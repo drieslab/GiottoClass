@@ -1,0 +1,57 @@
+Package: GiottoClasses
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: c(
+	person("Ruben", "Dries", email = "rubendries@gmail.com",
+		 role = c("aut", "cre")),
+	person("Jiaji", "George Chen", email = "jiajic@bu.edu",
+		 role = c("aut")),
+	person("Guo-Cheng", "Yuan", email = "guo-cheng.yuan@mssm.edu",
+		 role = c("aut")),
+  person("Matthew", "O'Brien", email = "mobrien2@bu.edu",
+	   role = c("aut")),
+	person("Joselyn", "Chávez", email = "joselynchavezf@gmail.com",
+	   role = c("aut"))
+	)
+Description: Giotto object and subobject class definitions and frameworks
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Depends:
+    base (>= 3.5.0),
+    utils (>= 3.5.0),
+    R (>= 3.5.0),
+    methods
+Imports:
+    data.table (>= 1.12.2),
+    igraph (>= 1.2.4.1),
+    Matrix,
+    MatrixGenerics,
+    terra (>= 1.7-39)
+Suggests: 
+    GiottoUtils,
+    reticulate (>= 1.25),
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Collate: 
+    'accessors.R'
+    'classes.R'
+    'create.R'
+    'data_evaluation.R'
+    'data_input.R'
+    'function_logging.R'
+    'giotto_structures.R'
+    'generics.R'
+    'interoperability.R'
+    'join.R'
+    'methods-featIDs.R'
+    'methods-initialize.R'
+    'methods-instructions.R'
+    'methods-nrow.R'
+    'methods-show.R'
+    'methods-spatIDs.R'
+    'package_imports.R'
+    'provenance.R'
+    'slot_check.R'
+    'zzz.R'
