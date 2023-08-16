@@ -1,4 +1,5 @@
 
+#' @include package_imports.R
 #' @include classes.R
 NULL
 
@@ -19,58 +20,11 @@ setGeneric('activeSpatUnit', function(gobject, ...) standardGeneric('activeSpatU
 setGeneric('activeSpatUnit<-', function(gobject, ..., value) standardGeneric('activeSpatUnit<-'))
 
 
-# centroids() S4 generic ####
-#' @title centroids-generic
-#' @name centroids-generic
-#' @description Access centroids information from polygon objects
-#' @param x object
-#' @aliases centroids
-#' @details For giottoPolygon, if centroids already exist, pulls from
-#' \code{spatVectorCentroids} slot. Otherwise, generates from
-#' \code{spatVector} slot de novo
-#' @importMethodsFrom terra centroids
-NULL
-
-#' @rdname centroids-generic
-#' @export
-setMethod('centroids', signature(x = 'giottoPolygon'),
-          function(x) {
-            if(!is.null(x@spatVectorCentroids)) {
-              return(x@spatVectorCentroids)
-            } else {
-              return(terra::centroids(x@spatVector))
-            }
-          })
-
-
-
-
-
 # Methods and documentations found in methods-spatShift.R
 setGeneric('spatShift', function(x, ...) standardGeneric('spatShift'))
 
-
-#' @title overlaps-generic
-#' @name overlaps-generic
-#' @description Access list of overlaps information from object
-#' @param x object
-#' @aliases overlaps
+# Methods and documentations found in methods-overlaps.R
 setGeneric('overlaps', function(x, ...) standardGeneric('overlaps'))
-
-#' @describeIn overlaps-generic Get overlaps information from giottoPolygon
-#' @param name (optional) name of overlaps information to retrieve
-#' @export
-setMethod('overlaps', signature(x = 'giottoPolygon'),
-          function(x, name = NULL) {
-            if(is.null(name)) {
-              # return entire list
-              return(x@overlaps)
-            } else {
-              # return named entry
-              return(x@overlaps[[name]])
-            }
-          })
-
 
 
 # Object Characteristics ####
@@ -79,6 +33,7 @@ setMethod('overlaps', signature(x = 'giottoPolygon'),
 if(!isGeneric('nrow')) setOldClass('nrow')
 if(!isGeneric('ncol')) setOldClass('ncol')
 if(!isGeneric('dim')) setOldClass('dim')
+# if(!isGeneric('t')) setOldClass('t', where = as.environment("package:Giotto"))
 
 ## colnames and rownames generics ####
 if(!isGeneric('colnames')) setOldClass('colnames')
@@ -113,5 +68,6 @@ setGeneric('objName<-', function(x, value) standardGeneric('objName<-'))
 
 
 
-
+# coerce ####
+setGeneric('as.sf', function(x, ...) standardGeneric('as.sf'))
 

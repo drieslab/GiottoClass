@@ -1,4 +1,6 @@
 #' @include classes.R
+#' @include slot_accessors.R
+#' @include package_imports.R
 NULL
 
 
@@ -15,9 +17,11 @@ NULL
 #' @param raw_exprs deprecated, use expression
 #' @param expression_feat available features (e.g. rna, protein, ...)
 #' @param spatial_locs data.table or data.frame with coordinates for cell centroids
-#' @param spatial_info information about spatial units
 #' @param spatial_info list of giotto polygon objects with spatial information,
 #' see \code{\link{createGiottoPolygonsFromMask}} and \code{\link{createGiottoPolygonsFromDfr}}
+#' @param calc_poly_centroids if spatial_info is provided, whether to also calculate centroids
+#' @param centroids_to_spatlocs if spatial_info is provided, whether to also convert
+#' centroids to spatial locations
 #' @param cell_metadata cell annotation metadata
 #' @param feat_metadata feature annotation metadata for each unique feature
 #' @param feat_info list of giotto point objects with feature info,
@@ -39,28 +43,28 @@ NULL
 #'
 #' See \url{http://giottosuite.com/articles/getting_started_gobject.html} for more details
 #'
-#' [\strong{Requirements}] To create a giotto object you need to provide at least a matrix with genes as
+#' \[**Requirements**\] To create a giotto object you need to provide at least a matrix with genes as
 #' row names and cells as column names. This matrix can be provided as a base matrix, sparse Matrix, data.frame,
 #' data.table or as a path to any of those.
 #' To include spatial information about cells (or regions) you need to provide a matrix, data.table or data.frame (or path to them)
 #' with coordinates for all spatial dimensions. This can be 2D (x and y) or 3D (x, y, x).
 #' The row order for the cell coordinates should be the same as the column order for the provided expression data.
 #'
-#' [\strong{Instructions}] Additionally an instruction file, generated manually or with \code{\link{createGiottoInstructions}}
+#' \[**Instructions**\] Additionally an instruction file, generated manually or with \code{\link{createGiottoInstructions}}
 #' can be provided to instructions, if not a default instruction file will be created
 #' for the Giotto object.
 #'
-#' [\strong{Multiple fields}] In case a dataset consists of multiple fields, like seqFISH+ for example,
+#' \[**Multiple fields**\] In case a dataset consists of multiple fields, like seqFISH+ for example,
 #' an offset file can be provided to stitch the different fields together. \code{\link{stitchFieldCoordinates}}
 #' can be used to generate such an offset file.
 #'
-#' [\strong{Processed data}] Processed count data, such as normalized data, can be provided using
+#' \[**Processed data**\] Processed count data, such as normalized data, can be provided using
 #' one of the different expression slots (norm_expr, norm_scaled_expr, custom_expr).
 #'
-#' [\strong{Metadata}] Cell and gene metadata can be provided using the cell and gene metadata slots.
+#' \[**Metadata**\] Cell and gene metadata can be provided using the cell and gene metadata slots.
 #' This data can also be added afterwards using the \code{\link{addFeatMetadata}} or \code{\link{addCellMetadata}} functions.
 #'
-#' [\strong{Other information}] Additional information can be provided through the appropriate slots:
+#' \[**Other information**\] Additional information can be provided through the appropriate slots:
 #' \itemize{
 #'   \item{spatial networks}
 #'   \item{spatial grids}
@@ -71,7 +75,6 @@ NULL
 #' }
 #'
 #' @concept giotto
-#' @importFrom methods new
 #' @export
 createGiottoObject = function(expression,
                               expression_feat = 'rna',
@@ -1205,7 +1208,7 @@ create_feat_meta_obj = function(metaDT = NULL,
 #' @param coordinates embedding coordinates
 #' @param name name of dimObj
 #' @param reduction reduction on columns (e.g. cells) or rows (e.g. features)
-#' @param reduction_method method used to generate dimension reduction
+#' @param method method used to generate dimension reduction
 #' @param spat_unit spatial unit of aggregated expression (e.g. 'cell')
 #' @param feat_type feature type of aggregated expression (e.g. 'rna', 'protein')
 #' @param provenance origin data of aggregated expression information (if applicable)
@@ -1278,13 +1281,12 @@ create_dim_obj = function(name = 'test',
 #' @title Create S4 nnNetObj
 #' @name createNearestNetObj
 #' @description Create an S4 nnNetObj
+#' @inheritParams data_access_params
 #' @param name name of nnNetObj
 #' @param nn_type type of nearest neighbor network
 #' @param network igraph object or data.frame containing nearest neighbor
 #' information (see details)
-#' @slot spat_unit spatial unit of data
-#' @slot feat_type feature type of data
-#' @slot provenance origin of aggregated information (if applicable)
+#' @param provenance origin of aggregated information (if applicable)
 #' @param misc misc
 #' @details igraph and dataframe-like inputs must include certain information.
 #' For igraph, it must have, at minimum vertex 'name' attributes and 'distance'
@@ -1345,13 +1347,14 @@ create_nn_net_obj = function(name = 'test',
 
 
 #' @title Create S4 spatLocsObj
-#' @name create_spat_locs_obj
+#' @name createSpatLocsObj
 #' @description Create an S4 spatLocsObj
 #' @param coordinates spatial coordinates
 #' @param name name of spatLocsObj
 #' @param spat_unit spatial unit of aggregated expression (e.g. 'cell')
 #' @param provenance origin data of aggregated expression information (if applicable)
 #' @param misc misc
+#' @param verbose be verbose
 #' @export
 createSpatLocsObj = function(coordinates,
                              name = 'test',
@@ -1380,6 +1383,9 @@ create_spat_locs_obj = function(name = 'test',
                                 spat_unit = 'cell',
                                 provenance = NULL,
                                 misc = NULL) {
+
+  # DT vars
+  cell_ID = NULL
 
   if(is.null(coordinates)) {
     coordinates = data.table::data.table(
@@ -1418,7 +1424,7 @@ create_spat_locs_obj = function(name = 'test',
 #' @param parameters (optional) additional method-specific parameters used during spatial network generation
 #' @param outputObj (optional) network geometry object
 #' @param cellShapeObj (optional) network cell shape information
-#' @param crossSectionObjects (optional) crossSectionObjects (see \code{\link{create_crossSection_object}})
+#' @param crossSectionObjects (optional) crossSectionObjects
 #' @param provenance (optional) origin of aggregated information (if applicable)
 #' @param misc misc
 #' @export
@@ -1486,7 +1492,7 @@ create_spat_net_obj = function(name = 'test',
 
 
 #' @title Create S4 spatEnrObj
-#' @name create_spat_enr_obj
+#' @name createSpatEnrObj
 #' @param enrichment_data spatial enrichment results, provided a dataframe-like object
 #' @param name name of S4 spatEnrObj
 #' @param method method used to generate spatial enrichment information
@@ -1495,6 +1501,7 @@ create_spat_net_obj = function(name = 'test',
 #' @param provenance origin data of aggregated expression information (if applicable)
 #' @param misc misc additional information about the spatial enrichment or how it
 #' was generated
+#' @param verbose be verbose
 #' @export
 createSpatEnrObj = function(enrichment_data,
                             name = 'test',
@@ -2077,6 +2084,494 @@ create_giotto_polygon_object = function(name = 'cell',
   return(g_polygon)
 }
 
+
+
+
+
+
+
+# giottoImage creation ####
+
+
+#' @title createGiottoImage
+#' @name createGiottoImage
+#' @description Creates a giotto image that can be added to a Giotto object and/or used to add an image to the spatial plotting functions
+#' @inheritParams data_access_params
+#' @param spatial_locs spatial locations (alternative if \code{gobject = NULL})
+#' @param spat_loc_name name of spatial locations within gobject
+#' @param mg_object magick image object
+#' @param name name for the image
+#' @param image_transformations vector of sequential image transformations
+#' @param negative_y Map image to negative y spatial values if TRUE during automatic
+#'   alignment. Meaning that origin is in upper left instead of lower left.
+#' @param do_manual_adj (default = FALSE) flag to use manual adj values instead
+#' of automatic alignment when given a gobject or spatlocs
+#' @param xmax_adj,xmin_adj,ymax_adj,ymin_adj adjustment of the maximum or maximum x or y-value to align the image
+#' @param scale_factor scaling of image dimensions relative to spatial coordinates
+#' @param x_shift,y_shift shift image along x or y axes
+#' @param scale_x,scale_y independently scale image in x or y direction
+#' @param order perform scaling or adjustments and shifts first
+#' @param xmin_set,xmax_set,ymin_set,ymax_set values to override image minmax spatial anchors when doing adjustments
+#' @param verbose be verbose
+#' @details image_transformations: transformation options from magick library
+#' \[\strong{flip_x_axis}\] flip x-axis (\code{\link[magick]{image_flop}})
+#' \[\strong{flip_y_axis}\] flip y-axis (\code{\link[magick]{image_flip}})
+#' Example: image_transformations = c(flip_x_axis, flip_y_axis); first flip x-axis and then y-axis
+#' @return a giottoImage object
+#' @export
+createGiottoImage = function(gobject = NULL,
+                             spat_unit = NULL,
+                             spatial_locs = NULL,
+                             spat_loc_name = NULL,
+                             mg_object,
+                             name = 'image',
+                             image_transformations = NULL,
+                             negative_y = TRUE,
+                             do_manual_adj = FALSE,
+                             xmax_adj = 0,
+                             xmin_adj = 0,
+                             ymax_adj = 0,
+                             ymin_adj = 0,
+                             scale_factor = 1,
+                             x_shift = NULL,
+                             y_shift = NULL,
+                             scale_x = NULL,
+                             scale_y = NULL,
+                             order = c('first_scale','first_adj'),
+                             xmin_set = NULL,
+                             xmax_set = NULL,
+                             ymin_set = NULL,
+                             ymax_set = NULL,
+                             verbose = TRUE) {
+
+  # Check params
+  order = match.arg(order, choices = c('first_scale','first_adj'))
+  scale_factor = c(x = scale_factor, y = scale_factor)
+
+  # create minimum giotto
+  g_image = new('giottoImage',
+                name = name,
+                mg_object = NULL,
+                minmax = NULL,
+                boundaries = NULL,
+                scale_factor = NULL,
+                resolution = NULL,
+                file_path = NULL,
+                OS_platform = .Platform[['OS.type']])
+
+
+  ## 1.a. check magick image object
+  if(!inherits(mg_object, 'magick-image')) {
+    if(file.exists(mg_object)) {
+      g_image@file_path = mg_object
+      mg_object = try(magick::image_read(mg_object))
+      if(inherits(mg_object, 'try-error')) {
+        stop(mg_object, ' can not be read by magick::image_read() \n')
+      }
+    } else {
+      stop("mg_object needs to be an image object 'magick-image' from the magick package or \n
+           an existing path that can be read by magick::image_read()")
+    }
+  }
+
+  ## 1.b. check colorspace
+  info = magick::image_info(mg_object)
+  mg_colorspace = info$colorspace
+  if(mg_colorspace == 'Gray') {
+    mg_object = magick::image_convert(mg_object, colorspace = 'rgb')
+  }
+
+  ## 1.c. perform transformations if found
+  if(!is.null(image_transformations)) {
+    for(transf in image_transformations) {
+      if(transf == 'flip_x_axis') {
+        mg_object = magick::image_flop(mg_object)
+      } else if(transf == 'flip_y_axis') {
+        mg_object = magick::image_flop(mg_object)
+      } else {
+        cat(transf, ' is not a supported transformation, see details \n')
+      }
+    }
+  }
+
+  g_image@mg_object = mg_object
+
+  ## 2. spatial minmax and adjustments -- manual OR by image dimensions (auto)
+  if(verbose == TRUE) {
+    if(do_manual_adj == TRUE) cat('do_manual_adj == TRUE \n','Boundaries will be adjusted by given values.\n')
+  }
+  # If spatlocs or gobject supplied, minmax values will always be generated
+  # If do_manual_adj == TRUE, bypass followup automatic boundary value generation
+  if(!is.null(gobject)) {
+
+    # Get spatial locations (or automatically take first available)
+    spatlocs = get_spatial_locations(gobject = gobject,
+                                     spat_unit = spat_unit,
+                                     spat_loc_name = spat_loc_name,
+                                     copy_obj = FALSE,
+                                     output = 'data.table')
+
+
+    # Find g_image minmax (spatial) from spatial_locs in gobject
+    my_xmin = min(spatlocs$sdimx)
+    my_xmax = max(spatlocs$sdimx)
+    my_ymin = min(spatlocs$sdimy)
+    my_ymax = max(spatlocs$sdimy)
+
+    if(do_manual_adj == FALSE) {
+      # find automatic adjustment values
+      img_minmax = get_img_minmax(mg_img = mg_object,
+                                  negative_y = negative_y)
+      adj_values = get_adj_rescale_img(img_minmax = img_minmax,
+                                       spatial_locs = spatlocs,
+                                       scale_factor = scale_factor)
+      # Automatic g_image@boundaries values
+      xmax_adj = as.numeric(adj_values[['xmax_adj_orig']])
+      xmin_adj = as.numeric(adj_values[['xmin_adj_orig']])
+      ymax_adj = as.numeric(adj_values[['ymax_adj_orig']])
+      ymin_adj = as.numeric(adj_values[['ymin_adj_orig']])
+    }
+
+
+  } else if(!is.null(spatial_locs)) {
+    spatlocs = spatial_locs
+    if(!all(c('sdimx','sdimy') %in% colnames(spatlocs))) {
+      stop('spatial_locs needs to be data.frame-like object with a sdimx and sdimy column')
+    }
+    # Find g_image minmax (spatial) from spatial_locs argument
+    my_xmin = min(spatlocs$sdimx)
+    my_xmax = max(spatlocs$sdimx)
+    my_ymin = min(spatlocs$sdimy)
+    my_ymax = max(spatlocs$sdimy)
+
+    if(do_manual_adj == FALSE) {
+      #find auto adjustment values
+      img_minmax = get_img_minmax(mg_img = mg_object,
+                                  negative_y = negative_y)
+      adj_values = get_adj_rescale_img(img_minmax = img_minmax,
+                                       spatial_locs = spatlocs,
+                                       scale_factor = scale_factor)
+      # Automatic g_image@boundaries values
+      xmax_adj = as.numeric(adj_values[['xmax_adj_orig']])
+      xmin_adj = as.numeric(adj_values[['xmin_adj_orig']])
+      ymax_adj = as.numeric(adj_values[['ymax_adj_orig']])
+      ymin_adj = as.numeric(adj_values[['ymin_adj_orig']])
+    }
+
+
+  } else {
+    if(verbose == TRUE) {
+      warning('gobject or spatial locations are not provided \n',
+              'Arbitrary values will be given \n')
+    }
+    # Default g_image@minmax values if no spatial_locs provided
+    my_xmin = 0; my_xmax = 10; my_ymin = 0; my_ymax = 10
+
+  }
+
+  # Set minmax and boundary values for return
+  g_image@minmax = c('xmax_sloc' = my_xmax,
+                     'xmin_sloc' = my_xmin,
+                     'ymax_sloc' = my_ymax,
+                     'ymin_sloc' = my_ymin)
+
+  ## if do_manual == TRUE, boundary values are those given or defaulted as arguments
+  ## if do_manual == FALSE, boundary values are taken from automatic processes above
+  g_image@boundaries = c('xmax_adj' = xmax_adj,
+                         'xmin_adj' = xmin_adj,
+                         'ymax_adj' = ymax_adj,
+                         'ymin_adj' = ymin_adj)
+
+  # scale factor and resolution values for return
+  g_image@scale_factor = scale_factor
+  g_image@resolution = 1/scale_factor
+
+  # Apply any additional manual adjustments through updateGiottoImage
+  if(do_manual_adj == TRUE) {
+    if(length(c(x_shift,
+                y_shift,
+                scale_x,
+                scale_y,
+                xmin_set,
+                xmax_set,
+                ymin_set,
+                ymax_set)) > 0) {
+      g_image = updateGiottoImageMG(giottoImage = g_image,
+                                    return_gobject = FALSE,
+                                    xmax_adj = xmax_adj,
+                                    xmin_adj = xmin_adj,
+                                    ymax_adj = ymax_adj,
+                                    ymin_adj = ymin_adj,
+                                    x_shift = x_shift,
+                                    y_shift = y_shift,
+                                    scale_factor = scale_factor,
+                                    order = order,
+                                    xmin_set = xmin_set,
+                                    xmax_set = xmax_set,
+                                    ymin_set = ymin_set,
+                                    ymax_set = ymax_set,
+                                    verbose = FALSE)
+    }
+  }
+
+  # image object
+  return(g_image)
+}
+
+
+
+# giottoLargeImage creation ####
+
+
+#' @title createGiottoLargeImage
+#' @name createGiottoLargeImage
+#' @description Creates a large giotto image that can be added to a Giotto subcellular object. Generates deep copy of SpatRaster
+#' @param raster_object terra SpatRaster image object
+#' @param name name for the image
+#' @param negative_y Map image to negative y spatial values if TRUE. Meaning that origin is in upper left instead of lower left.
+#' @param extent SpatExtent object to assign spatial extent. Takes priority unless use_rast_ext is TRUE.
+#' @param use_rast_ext Use extent from input raster object
+#' @param image_transformations vector of sequential image transformations - under construction
+#' @param flip_vertical flip raster in a vertical manner
+#' @param flip_horizontal flip raster in a horizontal manner
+#' @param xmax_bound,xmin_bound,ymax_bound,ymin_bound assign min and max x and y
+#'   values for image spatial placement
+#' @param scale_factor scaling of image dimensions relative to spatial coordinates
+#' @param verbose be verbose
+#' @return a giottoLargeImage object
+#' @export
+createGiottoLargeImage = function(raster_object,
+                                  name = 'image',
+                                  negative_y = TRUE,
+                                  extent = NULL,
+                                  use_rast_ext = FALSE,
+                                  image_transformations = NULL,
+                                  flip_vertical = FALSE,
+                                  flip_horizontal = FALSE,
+                                  xmax_bound = NULL,
+                                  xmin_bound = NULL,
+                                  ymax_bound = NULL,
+                                  ymin_bound = NULL,
+                                  scale_factor = 1,
+                                  verbose = TRUE) {
+
+  # create minimum giotto
+  g_imageL = new('giottoLargeImage',
+                 name = name,
+                 raster_object = NULL,
+                 overall_extent = NULL,
+                 scale_factor = NULL,
+                 resolution = NULL,
+                 file_path = NULL,
+                 OS_platform = .Platform[['OS.type']])
+
+
+  ## 1. check raster object and load as SpatRaster if necessary
+  if(!inherits(raster_object, 'SpatRaster')) {
+    if(file.exists(raster_object)) {
+      g_imageL@file_path = raster_object
+      raster_object = create_terra_spatRaster(image_path = raster_object)
+    } else {
+      stop("raster_object needs to be a'SpatRaster' object from the terra package or \n
+           an existing path that can be read by terra::rast()")
+    }
+  }
+
+  # Prevent updates to original raster object input
+  if(getNamespaceVersion('terra') >= '1.15-12') raster_object = terra::deepcopy(raster_object)
+  else {
+    # raster_object = terra::copy(raster_object)
+    if(isTRUE(verbose)) warning('\n If largeImage was created from a terra raster
+                                object, manipulations to the giotto image may be
+                                reflected in the raster object as well. Update
+                                terra to >= 1.15-12 to avoid this issue. \n')
+  }
+
+
+  ## 2. image bound spatial extent
+  if(use_rast_ext == TRUE) {
+    extent = terra::ext(raster_object)
+    if(verbose == TRUE) cat('use_rast_ext == TRUE, extent from input raster_object will be used.')
+  }
+
+  # By extent object (priority)
+  if(!is.null(extent)) {
+    if(inherits(extent, 'SpatExtent')) {
+      terra::ext(raster_object) = extent
+    } else {
+      stop('extent argument only accepts terra SpatExtent objects')
+    }
+  } else { # OR by manual OR by image dimensions (auto)
+
+    # Check if manual adj values were given
+    # Assign default values for any that were not manually given
+    if(all(is.null(xmax_bound),
+           is.null(xmin_bound),
+           is.null(ymax_bound),
+           is.null(ymin_bound))) {
+      im_dim = dim(raster_object)[2:1]
+
+      # Apply scale_factor
+      im_dim = im_dim * scale_factor
+
+      # Automatic extent values
+      xmax_bound = im_dim[1]
+      xmin_bound = 0
+      if(negative_y == TRUE) {
+        ymax_bound = 0
+        ymin_bound = -im_dim[2]
+      } else if(negative_y == FALSE) {
+        ymax_bound = im_dim[2]
+        ymin_bound = 0
+      }
+
+    } else {
+      # Manual extent values
+      if(is.null(xmax_bound) == TRUE) xmax_bound = 1
+      if(is.null(xmin_bound) == TRUE) xmin_bound = 0
+      if(negative_y == TRUE) {
+        if(is.null(ymax_bound) == TRUE) ymax_bound = 0
+        if(is.null(ymin_bound) == TRUE) ymin_bound = -1
+      } else if(negative_y == FALSE) {
+        if(is.null(ymax_bound) == TRUE) ymax_bound = 1
+        if(is.null(ymin_bound) == TRUE) ymin_bound = 0
+      }
+
+    }
+    terra::ext(raster_object) = c(xmin_bound,xmax_bound,ymin_bound,ymax_bound)
+  }
+
+
+  ## transformations
+
+  ## flip axes ##
+  if(flip_vertical == TRUE) {
+    raster_object = terra::flip(raster_object, direction = 'vertical')
+  }
+
+  if(flip_horizontal == TRUE) {
+    raster_object = terra::flip(raster_object, direction = 'horizontal')
+  }
+
+
+
+  ## 3. Assign raster_object to giottoLargeImage
+  g_imageL@raster_object = raster_object
+
+  ## 4. scale factor and resolution values
+  g_imageL@resolution = terra::res(g_imageL@raster_object) # (x,y)
+  names(g_imageL@resolution) = c('x','y')
+  g_imageL@scale_factor = (1/g_imageL@resolution)
+
+
+
+
+
+
+  ## 5. Get image characteristics by sampling
+  sampleValues = stats::na.omit(terra::spatSample(raster_object,
+                                                  size = 5000, # Defines the rough maximum of pixels allowed when resampling
+                                                  method = 'regular',
+                                                  value = TRUE))
+  if(nrow(sampleValues) == 0) {
+    if(verbose == TRUE) cat('No values discovered when sampling for image characteristics')
+  } else {
+    # get intensity range
+    srMinmax = suppressWarnings(terra::minmax(raster_object))
+    if(sum(is.infinite(srMinmax)) == 0) { # pull minmax values from terra spatRaster obj if img was small enough for them to be calculated
+      g_imageL@max_intensity = srMinmax[2]
+      g_imageL@min_intensity = srMinmax[1]
+    } else { # pull minmax values from sampled subset if img was too large
+      intensityRange = range(sampleValues)
+      g_imageL@max_intensity = intensityRange[2]
+      g_imageL@min_intensity = intensityRange[1]
+    }
+
+    # find out if image is int or floating point
+    is_int = identical(sampleValues, round(sampleValues))
+    if(is_int == TRUE) {
+      g_imageL@is_int = TRUE
+    } else {
+      g_imageL@is_int = FALSE
+    }
+  }
+
+
+
+  ## 6. extent object
+  g_imageL@extent = g_imageL@overall_extent = as.vector(terra::ext(raster_object))
+
+  ## 7. return image object
+  return(g_imageL)
+}
+
+
+#' @title createGiottoLargeImageList
+#' @name createGiottoLargeImageList
+#' @description Creates a list of large giotto images that can be added to a Giotto object. Generates deep copy of SpatRaster
+#' @param raster_objects vector of image paths or terra SpatRaster image objects
+#' @param names vector of names for the images
+#' @param negative_y Map image to negative y spatial values if TRUE. Meaning that origin is in upper left instead of lower left.
+#' @param extent SpatExtent object to assign spatial extent. Takes priority unless use_rast_ext is TRUE.
+#' @param use_rast_ext Use extent from input raster object
+#' @param image_transformations vector of sequential image transformations - under construction
+#' @param flip_vertical flip raster in a vertical manner
+#' @param flip_horizontal flip raster in a horizontal manner
+#' @param xmax_bound,xmin_bound,ymax_bound,ymin_bound assign min and max x and y
+#'   values for image spatial placement
+#' @param scale_factor scaling of image dimensions relative to spatial coordinates
+#' @param verbose be verbose
+#' @details See \code{\link{createGiottoLargeImage}}
+#' @return a list with giottoLargeImage objects
+#' @export
+createGiottoLargeImageList = function(raster_objects,
+                                      names = 'image',
+                                      negative_y = TRUE,
+                                      extent = NULL,
+                                      use_rast_ext = FALSE,
+                                      image_transformations = NULL,
+                                      flip_vertical = FALSE,
+                                      flip_horizontal = FALSE,
+                                      xmax_bound = NULL,
+                                      xmin_bound = NULL,
+                                      ymax_bound = NULL,
+                                      ymin_bound = NULL,
+                                      scale_factor = 1,
+                                      verbose = TRUE) {
+
+  l_images = length(raster_objects)
+  l_image_names = length(unique(names))
+
+  if(l_image_names != l_image_names) {
+    stop('length of raster_objects and unique names must be the same')
+  }
+
+  result_list = list()
+
+  for(i in 1:l_images) {
+
+    image_res = createGiottoLargeImage(raster_object = raster_objects[[i]],
+                                       name = names[[i]],
+                                       negative_y = negative_y,
+                                       extent = extent,
+                                       use_rast_ext = use_rast_ext,
+                                       image_transformations = image_transformations,
+                                       flip_vertical = flip_vertical,
+                                       flip_horizontal = flip_horizontal,
+                                       xmax_bound = xmax_bound,
+                                       xmin_bound = xmin_bound,
+                                       ymax_bound = ymax_bound,
+                                       ymin_bound = ymin_bound,
+                                       scale_factor = scale_factor,
+                                       verbose = verbose)
+
+    result_list[[i]] = image_res
+
+  }
+
+  return(result_list)
+
+}
 
 
 

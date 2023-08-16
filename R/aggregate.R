@@ -1,5 +1,957 @@
-### aggregate stacks ####
 
+
+# aggregate expression ####
+
+# Aggregate features based on morphological annotations in order to generate a
+# biological spatial unit to study.
+# 1. calculate overlap
+#   - Finds the features which are overlapped by the morphological annotations
+#     represented by a `giottoPolygon` object.
+#     This information is then stored within the `giottoPolygon`'s overlaps slot
+#
+# 2. overlap to matrix
+#   - Tabulates the overlapped feature information by cell and then sends it to
+#     the expression slot as a new expression matrix.
+
+
+## calculate overlap between cellular structures and features ####
+
+### ** raster way ####
+
+#' @title Convert polygon to raster
+#' @name polygon_to_raster
+#' @description  convert polygon to raster
+#' @keywords internal
+polygon_to_raster = function(polygon, field = NULL) {
+
+  pol_xmax = terra::xmax(polygon)
+  pol_xmin = terra::xmin(polygon)
+  ncols = abs(pol_xmax-pol_xmin)
+
+  pol_ymax = terra::ymax(polygon)
+  pol_ymin = terra::ymin(polygon)
+  nrows = abs(pol_ymax-pol_ymin)
+
+  r = terra::rast(polygon, ncols = ncols, nrows = nrows)
+
+  if(is.null(field)) {
+    field = names(polygon)[1]
+  }
+
+  # ensure that field is numerical
+  polygon$poly_i = 1:nrow(unique(polygon[[field]]))
+  poly_rast = terra::rasterize(x = polygon, r, field = 'poly_i')
+
+  poly_ID_vector = polygon[[field]][,1]; names(poly_ID_vector) = polygon[['poly_i']][,1]
+
+  return(list('raster' = poly_rast, 'ID_vector' = poly_ID_vector))
+
+}
+
+
+
+#' @title calculateOverlapRaster
+#' @name calculateOverlapRaster
+#' @description calculate overlap between cellular structures (polygons) and features (points)
+#' @param gobject giotto object
+#' @param name_overlap name for the overlap results (default to feat_info parameter)
+#' @param spatial_info polygon information
+#' @param poly_ID_names (optional) list of poly_IDs to use
+#' @param feat_info feature information
+#' @param feat_subset_column feature info column to subset features with
+#' @param feat_subset_ids ids within feature info column to use for subsetting
+#' @param count_info_column column with count information (optional)
+#' @param return_gobject return giotto object (default: TRUE)
+#' @param verbose be verbose
+#' @return giotto object or spatVector with overlapping information
+#' @details Serial overlapping function.
+#' @concept overlap
+#' @export
+calculateOverlapRaster = function(gobject,
+                                  name_overlap = NULL,
+                                  spatial_info = NULL,
+                                  poly_ID_names = NULL,
+                                  feat_info = NULL,
+                                  feat_subset_column = NULL,
+                                  feat_subset_ids = NULL,
+                                  count_info_column = NULL,
+                                  return_gobject = TRUE,
+                                  verbose = TRUE) {
+
+  # define for :=
+  poly_ID = NULL
+  poly_i = NULL
+  ID = NULL
+  x = NULL
+  y = NULL
+  feat_ID = NULL
+  feat_ID_uniq = NULL
+
+  # set defaults if not provided
+  if(is.null(feat_info)) {
+    feat_info = names(gobject@feat_info)[[1]]
+  }
+
+  if(is.null(name_overlap)) {
+    name_overlap = feat_info
+  }
+
+  if(is.null(spatial_info)) {
+    spatial_info = names(gobject@spatial_info)[[1]]
+  }
+
+
+  # spatial vector
+  if(verbose) cat('1. convert polygon to raster \n')
+  spatvec = gobject@spatial_info[[spatial_info]]@spatVector
+
+  # subset spatvec
+  if(!is.null(poly_ID_names)) {
+    spatvec = spatvec[spatvec$poly_ID %in% poly_ID_names]
+  }
+
+  # spatial vector to raster
+  spatrast_res = polygon_to_raster(spatvec, field = 'poly_ID')
+  spatrast = spatrast_res[['raster']]
+  ID_vector = spatrast_res[['ID_vector']]
+
+  # point vector
+  pointvec = gobject@feat_info[[feat_info]]@spatVector
+
+  # subset points if needed
+  # e.g. to select transcripts within a z-plane
+  if(!is.null(feat_subset_column) & !is.null(feat_subset_ids)) {
+    bool_vector = pointvec[[feat_subset_column]][[1]] %in% feat_subset_ids
+    pointvec = pointvec[bool_vector]
+  }
+
+  ## overlap between raster and point
+  if(verbose) cat('2. overlap raster and points \n')
+  overlap_test = terra::extract(x = spatrast, y = pointvec)
+
+  # add poly_ID information
+  if(verbose) cat('3. add polygon information \n')
+  overlap_test_dt = data.table::as.data.table(overlap_test)
+  overlap_test_dt[, poly_ID := ID_vector[poly_i]]
+
+  # add point information
+  if(verbose) cat('4. add points information \n')
+  pointvec_dt = spatVector_to_dt(pointvec)
+
+  pointvec_dt_x = pointvec_dt$x ; names(pointvec_dt_x) = pointvec_dt$geom
+  pointvec_dt_y = pointvec_dt$y ; names(pointvec_dt_y) = pointvec_dt$geom
+  pointvec_dt_feat_ID = pointvec_dt$feat_ID ; names(pointvec_dt_feat_ID) = pointvec_dt$geom
+  pointvec_dt_feat_ID_uniq = pointvec_dt$feat_ID_uniq ; names(pointvec_dt_feat_ID_uniq) = pointvec_dt$geom
+
+  overlap_test_dt[, x := pointvec_dt_x[ID]]
+  overlap_test_dt[, y := pointvec_dt_y[ID]]
+  overlap_test_dt[, feat_ID := pointvec_dt_feat_ID[ID]]
+  overlap_test_dt[, feat_ID_uniq := pointvec_dt_feat_ID_uniq[ID]]
+
+  if(!is.null(count_info_column)) {
+    pointvec_dt_count = pointvec_dt[[count_info_column]] ; names(pointvec_dt_count) = pointvec_dt$geom
+    overlap_test_dt[, c(count_info_column) := pointvec_dt_count[ID]]
+  }
+
+  if(verbose) cat('5. create overlap polygon information \n')
+  overlap_test_dt_spatvector = terra::vect(x = as.matrix(overlap_test_dt[, c('x', 'y'), with = F]),
+                                           type = "points",
+                                           atts = overlap_test_dt[, c('poly_ID', 'feat_ID', 'feat_ID_uniq', count_info_column), with = F])
+  names(overlap_test_dt_spatvector) = c('poly_ID', 'feat_ID', 'feat_ID_uniq', count_info_column)
+
+
+
+  if(return_gobject == TRUE) {
+    if(is.null(name_overlap)) {
+      name_overlap = feat_info
+    }
+
+    gobject@spatial_info[[spatial_info]]@overlaps[[name_overlap]] = overlap_test_dt_spatvector
+    return(gobject)
+
+  } else {
+    return(overlap_test_dt_spatvector)
+  }
+
+}
+
+
+
+#' @title Overlap points -- single polygon
+#' @name overlap_points_single_polygon
+#' @description  overlap for a single polygon
+#' @keywords internal
+overlap_points_single_polygon = function(spatvec,
+                                         poly_ID_name,
+                                         pointvec_dt) {
+
+  # define for data.table
+  x = y = NULL
+
+  ## extract single polygon and get spatextent
+  one_polygon_spatvector = spatvec[spatvec$poly_ID == poly_ID_name]
+  ext_limits = terra::ext(one_polygon_spatvector)
+
+  ## extract potential features (points) based on limits
+  one_polygon_pointvec_dt = pointvec_dt[x > terra::xmin(ext_limits) & x < terra::xmax(ext_limits)][y > terra::ymin(ext_limits) & y < terra::ymax(ext_limits)]
+  one_polygon_pointsvec = dt_to_spatVector_points(one_polygon_pointvec_dt)
+
+  ## calculate intersection between single polygon and points
+  one_polygon_overlap = terra::intersect(x = one_polygon_spatvector,
+                                         y = one_polygon_pointsvec)
+
+  if(nrow(one_polygon_overlap) > 0) {
+    return(one_polygon_overlap)
+  } else {
+    return(NULL)
+  }
+
+}
+
+
+
+
+
+#' @title calculateOverlapPolygonImages
+#' @name calculateOverlapPolygonImages
+#' @description calculate overlap between cellular structures (polygons) and images (intensities)
+#' @param gobject giotto object
+#' @param name_overlap name for the overlap results (default to feat_info parameter)
+#' @param spatial_info polygon information
+#' @param poly_ID_names (optional) list of poly_IDs to use
+#' @param image_names names of the images with raw data
+#' @param poly_subset numerical values to subset the polygon spatVector
+#' @param return_gobject return giotto object (default: TRUE)
+#' @param verbose be verbose
+#' @param ... additional params to \code{\link[exactextractr]{exact_extract}}
+#' @return giotto object or data.table with overlapping information
+#' @concept overlap
+#' @export
+calculateOverlapPolygonImages = function(gobject,
+                                         name_overlap = 'protein',
+                                         spatial_info = 'cell',
+                                         poly_ID_names = NULL,
+                                         image_names = NULL,
+                                         poly_subset = NULL,
+                                         return_gobject = TRUE,
+                                         verbose = TRUE,
+                                         ...) {
+
+  # data.table vars
+  coverage_fraction = NULL
+
+  if(is.null(image_names)) {
+    stop('image_names = NULL, you need to provide the names of the images you want to use,
+          see showGiottoImageNames() for attached images')
+  }
+
+  # need for package exactextractr for fast overlap calculations
+  package_check('exactextractr')
+
+  ## get polygon information
+  poly_info = get_polygon_info(gobject = gobject,
+                               polygon_name = spatial_info,
+                               return_giottoPolygon = TRUE)
+
+
+  # calculate centroids for poly_info if not present
+  if(is.null(poly_info@spatVectorCentroids)) {
+    poly_info = calculate_centroids_polygons(gpolygon = poly_info,
+                                             name = 'centroids',
+                                             append_gpolygon = TRUE)
+  }
+
+
+  potential_large_image_names = list_images_names(gobject, img_type = 'largeImage')
+
+  # check for wrong input names
+  for(img_name in image_names) {
+    if(!img_name %in% potential_large_image_names) {
+      warning('image with the name ', img_name, ' was not found and will be skipped \n')
+    }
+  }
+  image_names = image_names[image_names %in% potential_large_image_names]
+
+
+  image_list = list()
+
+  for(i in 1:length(image_names)) {
+
+    img_name = image_names[i]
+
+    if(!img_name %in% potential_large_image_names) {
+      warning('image with the name ', img_name, ' was not found and will be skipped \n')
+    }
+
+    intensity_image = get_giottoLargeImage(gobject = gobject, name = img_name)
+    intensity_image = intensity_image@raster_object
+
+    names(intensity_image) = img_name
+
+    image_list[[i]] = intensity_image
+
+  }
+
+  if (verbose) print('0. create image list')
+
+  image_vector_c = do.call('c', image_list)
+
+  # convert spatVector to sf object
+  if(!is.null(poly_subset)) {
+
+    poly_info_spatvector_sf <- as.sf(poly_info@spatVector[poly_subset])
+
+    # poly_info_spatvector_sf = try({
+    #   sf::st_as_sf(poly_info@spatVector[poly_subset])
+    # })
+    # if(inherits(poly_info_spatvector_sf, 'try-error')) {
+    #   # workaround if sf_as_sf does not work on a spatvector
+    #   d <- terra::as.data.frame(poly_info@spatVector[poly_subset], geom = "hex")
+    #   d$geometry <- structure(as.list(d$geometry), class = "WKB")
+    #   poly_info_spatvector_sf = sf::st_as_sf(x = d, crs = poly_info@spatVector[poly_subset]@ptr$get_crs("wkt"))
+    # }
+
+  } else{
+
+    poly_info_spatvector_sf <- as.sf(poly_info)
+
+    # poly_info_spatvector_sf = try({
+    #   sf::st_as_sf(poly_info@spatVector)
+    # })
+    # if(inherits(poly_info_spatvector_sf, 'try-error')) {
+    #   # workaround if sf_as_sf does not work on a spatvector
+    #   d <- terra::as.data.frame(poly_info@spatVector, geom = "hex")
+    #   d$geometry <- structure(as.list(d$geometry), class = "WKB")
+    #   poly_info_spatvector_sf = sf::st_as_sf(x = d, crs = poly_info@spatVector@ptr$get_crs("wkt"))
+    # }
+  }
+
+
+  if (verbose) print('1. start extraction')
+
+  extract_intensities_exact = exactextractr::exact_extract(x = image_vector_c,
+                                                           y = poly_info_spatvector_sf,
+                                                           include_cols = 'poly_ID',
+                                                           ...)
+  # rbind and convert output to data.table
+  dt_exact = data.table::as.data.table(do.call('rbind', extract_intensities_exact))
+
+  # prepare output
+  if (verbose) print(dt_exact)
+  colnames(dt_exact)[2:(length(image_names)+1)] = image_names # probably not needed anymore
+  dt_exact[, coverage_fraction := NULL]
+  if (verbose) print(dt_exact)
+
+  if(return_gobject) {
+
+    poly_info@overlaps[['intensity']][[name_overlap]] = dt_exact
+    gobject = set_polygon_info(gobject = gobject,
+                               polygon_name = spatial_info,
+                               gpolygon = poly_info)
+    return(gobject)
+
+  } else {
+    return(dt_exact)
+  }
+
+}
+
+
+
+
+
+
+
+
+
+### ** polygon way ####
+
+
+#' @title Overlap points per polgyon
+#' @name overlap_points_per_polygon
+#' @description Loop to overlap each single polygon
+#' @keywords internal
+#' @seealso \code{\link{overlap_points_single_polygon}}
+overlap_points_per_polygon = function(spatvec,
+                                      pointvec,
+                                      poly_ID_names,
+                                      verbose = TRUE) {
+
+  # spatial polygon
+  spatvec = spatvec[terra::is.valid(spatvec)]
+
+  # points polygon
+  pointvec_dt = spatVector_to_dt(pointvec)
+
+  # get polygon names
+  unique_cell_names = unique(spatvec$poly_ID)
+  poly_ID_names = poly_ID_names[poly_ID_names %in% unique_cell_names]
+
+
+  #final_vect = terra::vect()
+  final_list = list(); i = 1
+  for(poly_ID_name in poly_ID_names) {
+
+    if(verbose == TRUE) print(poly_ID_name)
+
+    result = overlap_points_single_polygon(spatvec = spatvec,
+                                           poly_ID_name = poly_ID_name,
+                                           pointvec_dt = pointvec_dt)
+
+    if(!is.null(result)) {
+      final_list[[i]] = result
+      i = i+1
+      #final_vect = rbind(final_vect, result)
+    }
+
+
+  }
+
+  final_vect = do.call('rbind', final_list)
+
+  return(final_vect)
+
+}
+
+
+
+#' @title calculateOverlapSerial
+#' @name calculateOverlapSerial
+#' @description calculate overlap between cellular structures (polygons) and features (points)
+#' @param gobject giotto object
+#' @param name_overlap name for the overlap results (default to feat_info parameter)
+#' @param spatial_info polygon information
+#' @param feat_info feature information
+#' @param poly_ID_names list of poly_IDs to use
+#' @param polygon_group_size number of polygons to process per group
+#' @param return_gobject return giotto object (default: TRUE)
+#' @param verbose be verbose
+#' @return giotto object or spatVector with overlapping information
+#' @details Serial overlapping function that works on groups of polygons at a time.
+#'   Number of polygons per group is defined by \code{polygon_group_size} param
+#' @concept overlap
+#' @export
+calculateOverlapSerial = function(gobject,
+                                  name_overlap = NULL,
+                                  spatial_info = 'cell',
+                                  feat_info = 'rna',
+                                  poly_ID_names = 'all',
+                                  polygon_group_size = 500,
+                                  return_gobject = TRUE,
+                                  verbose = FALSE) {
+
+  # spatial polygon
+  spatvec = gobject@spatial_info[[spatial_info]]@spatVector
+
+  # points polygon
+  pointvec = gobject@feat_info[[feat_info]]@spatVector
+
+  if(length(poly_ID_names) == 1) {
+    if(poly_ID_names == 'all') {
+      poly_ID_names = unique(spatvec$poly_ID)
+    }
+  }
+
+
+  total_polygons = length(poly_ID_names)
+  total_nr_groups = ceiling(total_polygons/polygon_group_size)
+  groupnames = cut(1:total_polygons,
+                   breaks = total_nr_groups,
+                   labels = 1:total_nr_groups)
+  names(poly_ID_names) = groupnames
+
+
+  final_result = list()
+  for(i in 1:total_nr_groups) {
+
+    if (verbose) print((total_nr_groups-i))
+
+    selected_poly_ID_names = poly_ID_names[names(poly_ID_names) == i]
+    selected_spatvec = spatvec[spatvec$poly_ID %in% selected_poly_ID_names]
+
+
+
+    spatvec_result = overlap_points_per_polygon(spatvec = selected_spatvec,
+                                                pointvec = pointvec,
+                                                poly_ID_names = selected_poly_ID_names,
+                                                verbose = verbose)
+
+    final_result[[i]] = spatvec_result
+
+  }
+
+  final_result = do.call('rbind', final_result)
+
+
+  if(return_gobject == TRUE) {
+
+    if(is.null(name_overlap)) {
+      name_overlap = feat_info
+    }
+
+    gobject@spatial_info[[spatial_info]]@overlaps[[name_overlap]] = final_result
+    return(gobject)
+
+  } else {
+    return(final_result)
+  }
+
+}
+
+
+
+#' @title Overlap points per polygon -- wrapped
+#' @name overlap_points_per_polygon_wrapped
+#' @description overlap wrapped polygons
+#' @keywords internal
+overlap_points_per_polygon_wrapped = function(spatvec_wrapped,
+                                              pointvec_wrapped,
+                                              poly_ID_names) {
+
+  unwrap_spatvec = terra::vect(spatvec_wrapped)
+  unwrap_pointvec = terra::vect(pointvec_wrapped)
+
+  if(length(poly_ID_names) == 1) {
+    if(poly_ID_names == 'all') {
+      poly_ID_names = unique(unwrap_spatvec$poly_ID)
+    }
+  }
+
+  intersect_res = overlap_points_per_polygon(spatvec = unwrap_spatvec,
+                                             pointvec = unwrap_pointvec,
+                                             poly_ID_names = poly_ID_names,
+                                             verbose = FALSE)
+
+  return(terra::wrap(intersect_res))
+
+}
+
+
+
+#' @title calculateOverlapParallel
+#' @name calculateOverlapParallel
+#' @description calculate overlap between cellular structures (polygons) and features (points)
+#' @param gobject giotto object
+#' @param name_overlap name for the overlap results (default to feat_info parameter)
+#' @param spatial_info polygon information
+#' @param feat_info feature information
+#' @param poly_ID_names list of poly_IDs to use
+#' @param polygon_group_size number of polygons to process per parallelization group
+#' @param return_gobject return giotto object (default: TRUE)
+#' @param verbose be verbose
+#' @return giotto object or spatVector with overlapping information
+#' @details parallel follows the future approach. This means that plan(multisession) does not work,
+#' since the underlying terra objects are internal C pointers. plan(multicore) is also not supported for
+#' Rstudio users.
+#' @concept overlap
+#' @export
+calculateOverlapParallel = function(gobject,
+                                    name_overlap = NULL,
+                                    spatial_info = 'cell',
+                                    feat_info = 'rna',
+                                    poly_ID_names = 'all',
+                                    polygon_group_size = 500,
+                                    return_gobject = TRUE,
+                                    verbose = TRUE) {
+
+  # spatial polygon
+  spatvec = gobject@spatial_info[[spatial_info]]@spatVector
+
+  # points polygon
+  pointvec = gobject@feat_info[[feat_info]]@spatVector
+
+
+  if(length(poly_ID_names) == 1) {
+    if(poly_ID_names == 'all') {
+      poly_ID_names = unique(spatvec$poly_ID)
+    }
+  }
+
+  total_polygons = length(poly_ID_names)
+  total_nr_groups = ceiling(total_polygons/polygon_group_size)
+  groupnames = cut(1:total_polygons,
+                   breaks = total_nr_groups,
+                   labels = 1:total_nr_groups)
+  names(poly_ID_names) = groupnames
+
+  # wrap SpatVector for points
+  pointvec_wrap = terra::wrap(pointvec)
+
+  # wrap SpatVectors for polygons
+  spatvec_wrap_list = list()
+  for(i in 1:total_nr_groups) {
+    selected_poly_ID_names = poly_ID_names[names(poly_ID_names) == i]
+    selected_spatvec = spatvec[spatvec$poly_ID %in% selected_poly_ID_names]
+    spatvec_wrap_list[[i]] = terra::wrap(selected_spatvec)
+  }
+
+
+  # first intersect in parallel on wrapped terra objects
+  result1 = lapply_flex(X = 1:length(spatvec_wrap_list),
+
+                        FUN = function(x) {
+                          test = overlap_points_per_polygon_wrapped(spatvec_wrapped = spatvec_wrap_list[[x]],
+                                                                    pointvec_wrapped = pointvec_wrap,
+                                                                    poly_ID_names = 'all')
+                        })
+
+  # unwrap overlap results
+  final_result = lapply(X = 1:length(result1), FUN = function(x) {
+    terra::vect(result1[x][[1]])
+  })
+
+  # rbind all results together
+  final_result = do.call('rbind', final_result)
+
+
+  if(return_gobject == TRUE) {
+
+    if(is.null(name_overlap)) {
+      name_overlap = feat_info
+    }
+
+    gobject@spatial_info[[spatial_info]]@overlaps[[name_overlap]] = final_result
+    return(gobject)
+
+  } else {
+    return(final_result)
+  }
+
+}
+
+
+
+
+
+
+## transfer overlap results to matrix ####
+
+#' @title overlapToMatrix
+#' @name overlapToMatrix
+#' @description create a count matrix based on overlap results from \code{\link{calculateOverlapRaster}}, \code{\link{calculateOverlapSerial}}, or \code{\link{calculateOverlapParallel}}
+#' @param gobject giotto object
+#' @param name name for the overlap count matrix
+#' @param poly_info polygon information
+#' @param feat_info feature information
+#' @param count_info_column column with count information
+#' @param return_gobject return giotto object (default: TRUE)
+#' @return giotto object or count matrix
+#' @concept overlap
+#' @export
+overlapToMatrix = function(gobject,
+                           name = 'raw',
+                           poly_info = 'cell',
+                           feat_info = 'rna',
+                           count_info_column = NULL,
+                           return_gobject = TRUE) {
+
+  # define for data.table
+  poly_ID = NULL
+
+  overlap_spatvec = get_polygon_info(gobject = gobject,
+                                     polygon_name = poly_info,
+                                     polygon_overlap = feat_info)
+
+  if(is.null(overlap_spatvec)) {
+    cat('overlap between ', poly_info, ' and ', feat_info, ' has not been found \n')
+    stop('Run calculateOverlap() first')
+  }
+
+  dtoverlap = spatVector_to_dt(overlap_spatvec)
+  dtoverlap = dtoverlap[!is.na(poly_ID)] # removes points that have no overlap with any polygons
+  #dtoverlap[, poly_ID := ifelse(is.na(poly_ID), 'no_overlap', poly_ID), by = 1:nrow(dtoverlap)]
+
+
+  if(!is.null(count_info_column)) {
+
+    if(!count_info_column %in% colnames(dtoverlap)) stop('count_info_column ', count_info_column, ' does not exist')
+
+    # aggregate counts of features
+    dtoverlap[, c(count_info_column) := as.numeric(get(count_info_column))]
+    aggr_dtoverlap = dtoverlap[, base::sum(get(count_info_column)), by = c('poly_ID', 'feat_ID')]
+    data.table::setnames(aggr_dtoverlap, 'V1', 'N')
+  } else {
+
+    # aggregate individual features
+    aggr_dtoverlap = dtoverlap[, .N, by = c('poly_ID', 'feat_ID')]
+  }
+
+
+
+  # get all feature and cell information
+  all_feats = gobject@feat_ID[[feat_info]]
+  missing_feats = all_feats[!all_feats %in% unique(aggr_dtoverlap$feat_ID)]
+
+  all_ids = gobject@cell_ID[[poly_info]]
+  missing_ids = all_ids[!all_ids %in% unique(aggr_dtoverlap$poly_ID)]
+
+  # create missing cell values, only if there are missing cell IDs!
+  if(!length(missing_ids) == 0) {
+    first_feature = aggr_dtoverlap[['feat_ID']][[1]]
+    missing_dt = data.table::data.table(poly_ID = missing_ids, feat_ID = first_feature, N = 0)
+    aggr_dtoverlap = rbind(aggr_dtoverlap, missing_dt)
+  }
+
+  if(!length(missing_feats) == 0) {
+    first_cell = aggr_dtoverlap[['poly_ID']][[1]]
+    missing_dt = data.table::data.table(poly_ID = first_cell, feat_ID = missing_feats, N = 0)
+    aggr_dtoverlap = rbind(aggr_dtoverlap, missing_dt)
+  }
+
+
+  # TODO: creating missing feature values
+
+  # create matrix
+  overlapmatrixDT = data.table::dcast(data = aggr_dtoverlap,
+                                      formula = feat_ID~poly_ID,
+                                      value.var = 'N', fill = 0)
+  overlapmatrix = dt_to_matrix(overlapmatrixDT)
+
+  overlapmatrix = overlapmatrix[match(gobject@feat_ID[[feat_info]], rownames(overlapmatrix)),
+                                match(gobject@cell_ID[[poly_info]], colnames(overlapmatrix))]
+
+  overlapExprObj = create_expr_obj(name = name,
+                                   exprMat = overlapmatrix,
+                                   spat_unit = poly_info,
+                                   feat_type = feat_info,
+                                   provenance = poly_info)
+
+  if(return_gobject == TRUE) {
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    gobject = set_expression_values(gobject, values = overlapExprObj)
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+    return(gobject)
+  } else {
+    return(overlapExprObj)
+  }
+
+}
+
+
+
+
+#' @title overlapToMatrixMultiPoly
+#' @name overlapToMatrixMultiPoly
+#' @description create a count matrix based on overlap results from \code{\link{calculateOverlapRaster}}, \code{\link{calculateOverlapSerial}}, or \code{\link{calculateOverlapParallel}}
+#' and aggregate information from multiple polygon layers (e.g. z-stacks) together
+#' @param gobject giotto object
+#' @param name name for the overlap count matrix
+#' @param poly_info vector with polygon information
+#' @param feat_info feature information
+#' @param new_poly_info name for new aggregated polygon information
+#' @param return_gobject return giotto object (default: TRUE)
+#' @return giotto object or count matrix
+#' @concept overlap
+#' @export
+overlapToMatrixMultiPoly = function(gobject,
+                                    name = 'raw',
+                                    poly_info = 'cell',
+                                    feat_info = 'rna',
+                                    new_poly_info = 'multi',
+                                    return_gobject = TRUE) {
+
+
+  # define for data.table
+  i = j = x = NULL
+
+  result_list = list()
+  cell_ids_list = list()
+
+  for(poly_info_i in 1:length(poly_info)) {
+
+    poly_info_set = poly_info[[poly_info_i]]
+
+    expr_names = list_expression_names(gobject = gobject,
+                                       spat_unit = poly_info_set,
+                                       feat_type = feat_info)
+
+    # check if matrix already exists, if not try to make it
+    if(!name %in% expr_names) {
+      gobject = overlapToMatrix(gobject = gobject,
+                                poly_info = poly_info_set,
+                                feat_info = feat_info,
+                                name = name)
+    }
+
+    testmat = get_expression_values(gobject = gobject,
+                                    spat_unit = poly_info_set,
+                                    feat_type = feat_info,
+                                    values = name)
+
+    featnames = dimnames(testmat)[[1]]
+    names(featnames) = 1:length(featnames)
+
+    colnames = dimnames(testmat)[[2]]
+    names(colnames) = 1:length(colnames)
+
+    testmat_DT = data.table::as.data.table(Matrix::summary(testmat))
+    testmat_DT[, i := featnames[i]]
+    testmat_DT[, j := colnames[j]]
+
+    result_list[[poly_info_i]] = testmat_DT
+
+    # cell ids
+    #cell_ids = gobject@cell_ID[[poly_info_set]]
+
+    #cell_ids_list[[poly_info_i]] = cell_ids
+
+  }
+
+  final_DT = data.table::rbindlist(result_list)
+  final_DT_aggr = final_DT[, sum(x), by = .(i, j)]
+
+
+  #combined_cell_IDs = sort(unique(unlist(cell_ids_list)))
+
+
+  # create matrix
+  overlapmatrixDT = data.table::dcast(data = final_DT_aggr,
+                                      formula = i~j,
+                                      value.var = 'V1', fill = 0)
+  overlapmatrix = dt_to_matrix(overlapmatrixDT)
+
+
+
+
+  #combined_cell_IDs = combined_cell_IDs[combined_cell_IDs %in% colnames(overlapmatrix)]
+
+  #overlapmatrix = overlapmatrix[match(gobject@feat_ID[[feat_info]], rownames(overlapmatrix)),
+  #                              match(combined_cell_IDs, colnames(overlapmatrix))]
+
+
+
+  if(return_gobject == TRUE) {
+    gobject@expression[[new_poly_info]][[feat_info]][[name]] = overlapmatrix
+    gobject@cell_ID[[new_poly_info]] = colnames(overlapmatrix)
+
+    gobject@cell_metadata[[new_poly_info]][[feat_info]] = data.table::data.table(cell_ID = colnames(overlapmatrix))
+    gobject@feat_metadata[[new_poly_info]][[feat_info]] = data.table::data.table(feat_ID = rownames(overlapmatrix))
+
+    return(gobject)
+  } else {
+    return(overlapmatrix)
+  }
+
+}
+
+
+
+
+
+#' @title overlapImagesToMatrix
+#' @name overlapImagesToMatrix
+#' @description create a count matrix based on overlap results from \code{\link{calculateOverlapPolygonImages}}
+#' @param gobject giotto object
+#' @param name name for the overlap count matrix
+#' @param poly_info polygon information
+#' @param feat_info feature information
+#' @param name_overlap name of the overlap
+#' @param aggr_function function to aggregate image information (default = sum)
+#' @param image_names names of images you used
+#' @param spat_locs_name name for spatial centroids / locations associated with matrix
+#' @param return_gobject return giotto object (default: TRUE)
+#' @return giotto object or data.table with aggregated information
+#' @concept overlap
+#' @export
+overlapImagesToMatrix = function(gobject,
+                                 name = 'raw',
+                                 poly_info = 'cell',
+                                 feat_info = 'protein',
+                                 name_overlap = 'images',
+                                 aggr_function = 'sum',
+                                 image_names = NULL,
+                                 spat_locs_name = 'raw',
+                                 return_gobject = TRUE) {
+
+  # data.table vars
+  value = poly_ID = feat_ID = x = y = NULL
+
+  ## get polygon information
+  polygon_info = get_polygon_info(gobject = gobject,
+                                  polygon_name = poly_info,
+                                  return_giottoPolygon = TRUE)
+
+
+  image_info = gobject@spatial_info[[poly_info]]@overlaps[['intensity']][[feat_info]]
+  melt_image_info = data.table::melt.data.table(data = image_info, id.vars = 'poly_ID', variable.name = 'feat_ID')
+
+  aggr_fun = get(aggr_function)
+  aggr_comb = melt_image_info[, aggr_fun(value), by = .(poly_ID, feat_ID)]
+  data.table::setnames(aggr_comb, 'V1', 'aggregation')
+
+
+  if(return_gobject) {
+
+    cell_IDs = unique(as.character(aggr_comb$poly_ID))
+    feat_IDs = unique(as.character(aggr_comb$feat_ID))
+
+
+
+    # create cell and feature metadata
+    S4_cell_meta = create_cell_meta_obj(metaDT = data.table::data.table(cell_ID = cell_IDs),
+                                        spat_unit = poly_info, feat_type = feat_info)
+    gobject = set_cell_metadata(gobject = gobject, S4_cell_meta, set_defaults = FALSE)
+
+    S4_feat_meta = create_feat_meta_obj(metaDT = data.table::data.table(feat_ID = feat_IDs),
+                                        spat_unit = poly_info, feat_type = feat_info)
+    gobject = set_feature_metadata(gobject = gobject, S4_feat_meta, set_defaults = FALSE)
+
+
+    # add feat_ID and cell_ID
+    gobject@feat_ID[[feat_info]] = feat_IDs
+    gobject@cell_ID[[poly_info]] = cell_IDs
+
+    # add spatial locations
+    centroidsDT = gobject@spatial_info[[poly_info]]@spatVectorCentroids
+    centroidsDT = spatVector_to_dt(centroidsDT)
+    centroidsDT_loc = centroidsDT[, .(poly_ID, x, y)]
+    colnames(centroidsDT_loc) = c('cell_ID', 'sdimx', 'sdimy')
+
+    S4_spat_locs = create_spat_locs_obj(name = name,
+                                        coordinates = centroidsDT_loc,
+                                        spat_unit = poly_info)
+
+    gobject = set_spatial_locations(gobject = gobject,
+                                    spatlocs = S4_spat_locs)
+
+    # create matrix
+    overlapmatrixDT = data.table::dcast(data = aggr_comb,
+                                        formula = feat_ID~poly_ID,
+                                        value.var = 'aggregation', fill = 0)
+    overlapmatrix = dt_to_matrix(overlapmatrixDT)
+
+    overlapmatrix = overlapmatrix[match(gobject@feat_ID[[feat_info]], rownames(overlapmatrix)),
+                                  match(gobject@cell_ID[[poly_info]], colnames(overlapmatrix))]
+
+    S4_expr_obj = create_expr_obj(name = name,
+                                  exprMat = overlapmatrix,
+                                  spat_unit = poly_info,
+                                  feat_type = feat_info)
+
+    gobject = set_expression_values(gobject = gobject,
+                                    values = S4_expr_obj)
+
+  } else {
+    return(aggr_comb)
+  }
+
+}
+
+
+
+
+
+
+
+
+
+# aggregate stacks ####
+
+# Functions for combining multiple layers of information into a single aggregated
+# layer for analysis. Examples include combining multiple z stacks that sample
+# the cells multiple times. Combining these z stacks provides a volumetric
+# understanding of the cell's expression
 
 
 #' @title combine_matrices
@@ -8,7 +960,7 @@ combine_matrices = function(mat_list,
                             summarize = 'sum') {
 
   # data.table vars
-  i = j = x = NULL
+  i = j = x = i2 = j2 = NULL
 
   DT_list = list()
   feats_list = list()
@@ -554,3 +1506,5 @@ aggregateStacks = function(gobject,
   return(gobject)
 
 }
+
+

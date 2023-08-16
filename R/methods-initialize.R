@@ -1,6 +1,6 @@
 
 #' @include classes.R
-#' @importFrom methods setMethod
+#' @include package_imports.R
 NULL
 
 # -------------------------------------------------- #
@@ -716,6 +716,7 @@ init_cell_and_feat_IDs = function(gobject) {
 
 
 # TODO DEPRECATE now that this functionality is covered in initialize()
+# Currently only used in createSubcellular and join, but are probably redundant
 #' @title Initialize cell metadata slot
 #' @name init_cell_metadata
 #' @description Generate cellMetaObjs to hold cell metadata for each spatial unit

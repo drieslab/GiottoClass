@@ -108,7 +108,8 @@ evaluate_cell_metadata = function(metadata,
                                   cores = determine_cores(),
                                   verbose = TRUE) {
 
-  # data.table vars cell_ID
+  # data.table vars
+  cell_ID = NULL
 
   # Get data as data.table
   if(!any(class(metadata) %in% c('data.table', 'data.frame', 'matrix', 'character'))) {

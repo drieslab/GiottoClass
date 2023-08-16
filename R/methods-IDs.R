@@ -1,4 +1,6 @@
 
+#' @include generics.R
+NULL
 
 ## spatIDs and featIDs generic ####
 #' @title Spatial and feature IDs

@@ -1,14 +1,9 @@
 
 #' @include classes.R
-#' @importFrom methods show
-#' @importFrom methods setMethod
 NULL
 
 
 # ------------------------------------------------------ #
-
-
-
 
 
 
@@ -20,7 +15,6 @@ NULL
 #' @aliases show,giotto-method
 #' @docType methods
 #' @rdname show-methods
-
 setMethod(
   f = "show",
   signature = "giotto",
@@ -148,7 +142,6 @@ setMethod("show", signature(object='packedGiotto'),
 #' @param object expression object
 #' @aliases show,exprObj-method
 #' @docType methods
-#' @importFrom methods show
 #' @rdname show-methods
 setMethod(
   f = "show", signature('exprObj'), function(object) {
@@ -237,7 +230,6 @@ setMethod('show', signature('featMetaObj'), function(object) {
 #' @param object dimension reduction object
 #' @aliases show,dimObj-method
 #' @docType methods
-#' @importFrom methods show
 #' @rdname show-methods
 setMethod(
   f = "show", signature('dimObj'), function(object) {
@@ -273,7 +265,6 @@ setMethod(
 #' @param object nearest neigbor network object
 #' @aliases show,nnNetObj-method
 #' @docType methods
-#' @importFrom methods show
 #' @rdname show-methods
 setMethod(
   f = "show", signature('nnNetObj'), function(object) {
@@ -312,7 +303,6 @@ setMethod(
 #' @param object spatial locations object
 #' @aliases show,spatLocsObj-method
 #' @docType methods
-#' @importFrom methods show
 #' @rdname show-methods
 setMethod(
   f = "show", signature('spatLocsObj'), function(object) {
@@ -349,9 +339,6 @@ setMethod(
 #' @param object spatial network object
 #' @aliases show,spatialNetworkObj-method
 #' @docType methods
-#' @importFrom methods show
-#' @importFrom graphics segments
-
 #' @rdname show-methods
 setMethod(
   f = "show", signature('spatialNetworkObj'), function(object) {
@@ -384,7 +371,6 @@ setMethod(
 #' @param object spatial grid object
 #' @aliases show,spatialGridObj-method
 #' @docType methods
-#' @importFrom methods show
 #' @rdname show-methods
 setMethod(
   f = "show", signature('spatialGridObj'), function(object) {
@@ -452,7 +438,6 @@ setMethod(
 #' @param object spatial locations object
 #' @aliases show,spatEnrObj-method
 #' @docType methods
-#' @importFrom methods show
 #' @rdname show-methods
 setMethod(
   f = "show", signature('spatEnrObj'), function(object) {
@@ -578,9 +563,7 @@ setMethod("show", signature(object='packedGiottoPoints'),
 #' @param object giottoImage object
 #' @aliases show,giottoImage-method
 #' @docType methods
-#' @importFrom methods show
 #' @rdname show-methods
-
 setMethod(
   f = "show",
   signature = "giottoImage",
@@ -638,9 +621,7 @@ setMethod(
 #' @param object giottoLargeImage object
 #' @aliases show,giottoLargeImage-method
 #' @docType methods
-#' @importFrom methods show
 #' @rdname show-methods
-
 setMethod(
   f = "show",
   signature = "giottoLargeImage",
@@ -706,6 +687,9 @@ show_prov = function(object) {
 show_ext = function(object) {
   paste0(paste0(ext(object)[], collapse = (', ')), ' (xmin, xmax, ymin, ymax)\n')
 }
+
+
+
 
 
 

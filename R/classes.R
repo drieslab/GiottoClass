@@ -1,3 +1,7 @@
+
+#' @include package_imports.R
+NULL
+
 # MISC ####
 ## * Define class unions ####
 
@@ -19,15 +23,6 @@ setClassUnion('nullOrList', c('NULL', 'list'))
 #' @noRd
 setClassUnion('nullOrDatatable', c('NULL', 'data.table'))
 
-## * Define external classes ####
-
-#' data.table S4 class for method dispatch
-#' @name data.table-class
-#' @aliases data.table
-#' @family data.table
-#' @exportClass data.table
-#' @noRd
-setOldClass('data.table')
 
 
 
@@ -403,9 +398,9 @@ updateGiottoObject = function(gobject) {
 #' @slot join_info information about joined Giotto objects
 #' @slot multiomics multiomics integration results
 #' @details
-#' [\strong{expression}] There are several ways to provide expression information:
+#' \[\strong{expression}\] There are several ways to provide expression information:
 #'
-#' [\strong{expression_feat}] The different features or modalities such as rna, protein, metabolites, ...
+#' \[\strong{expression_feat}\] The different features or modalities such as rna, protein, metabolites, ...
 #' that are provided in the expression slot.
 #'
 #'
@@ -949,7 +944,7 @@ check_spat_net_obj = function(object) {
 #' @slot networkDT data.table of network connections, distances, and weightings
 #' @slot networkDT_before_filter unfiltered data.table  of network connections, distances, and weightings
 #' @slot cellShapeObj network cell shape information
-#' @slot crossSectionObjects crossSectionObjects (see \code{\link{create_crossSection_object}})
+#' @slot crossSectionObjects crossSectionObjects
 #' @slot spat_unit spatial unit tag
 #' @slot provenance origin of aggregated information (if applicable)
 #' @slot misc misc
@@ -1346,9 +1341,9 @@ featureNetwork <- setClass(
 #' @slot file_path file path to the image if given
 #' @slot OS_platform Operating System to run Giotto analysis on
 #' @details
-#' [\strong{mg_object}] Core object is any image that can be read by the magick package
+#' \[\strong{mg_object}\] Core object is any image that can be read by the magick package
 #'
-#' [\strong{boundaries}] Boundary adjustments can be used to manually or
+#' \[\strong{boundaries}\] Boundary adjustments can be used to manually or
 #' automatically through a script adjust the image with the spatial data.
 #'
 #'

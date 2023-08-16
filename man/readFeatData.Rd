@@ -6,6 +6,11 @@
 \usage{
 readFeatData(data_list, verbose = TRUE)
 }
+\arguments{
+\item{data_list}{(nested) list of input data to read}
+
+\item{verbose}{be verbose}
+}
 \description{
 Function to read lists of feature information data and output
 a list of generated giottoPoints objects

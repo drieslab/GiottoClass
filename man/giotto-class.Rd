@@ -9,9 +9,9 @@
 Framework of giotto object to store and work with spatial expression data
 }
 \details{
-\link[=\\strong{expression}]{\strong{expression}} There are several ways to provide expression information:
+[\strong{expression}] There are several ways to provide expression information:
 
-\link[=\\strong{expression_feat}]{\strong{expression_feat}} The different features or modalities such as rna, protein, metabolites, ...
+[\strong{expression_feat}] The different features or modalities such as rna, protein, metabolites, ...
 that are provided in the expression slot.
 }
 \section{Slots}{

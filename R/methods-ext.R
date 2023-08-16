@@ -1,3 +1,5 @@
+
+
 ## ext ####
 
 #' @name ext-generic
@@ -5,6 +7,7 @@
 #' @description Get a SpatExtent of an object. This is the spatial minmax x and y
 #' that the object is mapped to.
 #' @param x spatial object
+#' @param value value to set. Accepts any object that `ext()` will work on
 #' @param ... additional params to pass
 NULL
 

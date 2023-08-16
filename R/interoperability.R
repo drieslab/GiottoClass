@@ -158,8 +158,6 @@ anndataToGiotto = function(anndata_path = NULL,
                            feat_type = NULL,
                            python_path = NULL) {
 
-  package_check('reticulate', repository = 'CRAN')
-
   # Preliminary file checks and guard clauses
   if (is.null(anndata_path)) {
     stop("Please provide a path to an AnnData .h5ad file for conversion.\n")
@@ -498,8 +496,6 @@ giottoToAnnData <- function(gobject = NULL,
                             feat_type = NULL,
                             python_path = NULL,
                             save_directory = NULL){
-
-  package_check(pkg_name = 'reticulate', repository = 'CRAN')
 
   # Check gobject
   invalid_obj = !("giotto" %in% class(gobject))

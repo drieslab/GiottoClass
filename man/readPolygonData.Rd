@@ -15,6 +15,8 @@ readPolygonData(
 )
 }
 \arguments{
+\item{data_list}{read polygon results from list}
+
 \item{default_name}{default name to assign if \code{polygonlist} is not a
 list. If \code{polygonlist} is an unnamed list then \code{default_name} will
 be used as part of the template for generating indexed default names.}

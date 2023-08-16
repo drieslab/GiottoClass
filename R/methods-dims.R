@@ -6,7 +6,6 @@ NULL
 #' @title Dimensions of giotto objects
 #' @name dims-generic
 #' @description Find the dimensions of an object
-#' @importMethodsFrom terra nrow ncol
 #' @param x object to check dimensions of
 NULL
 # ---------------------------------------------------------------- #
@@ -71,7 +70,7 @@ setMethod('ncol', signature('exprData'), function(x) ncol(x@exprMat))
 #' @export
 setMethod('ncol', signature('metaData'), function(x) ncol(x@metaDT))
 
-#' @rdname dims-generic Find cols of giotto S4s with enrData
+#' @describeIn dims-generic Find cols of giotto S4s with enrData
 #' @export
 setMethod('ncol', signature('enrData'), function(x) ncol(x@enrichDT))
 

@@ -7,7 +7,7 @@ check_cell_metadata = function(gobject,
                                verbose = TRUE) {
 
   # data.table vars
-  cell_ID = NULL
+  cell_ID = spat_unit = NULL
 
   # find available cell metadata
   avail_cm = list_cell_metadata(gobject)
@@ -117,7 +117,7 @@ check_feat_metadata = function(gobject,
                                verbose = TRUE) {
 
   # data.table vars
-  feat_ID = NULL
+  feat_ID = spat_unit = feat_type = NULL
 
   # find available feat metadata
   avail_fm = list_feat_metadata(gobject)
@@ -324,6 +324,9 @@ check_spatial_location_data = function(gobject) {
 #' @noRd
 check_spatial_networks = function(gobject) {
 
+  # DT vars
+  spat_unit = NULL
+
   avail_sn = list_spatial_networks(gobject = gobject)
   avail_sl = list_spatial_locations(gobject = gobject)
   used_su = unique(avail_sn$spat_unit)
@@ -372,6 +375,9 @@ check_spatial_networks = function(gobject) {
 #' @keywords internal
 #' @noRd
 check_spatial_enrichment = function(gobject) {
+
+  # DT vars
+  spat_unit = NULL
 
   avail_se = list_spatial_enrichments(gobject = gobject)
   avail_sl = list_spatial_locations(gobject = gobject)
@@ -426,6 +432,9 @@ check_spatial_enrichment = function(gobject) {
 #' @noRd
 check_dimension_reduction = function(gobject) {
 
+  # DT vars
+  spat_unit = feat_type = NULL
+
   # check that all spatIDs of coordinates setequals with gobject cell_ID for the particular spat_unit
   avail_dr = list_dim_reductions(gobject = gobject)
   avail_ex = list_expression(gobject = gobject)
@@ -460,7 +469,7 @@ check_dimension_reduction = function(gobject) {
 
         # if matrix has no IDs, regenerate from gobject IDs
         if(is.null(spatIDs(dr_obj))) {
-          if(nrow(dr[]) == length(IDs)) {
+          if(nrow(dr_obj[]) == length(IDs)) {
             # if nrow of matrix and number of gobject cell_IDs for the spat unit
             # match, then try guessing then set data back to replace
             warning(wrap_txt('data_type:', su_dr$data_type[[obj_i]],
@@ -516,6 +525,9 @@ check_dimension_reduction = function(gobject) {
 #' @noRd
 check_nearest_networks = function(gobject) {
 
+  # DT vars
+  spat_unit = feat_type = NULL
+
   avail_nn = list_nearest_networks(gobject = gobject)
   avail_dr = list_dim_reductions(gobject = gobject)
   used_su = unique(avail_nn$spat_unit)
@@ -570,6 +582,9 @@ check_nearest_networks = function(gobject) {
 #' @keywords internal
 #' @noRd
 check_spatial_info = function(gobject) {
+
+  # DT vars
+  spat_unit = NULL
 
   avail_sinfo = list_spatial_info(gobject)
   if(is.null(avail_sinfo)) return(gobject) # quit early if none available

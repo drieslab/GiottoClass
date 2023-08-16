@@ -1,7 +1,4 @@
 
-#' @importMethodsFrom terra wrap
-#' @importMethodsFrom terra vect
-NULL
 
 # # docs ----------------------------------------------------------- #
 #' @title Wrap giotto terra pointer information

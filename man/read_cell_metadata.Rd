@@ -24,6 +24,10 @@ read_cell_metadata(
 \arguments{
 \item{data_list}{nested list of cell metadata information}
 
+\item{default_spat_unit}{(optional) default spat_unit to use}
+
+\item{default_feat_type}{(optional) default feat_type to use}
+
 \item{provenance}{provenance information (optional)}
 
 \item{verbose}{be verbose}

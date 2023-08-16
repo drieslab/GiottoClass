@@ -28,7 +28,7 @@ slot (filtered).
 
 \item{\code{cellShapeObj}}{network cell shape information}
 
-\item{\code{crossSectionObjects}}{crossSectionObjects (see \code{\link{create_crossSection_object}})}
+\item{\code{crossSectionObjects}}{crossSectionObjects}
 
 \item{\code{spat_unit}}{spatial unit tag}
 

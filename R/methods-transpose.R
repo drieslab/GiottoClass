@@ -1,3 +1,5 @@
+
+
 ## transpose ####
 
 # S4 methods
@@ -6,7 +8,7 @@
 #' @param x object to be transposed
 #' @aliases t
 NULL
-# if(!isGeneric('t')) setOldClass('t', where = as.environment("package:Giotto"))
+
 
 #' @rdname transpose-generic
 #' @export

@@ -1,5 +1,6 @@
 
 #' @include generics.R
+NULL
 
 # docs ----------------------------------------------------------- #
 #' @title Access giotto instructions
@@ -21,6 +22,7 @@ NULL
 #' @description Retrieve or set the active spatial unit. This value will be the
 #' default spatial unit that the giotto object uses.
 #' @inheritParams data_access_params
+#' @param value spat_unit to set as default
 NULL
 
 #' @title Active feature type
@@ -29,6 +31,7 @@ NULL
 #' @description Retrieve or set the active feature type. This value will be the
 #' default feature type that the giotto object uses.
 #' @inheritParams data_access_params
+#' @param value feat_type to set as default
 NULL
 
 # ---------------------------------------------------------------- #
@@ -124,7 +127,7 @@ setMethod('instructions<-',
 #' @param height height of plots
 #' @param width width of  plots
 #' @param is_docker using docker implementation of Giotto (defaults to FALSE)
-#' @param plot_count [global option] start count for creating automatic unique plots
+#' @param plot_count (global option) start count for creating automatic unique plots
 #' @param fiji_path path to fiji executable
 #' @param no_python_warn turn off warning that no compatible python env has been detected
 #' @return named vector with giotto instructions

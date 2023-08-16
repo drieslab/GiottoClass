@@ -1,5 +1,5 @@
 
-#' @include classes.R
+#' @include generics.R
 NULL
 
 # docs ----------------------------------------------------------- #

@@ -17,7 +17,6 @@ NULL
 
 
 #' @describeIn rbind-generic Append giottoPolygon objects
-#' @importFrom methods rbind2
 #' @export
 setMethod('rbind2', signature(x = 'giottoPolygon', y = 'giottoPolygon'),
           function(x, y, add_list_ID = TRUE, ...) {

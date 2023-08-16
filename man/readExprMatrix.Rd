@@ -19,6 +19,8 @@ readExprMatrix(
 \item{cores}{number of cores to use}
 
 \item{transpose}{transpose matrix}
+
+\item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
 }
 \value{
 sparse matrix

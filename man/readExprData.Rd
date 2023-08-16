@@ -16,17 +16,17 @@ readExprData(
 )
 }
 \arguments{
+\item{data_list}{(nested) list of expression input data}
+
 \item{sparse}{(boolean, default = TRUE) read matrix data in a sparse manner}
 
 \item{cores}{number of cores to use}
 
-\item{default_feat_type}{default feature type to use}
+\item{default_feat_type}{(optional) default feat_type to use}
 
 \item{verbose}{be verbose}
 
-\item{provenance}{provenance information}
-
-\item{expr_list}{(nested) list of expression input data}
+\item{provenance}{(optional) provenance information}
 }
 \description{
 Read a nested list of expression data inputs in order to

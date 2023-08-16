@@ -15,7 +15,13 @@ readSpatLocsData(
 \arguments{
 \item{data_list}{(nested) list of spatial locations input data}
 
+\item{default_spat_unit}{(optional) default spat_unit to use}
+
+\item{provenance}{(optional) provenance information}
+
 \item{cores}{how many cores to use}
+
+\item{verbose}{be verbose}
 }
 \value{
 list of spatLocsObj

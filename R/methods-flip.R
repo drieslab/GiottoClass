@@ -1,4 +1,6 @@
-## flip ####
+
+
+# docs ----------------------------------------------------------- #
 #' @title Flip an object
 #' @name flip-generic
 #' @description Flip an object over a designated x or y value depending on
@@ -11,6 +13,7 @@
 #' to flip over the extent
 #' @param ... additional args to pass
 NULL
+# ---------------------------------------------------------------- #
 
 #' @describeIn flip-generic Flip a giottoPolygon object
 #' @export
@@ -77,7 +80,7 @@ flip_gpoly = function(gpoly,
                       direction = 'vertical',
                       x0 = 0,
                       y0 = 0) {
-  checkmate::assertClass(gpoly, 'giottoPolygon')
+  checkmate::assert_class(gpoly, 'giottoPolygon')
   checkmate::assert_character(direction)
   if(!is.null(x0)) {
     checkmate::assert_numeric(x0)
@@ -135,7 +138,7 @@ flip_large_image = function(image,
                             direction = 'vertical',
                             x0 = 0,
                             y0 = 0) {
-  checkmate::assertClass(image, 'giottoLargeImage')
+  checkmate::assert_class(image, 'giottoLargeImage')
   checkmate::assert_character(direction)
   if(!is.null(x0)) {
     checkmate::assert_numeric(x0)
@@ -184,7 +187,7 @@ flip_gpoints = function(gpoints,
                         direction = 'vertical',
                         x0 = 0,
                         y0 = 0) {
-  checkmate::assertClass(gpoints, 'giottoPoints')
+  checkmate::assert_class(gpoints, 'giottoPoints')
   checkmate::assert_character(direction)
   if(!is.null(x0)) {
     checkmate::assert_numeric(x0)
@@ -239,7 +242,7 @@ flip_spatlocs = function(sl,
                          copy_obj = TRUE) {
   sdimy = sdimx = NULL
 
-  checkmate::assertClass(sl, 'spatLocsObj')
+  checkmate::assert_class(sl, 'spatLocsObj')
   checkmate::assert_character(direction)
   if(!is.null(x0)) {
     checkmate::assert_numeric(x0)
@@ -283,7 +286,7 @@ flip_spatnet = function(sn,
                         copy_obj = TRUE) {
   sdimy_begin = sdimy_end = sdimx_begin = sdimx_end = NULL
 
-  checkmate::assertClass(sn, 'spatialNetworkObj')
+  checkmate::assert_class(sn, 'spatialNetworkObj')
   checkmate::assert_character(direction)
   if(!is.null(x0)) {
     checkmate::assert_numeric(x0)
@@ -330,7 +333,7 @@ flip_extent = function(e,
                        x0 = 0,
                        y0 = 0) {
 
-  checkmate::assertClass(e, 'SpatExtent')
+  checkmate::assert_class(e, 'SpatExtent')
   checkmate::assert_character(direction)
   if(!is.null(x0)) {
     checkmate::assert_numeric(x0)

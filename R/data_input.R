@@ -12,6 +12,7 @@
 #' @param path path to the expression matrix
 #' @param cores number of cores to use
 #' @param transpose transpose matrix
+#' @inheritParams data_access_params
 #' @return sparse matrix
 #' @details The expression matrix needs to have both unique column names and row names
 #' @export
@@ -37,7 +38,7 @@ readExprMatrix = function(path,
   }
 
   if(expression_matrix_class[1] == 'HDF5Matrix') {
-    require(HDF5Array)
+    package_check('HDF5Array')
     spM = methods::as(spM, 'HDF5Matrix')
   }
 
@@ -78,12 +79,10 @@ readExprMatrix = function(path,
 #' @name readExprData
 #' @description Read a nested list of expression data inputs in order to
 #' generate a list of giotto-native exprObj
-#' @param expr_list (nested) list of expression input data
+#' @param data_list (nested) list of expression input data
 #' @param sparse (boolean, default = TRUE) read matrix data in a sparse manner
 #' @param cores number of cores to use
-#' @param default_feat_type default feature type to use
-#' @param verbose be verbose
-#' @param provenance provenance information
+#' @inheritParams read_data_params
 #' @details
 #'
 #' mylistA = list('a' = matrix(1:5), 'b' = matrix(1:5))
@@ -334,8 +333,7 @@ read_expression_data = function(expr_list = NULL,
 #' @name read_cell_metadata
 #' @description read cell metadata from list
 #' @param data_list nested list of cell metadata information
-#' @param provenance provenance information (optional)
-#' @param verbose be verbose
+#' @inheritParams read_data_params
 #' @export
 readCellMetadata = function(data_list,
                             default_spat_unit = NULL,
@@ -499,8 +497,7 @@ read_cell_metadata = function(metadata,
 #' @name read_feature_metadata
 #' @description read feature metadata from listt
 #' @param data_list nested list of feature metadata information
-#' @param provenance provenance information (optional)
-#' @param verbose be verbose
+#' @inheritParams read_data_params
 #' @export
 readFeatMetadata = function(data_list,
                             default_spat_unit = NULL,
@@ -1771,6 +1768,7 @@ read_nearest_networks = function(nn_network,
 #' mask or tabular data. Calls the respective createGiottoPolygons functions. \cr
 #' If a \code{giottoPolygon} object is passed then no edits will be made other
 #' than updating the \code{name} slot if the list is named.
+#' @param data_list read polygon results from list
 #' @param input what type of input is being used. When set to 'guess', uses
 #' 'mask' if \code{polygonlist} is of type character and 'table' when
 #' \code{polygonlist} is dataframe-like

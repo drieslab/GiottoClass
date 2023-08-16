@@ -1,6 +1,6 @@
 
-
-
+#' @include generics.R
+NULL
 
 #' @title Row and column names
 #' @name row-plus-colnames-generic

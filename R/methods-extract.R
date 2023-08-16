@@ -1,3 +1,7 @@
+
+#' @include generics.R
+NULL
+
 #' @title Extract or replace parts of an object
 #' @name extract-methods
 #' @docType methods
