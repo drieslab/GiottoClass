@@ -83,6 +83,18 @@ jobs:
         with:
           use-public-rspm: true
 
+      # install extra dependencies
+      - name: Install GiottoData
+        run: |
+          suppressWarnings({
+            if(!require(remotes)){
+              install.packages('R.utils', repos = 'http://cran.us.r-project.org')
+              install.packages('remotes', repos = 'http://cran.us.r-project.org')
+            }
+            remotes::install_github('drieslab/GiottoData', build = FALSE)
+          })
+        shell: Rscript {0}
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::covr
@@ -90,17 +102,6 @@ jobs:
 
       - name: Test coverage
         run: |
-          suppressWarnings({
-            if(!require(remotes)){
-              install.packages('R.utils', repos = 'http://cran.us.r-project.org')
-              install.packages('remotes', repos = 'http://cran.us.r-project.org')
-            }
-
-            if(!require(GiottoData)){
-              remotes::install_github('drieslab/GiottoData', build = FALSE)
-            }
-          })
-
           covr::codecov(
             quiet = FALSE,
             clean = FALSE,
