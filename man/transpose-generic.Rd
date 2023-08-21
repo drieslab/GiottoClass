@@ -5,6 +5,8 @@
 \alias{t}
 \alias{t,spatLocsObj-method}
 \alias{t,spatialNetworkObj-method}
+\alias{t,giottoPoints-method}
+\alias{t,giottoPolygon-method}
 \alias{t.spatLocsObj}
 \alias{t.spatialNetworkObj}
 \title{Transpose}
@@ -12,6 +14,10 @@
 \S4method{t}{spatLocsObj}(x)
 
 \S4method{t}{spatialNetworkObj}(x)
+
+\S4method{t}{giottoPoints}(x)
+
+\S4method{t}{giottoPolygon}(x)
 
 \method{t}{spatLocsObj}(x)
 

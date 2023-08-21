@@ -2,16 +2,16 @@
 % Please edit documentation in R/methods-coerce.R
 \name{as.data.table}
 \alias{as.data.table}
-\alias{as.data.table,SpatVector-method}
-\alias{as.data.table,giottoPolygon-method}
-\alias{as.data.table,giottoPoints-method}
+\alias{as.data.table.SpatVector}
+\alias{as.data.table.giottoPolygon}
+\alias{as.data.table.giottoPoints}
 \title{Coerce to data.table}
 \usage{
-\S4method{as.data.table}{SpatVector}(x, geom = NULL, include_values = TRUE, ...)
+\method{as.data.table}{SpatVector}(x, geom = NULL, include_values = TRUE, ...)
 
-\S4method{as.data.table}{giottoPolygon}(x, keep.rownames = FALSE, ...)
+\method{as.data.table}{giottoPolygon}(x, ...)
 
-\S4method{as.data.table}{giottoPoints}(x, keep.rownames = FALSE, ...)
+\method{as.data.table}{giottoPoints}(x, ...)
 }
 \arguments{
 \item{x}{The object to coerce}

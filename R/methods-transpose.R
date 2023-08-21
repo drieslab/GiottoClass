@@ -29,6 +29,18 @@ setMethod('t', signature('spatialNetworkObj'), function(x) {
   }
   return(x)
 })
+#' @rdname transpose-generic
+#' @export
+setMethod('t', signature('giottoPoints'), function(x) {
+  x[] = t(x[])
+  x
+})
+#' @rdname transpose-generic
+#' @export
+setMethod('t', signature('giottoPolygon'), function(x) {
+  x = do_gpoly(x, 't')
+  x
+})
 
 # s3 methods
 #' @rdname transpose-generic

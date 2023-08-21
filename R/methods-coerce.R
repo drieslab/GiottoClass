@@ -22,38 +22,37 @@ NULL
 # ---------------------------------------------------------------- #
 
 # SpatVector -> DT ####
+#' @rdname as.data.table
+#' @method as.data.table SpatVector
+#' @export
+as.data.table.SpatVector <- function(x, geom = NULL, include_values = TRUE, ...) {
+  # if looking for polygon XY...
+  if(terra::is.polygons(x)) {
+    if(!is.null(geom)) {
+      if(geom == 'XY') {
+        return(spatVector_to_dt(x, include_values = include_values))
+      }
+    }
+  }
+  # all other conditions: pass to terra then set as DT
+  out = terra::as.data.frame(x, geom = geom, ...) %>%
+    data.table::setDT()
+  return(out)
+}
 
 #' @rdname as.data.table
+#' @method as.data.table giottoPolygon
 #' @export
-setMethod('as.data.table', signature('SpatVector'),
-          function(x, geom = NULL, include_values = TRUE, ...) {
-            # if looking for polygon XY...
-            if(terra::is.polygons(x)) {
-              if(!is.null(geom)) {
-                if(geom == 'XY') {
-                  return(spatVector_to_dt(x, include_values = include_values))
-                }
-              }
-            }
-            # all other conditions: pass to terra then set as DT
-            out = terra::as.data.frame(x, geom = geom, ...) %>%
-              data.table::setDT()
-            return(out)
-          })
+as.data.table.giottoPolygon <- function(x, ...) {
+  as.data.table(x[], ...)
+}
 
 #' @rdname as.data.table
+#' @method as.data.table giottoPoints
 #' @export
-setMethod('as.data.table', signature('giottoPolygon'),
-          function(x, ...) {
-            as.data.table(x[], ...)
-          })
-
-#' @rdname as.data.table
-#' @export
-setMethod('as.data.table', signature('giottoPoints'),
-          function(x, ...) {
-            as.data.table(x[], ...)
-          })
+as.data.table.giottoPoints <- function(x, ...) {
+  as.data.table(x[], ...)
+}
 
 
 # DT -> SpatVector ####

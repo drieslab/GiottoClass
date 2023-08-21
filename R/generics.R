@@ -3,6 +3,11 @@
 #' @include classes.R
 NULL
 
+# re-export external S3 generics
+#' @export
+data.table::as.data.table
+#' @export
+data.table::copy
 
 # Giotto Object Settings ####
 # Methods and documentations found in methods-IDs.R
@@ -41,9 +46,7 @@ if(!isGeneric('rownames')) setOldClass('rownames')
 
 
 # copy() S4 generic ####
-if(!isGeneric('copy')) setGeneric('copy', function(x) {
-  standardGeneric('copy')
-})
+setGeneric('copy', function(x) standardGeneric('copy'), useAsDefault = data.table::copy)
 
 
 # Giotto subnesting ####
