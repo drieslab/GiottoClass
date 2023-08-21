@@ -72,6 +72,7 @@ Collate:
     'data_evaluation.R'
     'data_input.R'
     'dd.R'
+    'defaults.R'
     'generics.R'
     'flex_functions.R'
     'function_logging.R'
