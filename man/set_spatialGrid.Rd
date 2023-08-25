@@ -65,6 +65,7 @@ Other functions to set data in giotto object:
 \code{\link{set_expression_values}()},
 \code{\link{set_feat_id}()},
 \code{\link{set_feature_info}()},
+\code{\link{set_feature_metadata}()},
 \code{\link{set_giottoImage}()},
 \code{\link{set_multiomics}()},
 \code{\link{set_polygon_info}()},

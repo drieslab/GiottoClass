@@ -1,5 +1,13 @@
+
+
+# functions for setting default behavior
+
+
 #' @title set_default_spat_unit
 #' @name set_default_spat_unit
+#' @description
+#' Function to guess a default spatial unit. Also see [activeSpatUnit()] in
+#' methods-instructions.R for a way to manually assign this default
 #' @inheritParams data_access_params
 #' @keywords internal
 #' @export
@@ -34,6 +42,9 @@ set_default_spat_unit = function(gobject,
 
 #' @title set_default_feat_type
 #' @name set_default_feat_type
+#' @description
+#' Function to guess a default feature type. Also see [activeFeatType()] in
+#' methods-instructions.R for a way to manually assign this default
 #' @inheritParams data_access_params
 #' @keywords internal
 #' @export

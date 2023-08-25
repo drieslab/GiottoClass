@@ -1,6 +1,6 @@
 Package: GiottoClass
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: c(
 	person("Ruben", "Dries", email = "rubendries@gmail.com",
 		 role = c("aut", "cre")),
@@ -80,6 +80,7 @@ Collate:
     'giotto_structures.R'
     'globals.R'
     'images.R'
+    'instructions.R'
     'interoperability.R'
     'join.R'
     'methods-IDs.R'
