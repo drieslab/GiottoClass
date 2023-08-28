@@ -654,7 +654,13 @@ create_average_detection_DT <- function(gobject,
 #' @title create_cluster_matrix
 #' @name create_cluster_matrix
 #' @description creates aggregated matrix for a given clustering column
+#' @inheritParams data_access_params
+#' @param expression_values name of expression values to use
+#' @param cluster_column name of cluster column to use,
+#' @param feat_subset subset of features to use
+#' @param gene_subset deprecated do not use.
 #' @keywords internal
+#' @export
 create_cluster_matrix <- function(gobject,
                                   spat_unit = NULL,
                                   feat_type = NULL,

@@ -7,7 +7,13 @@
 \alias{as.data.table.giottoPoints}
 \title{Coerce to data.table}
 \usage{
-\method{as.data.table}{SpatVector}(x, geom = NULL, include_values = TRUE, ...)
+\method{as.data.table}{SpatVector}(
+  x,
+  keep.rownames = FALSE,
+  geom = NULL,
+  include_values = TRUE,
+  ...
+)
 
 \method{as.data.table}{giottoPolygon}(x, ...)
 
@@ -16,6 +22,8 @@
 \arguments{
 \item{x}{The object to coerce}
 
+\item{keep.rownames}{This argument is ignored}
+
 \item{geom}{character or NULL. If not NULL, either "XY", "WKT", or "HEX", to
 get the geometry included in coordinates of each point or vertex, Well-Known-Text
 or hexadecimal notation.}
@@ -23,8 +31,6 @@ or hexadecimal notation.}
 \item{include_values}{whether to include attributes information when geom is 'XY'}
 
 \item{\dots}{additional arguments to pass}
-
-\item{keep.rownames}{This argument is ignored}
 }
 \description{
 Coerce to data.table if possible

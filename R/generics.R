@@ -3,11 +3,6 @@
 #' @include classes.R
 NULL
 
-# re-export external S3 generics
-#' @export
-data.table::as.data.table
-#' @export
-data.table::copy
 
 # Giotto Object Settings ####
 # Methods and documentations found in methods-IDs.R
