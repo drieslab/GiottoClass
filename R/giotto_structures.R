@@ -312,6 +312,7 @@ gpoly_from_dfr_smoothed_wrapped = function(segmdfr,
 #' @name spatVector_to_dt
 #' @description  convert spatVector to data.table
 #' @keywords internal
+#' @export
 spatVector_to_dt = function(spatvector,
                             include_values = TRUE) {
 

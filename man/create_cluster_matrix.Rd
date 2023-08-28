@@ -14,6 +14,21 @@ create_cluster_matrix(
   gene_subset = NULL
 )
 }
+\arguments{
+\item{gobject}{giotto object}
+
+\item{spat_unit}{spatial unit (e.g. "cell")}
+
+\item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
+
+\item{expression_values}{name of expression values to use}
+
+\item{cluster_column}{name of cluster column to use,}
+
+\item{feat_subset}{subset of features to use}
+
+\item{gene_subset}{deprecated do not use.}
+}
 \description{
 creates aggregated matrix for a given clustering column
 }
