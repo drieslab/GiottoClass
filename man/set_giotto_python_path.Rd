@@ -11,7 +11,11 @@ set_giotto_python_path(python_path = NULL, verbose = TRUE)
 
 \item{verbose}{be verbose}
 }
+\value{
+path to python executable
+}
 \description{
-sets the python path
+detects and sets the python path. Exits without doing anything
+if getOption('giotto.use_conda') is FALSE.
 }
 \keyword{internal}

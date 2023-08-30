@@ -1671,6 +1671,7 @@ addGiottoLargeImage = function(gobject = NULL,
 #' @param image_path path to source file of giottoLargeImage
 #' @return reconnected giottoLargeImage
 #' @keywords internal
+#' @export
 reconnect_giottoLargeImage = function(giottoLargeImage,
                                       image_path) {
 
