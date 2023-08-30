@@ -15,6 +15,9 @@ INCORRECT formats --> mini_install_path = "C:/my/conda/lives/here/" AND "C:\\my\
 
 \item{verbose}{be verbose}
 }
+\value{
+logical
+}
 \description{
 checkGiottoEnvironment
 }

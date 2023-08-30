@@ -48,14 +48,8 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
     instructions(.Object, initialize = FALSE) = createGiottoInstructions()
   }
 
-  ## test python module availability ##
-  python_modules = c('pandas', 'igraph', 'leidenalg', 'community', 'networkx', 'sklearn')
-  my_python_path = instructions(.Object, 'python_path')
-  for(module in python_modules) {
-    if(reticulate::py_module_available(module) == FALSE) {
-      warning('module: ', module, ' was not found with python path: ', my_python_path, '\n')
-    }
-  }
+  ## test python module availability if a python env is expected ##
+  check_giotto_python_modules(my_python_path = instructions(.Object, 'python_path'))
 
 
 

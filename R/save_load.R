@@ -352,7 +352,6 @@ loadGiotto = function(path_to_folder,
 
 
 
-
   ## 4. images
   if(verbose) wrap_msg('\n4. read Giotto image information \n')
   image_files = list.files(path = paste0(path_to_folder, '/Images'))
@@ -377,11 +376,18 @@ loadGiotto = function(path_to_folder,
 
 
   ## 5. Update python path
-  identified_python_path = set_giotto_python_path(python_path = python_path,
-                                                  verbose = verbose)
-  gobject = changeGiottoInstructions(gobject = gobject,
-                                     params = c('python_path'),
-                                     new_values = c(identified_python_path))
+  if (isTRUE(getOption('giotto.use_conda', TRUE))) {
+    identified_python_path = set_giotto_python_path(python_path = python_path,
+                                                    verbose = verbose)
+    gobject = changeGiottoInstructions(gobject = gobject,
+                                       params = c('python_path'),
+                                       new_values = c(identified_python_path))
+  } else {
+    instr = instructions(gobject)
+    instr['python_path'] = list(NULL)
+    instructions(gobject) = instr
+  }
+
 
   ## 6. overallocate for data.tables
   # (data.tables when read from disk have a truelength of 0)
