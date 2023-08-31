@@ -1040,10 +1040,9 @@ createGiottoObjectSubcellular = function(gpolygons = NULL,
 #' @title Create S4 exprObj
 #' @name createExprObj
 #' @description Create an S4 exprObj
+#' @inheritParams data_access_params
 #' @param expression_data expression data
 #' @param name name of exprObj
-#' @param spat_unit spatial unit of expression (e.g. 'cell')
-#' @param feat_type feature type of expression (e.g. 'rna', 'protein')
 #' @param provenance origin data of expression information (if applicable)
 #' @param misc misc
 #' @export
@@ -1070,15 +1069,20 @@ createExprObj = function(expression_data,
 }
 
 
+#' @title create_expr_obj
+#' @name create_expr_obj
 #' @param exprMat matrix of expression information
 #' @keywords internal
-#' @noRd
+#' @export
 create_expr_obj = function(name = 'test',
                            exprMat = NULL,
                            spat_unit = 'cell',
                            feat_type = 'rna',
                            provenance = NULL,
                            misc = NULL) {
+  deprecate_soft('3.3.0',
+                 what = 'Giotto::create_expr_obj()',
+                 with = 'Giotto::createExprObj()')
 
   if(is.null(exprMat)) exprMat = matrix()
 
@@ -1123,13 +1127,19 @@ createCellMetaObj = function(metadata,
 }
 
 
+#' @title create_cell_meta_obj
+#' @name create_cell_meta_obj
 #' @keywords internal
-#' @noRd
+#' @export
 create_cell_meta_obj = function(metaDT = NULL,
                                 col_desc = NA_character_,
                                 spat_unit = 'cell',
                                 feat_type = 'rna',
                                 provenance = NULL) {
+
+  deprecate_soft('3.3.0',
+                 what = 'Giotto::create_cell_meta_obj()',
+                 with = 'Giotto::createCellMetaObj()')
 
   if(is.null(col_desc)) col_desc = NA_character_
 
@@ -1175,14 +1185,19 @@ createFeatMetaObj = function(metadata,
 }
 
 
-
+#' @title create_feat_meta_obj
+#' @name create_feat_meta_obj
 #' @keywords internal
-#' @noRd
+#' @export
 create_feat_meta_obj = function(metaDT = NULL,
                                 col_desc = NA_character_,
                                 spat_unit = 'cell',
                                 feat_type = 'rna',
                                 provenance = NULL) {
+
+  deprecate_soft('3.3.0',
+                 what = 'Giotto::create_feat_meta_obj()',
+                 with = 'Giotto::createFeatMetaObj()')
 
   if(is.null(col_desc)) col_desc = NA_character_
 
@@ -1239,8 +1254,10 @@ createDimObj = function(coordinates,
 }
 
 
+#' @title create_dim_obj
+#' @name create_dim_obj
 #' @keywords internal
-#' @noRd
+#' @export
 create_dim_obj = function(name = 'test',
                           reduction = 'cells',
                           reduction_method = NA_character_,
@@ -1250,6 +1267,10 @@ create_dim_obj = function(name = 'test',
                           provenance = NULL,
                           misc = NULL,
                           my_rownames = NULL) {
+
+  deprecate_soft('3.3.0',
+                 what = 'Giotto::create_dim_obj()',
+                 with = 'Giotto::createDimObj()')
 
   if(is.null(reduction_method)) reduction_method = NA_character_
 
@@ -1317,8 +1338,10 @@ createNearestNetObj = function(name = 'test',
 }
 
 
+#' @title create_nn_net_obj
+#' @name create_nn_net_obj
 #' @keywords internal
-#' @noRd
+#' @export
 create_nn_net_obj = function(name = 'test',
                              nn_type = NA_character_,
                              igraph = NULL,
@@ -1326,6 +1349,10 @@ create_nn_net_obj = function(name = 'test',
                              feat_type = 'rna',
                              provenance = NULL,
                              misc = NULL) {
+
+  deprecate_soft('3.3.0',
+                 what = 'Giotto::create_nn_net_obj()',
+                 with = 'Giotto::createNearestNetObj()')
 
   if(is.null(nn_type)) nn_type = NA_character_
 
@@ -1375,14 +1402,19 @@ createSpatLocsObj = function(coordinates,
 }
 
 
-
+#' @title create_spat_locs_obj
+#' @name create_spat_locs_obj
 #' @keywords internal
-#' @noRd
+#' @export
 create_spat_locs_obj = function(name = 'test',
                                 coordinates = NULL,
                                 spat_unit = 'cell',
                                 provenance = NULL,
                                 misc = NULL) {
+
+  deprecate_soft('3.3.0',
+                 what = 'Giotto::create_spat_locs_obj()',
+                 with = 'Giotto::createSpatLocsObj()')
 
   # DT vars
   cell_ID = NULL
@@ -1456,8 +1488,10 @@ createSpatNetObj = function(network,
 }
 
 
+#' @title create_spat_net_obj
+#' @name create_spat_net_obj
 #' @keywords internal
-#' @noRd
+#' @export
 create_spat_net_obj = function(name = 'test',
                                method = NA_character_,
                                parameters = NULL,
@@ -1469,6 +1503,10 @@ create_spat_net_obj = function(name = 'test',
                                spat_unit = 'cell',
                                provenance = NULL,
                                misc = NULL ) {
+
+  deprecate_soft('3.3.0',
+                 what = 'Giotto::create_spat_net_obj()',
+                 with = 'Giotto::createSpatNetObj()')
 
   if(is.null(method)) method = NA_character_
 
@@ -1524,8 +1562,10 @@ createSpatEnrObj = function(enrichment_data,
 }
 
 
+#' @title create_spat_enr_obj
+#' @name create_spat_enr_obj
 #' @keywords internal
-#' @noRd
+#' @export
 create_spat_enr_obj = function(name = 'test',
                                method = NA_character_,
                                enrichDT = NULL,
@@ -1533,6 +1573,10 @@ create_spat_enr_obj = function(name = 'test',
                                feat_type = 'rna',
                                provenance = NULL,
                                misc = NULL) {
+
+  deprecate_soft('3.3.0',
+                 what = 'Giotto::create_spat_enr_obj()',
+                 with = 'Giotto::createSpatEnrObj()')
 
   if(is.null(method)) method = NA_character_
 
@@ -1569,6 +1613,7 @@ create_spat_enr_obj = function(name = 'test',
 #' @param provenance origin of aggregated information (if applicable)
 #' @param misc misc
 #' @keywords internal
+#' @export
 create_spat_grid_obj = function(name = 'test',
                                 method = NA_character_,
                                 parameters = NULL,
