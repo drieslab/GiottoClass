@@ -328,7 +328,9 @@ installGiottoEnvironment =  function(packages_to_install = c('pandas==1.5.1',
   if (is.null(mini_install_path)){
     conda_path = reticulate::miniconda_path()
   } else if (!dir.exists(mini_install_path)) {
-    stop(wrap_msg(paste0(" Unable to install miniconda in ", mini_install_path, "\nPlease ensure the directory has been created and provided as a string.")))
+    stop(wrap_msg(paste0(" Unable to install miniconda in ", 
+                         mini_install_path, 
+                         "\nPlease ensure the directory has been created and provided as a string.")))
   } else {
     conda_path = mini_install_path
 
