@@ -14,6 +14,7 @@ set_default_feat_type(gobject, feat_type = NULL, spat_unit)
 \item{spat_unit}{spatial unit (e.g. "cell")}
 }
 \description{
-set_default_feat_type
+Function to guess a default feature type. Also see \code{\link[=activeFeatType]{activeFeatType()}} in
+methods-instructions.R for a way to manually assign this default
 }
 \keyword{internal}

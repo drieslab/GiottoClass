@@ -592,12 +592,15 @@ set_feat_id = function(gobject,
 #' @description Get cell metadata from giotto object
 #' @seealso pDataDT
 #' @keywords internal
+#' @export
 get_cell_metadata = function(gobject,
                              spat_unit = NULL,
                              feat_type = NULL,
                              output = c('cellMetaObj', 'data.table'),
                              copy_obj = TRUE,
                              set_defaults = TRUE) {
+
+  deprecate_soft('3.3.0', 'get_cell_metadata()', 'getCellMetadata()')
 
   output = match.arg(output, choices = c('cellMetaObj', 'data.table'))
 
@@ -672,6 +675,7 @@ getCellMetadata = function(gobject,
 #' @param verbose be verbose
 #' @return giotto object
 #' @family functions to set data in giotto object
+#' @export
 setCellMetadata = function(gobject,
                            x,
                            spat_unit = NULL,
@@ -759,6 +763,7 @@ setCellMetadata = function(gobject,
 #' @return giotto object
 #' @family functions to set data in giotto object
 #' @keywords internal
+#' @export
 set_cell_metadata = function(gobject,
                              metadata,
                              spat_unit = NULL,
@@ -767,6 +772,8 @@ set_cell_metadata = function(gobject,
                              verbose = TRUE,
                              set_defaults = TRUE,
                              initialize = FALSE) {
+
+  deprecate_soft('3.3.0', 'set_cell_metadata()', 'setCellMetadata()')
 
   # data.table vars
   cell_ID = NULL
@@ -960,12 +967,15 @@ set_cell_metadata = function(gobject,
 #' @description Get feature metadata from giotto object
 #' @seealso fDataDT
 #' @keywords internal
+#' @export
 get_feature_metadata = function(gobject,
                                 spat_unit = NULL,
                                 feat_type = NULL,
                                 output = c('featMetaObj', 'data.table'),
                                 copy_obj = TRUE,
                                 set_defaults = TRUE) {
+
+  deprecate_soft('3.3.0', 'get_feature_metadata()', 'getFeatureMetadata()')
 
   output = match.arg(output, choices = c('featMetaObj', 'data.table'))
 
@@ -1032,6 +1042,7 @@ getFeatureMetadata = function(gobject,
 #' @param verbose be verbose
 #' @return giotto object
 #' @family functions to set data in giotto object
+#' @export
 setFeatureMetadata = function(gobject,
                               x,
                               spat_unit = NULL,
@@ -1104,8 +1115,18 @@ setFeatureMetadata = function(gobject,
 
 
 
+#' @title Set feature metadata
+#' @name set_feature_metadata
+#' @description Function to set feature metadata information into giotto object
+#' @inheritParams data_access_params
+#' @param provenance provenance information to set
+#' @param metadata featMetaObj or data.table containing feature metadata. Setting NULL will remove
+#' the object. Passing 'initialize' will reset the object.
+#' @param verbose be verbose
+#' @return giotto object
+#' @family functions to set data in giotto object
 #' @keywords internal
-#' @noRd
+#' @export
 set_feature_metadata = function(gobject,
                                 metadata,
                                 spat_unit = NULL,
@@ -1114,6 +1135,8 @@ set_feature_metadata = function(gobject,
                                 verbose = TRUE,
                                 set_defaults = TRUE,
                                 initialize = FALSE) {
+
+  deprecate_soft('3.3.0', 'set_feature_metadata()', 'setFeatureMetadata()')
 
   # data.table vars
   feat_ID = NULL
@@ -1336,12 +1359,17 @@ getExpression = function(gobject,
 
 # Internal function to get expression values from giotto object.
 # **Controls expression slot nesting and structure**
+#' @name get_expression_values
+#' @title get_expression_values
+#' @export
 get_expression_values = function(gobject,
                                  spat_unit = NULL,
                                  feat_type = NULL,
                                  values = NULL,
                                  output = c('exprObj', 'matrix'),
                                  set_defaults = TRUE) {
+
+  deprecate_soft('3.3.0', 'get_expression_values()', 'getExpression()')
 
   guard_against_notgiotto(gobject)
 

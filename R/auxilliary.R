@@ -521,6 +521,472 @@ addFeatMetadata <- function(gobject,
 
 
 
+# expression ####
+
+
+#' @title create_average_DT
+#' @description calculates average gene expression for a cell metadata factor (e.g. cluster)
+#' @param gobject giotto object
+#' @param spat_unit spatial unit
+#' @param feat_type feature type
+#' @param meta_data_name name of metadata column to use
+#' @param expression_values which expression values to use
+#' @return data.table with average gene epression values for each factor
+#' @keywords internal
+#' @export
+create_average_DT = function(gobject,
+                             spat_unit = NULL,
+                             feat_type = NULL,
+                             meta_data_name,
+                             expression_values = c('normalized', 'scaled', 'custom')) {
+
+
+  # Set feat_type and spat_unit
+  spat_unit = set_default_spat_unit(gobject = gobject,
+                                    spat_unit = spat_unit)
+  feat_type = set_default_feat_type(gobject = gobject,
+                                    spat_unit = spat_unit,
+                                    feat_type = feat_type)
+
+  # expression values to be used
+  values = match.arg(expression_values, unique(c('normalized', 'scaled', 'custom', expression_values)))
+  expr_data = get_expression_values(gobject = gobject,
+                                    spat_unit = spat_unit,
+                                    feat_type = feat_type,
+                                    values = values,
+                                    output = 'matrix')
+
+  # metadata
+  cell_metadata = get_cell_metadata(gobject,
+                                    spat_unit = spat_unit,
+                                    feat_type = feat_type,
+                                    output = 'data.table',
+                                    copy_obj = TRUE)
+  myrownames = rownames(expr_data)
+
+  savelist = list()
+  for(group in unique(cell_metadata[[meta_data_name]])) {
+
+    name = paste0('cluster_', group)
+
+    temp = expr_data[, cell_metadata[[meta_data_name]] == group]
+    temp_DT = rowMeans_flex(temp)
+
+    savelist[[name]] = temp_DT
+  }
+
+  finalDF = do.call('cbind', savelist)
+  rownames(finalDF) = myrownames
+
+  return(as.data.frame(finalDF))
+}
+
+#' @title create_average_detection_DT
+#' @description calculates average gene detection for a cell metadata factor (e.g. cluster)
+#' @param gobject giotto object
+#' @param spat_unit spatial unit
+#' @param feat_type feature type
+#' @param meta_data_name name of metadata column to use
+#' @param expression_values which expression values to use
+#' @param detection_threshold detection threshold to consider a gene detected
+#' @return data.table with average gene epression values for each factor
+#' @keywords internal
+#' @export
+create_average_detection_DT <- function(gobject,
+                                        feat_type = NULL,
+                                        spat_unit = NULL,
+                                        meta_data_name,
+                                        expression_values = c('normalized', 'scaled', 'custom'),
+                                        detection_threshold = 0) {
+
+
+  # Set feat_type and spat_unit
+  spat_unit = set_default_spat_unit(gobject = gobject,
+                                    spat_unit = spat_unit)
+  feat_type = set_default_feat_type(gobject = gobject,
+                                    spat_unit = spat_unit,
+                                    feat_type = feat_type)
+
+  # expression values to be used
+  values = match.arg(expression_values, unique(c('normalized', 'scaled', 'custom', expression_values)))
+  expr_data = get_expression_values(gobject = gobject,
+                                    spat_unit = spat_unit,
+                                    feat_type = feat_type,
+                                    values = values,
+                                    output = 'matrix')
+
+  # metadata
+  cell_metadata = get_cell_metadata(gobject,
+                                    spat_unit = spat_unit,
+                                    feat_type = feat_type,
+                                    output = 'data.table',
+                                    copy_obj = TRUE)
+  myrownames = rownames(expr_data)
+
+  savelist = list()
+  for(group in unique(cell_metadata[[meta_data_name]])) {
+
+    name = paste0('cluster_', group)
+
+    temp = expr_data[, cell_metadata[[meta_data_name]] == group]
+    temp = as.matrix(temp)
+
+    if(is.matrix(temp)) {
+      temp_DT = rowSums_flex(temp > detection_threshold)/ncol(temp)
+    } else {
+      temp_DT = as.numeric(temp > detection_threshold)
+    }
+
+    savelist[[name]] <- temp_DT
+  }
+
+  finalDF = do.call('cbind', savelist)
+  rownames(finalDF) = myrownames
+
+  return(as.data.frame(finalDF))
+}
+
+
+
+
+
+
+#' @title create_cluster_matrix
+#' @name create_cluster_matrix
+#' @description creates aggregated matrix for a given clustering column
+#' @inheritParams data_access_params
+#' @param expression_values name of expression values to use
+#' @param cluster_column name of cluster column to use,
+#' @param feat_subset subset of features to use
+#' @param gene_subset deprecated do not use.
+#' @keywords internal
+#' @export
+create_cluster_matrix <- function(gobject,
+                                  spat_unit = NULL,
+                                  feat_type = NULL,
+                                  expression_values = c('normalized', 'scaled', 'custom'),
+                                  cluster_column,
+                                  feat_subset = NULL,
+                                  gene_subset = NULL) {
+
+
+  # data.table variables
+  feats = NULL
+
+  ## deprecated arguments
+  if(!is.null(gene_subset)) {
+    feat_subset = gene_subset
+  }
+
+  # Set feat_type and spat_unit
+  spat_unit = set_default_spat_unit(gobject = gobject,
+                                    spat_unit = spat_unit)
+  feat_type = set_default_feat_type(gobject = gobject,
+                                    spat_unit = spat_unit,
+                                    feat_type = feat_type)
+
+  values = match.arg(expression_values, unique(c('normalized', 'scaled', 'custom', expression_values)))
+
+  # average expression per cluster
+  aggr_sc_clusters <- create_average_DT(gobject = gobject,
+                                        spat_unit = spat_unit,
+                                        feat_type = feat_type,
+                                        meta_data_name = cluster_column,
+                                        expression_values = values)
+  aggr_sc_clusters_DT <- data.table::as.data.table(aggr_sc_clusters)
+  aggr_sc_clusters_DT[, feats := rownames(aggr_sc_clusters)]
+  aggr_sc_clusters_DT_melt <- data.table::melt.data.table(aggr_sc_clusters_DT,
+                                                          variable.name = 'cluster',
+                                                          id.vars = 'feats',
+                                                          value.name = 'expression')
+
+  # create matrix
+  testmat = data.table::dcast.data.table(aggr_sc_clusters_DT_melt,
+                                         formula = feats~cluster,
+                                         value.var = 'expression')
+  testmatrix = dt_to_matrix(testmat)
+
+  # create subset if required
+  if(!is.null(feat_subset)) {
+    feat_subset_detected = feat_subset[feat_subset %in% rownames(testmatrix)]
+    testmatrix = testmatrix[rownames(testmatrix) %in% feat_subset_detected, ]
+  }
+
+  return(testmatrix)
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+#' @title calculateMetaTable
+#' @name calculateMetaTable
+#' @description calculates the average gene expression for one or more (combined) annotation columns.
+#' @param gobject giotto object
+#' @param spat_unit spatial unit
+#' @param feat_type feature type
+#' @param expression_values expression values to use
+#' @param metadata_cols annotation columns found in \code{pDataDT(gobject)}
+#' @param selected_feats subset of features to use
+#' @param selected_genes subset of genes to use (deprecated)
+#' @return data.table with average expression values for each gene per (combined) annotation
+#' @export
+calculateMetaTable = function(gobject,
+                              spat_unit = NULL,
+                              feat_type = NULL,
+                              expression_values =  c("normalized", "scaled", "custom"),
+                              metadata_cols = NULL,
+                              selected_feats = NULL,
+                              selected_genes = NULL) {
+
+  if(is.null(metadata_cols)) stop('\n You need to select one or more valid column names from pDataDT() \n')
+
+  # Set feat_type and spat_unit
+  spat_unit = set_default_spat_unit(gobject = gobject,
+                                    spat_unit = spat_unit)
+  feat_type = set_default_feat_type(gobject = gobject,
+                                    spat_unit = spat_unit,
+                                    feat_type = feat_type)
+
+  ## deprecated arguments
+  if(!is.null(selected_genes)) {
+    selected_feats = selected_genes
+    warning('selected_genes is deprecated, use selected_feats in the future \n')
+  }
+
+  # data.table variables
+  uniq_ID = NULL
+
+  ## get metadata and create unique groups
+  metadata = data.table::copy(pDataDT(gobject, feat_type = feat_type, spat_unit = spat_unit))
+  if(length(metadata_cols) > 1) {
+    metadata[, uniq_ID := paste(.SD, collapse = '-'), by = 1:nrow(metadata), .SDcols = metadata_cols]
+  } else {
+    metadata[, uniq_ID := get(metadata_cols)]
+  }
+
+  ## possible groups
+  possible_groups = unique(metadata[,metadata_cols, with = F])
+  if(length(metadata_cols) > 1) {
+    possible_groups[, uniq_ID := paste(.SD, collapse = '-'), by = 1:nrow(possible_groups), .SDcols = metadata_cols]
+  } else {
+    possible_groups[, uniq_ID := get(metadata_cols)]
+  }
+
+  ## get expression data
+  values = match.arg(expression_values, unique(c('normalized', 'scaled', 'custom', expression_values)))
+  expr_values = get_expression_values(gobject = gobject,
+                                      spat_unit = spat_unit,
+                                      feat_type = feat_type,
+                                      values = values,
+                                      output = 'matrix')
+  if(!is.null(selected_feats)) {
+    expr_values = expr_values[rownames(expr_values) %in% selected_feats, ]
+  }
+
+  ## summarize unique groups (average)
+  result_list = list()
+
+  for(row in 1:nrow(possible_groups)) {
+
+    uniq_identifiier = possible_groups[row][['uniq_ID']]
+    selected_cell_IDs = metadata[uniq_ID == uniq_identifiier][['cell_ID']]
+    sub_expr_values = expr_values[, colnames(expr_values) %in% selected_cell_IDs]
+
+    if(is.vector(sub_expr_values) == FALSE) {
+      subvec = rowMeans_flex(sub_expr_values)
+    } else {
+      subvec = sub_expr_values
+    }
+    result_list[[row]] = subvec
+  }
+  finaldt = data.table::as.data.table(do.call('rbind', result_list))
+  possible_groups_res = cbind(possible_groups, finaldt)
+  possible_groups_res_melt = data.table::melt.data.table(possible_groups_res, id.vars = c(metadata_cols, 'uniq_ID'))
+
+  return(possible_groups_res_melt)
+
+}
+
+
+#' @title calculateMetaTableCells
+#' @name calculateMetaTableCells
+#' @description calculates the average metadata values for one or more (combined) annotation columns.
+#' @param gobject giotto object
+#' @param spat_unit spatial unit
+#' @param feat_type feature type
+#' @param value_cols metadata or enrichment value columns to use
+#' @param metadata_cols annotation columns found in \code{pDataDT(gobject)}
+#' @param spat_enr_names which spatial enrichment results to include
+#' @return data.table with average metadata values per (combined) annotation
+#' @export
+calculateMetaTableCells = function(gobject,
+                                   spat_unit = NULL,
+                                   feat_type = NULL,
+                                   value_cols = NULL,
+                                   metadata_cols = NULL,
+                                   spat_enr_names = NULL) {
+
+  # Set feat_type and spat_unit
+  spat_unit = set_default_spat_unit(gobject = gobject,
+                                    spat_unit = spat_unit)
+  feat_type = set_default_feat_type(gobject = gobject,
+                                    spat_unit = spat_unit,
+                                    feat_type = feat_type)
+
+  if(is.null(metadata_cols)) stop('\n You need to select one or more valid column names from pDataDT() \n')
+  if(is.null(value_cols)) stop('\n You need to select one or more valid value column names from pDataDT() \n')
+
+  cell_metadata = combineMetadata(gobject = gobject,
+                                  feat_type = feat_type,
+                                  spat_unit = spat_unit,
+                                  spat_enr_names = spat_enr_names)
+
+  ## only keep columns that exist
+  cell_metadata_cols = colnames(cell_metadata)
+
+  if(!all(value_cols %in% cell_metadata_cols)) {
+    missing_value_cols = value_cols[!value_cols %in% cell_metadata_cols]
+    cat('These value columns were not found: ', missing_value_cols)
+  }
+  value_cols = value_cols[value_cols %in% cell_metadata_cols]
+
+  if(!all(metadata_cols %in% cell_metadata_cols)) {
+    missing_metadata_cols = metadata_cols[!metadata_cols %in% cell_metadata_cols]
+    cat('These metadata columns were not found: ', missing_metadata_cols)
+  }
+  metadata_cols = metadata_cols[metadata_cols %in% cell_metadata_cols]
+
+  if(!length(metadata_cols) > 0 | !length(value_cols) > 0) {
+    stop('\n missing sufficient metadata or value columns \n')
+  }
+
+  workdt = cell_metadata[, lapply(.SD, mean), by = metadata_cols, .SDcols = value_cols]
+  workdtmelt = data.table::melt.data.table(workdt, measure.vars = value_cols)
+
+  return(workdtmelt)
+
+}
+
+
+
+
+
+
+#' @title createMetafeats
+#' @name createMetafeats
+#' @description This function creates an average metafeat/metagene/module for clusters.
+#' @param gobject Giotto object
+#' @param spat_unit spatial unit
+#' @param feat_type feature type
+#' @param expression_values expression values to use
+#' @param feat_clusters numerical vector with features as names
+#' @param name name of the metagene results
+#' @param return_gobject return giotto object
+#' @return giotto object
+#' @details An example for the 'gene_clusters' could be like this:
+#' cluster_vector = c(1, 1, 2, 2); names(cluster_vector) = c('geneA', 'geneB', 'geneC', 'geneD')
+#' @export
+createMetafeats = function(gobject,
+                           spat_unit = NULL,
+                           feat_type = NULL,
+                           expression_values = c('normalized', 'scaled', 'custom'),
+                           feat_clusters,
+                           name = 'metafeat',
+                           return_gobject = TRUE) {
+
+  # Set feat_type and spat_unit
+  spat_unit = set_default_spat_unit(gobject = gobject,
+                                    spat_unit = spat_unit)
+  feat_type = set_default_feat_type(gobject = gobject,
+                                    spat_unit = spat_unit,
+                                    feat_type = feat_type)
+
+  # expression values to be used
+  values = match.arg(expression_values, unique(c('normalized', 'scaled', 'custom', expression_values)))
+  expr_values = get_expression_values(gobject = gobject,
+                                      spat_unit = spat_unit,
+                                      feat_type = feat_type,
+                                      values = values,
+                                      output = 'exprObj')
+
+
+  ## calculate metafeat ##
+  res_list = list()
+
+  for(id in sort(unique(feat_clusters))) {
+
+    clus_id = id
+
+    selected_feats = names(feat_clusters[feat_clusters == clus_id])
+    sub_mat = expr_values[][rownames(expr_values[]) %in% selected_feats,]
+
+    # calculate mean
+    if(length(selected_feats) == 1) {
+      mean_score = sub_mat
+    } else{
+      mean_score = colMeans_flex(sub_mat)
+    }
+
+    res_list[[id]] = mean_score
+  }
+
+  res_final = data.table::as.data.table(t(do.call('rbind', res_list)))
+  colnames(res_final) = as.character(sort(unique(feat_clusters)))
+
+  # data.table variables
+  cell_ID = NULL
+
+  res_final[, cell_ID := colnames(expr_values[])]
+
+  # create spatial enrichment object
+  enrObj = create_spat_enr_obj(name = name,
+                               method = 'metafeat',
+                               enrichDT = res_final,
+                               spat_unit = spat_unit,
+                               feat_type = feat_type,
+                               provenance = expr_values@provenance,
+                               misc = list(expr_values_used = expression_values))
+
+  if(return_gobject == TRUE) {
+
+    ## enrichment scores
+    spenr_names = list_spatial_enrichments_names(gobject = gobject, spat_unit = spat_unit, feat_type = feat_type)
+
+    if(name %in% spenr_names) {
+      cat('\n ', name, ' has already been used, will be overwritten \n')
+    }
+
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    gobject = set_spatial_enrichment(gobject = gobject, spatenrichment = enrObj)
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+    ## update parameters used ##
+    gobject = update_giotto_params(gobject, description = '_create_metafeat')
+    return(gobject)
+
+  } else {
+    return(enrObj)
+  }
+
+}
+
+
+
+
+
+
+
+
 
 # DT overallocation ####
 
@@ -652,9 +1118,4 @@ giotto_alloc_dt_slots = function(gobject) {
   }
   return(gobject)
 }
-
-
-
-
-
 

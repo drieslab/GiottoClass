@@ -3,8 +3,11 @@
 
 # Determine the name of the function n levels above the current evaluation frame,
 # where n is toplevel - 1
-#' @keywords internal
-#' @noRd
+#' @name get_prev_fname
+#' @title Get previous function name
+#' @param toplevel integer. Relative stack where the previous function call was made
+#' @param verbose be verbose
+#' @export
 get_prev_fname = function(toplevel = 3L, verbose = FALSE) {
   as.character(sys.call(-toplevel)[[1]])
 }
@@ -15,8 +18,11 @@ get_prev_fname = function(toplevel = 3L, verbose = FALSE) {
 
 #' @title Log args used
 #' @name get_args
-#' @keywords internal
-#' @noRd
+#' @description
+#' Get the arguments that were passed for a function call.
+#' @param toplevel integer. Relative stack where the function call was made.
+#' @param verbose be verbose
+#' @export
 get_args <- function(toplevel = 2L, verbose = FALSE) {
 
   nframes = sys.nframe()
@@ -89,8 +95,12 @@ get_args <- function(toplevel = 2L, verbose = FALSE) {
 
 #' @title Update giotto parameters
 #' @name update_giotto_params
-#' @keywords internal
-#' @noRd
+#' @param gobject giotto object
+#' @param description description of function run
+#' @param return_gobject logical. Whether the giotto object should be returned
+#' @param toplevel expected relative stackframe where call that is being recorded
+#' was made
+#' @export
 update_giotto_params = function(gobject,
                                 description = '_test',
                                 return_gobject = TRUE,

@@ -5,6 +5,7 @@
 #' @name as.data.table
 #' @description Coerce to data.table if possible
 #' @param x The object to coerce
+#' @param keep.rownames This argument is ignored
 #' @param geom character or NULL. If not NULL, either "XY", "WKT", or "HEX", to
 #' get the geometry included in coordinates of each point or vertex, Well-Known-Text
 #' or hexadecimal notation.
@@ -24,7 +25,7 @@ NULL
 #' @rdname as.data.table
 #' @method as.data.table SpatVector
 #' @export
-as.data.table.SpatVector <- function(x, geom = NULL, include_values = TRUE, ...) {
+as.data.table.SpatVector <- function(x, keep.rownames = FALSE, geom = NULL, include_values = TRUE, ...) {
   # if looking for polygon XY...
   if(terra::is.polygons(x)) {
     if(!is.null(geom)) {
