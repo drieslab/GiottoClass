@@ -8,7 +8,6 @@
 #' @param geom character or NULL. If not NULL, either "XY", "WKT", or "HEX", to
 #' get the geometry included in coordinates of each point or vertex, Well-Known-Text
 #' or hexadecimal notation.
-#' @param keep.rownames This argument is ignored
 #' @param include_values whether to include attributes information when geom is 'XY'
 #' @param \dots additional arguments to pass
 #' @family As coercion functions
