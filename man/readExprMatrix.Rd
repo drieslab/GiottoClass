@@ -21,6 +21,10 @@ readExprMatrix(
 \item{transpose}{transpose matrix}
 
 \item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
+
+\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'HDF5Matrix','rhdf5' description)}
+
+\item{h5_file}{path to h5 file}
 }
 \value{
 sparse matrix

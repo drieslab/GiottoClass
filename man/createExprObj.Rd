@@ -27,6 +27,10 @@ createExprObj(
 \item{provenance}{origin data of expression information (if applicable)}
 
 \item{misc}{misc}
+
+\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'HDF5Matrix', 'rhdf5')}
+
+\item{h5_file}{path to h5 file}
 }
 \description{
 Create an S4 exprObj

@@ -23,8 +23,6 @@ or hexadecimal notation.}
 \item{include_values}{whether to include attributes information when geom is 'XY'}
 
 \item{\dots}{additional arguments to pass}
-
-\item{keep.rownames}{This argument is ignored}
 }
 \description{
 Coerce to data.table if possible

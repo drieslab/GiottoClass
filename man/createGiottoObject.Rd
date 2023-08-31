@@ -77,6 +77,10 @@ see \code{\link{createGiottoPoints}}}
 
 \item{raw_exprs}{deprecated, use expression}
 
+\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'HDF5Matrix','rhdf5' description)}
+
+\item{h5_file}{path to h5 file}
+
 \item{verbose}{be verbose when building Giotto object}
 }
 \value{

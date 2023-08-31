@@ -27,6 +27,10 @@ readExprData(
 \item{verbose}{be verbose}
 
 \item{provenance}{(optional) provenance information}
+
+\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'HDF5Matrix','rhdf5' description)}
+
+\item{h5_file}{path to h5 file}
 }
 \description{
 Read a nested list of expression data inputs in order to
