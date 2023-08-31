@@ -20,9 +20,9 @@ createExprObj(
 
 \item{name}{name of exprObj}
 
-\item{spat_unit}{spatial unit of expression (e.g. 'cell')}
+\item{spat_unit}{spatial unit (e.g. "cell")}
 
-\item{feat_type}{feature type of expression (e.g. 'rna', 'protein')}
+\item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
 
 \item{provenance}{origin data of expression information (if applicable)}
 
