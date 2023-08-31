@@ -12,6 +12,8 @@
 #' @param path path to the expression matrix
 #' @param cores number of cores to use
 #' @param transpose transpose matrix
+#' @param expression_matrix_class class of expression matrix to use (e.g. 'dgCMatrix', 'HDF5Matrix','rhdf5' description)
+#' @param h5_file path to h5 file
 #' @inheritParams data_access_params
 #' @return sparse matrix
 #' @details The expression matrix needs to have both unique column names and row names
@@ -82,6 +84,8 @@ readExprMatrix = function(path,
 #' @param data_list (nested) list of expression input data
 #' @param sparse (boolean, default = TRUE) read matrix data in a sparse manner
 #' @param cores number of cores to use
+#' @param expression_matrix_class class of expression matrix to use (e.g. 'dgCMatrix', 'HDF5Matrix','rhdf5' description)
+#' @param h5_file path to h5 file
 #' @inheritParams read_data_params
 #' @details
 #'

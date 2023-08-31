@@ -37,6 +37,8 @@ NULL
 #' @param offset_file file used to stitch fields together (optional)
 #' @param instructions list of instructions or output result from \code{\link{createGiottoInstructions}}
 #' @param cores how many cores or threads to use to read data if paths are provided
+#' @param expression_matrix_class class of expression matrix to use (e.g. 'dgCMatrix', 'HDF5Matrix','rhdf5' description)
+#' @param h5_file path to h5 file
 #' @param verbose be verbose when building Giotto object
 #' @return giotto object
 #' @details
@@ -1046,6 +1048,8 @@ createGiottoObjectSubcellular = function(gpolygons = NULL,
 #' @param feat_type feature type of expression (e.g. 'rna', 'protein')
 #' @param provenance origin data of expression information (if applicable)
 #' @param misc misc
+#' @param expression_matrix_class class of expression matrix to use (e.g. 'dgCMatrix', 'HDF5Matrix', 'rhdf5')
+#' @param h5_file path to h5 file
 #' @export
 createExprObj = function(expression_data,
                          name = 'test',
