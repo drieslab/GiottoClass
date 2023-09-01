@@ -146,7 +146,7 @@ colMeans_flex = function(mymatrix) {
 t_flex = function(mymatrix) {
 
   if(inherits(mymatrix, 'HDF5Matrix')) {
-    require(HDF5Array)
+    package_check('HDF5Array', repository = 'Bioc')
     return(methods::as(t(mymatrix), 'HDF5Matrix'))
     # } else if(inherits(mymatrix, 'DelayedMatrix')) {
     #   return(t(mymatrix))
