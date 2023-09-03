@@ -1,0 +1,118 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+#
+# See https://github.com/r-lib/actions/tree/master/examples#readme for
+# additional example workflows available for the R community.
+
+
+name: Dev Workflow - Test and check thing
+on:
+  push:
+    branches: [ "dev" ]
+
+permissions:
+  contents: read
+
+jobs:
+  R-CMD-check:
+    name: R CMD Check
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Remove vignettes dir
+        run: rm -rf 'vignettes/'
+        shell: bash
+
+      - name: Checkout repo for workflow access
+        uses: actions/checkout@v3
+
+      - name: Set up R environment
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Set up dependencies (general)
+        uses: r-lib/actions/setup-r-dependencies@v2
+        env:
+          _R_CHECK_FORCE_SUGGESTS: false
+          _R_CHECK_RD_XREFS: false
+        with:
+          dependencies: '"hard"' # do not use suggested dependencies
+          extra-packages: any::rcmdcheck, any::testthat, any::data.table
+
+      - name: Set up dependencies (GiottoData)
+        run: |
+          suppressWarnings({
+            if(!require(remotes)){
+              install.packages('R.utils', repos = 'http://cran.us.r-project.org')
+              install.packages('remotes', repos = 'http://cran.us.r-project.org')
+            }
+            remotes::install_github('drieslab/GiottoData', build = FALSE)
+          })
+        shell: Rscript {0}
+
+      - name: Run R CMD check
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          error-on: '"error"' # workflow errors on error only, can change to include warnings
+
+      # show testthat output for ease of access
+      - name: Show testthat output
+        if: always()
+        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
+
+
+
+  test-coverage:
+    name: Code coverage
+    needs: R-CMD-check
+    runs-on: ubuntu-latest
+
+      - name: Set up dependencies (coverage)
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::covr
+          needs: coverage
+
+      - name: Test coverage
+        run: |
+          covr::codecov(
+            quiet = FALSE,
+            clean = FALSE,
+            install_path = file.path(Sys.getenv("RUNNER_TEMP"), "package")
+          )
+        shell: Rscript {0}
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+
+  # lint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #
+  #     - uses: r-lib/actions/setup-r@v2
+  #       with:
+  #         use-public-rspm: true
+  #
+  #     - uses: r-lib/actions/setup-r-dependencies@v2
+  #       with:
+  #         extra-packages: any::lintr, local::.
+  #         needs: lint
+  #
+  #     - name: Lint
+  #       run: lintr::lint_package()
+  #       shell: Rscript {0}
+  #       env:
+  #         LINTR_ERROR_ON_LINT: true
+
+
+
