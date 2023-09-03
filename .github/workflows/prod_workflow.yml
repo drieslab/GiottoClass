@@ -7,7 +7,7 @@
 # additional example workflows available for the R community.
 
 
-name: Master Workflow - Build and deploy to production
+name: Master Workflow - Deploy to production
 
 on:
   pull_request:

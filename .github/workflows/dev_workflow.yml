@@ -7,7 +7,7 @@
 # additional example workflows available for the R community.
 
 
-name: Dev Workflow - Test and check thing
+name: Dev Workflow - Test and check
 on:
   push:
     branches: [ "dev" ]
@@ -18,8 +18,8 @@ permissions:
 jobs:
   R-CMD-check:
     name: R CMD Check
-    # env:
-    #   GITHUB_PAT: ${{ secrets.WORKFLOW_PAT }}
+    env:
+      GITHUB_PAT: ${{ secrets.WORKFLOW_PAT }}
     runs-on: ubuntu-latest
 
     steps:
@@ -45,16 +45,20 @@ jobs:
           dependencies: '"hard"' # do not use suggested dependencies
           extra-packages: any::rcmdcheck, any::testthat, any::data.table
 
-      # - name: Set up dependencies (GiottoData)
-      #   run: |
-      #     suppressWarnings({
-      #       if(!require(remotes)){
-      #         install.packages('R.utils', repos = 'http://cran.us.r-project.org')
-      #         install.packages('remotes', repos = 'http://cran.us.r-project.org')
-      #       }
-      #       remotes::install_github('drieslab/GiottoData@suite_modular', build = FALSE)
-      #     })
-      #   shell: Rscript {0}
+      - name: Set up dependencies (GiottoData)
+        run: |
+          suppressWarnings({
+            if(!require(remotes)){
+              install.packages('R.utils', repos = 'http://cran.us.r-project.org')
+              install.packages('remotes', repos = 'http://cran.us.r-project.org')
+            }
+            remotes::install_github('drieslab/GiottoData@suite_modular', build = FALSE)
+          })
+
+          if (!checkGiottoEnvironment()) {
+            installGiottoEnvironment()
+          }
+        shell: Rscript {0}
 
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2
