@@ -18,6 +18,8 @@ permissions:
 jobs:
   R-CMD-check:
     name: R CMD Check
+    env:
+      GITHUB_PAT: ${{ secrets.WORKFLOW_PAT }}
     runs-on: ubuntu-latest
 
     steps:
