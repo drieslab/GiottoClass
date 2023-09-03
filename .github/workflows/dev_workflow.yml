@@ -73,6 +73,8 @@ jobs:
     needs: R-CMD-check
     runs-on: ubuntu-latest
 
+    steps:
+
       - name: Set up dependencies (coverage)
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
