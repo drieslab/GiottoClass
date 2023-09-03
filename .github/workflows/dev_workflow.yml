@@ -52,7 +52,7 @@ jobs:
               install.packages('R.utils', repos = 'http://cran.us.r-project.org')
               install.packages('remotes', repos = 'http://cran.us.r-project.org')
             }
-            remotes::install_github('drieslab/GiottoData', build = FALSE)
+            remotes::install_github('drieslab/GiottoData@suite_modular', build = FALSE)
           })
         shell: Rscript {0}
 
