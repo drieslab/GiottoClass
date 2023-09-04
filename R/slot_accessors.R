@@ -1419,7 +1419,17 @@ get_expression_values = function(gobject,
 
   # Get info from slot nesting
   expr_vals = gobject@expression[[spat_unit]][[feat_type]][[values]]
-
+  
+  # Read matrix from h5 file if needed
+  if(!is.null(slot(gobject, 'h5_file'))) {
+    h5_path = expr_vals[]
+    expression_matrix = HDF5Array::HDF5Array(filepath = slot(gobject, 'h5_file'), 
+                                             name = h5_path,
+                                             as.sparse = TRUE)
+    slot(expr_vals,'exprMat') = expression_matrix
+  }
+  
+  # Output
   if(output == 'exprObj') return(expr_vals)
   else if(output == 'matrix') return(expr_vals[])
 
@@ -1667,7 +1677,19 @@ set_expression_values = function(gobject,
     'Setting expression [', spatUnit(values), '][', featType(values), '] ',
     objName(values), sep = ''
   )
-
+  
+  ## 7. Write matrix to h5_file if needed
+  if(!is.null(slot(gobject, 'h5_file'))) {
+    expression_matrix = slot(values, 'exprMat')
+    expression_matrix = DelayedArray::DelayedArray(expression_matrix)
+    expression_matrix = HDF5Array::writeHDF5Array(x = expression_matrix,
+                                                  filepath = slot(gobject, 'h5_file'),
+                                                  name = paste0(feat_type,"_",values),
+                                                  with.dimnames = TRUE)
+    slot(values, 'exprMat') = paste0(feat_type,"_",values)
+  }
+  
+  # Output
   gobject@expression[[spat_unit]][[feat_type]][[name]] = values
   if(isTRUE(initialize)) return(initialize(gobject))
   else return(gobject)
