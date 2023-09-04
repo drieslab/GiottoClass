@@ -12,8 +12,7 @@
 #' @param path path to the expression matrix
 #' @param cores number of cores to use
 #' @param transpose transpose matrix
-#' @param expression_matrix_class class of expression matrix to use (e.g. 'dgCMatrix', 'HDF5Matrix','rhdf5' description)
-#' @param h5_file path to h5 file
+#' @param expression_matrix_class class of expression matrix to use (e.g. 'dgCMatrix', 'DelayedArray')
 #' @inheritParams data_access_params
 #' @return sparse matrix
 #' @details The expression matrix needs to have both unique column names and row names
@@ -22,8 +21,7 @@ readExprMatrix = function(path,
                           cores = determine_cores(),
                           transpose = FALSE,
                           feat_type = 'rna',
-                          expression_matrix_class = c('dgCMatrix', 'HDF5Matrix', 'rhdf5'),
-                          h5_file = NULL) {
+                          expression_matrix_class = c('dgCMatrix', 'DelayedArray')) {
 
   # check if path is a character vector and exists
   if(!is.character(path)) stop('path needs to be character vector')
@@ -39,29 +37,8 @@ readExprMatrix = function(path,
     spM = t_flex(spM)
   }
 
-  if(expression_matrix_class[1] == 'HDF5Matrix') {
-    package_check('HDF5Array')
-    spM = methods::as(spM, 'HDF5Matrix')
-  }
-
-  if(expression_matrix_class[1] == 'rhdf5') {
-    if(is.null(h5_file)) {
-      stop(wrap_txt('h5_file can not be NULL, please provide a file name',
-                    errWidth = TRUE))
-    }
-
-    rhdf5::h5createGroup(h5_file, paste0('expression/',feat_type))
-
-    spM = as.matrix(DT[,-1])
-    colnames(spM) = colnames(DT[,-1])
-    rownames(spM) = DT[[1]]
-
-    HDF5Array::writeHDF5Array(spM,
-                              h5_file,
-                              name = paste0('expression/',feat_type,'/raw'),
-                              with.dimnames=TRUE)
-
-    spM = paste0('expression/',feat_type,'/raw')
+  if(expression_matrix_class[1] == 'DelayedArray') {
+    spM = DelayedArray::DelayedArray(spM)
   }
 
   return(spM)
@@ -84,8 +61,7 @@ readExprMatrix = function(path,
 #' @param data_list (nested) list of expression input data
 #' @param sparse (boolean, default = TRUE) read matrix data in a sparse manner
 #' @param cores number of cores to use
-#' @param expression_matrix_class class of expression matrix to use (e.g. 'dgCMatrix', 'HDF5Matrix','rhdf5' description)
-#' @param h5_file path to h5 file
+#' @param expression_matrix_class class of expression matrix to use (e.g. 'dgCMatrix', 'DelayedArray')
 #' @inheritParams read_data_params
 #' @details
 #'
@@ -110,8 +86,7 @@ readExprData = function(data_list,
                         default_feat_type = NULL,
                         verbose = TRUE,
                         provenance = NULL,
-                        expression_matrix_class = c('dgCMatrix', 'HDF5Matrix', 'rhdf5'),
-                        h5_file = NULL) {
+                        expression_matrix_class = c('dgCMatrix', 'DelayedArray')) {
 
   read_expression_data(
     expr_list = data_list,
@@ -120,9 +95,7 @@ readExprData = function(data_list,
     default_feat_type = default_feat_type,
     verbose = verbose,
     provenance = provenance,
-    expression_matrix_class = expression_matrix_class,
-    h5_file = h5_file
-  )
+    expression_matrix_class = expression_matrix_class)
 
 }
 
@@ -136,8 +109,7 @@ read_expression_data = function(expr_list = NULL,
                                 default_feat_type = NULL,
                                 verbose = TRUE,
                                 provenance = NULL,
-                                expression_matrix_class = c('dgCMatrix', 'HDF5Matrix', 'rhdf5'),
-                                h5_file = NULL) {
+                                expression_matrix_class = c('dgCMatrix', 'DelayedArray')) {
 
   # import box characters
   ch = box_chars()
@@ -265,15 +237,6 @@ read_expression_data = function(expr_list = NULL,
 
   if(length(obj_list) > 0L) {
 
-    if(expression_matrix_class[1] == 'rhdf5') {
-      if(file.exists(h5_file)) {
-        wrap_txt("h5_file already exists, contents will be overwritten")
-        file.remove(h5_file)}
-
-      rhdf5::h5createFile(h5_file)
-      rhdf5::h5createGroup(h5_file,"expression")
-    }
-
     return_list = lapply(seq_along(obj_list), function(obj_i) {
 
       if(inherits(obj_list[[obj_i]], 'exprObj')) {
@@ -305,8 +268,7 @@ read_expression_data = function(expr_list = NULL,
             feat_type = feat_type,
             provenance = if(is_empty_char(provenance)) spat_unit else provenance, # assumed
             misc = NULL,
-            expression_matrix_class = expression_matrix_class,
-            h5_file = h5_file
+            expression_matrix_class = expression_matrix_class
           )
         )
       }
