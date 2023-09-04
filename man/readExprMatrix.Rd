@@ -9,8 +9,7 @@ readExprMatrix(
   cores = determine_cores(),
   transpose = FALSE,
   feat_type = "rna",
-  expression_matrix_class = c("dgCMatrix", "HDF5Matrix", "rhdf5"),
-  h5_file = NULL
+  expression_matrix_class = c("dgCMatrix", "DelayedArray")
 )
 }
 \arguments{
@@ -22,9 +21,7 @@ readExprMatrix(
 
 \item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
 
-\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'HDF5Matrix','rhdf5' description)}
-
-\item{h5_file}{path to h5 file}
+\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'DelayedArray')}
 }
 \value{
 sparse matrix

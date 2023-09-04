@@ -11,8 +11,7 @@ readExprData(
   default_feat_type = NULL,
   verbose = TRUE,
   provenance = NULL,
-  expression_matrix_class = c("dgCMatrix", "HDF5Matrix", "rhdf5"),
-  h5_file = NULL
+  expression_matrix_class = c("dgCMatrix", "DelayedArray")
 )
 }
 \arguments{
@@ -28,9 +27,7 @@ readExprData(
 
 \item{provenance}{(optional) provenance information}
 
-\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'HDF5Matrix','rhdf5' description)}
-
-\item{h5_file}{path to h5 file}
+\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'DelayedArray')}
 }
 \description{
 Read a nested list of expression data inputs in order to
