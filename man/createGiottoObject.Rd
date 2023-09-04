@@ -26,7 +26,7 @@ createGiottoObject(
   instructions = NULL,
   cores = determine_cores(),
   raw_exprs = NULL,
-  expression_matrix_class = c("dgCMatrix", "HDF5Matrix", "rhdf5"),
+  expression_matrix_class = c("dgCMatrix", "DelayedArray"),
   h5_file = NULL,
   verbose = FALSE
 )
@@ -77,7 +77,7 @@ see \code{\link{createGiottoPoints}}}
 
 \item{raw_exprs}{deprecated, use expression}
 
-\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'HDF5Matrix','rhdf5' description)}
+\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'DelayedArray')}
 
 \item{h5_file}{path to h5 file}
 

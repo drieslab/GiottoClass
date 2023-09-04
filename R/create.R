@@ -37,7 +37,7 @@ NULL
 #' @param offset_file file used to stitch fields together (optional)
 #' @param instructions list of instructions or output result from \code{\link{createGiottoInstructions}}
 #' @param cores how many cores or threads to use to read data if paths are provided
-#' @param expression_matrix_class class of expression matrix to use (e.g. 'dgCMatrix', 'HDF5Matrix','rhdf5' description)
+#' @param expression_matrix_class class of expression matrix to use (e.g. 'dgCMatrix', 'DelayedArray')
 #' @param h5_file path to h5 file
 #' @param verbose be verbose when building Giotto object
 #' @return giotto object
@@ -99,7 +99,7 @@ createGiottoObject = function(expression,
                               instructions = NULL,
                               cores = determine_cores(),
                               raw_exprs = NULL,
-                              expression_matrix_class = c('dgCMatrix', 'HDF5Matrix','rhdf5'),
+                              expression_matrix_class = c('dgCMatrix', 'DelayedArray'),
                               h5_file = NULL,
                               verbose = FALSE) {
 
@@ -196,6 +196,18 @@ createGiottoObject = function(expression,
                                    default_feat_type = expression_feat,
                                    verbose = debug_msg,
                                    expression_matrix_class = expression_matrix_class)
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    ## evaluate if h5_file exists
+    if(!is.null(h5_file)) {
+      if(file.exists(h5_file)) {
+        wrap_msg("'", h5_file, "'", 
+                 " file already exists and will be replaced", sep = "")
+        file.remove(h5_file)
+      } else {
+        wrap_msg("Initializing file ", "'", h5_file, "'", sep = "")
+      }
+    }
+    
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
     gobject = setExpression(gobject = gobject,
                             x = expression_data,
