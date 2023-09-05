@@ -21,7 +21,11 @@ gpoints = GiottoData::loadSubObjectMini('giottoPoints')
 ### TESTS FOR GOBJECT FUNCTIONALITY ####
 ## ------------------------------------------------------------------------ ##
 
-test = giotto()
+options('giotto.use_conda' = FALSE)
+# Gobject can be generated without conda env, but will send warning
+suppressWarnings({
+  test = giotto()
+})
 
 test_that('Gobject can be generated', {
   expect_s4_class(test, 'giotto')

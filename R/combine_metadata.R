@@ -56,7 +56,8 @@ combineMetadata = function(gobject,
   cell_ID = NULL
 
   if(!is.null(spatial_locs)) {
-    metadata = cbind(metadata, spatial_locs[, cell_ID := NULL])
+    # metadata = cbind(metadata, spatial_locs[, cell_ID := NULL])
+    metadata = data.table::merge.data.table(metadata, spatial_locs, by = 'cell_ID')
   }
 
 
@@ -88,11 +89,15 @@ combineMetadata = function(gobject,
                                          output = 'data.table',
                                          copy_obj = TRUE)
 
-      temp_spat[, 'cell_ID' := NULL]
+      # temp_spat[, 'cell_ID' := NULL]
 
       result_list[[spatenr]] = temp_spat
     }
-    final_meta = do.call('cbind', c(list(metadata), result_list))
+    # final_meta = do.call('cbind', c(list(metadata), result_list))
+    final_meta = Reduce(
+      function(x, y) data.table::merge.data.table(x, y, by = 'cell_ID'),
+      c(list(metadata), result_list)
+    )
 
     duplicates = sum(duplicated(colnames(final_meta)))
     if(duplicates > 0) cat('Some column names are not unique.
