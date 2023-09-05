@@ -1359,6 +1359,11 @@ getExpression = function(gobject,
 # **Controls expression slot nesting and structure**
 #' @name get_expression_values
 #' @title get_expression_values
+#' @inheritParams data_access_params
+#' @param values expression values to extract (e.g. "raw", "normalized", "scaled")
+#' @param output what object type to retrieve the expression as. Currently either
+#' 'matrix' for the matrix object contained in the exprObj or 'exprObj' (default) for
+#' the exprObj itself are allowed.
 #' @export
 get_expression_values = function(gobject,
                                  spat_unit = NULL,
