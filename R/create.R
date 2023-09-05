@@ -1718,7 +1718,7 @@ createGiottoPoints = function(x,
                                            spatVector = spatvec,
                                            unique_IDs = unique_IDs)
 
-  } else if(inherits(x, 'spatVector')) {
+  } else if(inherits(x, 'SpatVector')) {
 
     g_points = create_giotto_points_object(feat_type = feat_type,
                                            spatVector = x,
