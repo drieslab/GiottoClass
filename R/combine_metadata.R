@@ -517,8 +517,7 @@ combineFeatureOverlapData = function(gobject,
 #' @param feat_type feature type
 #' @param spat_network spatial network
 #' @param metadata_column metadata column to use
-#' @param name descriptve name for the calculated proportions
-#' @param metadata_cols annotation columns found in \code{pDataDT(gobject)}
+#' @param name descriptive name for the calculated proportions
 #' @param return_gobject return giotto object
 #' @return giotto object (default) or enrichment object if return_gobject = FALSE
 #' @export
