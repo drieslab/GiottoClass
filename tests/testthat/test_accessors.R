@@ -13,7 +13,7 @@ nn = GiottoData::loadSubObjectMini('nnNetObj')
 gpoly = GiottoData::loadSubObjectMini('giottoPolygon')
 gpoints = GiottoData::loadSubObjectMini('giottoPoints')
 
-# Ingore internal usage of deprecated accessors
+# Ignore internal usage of deprecated accessors
 lifecycle_opt = getOption('lifecycle_verbosity')
 options('lifecycle_verbosity' = 'quiet')
 

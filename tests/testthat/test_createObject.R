@@ -14,6 +14,10 @@ gpoly = GiottoData::loadSubObjectMini('giottoPolygon')
 gpoints = GiottoData::loadSubObjectMini('giottoPoints')
 
 
+# Ignore internal usage of deprecated accessors
+lifecycle_opt = getOption('lifecycle_verbosity')
+options('lifecycle_verbosity' = 'quiet')
+
 
 #  TEST SUBOBJECT CREATION ####
 ## ------------------------------------------------------------------------ ##
@@ -60,6 +64,7 @@ dgC = ex[]
 ex_IDs = spatIDs(ex)
 
 test_that('exprObj is created from array', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   exprObj = create_expr_obj(exprMat = a)
   expect_no_error(validObject(exprObj))
   expect_s4_class(exprObj, 'exprObj')
@@ -67,6 +72,7 @@ test_that('exprObj is created from array', {
 })
 
 test_that('exprObj is created from matrix', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   exprObj = create_expr_obj(exprMat = m)
   expect_no_error(validObject(exprObj))
   expect_s4_class(exprObj, 'exprObj')
@@ -74,6 +80,7 @@ test_that('exprObj is created from matrix', {
 })
 
 test_that('exprObj is created from dgCMatrix', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   exprObj = create_expr_obj(exprMat = dgC)
   expect_no_error(validObject(exprObj))
   expect_s4_class(exprObj, 'exprObj')
@@ -188,6 +195,7 @@ test_that('Read returns nnNetObj list directly', {
 
 
 test_that('Depth 1 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readNearestNetData(list(ig, ig))
   expect_true(all(sapply(read_list, featType) == 'rna'))
   expect_true(all(sapply(read_list, spatUnit) == 'cell'))
@@ -197,6 +205,7 @@ test_that('Depth 1 works', {
 
 
 test_that('Depth 2 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readNearestNetData(list(test_feat = list(ig,ig),
                                       list(test = ig)))
   expect_identical(sapply(read_list, featType), c('test_feat', 'test_feat', 'feat_2'))
@@ -206,6 +215,7 @@ test_that('Depth 2 works', {
 })
 
 test_that('Depth 3 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readNearestNetData(list(test_unit = list(test_feat = list(a = ig, ig),
                                                        list(ig)),
                                       list(list(b = ig))))
@@ -216,6 +226,7 @@ test_that('Depth 3 works', {
 })
 
 test_that('Depth 4 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readNearestNetData(list(test_unit = list(test_feat = list(list(a = ig),
                                                                         test_meth2 = list(x = ig)),
                                                        list(test_meth = list(ig))),
@@ -252,6 +263,7 @@ test_that('Read returns dimObj list directly', {
 
 
 test_that('Depth 1 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readDimReducData(list(drm, drm))
   expect_true(all(sapply(read_list, featType) == 'rna'))
   expect_true(all(sapply(read_list, spatUnit) == 'cell'))
@@ -261,6 +273,7 @@ test_that('Depth 1 works', {
 
 
 test_that('Depth 2 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readDimReducData(list(test_feat = list(drm,drm),
                                     list(test = drm)))
   expect_identical(sapply(read_list, featType), c('test_feat', 'test_feat', 'feat_2'))
@@ -270,6 +283,7 @@ test_that('Depth 2 works', {
 })
 
 test_that('Depth 3 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readDimReducData(list(test_unit = list(test_feat = list(a = drm, drm),
                                                      list(drm)),
                                     list(list(b = drm))))
@@ -280,6 +294,7 @@ test_that('Depth 3 works', {
 })
 
 test_that('Depth 4 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readDimReducData(list(test_unit = list(test_feat = list(list(a = drm),
                                                                       test_meth2 = list(x = drm)),
                                                      list(test_meth = list(drm))),
@@ -309,6 +324,7 @@ test_that('Read returns spatEnrObj list directly', {
 
 
 test_that('Depth 1 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readSpatEnrichData(list(enrDT, enrDT))
   expect_true(all(sapply(read_list, featType) == 'rna'))
   expect_true(all(sapply(read_list, spatUnit) == 'cell'))
@@ -318,6 +334,7 @@ test_that('Depth 1 works', {
 
 
 test_that('Depth 2 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readSpatEnrichData(list(test_feat = list(enrDT,enrDT),
                                       list(test = enrDT)))
   expect_identical(sapply(read_list, featType), c('test_feat', 'test_feat', 'feat_2'))
@@ -327,6 +344,7 @@ test_that('Depth 2 works', {
 })
 
 test_that('Depth 3 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readSpatEnrichData(list(test_unit = list(test_feat = list(a = enrDT, enrDT),
                                                        list(enrDT)),
                                       list(list(b = enrDT))))
@@ -338,6 +356,7 @@ test_that('Depth 3 works', {
 
 
 test_that('Depth 4 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readSpatEnrichData(list(test_unit = list(test_feat = list(list(a = enrDT),
                                                                         test_meth2 = list(x = enrDT)),
                                                        list(test_meth = list(enrDT))),
@@ -369,6 +388,7 @@ test_that('Read returns spatialNetworkObj list directly', {
 
 
 test_that('Depth 1 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readSpatNetData(list(snDT, snDT))
   expect_true(all(sapply(read_list, spatUnit) == 'cell'))
   expect_identical(sapply(read_list, objName), c('sn_1', 'sn_2'))
@@ -377,6 +397,7 @@ test_that('Depth 1 works', {
 
 
 test_that('Depth 2 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readSpatNetData(list(test_unit = list(snDT,snDT),
                                    list(test = snDT)))
   expect_identical(sapply(read_list, spatUnit), c('test_unit', 'test_unit', 'unit_2'))
@@ -401,6 +422,7 @@ test_that('Read returns spatLocsObj list directly', {
 })
 
 test_that('Depth 1 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readSpatLocsData(list(slDT, slDT))
   expect_true(all(sapply(read_list, spatUnit) == 'cell'))
   expect_identical(sapply(read_list, objName), c('coord_1', 'coord_2'))
@@ -408,6 +430,7 @@ test_that('Depth 1 works', {
 
 
 test_that('Depth 2 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readSpatLocsData(list(test_unit = list(slDT,slDT),
                                     list(test = slDT)))
   expect_identical(sapply(read_list, spatUnit), c('test_unit', 'test_unit', 'unit_2'))
@@ -441,6 +464,7 @@ test_that('Read returns dimObj list directly', {
 
 
 test_that('Depth 1 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readExprData(list(exMat, exMat))
   expect_true(all(sapply(read_list, featType) == 'rna'))
   expect_true(all(sapply(read_list, spatUnit) == 'cell'))
@@ -449,6 +473,7 @@ test_that('Depth 1 works', {
 
 
 test_that('Depth 2 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readExprData(list(test_feat = list(exMat,exMat),
                                 list(test = exMat)))
   expect_identical(sapply(read_list, featType), c('test_feat', 'test_feat', 'feat_2'))
@@ -457,6 +482,7 @@ test_that('Depth 2 works', {
 })
 
 test_that('Depth 3 works', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   read_list = readExprData(list(test_unit = list(test_feat = list(a = exMat, exMat),
                                                  list(exMat)),
                                 list(list(b = exMat))))
@@ -485,4 +511,4 @@ test_that('Depth 3 works', {
 
 
 
-
+options('lifecycle_verbosity' = lifecycle_opt)
