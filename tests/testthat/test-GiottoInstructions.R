@@ -2,6 +2,12 @@
 # -------------------------------------------------------------- #
 
 # CREATE GIOTTO OBJECT FOR TESTING
+
+# no need for python env in these tests
+options('giotto.use_conda' = FALSE)
+# silence deprecated internals
+rlang::local_options(lifecycle_verbosity = "quiet")
+
 instrs = createGiottoInstructions(
   show_plot = TRUE,
   return_plot = NULL,
