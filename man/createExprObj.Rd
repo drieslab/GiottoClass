@@ -11,8 +11,7 @@ createExprObj(
   feat_type = "rna",
   provenance = NULL,
   misc = NULL,
-  expression_matrix_class = c("dgCMatrix", "HDF5Matrix", "rhdf5"),
-  h5_file = NULL
+  expression_matrix_class = c("dgCMatrix", "DelayedArray")
 )
 }
 \arguments{
@@ -27,6 +26,8 @@ createExprObj(
 \item{provenance}{origin data of expression information (if applicable)}
 
 \item{misc}{misc}
+
+\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'DelayedArray')}
 }
 \description{
 Create an S4 exprObj

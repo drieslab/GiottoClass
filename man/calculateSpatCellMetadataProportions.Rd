@@ -25,11 +25,9 @@ calculateSpatCellMetadataProportions(
 
 \item{metadata_column}{metadata column to use}
 
-\item{name}{descriptve name for the calculated proportions}
+\item{name}{descriptive name for the calculated proportions}
 
 \item{return_gobject}{return giotto object}
-
-\item{metadata_cols}{annotation columns found in \code{pDataDT(gobject)}}
 }
 \value{
 giotto object (default) or enrichment object if return_gobject = FALSE

@@ -37,16 +37,16 @@ evaluate_expr_matrix = function(inputmatrix,
                                 sparse = TRUE,
                                 cores = determine_cores(),
                                 feat_type = 'rna',
-                                expression_matrix_class = c('dgCMatrix', 'HDF5Matrix', 'rhdf5'),
-                                h5_file = NULL) {
+                                expression_matrix_class = c('dgCMatrix', 'DelayedArray')) {
 
 
   if(inherits(inputmatrix, 'character')) {
     inputmatrix = path.expand(inputmatrix)
     mymatrix = readExprMatrix(inputmatrix, cores = cores,
                               expression_matrix_class = expression_matrix_class,
-                              feat_type = feat_type,
-                              h5_file = h5_file)
+                              feat_type = feat_type)
+  } else if(expression_matrix_class[1] == 'DelayedArray') {
+    mymatrix = DelayedArray::DelayedArray(inputmatrix)
   } else if(inherits(inputmatrix, 'Matrix')) {
     mymatrix = inputmatrix
   } else if(inherits(inputmatrix, 'DelayedMatrix')) {
