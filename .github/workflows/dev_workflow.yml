@@ -19,7 +19,7 @@ jobs:
   R-CMD-check:
     name: R CMD Check
     env:
-      GITHUB_PAT: ${{ secrets.WORKFLOW_PAT }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     runs-on: ubuntu-latest
 
     steps:
