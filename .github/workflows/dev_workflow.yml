@@ -102,12 +102,6 @@ jobs:
           })
         shell: Rscript {0}
 
-      - name: Set up dependencies (coverage)
-        uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: any::covr
-          needs: coverage
-
       - name: Test coverage
         run: |
           covr::codecov(
@@ -127,14 +121,16 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo for workflow access
+        uses: actions/checkout@v3
 
-      - uses: r-lib/actions/setup-r@v2
+      - name: Set up dependencies (general)
+        uses: r-lib/actions/setup-r-dependencies@v2
+        env:
+          _R_CHECK_FORCE_SUGGESTS: false
+          _R_CHECK_RD_XREFS: false
         with:
-          use-public-rspm: true
-
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
+          dependencies: '"hard"' # do not use suggested dependencies
           extra-packages: any::lintr, local::.
           needs: lint
 
