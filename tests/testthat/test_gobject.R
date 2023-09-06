@@ -16,6 +16,10 @@ gpoints = GiottoData::loadSubObjectMini('giottoPoints')
 
 
 
+# Ingore internal usage of deprecated accessors
+lifecycle_opt = getOption('lifecycle_verbosity')
+options('lifecycle_verbosity' = 'quiet')
+
 
 
 ### TESTS FOR GOBJECT FUNCTIONALITY ####
@@ -242,5 +246,5 @@ test_that('feat_ID from feat_info is overwritten by expression', {
 
 
 
-
+options('lifecycle_verbosity' = lifecycle_opt)
 

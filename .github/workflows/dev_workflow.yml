@@ -54,10 +54,6 @@ jobs:
             }
             remotes::install_github('drieslab/GiottoData@suite_modular', build = FALSE)
           })
-
-          if (!GiottoClass::checkGiottoEnvironment()) {
-            GiottoClass::installGiottoEnvironment()
-          }
         shell: Rscript {0}
 
       - name: Run R CMD check

@@ -13,9 +13,16 @@ nn = GiottoData::loadSubObjectMini('nnNetObj')
 gpoly = GiottoData::loadSubObjectMini('giottoPolygon')
 gpoints = GiottoData::loadSubObjectMini('giottoPoints')
 
+# Ingore internal usage of deprecated accessors
+lifecycle_opt = getOption('lifecycle_verbosity')
+options('lifecycle_verbosity' = 'quiet')
 
 # create test object
-test = giotto()
+options('giotto.use_conda' = FALSE)
+# Gobject can be generated without conda env, but will send warning
+suppressWarnings({
+  test = giotto()
+})
 
 
 
@@ -552,3 +559,18 @@ test_that('Native spatLocsObj can be removed', {
 })
 
 rm(test_sl)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+options('lifecycle_verbosity' = lifecycle_opt)
