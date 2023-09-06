@@ -535,6 +535,8 @@ calculateSpatCellMetadataProportions = function(gobject,
                                                 name = 'proportion',
                                                 return_gobject = TRUE){
 
+  # DT vars
+  proptable = target_clus = source_clus = network = target = NULL
 
   if(is.null(spat_network)) stop('spat_network = NULL, you need to provide an existing spatial network')
   if(is.null(metadata_column)) stop('metadata_column = NULL, you need to provide an existing cell metadata column')
@@ -591,8 +593,8 @@ calculateSpatCellMetadataProportions = function(gobject,
 
   # data.table variables
   label = NULL
-  propensities[, label := tableres$tablelabels]
-  propensities[, proptable := as.numeric(proptable)]
+  propensities[, 'label' := tableres$tablelabels]
+  propensities[, 'proptable' := as.numeric(proptable)]
   proportions_mat = dcast.data.table(propensities, formula = 'source~label', fill = 0, value.var = 'proptable')
   data.table::setnames(x = proportions_mat, old = 'source', new = 'cell_ID')
 

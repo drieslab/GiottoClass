@@ -40,6 +40,7 @@ test_that("Instructions are created", {
 # meta_path = "./testdata/merFISH_3D_metadata.txt"
 
 # CREATE GIOTTO OBJECT FOR TESTING
+rlang::local_options(lifecycle_verbosity = "quiet")
 object <- GiottoData::loadGiottoMini('vizgen')
 
 # readGiottoInstructions
