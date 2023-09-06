@@ -8,6 +8,8 @@ require(testthat)
 ### TESTS FUNCTIONS FOR CREATING/CHANGING GIOTTO INSTRUCTIONS
 # -------------------------------------------------------------- #
 
+options('giotto.use_conda' = FALSE)
+
 instrs = createGiottoInstructions(
   #python_path = NULL,
   show_plot = TRUE,

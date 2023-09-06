@@ -552,9 +552,8 @@ test_that('Spatlocs missing spat_unit in expr and spatial_info throws error', {
 test_that('Spatlocs spatID mismatch throws error', {
   rlang::local_options(lifecycle_verbosity = "quiet")
   test_sl = setPolygonInfo(test_sl, gpoly, name = 'new')
-  # in spat_unit 'new', spatIDs have more entries (poly info) than the spatlocs
-  # which are based on the later aggregated expression information
-  expect_error(setSpatialLocations(test_sl, sl, spat_unit = 'new'),
+  # due to subset, expected that sl will have fewer IDs
+  expect_error(setSpatialLocations(test_sl, sl[1:6], spat_unit = 'new'),
                regexp = 'between spatial and')
 })
 
