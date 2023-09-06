@@ -426,6 +426,7 @@ updateGiottoObject <- function(gobject) {
 #' @slot OS_platform Operating System to run Giotto analysis on
 #' @slot join_info information about joined Giotto objects
 #' @slot multiomics multiomics integration results
+#' @slot h5_file path to h5 file
 #' @details
 #' \[\strong{expression}\] There are several ways to provide expression information:
 #'
@@ -534,7 +535,8 @@ setClass(
     offset_file = "ANY",
     OS_platform = "ANY",
     join_info = "ANY",
-    multiomics = "ANY"
+    multiomics = "ANY",
+    h5_file = "ANY"
   ),
   prototype = list(
     packed_spatial_info = NULL,
@@ -558,7 +560,8 @@ setClass(
     offset_file = NULL,
     OS_platform = NULL,
     join_info = NULL,
-    multiomics = NULL
+    multiomics = NULL,
+    h5_file = NULL
   )
 )
 
