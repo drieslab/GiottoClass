@@ -52,6 +52,7 @@ Suggests:
     HDF5Array (>= 1.18.1),
     remotes,
     rhdf5,
+    rlang,
     RTriangle (>= 1.6-0.10),
     S4Vectors,
     scattermore,

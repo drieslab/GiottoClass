@@ -1,5 +1,357 @@
 
-require(testthat)
+
+# silence deprecated internal functions
+rlang::local_options(lifecycle_verbosity = "quiet")
+# Gobject can be generated without conda env, but will send warning
+options('giotto.use_conda' = FALSE)
+
+# create test object
+suppressWarnings({
+  giotto_object = giotto()
+})
+
+
+
+
+# GETTERS ####
+
+## missing cases ####
+
+test_that('Not found exprObj returns error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_error(
+        getExpression(giotto_object, spat_unit = 'none',
+                      feat_type = 'none', values = 'raw')
+    )
+})
+
+test_that('Not found CellMetadata returns error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_error(
+        getCellMetadata(giotto_object, spat_unit = 'none',
+                        feat_type = 'none', values = 'raw')
+    )
+})
+
+test_that('Not found DimReduction returns error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_error(
+        getDimReduction(giotto_object, spat_unit = 'none',
+                        feat_type = 'none', values = 'raw')
+    )
+})
+
+test_that('Not found FeatureInfo returns error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_error(
+        getFeatureInfo(giotto_object, spat_unit = 'none',
+                       feat_type = 'none', values = 'raw')
+    )
+})
+
+test_that('Not found FeatureMetadata returns error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_error(
+        getFeatureMetadata(giotto_object, spat_unit = 'none',
+                           feat_type = 'none', values = 'raw')
+    )
+})
+
+test_that('Not found GiottoImage returns error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_error(
+        getGiottoImage(giotto_object, spat_unit = 'none',
+                       feat_type = 'none', values = 'raw')
+    )
+})
+
+test_that('Not found Multiomics returns error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_error(
+        getMultiomics(giotto_object, spat_unit = 'none',
+                      feat_type = 'none', values = 'raw')
+    )
+})
+
+test_that('Not found NearestNetwork returns error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_error(
+        getNearestNetwork(giotto_object, spat_unit = 'none',
+                          feat_type = 'none', values = 'raw')
+    )
+})
+
+test_that('Not found PolygonInfo returns error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_error(
+        getPolygonInfo(giotto_object, spat_unit = 'none',
+                       feat_type = 'none', values = 'raw')
+    )
+})
+
+test_that('Not found SpatialEnrichment returns error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_error(
+        getSpatialEnrichment(giotto_object, spat_unit = 'none',
+                             feat_type = 'none', values = 'raw')
+    )
+})
+
+test_that('Not found SpatialGrid returns error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_error(
+        getSpatialGrid(giotto_object, spat_unit = 'none',
+                       feat_type = 'none', values = 'raw')
+    )
+})
+
+test_that('Not found SpatialLocations returns error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_error(
+        getSpatialLocations(giotto_object, spat_unit = 'none',
+                            feat_type = 'none', values = 'raw')
+    )
+})
+
+test_that('Not found SpatialNetwork returns error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_error(
+        getSpatialNetwork(giotto_object, spat_unit = 'none',
+                          feat_type = 'none', values = 'raw')
+    )
+})
+
+## expect information ####
+
+### download pre-processed Giotto object
+giotto_object = GiottoData::loadGiottoMini('vizgen')
+
+test_that('Finds exprObj', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getExpression(giotto_object), 'exprObj')
+})
+
+test_that('Finds CellMetadata', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getCellMetadata(giotto_object), 'cellMetaObj')
+})
+
+test_that('Finds DimReduction', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getDimReduction(giotto_object,
+                                 spat_unit = 'aggregate',
+                                 feat_type = 'rna'),
+                 'dimObj')
+})
+
+test_that('Finds FeatureInfo', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getFeatureInfo(giotto_object), 'SpatVector')
+})
+
+test_that('Finds FeatureMetadata', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getFeatureMetadata(giotto_object), 'featMetaObj')
+})
+
+test_that('Finds NearestNetwork', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getNearestNetwork(giotto_object,
+                                   spat_unit = 'aggregate',
+                                   feat_type = 'rna'),
+                 'nnNetObj')
+})
+
+test_that('Finds PolygonInfo', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getPolygonInfo(giotto_object), 'SpatVector')
+})
+
+test_that('Finds SpatialEnrichment', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getSpatialEnrichment(giotto_object,
+                                      spat_unit = 'aggregate',
+                                      feat_type = 'rna',
+                                      name = 'cluster_metagene'),
+                 'spatEnrObj')
+})
+
+test_that('Finds SpatialLocations', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getSpatialLocations(giotto_object), 'spatLocsObj')
+})
+
+test_that('Finds SpatialNetwork', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getSpatialNetwork(giotto_object,
+                                   spat_unit = 'aggregate'),
+                 'spatialNetworkObj')
+})
+
+
+# SETTERS ####
+
+### create empty test object
+suppressWarnings({
+  giotto_empty = giotto()
+})
+
+
+x = getExpression(giotto_object,
+                  spat_unit = 'z0',
+                  feat_type = 'rna')
+giotto_empty = setExpression(giotto_empty,
+                             spat_unit = 'z0',
+                             feat_type = 'rna',
+                             x = x)
+
+x = getExpression(giotto_object,
+                  spat_unit = 'z1',
+                  feat_type = 'rna')
+giotto_empty = setExpression(giotto_empty,
+                             spat_unit = 'z1',
+                             feat_type = 'rna',
+                             x = x)
+
+x = getExpression(giotto_object,
+                  spat_unit = 'aggregate',
+                  feat_type = 'rna')
+giotto_empty = setExpression(giotto_empty,
+                             spat_unit = 'aggregate',
+                             feat_type = 'rna',
+                             x = x)
+
+test_that('Sets exprObj', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getExpression(giotto_empty), 'exprObj')
+})
+
+x = getCellMetadata(giotto_object)
+giotto_empty = setCellMetadata(giotto_empty,
+                               x = x)
+
+test_that('Sets CellMetadata', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getCellMetadata(giotto_empty), 'cellMetaObj')
+})
+
+x = getDimReduction(giotto_object,
+                    spat_unit = 'aggregate',
+                    feat_type = 'rna')
+giotto_empty = setDimReduction(giotto_empty,
+                               spat_unit = 'aggregate',
+                               feat_type = 'rna',
+                               x = x)
+
+test_that('Sets DimReduction', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getDimReduction(giotto_empty,
+                                 spat_unit = 'aggregate',
+                                 feat_type = 'rna'),
+                 'dimObj')
+})
+
+x = getFeatureInfo(giotto_object)
+giotto_empty = setFeatureInfo(giotto_empty,
+                              x = createGiottoPoints(x))
+
+test_that('Sets FeatureInfo', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getFeatureInfo(giotto_empty), 'SpatVector')
+})
+
+x = getFeatureMetadata(giotto_object)
+giotto_empty = setFeatureMetadata(giotto_empty,
+                                  x = x)
+
+test_that('Sets FeatureMetadata', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getFeatureMetadata(giotto_empty), 'featMetaObj')
+})
+
+x = getNearestNetwork(giotto_object,
+                      spat_unit = 'aggregate',
+                      feat_type = 'rna')
+giotto_empty = setNearestNetwork(giotto_empty,
+                                 spat_unit = 'aggregate',
+                                 feat_type = 'rna',
+                                 x = x)
+
+test_that('Sets NearestNetwork', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getNearestNetwork(giotto_empty,
+                                   spat_unit = 'aggregate',
+                                   feat_type = 'rna'),
+                 'nnNetObj')
+})
+
+x = getPolygonInfo(giotto_object)
+x_polygon = GiottoClass:::create_giotto_polygon_object(name = 'z0',
+                                                       spatVector = x)
+giotto_empty = setPolygonInfo(giotto_empty,
+                              x = x_polygon,
+                              name = 'z0')
+
+test_that('Sets PolygonInfo', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getPolygonInfo(giotto_empty), 'SpatVector')
+})
+
+x = getSpatialLocations(giotto_object)
+giotto_empty = setSpatialLocations(giotto_empty,
+                                   x = x)
+
+x = getSpatialLocations(giotto_object,
+                        spat_unit = 'aggregate')
+giotto_empty = setSpatialLocations(giotto_empty,
+                                   spat_unit = 'aggregate',
+                                   x = x)
+
+test_that('Sets SpatialLocations', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getSpatialLocations(giotto_empty), 'spatLocsObj')
+})
+
+x = getSpatialEnrichment(giotto_object,
+                         spat_unit = 'aggregate',
+                         feat_type = 'rna',
+                         name = 'cluster_metagene')
+giotto_empty = setSpatialEnrichment(giotto_empty,
+                                    spat_unit = 'aggregate',
+                                    feat_type = 'rna',
+                                    name = 'cluster_metagene',
+                                    x = x)
+
+test_that('Sets SpatialEnrichment', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getSpatialEnrichment(giotto_empty,
+                                      spat_unit = 'aggregate',
+                                      feat_type = 'rna',
+                                      name = 'cluster_metagene'),
+                 'spatEnrObj')
+})
+
+x = getSpatialNetwork(giotto_object,
+                      spat_unit = 'aggregate')
+giotto_empty = setSpatialNetwork(giotto_empty,
+                                 spat_unit = 'aggregate',
+                                 x = x)
+
+test_that('Sets SpatialNetwork', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+    expect_class(getSpatialNetwork(giotto_empty,
+                                   spat_unit = 'aggregate'),
+                 'spatialNetworkObj')
+})
+
+
+
+#### setting: expression ####
+
+
+suppressWarnings(
+  test <- giotto()
+)
 
 # Load subobjects
 ex = GiottoData::loadSubObjectMini('exprObj')
@@ -14,39 +366,6 @@ gpoly = GiottoData::loadSubObjectMini('giottoPolygon')
 gpoints = GiottoData::loadSubObjectMini('giottoPoints')
 
 
-# create test object
-test = giotto()
-
-
-
-
-ex1 = ex2 = ex
-objName(ex1) = 'data1'
-featType(ex1) = 'protein'
-objName(ex2) = 'data2'
-featType(ex2) = 'feat3'
-spatUnit(ex2) = 'nucleus'
-
-
-
-# GETTERS ####
-
-## missing cases ####
-
-test_that('Not found exprObj returns error', {
-  expect_error(
-    getExpression(test, spat_unit = 'none', feat_type = 'none', values = 'raw')
-  )
-})
-
-
-
-
-# SETTERS ####
-## ------------------------------------------------------------------------ ##
-
-#### setting: expression ####
-
 ex1 = ex2 = ex
 objName(ex1) = 'data1'
 featType(ex1) = 'protein'
@@ -56,7 +375,7 @@ spatUnit(ex2) = 'nucleus'
 
 
 test_that('Single: exprObj can be set', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_ex = setExpression(test, ex)
 
   avail_ex = list_expression(test_ex)
@@ -69,7 +388,7 @@ test_that('Single: exprObj can be set', {
 })
 
 test_that('List: exprObj can be set', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_ex = setExpression(test, list(ex, ex1, ex2))
 
   avail_ex = list_expression(test_ex)
@@ -82,6 +401,7 @@ test_that('List: exprObj can be set', {
 })
 
 test_that('Non-native throws error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_ex = expect_error(setExpression(test, ex[]), regexp = 'Only exprObj')
 })
 
@@ -110,7 +430,7 @@ spatUnit(sl2) = 'nucleus'
 
 
 test_that('Single: spatLocsObj can be set', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_ex = setSpatialLocations(test_ex, sl)
 
   avail_ex = list_spatial_locations(test_ex)
@@ -122,6 +442,7 @@ test_that('Single: spatLocsObj can be set', {
 })
 
 test_that('List: spatLocsObj can be set', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   # setup
   test_ex = setExpression(test_ex, ex2)
 
@@ -137,6 +458,7 @@ test_that('List: spatLocsObj can be set', {
 })
 
 test_that('Non-native throws error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   expect_error(setSpatialLocations(test_ex, sl[]), regexp = 'Only spatLocsObj')
 })
 
@@ -153,6 +475,7 @@ spatUnit(sl2) = 'nucleus'
 spatUnit(sn2) = 'nucleus'
 
 test_that('Spatial network requires matching spatial locations', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   expect_error(setSpatialNetwork(test_ex, sn2), regexp = 'Add spatial location') # none
   test_ex = setSpatialLocations(test_ex, sl)
   expect_error(setSpatialNetwork(test_ex, sn2), regexp = 'Matching') # no match (nucleus vs aggregate)
@@ -163,6 +486,7 @@ test_that('Spatial network requires matching spatial locations', {
 })
 
 test_that('Single: spatialNetworkObj can be set', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_ex = setSpatialLocations(test_ex, sl)
   test_ex = setSpatialNetwork(test_ex, sn)
 
@@ -175,6 +499,7 @@ test_that('Single: spatialNetworkObj can be set', {
 })
 
 test_that('List: spatialNetworkObj can be set', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   # setup
   test_ex = setSpatialLocations(test_ex, sl)
   test_ex = setExpression(test_ex, ex2)
@@ -192,6 +517,7 @@ test_that('List: spatialNetworkObj can be set', {
 })
 
 test_that('Non-native throws error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_ex = setSpatialLocations(test_ex, sl)
   expect_error(setSpatialNetwork(test_ex, sn[]), regexp = 'Only spatialNetworkObj')
 })
@@ -209,6 +535,7 @@ spatUnit(sl2) = 'nucleus'
 spatUnit(enr2) = 'nucleus'
 
 test_that('Spatial enrichment requires matching spatial locations', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   expect_error(setSpatialEnrichment(test_ex, enr2), regexp = 'Add spatial location') # none
   test_ex = setSpatialLocations(test_ex, sl)
   expect_error(setSpatialEnrichment(test_ex, enr2), regexp = 'Matching') # no match (nucleus vs aggregate)
@@ -219,6 +546,7 @@ test_that('Spatial enrichment requires matching spatial locations', {
 })
 
 test_that('Single: spatEnrObj can be set', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_ex = setSpatialLocations(test_ex, sl)
   test_ex = setSpatialEnrichment(test_ex, enr)
 
@@ -231,6 +559,7 @@ test_that('Single: spatEnrObj can be set', {
 })
 
 test_that('List: spatEnrObj can be set', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   # setup
   test_ex = setSpatialLocations(test_ex, sl)
   test_ex = setExpression(test_ex, ex2)
@@ -248,6 +577,7 @@ test_that('List: spatEnrObj can be set', {
 })
 
 test_that('Non-native throws error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_ex = setSpatialLocations(test_ex, sl)
   expect_error(setSpatialEnrichment(test_ex, enr[]), regexp = 'Only spatEnrObj')
 })
@@ -265,6 +595,7 @@ spatUnit(dr2) = 'nucleus'
 featType(dr2) = 'test_feat'
 
 test_that('Dim red requires matching expression', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   expect_error(setDimReduction(test, dr2), regexp = 'Add expression') # none
   expect_error(setDimReduction(test_ex, dr2), regexp = 'Matching') # no match (nucleus vs aggregate)
 
@@ -275,6 +606,7 @@ test_that('Dim red requires matching expression', {
 })
 
 test_that('Single: dimObj can be set', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_ex = setSpatialLocations(test_ex, sl)
   test_ex = setDimReduction(test_ex, dr)
 
@@ -287,6 +619,7 @@ test_that('Single: dimObj can be set', {
 })
 
 test_that('List: dimObj can be set', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   # setup
   featType(ex2) = 'test_feat'
   test_ex = setExpression(test_ex, ex2)
@@ -308,6 +641,7 @@ test_that('List: dimObj can be set', {
 })
 
 test_that('Non-native throws error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_ex = setSpatialLocations(test_ex, sl)
   expect_error(setDimReduction(test_ex, dr[]), regexp = 'Only dimObj')
 })
@@ -326,6 +660,7 @@ spatUnit(nn2) = 'nucleus'
 featType(nn2) = 'test_feat'
 
 test_that('Nearest neighbors requires matching dimreduction', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   expect_error(setNearestNetwork(test, nn2), regexp = 'Add dimension reduction') # none
   test_ex = setDimReduction(test_ex, dr) # no match (nucleus vs aggregate)
 
@@ -373,6 +708,7 @@ test_that('Nearest neighbors requires matching dimreduction', {
 # })
 
 test_that('Non-native throws error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_ex = setSpatialLocations(test_ex, sl)
   expect_error(setDimReduction(test_ex, nn[]), regexp = 'Only dimObj')
 })
@@ -392,7 +728,7 @@ test_that('Non-native throws error', {
 
 
 test_that('Native feature info is set directly', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_fi = expect_no_error(setFeatureInfo(test, gpoints))
 
   avail_fi = list_feature_info(test_fi)
@@ -403,7 +739,7 @@ test_that('Native feature info is set directly', {
 
 
 test_that('Native feature info is set with lists', { # issues currently happen with unnamed lists
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   # assign names by list names - this now happens through read fxns only
   # test_fi = setFeatureInfo(test, x = list(rna = gpoints,
   #                                         protein = gpoints2))
@@ -429,7 +765,7 @@ test_that('Native feature info is set with lists', { # issues currently happen w
 ## ------------------------------------------------------------------------ ##
 
 test_that('Native spatial info is set directly', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_si = expect_no_error(setPolygonInfo(test, gpoly))
 
   avail_si = list_spatial_info(test_si)
@@ -439,7 +775,7 @@ test_that('Native spatial info is set directly', {
 })
 
 test_that('Spatlocs is also set if centroids are available', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   # spat_unit (polygon_name) not explicitly set
   test_si = setPolygonInfo(test, gpoly, centroids_to_spatlocs = TRUE)
 
@@ -474,7 +810,7 @@ test_that('Spatlocs is also set if centroids are available', {
 
 
 test_that('Spatlocs setting requires expression', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   expect_error(setSpatialLocations(test, sl),
                regexp = 'Add expression')
 
@@ -485,7 +821,7 @@ test_that('Spatlocs setting requires expression', {
 # set expression first
 test_sl = setExpression(test, ex)
 test_that('Native spatlocs is set', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_sl = suppressWarnings(setSpatialLocations(test_sl, sl))
 
   avail_sl = list_spatial_locations(test_sl)
@@ -497,7 +833,7 @@ test_that('Native spatlocs is set', {
 
 
 test_that('Native spatLocsObj is set with user specified nesting', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   # add needed spat_unit in expression first
   test_sl = setExpression(test_sl, ex, spat_unit = 'new')
 
@@ -517,6 +853,7 @@ test_that('Native spatLocsObj is set with user specified nesting', {
 
 
 test_that('Spatlocs missing spat_unit in expr and spatial_info throws error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   # available spat unit in expression is only 'aggregate'
   test_sl = expect_error(setSpatialLocations(test_sl, sl, spat_unit = 'new'),
                          regexp = 'No expression')
@@ -524,10 +861,10 @@ test_that('Spatlocs missing spat_unit in expr and spatial_info throws error', {
 
 
 test_that('Spatlocs spatID mismatch throws error', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_sl = setPolygonInfo(test_sl, gpoly, name = 'new')
-  # in spat_unit 'new', spatIDs have more entries (poly info) than the spatlocs
-  # which are based on the later aggregated expression information
-  expect_error(setSpatialLocations(test_sl, sl, spat_unit = 'new'),
+  # due to subset, expected that sl will have fewer IDs
+  expect_error(setSpatialLocations(test_sl, sl[1:6], spat_unit = 'new'),
                regexp = 'between spatial and')
 })
 
@@ -539,7 +876,7 @@ test_that('Spatlocs spatID mismatch throws error', {
 
 
 test_that('Native spatLocsObj can be removed', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_sl = setSpatialLocations(test_sl, sl)
 
   test_sl = setSpatialLocations(test_sl,

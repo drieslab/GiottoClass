@@ -140,6 +140,31 @@ calculate_distance_and_weight <- function(networkDT = NULL,
   return(networkDT)
 }
 
+
+
+
+#' @title get_distance
+#' @name get_distance
+#' @description estimate average distance between neighboring cells with network table as input
+#' @param networkDT networkDT
+#' @param method method
+#' @keywords internal
+get_distance <- function(networkDT,
+                         method=c("mean","median")
+){
+
+  if (method=="median"){
+    distance = stats::median(networkDT$distance)
+  }else if(method=="mean"){
+    distance = mean(networkDT$distance)
+  }
+  return(distance)
+}
+
+
+
+
+
 #' @title filter_network
 #' @name filter_network
 #' @description function to filter a spatial network
@@ -178,7 +203,10 @@ filter_network <- function(networkDT = NULL,
 #' @name compatible_spatial_network
 #' @description Function to evaluate if a spatial network is compatible
 #' with a provided expression matrix
+#' @param spatial_network spatial network to evaluate
+#' @param expression_matrix expression to compare against
 #' @keywords internal
+#' @export
 compatible_spatial_network = function(spatial_network,
                                       expression_matrix) {
 

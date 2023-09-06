@@ -1,4 +1,3 @@
-
 #' @include package_imports.R
 NULL
 
@@ -9,19 +8,19 @@ NULL
 #' @description class to allow either NULL or character
 #' @keywords internal
 #' @noRd
-setClassUnion('nullOrChar', c('NULL', 'character'))
+setClassUnion("nullOrChar", c("NULL", "character"))
 
 #' @title NULL or list class union
 #' @description class to allow either NULL or list
 #' @keywords internal
 #' @noRd
-setClassUnion('nullOrList', c('NULL', 'list'))
+setClassUnion("nullOrList", c("NULL", "list"))
 
 #' @title NULL or data.table class union
 #' @description class to allow either NULL or data.table
 #' @keywords internal
 #' @noRd
-setClassUnion('nullOrDatatable', c('NULL', 'data.table'))
+setClassUnion("nullOrDatatable", c("NULL", "data.table"))
 
 
 
@@ -34,19 +33,21 @@ setClassUnion('nullOrDatatable', c('NULL', 'data.table'))
 # ** nameData Class ####
 #' @keywords internal
 #' @noRd
-setClass('nameData',
-         contains = 'VIRTUAL',
-         slots = list(name = 'character'),
-         prototype = prototype(name = NA_character_))
+setClass("nameData",
+  contains = "VIRTUAL",
+  slots = list(name = "character"),
+  prototype = prototype(name = NA_character_)
+)
 
 # ** exprData Class ####
 #' Basic class for classes with expression information
 #' @keywords internal
 #' @noRd
-setClass('exprData',
-         contains = 'VIRTUAL',
-         slots = list(exprMat = 'ANY'),
-         prototype = prototype(exprMat = NULL))
+setClass("exprData",
+  contains = "VIRTUAL",
+  slots = list(exprMat = "ANY"),
+  prototype = prototype(exprMat = NULL)
+)
 
 
 
@@ -59,10 +60,11 @@ setClass('exprData',
 #' retreival and setting.
 #' @keywords internal
 #' @noRd
-setClass('coordDataDT',
-         contains = 'VIRTUAL',
-         slots = list(coordinates = 'data.table'),
-         prototype = prototype(coordinates = data.table::data.table()))
+setClass("coordDataDT",
+  contains = "VIRTUAL",
+  slots = list(coordinates = "data.table"),
+  prototype = prototype(coordinates = data.table::data.table())
+)
 
 
 
@@ -81,13 +83,16 @@ setClass('coordDataDT',
 #' with some basic generic operators for data retrieval and setting
 #' @keywords internal
 #' @noRd
-setClass('metaData',
-         contains = 'VIRTUAL',
-         slots = list(metaDT = 'data.table',
-                      col_desc = 'character'),
-         prototype = methods::prototype(
-           metaDT = data.table::data.table(),
-           col_desc = NA_character_)
+setClass("metaData",
+  contains = "VIRTUAL",
+  slots = list(
+    metaDT = "data.table",
+    col_desc = "character"
+  ),
+  prototype = methods::prototype(
+    metaDT = data.table::data.table(),
+    col_desc = NA_character_
+  )
 )
 
 
@@ -98,12 +103,17 @@ setClass('metaData',
 #' enrData
 #' @keywords internal
 #' @noRd
-setClass('enrData',
-         contains = 'VIRTUAL',
-         slots = list(method = 'character',
-                      enrichDT = 'nullOrDatatable'),
-         prototype = methods::prototype(method = NA_character_,
-                                        enrichDT = NULL))
+setClass("enrData",
+  contains = "VIRTUAL",
+  slots = list(
+    method = "character",
+    enrichDT = "nullOrDatatable"
+  ),
+  prototype = methods::prototype(
+    method = NA_character_,
+    enrichDT = NULL
+  )
+)
 
 
 
@@ -112,31 +122,41 @@ setClass('enrData',
 # ** nnData ####
 #' @keywords internal
 #' @noRd
-setClass('nnData',
-         contains = 'VIRTUAL',
-         slots = list(nn_type = 'character',
-                      igraph = 'ANY'),
-         prototype = methods::prototype(nn_type = NA_character_,
-                                        igraph = NULL))
+setClass("nnData",
+  contains = "VIRTUAL",
+  slots = list(
+    nn_type = "character",
+    igraph = "ANY"
+  ),
+  prototype = methods::prototype(
+    nn_type = NA_character_,
+    igraph = NULL
+  )
+)
 
 
 # ** spatNetData ####
 #' @keywords internal
 #' @noRd
-setClass('spatNetData',
-         contains = 'VIRTUAL',
-         slots = list(method = 'character',
-                      parameters = 'ANY',
-                      outputObj = 'ANY',
-                      networkDT = 'nullOrDatatable',
-                      networkDT_before_filter = 'nullOrDatatable',
-                      cellShapeObj = 'ANY'),
-         prototype = methods::prototype(method = NA_character_,
-                                        parameters = NULL,
-                                        outputObj = NULL,
-                                        networkDT = NULL,
-                                        networkDT_before_filter = NULL,
-                                        cellShapeObj = NULL))
+setClass("spatNetData",
+  contains = "VIRTUAL",
+  slots = list(
+    method = "character",
+    parameters = "ANY",
+    outputObj = "ANY",
+    networkDT = "nullOrDatatable",
+    networkDT_before_filter = "nullOrDatatable",
+    cellShapeObj = "ANY"
+  ),
+  prototype = methods::prototype(
+    method = NA_character_,
+    parameters = NULL,
+    outputObj = NULL,
+    networkDT = NULL,
+    networkDT_before_filter = NULL,
+    cellShapeObj = NULL
+  )
+)
 
 
 
@@ -144,14 +164,19 @@ setClass('spatNetData',
 # ** spatGridData ####
 #' @keywords internal
 #' @noRd
-setClass('spatGridData',
-         contains = 'VIRTUAL',
-         slots = list(method = 'character',
-                      parameters = 'ANY',
-                      gridDT = 'nullOrDatatable'),
-         prototype = prototype(method = NA_character_,
-                               parameters = NULL,
-                               gridDT = NULL))
+setClass("spatGridData",
+  contains = "VIRTUAL",
+  slots = list(
+    method = "character",
+    parameters = "ANY",
+    gridDT = "nullOrDatatable"
+  ),
+  prototype = prototype(
+    method = NA_character_,
+    parameters = NULL,
+    gridDT = NULL
+  )
+)
 
 
 
@@ -168,10 +193,11 @@ setClass('spatGridData',
 #' z layers that were used in its generation.
 #' @keywords internal
 #' @noRd
-setClass('provData',
-         contains = 'VIRTUAL',
-         slots = list(provenance = 'ANY'),
-         prototype = prototype(provenance = NULL))
+setClass("provData",
+  contains = "VIRTUAL",
+  slots = list(provenance = "ANY"),
+  prototype = prototype(provenance = NULL)
+)
 
 
 
@@ -185,10 +211,11 @@ setClass('provData',
 #' there is a nesting structure that first nests by spatial unit.
 #' @keywords internal
 #' @noRd
-setClass('spatData',
-         contains = c('provData', 'VIRTUAL'),
-         slots = list(spat_unit = 'character'), # not allowed to be NULL
-         prototype = prototype(spat_unit = NA_character_))
+setClass("spatData",
+  contains = c("provData", "VIRTUAL"),
+  slots = list(spat_unit = "character"), # not allowed to be NULL
+  prototype = prototype(spat_unit = NA_character_)
+)
 
 
 
@@ -204,10 +231,11 @@ setClass('spatData',
 #' and then by feature type
 #' @keywords internal
 #' @noRd
-setClass('featData',
-         contains = 'VIRTUAL',
-         slots = list(feat_type = 'character'), # not allowed to be NULL
-         prototype = prototype(feat_type = NA_character_))
+setClass("featData",
+  contains = "VIRTUAL",
+  slots = list(feat_type = "character"), # not allowed to be NULL
+  prototype = prototype(feat_type = NA_character_)
+)
 
 
 
@@ -218,10 +246,11 @@ setClass('featData',
 #' Classes (such as dimObj) that can hold information from multiple types of methods
 #' use the misc slot to hold additional information specific to each method.
 #' Information may be stored within as S3 structures.
-setClass('miscData',
-         contains = 'VIRTUAL',
-         slots = list(misc = 'ANY'),
-         prototype = prototype(misc = NULL))
+setClass("miscData",
+  contains = "VIRTUAL",
+  slots = list(misc = "ANY"),
+  prototype = prototype(misc = NULL)
+)
 
 
 
@@ -236,8 +265,9 @@ setClass('miscData',
 #' Superclass for classes that contain both spatial and feature data
 #' @keywords internal
 #' @noRd
-setClass('spatFeatData',
-         contains = c('spatData', 'featData', 'VIRTUAL'))
+setClass("spatFeatData",
+  contains = c("spatData", "featData", "VIRTUAL")
+)
 
 
 
@@ -342,25 +372,24 @@ setClass('spatFeatData',
 #' }
 #' @examples
 #' \dontrun{
-#' gobject = updateGiottoObject(gobject)
+#' gobject <- updateGiottoObject(gobject)
 #' }
 #' @export
-updateGiottoObject = function(gobject) {
-
-  if(!inherits(gobject, 'giotto')) {
-    stop(wrap_txt('This function is intended for updating giotto objects'))
+updateGiottoObject <- function(gobject) {
+  if (!inherits(gobject, "giotto")) {
+    stop(wrap_txt("This function is intended for updating giotto objects"))
   }
 
   # 3.2.0 release adds multiomics slot
-  if(is.null(attr(gobject, 'multiomics'))) {
-    attr(gobject, 'multiomics') = NA
-    gobject@multiomics = NULL
+  if (is.null(attr(gobject, "multiomics"))) {
+    attr(gobject, "multiomics") <- NA
+    gobject@multiomics <- NULL
   }
 
   # 3.3.1 release adds h5_file slot
-  if(is.null(attr(gobject, 'h5_file'))) {
-    attr(gobject, 'h5_file') = NA
-    gobject@h5_file = NULL
+  if (is.null(attr(gobject, "h5_file"))) {
+    attr(gobject, "h5_file") <- NA
+    gobject@h5_file <- NULL
   }
 
   return(gobject)
@@ -397,6 +426,7 @@ updateGiottoObject = function(gobject) {
 #' @slot OS_platform Operating System to run Giotto analysis on
 #' @slot join_info information about joined Giotto objects
 #' @slot multiomics multiomics integration results
+#' @slot h5_file path to h5 file
 #' @details
 #' \[\strong{expression}\] There are several ways to provide expression information:
 #'
@@ -420,7 +450,7 @@ giotto <- setClass(
     spatial_network = "ANY",
     spatial_grid = "ANY",
     spatial_enrichment = "ANY",
-    dimension_reduction = 'ANY',
+    dimension_reduction = "ANY",
     nn_network = "ANY",
     images = "ANY",
     largeImages = "ANY",
@@ -431,9 +461,7 @@ giotto <- setClass(
     join_info = "ANY",
     multiomics = "ANY",
     h5_file = "ANY"
-
   ),
-
   prototype = list(
     expression = NULL,
     expression_feat = NULL,
@@ -488,7 +516,6 @@ setClass(
   slots = c(
     packed_spatial_info = "ANY",
     packed_feat_info = "ANY",
-
     expression = "nullOrList",
     expression_feat = "ANY",
     spatial_locs = "ANY",
@@ -499,7 +526,7 @@ setClass(
     spatial_network = "ANY",
     spatial_grid = "ANY",
     spatial_enrichment = "ANY",
-    dimension_reduction = 'ANY',
+    dimension_reduction = "ANY",
     nn_network = "ANY",
     images = "ANY",
     largeImages = "ANY",
@@ -508,14 +535,12 @@ setClass(
     offset_file = "ANY",
     OS_platform = "ANY",
     join_info = "ANY",
-    multiomics = "ANY"
-
+    multiomics = "ANY",
+    h5_file = "ANY"
   ),
-
   prototype = list(
     packed_spatial_info = NULL,
     packed_feat_info = NULL,
-
     expression = NULL,
     expression_feat = NULL,
     spatial_locs = NULL,
@@ -535,7 +560,8 @@ setClass(
     offset_file = NULL,
     OS_platform = NULL,
     join_info = NULL,
-    multiomics = NULL
+    multiomics = NULL,
+    h5_file = NULL
   )
 )
 
@@ -557,21 +583,23 @@ setClass(
 #' @description Check function for S4 exprObj
 #' @param object S4 exprObj to check
 #' @keywords internal
-check_expr_obj = function(object) {
-  errors = character()
+check_expr_obj <- function(object) {
+  errors <- character()
 
   # Check for expr info
-  if(is.null(slot(object, 'exprMat'))) {
-    obj_info = paste0('exprObj ',
-                      'spat_unit "', slot(object, 'spat_unit'), '", ',
-                      'feat_type "', slot(object, 'feat_type'), '", ',
-                      'name "', slot(object, 'name'), '": \n')
+  if (is.null(slot(object, "exprMat"))) {
+    obj_info <- paste0(
+      "exprObj ",
+      'spat_unit "', slot(object, "spat_unit"), '", ',
+      'feat_type "', slot(object, "feat_type"), '", ',
+      'name "', slot(object, "name"), '": \n'
+    )
 
-    msg = paste0(obj_info, 'No expression information found.\n')
-    errors = c(errors, msg)
+    msg <- paste0(obj_info, "No expression information found.\n")
+    errors <- c(errors, msg)
   }
 
-  if(length(errors) == 0) TRUE else errors
+  if (length(errors) == 0) TRUE else errors
 }
 
 
@@ -588,9 +616,10 @@ check_expr_obj = function(object) {
 #' @slot provenance origin data of expression information (if applicable)
 #' @slot misc misc
 #' @export
-setClass('exprObj',
-         contains = c('nameData', 'exprData', 'spatFeatData', 'miscData'),
-         validity = check_expr_obj)
+setClass("exprObj",
+  contains = c("nameData", "exprData", "spatFeatData", "miscData"),
+  validity = check_expr_obj
+)
 
 
 
@@ -613,27 +642,24 @@ setClass('exprObj',
 #' @description Function to check S4 cellMetaObj
 #' @param object S4 cellMetaObj to check
 #' @keywords internal
-check_cell_meta_obj = function(object) {
+check_cell_meta_obj <- function(object) {
+  errors <- character()
 
-  errors = character()
-
-  if(!'cell_ID' %in% colnames(object@metaDT)) {
-    msg = 'No "cell_ID" column found.'
-    errors = c(errors, msg)
+  if (!"cell_ID" %in% colnames(object@metaDT)) {
+    msg <- 'No "cell_ID" column found.'
+    errors <- c(errors, msg)
   } else {
-
-    if(!is.character(object@metaDT[['cell_ID']])) {
-      msg = '"cell_ID" column must be of class character.'
-      errors = c(errors, msg)
+    if (!is.character(object@metaDT[["cell_ID"]])) {
+      msg <- '"cell_ID" column must be of class character.'
+      errors <- c(errors, msg)
     }
 
-    if(colnames(object@metaDT)[[1]] != 'cell_ID') {
-      msg = '"cell_ID" column should be the first column.'
-      errors = c(errors, msg)
+    if (colnames(object@metaDT)[[1]] != "cell_ID") {
+      msg <- '"cell_ID" column should be the first column.'
+      errors <- c(errors, msg)
     }
-
   }
-  if(length(errors) == 0) TRUE else errors
+  if (length(errors) == 0) TRUE else errors
 }
 
 # * Definition ####
@@ -645,9 +671,10 @@ check_cell_meta_obj = function(object) {
 #' @slot feat_type feature type of aggregated expression (e.g. 'rna', 'protein')
 #' @slot provenance origin data of aggregated expression information (if applicable)
 #' @export
-setClass('cellMetaObj',
-         contains = c('metaData', 'spatFeatData'),
-         validity = check_cell_meta_obj)
+setClass("cellMetaObj",
+  contains = c("metaData", "spatFeatData"),
+  validity = check_cell_meta_obj
+)
 
 
 
@@ -660,27 +687,24 @@ setClass('cellMetaObj',
 #' @description Function to check S4 featMetaObj
 #' @param object S4 featMetaObj to check
 #' @keywords internal
-check_feat_meta_obj = function(object) {
+check_feat_meta_obj <- function(object) {
+  errors <- character()
 
-  errors = character()
-
-  if(!'feat_ID' %in% colnames(object@metaDT)) {
-    msg = 'No "feat_ID" column found.'
-    errors = c(errors, msg)
+  if (!"feat_ID" %in% colnames(object@metaDT)) {
+    msg <- 'No "feat_ID" column found.'
+    errors <- c(errors, msg)
   } else {
-
-    if(!is.character(object@metaDT[['feat_ID']])) {
-      msg = '"feat_ID" column must be of class character.'
-      errors = c(errors, msg)
+    if (!is.character(object@metaDT[["feat_ID"]])) {
+      msg <- '"feat_ID" column must be of class character.'
+      errors <- c(errors, msg)
     }
 
-    if(colnames(object@metaDT)[[1]] != 'feat_ID') {
-      msg = '"feat_ID" column should be the first column.'
-      errors = c(errors, msg)
+    if (colnames(object@metaDT)[[1]] != "feat_ID") {
+      msg <- '"feat_ID" column should be the first column.'
+      errors <- c(errors, msg)
     }
-
   }
-  if(length(errors) == 0) TRUE else errors
+  if (length(errors) == 0) TRUE else errors
 }
 
 # * Definition ####
@@ -692,9 +716,10 @@ check_feat_meta_obj = function(object) {
 #' @slot feat_type feature type of aggregated expression (e.g. 'rna', 'protein')
 #' @slot provenance origin data of aggregated expression information (if applicable)
 #' @export
-setClass('featMetaObj',
-         contains = c('metaData', 'spatFeatData'),
-         validity = check_feat_meta_obj)
+setClass("featMetaObj",
+  contains = c("metaData", "spatFeatData"),
+  validity = check_feat_meta_obj
+)
 
 
 
@@ -713,24 +738,24 @@ setClass('featMetaObj',
 #' @description check function for S4 dimObj
 #' @param object S4 dimObj to check
 #' @keywords internal
-check_dim_obj = function(object) {
-  errors = character()
-  length_reduction_method = length(object@reduction_method)
-  if(length_reduction_method > 1) {
-    msg = paste0('reduction_method is length ', length_reduction_method, '. Should be 1')
-    errors = c(errors, msg)
+check_dim_obj <- function(object) {
+  errors <- character()
+  length_reduction_method <- length(object@reduction_method)
+  if (length_reduction_method > 1) {
+    msg <- paste0("reduction_method is length ", length_reduction_method, ". Should be 1")
+    errors <- c(errors, msg)
   }
 
-  if(length_reduction_method == 0) {
-    msg = 'A reduction_method must be given'
-    errors = c(errors, msg)
+  if (length_reduction_method == 0) {
+    msg <- "A reduction_method must be given"
+    errors <- c(errors, msg)
   }
 
-  lastCols = tail(colnames(object@coordinates),2)
-  col_dims = all(grepl(pattern = 'Dim.', x = lastCols))
-  if(!isTRUE(col_dims)) {
-    msg = 'Dim reduction coordinates should be provided with dimensions ("Dim.#") as columns and samples as rows\n'
-    errors = c(errors, msg)
+  lastCols <- tail(colnames(object@coordinates), 2)
+  col_dims <- all(grepl(pattern = "Dim.", x = lastCols))
+  if (!isTRUE(col_dims)) {
+    msg <- 'Dim reduction coordinates should be provided with dimensions ("Dim.#") as columns and samples as rows\n'
+    errors <- c(errors, msg)
   }
 
   # This check applied using check_dimension_reduction()
@@ -739,7 +764,7 @@ check_dim_obj = function(object) {
   #   errors = c(errors, msg)
   # }
 
-  if(length(errors) == 0) TRUE else errors
+  if (length(errors) == 0) TRUE else errors
 }
 
 
@@ -758,17 +783,22 @@ check_dim_obj = function(object) {
 #' @slot coordinates embedding coordinates
 #' @slot misc method-specific additional outputs
 #' @export
-setClass('dimObj',
-         contains = c('nameData', 'spatFeatData'),
-         slots = c(reduction = 'character',
-                   reduction_method = 'character',
-                   coordinates = 'ANY',
-                   misc = 'ANY'),
-         prototype = list(reduction = NA_character_,
-                          reduction_method = NA_character_,
-                          coordinates = NULL,
-                          misc = NULL),
-         validity = check_dim_obj)
+setClass("dimObj",
+  contains = c("nameData", "spatFeatData"),
+  slots = c(
+    reduction = "character",
+    reduction_method = "character",
+    coordinates = "ANY",
+    misc = "ANY"
+  ),
+  prototype = list(
+    reduction = NA_character_,
+    reduction_method = NA_character_,
+    coordinates = NULL,
+    misc = NULL
+  ),
+  validity = check_dim_obj
+)
 
 
 
@@ -783,15 +813,16 @@ setClass('dimObj',
 #' @description Convert S3 dimObj to S4
 #' @param object S3 dimObj
 #' @keywords internal
-S3toS4dimObj = function(object) {
-  if(!isS4(object)) {
-    object = new('dimObj',
-                 name = object$name,
-                 feat_type = object$feat_type,
-                 spat_unit = object$spat_unit,
-                 reduction_method = object$reduction_method,
-                 coordinates = object$coordinates,
-                 misc = object$misc)
+S3toS4dimObj <- function(object) {
+  if (!isS4(object)) {
+    object <- new("dimObj",
+      name = object$name,
+      feat_type = object$feat_type,
+      spat_unit = object$spat_unit,
+      reduction_method = object$reduction_method,
+      coordinates = object$coordinates,
+      misc = object$misc
+    )
   }
   object
 }
@@ -815,8 +846,9 @@ S3toS4dimObj = function(object) {
 #' @slot provenance origin of aggregated information (if applicable)
 #' @slot misc misc
 #' @export
-setClass('nnNetObj',
-         contains = c('nameData', 'nnData', 'spatFeatData', 'miscData'))
+setClass("nnNetObj",
+  contains = c("nameData", "nnData", "spatFeatData", "miscData")
+)
 
 
 
@@ -848,26 +880,26 @@ setClass('nnNetObj',
 #' @description Check function for S4 spatLocsObj
 #' @param object S4 spatLocsObj to check
 #' @keywords internal
-check_spat_locs_obj = function(object) {
-  errors = character()
+check_spat_locs_obj <- function(object) {
+  errors <- character()
 
-  if(!'sdimx' %in% colnames(slot(object, 'coordinates'))) {
-    msg = 'Column "sdimx" for x spatial location was not found'
-    errors = c(errors, msg)
+  if (!"sdimx" %in% colnames(slot(object, "coordinates"))) {
+    msg <- 'Column "sdimx" for x spatial location was not found'
+    errors <- c(errors, msg)
   }
 
-  if(!'sdimy' %in% colnames(slot(object, 'coordinates'))) {
-    msg = 'Column "sdimy" for y spatial location was not found'
-    errors = c(errors, msg)
+  if (!"sdimy" %in% colnames(slot(object, "coordinates"))) {
+    msg <- 'Column "sdimy" for y spatial location was not found'
+    errors <- c(errors, msg)
   }
 
   # Allow check_spatial_location_data() to compensate for missing cell_ID
-  if(!'cell_ID' %in% colnames(slot(object, 'coordinates'))) {
-    msg = 'Column "cell_ID" for cell ID was not found'
-    errors = c(errors, msg)
+  if (!"cell_ID" %in% colnames(slot(object, "coordinates"))) {
+    msg <- 'Column "cell_ID" for cell ID was not found'
+    errors <- c(errors, msg)
   }
 
-  if(length(errors) == 0) TRUE else errors
+  if (length(errors) == 0) TRUE else errors
 }
 
 
@@ -881,9 +913,10 @@ check_spat_locs_obj = function(object) {
 #' @slot spat_unit spatial unit tag
 #' @slot provenance origin of aggregated information (if applicable)
 #' @export
-setClass('spatLocsObj',
-         contains = c('nameData', 'coordDataDT', 'spatData', 'miscData'),
-         validity = check_spat_locs_obj)
+setClass("spatLocsObj",
+  contains = c("nameData", "coordDataDT", "spatData", "miscData"),
+  validity = check_spat_locs_obj
+)
 
 
 
@@ -908,13 +941,13 @@ setClass('spatLocsObj',
 #' @description Check function for S4 spatialNetworkObj
 #' @param object S4 spatialNetworkObj to check
 #' @keywords internal
-check_spat_net_obj = function(object) {
-  errors = character()
-  method_slot = slot(object, 'method')
-  length_method = length(method_slot)
-  if(length_method > 1) {
-    msg = paste0('method is length ', length_method, '. Should be 1')
-    errors = c(errors, msg)
+check_spat_net_obj <- function(object) {
+  errors <- character()
+  method_slot <- slot(object, "method")
+  length_method <- length(method_slot)
+  if (length_method > 1) {
+    msg <- paste0("method is length ", length_method, ". Should be 1")
+    errors <- c(errors, msg)
   }
 
   # if(is.null(method_slot)) {
@@ -922,12 +955,12 @@ check_spat_net_obj = function(object) {
   #   errors = c(errors, msg)
   # }
 
-  if(is.null(object@networkDT) & is.null(object@networkDT_before_filter)) {
-    msg = 'No data in either networkDT or networkDT_before_filter slots.\nThis object contains no network information.\n'
-    errors = c(errors, msg)
+  if (is.null(object@networkDT) && is.null(object@networkDT_before_filter)) {
+    msg <- "No data in either networkDT or networkDT_before_filter slots.\nThis object contains no network information.\n"
+    errors <- c(errors, msg)
   }
 
-  if(length(errors) == 0) TRUE else errors
+  if (length(errors) == 0) TRUE else errors
 }
 
 
@@ -951,11 +984,12 @@ check_spat_net_obj = function(object) {
 #' @details The generic access operators work with the data within the \code{networkDT}
 #' slot (filtered).
 #' @export
-setClass('spatialNetworkObj',
-         contains = c('nameData', 'spatNetData' ,'spatData', 'miscData'),
-         slots = c(crossSectionObjects = 'ANY'),
-         prototype = list(crossSectionObjects = NULL),
-         validity = check_spat_net_obj)
+setClass("spatialNetworkObj",
+  contains = c("nameData", "spatNetData", "spatData", "miscData"),
+  slots = c(crossSectionObjects = "ANY"),
+  prototype = list(crossSectionObjects = NULL),
+  validity = check_spat_net_obj
+)
 
 
 
@@ -973,20 +1007,21 @@ setClass('spatialNetworkObj',
 #' @param object S3 spatNetworkObj
 #' @param spat_unit spatial unit metadata to append
 #' @keywords internal
-S3toS4spatNetObj = function(object,
-                            spat_unit = NULL) {
-  if(!isS4(object)) {
-    object = new('spatialNetworkObj',
-                 name = object$name,
-                 method = object$method,
-                 parameters = object$parameters,
-                 outputObj = object$outputObj,
-                 networkDT = object$networkDT,
-                 networkDT_before_filter = object$networkDT_before_filter,
-                 cellShapeObj = object$cellShapeObj,
-                 crossSectionObjects = object$crossSectionObjects,
-                 spat_unit = spat_unit,
-                 misc = object$misc)
+S3toS4spatNetObj <- function(object,
+                             spat_unit = NULL) {
+  if (!isS4(object)) {
+    object <- new("spatialNetworkObj",
+      name = object$name,
+      method = object$method,
+      parameters = object$parameters,
+      outputObj = object$outputObj,
+      networkDT = object$networkDT,
+      networkDT_before_filter = object$networkDT_before_filter,
+      cellShapeObj = object$cellShapeObj,
+      crossSectionObjects = object$crossSectionObjects,
+      spat_unit = spat_unit,
+      misc = object$misc
+    )
   }
   object
 }
@@ -1014,13 +1049,13 @@ S3toS4spatNetObj = function(object,
 #' @description Check function for S4 spatialGridObj
 #' @param object S4 spatialGridObj to check
 #' @keywords internal
-check_spat_grid_obj = function(object) {
-  errors = character()
-  method_slot = slot(object, 'method')
-  length_method = length(method_slot)
-  if(length_method > 1) {
-    msg = paste0('method is length ', length_method, '. Should be 1')
-    errors = c(errors, msg)
+check_spat_grid_obj <- function(object) {
+  errors <- character()
+  method_slot <- slot(object, "method")
+  length_method <- length(method_slot)
+  if (length_method > 1) {
+    msg <- paste0("method is length ", length_method, ". Should be 1")
+    errors <- c(errors, msg)
   }
 
   # if(is.null(method_slot)) {
@@ -1028,12 +1063,12 @@ check_spat_grid_obj = function(object) {
   #   errors = c(errors, msg)
   # }
 
-  if(is.null(object@gridDT)) {
-    msg = 'No data in gridDT slot.\nThis object contains no spatial grid information\n'
-    errors = c(errors, msg)
+  if (is.null(object@gridDT)) {
+    msg <- "No data in gridDT slot.\nThis object contains no spatial grid information\n"
+    errors <- c(errors, msg)
   }
 
-  if(length(errors) == 0) TRUE else errors
+  if (length(errors) == 0) TRUE else errors
 }
 
 
@@ -1058,9 +1093,10 @@ check_spat_grid_obj = function(object) {
 #' of the grid and names for each of the spatial axis locations that make up the cell.
 #' Grids can be annotated with both spatial and feature information
 #' @export
-setClass('spatialGridObj',
-         contains = c('nameData', 'spatGridData', 'spatFeatData', 'miscData'),
-         validity = check_spat_grid_obj)
+setClass("spatialGridObj",
+  contains = c("nameData", "spatGridData", "spatFeatData", "miscData"),
+  validity = check_spat_grid_obj
+)
 
 
 
@@ -1078,14 +1114,15 @@ setClass('spatialGridObj',
 #' @description convert S3 spatialGridObj to S4
 #' @param object S3 spatialGridObj
 #' @keywords internal
-S3toS4spatialGridObj = function(object) {
-  if(!isS4(object)) {
-    object = new('spatialGridObj',
-                 name = object$name,
-                 method = object$method,
-                 parameters = object$parameters,
-                 gridDT = object$gridDT,
-                 misc = object$misc)
+S3toS4spatialGridObj <- function(object) {
+  if (!isS4(object)) {
+    object <- new("spatialGridObj",
+      name = object$name,
+      method = object$method,
+      parameters = object$parameters,
+      gridDT = object$gridDT,
+      misc = object$misc
+    )
   }
   object
 }
@@ -1107,8 +1144,9 @@ S3toS4spatialGridObj = function(object) {
 #' @slot provenance provenance information
 #' @slot misc misc
 #' @export
-setClass('spatEnrObj',
-         contains = c('nameData', 'enrData', 'spatFeatData', 'miscData'))
+setClass("spatEnrObj",
+  contains = c("nameData", "enrData", "spatFeatData", "miscData")
+)
 
 
 
@@ -1132,17 +1170,15 @@ setClass('spatEnrObj',
 #' @details holds polygon data
 #'
 #' @export
-giottoPolygon = setClass(
+giottoPolygon <- setClass(
   Class = "giottoPolygon",
-  contains = c('nameData'),
-
+  contains = c("nameData"),
   slots = c(
     spatVector = "ANY",
     spatVectorCentroids = "ANY",
     overlaps = "ANY",
-    unique_ID_cache = 'character'
+    unique_ID_cache = "character"
   ),
-
   prototype = list(
     spatVector = NULL,
     spatVectorCentroids = NULL,
@@ -1158,14 +1194,14 @@ giottoPolygon = setClass(
 #' @name updateGiottoPolygonObject
 #' @param gpoly giotto polygon object
 #' @export
-updateGiottoPolygonObject = function(gpoly) {
-  if(!inherits(gpoly, 'giottoPolygon')) {
-    stop('This function is only for giottoPoints')
+updateGiottoPolygonObject <- function(gpoly) {
+  if (!inherits(gpoly, "giottoPolygon")) {
+    stop("This function is only for giottoPoints")
   }
 
   # 3.2.X adds cacheing of IDs
-  if(is.null(attr(gpoly, 'unique_ID_cache'))) {
-    attr(gpoly, 'unique_ID_cache') = unique(as.list(gpoly@spatVector)$poly_ID)
+  if (is.null(attr(gpoly, "unique_ID_cache"))) {
+    attr(gpoly, "unique_ID_cache") <- unique(as.list(gpoly@spatVector)$poly_ID)
   }
 
   gpoly
@@ -1177,21 +1213,21 @@ updateGiottoPolygonObject = function(gpoly) {
 
 
 # for use with wrap() generic
-setClass('packedGiottoPolygon',
-         contains = c('nameData'),
-
-         slots = c(
-           packed_spatVector = 'ANY',
-           packed_spatVectorCentroids = 'ANY',
-           packed_overlaps = 'ANY',
-           unique_ID_cache = 'character'
-         ),
-         prototype = list(
-           packed_spatVector = NULL,
-           packed_spatVectorCentroids = NULL,
-           packed_overlaps = NULL,
-           unique_ID_cache = NA_character_
-         ))
+setClass("packedGiottoPolygon",
+  contains = c("nameData"),
+  slots = c(
+    packed_spatVector = "ANY",
+    packed_spatVectorCentroids = "ANY",
+    packed_overlaps = "ANY",
+    unique_ID_cache = "character"
+  ),
+  prototype = list(
+    packed_spatVector = NULL,
+    packed_spatVectorCentroids = NULL,
+    packed_overlaps = NULL,
+    unique_ID_cache = NA_character_
+  )
+)
 
 
 
@@ -1216,14 +1252,12 @@ setClass('packedGiottoPolygon',
 #' @export
 giottoPoints <- setClass(
   Class = "giottoPoints",
-  contains = c('featData'),
-
+  contains = c("featData"),
   slots = c(
     spatVector = "ANY",
     networks = "ANY",
-    unique_ID_cache = 'character'
+    unique_ID_cache = "character"
   ),
-
   prototype = list(
     spatVector = NULL,
     networks = NULL,
@@ -1238,14 +1272,14 @@ giottoPoints <- setClass(
 #' @name updateGiottoPointsObject
 #' @param gpoints giotto points object
 #' @export
-updateGiottoPointsObject = function(gpoints) {
-  if(!inherits(gpoints, 'giottoPoints')) {
-    stop('This function is only for giottoPoints')
+updateGiottoPointsObject <- function(gpoints) {
+  if (!inherits(gpoints, "giottoPoints")) {
+    stop("This function is only for giottoPoints")
   }
 
   # 3.2.X adds cacheing of IDs
-  if(is.null(attr(gpoints, 'unique_ID_cache'))) {
-    attr(gpoints, 'unique_ID_cache') = unique(as.list(gpoints@spatVector)$feat_ID)
+  if (is.null(attr(gpoints, "unique_ID_cache"))) {
+    attr(gpoints, "unique_ID_cache") <- unique(as.list(gpoints@spatVector)$feat_ID)
   }
 
   gpoints
@@ -1263,13 +1297,12 @@ updateGiottoPointsObject = function(gpoints) {
 
 # for use with wrap() generic
 setClass(
-  'packedGiottoPoints',
-
+  "packedGiottoPoints",
   slots = c(
-    feat_type = 'character',
-    packed_spatVector = 'ANY',
-    networks = 'ANY',
-    unique_ID_cache = 'character'
+    feat_type = "character",
+    packed_spatVector = "ANY",
+    networks = "ANY",
+    unique_ID_cache = "character"
   ),
   prototype = list(
     feat_type = NA_character_,
@@ -1306,14 +1339,12 @@ setClass(
 #' @export
 featureNetwork <- setClass(
   Class = "featureNetwork",
-  contains = 'nameData',
-
+  contains = "nameData",
   slots = c(
     network_datatable = "ANY",
     network_lookup_id = "ANY",
     full = "ANY"
   ),
-
   prototype = list(
     network_datatable = NULL,
     network_lookup_id = NULL,
@@ -1350,7 +1381,6 @@ featureNetwork <- setClass(
 #' @export
 giottoImage <- setClass(
   Class = "giottoImage",
-
   slots = c(
     name = "ANY",
     mg_object = "ANY",
@@ -1361,7 +1391,6 @@ giottoImage <- setClass(
     file_path = "ANY",
     OS_platform = "ANY"
   ),
-
   prototype = list(
     name = NULL,
     mg_object = NULL,
@@ -1402,7 +1431,6 @@ giottoImage <- setClass(
 #' @export
 giottoLargeImage <- setClass(
   Class = "giottoLargeImage",
-
   slots = c(
     name = "ANY",
     raster_object = "ANY",
@@ -1416,7 +1444,6 @@ giottoLargeImage <- setClass(
     file_path = "ANY",
     OS_platform = "ANY"
   ),
-
   prototype = list(
     name = NULL,
     raster_object = NULL,
@@ -1431,15 +1458,3 @@ giottoLargeImage <- setClass(
     OS_platform = NULL
   )
 )
-
-
-
-
-
-
-
-
-
-
-
-
