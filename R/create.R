@@ -37,6 +37,8 @@ NULL
 #' @param offset_file file used to stitch fields together (optional)
 #' @param instructions list of instructions or output result from \code{\link{createGiottoInstructions}}
 #' @param cores how many cores or threads to use to read data if paths are provided
+#' @param expression_matrix_class class of expression matrix to use (e.g. 'dgCMatrix', 'DelayedArray')
+#' @param h5_file path to h5 file
 #' @param verbose be verbose when building Giotto object
 #' @return giotto object
 #' @details
@@ -97,7 +99,7 @@ createGiottoObject = function(expression,
                               instructions = NULL,
                               cores = determine_cores(),
                               raw_exprs = NULL,
-                              expression_matrix_class = c('dgCMatrix', 'HDF5Matrix','rhdf5'),
+                              expression_matrix_class = c('dgCMatrix', 'DelayedArray'),
                               h5_file = NULL,
                               verbose = FALSE) {
 
@@ -193,8 +195,19 @@ createGiottoObject = function(expression,
                                    cores = cores,
                                    default_feat_type = expression_feat,
                                    verbose = debug_msg,
-                                   expression_matrix_class = expression_matrix_class,
-                                   h5_file = h5_file)
+                                   expression_matrix_class = expression_matrix_class)
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    ## evaluate if h5_file exists
+    if(!is.null(h5_file)) {
+      if(file.exists(h5_file)) {
+        wrap_msg("'", h5_file, "'", 
+                 " file already exists and will be replaced", sep = "")
+        file.remove(h5_file)
+      } else {
+        wrap_msg("Initializing file ", "'", h5_file, "'", sep = "")
+      }
+    }
+    
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
     gobject = setExpression(gobject = gobject,
                             x = expression_data,
@@ -1045,6 +1058,7 @@ createGiottoObjectSubcellular = function(gpolygons = NULL,
 #' @param name name of exprObj
 #' @param provenance origin data of expression information (if applicable)
 #' @param misc misc
+#' @param expression_matrix_class class of expression matrix to use (e.g. 'dgCMatrix', 'DelayedArray')
 #' @export
 createExprObj = function(expression_data,
                          name = 'test',
@@ -1052,13 +1066,11 @@ createExprObj = function(expression_data,
                          feat_type = 'rna',
                          provenance = NULL,
                          misc = NULL,
-                         expression_matrix_class = c('dgCMatrix', 'HDF5Matrix', 'rhdf5'),
-                         h5_file = NULL) {
+                         expression_matrix_class = c('dgCMatrix', 'DelayedArray')) {
 
   exprMat = evaluate_expr_matrix(expression_data,
                                  expression_matrix_class = expression_matrix_class,
-                                 feat_type = feat_type,
-                                 h5_file = h5_file)
+                                 feat_type = feat_type)
 
   create_expr_obj(name = name,
                   exprMat = exprMat,
@@ -1706,7 +1718,7 @@ createGiottoPoints = function(x,
                                            spatVector = spatvec,
                                            unique_IDs = unique_IDs)
 
-  } else if(inherits(x, 'spatVector')) {
+  } else if(inherits(x, 'SpatVector')) {
 
     g_points = create_giotto_points_object(feat_type = feat_type,
                                            spatVector = x,

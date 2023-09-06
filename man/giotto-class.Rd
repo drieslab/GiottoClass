@@ -60,6 +60,8 @@ that are provided in the expression slot.
 \item{\code{join_info}}{information about joined Giotto objects}
 
 \item{\code{multiomics}}{multiomics integration results}
+
+\item{\code{h5_file}}{path to h5 file}
 }}
 
 \concept{giotto object}
