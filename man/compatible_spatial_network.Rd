@@ -6,6 +6,11 @@
 \usage{
 compatible_spatial_network(spatial_network, expression_matrix)
 }
+\arguments{
+\item{spatial_network}{spatial network to evaluate}
+
+\item{expression_matrix}{expression to compare against}
+}
 \description{
 Function to evaluate if a spatial network is compatible
 with a provided expression matrix
