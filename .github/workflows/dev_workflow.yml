@@ -43,15 +43,11 @@ jobs:
           _R_CHECK_RD_XREFS: false
         with:
           dependencies: '"hard"' # do not use suggested dependencies
-          extra-packages: any::rcmdcheck, any::testthat, any::rlang
+          extra-packages: any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::remotes
 
       - name: Set up dependencies (GiottoData)
         run: |
           suppressWarnings({
-            if(!require(remotes)){
-              install.packages('R.utils', repos = 'http://cran.us.r-project.org')
-              install.packages('remotes', repos = 'http://cran.us.r-project.org')
-            }
             remotes::install_github('drieslab/GiottoData@suite_modular', build = FALSE)
           })
         shell: Rscript {0}
