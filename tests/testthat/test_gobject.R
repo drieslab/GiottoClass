@@ -16,12 +16,20 @@ gpoints = GiottoData::loadSubObjectMini('giottoPoints')
 
 
 
+# Ignore internal usage of deprecated accessors
+lifecycle_opt = getOption('lifecycle_verbosity')
+options('lifecycle_verbosity' = 'quiet')
+
 
 
 ### TESTS FOR GOBJECT FUNCTIONALITY ####
 ## ------------------------------------------------------------------------ ##
 
-test = giotto()
+options('giotto.use_conda' = FALSE)
+# Gobject can be generated without conda env, but will send warning
+suppressWarnings({
+  test = giotto()
+})
 
 test_that('Gobject can be generated', {
   expect_s4_class(test, 'giotto')
@@ -69,7 +77,7 @@ test_that('Providing feat_type returns unmodified', {
 #### Aggregate Initialization ####
 
 test_that('Expression initiates ID slots', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_ex = setExpression(test, ex)
 
   expect_identical(spatIDs(test_ex), spatIDs(ex))
@@ -84,7 +92,7 @@ test_that('Expression initiates ID slots', {
 
 
 test_that('Expression initiates metadata slots', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_ex = setExpression(test, ex)
 
   expect_identical(spatIDs(test_ex), pDataDT(test_ex)$cell_ID)
@@ -99,6 +107,7 @@ test_that('Expression initiates metadata slots', {
 
 
 test_that('Expression sets active spat_unit and feat_type', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_ex = setExpression(test, ex)
 
   # check in instructions settings
@@ -112,7 +121,7 @@ test_that('Expression sets active spat_unit and feat_type', {
 
 
 test_that('expression_feats slot is set by expression', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   # test single
   test_ex = setExpression(test, ex, feat_type = 'test_feat')
   expect_identical(test_ex@expression_feat, 'test_feat')
@@ -128,7 +137,7 @@ test_that('expression_feats slot is set by expression', {
 
 
 test_that('Spatial info initiates spat_ID slot', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_si = setPolygonInfo(test, gpoly)
 
   expect_identical(spatIDs(test_si), spatIDs(gpoly))
@@ -139,7 +148,7 @@ test_that('Spatial info initiates spat_ID slot', {
 })
 
 test_that('Spatial info sets active spat_unit', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_si = setPolygonInfo(test, gpoly)
 
   expect_identical(activeSpatUnit(test_si), 'aggregate')
@@ -149,7 +158,7 @@ test_that('Spatial info sets active spat_unit', {
 
 
 test_that('Feature info initiates feat_ID slot', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   featType(gpoints) = 'test_feat'
   test_fi = setFeatureInfo(test, gpoints)
 
@@ -160,7 +169,7 @@ test_that('Feature info initiates feat_ID slot', {
 
 
 test_that('Spat and Feat info initiates cell_metadata slot', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_sf = setFeatureInfo(test, gpoints)
 
   expect_null(list_cell_metadata(test_sf))
@@ -175,7 +184,7 @@ test_that('Spat and Feat info initiates cell_metadata slot', {
 
 
 test_that('expression_feats slot is set by feature_info', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   # test single
   test_fi = setFeatureInfo(test, gpoints, feat_type = 'test_feat')
   expect_identical(test_fi@expression_feat, 'test_feat')
@@ -190,7 +199,7 @@ test_that('expression_feats slot is set by feature_info', {
 #### ID interaction interactions ####
 
 test_that('cell_ID from spatial_info is overwritten by expression', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   expected_IDs = spatIDs(ex)
 
   test_int = setPolygonInfo(test, gpoly)
@@ -203,7 +212,7 @@ test_that('cell_ID from spatial_info is overwritten by expression', {
 
 
 test_that('feat_ID from feat_info is overwritten by expression', {
-
+  rlang::local_options(lifecycle_verbosity = "quiet")
   expected_IDs = featIDs(ex)
 
   test_int = setFeatureInfo(test, gpoints)
@@ -238,5 +247,5 @@ test_that('feat_ID from feat_info is overwritten by expression', {
 
 
 
-
+options('lifecycle_verbosity' = lifecycle_opt)
 

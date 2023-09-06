@@ -123,7 +123,7 @@ setMethod(
 # packedGiotto ####
 setMethod("show", signature(object='packedGiotto'),
           function(object) {
-            print(paste("This is a", class(object), "object. Use 'Giotto::unwrap()' to unpack it"))
+            print(paste("This is a", class(object), "object. Use 'GiottoClass::vect()' to unpack it"))
           }
 )
 
@@ -507,7 +507,7 @@ setMethod('show', signature = 'giottoPolygon', function(object) {
 ## packedGiottoPolygon ####
 setMethod("show", signature(object='packedGiottoPolygon'),
           function(object) {
-            print(paste("This is a", class(object), "object. Use 'Giotto::unwrap()' to unpack it"))
+            print(paste("This is a", class(object), "object. Use 'GiottoClass::vect()' to unpack it"))
           }
 )
 
@@ -543,7 +543,7 @@ setMethod('show', signature = 'giottoPoints', function(object) {
 ## packedGiottoPoints ####
 setMethod("show", signature(object='packedGiottoPoints'),
           function(object) {
-            print(paste("This is a", class(object), "object. Use 'Giotto::unwrap()' to unpack it"))
+            print(paste("This is a", class(object), "object. Use 'GiottoClass::vect()' to unpack it"))
           }
 )
 
