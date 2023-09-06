@@ -73,6 +73,9 @@ jobs:
 
     steps:
 
+      - name: Checkout repo for workflow access
+        uses: actions/checkout@v3
+
       - name: Set up dependencies (coverage)
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
