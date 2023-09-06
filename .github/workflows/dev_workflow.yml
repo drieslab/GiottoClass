@@ -43,7 +43,7 @@ jobs:
           _R_CHECK_RD_XREFS: false
         with:
           dependencies: '"hard"' # do not use suggested dependencies
-          extra-packages: any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::remotes
+          extra-packages: any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::remotes, any::covr
 
       - name: Set up dependencies (GiottoData)
         run: |
@@ -65,23 +65,6 @@ jobs:
         shell: bash
 
 
-
-  test-coverage:
-    name: Code coverage
-    needs: R-CMD-check
-    runs-on: ubuntu-latest
-
-    steps:
-
-      - name: Checkout repo for workflow access
-        uses: actions/checkout@v3
-
-      - name: Set up dependencies (coverage)
-        uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: any::covr
-          needs: coverage
-
       - name: Test coverage
         run: |
           covr::codecov(
@@ -95,6 +78,10 @@ jobs:
         uses: codecov/codecov-action@v3
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+
+
+
 
 
   # lint:
