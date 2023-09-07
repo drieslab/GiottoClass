@@ -8,9 +8,8 @@
 ![Version](https://img.shields.io/github/r-package/v/drieslab/GiottoClass)
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
-[![Codecov test
-coverage](https://codecov.io/gh/jiajic/GiottoClass/branch/main/graph/badge.svg)](https://app.codecov.io/gh/jiajic/GiottoClass?branch=main)
-[![R-CMD-check](https://github.com/drieslab/GiottoClass/actions/workflows/R-CMD-check.yml/badge.svg)](https://github.com/drieslab/GiottoClass/actions/workflows/R-CMD-check.yml)
+[![codecov](https://codecov.io/github/drieslab/GiottoClass/graph/badge.svg?token=YFvDRFwoAr)](https://codecov.io/github/drieslab/GiottoClass)
+[![R-CMD-check](https://github.com/drieslab/GiottoClass/actions/workflows/main_check.yml/badge.svg)](https://github.com/drieslab/GiottoClass/actions/workflows/main_check.yml)
 [![GitHub
 issues](https://img.shields.io/github/issues/drieslab/Giotto)](https://github.com/drieslab/Giotto/issues)
 [![GitHub
