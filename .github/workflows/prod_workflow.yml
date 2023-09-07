@@ -7,7 +7,7 @@
 # additional example workflows available for the R community.
 
 
-name: Master Workflow - Deploy to production
+name: Master Workflow - For release
 
 on:
   pull_request:
@@ -87,76 +87,6 @@ jobs:
         run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
         shell: bash
 
-
-  test-coverage:
-    name: Code coverage
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-
-    steps:
-
-      - name: Checkout repo for workflow access
-        uses: actions/checkout@v3
-
-      - name: Set up R environment
-        uses: r-lib/actions/setup-r@v2
-        with:
-          use-public-rspm: true
-
-      - name: Set up dependencies (general)
-        uses: r-lib/actions/setup-r-dependencies@v2
-        env:
-          _R_CHECK_FORCE_SUGGESTS: false
-          _R_CHECK_RD_XREFS: false
-        with:
-          dependencies: '"hard"' # do not use suggested dependencies
-          extra-packages: any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::remotes, any::covr
-          needs: coverage
-
-      - name: Set up dependencies (GiottoData)
-        run: |
-          suppressWarnings({
-            remotes::install_github('drieslab/GiottoData@suite_modular', build = FALSE)
-          })
-        shell: Rscript {0}
-
-      - name: Test coverage
-        run: |
-          covr::codecov(
-            quiet = FALSE,
-            clean = FALSE,
-            install_path = file.path(Sys.getenv("RUNNER_TEMP"), "package")
-          )
-        shell: Rscript {0}
-
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-  # lint:
-  #   runs-on: ubuntu-latest
-  #   needs: R-CMD-check
-  #   env:
-  #     GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #
-  #     - uses: r-lib/actions/setup-r@v2
-  #       with:
-  #         use-public-rspm: true
-  #
-  #     - uses: r-lib/actions/setup-r-dependencies@v2
-  #       with:
-  #         extra-packages: any::lintr, local::.
-  #         needs: lint
-  #
-  #     - name: Lint
-  #       run: lintr::lint_package()
-  #       shell: Rscript {0}
-  #       env:
-  #         LINTR_ERROR_ON_LINT: true
 
 
   # render-rmarkdown:
