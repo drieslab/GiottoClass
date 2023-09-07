@@ -11,7 +11,7 @@ on:
   schedule:
     - cron: '16 20 * * 2'
 
-
+jobs:
   test-coverage:
     name: Code coverage
     runs-on: ubuntu-latest
