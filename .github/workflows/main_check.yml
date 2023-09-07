@@ -7,7 +7,7 @@
 # additional example workflows available for the R community.
 
 
-name: Master Workflow - For release
+name: R-CMD-check
 
 on:
   pull_request:
