@@ -563,9 +563,13 @@ calculateSpatCellMetadataProportions = function(gobject,
                                 output = 'data.table')
 
   # merge spatial network and cell metadata
-  network_annot = data.table::merge.data.table(network, cell_meta[,c('cell_ID', metadata_column), with = FALSE], by.x = 'source', by.y = 'cell_ID')
+  network_annot = data.table::merge.data.table(x = sp_network, 
+                                               y = cell_meta[,c('cell_ID', metadata_column), with = FALSE], 
+                                               by.x = 'source', by.y = 'cell_ID')
   setnames(network_annot, old = metadata_column, 'source_clus')
-  network_annot = data.table::merge.data.table(network_annot, cell_meta[,c('cell_ID', metadata_column), with = FALSE], by.x = 'target', by.y = 'cell_ID')
+  network_annot = data.table::merge.data.table(x = network_annot, 
+                                               y = cell_meta[,c('cell_ID', metadata_column), with = FALSE], 
+                                               by.x = 'target', by.y = 'cell_ID')
   setnames(network_annot, old = metadata_column, 'target_clus')
 
   # create self information: source cell is its own neighbor
