@@ -109,6 +109,7 @@ Collate:
     'methods-spin.R'
     'methods-transpose.R'
     'methods-wrap.R'
+    'methods_crop.R'
     'provenance.R'
     'python_environment.R'
     'save_load.R'

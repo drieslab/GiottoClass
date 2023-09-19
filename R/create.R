@@ -200,14 +200,14 @@ createGiottoObject = function(expression,
     ## evaluate if h5_file exists
     if(!is.null(h5_file)) {
       if(file.exists(h5_file)) {
-        wrap_msg("'", h5_file, "'", 
+        wrap_msg("'", h5_file, "'",
                  " file already exists and will be replaced", sep = "")
         file.remove(h5_file)
       } else {
         wrap_msg("Initializing file ", "'", h5_file, "'", sep = "")
       }
     }
-    
+
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
     gobject = setExpression(gobject = gobject,
                             x = expression_data,
@@ -2526,31 +2526,22 @@ createGiottoLargeImage = function(raster_object,
 
 
   ## 5. Get image characteristics by sampling
-  sampleValues = stats::na.omit(terra::spatSample(raster_object,
-                                                  size = 5000, # Defines the rough maximum of pixels allowed when resampling
-                                                  method = 'regular',
-                                                  value = TRUE))
-  if(nrow(sampleValues) == 0) {
+  sample_values = spatraster_sample_values(raster_object, size = 5000, verbose = verbose)
+
+  if(nrow(sample_values) == 0) {
     if(verbose == TRUE) cat('No values discovered when sampling for image characteristics')
   } else {
-    # get intensity range
-    srMinmax = suppressWarnings(terra::minmax(raster_object))
-    if(sum(is.infinite(srMinmax)) == 0) { # pull minmax values from terra spatRaster obj if img was small enough for them to be calculated
-      g_imageL@max_intensity = srMinmax[2]
-      g_imageL@min_intensity = srMinmax[1]
-    } else { # pull minmax values from sampled subset if img was too large
-      intensityRange = range(sampleValues)
-      g_imageL@max_intensity = intensityRange[2]
-      g_imageL@min_intensity = intensityRange[1]
-    }
+
+    # find estimated intensity range
+    intensity_range = spatraster_intensity_range(raster_object = raster_object,
+                                                 sample_values = sample_values)
+    g_imageL@min_intensity = intensity_range[['min']]
+    g_imageL@max_intensity = intensity_range[['max']]
 
     # find out if image is int or floating point
-    is_int = identical(sampleValues, round(sampleValues))
-    if(is_int == TRUE) {
-      g_imageL@is_int = TRUE
-    } else {
-      g_imageL@is_int = FALSE
-    }
+    is_int = spatraster_is_int(raster_object = raster_object,
+                               sample_values = sample_values)
+    g_imageL@is_int = is_int
   }
 
 
@@ -2561,6 +2552,10 @@ createGiottoLargeImage = function(raster_object,
   ## 7. return image object
   return(g_imageL)
 }
+
+
+
+
 
 
 #' @title createGiottoLargeImageList

@@ -730,6 +730,73 @@ plot_auto_largeImage_resample = function(gobject,
 
 
 
+#' @title Sample values from SpatRaster
+#' @name spatraster_sample_values
+#' @param raster_object terra SpatRaster to sample from
+#' @param size rough maximum of pixels allowed when resampling
+#' @param verbose be verbose
+#' @keywords internal
+spatraster_sample_values = function(raster_object, size = 5000, verbose = TRUE) {
+  res = stats::na.omit(
+    terra::spatSample(
+      raster_object,
+      size = size,
+      method = 'regular',
+      value = TRUE)
+  )
+
+  if(nrow(res) == 0) {
+    if(isTRUE(verbose)) cat('No values discovered when sampling for image characteristics')
+  }
+
+  res
+}
+
+
+
+
+#' @title Find SpatRaster intensity range
+#' @name spatraster_intensity_range
+#' @keywords internal
+#' @noRd
+#' @return named numeric vector of min then max detected values
+spatraster_intensity_range = function(
+  raster_object,
+  sample_values = spatraster_sample_values(raster_object)
+) {
+  # get intensity range
+  srMinmax = suppressWarnings(terra::minmax(raster_object))
+  if(sum(is.infinite(srMinmax)) == 0) { # pull minmax values from terra spatRaster obj if img was small enough for them to be calculated
+    res = c(srMinmax[1], srMinmax[2])
+  } else { # pull minmax values from sampled subset if img was too large
+    intensityRange = range(sample_values)
+    res = c(intensityRange[1],intensityRange[2])
+  }
+
+  names(res) = c('min', 'max')
+  return(res)
+}
+
+
+
+
+#' @title Find SpatRaster int or floating point
+#' @name spatraster_is_int
+#' @keywords internal
+#' @noRd
+#' @return logical
+spatraster_is_int = function(
+  raster_object,
+  sample_values = spatraster_sample_values(raster_object)
+) {
+  # find out if image is int or floating point
+  identical(sample_values, round(sample_values))
+}
+
+
+
+
+
 
 #' @title Plot smoothed curve of giotto largeImage intensity values
 #' @name density_giottoLargeImage
