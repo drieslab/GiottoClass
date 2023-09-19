@@ -21,6 +21,7 @@
 #' @importMethodsFrom terra plot
 #' @importMethodsFrom terra wrap
 #' @importMethodsFrom terra vect
+#' @importMethodsFrom terra crop
 #' @importMethodsFrom terra as.data.frame
 #' @importMethodsFrom terra nrow ncol
 #' @importClassesFrom terra SpatExtent
