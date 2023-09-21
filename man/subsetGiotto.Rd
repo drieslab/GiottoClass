@@ -10,7 +10,6 @@ subsetGiotto(
   feat_type = NULL,
   cell_ids = NULL,
   feat_ids = NULL,
-  gene_ids = NULL,
   poly_info = NULL,
   all_spat_units = TRUE,
   all_feat_types = TRUE,
@@ -32,8 +31,6 @@ subsetGiotto(
 \item{cell_ids}{cell IDs to keep}
 
 \item{feat_ids}{feature IDs to keep}
-
-\item{gene_ids}{deprecated. Use \code{feat_ids}}
 
 \item{poly_info}{polygon information to use}
 
