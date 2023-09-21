@@ -706,40 +706,38 @@ subset_giotto_points_object = function(gpoints,
   # data.table vars
   x = y = feat_ID = NULL
 
-  if(!is.null(gpoints@spatVector)) {
-
-    if(!is.null(feat_ids)) {
-      feat_id_bool = gpoints@spatVector$feat_ID %in% feat_ids
-      gpoints@spatVector = gpoints@spatVector[feat_id_bool]
-    }
-
-    # spatial subset specific
-    if(!any(is.null(c(x_min, x_max, y_min, y_max)))) {
-
-      if(verbose) print('im1')
-
-      myspatvector = gpoints@spatVector
-      spatDT = spatVector_to_dt(myspatvector)
-
-      if(verbose) print('im2')
-
-      spatDT_subset = spatDT[x >= x_min & x <= x_max & y >= y_min & y <= y_max]
-      myspatvector_subset = dt_to_spatVector_points(dt = spatDT_subset)
-
-      if(verbose) print('im3')
-
-      gpoints@spatVector = myspatvector_subset
-      gpoints@unique_ID_cache = spatDT_subset[, unique(feat_ID)] # update cache
-      return(gpoints)
-    }
-
-    # for when no spatial subsetting happens
-    gpoints@unique_ID_cache = unique(terra::values(gpoints@spatVector)$feat_ID)
-
+  # 0. check if spatial feature information exists
+  if(is.null(gpoints@spatVector)) {
+    return(gpoints) # return without change since there is no points info
   }
 
-  return(gpoints)
 
+  # 1. ID based subsetting #
+  # ---------------------- #
+  if(!is.null(feat_ids)) {
+    feat_id_bool = gpoints@spatVector$feat_ID %in% feat_ids
+    gpoints@spatVector = gpoints@spatVector[feat_id_bool]
+  }
+
+  # 2. Spatial subsetting #
+  # --------------------- #
+  # 2.1 if NO spatial subset information available,
+  # ie: if all spat subset params are NULL, return directly because there are
+  # no following steps
+  if(all(sapply(list(x_min, x_max, y_min, y_max), is.null))) {
+    # even if no spatial subsetting happened, if ID subsetting occurred, the
+    # unique_ID_cache needs to be updated
+    gpoints@unique_ID_cache = unique(terra::values(gpoints@spatVector)$feat_ID)
+    return(gpoints)
+  }
+
+  # 2.2 otherwise use DT crop method
+  gpoints = crop(gpoints,
+                 xmin = x_min, xmax = x_max,
+                 ymin = y_min, ymax = y_max,
+                 DT = TRUE)
+
+  return(gpoints)
 }
 
 
@@ -799,7 +797,6 @@ subset_feature_info_data = function(feat_info,
 #' @inheritParams data_access_params
 #' @param cell_ids cell IDs to keep
 #' @param feat_ids feature IDs to keep
-#' @param gene_ids deprecated. Use \code{feat_ids}
 #' @param poly_info polygon information to use
 #' @param all_spat_units subset all spatial units with selected feature ids
 #' @param all_feat_types subset all feature type data with selected cell ids
@@ -814,7 +811,6 @@ subsetGiotto <- function(gobject,
                          feat_type = NULL,
                          cell_ids = NULL,
                          feat_ids = NULL,
-                         gene_ids = NULL,
                          poly_info = NULL,
                          all_spat_units = TRUE,
                          all_feat_types = TRUE,
@@ -837,19 +833,13 @@ subsetGiotto <- function(gobject,
     poly_info = spat_unit
   }
 
-  ## deprecated arguments
-  if(!is.null(gene_ids)) {
-    feat_ids = gene_ids
-    warning('gene_ids argument is deprecated, use feat_ids argument in the future \n')
-  }
-
   if(!is.null(slot(gobject, 'h5_file'))) {
     g_dimnames = HDF5Array::h5readDimnames(filepath = slot(gobject, 'h5_file'),
                                            name =  paste0("/expression/",feat_type,"/raw"))
     g_cell_IDs = g_dimnames[[2]]
     g_feat_IDs = g_dimnames[[1]]
   } else {
-    # filter cell_ID and gene_ID
+    # filter cell_ID and feat_ID
     g_cell_IDs = get_cell_id(gobject, spat_unit = spat_unit)
     g_feat_IDs = get_feat_id(gobject, feat_type = feat_type)
 
@@ -1083,11 +1073,9 @@ subsetGiottoLocs = function(gobject,
                                     feat_type = feat_type)
 
   # Check spatial params
-  spatError = NULL
-  if(!is.null(x_min) && !is.null(x_max)) if(x_min > x_max) spatError = append(spatError, 'x_max must be larger than x_min \n')
-  if(!is.null(y_min) && !is.null(y_max)) if(y_min > y_max) spatError = append(spatError, 'y_max must be larger than y_min \n')
-  if(!is.null(z_min) && !is.null(z_max)) if(z_min > z_max) spatError = append(spatError, 'z_max must be larger than z_min \n')
-  if(!is.null(spatError)) stop(spatError)
+  valid_spat_subset_params(x_min = x_min, x_max = x_max,
+                           y_min = y_min, y_max = y_max,
+                           z_min = z_min, z_max = z_max)
 
 
   # function requires spat_loc_name
@@ -1266,7 +1254,6 @@ subsetGiottoLocsMulti = function(gobject,
 
 
 
-
 #' @title Subset raw subcellular information by location
 #' @name subsetGiottoLocsSubcellular
 #' @description Subsets Giotto object based on spatial coordinates
@@ -1287,15 +1274,14 @@ subsetGiottoLocsSubcellular = function(gobject,
 
   # only to be used if there is no aggregated information #
   if(!is.null(gobject@expression)) {
-    stop('Aggregated information was found, use subsetGiottoLocs \n')
+    stop(wrap_txt('Aggregated information was found in gobject.
+                  Use subsetGiottoLocs() instead'))
   }
 
   # Check spatial params
-  spatError = NULL
-  if(!is.null(x_min) && !is.null(x_max)) if(x_min > x_max) spatError = append(spatError, 'x_max must be larger than x_min \n')
-  if(!is.null(y_min) && !is.null(y_max)) if(y_min > y_max) spatError = append(spatError, 'y_max must be larger than y_min \n')
-  if(!is.null(z_min) && !is.null(z_max)) if(z_min > z_max) spatError = append(spatError, 'z_max must be larger than z_min \n')
-  if(!is.null(spatError)) stop(spatError)
+  valid_spat_subset_params(x_min = x_min, x_max = x_max,
+                           y_min = y_min, y_max = y_max,
+                           z_min = z_min, z_max = z_max)
 
 
   # first subset feature ids based on location
@@ -1306,28 +1292,24 @@ subsetGiottoLocsSubcellular = function(gobject,
   ## --------------- ##
   if(!is.null(gobject@feat_info)) {
 
-    # TODO: make it possible for multiple feature types
-
-    feats_list = slot(gobject, 'feat_info')
-    cropped_feats = lapply(feats_list[[feat_type]], function(x) {
-      sv = slot(x, 'spatVector')
-      sv = terra::crop(sv, terra::ext(x_min, x_max, y_min, y_max))
-      sv$feat_ID
+    # perform crop and return to gobject
+    gpoints_list = get_feature_info_list(gobject, return_giottoPoints = TRUE)[feat_type]
+    cropped_gpoints = lapply(gpoints_list, function(x) {
+      crop(gpoints_list[[x]],
+           DT = TRUE,
+           xmin = x_min, xmax = x_max,
+           ymin = y_min, ymax = y_max)
       # TODO add cropping for z values as well
     })
+    gobject@feat_info = cropped_gpoints
 
+    # extract the cropped feature IDs for use with spatial info overlaps
+    cropped_feats = lapply(cropped_gpoints, function(cropped_x) {
+      cropped_x@unique_ID_cache
+    })
     cropped_feats = unique(unlist(cropped_feats))
 
-    gobject@feat_info = subset_feature_info_data(feat_info = gobject@feat_info,
-                                                 feat_ids = cropped_feats,
-                                                 feat_type = feat_type,
-                                                 x_max = x_max,
-                                                 x_min = x_min,
-                                                 y_max = y_max,
-                                                 y_min = y_min,
-                                                 verbose = verbose)
-
-    if(verbose == TRUE) cat('subsetted spatial feature data \n')
+    if(verbose) wrap_msg('subsetted spatial feature data')
   } else {
 
     cropped_feats = NULL
@@ -1340,7 +1322,7 @@ subsetGiottoLocsSubcellular = function(gobject,
   if(!is.null(gobject@spatial_info)) {
 
     # get the associated poly_IDs
-    polys_list = slot(gobject, 'spatial_info')
+    polys_list = get_polygon_info_list(gobject, return_giottoPolygon = TRUE)
     cropped_IDs = lapply(polys_list, function(x) {
       sv = slot(x, 'spatVector')
       sv = terra::crop(sv, terra::ext(x_min, x_max, y_min, y_max))
@@ -1360,7 +1342,7 @@ subsetGiottoLocsSubcellular = function(gobject,
 
     }
 
-    if(verbose == TRUE) cat('subsetted spatial information data \n')
+    if(verbose) wrap_msg('subsetted spatial information data')
   }
 
 
@@ -1369,3 +1351,48 @@ subsetGiottoLocsSubcellular = function(gobject,
   return(initialize(gobject))
 
 }
+
+
+
+
+# helpers ####
+
+valid_spat_subset_params = function(
+    x_min = NULL,
+    x_max = NULL,
+    y_min = NULL,
+    y_max = NULL,
+    z_min = NULL,
+    z_max = NULL
+) {
+  # Check spatial params
+  spatError = NULL
+  if(!is.null(x_min) && !is.null(x_max)) {
+    if(x_min > x_max) {
+      spatError = append(spatError, 'x max must be larger than x min \n')
+    }
+  }
+  if(!is.null(y_min) && !is.null(y_max)) {
+    if(y_min > y_max) {
+      spatError = append(spatError, 'y max must be larger than y min \n')
+    }
+  }
+  if(!is.null(z_min) && !is.null(z_max)) {
+    if(z_min > z_max) {
+      spatError = append(spatError, 'z max must be larger than z min \n')
+    }
+  }
+
+  if(!is.null(spatError)) {
+    stop('Invalid spatial subset params:\n',
+         spatError,
+         call. = FALSE)
+  }
+}
+
+
+
+
+
+
+
