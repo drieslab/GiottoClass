@@ -3,6 +3,8 @@
 ## Breaking Changes
 
 ## Added
+- Added `ext<-()` method for `giottoPolygon`, `giottoPoints`
+- Added `crop()` method for `giottoLargeImage`, `giottoPoints`
 
 ## Changes
 - Improved performance of gefToGiotto()
