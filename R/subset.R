@@ -145,22 +145,24 @@ subset_expression_data = function(gobject,
 
           # for HDF5Array
           if(methods::is(S4_expr@exprMat, 'HDF5Array')) {
-            m = mirai::mirai({
-                DelayedArray::realize(expression_info[, filter_bool_cells], "HDF5Array")
-              },
-              expression_info = S4_expr@exprMat,
-              filter_bool_cells = filter_bool_cells
-            )
+            # m = mirai::mirai({
+            #     DelayedArray::realize(expression_info[, filter_bool_cells], "HDF5Array")
+            #   },
+            #   expression_info = S4_expr@exprMat,
+            #   filter_bool_cells = filter_bool_cells
+            # )
+            S4_expr@exprMat = DelayedArray::realize(S4_expr@exprMat[, filter_bool_cells], "HDF5Array")
           } else {
-            m = mirai::mirai({
-                expression_info[, filter_bool_cells]
-              },
-              expression_info = S4_expr@exprMat,
-              filter_bool_cells = filter_bool_cells
-            )
+            # m = mirai::mirai({
+            #     expression_info[, filter_bool_cells]
+            #   },
+            #   expression_info = S4_expr@exprMat,
+            #   filter_bool_cells = filter_bool_cells
+            # )
+            S4_expr@exprMat = S4_expr@exprMat[, filter_bool_cells]
           }
 
-          S4_expr@exprMat = m
+          # S4_expr@exprMat = m
 
           ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
           ### set dummy
@@ -168,7 +170,7 @@ subset_expression_data = function(gobject,
                                           values = S4_expr,
                                           verbose = FALSE)
           # actual value
-          gobject = set_mirai(gobject, S4_expr)
+          # gobject = set_mirai(gobject, S4_expr)
           ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
         }
