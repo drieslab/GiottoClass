@@ -38,7 +38,6 @@ Imports:
     Matrix,
     matrixStats (>= 0.55.0),
     methods,
-    mirai,
     reshape2,
     reticulate (>= 1.25),
     sp,
