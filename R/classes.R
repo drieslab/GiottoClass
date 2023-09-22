@@ -30,6 +30,14 @@ setClassUnion("nullOrDatatable", c("NULL", "data.table"))
 
 # VIRTUAL CLASSES ####
 
+# ** giottoSubobject Class ####
+#' @keywords internal
+#' @noRd
+setClass(
+  'giottoSubobject',
+  contains = 'VIRTUAL')
+
+
 # ** nameData Class ####
 #' @keywords internal
 #' @noRd
@@ -392,6 +400,11 @@ updateGiottoObject <- function(gobject) {
     gobject@h5_file <- NULL
   }
 
+  # # 3.3.X release adds mirai slot
+  # if (is.null(attr(gobject, "mirai"))) {
+  #   attr(gobject, "mirai") <- list()
+  # }
+
   return(gobject)
 }
 
@@ -427,6 +440,7 @@ updateGiottoObject <- function(gobject) {
 #' @slot join_info information about joined Giotto objects
 #' @slot multiomics multiomics integration results
 #' @slot h5_file path to h5 file
+# #' @slot mirai unresolved mirai values pool
 #' @details
 #' \[\strong{expression}\] There are several ways to provide expression information:
 #'
@@ -461,6 +475,7 @@ giotto <- setClass(
     join_info = "ANY",
     multiomics = "ANY",
     h5_file = "ANY"
+    # mirai = 'list'
   ),
   prototype = list(
     expression = NULL,
@@ -486,6 +501,7 @@ giotto <- setClass(
     join_info = NULL,
     multiomics = NULL,
     h5_file = NULL
+    # mirai = list()
   )
 
   # validity = check_giotto_obj
@@ -617,7 +633,7 @@ check_expr_obj <- function(object) {
 #' @slot misc misc
 #' @export
 setClass("exprObj",
-  contains = c("nameData", "exprData", "spatFeatData", "miscData"),
+  contains = c("nameData", "exprData", "spatFeatData", "miscData", 'giottoSubobject'),
   validity = check_expr_obj
 )
 
@@ -672,7 +688,7 @@ check_cell_meta_obj <- function(object) {
 #' @slot provenance origin data of aggregated expression information (if applicable)
 #' @export
 setClass("cellMetaObj",
-  contains = c("metaData", "spatFeatData"),
+  contains = c("metaData", "spatFeatData", "giottoSubobject"),
   validity = check_cell_meta_obj
 )
 
@@ -717,7 +733,7 @@ check_feat_meta_obj <- function(object) {
 #' @slot provenance origin data of aggregated expression information (if applicable)
 #' @export
 setClass("featMetaObj",
-  contains = c("metaData", "spatFeatData"),
+  contains = c("metaData", "spatFeatData", 'giottoSubobject'),
   validity = check_feat_meta_obj
 )
 
@@ -784,7 +800,7 @@ check_dim_obj <- function(object) {
 #' @slot misc method-specific additional outputs
 #' @export
 setClass("dimObj",
-  contains = c("nameData", "spatFeatData"),
+  contains = c("nameData", "spatFeatData", 'giottoSubobject'),
   slots = c(
     reduction = "character",
     reduction_method = "character",
@@ -847,7 +863,7 @@ S3toS4dimObj <- function(object) {
 #' @slot misc misc
 #' @export
 setClass("nnNetObj",
-  contains = c("nameData", "nnData", "spatFeatData", "miscData")
+  contains = c("nameData", "nnData", "spatFeatData", "miscData", 'giottoSubobject')
 )
 
 
@@ -914,7 +930,7 @@ check_spat_locs_obj <- function(object) {
 #' @slot provenance origin of aggregated information (if applicable)
 #' @export
 setClass("spatLocsObj",
-  contains = c("nameData", "coordDataDT", "spatData", "miscData"),
+  contains = c("nameData", "coordDataDT", "spatData", "miscData", 'giottoSubobject'),
   validity = check_spat_locs_obj
 )
 
@@ -985,7 +1001,7 @@ check_spat_net_obj <- function(object) {
 #' slot (filtered).
 #' @export
 setClass("spatialNetworkObj",
-  contains = c("nameData", "spatNetData", "spatData", "miscData"),
+  contains = c("nameData", "spatNetData", "spatData", "miscData", 'giottoSubobject'),
   slots = c(crossSectionObjects = "ANY"),
   prototype = list(crossSectionObjects = NULL),
   validity = check_spat_net_obj
@@ -1094,7 +1110,7 @@ check_spat_grid_obj <- function(object) {
 #' Grids can be annotated with both spatial and feature information
 #' @export
 setClass("spatialGridObj",
-  contains = c("nameData", "spatGridData", "spatFeatData", "miscData"),
+  contains = c("nameData", "spatGridData", "spatFeatData", "miscData", 'giottoSubobject'),
   validity = check_spat_grid_obj
 )
 
@@ -1145,7 +1161,7 @@ S3toS4spatialGridObj <- function(object) {
 #' @slot misc misc
 #' @export
 setClass("spatEnrObj",
-  contains = c("nameData", "enrData", "spatFeatData", "miscData")
+  contains = c("nameData", "enrData", "spatFeatData", "miscData", 'giottoSubobject')
 )
 
 
@@ -1172,7 +1188,7 @@ setClass("spatEnrObj",
 #' @export
 giottoPolygon <- setClass(
   Class = "giottoPolygon",
-  contains = c("nameData"),
+  contains = c("nameData", "giottoSubobject"),
   slots = c(
     spatVector = "ANY",
     spatVectorCentroids = "ANY",
@@ -1214,7 +1230,7 @@ updateGiottoPolygonObject <- function(gpoly) {
 
 # for use with wrap() generic
 setClass("packedGiottoPolygon",
-  contains = c("nameData"),
+  contains = c("nameData", "giottoSubobject"),
   slots = c(
     packed_spatVector = "ANY",
     packed_spatVectorCentroids = "ANY",
@@ -1252,7 +1268,7 @@ setClass("packedGiottoPolygon",
 #' @export
 giottoPoints <- setClass(
   Class = "giottoPoints",
-  contains = c("featData"),
+  contains = c("featData", 'giottoSubobject'),
   slots = c(
     spatVector = "ANY",
     networks = "ANY",
@@ -1339,7 +1355,7 @@ setClass(
 #' @export
 featureNetwork <- setClass(
   Class = "featureNetwork",
-  contains = "nameData",
+  contains = c("nameData", 'giottoSubobject'),
   slots = c(
     network_datatable = "ANY",
     network_lookup_id = "ANY",

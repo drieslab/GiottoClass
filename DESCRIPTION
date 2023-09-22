@@ -38,6 +38,7 @@ Imports:
     Matrix,
     matrixStats (>= 0.55.0),
     methods,
+    mirai,
     reshape2,
     reticulate (>= 1.25),
     sp,
@@ -110,6 +111,7 @@ Collate:
     'methods-transpose.R'
     'methods-wrap.R'
     'methods_crop.R'
+    'methods_setGiotto.R'
     'provenance.R'
     'python_environment.R'
     'save_load.R'

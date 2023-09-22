@@ -1422,16 +1422,16 @@ get_expression_values = function(gobject,
 
   # Get info from slot nesting
   expr_vals = gobject@expression[[spat_unit]][[feat_type]][[values]]
-  
+
   # Read matrix from h5 file if needed
   if(!is.null(slot(gobject, 'h5_file'))) {
     matrix_path = expr_vals[]
-    expression_matrix = HDF5Array::HDF5Array(filepath = slot(gobject, 'h5_file'), 
+    expression_matrix = HDF5Array::HDF5Array(filepath = slot(gobject, 'h5_file'),
                                              name = matrix_path,
                                              as.sparse = TRUE)
     slot(expr_vals,'exprMat') = expression_matrix
   }
-  
+
   # Output
   if(output == 'exprObj') return(expr_vals)
   else if(output == 'matrix') return(expr_vals[])
@@ -1680,7 +1680,7 @@ set_expression_values = function(gobject,
     'Setting expression [', spatUnit(values), '][', featType(values), '] ',
     objName(values), sep = ''
   )
-  
+
   ## 7. Write matrix to h5_file if needed
   if(!is.null(slot(gobject, 'h5_file'))) {
     expression_matrix = slot(values, 'exprMat')
@@ -1690,7 +1690,7 @@ set_expression_values = function(gobject,
                                                   with.dimnames = TRUE)
     slot(values, 'exprMat') = paste0(feat_type,"_",name)
   }
-  
+
   # Output
   gobject@expression[[spat_unit]][[feat_type]][[name]] = values
   if(isTRUE(initialize)) return(initialize(gobject))
@@ -4696,7 +4696,7 @@ set_spatial_enrichment = function(gobject,
                                   provenance = NULL,
                                   verbose = TRUE,
                                   set_defaults = TRUE,
-                                  initialize = TRUE) {
+                                  initialize = FALSE) {
 
   deprecate_soft('3.3.0', what = 'set_spatial_enrichment()', with = 'setSpatialEnrichment()')
 
@@ -5114,6 +5114,21 @@ setGiottoImage = function(gobject = NULL,
 
 }
 
+
+
+
+
+# set_mirai = function(gobject, x) {
+#   checkmate::assert_class(x, 'mirai')
+#   mirai_length <- length(gobject@mirai)
+#   gobject@mirai[mirai_length + 1] <- x
+#   gobject
+# }
+#
+#
+# get_mirai_list = function(gobject) {
+#   gobject@mirai
+# }
 
 
 
