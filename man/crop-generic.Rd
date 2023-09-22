@@ -3,16 +3,24 @@
 \name{crop-generic}
 \alias{crop-generic}
 \alias{crop,giottoLargeImage-method}
+\alias{crop,giottoPoints-method}
 \title{Crop to a spatial subset}
 \usage{
 \S4method{crop}{giottoLargeImage}(x, y, ...)
+
+\S4method{crop}{giottoPoints}(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL, ...)
 }
 \arguments{
 \item{x}{object}
 
 \item{y}{any object that has a SpatExtent or returns a SpatExtent}
 
-\item{...}{additional params to pass to terra::crop}
+\item{\dots}{additional params to pass to terra::crop}
+
+\item{DT}{logical. Use alternative DT subsetting for crop operation}
+
+\item{xmin, xmax, ymin, ymax}{only used if DT = TRUE. Set extent bounds
+independently}
 }
 \description{
 see \link[terra:crop]{terra::crop}. Object x will be cropped using object y.
@@ -20,5 +28,7 @@ see \link[terra:crop]{terra::crop}. Object x will be cropped using object y.
 \section{Functions}{
 \itemize{
 \item \code{crop(giottoLargeImage)}: Crop a giottoLargeImage
+
+\item \code{crop(giottoPoints)}: Crop a giottoPoints
 
 }}
