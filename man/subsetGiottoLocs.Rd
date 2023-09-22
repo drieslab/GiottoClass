@@ -42,7 +42,7 @@ to subset to}
 giotto object
 }
 \description{
-Subsets Giotto object based on spatial locations
+Subsets Giotto object based on spatial locations.
 }
 \details{
 Subsets a Giotto based on spatial locations and for one provided spatial unit

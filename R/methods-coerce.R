@@ -56,8 +56,9 @@ as.data.table.giottoPoints <- function(x, ...) {
 
 
 # DT -> SpatVector ####
-
 # TODO
+# as.points / as.polygon generics from terra are an option, but terra deals with
+# this kind of conversion using vect() usually
 
 
 

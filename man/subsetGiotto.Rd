@@ -10,7 +10,6 @@ subsetGiotto(
   feat_type = NULL,
   cell_ids = NULL,
   feat_ids = NULL,
-  gene_ids = NULL,
   poly_info = NULL,
   all_spat_units = TRUE,
   all_feat_types = TRUE,
@@ -29,13 +28,12 @@ subsetGiotto(
 
 \item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
 
-\item{cell_ids}{cell IDs to keep}
+\item{cell_ids}{character. cell IDs to keep}
 
-\item{feat_ids}{feature IDs to keep}
+\item{feat_ids}{character. feature IDs to keep}
 
-\item{gene_ids}{deprecated. Use \code{feat_ids}}
-
-\item{poly_info}{polygon information to use}
+\item{poly_info}{character. polygon info(s) to subset if present. (defaults
+to be the same as the spat_unit)}
 
 \item{all_spat_units}{subset all spatial units with selected feature ids}
 
@@ -51,7 +49,9 @@ subsetGiotto(
 giotto object
 }
 \description{
-Subsets Giotto object including previous analyses.
+Subsets Giotto object including previous analyses. For subsetting
+the subcellular information only without editing the aggregate information,
+use \link{subsetGiottoLocsSubcellular}
 }
 \details{
 Subsets a Giotto object for a specific spatial unit and feature type
