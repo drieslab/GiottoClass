@@ -23,7 +23,7 @@ subset_expression_data = function(gobject,
   # get expression information from giotto object
   output_table = list_expression(gobject)
 
-  if(!is.null(output_table)) {
+  if (!is.null(output_table)) {
 
     # loop through expression objects and update accordingly
     for(row in 1:nrow(output_table)) {
@@ -33,7 +33,7 @@ subset_expression_data = function(gobject,
       expression_name = output_table[row][['name']]
 
 
-      if(feat_type_name == feat_type & spat_unit_name == spat_unit) {
+      if(feat_type_name == feat_type && spat_unit_name == spat_unit) {
 
         S4_expr = get_expression_values(gobject = gobject,
                                         spat_unit = spat_unit_name,
@@ -92,9 +92,9 @@ subset_expression_data = function(gobject,
                                         verbose = FALSE)
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
-      } else if(feat_type_name == feat_type & spat_unit_name != spat_unit) {
+      } else if(feat_type_name == feat_type && spat_unit_name != spat_unit) {
 
-        if(all_spat_units == TRUE) {
+        if(all_spat_units) {
 
           # filter only features, but NOT cells
           S4_expr = get_expression_values(gobject = gobject,
@@ -145,15 +145,32 @@ subset_expression_data = function(gobject,
 
           # for HDF5Array
           if(methods::is(S4_expr@exprMat, 'HDF5Array')) {
+            # m = mirai::mirai({
+            #     DelayedArray::realize(expression_info[, filter_bool_cells], "HDF5Array")
+            #   },
+            #   expression_info = S4_expr@exprMat,
+            #   filter_bool_cells = filter_bool_cells
+            # )
             S4_expr@exprMat = DelayedArray::realize(S4_expr@exprMat[, filter_bool_cells], "HDF5Array")
           } else {
+            # m = mirai::mirai({
+            #     expression_info[, filter_bool_cells]
+            #   },
+            #   expression_info = S4_expr@exprMat,
+            #   filter_bool_cells = filter_bool_cells
+            # )
             S4_expr@exprMat = S4_expr@exprMat[, filter_bool_cells]
           }
 
+          # S4_expr@exprMat = m
+
           ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+          ### set dummy
           gobject = set_expression_values(gobject = gobject,
                                           values = S4_expr,
                                           verbose = FALSE)
+          # actual value
+          # gobject = set_mirai(gobject, S4_expr)
           ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
         }
@@ -179,6 +196,9 @@ subset_spatial_locations = function(gobject,
                                     cell_ids,
                                     spat_unit,
                                     all_spat_units = TRUE) {
+
+  # DT vars
+  name = NULL
 
   if(all_spat_units) {
     avail_locs = list_spatial_locations(gobject)
@@ -359,8 +379,8 @@ subset_spatial_network = function(gobject,
                                   cell_ids,
                                   all_spat_units = TRUE) {
 
-  # define for data.table
-  to = from = NULL
+  # DT vars
+  to = from = name = NULL
 
   # if no spatial networks available, return directly
   if(is.null(slot(gobject, 'spatial_network'))) {
@@ -425,8 +445,8 @@ subset_dimension_reduction = function(gobject,
   avail_dim = list_dim_reductions(
     gobject = gobject,
     data_type = 'cells',
-    spat_unit = ifelse(all_spat_units, NULL, spat_unit),
-    feat_type = ifelse(all_feat_types, NULL, feat_type)
+    spat_unit = if(all_spat_units) NULL else spat_unit,
+    feat_type = if(all_feat_types) NULL else feat_type
   )
 
   if(!is.null(avail_dim)) {
@@ -470,14 +490,14 @@ subset_nearest_network = function(gobject,
 
   avail_kNN = list_nearest_networks(
     gobject,
-    spat_unit = ifelse(all_spat_units, NULL, spat_unit),
-    feat_type = ifelse(all_feat_types, NULL, feat_type),
+    spat_unit = if(all_spat_units) NULL else spat_unit,
+    feat_type = if(all_feat_types) NULL else feat_type,
     nn_type = 'kNN'
   )
   avail_sNN = list_nearest_networks(
     gobject,
-    spat_unit = ifelse(all_spat_units, NULL, spat_unit),
-    feat_type = ifelse(all_feat_types, NULL, feat_type),
+    spat_unit = if(all_spat_units) NULL else spat_unit,
+    feat_type = if(all_feat_types) NULL else feat_type,
     nn_type = 'sNN'
   )
 
@@ -492,7 +512,8 @@ subset_nearest_network = function(gobject,
                                  output = 'nnNetObj')
 
       #vertices_to_keep = igraph::V(nnObj[])[filter_bool_cells]
-      nnObj[] = igraph::induced_subgraph(graph = nnObj[], vids = cell_ids)
+      vids = which(cell_ids %in% igraph::V(nnObj[])$name)
+      nnObj[] = igraph::induced_subgraph(graph = nnObj[], vids = vids)
 
       ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
       gobject = set_NearestNetwork(gobject, nn_network = nnObj, verbose = FALSE)
@@ -511,7 +532,8 @@ subset_nearest_network = function(gobject,
                                  output = 'nnNetObj')
 
       #vertices_to_keep = igraph::V(nnObj[])[filter_bool_cells]
-      nnObj[] = igraph::induced_subgraph(graph = nnObj[], vids = cell_ids)
+      vids = which(cell_ids %in% igraph::V(nnObj[])$name)
+      nnObj[] = igraph::induced_subgraph(graph = nnObj[], vids = vids)
 
       ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
       gobject = set_NearestNetwork(gobject, nn_network = nnObj, verbose = FALSE)
@@ -585,8 +607,8 @@ subset_spatial_enrichment = function(gobject,
 
   avail_enr = list_spatial_enrichments(
     gobject,
-    spat_unit = ifelse(all_spat_units, NULL, spat_unit),
-    feat_type = ifelse(all_feat_types, NULL, feat_type)
+    spat_unit = if(all_spat_units) NULL else spat_unit,
+    feat_type = if(all_feat_types) NULL else feat_type
   )
 
   if(!is.null(avail_enr)) {
@@ -879,6 +901,11 @@ subset_feature_info_data = function(feat_info,
 #   and feature info (points). This is useful for situations in which aggregate
 #   information has not been created but the subcellular data is present.
 
+
+# all_spat_units and all_feat_types - may need name changes
+
+
+
 # TODO
 # Consider an `across_spat_units` and `across_feat_types` for finer control
 # with a special ':all:' input that will apply to all spat_units/feat_types
@@ -917,6 +944,14 @@ subsetGiotto <- function(gobject,
                          y_min = NULL,
                          verbose = FALSE,
                          toplevel_params = 2) {
+
+  # mirai::daemons(n = GiottoUtils::determine_cores())
+  #
+  # # mirai cleanup
+  # on.exit({
+  #   mirai::daemons(0) # reset
+  # })
+
 
   # Set feat_type and spat_unit
   spat_unit = set_default_spat_unit(gobject = gobject,
@@ -1160,6 +1195,33 @@ subsetGiotto <- function(gobject,
                                      'cells removed' = cells_removed,
                                      'feats removed' = feats_removed)
   gobject@parameters = parameters_list
+
+
+
+# browser()
+#   # mirai
+#   mirai_res = get_mirai_list(gobject)
+#   if (length(mirai_res > 0)) {
+#
+#     lapply(mirai_res, function(res) {
+#       # wait until everything is done evaluating
+#       mirai::call_mirai(res)
+#
+#       # handle errors
+#       if(mirai::is_error_value(res)) stop(wrap_txt('mirai', res$data))
+#
+#       # set value
+#       gobject <<- setGiotto(gobject, x = res$data, verbose = FALSE)
+#
+#       return(NULL) # lapply itself should not return anything
+#     })
+#
+#     # TODO clear results
+#     gobject@mirai <- list()
+#     gobject <<- gobject
+#
+#   }
+
 
 
   return(initialize(gobject))

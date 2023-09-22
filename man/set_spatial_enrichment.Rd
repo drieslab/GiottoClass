@@ -13,7 +13,7 @@ set_spatial_enrichment(
   provenance = NULL,
   verbose = TRUE,
   set_defaults = TRUE,
-  initialize = TRUE
+  initialize = FALSE
 )
 }
 \arguments{
