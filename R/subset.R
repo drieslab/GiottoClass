@@ -219,7 +219,7 @@ subset_spatial_locations = function(gobject,
   }
 
   # 1. for each spatial unit requested to be subset...
-  for(su in avail_locs$spat_unit) {
+  for(su in unique(avail_locs$spat_unit)) {
     per_spat_unit(su = su)
   }
 
@@ -356,34 +356,53 @@ subset_feature_metadata = function(gobject,
 #' @noRd
 subset_spatial_network = function(gobject,
                                   spat_unit,
-                                  cell_ids) {
+                                  cell_ids,
+                                  all_spat_units = TRUE) {
 
   # define for data.table
   to = from = NULL
 
-  # cell spatial network
-  if(!is.null(slot(gobject, 'spatial_network'))) {
-    # Find existing networks for given spatial unit
-    existing_networks = list_spatial_networks_names(gobject = gobject,
-                                                    spat_unit = spat_unit)
-    # Iterate through all networks of this spatial unit...
-    for(network in existing_networks) {
-      spatNetObj = get_spatialNetwork(gobject = gobject,
-                                      spat_unit = spat_unit,
-                                      name = network,
-                                      output = 'spatialNetworkObj')
+  # if no spatial networks available, return directly
+  if(is.null(slot(gobject, 'spatial_network'))) {
+    return(gobject)
+  }
 
-      # Within each spatialNetworkObj, subset only the cells_to_keep
-      spatNetObj[] = spatNetObj[][to %in% cell_ids & from %in% cell_ids]
+  # Find existing networks and return as DT
+  if(all_spat_units) {
+    existing_networks = list_spatial_networks(gobject = gobject)
+  } else {
+    existing_networks = list_spatial_networks(gobject = gobject,
+                                              spat_unit = spat_unit)
+  }
 
-      # Set the spatialNetworkObj back into the gobject
-      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      gobject = set_spatialNetwork(gobject = gobject,
+  do_subset = function(su, nname) {
+    spatNetObj = get_spatialNetwork(gobject = gobject,
+                                    spat_unit = su,
+                                    name = nname,
+                                    output = 'spatialNetworkObj')
+
+    # Within each spatialNetworkObj, subset only the cells_to_keep
+    spatNetObj[] = spatNetObj[][to %in% cell_ids & from %in% cell_ids]
+
+    # Set the spatialNetworkObj back into the gobject
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    gobject <<- set_spatialNetwork(gobject = gobject,
                                    spatial_network = spatNetObj,
                                    verbose = FALSE)
-      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  }
+
+  per_spat_unit = function(su) {
+    net_names = existing_networks[spat_unit == su, name]
+    for(nname in net_names) {
+      do_subset(su, nname)
     }
   }
+
+  for(su in unique(existing_networks$spat_unit)) {
+    per_spat_unit(su = su)
+  }
+
 
   return(gobject)
 }
@@ -398,13 +417,17 @@ subset_spatial_network = function(gobject,
 subset_dimension_reduction = function(gobject,
                                       spat_unit,
                                       feat_type,
-                                      cell_ids) {
+                                      cell_ids,
+                                      all_feat_types = TRUE,
+                                      all_spat_units = TRUE) {
 
   # find available dim reductions
-  avail_dim = list_dim_reductions(gobject = gobject,
-                                  data_type = 'cells',
-                                  spat_unit = spat_unit,
-                                  feat_type = feat_type)
+  avail_dim = list_dim_reductions(
+    gobject = gobject,
+    data_type = 'cells',
+    spat_unit = ifelse(all_spat_units, NULL, spat_unit),
+    feat_type = ifelse(all_feat_types, NULL, feat_type)
+  )
 
   if(!is.null(avail_dim)) {
 
@@ -441,16 +464,22 @@ subset_dimension_reduction = function(gobject,
 subset_nearest_network = function(gobject,
                                   spat_unit,
                                   feat_type,
-                                  cell_ids) {
+                                  cell_ids,
+                                  all_spat_units = TRUE,
+                                  all_feat_types = TRUE) {
 
-  avail_kNN = list_nearest_networks(gobject,
-                                    spat_unit = spat_unit,
-                                    feat_type = feat_type,
-                                    nn_type = 'kNN')
-  avail_sNN = list_nearest_networks(gobject,
-                                    spat_unit = spat_unit,
-                                    feat_type = feat_type,
-                                    nn_type = 'sNN')
+  avail_kNN = list_nearest_networks(
+    gobject,
+    spat_unit = ifelse(all_spat_units, NULL, spat_unit),
+    feat_type = ifelse(all_feat_types, NULL, feat_type),
+    nn_type = 'kNN'
+  )
+  avail_sNN = list_nearest_networks(
+    gobject,
+    spat_unit = ifelse(all_spat_units, NULL, spat_unit),
+    feat_type = ifelse(all_feat_types, NULL, feat_type),
+    nn_type = 'sNN'
+  )
 
   if(!is.null(avail_kNN)) {
 
@@ -550,11 +579,15 @@ subset_nearest_network = function(gobject,
 subset_spatial_enrichment = function(gobject,
                                      spat_unit,
                                      feat_type,
-                                     cell_ids) {
+                                     cell_ids,
+                                     all_spat_units = TRUE,
+                                     all_feat_types = TRUE) {
 
-  avail_enr = list_spatial_enrichments(gobject,
-                                       spat_unit = spat_unit,
-                                       feat_type = feat_type)
+  avail_enr = list_spatial_enrichments(
+    gobject,
+    spat_unit = ifelse(all_spat_units, NULL, spat_unit),
+    feat_type = ifelse(all_feat_types, NULL, feat_type)
+  )
 
   if(!is.null(avail_enr)) {
     for(enr_i in seq(avail_enr[, .N])) {
@@ -653,14 +686,20 @@ subset_giotto_polygon_object = function(gpolygon,
 
 #' @title Subset spatial info data
 #' @name subset_spatial_info_data
-#' @description Subset all spatial info (polygon) data
+#' @description Subset all spatial info (polygon) data.
+#' @param spatial_info contents of the Giotto spatial_info slot
+#' @param cell_ids character. cell ids to keep
+#' @param poly_info character. polygon(s) to subset
+#' @param feat_type feature type of overlaps to subset if they exist within the
+#' giottoPolygon
+#' @param feat_ids character. feat ids to keep
 #' @keywords internal
 #' @noRd
 subset_spatial_info_data = function(spatial_info,
                                     cell_ids,
                                     poly_info = 'cell',
-                                    feat_ids,
                                     feat_type = NULL,
+                                    feat_ids,
                                     verbose = TRUE) {
 
 
@@ -670,10 +709,12 @@ subset_spatial_info_data = function(spatial_info,
   }
 
   res_list = list()
+  # iterate through all spatial info entries...
   for(spat_info in names(spatial_info)) {
 
     if(verbose) cat('for ', spat_info, '\n')
 
+    # if the spatial info is one selected in poly_info...
     if(spat_info %in% poly_info) {
 
       if(verbose) cat('--> ', spat_info, ' found back in polygon layer: ', poly_info, '\n')
@@ -688,7 +729,9 @@ subset_spatial_info_data = function(spatial_info,
       res_list[[spat_info]] = spat_subset
 
     } else {
-
+      # even if the spatial info is not one selected directly through poly_info,
+      # still subset subset any existing feature overlaps matching the feat_type
+      # for the feat_ids
       if(!is.null(spatial_info[[spat_info]]@overlaps)) {
 
         for(feat in names(spatial_info[[spat_info]]@overlaps)) {
@@ -769,6 +812,11 @@ subset_giotto_points_object = function(gpoints,
 #' @title Subset feature info data
 #' @name subset_feature_info_data
 #' @description Subset all spatial feature (points) data
+#' @param feat_info contents of giotto object feat_info slot
+#' @param feat_ids character. feat ids to keep
+#' @param feat_type character vector. feature type(s) to subset
+#' @param x_min,x_max,y_min,y_max spatial bounds to subset by
+#' @param verbose be verbose
 #' @keywords internal
 #' @noRd
 subset_feature_info_data = function(feat_info,
@@ -831,7 +879,11 @@ subset_feature_info_data = function(feat_info,
 #   and feature info (points). This is useful for situations in which aggregate
 #   information has not been created but the subcellular data is present.
 
+# TODO
+# Consider an `across_spat_units` and `across_feat_types` for finer control
+# with a special ':all:' input that will apply to all spat_units/feat_types
 
+# Hierarchical subsetting?
 
 
 #' @title subsetGiotto
@@ -1003,7 +1055,8 @@ subsetGiotto <- function(gobject,
   # cell spatial network
   gobject = subset_spatial_network(gobject = gobject,
                                    spat_unit = spat_unit,
-                                   cell_ids = cell_ids)
+                                   cell_ids = cell_ids,
+                                   all_spat_units = all_spat_units)
 
 
   if(verbose) cat('completed 7: subset spatial network(s) \n')
@@ -1017,7 +1070,9 @@ subsetGiotto <- function(gobject,
   gobject = subset_dimension_reduction(gobject = gobject,
                                        spat_unit = spat_unit,
                                        feat_type = feat_type,
-                                       cell_ids = cell_ids)
+                                       cell_ids = cell_ids,
+                                       all_feat_types = all_feat_types,
+                                       all_spat_units = all_spat_units)
 
   if(verbose) cat('completed 8: subsetted dimension reductions \n')
 
@@ -1026,7 +1081,9 @@ subsetGiotto <- function(gobject,
   gobject = subset_nearest_network(gobject = gobject,
                                    spat_unit = spat_unit,
                                    feat_type = feat_type,
-                                   cell_ids =  cell_ids)
+                                   cell_ids = cell_ids,
+                                   all_spat_units = all_spat_units,
+                                   all_feat_types = all_feat_types)
 
   if(verbose) cat('completed 9: subsetted nearest network(s) \n')
 
@@ -1035,7 +1092,9 @@ subsetGiotto <- function(gobject,
   gobject = subset_spatial_enrichment(gobject = gobject,
                                       spat_unit = spat_unit,
                                       feat_type = feat_type,
-                                      cell_ids = cell_ids)
+                                      cell_ids = cell_ids,
+                                      all_spat_units = all_spat_units,
+                                      all_feat_types = all_feat_types)
 
   if(verbose) cat('completed 10: subsetted spatial enrichment results \n')
 
@@ -1044,6 +1103,9 @@ subsetGiotto <- function(gobject,
 
     for(select_poly_info in poly_info) {
 
+      # for each entry entry in poly_info, subset using cell_ids
+      # note that even if no poly_info is selected, the overlaps slots that match
+      # the feat_type param will be subset using feat_ids
       gobject@spatial_info = subset_spatial_info_data(spatial_info = gobject@spatial_info,
                                                       feat_type = feat_type,
                                                       cell_ids = cell_ids,
@@ -1099,10 +1161,6 @@ subsetGiotto <- function(gobject,
                                      'feats removed' = feats_removed)
   gobject@parameters = parameters_list
 
-  # if(verbose){
-  #   print(gobject@spatial_info)
-  #   print(gobject@spatial_locs)
-  # }
 
   return(initialize(gobject))
 
