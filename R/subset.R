@@ -180,6 +180,9 @@ subset_spatial_locations = function(gobject,
                                     spat_unit,
                                     all_spat_units = TRUE) {
 
+  # DT vars
+  name = NULL
+
   if(all_spat_units) {
     avail_locs = list_spatial_locations(gobject)
   } else {
@@ -359,8 +362,8 @@ subset_spatial_network = function(gobject,
                                   cell_ids,
                                   all_spat_units = TRUE) {
 
-  # define for data.table
-  to = from = NULL
+  # DT vars
+  to = from = name = NULL
 
   # if no spatial networks available, return directly
   if(is.null(slot(gobject, 'spatial_network'))) {
