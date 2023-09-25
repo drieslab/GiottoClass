@@ -1233,17 +1233,29 @@ subsetGiotto <- function(gobject,
 
 #' @title Subset by spatial locations
 #' @name subsetGiottoLocs
-#' @description Subsets Giotto object based on spatial locations.
+#' @description Subsets Giotto object spatially by defining a set of
+#' cropping bounds. The information to be subset is preferred to be from spatial
+#' locations. If no `spat_loc_name` is given, the first available set of
+#' spatial locations for the `spat_unit` will be picked.
+#' If no spatial locations are available, the polygon information will be subset.
+#' Spatial IDs surviving the crop are then applied to the rest of the Giotto object
+#' using [subsetGiotto].
+#'
+#' The spatial subset is only performed on one spatial unit at a time.\cr
+#' For subsetting more than one spatial unit, see [subsetGiottoLocsMulti]\cr
+#' This function
 #' @inheritParams data_access_params
-#' @param spat_loc_name name of spatial locations to use
+#' @param spat_loc_name name of spatial locations to use within spat_unit
+#' @param spat_unit spatial unit to subset
+#' @param feat_type
 #' @param x_max,x_min,y_max,y_min,z_max,z_min minimum and maximum x, y, and z coordinates
 #'   to subset to
-#' @param poly_info polygon information to use
+#' @param poly_info character. polygon information to subset
 #' @param return_gobject return Giotto object
 #' @param verbose be verbose
 #' @return giotto object
-#' @details Subsets a Giotto based on spatial locations and for one provided spatial unit
-#' if return_gobject = FALSE, then a filtered combined metadata data.table will be returned
+#' @details If `return_gobject = FALSE`, then a filtered combined metadata
+#' data.table will be returned
 #' @export
 subsetGiottoLocs = function(gobject,
                             spat_unit = NULL,
@@ -1271,6 +1283,13 @@ subsetGiottoLocs = function(gobject,
                                     spat_unit = spat_unit,
                                     feat_type = feat_type)
 
+  checkmate::assert_character(spat_unit)
+  if (length(spat_unit) > 1) stop(wrap_txt(
+    'subsetGiottoLocs: Length of spat_unit > 1
+    Use subsetGiottoLocsMulti() for spatial subsets across multiple spat_units'
+  ))
+
+
   # 1. Check spatial params
   valid_spat_subset_params(x_min = x_min, x_max = x_max,
                            y_min = y_min, y_max = y_max,
@@ -1281,18 +1300,36 @@ subsetGiottoLocs = function(gobject,
   if(is.null(spat_loc_name)) {
 
     # first check spatial locations
-    if(!is.null(slot(gobject, 'spatial_locs'))) {
-      spat_loc_name = names(slot(gobject, 'spatial_locs')[[spat_unit]])[[1]]
+    if (!is.null(slot(gobject, 'spatial_locs'))) {
+      # get name of first available spatial unit if none provided
+      spat_loc_name = list_spatial_locations_names(
+        gobject = gobject,
+        spat_unit = spat_unit
+      )[[1]]
       # cat('No spatial locations have been selected, the first one -',spat_loc_name, '- will be used \n')
 
       # if spatlocs missing, check spatial_info
     } else if(!is.null(slot(gobject, 'spatial_info'))) {
+
+      if (!return_gobject) {
+        stop(wrap_txt(
+          'subsetGiottoLocs:
+          No spatial locations for spat_unit', paste0('\'', spat_unit, '\''),
+          'have been found.
+          return_gobject = FALSE is not possible when defaulting to polygon info
+          subsetting.',
+          errWidth = TRUE
+        ))
+      }
+
       # EXCEPTION: if no spatlocs found but polys exist, find cell_IDs from polys
+      # by spatially scanning across all of them. The resulting cell_ID list
+      # can be expected not be specific for the spatial unit, but this should
+      # be fine in most cases since subsetGiotto() cell_ID input is which cells
+      # to keep as opposed to which to exclude.
       polys_list = slot(gobject, 'spatial_info')
       cropped_IDs = lapply(polys_list, function(x) {
-        sv = slot(x, 'spatVector')
-        sv = terra::crop(sv, terra::ext(x_min, x_max, y_min, y_max))
-        sv$poly_ID
+        terra::crop(x, terra::ext(x_min, x_max, y_min, y_max))@unique_ID_cache
         # TODO add cropping for z values as well
       })
 
@@ -1352,6 +1389,7 @@ subsetGiottoLocs = function(gobject,
 
     filtered_cell_IDs = comb_metadata[['cell_ID']]
 
+    # assumes that all spatlocs within a spat unit contain the same cell_IDs
     subset_object = subsetGiotto(gobject = gobject,
                                  spat_unit = spat_unit,
                                  feat_type = feat_type,
@@ -1361,6 +1399,7 @@ subsetGiottoLocs = function(gobject,
                                  x_min = x_min,
                                  y_max = y_max,
                                  y_min = y_min,
+                                 all_spat_units = FALSE,
                                  verbose = verbose)
 
     return(subset_object)
@@ -1378,6 +1417,7 @@ subsetGiottoLocs = function(gobject,
 #' @name subsetGiottoLocsMulti
 #' @description Subsets Giotto object based on spatial locations
 #' @inheritParams subsetGiottoLocs
+#' @param spat_unit character vector of multiple spatial units
 #' @return giotto object
 #' @details Subsets a Giotto based on spatial locations for multiple spatial units
 #' if return_gobject = FALSE, then a filtered combined metadata data.table will be returned

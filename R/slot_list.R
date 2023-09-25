@@ -53,8 +53,8 @@ list_expression = function(gobject,
   }
 
   # check if a specific category is desired
-  if(!is.null(spat_unit)) spat_unit_subset = availableExpr$spat_unit == spat_unit else spat_unit_subset = TRUE
-  if(!is.null(feat_type)) feat_type_subset = availableExpr$feat_type == feat_type else feat_type_subset = TRUE
+  if(!is.null(spat_unit)) spat_unit_subset = availableExpr$spat_unit %in% spat_unit else spat_unit_subset = TRUE
+  if(!is.null(feat_type)) feat_type_subset = availableExpr$feat_type %in% feat_type else feat_type_subset = TRUE
 
   availableExpr = availableExpr[spat_unit_subset & feat_type_subset,]
 
@@ -133,8 +133,8 @@ list_cell_metadata = function(gobject,
   }
 
   # check if a specific category is desired
-  if(!is.null(spat_unit)) spat_unit_subset = availableCMet$spat_unit == spat_unit else spat_unit_subset = TRUE
-  if(!is.null(feat_type)) feat_type_subset = availableCMet$feat_type == feat_type else feat_type_subset = TRUE
+  if(!is.null(spat_unit)) spat_unit_subset = availableCMet$spat_unit %in% spat_unit else spat_unit_subset = TRUE
+  if(!is.null(feat_type)) feat_type_subset = availableCMet$feat_type %in% feat_type else feat_type_subset = TRUE
 
   availableCMet = availableCMet[spat_unit_subset & feat_type_subset,]
 
@@ -173,8 +173,8 @@ list_feat_metadata = function(gobject,
   }
 
   # check if a specific category is desired
-  if(!is.null(spat_unit)) spat_unit_subset = availableFMet$spat_unit == spat_unit else spat_unit_subset = TRUE
-  if(!is.null(feat_type)) feat_type_subset = availableFMet$feat_type == feat_type else feat_type_subset = TRUE
+  if(!is.null(spat_unit)) spat_unit_subset = availableFMet$spat_unit %in% spat_unit else spat_unit_subset = TRUE
+  if(!is.null(feat_type)) feat_type_subset = availableFMet$feat_type %in% feat_type else feat_type_subset = TRUE
 
   availableFMet = availableFMet[spat_unit_subset & feat_type_subset,]
 
@@ -214,7 +214,7 @@ list_spatial_locations = function(gobject,
   }
 
   # check if a specific category is desired
-  if(!is.null(spat_unit)) spat_unit_subset = availableSpatLocs$spat_unit == spat_unit else spat_unit_subset = TRUE
+  if(!is.null(spat_unit)) spat_unit_subset = availableSpatLocs$spat_unit %in% spat_unit else spat_unit_subset = TRUE
 
   availableSpatLocs = availableSpatLocs[spat_unit_subset,]
 
@@ -276,8 +276,8 @@ list_spatial_enrichments = function(gobject,
   }
 
   # check if a specific category is desired
-  if(!is.null(spat_unit)) spat_unit_subset = availableSpatEnr$spat_unit == spat_unit else spat_unit_subset = TRUE
-  if(!is.null(feat_type)) feat_type_subset = availableSpatEnr$feat_type == feat_type else feat_type_subset = TRUE
+  if(!is.null(spat_unit)) spat_unit_subset = availableSpatEnr$spat_unit %in% spat_unit else spat_unit_subset = TRUE
+  if(!is.null(feat_type)) feat_type_subset = availableSpatEnr$feat_type %in% feat_type else feat_type_subset = TRUE
 
   availableSpatEnr = availableSpatEnr[spat_unit_subset & feat_type_subset,]
 
@@ -346,10 +346,10 @@ list_dim_reductions = function(gobject,
   }
 
   # check if a specific category is desired
-  if(!is.null(data_type)) data_type_subset = availableDimRed$data_type == data_type else data_type_subset = TRUE
-  if(!is.null(spat_unit)) spat_unit_subset = availableDimRed$spat_unit == spat_unit else spat_unit_subset = TRUE
-  if(!is.null(feat_type)) feat_type_subset = availableDimRed$feat_type == feat_type else feat_type_subset = TRUE
-  if(!is.null(dim_type)) dimred_type_subset = availableDimRed$dim_type == dim_type else dimred_type_subset = TRUE
+  if(!is.null(data_type)) data_type_subset = availableDimRed$data_type %in% data_type else data_type_subset = TRUE
+  if(!is.null(spat_unit)) spat_unit_subset = availableDimRed$spat_unit %in% spat_unit else spat_unit_subset = TRUE
+  if(!is.null(feat_type)) feat_type_subset = availableDimRed$feat_type %in% feat_type else feat_type_subset = TRUE
+  if(!is.null(dim_type)) dimred_type_subset = availableDimRed$dim_type %in% dim_type else dimred_type_subset = TRUE
 
   availableDimRed = availableDimRed[data_type_subset & spat_unit_subset & feat_type_subset & dimred_type_subset,]
 
@@ -399,6 +399,8 @@ list_nearest_networks = function(gobject,
                                  nn_type = NULL,
                                  return_uniques = FALSE) {
 
+  # TODO remove uniques
+
   availableNN = data.table()
   uniques = list()
   for(spatUnit in names(slot(gobject, 'nn_network'))) {
@@ -420,55 +422,14 @@ list_nearest_networks = function(gobject,
     }
   }
 
-  # **To be deprecated**
-  # nn network has gained feat_type nesting. Check back one layer
-  if(!all(uniques$nn_type %in% availableNN$nn_type)) {
-    # Check for vaid igraph objects at lower nesting
-    availableNN_old = data.table()
-    for(spatUnit in names(slot(gobject, 'nn_network'))) {
-      for(nnType in names(slot(gobject, 'nn_network')[[spatUnit]])) {
-        for(nnNet in names(slot(gobject, 'nn_network')[[spatUnit]][[nnType]])) {
-          if(inherits(slot(gobject, 'nn_network')[[spatUnit]][[nnType]][[nnNet]], 'igraph')) {
-            availableNN_old = rbind(availableNN_old,
-                                    list(spat_unit = spatUnit,
-                                         nn_type = nnType,
-                                         name = nnNet))
-          }
-        }
-      }
-    }
-    if(nrow(availableNN_old > 0)) {
-      message('Deprecated nesting found within nn_network slot:')
-      print(availableNN_old)
-      warning('Deprecated nesting discovered within Giotto nn_network slot. Consider remaking the object or changing the nesting to the suggested.')
-
-      for(net in seq(nrow(availableNN_old))) {
-        # Assign default feature type for each spat_unit
-        featType = set_default_feat_type(gobject,
-                                         spat_unit = availableNN_old$spat_unit[[net]])
-        # Place object in new location
-        gobject@nn_network[[availableNN_old$spat_unit[[net]]]][[featType]][[availableNN_old$nn_type[[net]]]][[availableNN_old$name[[net]]]] =
-          gobject@nn_network[[availableNN_old$spat_unit[[net]]]][[availableNN_old$nn_type[[net]]]][[availableNN_old$name[[net]]]]
-        # Remove old object so that it is not detected by this list function
-        gobject@nn_network[[availableNN_old$spat_unit[[net]]]][[availableNN_old$nn_type[[net]]]][[availableNN_old$name[[net]]]] = NULL
-      }
-      # Recursive call on new nesting structure
-      message('Suggested new nesting:')
-      availableNN_suggest = list_nearest_networks(gobject)
-      print(availableNN_suggest)
-      cat('\n')
-      availableNN = availableNN_old
-    }
-  } # **deprecation end**
-
   # check if a specific category is desired
-  if(!is.null(spat_unit)) spat_unit_subset = availableNN$spat_unit == spat_unit else spat_unit_subset = TRUE
-  if(!is.null(feat_type)) feat_type_subset = availableNN$feat_type == feat_type else feat_type_subset = TRUE
-  if(!is.null(nn_type)) nn_type_subset = availableNN$nn_type == nn_type else nn_type_subset = TRUE
+  if(!is.null(spat_unit)) spat_unit_subset = availableNN$spat_unit %in% spat_unit else spat_unit_subset = TRUE
+  if(!is.null(feat_type)) feat_type_subset = availableNN$feat_type %in% feat_type else feat_type_subset = TRUE
+  if(!is.null(nn_type)) nn_type_subset = availableNN$nn_type %in% nn_type else nn_type_subset = TRUE
 
   availableNN = availableNN[spat_unit_subset & feat_type_subset & nn_type_subset,]
 
-  if(!isTRUE(return_uniques)) {
+  if (!isTRUE(return_uniques)) {
     # NULL if there is no data
     if(nrow(availableNN) == 0) return(NULL)
     else return(availableNN)
@@ -597,7 +558,7 @@ list_spatial_networks = function(gobject,
   }
 
   # check if a specific category is desired
-  if(!is.null(spat_unit)) spat_unit_subset = availableSpatNetworks$spat_unit == spat_unit else spat_unit_subset = TRUE
+  if(!is.null(spat_unit)) spat_unit_subset = availableSpatNetworks$spat_unit %in% spat_unit else spat_unit_subset = TRUE
 
   availableSpatNetworks = availableSpatNetworks[spat_unit_subset,]
 
@@ -659,47 +620,10 @@ list_spatial_grids = function(gobject,
     }
   }
 
-  # **To be deprecated**
-  # spatial_grid has gained feat_type nesting. Check back one layer
-  if(!all(uniques$name %in% availableSpatGrids$name)) {
-    # Check for valid spatialGridObj objects at lower nesting
-    availableSpatGrids_old = data.table()
-    for(spatial_unit in names(gobject@spatial_grid)) {
-      for(grid_names in names(gobject@spatial_grid[[spatial_unit]])) {
-        if(inherits(gobject@spatial_grid[[spatial_unit]][[grid_names]], 'spatialGridObj')) {
-          availableSpatGrids_old = rbind(availableSpatGrids_old,
-                                         list(spat_unit = spatial_unit,
-                                              name = grid_names))
-        }
-      }
-    }
-    if(nrow(availableSpatGrids_old > 0)) {
-      message('Deprecated nesting discovered within spatial_grid slot:')
-      print(availableSpatGrids_old)
-      warning('Deprecated nesting discovered within Giotto spatial_grid slot. Consider remaking the object or changing the nesting to the suggested.')
-      for(grid in seq(nrow(availableSpatGrids_old))) {
-        # Assign default feature type for each spat_unit
-        feature_type = set_default_feat_type(gobject,
-                                             spat_unit = availableSpatGrids_old$spat_unit[[grid]])
-        # Place object in new location
-        gobject@spatial_grid[[availableSpatGrids_old$spat_unit[[grid]]]][[feature_type]][[availableSpatGrids_old$name[[grid]]]] =
-          gobject@spatial_grid[[availableSpatGrids_old$spat_unit[[grid]]]][[availableSpatGrids_old$name[[grid]]]]
-        # Remove old object so that it is not detected by this list function
-        gobject@spatial_grid[[availableSpatGrids_old$spat_unit[[grid]]]][[availableSpatGrids_old$name[[grid]]]] = NULL
-      }
-      # Recursive call on new nesting structure
-      message('Suggested new nesting:')
-      availableSpatGrids_suggest = list_spatial_grids(gobject)
-      print(availableSpatGrids_suggest)
-      cat('\n')
-      availableSpatGrids = availableSpatGrids_old
-    }
-  } # **deprecation end**
-
 
   # check if a specific category is desired
-  if(!is.null(spat_unit)) spat_unit_subset = availableSpatGrids$spat_unit == spat_unit else spat_unit_subset = TRUE
-  if(!is.null(feat_type)) feat_type_subset = availableSpatGrids$feat_type == feat_type else feat_type_subset = TRUE
+  if(!is.null(spat_unit)) spat_unit_subset = availableSpatGrids$spat_unit %in% spat_unit else spat_unit_subset = TRUE
+  if(!is.null(feat_type)) feat_type_subset = availableSpatGrids$feat_type %in% feat_type else feat_type_subset = TRUE
 
   availableSpatGrids = availableSpatGrids[spat_unit_subset & feat_type_subset,]
 
@@ -768,7 +692,7 @@ list_images = function(gobject,
   }
 
   # check if a specific category is desired
-  if(!is.null(img_type)) img_type_subset = availableImages$img_type == img_type else img_type_subset = TRUE
+  if(!is.null(img_type)) img_type_subset = availableImages$img_type %in% img_type else img_type_subset = TRUE
 
   availableImages = availableImages[img_type_subset,]
 
