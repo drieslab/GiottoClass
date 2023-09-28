@@ -48,7 +48,7 @@ subset_expression_data = function(gobject,
     return(gobject)
   }
 
-  
+
   # merge availability tables for easier iterating
   # left
   if (!is.null(avail_cex) && is.null(avail_fex)) {
@@ -68,7 +68,7 @@ subset_expression_data = function(gobject,
                      on = c('spat_unit', 'feat_type', 'name'),
                      all = TRUE)
   }
-  
+
 
   # for each selected expr, perform up to 2 subsets #
   lapply(seq(nrow(avail_ex)), function(ex_i) {
@@ -229,7 +229,7 @@ subset_feature_metadata = function(gobject,
   if (isTRUE(spat_unit_fsub == ':all:')) spat_unit_fsub = NULL
   if (isTRUE(feat_type == ':all:')) feat_type = NULL
   avail_fm = list_feat_metadata(
-    gobject = gobject, 
+    gobject = gobject,
     feat_type = feat_type,
     spat_unit = spat_unit_fsub
   )
@@ -542,7 +542,7 @@ subset_spatial_info_data = function(spatial_info,
     if(spat_info %in% poly_info) {
 
       if(verbose) cat('--> ', spat_info, ' found back in polygon layer: ', poly_info, '\n')
-      
+
       # subset the giottoPolygon object for the cell_ids and the specified
       # feat_type overlap information (if existing) for the feat_ids
       spat_subset = subset_giotto_polygon_object(gpolygon = si,
@@ -560,9 +560,9 @@ subset_spatial_info_data = function(spatial_info,
          !is.null(feat_ids)) {
 
         if (isTRUE(feat_type) == ':all:') feat_type = names(si@overlaps)
-        
+
         for(feat in names(si@overlaps)) {
-          
+
           if (isTRUE(feat %in% feat_type)) {
             feat_id_bool = terra::as.list(si@overlaps[[feat]])$feat_ID %in% feat_ids
             si@overlaps[[feat]] = si@overlaps[[feat]][feat_id_bool]
@@ -603,7 +603,7 @@ subset_feature_info_data = function(feat_info,
                                     verbose = FALSE) {
 
   if (isTRUE(feat_type == ':all:')) feat_type = names(feat_info)
-  
+
   res_list = list()
   for(feat in names(feat_info)) {
 
@@ -697,10 +697,10 @@ subset_giotto = function(gobject,
                          y_min = NULL,
                          verbose = FALSE,
                          toplevel_params = 2) {
-  
+
   # NOTE:
   # spat_unit = ':all:', but feat_type is hardcoded to 'rna'
-  # This is since most people will be running analyses that look at rna 
+  # This is since most people will be running analyses that look at rna
   # information through the lens of multiple spatial units
 
 
@@ -733,7 +733,7 @@ subset_giotto = function(gobject,
   #   filter_bool_cells = g_cell_IDs %in% g_cell_IDs
   #   cell_ids = g_cell_IDs[filter_bool_cells]
   # }
-  # 
+  #
   # if(!is.null(feat_ids)) {
   #   filter_bool_feats = g_feat_IDs %in% feat_ids
   #   feat_ids = g_feat_IDs[filter_bool_feats]
@@ -786,9 +786,9 @@ subset_giotto = function(gobject,
     feat_type_ssub = feat_type_ssub,
     cell_ids = cell_ids
   )
-  
+
   if(verbose) cat('completed 4: subset cell metadata \n')
-  
+
   # feature metadata
   gobject = subset_feature_metadata(
     gobject = gobject,
@@ -909,7 +909,7 @@ subset_giotto = function(gobject,
 
   parameters_list = parameters_info[['plist']]
   # update_name = parameters_info[['newname']]
-  # 
+  #
   # parameters_list[[update_name]] = c(parameters_list[[update_name]],
   #                                    'cells removed' = cells_removed,
   #                                    'feats removed' = feats_removed)
@@ -1026,7 +1026,7 @@ subsetGiotto <- function(gobject,
                          feat_type_ssub = ':all:',
                          verbose = FALSE,
                          toplevel_params = 2) {
-  
+
   # handle deprecations
   if (!is.null(all_spat_units)) {
     warning(wrap_txt(
@@ -1130,11 +1130,11 @@ subsetGiottoLocs = function(gobject,
                                     spat_unit = spat_unit,
                                     feat_type = feat_type)
 
-  
+
   if (is.null(poly_info)) {
     poly_info = spat_unit
   }
-  
+
   if (length(feat_type) > 1L ||
       isTRUE(feat_type == ':all:')) {
     stop(wrap_txt(
@@ -1197,7 +1197,7 @@ subsetGiottoLocs = function(gobject,
     }
   }
 
-  
+
   # only used for combined metadata outputs
   comb_metadata = combineMetadata(gobject = gobject,
                                   spat_unit = spat_unit,
@@ -1279,7 +1279,7 @@ subsetGiottoLocsMulti = function(gobject,
                                  poly_info = NULL,
                                  return_gobject = TRUE,
                                  verbose = TRUE) {
-  
+
   if (length(feat_type) > 1L ||
       isTRUE(feat_type == ':all:')) {
     stop(wrap_txt(
@@ -1291,12 +1291,12 @@ subsetGiottoLocsMulti = function(gobject,
       errWidth = TRUE
     ))
   }
-  
+
   # if :all:, find all existing spat units with spatial information
   if(isTRUE(spat_unit == ':all:')) {
     avail_su = c(list_spatial_locations(gobject)$spat_unit,
                  list_spatial_info(gobject)$spat_unit)
-    
+
     spat_unit = unique(avail_su)
   }
 
@@ -1585,14 +1585,14 @@ subset_giotto_polygon_object = function(gpolygon,
 
   # cell ID only subsets
   if (!is.null(cell_ids)) {
-    
+
     if (!is.null(gpolygon@spatVector)) {
       poly_IDs = spatIDs(gpolygon, uniques = FALSE)
       cell_id_bool = poly_IDs %in% cell_ids
       gpolygon@spatVector = gpolygon@spatVector[cell_id_bool]
       gpolygon@unique_ID_cache = unique(poly_IDs[cell_id_bool]) # update cache
     }
-    
+
     if(!is.null(gpolygon@spatVectorCentroids)) {
       # assume identical ordering
       gpolygon@spatVectorCentroids = gpolygon@spatVectorCentroids[cell_id_bool]
@@ -1601,7 +1601,7 @@ subset_giotto_polygon_object = function(gpolygon,
 
   # cell ID and feat ID subsets
   if(!is.null(gpolygon@overlaps)) {
-    
+
     if (isTRUE(feat_type) == ':all:') feat_type = names(gpolygon@overlaps)
 
     for(feat in names(gpolygon@overlaps)) {
@@ -1688,7 +1688,7 @@ subset_giotto_points_object = function(gpoints,
 # runs expression finalizer, if any
 finalize_expr_subset = function(ex_mat) {
   if(methods::is(ex_mat[], 'HDF5Array')) {
-    ex_mat[] = DelayedArray::realize(ex_mat[])
+    ex_mat[] = DelayedArray::realize(ex_mat[], "HDF5Array")
   }
   return(ex_mat)
 }
