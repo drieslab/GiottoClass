@@ -20,9 +20,11 @@ subsetGiottoLocsSubcellular(
 \arguments{
 \item{gobject}{giotto object}
 
-\item{poly_info}{polygon information to use}
+\item{poly_info}{character. polygon information to subset (considered
+separately from the spat_units to subset)}
 
-\item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
+\item{feat_type}{(optional) feat type to use if \code{return_gobject = TRUE} and
+a combined data.table output is desired.}
 
 \item{x_max, x_min, y_max, y_min, z_max, z_min}{minimum and maximum x, y, and z coordinates
 to subset to}

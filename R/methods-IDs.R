@@ -71,12 +71,20 @@ setMethod('spatIDs', signature(x = 'dimObj', spat_unit = 'missing'),
           })
 #' @rdname spatIDs-generic
 #' @param use_cache use cached IDs if available (gpoly and gpoints only)
+#' @param uniques return unique ID values only (currently gpoly and gpoints only)
 #' @export
 setMethod('spatIDs', signature(x = 'giottoPolygon', spat_unit = 'missing'),
-          function(x, use_cache = TRUE, ...) {
+          function(x, use_cache = TRUE, uniques = TRUE, ...) {
+            if (!all(is.na(x@unique_ID_cache)) &&
+                isTRUE(use_cache) &&
+                isTRUE(uniques)) {
+              return(as.character(x@unique_ID_cache))
+            }
+            
             # getting as list first is more performant
-            if(!all(is.na(x@unique_ID_cache)) & isTRUE(use_cache)) as.character(x@unique_ID_cache)
-            else as.character(unique(terra::as.list(x@spatVector)$poly_ID))
+            out = as.character(terra::as.list(x@spatVector)$poly_ID)
+            if (isTRUE(uniques)) out = unique(out)
+            return(out)
           })
 #' @rdname spatIDs-generic
 #' @export
@@ -118,11 +126,24 @@ setMethod('featIDs', signature(x = 'exprObj', feat_type = 'missing'),
           })
 #' @rdname spatIDs-generic
 #' @export
+setMethod('featIDs', signature(x = 'featMetaObj', feat_type = 'missing'),
+          function(x, ...) {
+            as.character(x[]$feat_ID)
+          })
+#' @rdname spatIDs-generic
+#' @export
 setMethod('featIDs', signature(x = 'giottoPoints', feat_type = 'missing'),
-          function(x, use_cache = TRUE, ...) {
+          function(x, use_cache = TRUE, uniques = TRUE, ...) {
+            if (!all(is.na(x@unique_ID_cache)) &&
+                isTRUE(use_cache) &&
+                isTRUE(uniques)) {
+              return(as.character(x@unique_ID_cache))
+            }
+            
             # getting as list is more performant than directly using `$`
-            if(!all(is.na(x@unique_ID_cache)) & isTRUE(use_cache)) as.character(x@unique_ID_cache)
-            else as.character(unique(terra::as.list(x@spatVector)$feat_ID))
+            out = as.character(terra::as.list(x@spatVector)$feat_ID)
+            if (isTRUE(uniques)) out = unique(out)
+            return(out)
           })
 #' @rdname spatIDs-generic
 #' @export

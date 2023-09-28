@@ -496,6 +496,7 @@ setMethod('show', signature = 'giottoPolygon', function(object) {
   } else {
     cat(' overlaps    : NULL')
   }
+  cat('\n')
 
 })
 
@@ -531,6 +532,7 @@ setMethod('show', signature = 'giottoPoints', function(object) {
     cat(' feat. net.  :')
     print(object@networks)
   }
+  cat('\n')
 
 })
 

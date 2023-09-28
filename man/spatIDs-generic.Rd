@@ -17,6 +17,7 @@
 \alias{featIDs,giotto,missing-method}
 \alias{featIDs,giotto,character-method}
 \alias{featIDs,exprObj,missing-method}
+\alias{featIDs,featMetaObj,missing-method}
 \alias{featIDs,giottoPoints,missing-method}
 \alias{featIDs,spatEnrObj,missing-method}
 \title{Spatial and feature IDs}
@@ -42,7 +43,7 @@ featIDs(x, feat_type, ...)
 
 \S4method{spatIDs}{dimObj,missing}(x, spat_unit, ...)
 
-\S4method{spatIDs}{giottoPolygon,missing}(x, use_cache = TRUE, ...)
+\S4method{spatIDs}{giottoPolygon,missing}(x, use_cache = TRUE, uniques = TRUE, ...)
 
 \S4method{spatIDs}{spatEnrObj,missing}(x, spat_unit, ...)
 
@@ -54,7 +55,9 @@ featIDs(x, feat_type, ...)
 
 \S4method{featIDs}{exprObj,missing}(x, feat_type, ...)
 
-\S4method{featIDs}{giottoPoints,missing}(x, use_cache = TRUE, ...)
+\S4method{featIDs}{featMetaObj,missing}(x, feat_type, ...)
+
+\S4method{featIDs}{giottoPoints,missing}(x, use_cache = TRUE, uniques = TRUE, ...)
 
 \S4method{featIDs}{spatEnrObj,missing}(x, feat_type, ...)
 }
@@ -66,6 +69,8 @@ featIDs(x, feat_type, ...)
 \item{...}{additional parameters to pass}
 
 \item{use_cache}{use cached IDs if available (gpoly and gpoints only)}
+
+\item{uniques}{return unique ID values only (currently gpoly and gpoints only)}
 
 \item{feat_type}{(optional) specify which feature type}
 }

@@ -33,6 +33,9 @@ setMethod('plot', signature(x = 'giottoLargeImage', y = 'missing'), function(x,y
 #' @export
 setMethod('plot', signature(x = 'giottoPolygon', y = 'missing'),
           function(x, point_size = 0.1, type = c('poly', 'centroid'), ...) {
+            if(length(x@unique_ID_cache) == 0) {
+              stop(wrap_txt('No geometries to plot'), call. = FALSE)
+            }
             plot_giotto_polygon(x = x, point_size = point_size, type = type, ...)
           })
 
@@ -45,6 +48,9 @@ setMethod('plot', signature(x = 'giottoPolygon', y = 'missing'),
 #' @export
 setMethod('plot', signature(x = 'giottoPoints', y = 'missing'),
           function(x, point_size = 0, feats = NULL, raster = TRUE, raster_size = 600, ...) {
+            if(length(x@unique_ID_cache) == 0) {
+              stop(wrap_txt('No geometries to plot'), call. = FALSE)
+            }
             plot_giotto_points(x = x, point_size = point_size, feats = feats,
                                raster = raster, raster_size = raster_size, ...)
           })

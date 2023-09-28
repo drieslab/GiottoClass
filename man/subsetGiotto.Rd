@@ -6,17 +6,15 @@
 \usage{
 subsetGiotto(
   gobject,
-  spat_unit = NULL,
-  feat_type = NULL,
+  spat_unit = ":all:",
+  feat_type = "rna",
   cell_ids = NULL,
   feat_ids = NULL,
   poly_info = NULL,
-  all_spat_units = TRUE,
-  all_feat_types = TRUE,
-  x_max = NULL,
-  x_min = NULL,
-  y_max = NULL,
-  y_min = NULL,
+  all_spat_units = NULL,
+  all_feat_types = NULL,
+  spat_unit_fsub = ":all:",
+  feat_type_ssub = ":all:",
   verbose = FALSE,
   toplevel_params = 2
 )
@@ -38,8 +36,6 @@ to be the same as the spat_unit)}
 \item{all_spat_units}{subset all spatial units with selected feature ids}
 
 \item{all_feat_types}{subset all feature type data with selected cell ids}
-
-\item{x_max, x_min, y_max, y_min}{minimum and maximum x and y coordinates to keep for feature coordinates}
 
 \item{verbose}{be verbose}
 

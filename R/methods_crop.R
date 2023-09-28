@@ -30,6 +30,9 @@ NULL
 #' @describeIn crop-generic Crop a giottoLargeImage
 #' @export
 setMethod('crop', signature('giottoLargeImage'), function(x, y, ...) {
+  if (is.null(terra::intersect(terra::ext(x), terra::ext(y)))) {
+    warning('crop region is empty', call. = FALSE)
+  }
   x@raster_object = terra::crop(x@raster_object, y, ...)
   x@extent = ext(x@raster_object)
   intensity_range = spatraster_intensity_range(x@raster_object)
@@ -65,12 +68,18 @@ setMethod('crop', signature('giottoPoints'), function(
 
     # 3. spatial subset then vect() to SpatVector again
     sub_idx = spatDT[, which(x >= b[[1]] & x <= b[2] & y >= b[3] & y <= b[4])]
+    if(length(sub_idx) == 0L) warning('crop region is empty', call. = FALSE)
 
     # 4. update x
     x@spatVector = sv[sub_idx]
 
   } else {
     # non-DT method. terra default.
+    
+    if (is.null(terra::intersect(terra::ext(x), terra::ext(y)))) {
+      warning('crop region is empty', call. = FALSE)
+    }
+    
     x@spatVector = terra::crop(x@spatVector, y, ...)
   }
 
@@ -110,6 +119,7 @@ setMethod('crop', signature('giottoPolygon'), function(
 
     # 3. get subset indices
     sub_idx = spatDT[, which(x >= b[[1]] & x <= b[2] & y >= b[3] & y <= b[4])]
+    if(length(sub_idx) == 0L) warning('crop region is empty', call. = FALSE)
 
     # 4. update x
     x@spatVector = x@spatVector[sub_idx]
@@ -119,6 +129,11 @@ setMethod('crop', signature('giottoPolygon'), function(
 
   } else {
     # non-DT method. terra default.
+    
+    if (is.null(terra::intersect(terra::ext(x), terra::ext(y)))) {
+      warning('crop region is empty', call. = FALSE)
+    }
+    
     args = list(y = y, ...)
     x = do_gpoly(x, what = terra::crop, args = args)
     # update ID cache
