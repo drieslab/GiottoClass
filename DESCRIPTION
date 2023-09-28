@@ -111,6 +111,7 @@ Collate:
     'methods-wrap.R'
     'methods_crop.R'
     'provenance.R'
+    'python_bento.R'
     'python_environment.R'
     'save_load.R'
     'slot_check.R'

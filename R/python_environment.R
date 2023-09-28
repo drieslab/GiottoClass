@@ -114,7 +114,7 @@ check_giotto_python_modules = function(my_python_path) {
   if (isFALSE(getOption('giotto.has_conda', TRUE))) return(invisible(NULL))
   if (isFALSE(getOption('giotto.use_conda', TRUE))) return(invisible(NULL))
 
-  python_modules = c('pandas', 'igraph', 'leidenalg', 'community', 'networkx', 'sklearn')
+  python_modules = c('pandas', 'igraph', 'leidenalg', 'community', 'networkx', 'sklearn', 'bento-tools')
   for(module in python_modules) {
     if(reticulate::py_module_available(module) == FALSE) {
       warning('module: ', module, ' was not found with python path: ', my_python_path, '\n')
@@ -152,7 +152,7 @@ install_giotto_environment_specific = function(packages_to_install = c('pandas',
 
   py_lou = packages_to_install[grepl(pattern = 'python-louvain',x = packages_to_install)]
 
-  pip_packages = c("smfishhmrf", py_lou)
+  pip_packages = c("smfishhmrf", "session-info", py_lou)
 
   # python-louvain must be installed with pip, not with conda-forge
   packages_to_install = packages_to_install[!grepl(pattern = 'python-louvain',x = packages_to_install)]
@@ -219,6 +219,10 @@ install_giotto_environment_specific = function(packages_to_install = c('pandas',
                            python_version = python_version)
   }
 
+  # reticulate don't support installation from github yet
+  # using system call instead
+  config <- reticulate::py_discover_config(use_environment='giotto_env')
+  system2(config$python, c("-m", "pip", "install", "git+https://github.com/wwang-chcn/bento-tools.git@giotto_install"))
 
 }
 
