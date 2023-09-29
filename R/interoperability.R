@@ -70,7 +70,7 @@ gefToGiotto = function(gef_file, bin_size = 'bin100', verbose = FALSE, h5_file =
                                      x = exprDT$count)
 
    colnames(expMatrix) = cell_locations$cell_ID
-   rownames(expMatrix) = unique(exprDT, by = c("genes", "gene_idx"))$genes 
+   rownames(expMatrix) = unique(exprDT, by = c("genes", "gene_idx"))$genes
    if(isTRUE(verbose)) wrap_msg('finished expression matrix')
 
    # 4. create minimal giotto object
@@ -1856,6 +1856,51 @@ spatialExperimentToGiotto <- function(spe,
 
   return(giottoObj)
 }
+
+
+
+
+
+# SpatialExperiment methods ####
+
+# register methods if SpatialExperiment is present
+if (package_check('SpatialExperiment')) {
+
+  setMethod(
+    SingleCellExperiment::colData,
+    signature('giotto'),
+    function(x, spat_unit = NULL, feat_type = NULL, ...
+    ) {
+      pDataDT(
+        gobject = x,
+        spat_unit = spat_unit,
+        feat_type = feat_type, ...
+      ) %>%
+        S4Vectors::DataFrame()
+    })
+
+  setMethod(
+    # TODO generate DataFrame of ENSG and gene symbols
+    SingleCellExperiment::rowData,
+    signature('giotto'),
+    function(x, spat_unit = NULL, feat_type = NULL, ...
+    ) {
+      fDataDT(
+        gobject = x,
+        spat_unit = spat_unit,
+        feat_type = feat_type, ...
+      ) %>%
+        S4Vectors::DataFrame()
+    })
+
+}
+
+
+
+
+
+
+# older Giotto versions ####
 
 #' Convert a master Giotto object to suite
 #'

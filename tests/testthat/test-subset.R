@@ -6,6 +6,14 @@ sub_feat_ids = featIDs(g)[1:6]
 
 # subset :all: tests ####
 
+
+test_that('subsetGiotto handles no params', {
+  expect_no_error({
+    sub_g = subsetGiotto(g)
+  })
+})
+
+
 # test spat_unit = :all: subsets all spatial units
 test_that('subsetGiotto can subset all spat_units', {
   sub_g = subsetGiotto(
