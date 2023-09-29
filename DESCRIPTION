@@ -112,6 +112,7 @@ Collate:
     'methods_crop.R'
     'methods_setGiotto.R'
     'provenance.R'
+    'python_bento.R'
     'python_environment.R'
     'save_load.R'
     'slot_check.R'
