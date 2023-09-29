@@ -1,4 +1,4 @@
-### subset Giotto object slots ####
+# subset slots ####
 
 
 #' @title Subset expression data
@@ -7,200 +7,159 @@
 #' @keywords internal
 #' @noRd
 subset_expression_data = function(gobject,
-                                  cell_ids,
-                                  feat_ids,
-                                  feat_type,
-                                  spat_unit,
-                                  all_spat_units,
-                                  all_feat_types) {
-  
-  
-  
-  # get cell/spatial ids and feature ids
-  g_cell_IDs = get_cell_id(gobject = gobject, spat_unit = spat_unit)
-  g_feat_IDs = get_feat_id(gobject = gobject, feat_type = feat_type)
-  
-  # get expression information from giotto object
-  output_table = list_expression(gobject)
-  
-  if(!is.null(output_table)) {
-    
-    # loop through expression objects and update accordingly
-    for(row in 1:nrow(output_table)) {
-      
-      spat_unit_name = output_table[row][['spat_unit']]
-      feat_type_name = output_table[row][['feat_type']]
-      expression_name = output_table[row][['name']]
-      
-      
-      if(feat_type_name == feat_type & spat_unit_name == spat_unit) {
-        
-        S4_expr = get_expression_values(gobject = gobject,
-                                        spat_unit = spat_unit_name,
-                                        feat_type = feat_type_name,
-                                        values = expression_name,
-                                        output = 'exprObj')
-        
-        ## filter index
-        g_cell_IDs = colnames(S4_expr@exprMat)
-        g_feat_IDs = rownames(S4_expr@exprMat)
-        
-        if(!is.null(cell_ids)) {
-          filter_bool_cells = g_cell_IDs %in% cell_ids
-        } else filter_bool_cells = g_cell_IDs %in% g_cell_IDs
-        if(!is.null(feat_ids)) {
-          filter_bool_feats = g_feat_IDs %in% feat_ids
-        } else filter_bool_feats = g_feat_IDs %in% g_feat_IDs
-        
-        
-        # for HDF5Array
-        if(methods::is(S4_expr@exprMat, 'HDF5Array')) {
-          S4_expr@exprMat = DelayedArray::realize(S4_expr@exprMat[filter_bool_feats, filter_bool_cells], "HDF5Array")
-        } else {
-          S4_expr@exprMat = S4_expr@exprMat[filter_bool_feats, filter_bool_cells]
-        }
-        
-        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        gobject = set_expression_values(gobject = gobject,
-                                        values = S4_expr,
-                                        verbose = FALSE)
-        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        
-      } else if(feat_type_name == feat_type & spat_unit_name != spat_unit) {
-        
-        if(all_spat_units == TRUE) {
-          
-          # filter only features, but NOT cells
-          S4_expr = get_expression_values(gobject = gobject,
-                                          spat_unit = spat_unit_name,
-                                          feat_type = feat_type_name,
-                                          values = expression_name,
-                                          output = 'exprObj')
-          ## filter index
-          g_feat_IDs = rownames(S4_expr@exprMat)
-          if(!is.null(feat_ids)) {
-            filter_bool_feats = g_feat_IDs %in% feat_ids
-          } else filter_bool_feats = g_feat_IDs %in% g_feat_IDs
-          
-          # for HDF5Array
-          if(methods::is(S4_expr@exprMat, 'HDF5Array')) {
-            S4_expr@exprMat = DelayedArray::realize(S4_expr@exprMat[filter_bool_feats, ], "HDF5Array")
-          } else {
-            S4_expr@exprMat = S4_expr@exprMat[filter_bool_feats, ]
-          }
-          
-          ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-          gobject = set_expression_values(gobject = gobject,
-                                          values = S4_expr,
-                                          verbose = FALSE)
-          ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-          
-        }
-        
-        
-        
-        
-      } else if(feat_type_name != feat_type & spat_unit_name == spat_unit) {
-        
-        if(all_feat_types == TRUE) {
-          
-          # filter only cells, but NOT features
-          S4_expr = get_expression_values(gobject = gobject,
-                                          spat_unit = spat_unit_name,
-                                          feat_type = feat_type_name,
-                                          values = expression_name,
-                                          output = 'exprObj')
-          ## filter index
-          g_cell_IDs = colnames(S4_expr@exprMat)
-          
-          if(!is.null(cell_ids)) {
-            filter_bool_cells = g_cell_IDs %in% cell_ids
-          } else filter_bool_cells = g_cell_IDs %in% g_cell_IDs
-          
-          # for HDF5Array
-          if(methods::is(S4_expr@exprMat, 'HDF5Array')) {
-            S4_expr@exprMat = DelayedArray::realize(S4_expr@exprMat[, filter_bool_cells], "HDF5Array")
-          } else {
-            S4_expr@exprMat = S4_expr@exprMat[, filter_bool_cells]
-          }
-          
-          ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-          gobject = set_expression_values(gobject = gobject,
-                                          values = S4_expr,
-                                          verbose = FALSE)
-          ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-          
-        }
-        
-      }
-      
-    }
-    
+                                  feat_type = ':all:',
+                                  spat_unit = ':all:',
+                                  spat_unit_fsub = ':all:',
+                                  feat_type_ssub = ':all:',
+                                  cell_ids = NULL,
+                                  feat_ids = NULL) {
+
+  # DT vars
+  subset_cells = subset_feats = NULL
+
+  # find expression sets to use
+  if (is.null(cell_ids)) {
+    avail_cex = NULL
+  } else {
+    if (isTRUE(feat_type_ssub == ':all:')) feat_type_ssub = NULL
+    if (isTRUE(spat_unit == ':all:')) spat_unit = NULL
+    avail_cex = list_expression(
+      gobject = gobject,
+      spat_unit = spat_unit,
+      feat_type = feat_type_ssub
+    )
   }
-  
+
+  if (is.null(feat_ids)) {
+    avail_fex = NULL
+  } else {
+    if (isTRUE(spat_unit_fsub == ':all:')) spat_unit_fsub = NULL
+    if (isTRUE(feat_type == ':all:')) feat_type = NULL
+    avail_fex = list_expression(
+      gobject = gobject,
+      feat_type = feat_type,
+      spat_unit = spat_unit_fsub
+    )
+  }
+
+
+  # if no expr or no need to subset, directly return
+  if (is.null(avail_cex) && is.null(avail_fex)) {
+    return(gobject)
+  }
+
+
+  # merge availability tables for easier iterating
+  # left
+  if (!is.null(avail_cex) && is.null(avail_fex)) {
+    avail_cex = avail_cex[, subset_feats := FALSE]
+    avail_ex = avail_cex[, subset_cells := TRUE]
+  }
+  # right
+  else if (is.null(avail_cex) && !is.null(avail_fex)) {
+    avail_fex = avail_fex[, subset_cells := FALSE]
+    avail_ex = avail_fex[, subset_feats := TRUE]
+  }
+  else {
+    # both
+    avail_cex[, subset_cells := TRUE]
+    avail_fex[, subset_feats := TRUE]
+    avail_ex = merge(avail_cex, avail_fex,
+                     on = c('spat_unit', 'feat_type', 'name'),
+                     all = TRUE)
+  }
+
+
+  # for each selected expr, perform up to 2 subsets #
+  lapply(seq(nrow(avail_ex)), function(ex_i) {
+
+    ex = getExpression(
+      gobject = gobject,
+      spat_unit = avail_ex[ex_i]$spat_unit,
+      feat_type = avail_ex[ex_i]$feat_type,
+      values = avail_ex[ex_i]$name,
+      output = 'exprObj'
+    )
+
+    # perform matrix subset #
+    ## cell only subsets
+    if (isTRUE(avail_ex[ex_i]$subset_cells) &&
+        !isTRUE(avail_ex[ex_i]$subset_feats)) {
+      filter_bool_cells = spatIDs(ex) %in% cell_ids
+      ex[] = finalize_expr_subset(ex[][,filter_bool_cells])
+    }
+
+    ## feat only subsets
+    if (!isTRUE(avail_ex[ex_i]$subset_cells) &&
+        isTRUE(avail_ex[ex_i]$subset_feats)) {
+      filter_bool_feats = featIDs(ex) %in% feat_ids
+      ex[] = finalize_expr_subset(ex[][filter_bool_feats,])
+    }
+
+    ## cell and feat subsets
+    if (isTRUE(avail_ex[ex_i]$subset_cells) &&
+        isTRUE(avail_ex[ex_i]$subset_feats)) {
+      filter_bool_cells = spatIDs(ex) %in% cell_ids
+      filter_bool_feats = featIDs(ex) %in% feat_ids
+      ex[] = finalize_expr_subset(ex[][filter_bool_feats, filter_bool_cells])
+    }
+
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    gobject <<- set_expression_values(gobject = gobject,
+                                      values = ex,
+                                      verbose = FALSE)
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+    return(NULL) # ignore this
+  })
+
   return(gobject)
-  
 }
+
+
+
+
+
 
 #' @title Subset spatial locations
 #' @name subset_spatial_locations
 #' @description Subset location data from giotto object
-#' @param all_spat_units logical. Applies subset operation across the whole gobject
-#' (ALL spat_units), ignoring the \code{spat_unit} input param. Defaults to TRUE.
 #' @keywords internal
 #' @noRd
 subset_spatial_locations = function(gobject,
-                                    cell_ids,
-                                    spat_unit,
-                                    all_spat_units = TRUE) {
-  
-  # data.table vars 
-  name = NULL 
-  
-  if(all_spat_units) {
-    avail_locs = list_spatial_locations(gobject)
-  } else {
-    avail_locs = list_spatial_locations(gobject, spat_unit = spat_unit)
+                                    spat_unit = ':all:',
+                                    cell_ids = NULL) {
+
+  if (isTRUE(spat_unit == ':all:')) spat_unit = NULL
+  avail_locs = list_spatial_locations(gobject, spat_unit = spat_unit)
+
+  # if no spatial locations or subset needed, directly return
+  if (is.null(avail_locs) || is.null(cell_ids)) {
+    return(gobject)
   }
-  
-  # 3. get, subset, and set back a single spatLocsObj
-  # returns a gobject
-  do_subset = function(su, sname) {
-    spatObj = get_spatial_locations(gobject,
-                                    spat_unit = su,
-                                    spat_loc_name = sname,
-                                    output = 'spatLocsObj',
-                                    copy_obj = FALSE)
-    
+
+  # for each selected spatlocs, perform subset
+  lapply(seq(nrow(avail_locs)), function(sl_i) {
+    spatObj = get_spatial_locations(
+      gobject = gobject,
+      spat_unit = avail_locs[sl_i]$spat_unit,
+      spat_loc_name = avail_locs[sl_i]$name,
+      output = 'spatLocsObj',
+      copy_obj = FALSE
+    )
+
     ## filter index
-    g_cell_IDs = spatObj@coordinates[['cell_ID']]
-    
-    if(!is.null(cell_ids)) {
-      filter_bool_cells = g_cell_IDs %in% cell_ids
-    } else filter_bool_cells = g_cell_IDs %in% g_cell_IDs
-    
+    filter_bool_cells = spatIDs(spatObj) %in% cell_ids
     spatObj[] = spatObj[][filter_bool_cells]
-    
+
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
     gobject <<- set_spatial_locations(gobject, spatlocs = spatObj, verbose = FALSE)
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
     # not yet possible to row subset data.tables by reference. Must be set back in.
-  }
-  
-  # 2. for each spat unit, subset all contained spatLocsObjs
-  per_spat_unit = function(su) {
-    spat_names = avail_locs[spat_unit == su, name]
-    for(sname in spat_names) {
-      do_subset(su, sname)
-    }
-  }
-  
-  # 1. for each spatial unit requested to be subset...
-  for(su in unique(avail_locs$spat_unit)) {
-    per_spat_unit(su = su)
-  }
-  
-  
+
+    return(NULL) # ignore this
+  })
+
   return(gobject)
 }
 
@@ -210,57 +169,48 @@ subset_spatial_locations = function(gobject,
 #' @description Subset cell metadata from giotto object
 #' @inheritParams data_access_params
 #' @param cell_ids cell ids to keep
-#' @param all_feat_types (boolean) applies subset operation across the whole gobject
-#' (ALL feature types), ignoring the \code{feat_type} input param. Defaults to TRUE.
 #' @keywords internal
 subset_cell_metadata = function(gobject,
-                                feat_type = NULL,
-                                cell_ids,
-                                spat_unit,
-                                all_feat_types = TRUE) {
-  
-  if(isTRUE(all_feat_types)) {
-    avail_cm = list_cell_metadata(gobject,
-                                  spat_unit = spat_unit)
-  } else {
-    avail_cm = list_cell_metadata(gobject,
-                                  spat_unit = spat_unit,
-                                  feat_type = feat_type)
+                                spat_unit = ':all:',
+                                feat_type_ssub = ':all:',
+                                cell_ids = NULL) {
+
+  # cell meta contains cell (row) by meta (col)
+  # only uses cell_ids subsetting
+
+  if (isTRUE(feat_type_ssub == ':all:')) feat_type_ssub = NULL
+  if (isTRUE(spat_unit == ':all:')) spat_unit = NULL
+  avail_cm = list_cell_metadata(
+    gobject = gobject,
+    spat_unit = spat_unit,
+    feat_type = feat_type_ssub
+  )
+
+  # if no cell meta or subset needed, directly return
+  if(is.null(avail_cm) || is.null(cell_ids)) {
+    return(gobject)
   }
-  
-  if(!is.null(avail_cm)) {
-    
-    for(cm_i in seq(nrow(avail_cm))) {
-      
-      cm = get_cell_metadata(gobject,
-                             spat_unit = avail_cm$spat_unit[[cm_i]],
-                             feat_type = avail_cm$feat_type[[cm_i]],
-                             output = 'cellMetaObj')
-      
-      ## filter index
-      g_cell_IDs = cm@metaDT[['cell_ID']]
-      
-      if(!is.null(cell_ids)) {
-        filter_bool_cells = g_cell_IDs %in% cell_ids
-      } else filter_bool_cells = g_cell_IDs %in% g_cell_IDs
-      
-      cm[] = cm[][filter_bool_cells]
-      
-      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      gobject = set_cell_metadata(gobject, metadata = cm, verbose = FALSE)
-      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      
-    }
-    
-  }
-  
-  # if(!is.null(gobject@cell_metadata)) {
-  #   # only subset cell_ID for selected spatial unit
-  #   for(feat_type in names(gobject@cell_metadata[[spat_unit]])) {
-  #     gobject@cell_metadata[[spat_unit]][[feat_type]] = gobject@cell_metadata[[spat_unit]][[feat_type]][filter_bool_cells,]
-  #   }
-  # }
-  
+
+  # for each selected cellmeta, perform subset
+  lapply(seq(nrow(avail_cm)), function(cm_i) {
+    cm = get_cell_metadata(
+      gobject = gobject,
+      spat_unit = avail_cm[cm_i]$spat_unit,
+      feat_type = avail_cm[cm_i]$feat_type,
+      output = 'cellMetaObj'
+    )
+
+    ## filter index
+    filter_bool_cells = spatIDs(cm) %in% cell_ids
+    cm[] = cm[][filter_bool_cells]
+
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    gobject <<- set_cell_metadata(gobject, metadata = cm, verbose = FALSE)
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+    return(FALSE) # ignore this
+  })
+
   return(gobject)
 }
 
@@ -270,56 +220,45 @@ subset_cell_metadata = function(gobject,
 #' @description Subset feature metadata from giotto object
 #' @inheritParams data_access_params
 #' @param feat_ids feature ids to keep
-#' @param all_spat_units (boolean) applies subset operation across the whole gobject
-#' (ALL spat_units), ignoring the \code{spat_unit} input param. Defaults to TRUE.
 #' @keywords internal
 subset_feature_metadata = function(gobject,
-                                   feat_type,
-                                   spat_unit = NULL,
-                                   feat_ids,
-                                   all_spat_units = TRUE) {
-  
-  if(isTRUE(all_spat_units)) {
-    avail_fm = list_feat_metadata(gobject,
-                                  feat_type = feat_type)
-  } else {
-    avail_fm = list_feat_metadata(gobject,
-                                  spat_unit = spat_unit,
-                                  feat_type = feat_type)
+                                   feat_type = ':all:',
+                                   spat_unit_fsub = ':all:',
+                                   feat_ids = NULL) {
+
+  if (isTRUE(spat_unit_fsub == ':all:')) spat_unit_fsub = NULL
+  if (isTRUE(feat_type == ':all:')) feat_type = NULL
+  avail_fm = list_feat_metadata(
+    gobject = gobject,
+    feat_type = feat_type,
+    spat_unit = spat_unit_fsub
+  )
+
+  # return directly if no cellmeta or no subset needed
+  if (is.null(avail_fm) || is.null(feat_ids)) {
+    return(gobject)
   }
-  
-  
-  if(!is.null(avail_fm)) {
-    
-    for(fm_i in seq(nrow(avail_fm))) {
-      
-      fm = get_feature_metadata(gobject,
-                                spat_unit = avail_fm$spat_unit[[fm_i]],
-                                feat_type = avail_fm$feat_type[[fm_i]],
-                                output = 'featMetaObj')
-      
-      ## filter index
-      g_feat_IDs = fm@metaDT[['feat_ID']]
-      
-      if(!is.null(feat_ids)) {
-        filter_bool_feats = g_feat_IDs %in% feat_ids
-      } else filter_bool_feats = g_feat_IDs %in% feat_ids
-      
-      fm[] = fm[][filter_bool_feats]
-      
-      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      gobject = set_feature_metadata(gobject, metadata = fm, verbose = FALSE)
-      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      
-    }
-    
-    # for(spat_unit in names(gobject@feat_metadata)) {
-    #   # only subset features of the feat type, but do it for all spatial regions
-    #   gobject@feat_metadata[[spat_unit]][[feat_type]] = gobject@feat_metadata[[spat_unit]][[feat_type]][filter_bool_feats,]
-    # }
-    
-  }
-  
+
+  # for each selected featmeta, perform subset
+  lapply(seq(nrow(avail_fm)), function(fm_i) {
+    fm = get_feature_metadata(
+      gobject = gobject,
+      spat_unit = avail_fm[fm_i]$spat_unit,
+      feat_type = avail_fm[fm_i]$feat_type,
+      output = 'featMetaObj'
+    )
+
+    ## filter index
+    filter_bool_feats = featIDs(fm) %in% feat_ids
+    fm[] = fm[][filter_bool_feats]
+
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    gobject <<- set_feature_metadata(gobject, metadata = fm, verbose = FALSE)
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+    return(NULL) # ignore this
+  })
+
   return(gobject)
 }
 
@@ -332,55 +271,43 @@ subset_feature_metadata = function(gobject,
 #' @keywords internal
 #' @noRd
 subset_spatial_network = function(gobject,
-                                  spat_unit,
-                                  cell_ids,
-                                  all_spat_units = TRUE) {
-  
-  # define for data.table
-  to = from = name = NULL
-  
-  # if no spatial networks available, return directly
-  if(is.null(slot(gobject, 'spatial_network'))) {
+                                  spat_unit = ':all:',
+                                  cell_ids = NULL) {
+
+  # DT vars
+  to = from = NULL
+
+  # Find existing networks and return as DT
+  if(isTRUE(spat_unit == ':all:')) spat_unit = NULL
+  avail_sn = list_spatial_networks(gobject, spat_unit = spat_unit)
+
+  # if no networks or no subset needed, return directly
+  if (is.null(avail_sn) || is.null(cell_ids)) {
     return(gobject)
   }
-  
-  # Find existing networks and return as DT
-  if(all_spat_units) {
-    existing_networks = list_spatial_networks(gobject = gobject)
-  } else {
-    existing_networks = list_spatial_networks(gobject = gobject,
-                                              spat_unit = spat_unit)
-  }
-  
-  do_subset = function(su, nname) {
-    spatNetObj = get_spatialNetwork(gobject = gobject,
-                                    spat_unit = su,
-                                    name = nname,
-                                    output = 'spatialNetworkObj')
-    
+
+  # for each selected spatnet, perform subset
+  lapply(seq(nrow(avail_sn)), function(sn_i) {
+    sn = get_spatialNetwork(
+      gobject = gobject,
+      spat_unit = avail_sn[sn_i]$spat_unit,
+      name = avail_sn[sn_i]$name,
+      output = 'spatialNetworkObj'
+    )
+
     # Within each spatialNetworkObj, subset only the cells_to_keep
-    spatNetObj[] = spatNetObj[][to %in% cell_ids & from %in% cell_ids]
-    
+    sn[] = sn[][to %in% cell_ids & from %in% cell_ids]
+
     # Set the spatialNetworkObj back into the gobject
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
     gobject <<- set_spatialNetwork(gobject = gobject,
-                                   spatial_network = spatNetObj,
+                                   spatial_network = sn,
                                    verbose = FALSE)
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  }
-  
-  per_spat_unit = function(su) {
-    net_names = existing_networks[spat_unit == su, name]
-    for(nname in net_names) {
-      do_subset(su, nname)
-    }
-  }
-  
-  for(su in unique(existing_networks$spat_unit)) {
-    per_spat_unit(su = su)
-  }
-  
-  
+
+    return(NULL) # ignore this
+  })
+
   return(gobject)
 }
 
@@ -392,157 +319,135 @@ subset_spatial_network = function(gobject,
 #' @keywords internal
 #' @noRd
 subset_dimension_reduction = function(gobject,
-                                      spat_unit,
-                                      feat_type,
-                                      cell_ids,
-                                      all_feat_types = TRUE,
-                                      all_spat_units = TRUE) {
-  
+                                      spat_unit = ':all:',
+                                      feat_type = ':all:',
+                                      spat_unit_fsub = ':all:',
+                                      feat_type_ssub = ':all:',
+                                      cell_ids = NULL,
+                                      feat_ids = NULL) {
+
   # find available dim reductions
-  avail_dim = list_dim_reductions(
+
+
+  if (isTRUE(feat_type_ssub == ':all:')) feat_type_ssub = NULL
+  if (isTRUE(spat_unit == ':all:')) spat_unit = NULL
+  avail_cdr = list_dim_reductions(
     gobject = gobject,
     data_type = 'cells',
-    spat_unit = ifelse(all_spat_units, NULL, spat_unit),
-    feat_type = ifelse(all_feat_types, NULL, feat_type)
+    spat_unit = spat_unit,
+    feat_type = feat_type_ssub
   )
-  
-  if(!is.null(avail_dim)) {
-    
-    for(data_i in seq(avail_dim[, .N])) {
-      dimObj = get_dimReduction(gobject = gobject,
-                                spat_unit = avail_dim$spat_unit[[data_i]],
-                                feat_type = avail_dim$feat_type[[data_i]],
-                                reduction = 'cells',
-                                reduction_method = avail_dim$dim_type[[data_i]],
-                                name = avail_dim$name[[data_i]],
-                                output = 'dimObj')
-      
-      dimObj[] = dimObj[][rownames(dimObj[]) %in% cell_ids,]
-      
-      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      gobject = set_dimReduction(gobject = gobject, dimObject = dimObj, verbose = FALSE)
-      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      
-    }
-    
+
+  if (isTRUE(spat_unit_fsub == ':all:')) spat_unit_fsub = NULL
+  if (isTRUE(feat_type == ':all:')) feat_type = NULL
+  avail_fdr = list_dim_reductions(
+    gobject = gobject,
+    data_type = 'feats',
+    feat_type = feat_type,
+    spat_unit = spat_unit_fsub)
+
+  # if no dim reducs, or no need to subset directly return
+  if ((is.null(avail_cdr) || is.null(cell_ids)) &&
+      (is.null(avail_fdr) || is.null(feat_ids))) {
+    return(gobject)
   }
-  
+
+  # for each selected dimreduc, perform subset #
+  # there should be no overlap over cell dim reducs (cdr)
+  # and feature dim reducs (fdr), as in the two types of info are always
+  # entirely different objects. Subset operation only needs to be performed
+  # once per object, so there should be no limitations on mirai usage.
+  lapply(seq(nrow(avail_cdr)), function(cdr_i) {
+    cdr = get_dimReduction(
+      gobject = gobject,
+      spat_unit = avail_cdr[cdr_i]$spat_unit,
+      feat_type = avail_cdr[cdr_i]$feat_type,
+      reduction = 'cells',
+      reduction_method = avail_cdr[cdr_i]$dim_type,
+      name = avail_cdr[cdr_i]$name,
+      output = 'dimObj'
+    )
+
+    cdr[] = cdr[][rownames(cdr[]) %in% cell_ids,]
+
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    gobject <<- set_dimReduction(gobject = gobject,
+                                 dimObject = cdr,
+                                 verbose = FALSE)
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    return(NULL) # ignore this
+  })
+
+  lapply(seq(nrow(avail_fdr)), function(fdr_i) {
+    fdr = get_dimReduction(
+      gobject = gobject,
+      spat_unit = avail_fdr[fdr_i]$spat_unit,
+      feat_type = avail_fdr[fdr_i]$feat_type,
+      reduction = 'feats',
+      reduction_method = avail_fdr[fdr_i]$dim_type,
+      name = avail_fdr[fdr_i]$name,
+      output = 'dimObj'
+    )
+
+    fdr[] = fdr[][rownames(fdr[]) %in% feat_ids,]
+
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    gobject <<- set_dimReduction(gobject = gobject,
+                                 dimObject = fdr,
+                                 verbose = FALSE)
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    return(NULL) # ignore this
+  })
+
   return(gobject)
 }
 
 
 
 
+# TODO expand this to include NNs that might be made from feature dim reducs
 #' @title Subset nearest network
 #' @name subset_nearest_network
 #' @description Subset nearest network results from giotto object
 #' @keywords internal
 #' @noRd
 subset_nearest_network = function(gobject,
-                                  spat_unit,
-                                  feat_type,
-                                  cell_ids,
-                                  all_spat_units = TRUE,
-                                  all_feat_types = TRUE) {
-  
-  avail_kNN = list_nearest_networks(
-    gobject,
-    spat_unit = ifelse(all_spat_units, NULL, spat_unit),
-    feat_type = ifelse(all_feat_types, NULL, feat_type),
-    nn_type = 'kNN'
-  )
-  avail_sNN = list_nearest_networks(
-    gobject,
-    spat_unit = ifelse(all_spat_units, NULL, spat_unit),
-    feat_type = ifelse(all_feat_types, NULL, feat_type),
-    nn_type = 'sNN'
-  )
-  
-  if(!is.null(avail_kNN)) {
-    
-    for(nn_i in seq(avail_kNN[, .N])) {
-      nnObj = get_NearestNetwork(gobject = gobject,
-                                 spat_unit = avail_kNN$spat_unit[[nn_i]],
-                                 feat_type = avail_kNN$feat_type[[nn_i]],
-                                 nn_network_to_use = 'kNN',
-                                 network_name = avail_kNN$name[[nn_i]],
-                                 output = 'nnNetObj')
-      
-      #vertices_to_keep = igraph::V(nnObj[])[filter_bool_cells]
-      nnObj[] = igraph::induced_subgraph(graph = nnObj[], vids = cell_ids)
-      
-      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      gobject = set_NearestNetwork(gobject, nn_network = nnObj, verbose = FALSE)
-      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    }
-    
+                                  spat_unit = ':all:',
+                                  feat_type_ssub = ':all:',
+                                  cell_ids = NULL) {
+
+  if (isTRUE(feat_type_ssub == ':all:')) feat_type_ssub = NULL
+  if (isTRUE(spat_unit == ':all:')) spat_unit = NULL
+  avail_nn = list_nearest_networks(
+    gobject = gobject,
+    spat_unit = spat_unit,
+    feat_type = feat_type_ssub)
+
+  # if no nearest nets or subset needed, directly return
+  if (is.null(avail_nn) || is.null(cell_ids)) {
+    return(gobject)
   }
-  if(!is.null(avail_sNN)) {
-    
-    for(nn_i in seq(avail_sNN[, .N])) {
-      nnObj = get_NearestNetwork(gobject,
-                                 spat_unit = avail_sNN$spat_unit[[nn_i]],
-                                 feat_type = avail_sNN$feat_type[[nn_i]],
-                                 nn_network_to_use = 'sNN',
-                                 network_name = avail_sNN$name[[nn_i]],
-                                 output = 'nnNetObj')
-      
-      #vertices_to_keep = igraph::V(nnObj[])[filter_bool_cells]
-      nnObj[] = igraph::induced_subgraph(graph = nnObj[], vids = cell_ids)
-      
-      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      gobject = set_NearestNetwork(gobject, nn_network = nnObj, verbose = FALSE)
-      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    }
-    
-  }
-  
-  # ## nn network ##
-  # if(!is.null(gobject@nn_network[['cells']])) {
-  #
-  #   for(spat_unit_name in names(gobject@nn_network[['cells']])) {
-  #
-  #     if(spat_unit_name == spat_unit) {
-  #
-  #       for(knn_name in names(gobject@nn_network[['cells']][[spat_unit_name]][['kNN']])) {
-  #
-  #         # # layout
-  #         # old_layout = gobject@nn_network[['cells']][[spat_unit_name]][['kNN']][[knn_name]][['layout']]
-  #         #
-  #         # if(!is.null(old_layout)) {
-  #         #   new_layout = old_layout[filter_bool_cells,]
-  #         #   gobject@nn_network[['cells']][[spat_unit]][['kNN']][[knn_name]][['layout']] = new_layout
-  #         # }
-  #
-  #         # igraph object
-  #         old_graph = gobject@nn_network[['cells']][[spat_unit_name]][['kNN']][[knn_name]][['igraph']]
-  #         vertices_to_keep = igraph::V(old_graph)[filter_bool_cells]
-  #         new_subgraph = igraph::subgraph(graph = old_graph, v = vertices_to_keep)
-  #         gobject@nn_network[['cells']][[spat_unit_name]][['kNN']][[knn_name]][['igraph']] = new_subgraph
-  #       }
-  #
-  #       for(snn_name in names(gobject@nn_network[['cells']][[spat_unit_name]][['sNN']])) {
-  #
-  #         # # layout
-  #         # old_layout = gobject@nn_network[['cells']][[spat_unit_name]][['sNN']][[snn_name]][['layout']]
-  #         #
-  #         # if(!is.null(old_layout)) {
-  #         #   new_layout = old_layout[filter_bool_cells,]
-  #         #   gobject@nn_network[['cells']][[spat_unit_name]][['sNN']][[snn_name]][['layout']] = new_layout
-  #         # }
-  #
-  #         # igraph object
-  #         old_graph = gobject@nn_network[['cells']][[spat_unit_name]][['sNN']][[snn_name]][['igraph']]
-  #         vertices_to_keep = igraph::V(old_graph)[filter_bool_cells]
-  #         new_subgraph = igraph::subgraph(graph = old_graph, v = vertices_to_keep)
-  #         gobject@nn_network[['cells']][[spat_unit_name]][['sNN']][[snn_name]][['igraph']] = new_subgraph
-  #       }
-  #
-  #     }
-  #   }
-  #
-  # }
-  
+
+  # for each selected nearest net, perform subset
+  lapply(seq(nrow(avail_nn)), function(nn_i) {
+    nnObj = get_NearestNetwork(
+      gobject = gobject,
+      spat_unit = avail_nn[nn_i]$spat_unit,
+      feat_type = avail_nn[nn_i]$feat_type,
+      nn_network_to_use = avail_nn[nn_i]$nn_type,
+      network_name = avail_nn[nn_i]$name,
+      output = 'nnNetObj'
+    )
+
+    #vertices_to_keep = igraph::V(nnObj[])[filter_bool_cells]
+    vids = which(spatIDs(nnObj) %in% cell_ids)
+    nnObj[] = igraph::induced_subgraph(graph = nnObj[], vids = vids)
+
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    gobject <<- set_NearestNetwork(gobject, nn_network = nnObj, verbose = FALSE)
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  })
+
   return(gobject)
 }
 
@@ -554,55 +459,41 @@ subset_nearest_network = function(gobject,
 #' @keywords internal
 #' @noRd
 subset_spatial_enrichment = function(gobject,
-                                     spat_unit,
-                                     feat_type,
-                                     cell_ids,
-                                     all_spat_units = TRUE,
-                                     all_feat_types = TRUE) {
-  
+                                     spat_unit = ':all:',
+                                     feat_type_ssub = ':all:',
+                                     cell_ids = NULL) {
+
+  if (isTRUE(feat_type_ssub == ':all:')) feat_type_ssub = NULL
+  if (isTRUE(spat_unit == ':all:')) spat_unit = NULL
   avail_enr = list_spatial_enrichments(
-    gobject,
-    spat_unit = ifelse(all_spat_units, NULL, spat_unit),
-    feat_type = ifelse(all_feat_types, NULL, feat_type)
+    gobject = gobject,
+    spat_unit = spat_unit,
+    feat_type = feat_type_ssub
   )
-  
-  if(!is.null(avail_enr)) {
-    for(enr_i in seq(avail_enr[, .N])) {
-      
-      spatEnrObj = get_spatial_enrichment(gobject,
-                                          spat_unit = avail_enr$spat_unit[[enr_i]],
-                                          feat_type = avail_enr$feat_type[[enr_i]],
-                                          enrichm_name = avail_enr$name[[enr_i]],
-                                          output = 'spatEnrObj')
-      
-      spatEnrObj[] = spatEnrObj[][get('cell_ID') %in% cell_ids]
-      
-      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      gobject = set_spatial_enrichment(gobject, spatenrichment = spatEnrObj, verbose = FALSE)
-      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      
-    }
+
+  # if no spatial enrichments or subset needed, directly return
+  if (is.null(avail_enr) || is.null(cell_ids)) {
+    return(gobject)
   }
-  
-  # if(!is.null(gobject@spatial_enrichment)) {
-  #   for(spat_unit_name in names(gobject@spatial_enrichment)) {
-  #
-  #     for(feat_type_name in names(gobject@spatial_enrichment[[spat_unit_name]])) {
-  #
-  #       if(spat_unit_name == spat_unit & feat_type_name == feat_type) {
-  #         for(spat_enrich_name in names(gobject@spatial_enrichment[[spat_unit_name]][[feat_type_name]])) {
-  #
-  #           gobject@spatial_enrichment[[spat_unit_name]][[feat_type_name]][[spat_enrich_name]] = gobject@spatial_enrichment[[spat_unit_name]][[feat_type_name]][[spat_enrich_name]][filter_bool_cells]
-  #
-  #         }
-  #       }
-  #
-  #     }
-  #
-  #
-  #   }
-  # }
-  
+
+  # for each selected spatial enrichment, perform subset
+  lapply(seq(nrow(avail_enr)), function(enr_i) {
+    spatEnrObj = get_spatial_enrichment(gobject = gobject,
+                                        spat_unit = avail_enr[enr_i]$spat_unit,
+                                        feat_type = avail_enr[enr_i]$feat_type,
+                                        enrichm_name = avail_enr[enr_i]$name,
+                                        output = 'spatEnrObj')
+
+    filter_bool_cells = spatIDs(spatEnrObj) %in% cell_ids
+    spatEnrObj[] = spatEnrObj[][filter_bool_cells]
+
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    gobject <<- set_spatial_enrichment(gobject,
+                                       spatenrichment = spatEnrObj,
+                                       verbose = FALSE)
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  })
+
   return(gobject)
 }
 
@@ -611,53 +502,7 @@ subset_spatial_enrichment = function(gobject,
 
 
 
-#' @title Subset giotto polygon object
-#' @name subset_giotto_polygon_object
-#' @description Subset a single giotto polygon object for cell_ids and feat_ids
-#' @param gpolygon giottoPolygon object to subset
-#' @param cell_ids character. cell_ids to keep
-#' @param feat_ids character. feat_ids to keep
-#' @param feat_type character. feature type to subset feat_ids from if overlaps
-#' are present within the giottoPolygon object
-#' @keywords internal
-#' @noRd
-subset_giotto_polygon_object = function(gpolygon,
-                                        cell_ids,
-                                        feat_ids,
-                                        feat_type) {
-  
-  
-  if(!is.null(gpolygon@spatVector)) {
-    poly_IDs = gpolygon@spatVector$poly_ID
-    cell_id_bool = poly_IDs %in% cell_ids
-    gpolygon@spatVector = gpolygon@spatVector[cell_id_bool]
-    gpolygon@unique_ID_cache = unique(poly_IDs[cell_id_bool]) # update cache
-  }
-  
-  if(!is.null(gpolygon@spatVectorCentroids)) {
-    cell_id_bool = gpolygon@spatVectorCentroids$poly_ID %in% cell_ids
-    gpolygon@spatVectorCentroids = gpolygon@spatVectorCentroids[cell_id_bool]
-  }
-  
-  if(!is.null(gpolygon@overlaps)) {
-    
-    for(feat in names(gpolygon@overlaps)) {
-      cell_id_bool = gpolygon@overlaps[[feat]]$poly_ID %in% cell_ids
-      gpolygon@overlaps[[feat]] = gpolygon@overlaps[[feat]][cell_id_bool]
-      
-      if(feat == feat_type) {
-        feat_id_bool = gpolygon@overlaps[[feat]]$feat_ID %in% feat_ids
-        gpolygon@overlaps[[feat]] = gpolygon@overlaps[[feat]][feat_id_bool]
-      }
-      
-    }
-    
-    
-  }
-  
-  return(gpolygon)
-  
-}
+
 
 
 
@@ -673,116 +518,68 @@ subset_giotto_polygon_object = function(gpolygon,
 #' @keywords internal
 #' @noRd
 subset_spatial_info_data = function(spatial_info,
-                                    cell_ids,
+                                    cell_ids = NULL,
                                     poly_info = 'cell',
                                     feat_type = NULL,
-                                    feat_ids,
+                                    feat_ids = NULL,
                                     verbose = TRUE) {
-  
-  
+
+  if (isTRUE(poly_info == ':all:')) poly_info = names(spatial_info)
+
   # set feat type
   if(is.null(feat_type)) {
     feat_type = 'rna'
   }
-  
+
   res_list = list()
   # iterate through all spatial info entries...
   for(spat_info in names(spatial_info)) {
-    
+
     if(verbose) cat('for ', spat_info, '\n')
-    
+    si = spatial_info[[spat_info]]
+
     # if the spatial info is one selected in poly_info...
     if(spat_info %in% poly_info) {
-      
+
       if(verbose) cat('--> ', spat_info, ' found back in polygon layer: ', poly_info, '\n')
-      
+
       # subset the giottoPolygon object for the cell_ids and the specified
       # feat_type overlap information (if existing) for the feat_ids
-      spat_subset = subset_giotto_polygon_object(spatial_info[[spat_info]],
+      spat_subset = subset_giotto_polygon_object(gpolygon = si,
                                                  cell_ids = cell_ids,
                                                  feat_ids = feat_ids,
                                                  feat_type = feat_type)
-      
+
       res_list[[spat_info]] = spat_subset
-      
+
     } else {
       # even if the spatial info is not one selected directly through poly_info,
       # still subset subset any existing feature overlaps matching the feat_type
       # for the feat_ids
-      if(!is.null(spatial_info[[spat_info]]@overlaps)) {
-        
-        for(feat in names(spatial_info[[spat_info]]@overlaps)) {
-          
-          if(feat == feat_type) {
-            
-            feat_id_bool = spatial_info[[spat_info]]@overlaps[[feat]]$feat_ID %in% feat_ids
-            
-            spatial_info[[spat_info]]@overlaps[[feat]] = spatial_info[[spat_info]]@overlaps[[feat]][feat_id_bool]
+      if(!is.null(si@overlaps) &&
+         !is.null(feat_ids)) {
+
+        if (isTRUE(feat_type) == ':all:') feat_type = names(si@overlaps)
+
+        for(feat in names(si@overlaps)) {
+
+          if (isTRUE(feat %in% feat_type)) {
+            feat_id_bool = terra::as.list(si@overlaps[[feat]])$feat_ID %in% feat_ids
+            si@overlaps[[feat]] = si@overlaps[[feat]][feat_id_bool]
           }
         }
       }
-      
-      res_list[[spat_info]] = spatial_info[[spat_info]]
+
+      res_list[[spat_info]] = si
     }
-    
-    
+
+
   }
   return(res_list)
 }
 
 
-# subset giotto points
 
-#' @title Subset giotto points object
-#' @name subset_giotto_points_object
-#' @description Subset a single giotto points object
-#' @details Subset on feature ids and on x,y coordinates
-#' @keywords internal
-#' @noRd
-subset_giotto_points_object = function(gpoints,
-                                       feat_ids = NULL,
-                                       x_min = NULL,
-                                       x_max = NULL,
-                                       y_min = NULL,
-                                       y_max = NULL,
-                                       verbose = FALSE) {
-  
-  # data.table vars
-  x = y = feat_ID = NULL
-  
-  # 0. check if spatial feature information exists
-  if(is.null(gpoints@spatVector)) {
-    return(gpoints) # return without change since there is no points info
-  }
-  
-  
-  # 1. ID based subsetting #
-  # ---------------------- #
-  if(!is.null(feat_ids)) {
-    feat_id_bool = gpoints@spatVector$feat_ID %in% feat_ids
-    gpoints@spatVector = gpoints@spatVector[feat_id_bool]
-  }
-  
-  # 2. Spatial subsetting #
-  # --------------------- #
-  # 2.1 if NO spatial subset information available,
-  # ie: if all spat subset params are NULL, return directly because there are
-  # no following steps
-  if(all(sapply(list(x_min, x_max, y_min, y_max), is.null))) {
-    # even if no spatial subsetting happened, if ID subsetting occurred, the
-    # unique_ID_cache needs to be updated
-    gpoints@unique_ID_cache = unique(terra::values(gpoints@spatVector)$feat_ID)
-    return(gpoints)
-  }
-  
-  # 2.2 otherwise use DT crop method
-  gpoints = crop(gpoints,
-                 xmin = x_min, xmax = x_max,
-                 ymin = y_min, ymax = y_max,
-                 DT = TRUE)
-  
-  return(gpoints)
-}
 
 
 
@@ -797,39 +594,359 @@ subset_giotto_points_object = function(gpoints,
 #' @keywords internal
 #' @noRd
 subset_feature_info_data = function(feat_info,
-                                    feat_ids,
+                                    feat_ids = NULL,
                                     feat_type = 'rna',
                                     x_min = NULL,
                                     x_max = NULL,
                                     y_min = NULL,
                                     y_max = NULL,
                                     verbose = FALSE) {
-  
+
+  if (isTRUE(feat_type == ':all:')) feat_type = names(feat_info)
+
   res_list = list()
   for(feat in names(feat_info)) {
-    
-    if(verbose) print(feat)
-    
-    if(feat == feat_type) {
-      
-      feat_subset = subset_giotto_points_object(feat_info[[feat]],
-                                                feat_ids = feat_ids,
-                                                x_min = x_min,
-                                                x_max = x_max,
-                                                y_min = y_min,
-                                                y_max = y_max,
-                                                verbose = verbose)
-      
+
+    if (isTRUE(feat %in% feat_type)) {
+      if (verbose) cat('subset feature info:', feat)
+
+      feat_subset = subset_giotto_points_object(
+        gpoints = feat_info[[feat]],
+        feat_ids = feat_ids,
+        x_min = x_min,
+        x_max = x_max,
+        y_min = y_min,
+        y_max = y_max,
+        verbose = verbose
+      )
+
       res_list[[feat]] = feat_subset
-      
+
     } else {
       res_list[[feat]] = feat_info[[feat]]
     }
-    
-    
   }
   return(res_list)
 }
+
+
+
+
+
+# subset giotto object ####
+
+
+# explanation of spat_unit and feat_type in subsetting
+# for a set of su and ft, the su and ft define the scope across which the ID
+# selections are applied. su and ft limitations are applied independently.
+# ie: su: a, ft: b is NOT those sets of info where su == a & ft == b,
+# but instead cell_ID subset is applied only to su == a
+# and feat_ID subset is applied only to ft == b. 2 Subset operations needed
+# for each obj
+
+
+
+#' @title subset_giotto
+#' @description
+#' Internal to subset Giotto object including previous analyses for a specific
+#' spatial unit and feature type.\cr
+#' This is the master workflow for aggregate data that does any actual subsetting
+#' of the objects. [subsetGiotto], [subsetGiottoLocs], and [subsetGiottoLocsMulti]
+#' only provide the params to pass to this function. This function helps by
+#' hiding confusing but needed internal params from the exported functions.\cr
+#'
+#' The x_max, x_min, y_max, y_min params are only provided for subsetting of the
+#' feature info downstream of subsetGiottoLocs.\cr
+#'
+#' For subsetting the subcellular information only without editing the aggregate
+#' information, use [subsetGiottoLocsSubcellular]
+#' @inheritParams data_access_params
+#' @param spat_unit,feat_type character vector. (default = ':all:') One or more
+#' spatial units or feature types to subset. Accepts ':all:' as a token
+#' to subset across all available.
+#' @param cell_ids character. cell IDs to keep
+#' @param feat_ids character. feature IDs to keep
+#' @param poly_info character. polygon info(s) to subset if present. (defaults
+#' to be the same as the spat_unit)
+#' @param all_spat_units deprecated. use spat_unit_fsub = ':all:'
+#' @param all_feat_types deprecated. use feat_type_ssub = ':all:'
+#' @param spat_unit_fsub character vector. (default = ':all:') limit feat_id
+#' subsets to these spat_units
+#' @param feat_type_ssub character vector. (default = ':all:') limit cell_id
+#' subsets to these feat_types
+#' @param x_max,x_min,y_max,y_min For feature info only. minimum and maximum x
+#' and y coordinates to keep
+#' @param verbose be verbose
+#' @param toplevel_params expected stackframe from which parameters should be
+#' extracted
+#' @return giotto object
+#' @keywords internal
+subset_giotto = function(gobject,
+                         spat_unit = ':all:',
+                         feat_type = 'rna', # see note below
+                         spat_unit_fsub = ':all:',
+                         feat_type_ssub = ':all:',
+                         cell_ids = NULL,
+                         feat_ids = NULL,
+                         poly_info = NULL,
+                         all_spat_units = NULL,
+                         all_feat_types = NULL,
+                         x_max = NULL,
+                         x_min = NULL,
+                         y_max = NULL,
+                         y_min = NULL,
+                         verbose = FALSE,
+                         toplevel_params = 2) {
+
+  # NOTE:
+  # spat_unit = ':all:', but feat_type is hardcoded to 'rna'
+  # This is since most people will be running analyses that look at rna
+  # information through the lens of multiple spatial units
+
+
+  # mirai::daemons(n = GiottoUtils::determine_cores())
+  #
+  # # mirai cleanup
+  # on.exit({
+  #   mirai::daemons(0) # reset
+  # })
+
+
+
+  # set poly_info
+  if(is.null(poly_info)) {
+    poly_info = spat_unit
+  }
+
+
+  # # filter cell_ID and feat_ID
+  # g_cell_IDs = get_cell_id(gobject, spat_unit = spat_unit)
+  # g_feat_IDs = get_feat_id(gobject, feat_type = feat_type)
+
+
+  ## filter index
+  # if(!is.null(cell_ids)) {
+  #   filter_bool_cells = g_cell_IDs %in% cell_ids
+  #   cell_ids = g_cell_IDs[filter_bool_cells]
+  # } else {
+  #   # set cell ids to all if not provided
+  #   filter_bool_cells = g_cell_IDs %in% g_cell_IDs
+  #   cell_ids = g_cell_IDs[filter_bool_cells]
+  # }
+  #
+  # if(!is.null(feat_ids)) {
+  #   filter_bool_feats = g_feat_IDs %in% feat_ids
+  #   feat_ids = g_feat_IDs[filter_bool_feats]
+  # } else {
+  #   # set feat ids to all if not provided
+  #   filter_bool_feats = g_feat_IDs %in% g_feat_IDs
+  #   feat_ids = g_feat_IDs[filter_bool_feats]
+  # }
+
+
+
+
+  if(verbose) cat('completed 1: preparation \n')
+
+
+  ## FILTER ##
+  # filter expression data
+  gobject = subset_expression_data(
+    gobject = gobject,
+    cell_ids = cell_ids,
+    feat_ids = feat_ids,
+    spat_unit = spat_unit,
+    feat_type = feat_type,
+    spat_unit_fsub = spat_unit_fsub,
+    feat_type_ssub = feat_type_ssub
+  )
+
+  if(verbose) cat('completed 2: subset expression data \n')
+
+
+  # filter spatial locations
+
+  gobject = subset_spatial_locations(gobject = gobject,
+                                     cell_ids = cell_ids,
+                                     spat_unit = spat_unit)
+
+  if(verbose) cat('completed 3: subset spatial locations \n')
+
+  # update ID slots now performed by intialization
+
+
+
+
+
+  ## cell & feature metadata ##
+  # cell metadata
+  gobject = subset_cell_metadata(
+    gobject = gobject,
+    spat_unit = spat_unit,
+    feat_type_ssub = feat_type_ssub,
+    cell_ids = cell_ids
+  )
+
+  if(verbose) cat('completed 4: subset cell metadata \n')
+
+  # feature metadata
+  gobject = subset_feature_metadata(
+    gobject = gobject,
+    feat_type = feat_type,
+    spat_unit_fsub = spat_unit_fsub,
+    feat_ids = feat_ids
+  )
+
+  if(verbose) cat('completed 5: subset feature metadata \n')
+
+
+  ## spatial network & grid ##
+  # cell spatial network
+  gobject = subset_spatial_network(
+    gobject = gobject,
+    spat_unit = spat_unit,
+    cell_ids = cell_ids
+  )
+
+
+  if(verbose) cat('completed 6: subset spatial network(s) \n')
+
+  # spatial grid
+  # need to be recomputed
+
+
+  ## dimension reduction ##
+  # cell dim reduction
+  gobject = subset_dimension_reduction(
+    gobject = gobject,
+    spat_unit = spat_unit,
+    feat_type = feat_type,
+    spat_unit_fsub = spat_unit_fsub,
+    feat_type_ssub = feat_type_ssub,
+    cell_ids = cell_ids,
+    feat_ids = feat_ids
+  )
+  # likely also needs to be recomputed
+
+  if(verbose) cat('completed 7: subsetted dimension reductions \n')
+
+
+  ## nn network ##
+  gobject = subset_nearest_network(
+    gobject = gobject,
+    spat_unit = spat_unit,
+    feat_type_ssub = feat_type_ssub,
+    cell_ids = cell_ids
+  )
+
+  if(verbose) cat('completed 8: subsetted nearest network(s) \n')
+
+
+  ## spatial enrichment ##
+  gobject = subset_spatial_enrichment(
+    gobject = gobject,
+    spat_unit = spat_unit,
+    feat_type_ssub = feat_type_ssub,
+    cell_ids = cell_ids
+  )
+
+  if(verbose) cat('completed 9: subsetted spatial enrichment results \n')
+
+  ## spatial info
+  if(!is.null(gobject@spatial_info)) {
+
+    for(select_poly_info in poly_info) {
+
+      # for each entry entry in poly_info, subset using cell_ids
+      # note that even if no poly_info is selected, the overlaps slots that match
+      # the feat_type param will be subset using feat_ids
+      gobject@spatial_info = subset_spatial_info_data(
+        spatial_info = gobject@spatial_info,
+        feat_type = feat_type,
+        cell_ids = cell_ids,
+        feat_ids = feat_ids,
+        poly_info = select_poly_info,
+        verbose = verbose
+      )
+
+    }
+
+    if(verbose) cat('completed 10: subsetted spatial information data \n')
+  }
+
+
+  ## feature info
+  if(!is.null(gobject@feat_info)) {
+
+    gobject@feat_info = subset_feature_info_data(
+      feat_info = gobject@feat_info,
+      feat_ids = feat_ids,
+      feat_type = feat_type,
+      x_max = x_max,
+      x_min = x_min,
+      y_max = y_max,
+      y_min = y_min,
+      verbose = verbose
+    )
+
+    if(verbose) cat('completed 11: subsetted spatial feature data \n')
+  }
+
+
+
+  ## update parameters used ##
+
+  parameters_info = update_giotto_params(
+    gobject,
+    description = '_subset',
+    return_gobject = FALSE,
+    toplevel = toplevel_params
+  )
+
+  # extra parameters to include
+  # cells_removed = length(filter_bool_cells[filter_bool_cells==FALSE])
+  # feats_removed = length(filter_bool_feats[filter_bool_feats==FALSE])
+
+  parameters_list = parameters_info[['plist']]
+  # update_name = parameters_info[['newname']]
+  #
+  # parameters_list[[update_name]] = c(parameters_list[[update_name]],
+  #                                    'cells removed' = cells_removed,
+  #                                    'feats removed' = feats_removed)
+  gobject@parameters = parameters_list
+
+
+
+  # browser()
+  #   # mirai
+  #   mirai_res = get_mirai_list(gobject)
+  #   if (length(mirai_res > 0)) {
+  #
+  #     lapply(mirai_res, function(res) {
+  #       # wait until everything is done evaluating
+  #       mirai::call_mirai(res)
+  #
+  #       # handle errors
+  #       if(mirai::is_error_value(res)) stop(wrap_txt('mirai', res$data))
+  #
+  #       # set value
+  #       gobject <<- setGiotto(gobject, x = res$data, verbose = FALSE)
+  #
+  #       return(NULL) # lapply itself should not return anything
+  #     })
+  #
+  #     # TODO clear results
+  #     gobject@mirai <- list()
+  #     gobject <<- gobject
+  #
+  #   }
+
+
+
+  return(initialize(gobject))
+
+}
+
 
 
 
@@ -856,6 +973,24 @@ subset_feature_info_data = function(feat_info,
 #   and feature info (points). This is useful for situations in which aggregate
 #   information has not been created but the subcellular data is present.
 
+
+# subsetGiotto (by IDs) and subsetGiottoLocs (by spatial bounds) are separate
+# functions because of the difference in the scope of how these subsets can be
+# applied.
+# - ID subsets are only make sense relative which spat_units/feat_types they are
+#   part of.
+# - spatial bound subsets should be possible to apply across multiple spatunits/
+#   feat_types and should be agnostic to them.
+#
+# These differences result in different defaults needed for scope of spat_units
+# and feat_types they affect.
+
+
+
+# all_spat_units and all_feat_types - may need name changes
+
+
+
 # TODO
 # Consider an `across_spat_units` and `across_feat_types` for finer control
 # with a special ':all:' input that will apply to all spat_units/feat_types
@@ -868,291 +1003,123 @@ subset_feature_info_data = function(feat_info,
 #' the subcellular information only without editing the aggregate information,
 #' use [subsetGiottoLocsSubcellular]
 #' @inheritParams data_access_params
+#' @param spat_unit,feat_type character vector. (default = ':all:') One or more
+#' spatial units or feature types to subset. Accepts ':all:' as a token
+#' to subset across all available.
 #' @param cell_ids character. cell IDs to keep
 #' @param feat_ids character. feature IDs to keep
 #' @param poly_info character. polygon info(s) to subset if present. (defaults
 #' to be the same as the spat_unit)
-#' @param all_spat_units subset all spatial units with selected feature ids
-#' @param all_feat_types subset all feature type data with selected cell ids
-#' @param x_max,x_min,y_max,y_min minimum and maximum x and y coordinates to keep for feature coordinates
+#' @param all_spat_units deprecated. use spat_unit_fsub = ':all:'
+#' @param all_feat_types deprecated. use feat_type_ssub = ':all:'
+#' @param spat_unit_fsub character vector. (default = ':all:') limit feat_id
+#' subsets to these spat_units
+#' @param feat_type_ssub character vector. (default = ':all:') limit cell_id
+#' subsets to these feat_types
 #' @param verbose be verbose
 #' @param toplevel_params parameters to extract
 #' @return giotto object
 #' @details Subsets a Giotto object for a specific spatial unit and feature type
 #' @export
 subsetGiotto <- function(gobject,
-                         spat_unit = NULL,
-                         feat_type = NULL,
+                         spat_unit = ':all:',
+                         feat_type = 'rna',
                          cell_ids = NULL,
                          feat_ids = NULL,
                          poly_info = NULL,
-                         all_spat_units = TRUE,
-                         all_feat_types = TRUE,
-                         x_max = NULL,
-                         x_min = NULL,
-                         y_max = NULL,
-                         y_min = NULL,
+                         all_spat_units = NULL,
+                         all_feat_types = NULL,
+                         spat_unit_fsub = ':all:',
+                         feat_type_ssub = ':all:',
                          verbose = FALSE,
                          toplevel_params = 2) {
-  
-  # Set feat_type and spat_unit
-  spat_unit = set_default_spat_unit(gobject = gobject,
-                                    spat_unit = spat_unit)
-  feat_type = set_default_feat_type(gobject = gobject,
-                                    spat_unit = spat_unit,
-                                    feat_type = feat_type)
-  
-  # set poly_info
-  if(is.null(poly_info)) {
-    poly_info = spat_unit
+
+  # handle deprecations
+  if (!is.null(all_spat_units)) {
+    warning(wrap_txt(
+      'subsetGiotto:
+      all_spat_units param is deprecated.
+      Please use spat_unit_fsub = \":all:\" instead. (this is the default)'
+    ))
   }
-  
-  
-  # spatial subsetting #
-  # pass to subsetGiottoLocs if not all spatial subset params are NULL
-  if(!all(sapply(list(x_max, x_min, y_min, y_max), is.null))) {
-    comb_metadata = subsetGiottoLocs(
-      gobject = gobject,
-      spat_unit = spat_unit,
-      feat_type = feat_type,
-      x_min = x_min, x_max = x_max,
-      y_min = y_min, y_max = y_max,
-      return_gobject = FALSE # returned the combined and spatially subset
-      # metadata instead
-    )
-    
-    # get spatially filtered cell_IDs
-    # filter current IDs to keep (cell_ids) by selecting only those that are
-    # also within the spat_filtered_cell_ids
-    spat_filtered_cell_ids = comb_metadata[['cell_ID']]
-    if (is.null(cell_ids)) cell_ids = spat_filtered_cell_ids
-    else cell_ids = cell_ids[cell_ids %in% spat_filtered_cell_ids]
+  if (!is.null(all_feat_types)) {
+    warning(wrap_txt(
+      'subsetGiotto:
+      all_feat_types param is deprecated.
+      Please use feat_type_ssub = \":all:\" instead. (this is the default)'
+    ))
   }
-  
-  
-  # all subsetting operations below here should rely on cell_ID or feat_ID #
-  # ---------------------------------------------------------------------- #
-  
-  # filter cell_ID and feat_ID
-  g_cell_IDs = get_cell_id(gobject, spat_unit = spat_unit)
-  g_feat_IDs = get_feat_id(gobject, feat_type = feat_type)
-  
-  
-  ## filter index
-  if(!is.null(cell_ids)) {
-    filter_bool_cells = g_cell_IDs %in% cell_ids
-    cell_ids = g_cell_IDs[filter_bool_cells]
-  } else {
-    # set cell ids to all if not provided
-    filter_bool_cells = g_cell_IDs %in% g_cell_IDs
-    cell_ids = g_cell_IDs[filter_bool_cells]
-  }
-  
-  if(!is.null(feat_ids)) {
-    filter_bool_feats = g_feat_IDs %in% feat_ids
-    feat_ids = g_feat_IDs[filter_bool_feats]
-  } else {
-    # set feat ids to all if not provided
-    filter_bool_feats = g_feat_IDs %in% g_feat_IDs
-    feat_ids = g_feat_IDs[filter_bool_feats]
-  }
-  
-  
-  
-  
-  
-  
-  
-  if(verbose) cat('completed 1: preparation \n')
-  
-  
-  ## FILTER ##
-  # filter expression data
-  gobject = subset_expression_data(gobject = gobject,
-                                   cell_ids = cell_ids,
-                                   feat_ids = feat_ids,
-                                   feat_type = feat_type,
-                                   spat_unit = spat_unit,
-                                   all_spat_units = all_spat_units,
-                                   all_feat_types = all_feat_types)
-  
-  if(verbose) cat('completed 2: subset expression data \n')
-  
-  
-  # filter spatial locations
-  
-  gobject = subset_spatial_locations(gobject = gobject,
-                                     cell_ids = cell_ids,
-                                     spat_unit = spat_unit,
-                                     all_spat_units = all_spat_units)
-  
-  if(verbose) cat('completed 3: subset spatial locations \n')
-  
-  # update ID slots now performed by intialization
-  
-  
-  # gobject@cell_ID[[spat_unit]] = gobject@cell_ID[[spat_unit]][filter_bool_cells]
-  # gobject@feat_ID[[feat_type]] = gobject@feat_ID[[feat_type]][filter_bool_feats]
-  
-  
-  if(verbose) cat('completed 4: subset cell (spatial units) and feature IDs \n')
-  
-  
-  ## cell & feature metadata ##
-  # cell metadata
-  gobject = subset_cell_metadata(gobject = gobject,
-                                 feat_type = feat_type,
-                                 cell_ids = cell_ids,
-                                 spat_unit = spat_unit,
-                                 all_feat_types = all_feat_types)
-  
-  if(verbose) cat('completed 5: subset cell metadata \n')
-  
-  # feature metadata
-  gobject = subset_feature_metadata(gobject = gobject,
-                                    feat_type = feat_type,
-                                    spat_unit = spat_unit,
-                                    feat_ids = feat_ids,
-                                    all_spat_units = all_spat_units)
-  
-  if(verbose) cat('completed 6: subset feature metadata \n')
-  
-  
-  ## spatial network & grid ##
-  # cell spatial network
-  gobject = subset_spatial_network(gobject = gobject,
-                                   spat_unit = spat_unit,
-                                   cell_ids = cell_ids,
-                                   all_spat_units = all_spat_units)
-  
-  
-  if(verbose) cat('completed 7: subset spatial network(s) \n')
-  
-  # spatial grid
-  # need to be recomputed
-  
-  
-  ## dimension reduction ##
-  # cell dim reduction
-  gobject = subset_dimension_reduction(gobject = gobject,
-                                       spat_unit = spat_unit,
-                                       feat_type = feat_type,
-                                       cell_ids = cell_ids,
-                                       all_feat_types = all_feat_types,
-                                       all_spat_units = all_spat_units)
-  
-  if(verbose) cat('completed 8: subsetted dimension reductions \n')
-  
-  
-  ## nn network ##
-  gobject = subset_nearest_network(gobject = gobject,
-                                   spat_unit = spat_unit,
-                                   feat_type = feat_type,
-                                   cell_ids = cell_ids,
-                                   all_spat_units = all_spat_units,
-                                   all_feat_types = all_feat_types)
-  
-  if(verbose) cat('completed 9: subsetted nearest network(s) \n')
-  
-  
-  ## spatial enrichment ##
-  gobject = subset_spatial_enrichment(gobject = gobject,
-                                      spat_unit = spat_unit,
-                                      feat_type = feat_type,
-                                      cell_ids = cell_ids,
-                                      all_spat_units = all_spat_units,
-                                      all_feat_types = all_feat_types)
-  
-  if(verbose) cat('completed 10: subsetted spatial enrichment results \n')
-  
-  ## spatial info
-  if(!is.null(gobject@spatial_info)) {
-    
-    for(select_poly_info in poly_info) {
-      
-      # for each entry entry in poly_info, subset using cell_ids
-      # note that even if no poly_info is selected, the overlaps slots that match
-      # the feat_type param will be subset using feat_ids
-      gobject@spatial_info = subset_spatial_info_data(spatial_info = gobject@spatial_info,
-                                                      feat_type = feat_type,
-                                                      cell_ids = cell_ids,
-                                                      feat_ids = feat_ids,
-                                                      poly_info = select_poly_info,
-                                                      verbose = verbose)
-      
-    }
-    
-    if(verbose) cat('completed 11: subsetted spatial information data \n')
-  }
-  
-  
-  ## feature info
-  if(!is.null(gobject@feat_info)) {
-    
-    gobject@feat_info = subset_feature_info_data(feat_info = gobject@feat_info,
-                                                 feat_ids = feat_ids,
-                                                 feat_type = feat_type,
-                                                 x_max = x_max,
-                                                 x_min = x_min,
-                                                 y_max = y_max,
-                                                 y_min = y_min,
-                                                 verbose = verbose)
-    
-    if(verbose) cat('completed 12: subsetted spatial feature data \n')
-  }
-  
-  
-  
-  ## update parameters used ##
-  
-  # nframes = sys.nframe()
-  # if(verbose) cat('number of frames: ', nframes, '\n')
-  #
-  # parent = sys.parent()
-  # if(verbose) cat('sys parent: ', parent, '\n')
-  
-  parameters_info = update_giotto_params(gobject,
-                                         description = '_subset',
-                                         return_gobject = FALSE,
-                                         toplevel = toplevel_params)
-  
-  # extra parameters to include
-  cells_removed = length(filter_bool_cells[filter_bool_cells==FALSE])
-  feats_removed = length(filter_bool_feats[filter_bool_feats==FALSE])
-  
-  parameters_list = parameters_info[['plist']]
-  update_name = parameters_info[['newname']]
-  
-  parameters_list[[update_name]] = c(parameters_list[[update_name]],
-                                     'cells removed' = cells_removed,
-                                     'feats removed' = feats_removed)
-  gobject@parameters = parameters_list
-  
-  
-  return(initialize(gobject))
-  
+
+  subset_giotto(
+    gobject = gobject,
+    spat_unit = spat_unit,
+    feat_type = feat_type,
+    cell_ids = cell_ids,
+    feat_ids = feat_ids,
+    poly_info = poly_info,
+    spat_unit_fsub = spat_unit_fsub,
+    feat_type_ssub = feat_type_ssub,
+    x_max = NULL,
+    x_min = NULL,
+    y_max = NULL,
+    y_min = NULL,
+    verbose = verbose,
+    toplevel_params = toplevel_params + 1
+  )
+
 }
+
+
+
+
+
+
+
+
+
 
 
 
 
 #' @title Subset by spatial locations
 #' @name subsetGiottoLocs
-#' @description Subsets Giotto object based on spatial locations.
+#' @description Subsets Giotto object spatially by defining a set of
+#' cropping bounds. The information to be subset is preferred to be from spatial
+#' locations. If no `spat_loc_name` is given, the first available set of
+#' spatial locations for the `spat_unit` will be picked.
+#' If no spatial locations are available, the polygon information will be subset.
+#' Spatial IDs surviving the crop are then applied to the rest of the Giotto object
+#' using [subsetGiotto].
+#'
+#' Since spatial subsetting results are unique for each spatial unit, it must
+#' be performed separately for each spat_unit that is desired to be spatially
+#' subset.
+#' Thus, we split the workflow into two functions:
+#' \itemize{
+#'   \item [subsetGiottoLocs] for subsetting a single spat_unit
+#'   \item [subsetGiottoLocsMulti] for iterating through every spat_unit requested
+#' }
 #' @inheritParams data_access_params
-#' @param spat_loc_name name of spatial locations to use
+#' @param spat_loc_name name of spatial locations to use within spat_unit
+#' @param spat_unit spatial unit to subset
+#' @param feat_type (optional) feat type to use if `return_gobject = TRUE` and
+#' a combined data.table output is desired.
+#' @param feat_type_ssub which feat types across which to apply the spatial
+#' subset
 #' @param x_max,x_min,y_max,y_min,z_max,z_min minimum and maximum x, y, and z coordinates
 #'   to subset to
-#' @param poly_info polygon information to use
+#' @param poly_info character. polygon information to subset (considered
+#' separately from the spat_units to subset)
 #' @param return_gobject return Giotto object
 #' @param verbose be verbose
 #' @return giotto object
-#' @details Subsets a Giotto based on spatial locations and for one provided spatial unit
-#' if return_gobject = FALSE, then a filtered combined metadata data.table will be returned
+#' @details If `return_gobject = FALSE`, then a filtered combined metadata
+#' data.table will be returned
 #' @export
 subsetGiottoLocs = function(gobject,
                             spat_unit = NULL,
                             feat_type = NULL,
+                            feat_type_ssub = ':all:',
                             spat_loc_name = NULL,
                             x_max = NULL,
                             x_min = NULL,
@@ -1160,136 +1127,155 @@ subsetGiottoLocs = function(gobject,
                             y_min = NULL,
                             z_max = NULL,
                             z_min = NULL,
-                            poly_info = 'cell',
+                            poly_info = NULL,
                             return_gobject = TRUE,
                             verbose = FALSE) {
-  
-  # FOR AGGREGATE DATA #
-  # Spatial subsetting is performed on the spatial locations information #
-  # The IDs after this operation are then used to subset the rest of the #
-  # Giotto object using subsetGiotto()                                   #
-  
-  # 0. Set feat_type and spat_unit
+
   spat_unit = set_default_spat_unit(gobject = gobject,
                                     spat_unit = spat_unit)
   feat_type = set_default_feat_type(gobject = gobject,
                                     spat_unit = spat_unit,
                                     feat_type = feat_type)
-  
+
+
+  if (is.null(poly_info)) {
+    poly_info = spat_unit
+  }
+
+  if (length(feat_type) > 1L ||
+      isTRUE(feat_type == ':all:')) {
+    stop(wrap_txt(
+      'subsetGiottoLocs: multiple values or :all: passed to param feat_types.
+      Giotto subset functions use params spat_unit and feat_type to define on which spatial units and feature types cell_id and feat_id subsets should be performed, respectively.
+      -- Spatial subsets can only subset on cell_id.\n
+      subsetGiottoLocs() and subsetGiottoLocsMulti() use feat_type only to define which set of combined metadata info to generate if return_gobject = FALSE.\n
+      Use param feat_type_ssub instead to define which feature types the cell_id subset is applied across.',
+      errWidth = TRUE
+    ))
+  }
+
+  checkmate::assert_character(spat_unit)
+  if (length(spat_unit) > 1 ||
+      spat_unit == ':all:') stop(wrap_txt(
+    'subsetGiottoLocs: Length of spat_unit > 1
+    Use subsetGiottoLocsMulti() for spatial subsets across multiple spat_units'
+  ))
+
+
   # 1. Check spatial params
   valid_spat_subset_params(x_min = x_min, x_max = x_max,
                            y_min = y_min, y_max = y_max,
                            z_min = z_min, z_max = z_max)
-  
-  
+
+
   # function requires spat_loc_name
-  if(is.null(spat_loc_name)) {
-    
+  if (is.null(spat_loc_name)) {
+
     # first check spatial locations
-    if(!is.null(slot(gobject, 'spatial_locs'))) {
-      spat_loc_name = names(slot(gobject, 'spatial_locs')[[spat_unit]])[[1]]
+    if (!is.null(slot(gobject, 'spatial_locs'))) {
+      # get name of first available spatial unit if none provided
+      spat_loc_name = list_spatial_locations_names(
+        gobject = gobject,
+        spat_unit = spat_unit
+      )[[1]]
       # cat('No spatial locations have been selected, the first one -',spat_loc_name, '- will be used \n')
-      
-      # if spatlocs missing, check spatial_info
+
+      # if spatlocs missing, use alternate method with spatial_info
     } else if(!is.null(slot(gobject, 'spatial_info'))) {
-      # EXCEPTION: if no spatlocs found but polys exist, find cell_IDs from polys
-      polys_list = slot(gobject, 'spatial_info')
-      cropped_IDs = lapply(polys_list, function(x) {
-        sv = slot(x, 'spatVector')
-        sv = terra::crop(sv, terra::ext(x_min, x_max, y_min, y_max))
-        sv$poly_ID
-        # TODO add cropping for z values as well
-      })
-      
-      cropped_IDs = unique(unlist(cropped_IDs))
-      
-      subset_object = subsetGiotto(gobject = gobject,
-                                   spat_unit = spat_unit,
-                                   feat_type = feat_type,
-                                   cell_ids = cropped_IDs,
-                                   poly_info = poly_info,
-                                   x_max = x_max,
-                                   x_min = x_min,
-                                   y_max = y_max,
-                                   y_min = y_min,
-                                   verbose = verbose)
-      
+
+      subset_object = subset_giotto_polygons_workflow(
+        gobject = gobject,
+        return_gobject = return_gobject,
+        spat_unit = spat_unit,
+        feat_type = feat_type,
+        poly_info = poly_info,
+        x_min = x_min, # pass subsetting params to feat info
+        x_max = x_max,
+        y_min = y_min,
+        y_max = y_max,
+        verbose = verbose
+      )
       return(subset_object)
-      
+
     } else {
       spat_loc_name = NULL
       wrap_msg('No spatial locations or spatial info have been found \n')
       return(NULL)
     }
   }
-  
+
+
+  # only used for combined metadata outputs
   comb_metadata = combineMetadata(gobject = gobject,
                                   spat_unit = spat_unit,
                                   feat_type = feat_type,
                                   spat_loc_name = spat_loc_name)
   comb_colnames =  colnames(comb_metadata)
-  
+
   # x spatial dimension
   if('sdimx' %in% comb_colnames) {
     if(is.null(x_max)) x_max = max(comb_metadata[['sdimx']])
     if(is.null(x_min)) x_min = min(comb_metadata[['sdimx']])
-    
+
     comb_metadata = comb_metadata[get('sdimx') < x_max & get('sdimx') > x_min]
   }
-  
+
   # y spatial dimension
   if('sdimy' %in% comb_colnames) {
     if(is.null(y_max)) y_max = max(comb_metadata[['sdimy']])
     if(is.null(y_min)) y_min = min(comb_metadata[['sdimy']])
-    
+
     comb_metadata = comb_metadata[get('sdimy') < y_max & get('sdimy') > y_min]
   }
-  
+
   # z spatial dimension
   if('sdimz' %in% comb_colnames) {
     if(is.null(z_max)) z_max = max(comb_metadata[['sdimz']])
     if(is.null(z_min)) z_min = min(comb_metadata[['sdimz']])
-    
+
     comb_metadata = comb_metadata[get('sdimz') < z_max & get('sdimz') > z_min]
   }
-  
+
   if(return_gobject) {
-    
+
     filtered_cell_IDs = comb_metadata[['cell_ID']]
-    
-    subset_object = subsetGiotto(gobject = gobject,
-                                 spat_unit = spat_unit,
-                                 feat_type = feat_type,
-                                 cell_ids = filtered_cell_IDs,
-                                 poly_info = poly_info,
-                                 x_max = x_max,
-                                 x_min = x_min,
-                                 y_max = y_max,
-                                 y_min = y_min,
-                                 verbose = verbose)
-    
+
+    # assumes that all spatlocs within a spat unit contain the same cell_IDs
+    subset_object = subset_giotto(
+      gobject = gobject,
+      spat_unit = spat_unit,
+      feat_type = ":all:",
+      cell_ids = filtered_cell_IDs,
+      poly_info = poly_info,
+      x_max = x_max, # pass subsetting params to feat_info
+      x_min = x_min,
+      y_max = y_max,
+      y_min = y_min,
+      verbose = verbose
+    )
+
     return(subset_object)
-    
+
   } else {
     return(comb_metadata)
   }
-  
+
 }
 
 
 
 
-#' @title Subset by spatial locations -- multi
-#' @name subsetGiottoLocsMulti
-#' @description Subsets Giotto object based on spatial locations
+
+
+
+
+#' @rdname subsetGiottoLocs
 #' @inheritParams subsetGiottoLocs
-#' @return giotto object
-#' @details Subsets a Giotto based on spatial locations for multiple spatial units
-#' if return_gobject = FALSE, then a filtered combined metadata data.table will be returned
 #' @export
 subsetGiottoLocsMulti = function(gobject,
-                                 spat_unit = NULL,
+                                 spat_unit = ":all:",
                                  feat_type = NULL,
+                                 feat_type_ssub = ":all:",
                                  spat_loc_name = NULL,
                                  x_max = NULL,
                                  x_min = NULL,
@@ -1300,61 +1286,88 @@ subsetGiottoLocsMulti = function(gobject,
                                  poly_info = NULL,
                                  return_gobject = TRUE,
                                  verbose = TRUE) {
-  
-  
-  
-  
+
+  if (length(feat_type) > 1L ||
+      isTRUE(feat_type == ':all:')) {
+    stop(wrap_txt(
+      'subsetGiottoLocsMulti: multiple values or :all: passed to param feat_types.
+      Giotto subset functions use params spat_unit and feat_type to define on which spatial units and feature types cell_id and feat_id subsets should be performed, respectively.
+      -- Spatial subsets can only subset on cell_id.\n
+      subsetGiottoLocs() and subsetGiottoLocsMulti() use feat_type only to define which set of combined metadata info to generate if return_gobject = FALSE.\n
+      Use param feat_type_ssub instead to define which feature types the cell_id subset is applied across.',
+      errWidth = TRUE
+    ))
+  }
+
+  # if :all:, find all existing spat units with spatial information
+  if(isTRUE(spat_unit == ':all:')) {
+    avail_su = c(list_spatial_locations(gobject)$spat_unit,
+                 list_spatial_info(gobject)$spat_unit)
+
+    spat_unit = unique(avail_su)
+  }
+
+
   res_list = list()
-  
+
   for(spat_unit_selected in spat_unit) {
-    
+
     poly_info_selected = poly_info[[spat_unit_selected]]
-    
+
     cat('\n \n')
-    
+
     if(verbose) wrap_msg('Start subset on locations for spatial unit: ', spat_unit_selected,
                          'and polygon information layers: ', poly_info_selected, '\n')
-    
-    
+
+
     if(return_gobject) {
-      gobject = subsetGiottoLocs(gobject = gobject,
-                                 spat_unit = spat_unit_selected,
-                                 feat_type = feat_type,
-                                 spat_loc_name = spat_loc_name,
-                                 x_max = x_max,
-                                 x_min = x_min,
-                                 y_max = y_max,
-                                 y_min = y_min,
-                                 z_max = z_max,
-                                 z_min = z_min,
-                                 poly_info = poly_info_selected,
-                                 return_gobject = return_gobject,
-                                 verbose = verbose)
+
+      # multiple subsets upon same object
+      gobject = subsetGiottoLocs(
+        gobject = gobject,
+        spat_unit = spat_unit_selected,
+        feat_type = feat_type,
+        feat_type_ssub = feat_type_ssub,
+        spat_loc_name = spat_loc_name,
+        x_max = x_max,
+        x_min = x_min,
+        y_max = y_max,
+        y_min = y_min,
+        z_max = z_max,
+        z_min = z_min,
+        poly_info = poly_info_selected,
+        return_gobject = return_gobject,
+        verbose = verbose
+      )
     } else {
-      
-      res_list[[spat_unit_selected]] = subsetGiottoLocs(gobject = gobject,
-                                                        spat_unit = spat_unit_selected,
-                                                        feat_type = feat_type,
-                                                        spat_loc_name = spat_loc_name,
-                                                        x_max = x_max,
-                                                        x_min = x_min,
-                                                        y_max = y_max,
-                                                        y_min = y_min,
-                                                        z_max = z_max,
-                                                        z_min = z_min,
-                                                        poly_info = poly_info_selected,
-                                                        return_gobject = return_gobject,
-                                                        verbose = verbose)
-      
+
+      # accumulate list of combined metadata tables
+      res_list[[spat_unit_selected]] = subsetGiottoLocs(
+        gobject = gobject,
+        spat_unit = spat_unit_selected,
+        feat_type = feat_type,
+        feat_type_ssub = feat_type_ssub,
+        spat_loc_name = spat_loc_name,
+        x_max = x_max,
+        x_min = x_min,
+        y_max = y_max,
+        y_min = y_min,
+        z_max = z_max,
+        z_min = z_min,
+        poly_info = poly_info_selected,
+        return_gobject = return_gobject,
+        verbose = verbose
+      )
+
     }
   }
-  
+
   if(return_gobject) {
     return(gobject)
   } else {
     return(res_list)
   }
-  
+
 }
 
 
@@ -1377,27 +1390,27 @@ subsetGiottoLocsSubcellular = function(gobject,
                                        z_max = NULL,
                                        z_min = NULL,
                                        verbose = FALSE) {
-  
+
   # only to be used if there is no aggregated information #
   if(!is.null(gobject@expression)) {
     stop(wrap_txt('Aggregated information was found in gobject.
                   Use subsetGiottoLocs() instead'))
   }
-  
+
   # Check spatial params
   valid_spat_subset_params(x_min = x_min, x_max = x_max,
                            y_min = y_min, y_max = y_max,
                            z_min = z_min, z_max = z_max)
-  
-  
+
+
   # first subset feature ids based on location
   # this information could be needed for spatial_info if overlaps were calculated
-  
-  
+
+
   ## 1. feature info ##
   ## --------------- ##
   if(!is.null(gobject@feat_info)) {
-    
+
     # perform crop and return to gobject
     gpoints_list = get_feature_info_list(gobject, return_giottoPoints = TRUE)[feat_type]
     cropped_gpoints = lapply(gpoints_list, function(x) {
@@ -1408,25 +1421,25 @@ subsetGiottoLocsSubcellular = function(gobject,
       # TODO add cropping for z values as well
     })
     gobject@feat_info = cropped_gpoints
-    
+
     # extract the cropped feature IDs for use with spatial info overlaps
     cropped_feats = lapply(cropped_gpoints, function(cropped_x) {
       cropped_x@unique_ID_cache
     })
     cropped_feats = unique(unlist(cropped_feats))
-    
+
     if(verbose) wrap_msg('subsetted spatial feature data')
   } else {
-    
+
     cropped_feats = NULL
-    
+
   }
-  
-  
+
+
   ## 2. spatial info ###
   ## ---------------- ##
   if(!is.null(gobject@spatial_info)) {
-    
+
     # get the associated poly_IDs
     polys_list = get_polygon_info_list(gobject, return_giottoPolygon = TRUE)
     cropped_IDs = lapply(polys_list, function(x) {
@@ -1435,27 +1448,27 @@ subsetGiottoLocsSubcellular = function(gobject,
       sv$poly_ID
       # TODO add cropping for z values as well
     })
-    
+
     cropped_IDs = unique(unlist(cropped_IDs))
-    
+
     for(select_poly_info in poly_info) {
-      
+
       gobject@spatial_info = subset_spatial_info_data(spatial_info = gobject@spatial_info,
                                                       feat_type = feat_type,
                                                       cell_ids = cropped_IDs,
                                                       feat_ids = cropped_feats,
                                                       poly_info = select_poly_info)
-      
+
     }
-    
+
     if(verbose) wrap_msg('subsetted spatial information data')
   }
-  
-  
+
+
   # TODO: update parameters
-  
+
   return(initialize(gobject))
-  
+
 }
 
 
@@ -1488,7 +1501,7 @@ valid_spat_subset_params = function(
       spatError = append(spatError, 'z max must be larger than z min \n')
     }
   }
-  
+
   if(!is.null(spatError)) {
     stop('Invalid spatial subset params:\n',
          spatError,
@@ -1502,3 +1515,187 @@ valid_spat_subset_params = function(
 
 
 
+# see subsetGiottoLocs
+subset_giotto_polygons_workflow = function(gobject = gobject,
+                                           return_gobject = return_gobject,
+                                           spat_unit = spat_unit,
+                                           feat_type = feat_type,
+                                           poly_info = poly_info,
+                                           x_min = x_min,
+                                           x_max = x_max,
+                                           y_min = y_min,
+                                           y_max = y_max,
+                                           verbose = verbose) {
+
+  if (!return_gobject) {
+    stop(wrap_txt(
+      'subsetGiottoLocs:
+          No spatial locations for spat_unit', paste0('\'', spat_unit, '\''),
+      'have been found.
+          return_gobject = FALSE is not possible when defaulting to polygon info
+          subsetting.',
+      errWidth = TRUE
+    ))
+  }
+
+  # EXCEPTION: if no spatlocs found but polys exist, find cell_IDs from polys
+  # by spatially scanning across all of them. The resulting cell_ID list
+  # can be expected not be specific for the spatial unit, but this should
+  # be fine in most cases since subsetGiotto() cell_ID input is which cells
+  # to keep as opposed to which to exclude.
+  polys_list = slot(gobject, 'spatial_info')
+  cropped_IDs = lapply(polys_list, function(x) {
+    terra::crop(x, terra::ext(x_min, x_max, y_min, y_max))@unique_ID_cache
+    # TODO add cropping for z values as well
+  })
+
+  cropped_IDs = unique(unlist(cropped_IDs))
+
+  subset_object = subset_giotto(
+    gobject = gobject,
+    spat_unit = spat_unit,
+    feat_type = feat_type,
+    cell_ids = cropped_IDs,
+    poly_info = poly_info,
+    x_max = x_max, # pass subsetting to feat_info
+    x_min = x_min,
+    y_max = y_max,
+    y_min = y_min,
+    all_spat_units = FALSE, # one spat_unit at a time
+    all_feat_types = TRUE, # across all feat types for the spat unit
+    verbose = verbose
+  )
+
+  return(subset_object)
+
+}
+
+
+
+
+## object subsetting ####
+
+#' @title Subset giotto polygon object
+#' @name subset_giotto_polygon_object
+#' @description Subset a single giotto polygon object for cell_ids and feat_ids
+#' @param gpolygon giottoPolygon object to subset
+#' @param cell_ids character. cell_ids to keep
+#' @param feat_ids character. feat_ids to keep
+#' @param feat_type character. feature type to subset feat_ids from if overlaps
+#' are present within the giottoPolygon object
+#' @keywords internal
+#' @noRd
+subset_giotto_polygon_object = function(gpolygon,
+                                        cell_ids = NULL,
+                                        feat_ids = NULL,
+                                        feat_type = NULL) {
+
+  # cell ID only subsets
+  if (!is.null(cell_ids)) {
+
+    if (!is.null(gpolygon@spatVector)) {
+      poly_IDs = spatIDs(gpolygon, uniques = FALSE)
+      cell_id_bool = poly_IDs %in% cell_ids
+      gpolygon@spatVector = gpolygon@spatVector[cell_id_bool]
+      gpolygon@unique_ID_cache = unique(poly_IDs[cell_id_bool]) # update cache
+    }
+
+    if(!is.null(gpolygon@spatVectorCentroids)) {
+      # assume identical ordering
+      gpolygon@spatVectorCentroids = gpolygon@spatVectorCentroids[cell_id_bool]
+    }
+  }
+
+  # cell ID and feat ID subsets
+  if(!is.null(gpolygon@overlaps)) {
+
+    if (isTRUE(feat_type) == ':all:') feat_type = names(gpolygon@overlaps)
+
+    for(feat in names(gpolygon@overlaps)) {
+      # TODO check this for intensity image overlaps
+      if (!is.null(cell_ids)) {
+        cell_id_bool = terra::as.list(gpolygon@overlaps[[feat]])$poly_ID %in% cell_ids
+        gpolygon@overlaps[[feat]] = gpolygon@overlaps[[feat]][cell_id_bool]
+      }
+
+      if (!is.null(feat_ids) &&
+          isTRUE(feat %in% feat_type)) {
+        feat_id_bool = terra::as.list(gpolygon@overlaps[[feat]])$feat_ID %in% feat_ids
+        gpolygon@overlaps[[feat]] = gpolygon@overlaps[[feat]][feat_id_bool]
+      }
+    }
+  }
+  return(gpolygon)
+}
+
+
+
+
+
+
+
+#' @title Subset giotto points object
+#' @name subset_giotto_points_object
+#' @description Subset a single giotto points object
+#' @details Subset on feature ids and on x,y coordinates
+#' @keywords internal
+#' @noRd
+subset_giotto_points_object = function(gpoints,
+                                       feat_ids = NULL,
+                                       x_min = NULL,
+                                       x_max = NULL,
+                                       y_min = NULL,
+                                       y_max = NULL,
+                                       verbose = FALSE) {
+
+  # data.table vars
+  x = y = feat_ID = NULL
+
+  # 0. check if spatial feature information exists
+  if(is.null(gpoints@spatVector)) {
+    return(gpoints) # return without change since there is no points info
+  }
+
+
+  # 1. ID based subsetting #
+  # ---------------------- #
+  if(!is.null(feat_ids)) {
+    feat_id_bool = featIDs(gpoints, uniques = FALSE) %in% feat_ids
+    gpoints@spatVector = gpoints@spatVector[feat_id_bool]
+  }
+
+  # 2. Spatial subsetting #
+  # --------------------- #
+  # 2.1 if NO spatial subset information available,
+  # ie: if all spat subset params are NULL, return directly because there are
+  # no following steps
+  if(all(sapply(list(x_min, x_max, y_min, y_max), is.null))) {
+    # even if no spatial subsetting happened, if ID subsetting occurred, the
+    # unique_ID_cache needs to be updated
+    gpoints@unique_ID_cache = featIDs(gpoints, use_cache = FALSE, uniques = TRUE)
+    return(gpoints)
+  }
+
+  # 2.2 otherwise use DT crop method
+  gpoints = crop(gpoints,
+                 xmin = x_min, xmax = x_max,
+                 ymin = y_min, ymax = y_max,
+                 DT = TRUE)
+  # unique_ID_cache needs to be updated
+  gpoints@unique_ID_cache = featIDs(gpoints, use_cache = FALSE, uniques = TRUE)
+
+  return(gpoints)
+}
+
+
+
+
+
+# see subset_expression_data
+# runs expression finalizer, if any
+finalize_expr_subset = function(ex_mat) {
+  if(methods::is(ex_mat[], 'HDF5Array')) {
+    ex_mat[] = DelayedArray::realize(ex_mat[], "HDF5Array")
+  }
+  return(ex_mat)
+}

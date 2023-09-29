@@ -11,6 +11,8 @@
 \alias{$<-,coordDataDT-method}
 \alias{$,metaData-method}
 \alias{$<-,metaData-method}
+\alias{$,terraVectData-method}
+\alias{$<-,terraVectData-method}
 \alias{[,coordDataDT,missing,ANY,missing-method}
 \alias{[,coordDataDT,ANY,missing,missing-method}
 \alias{[,coordDataDT,ANY,ANY,missing-method}
@@ -61,6 +63,10 @@
 \S4method{$}{metaData}(x, name)
 
 \S4method{$}{metaData}(x, name) <- value
+
+\S4method{$}{terraVectData}(x, name)
+
+\S4method{$}{terraVectData}(x, name) <- value
 
 \S4method{[}{coordDataDT,missing,ANY,missing}(x, i, j)
 
@@ -145,6 +151,9 @@ Select by colname from giotto S4 data.table coordinates slot.
 
 
 Select by colname from giotto S4 data.table metaDT slot.
+
+
+Select by colname from giotto S4 spatVector slot.
 }
 
 \section{\code{`$<-`} methods}{
@@ -157,6 +166,9 @@ Works via data.table methods
 
 Set values by colname into giotto S4 data.table metaDT slot.
 Works via data.table methods
+
+
+Set values by colname into giotto S4 spatVector slot.
 }
 
 \section{\code{`[`} methods}{

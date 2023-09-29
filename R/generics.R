@@ -63,7 +63,8 @@ setGeneric('featType<-', function(x, value) standardGeneric('featType<-'))
 setGeneric('objName', function(x) standardGeneric('objName'))
 setGeneric('objName<-', function(x, value) standardGeneric('objName<-'))
 
-
+## setGiotto() generic ####
+setGeneric('setGiotto', function(gobject, x, ...) standardGeneric('setGiotto'))
 
 
 # coerce ####

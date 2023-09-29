@@ -67,6 +67,26 @@ setMethod('$<-', signature(x = 'metaData'),
             x
           })
 
+## * terraVectData * ####
+
+#' @rdname extract-methods
+#' @section \code{`$`} methods:
+#'   Select by colname from giotto S4 spatVector slot.
+#' @export
+setMethod('$', signature(x = 'terraVectData'),
+          function(x, name) terra::as.list(x@spatVector)[[name]])
+
+#' @rdname extract-methods
+#' @section \code{`$<-`} methods:
+#'   Set values by colname into giotto S4 spatVector slot.
+#' @export
+setMethod('$<-', signature(x = 'terraVectData'),
+          function(x, name, value) {
+            x@spatVector[[name]] <- value
+            x
+          })
+
+
 
 # [ S4 access generic ####
 
