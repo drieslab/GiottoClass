@@ -1864,7 +1864,7 @@ spatialExperimentToGiotto <- function(spe,
 # SpatialExperiment methods ####
 
 # register methods if SpatialExperiment is present
-if (package_check('SpatialExperiment')) {
+if (requireNamespace('SpatialExperiment', quietly = TRUE)) {
 
   setMethod(
     SingleCellExperiment::colData,
