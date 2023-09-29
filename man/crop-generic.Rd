@@ -4,11 +4,14 @@
 \alias{crop-generic}
 \alias{crop,giottoLargeImage-method}
 \alias{crop,giottoPoints-method}
+\alias{crop,giottoPolygon-method}
 \title{Crop to a spatial subset}
 \usage{
 \S4method{crop}{giottoLargeImage}(x, y, ...)
 
 \S4method{crop}{giottoPoints}(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL, ...)
+
+\S4method{crop}{giottoPolygon}(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL, ...)
 }
 \arguments{
 \item{x}{object}
@@ -23,12 +26,23 @@
 independently}
 }
 \description{
-see \link[terra:crop]{terra::crop}. Object x will be cropped using object y.
+Spatially subset an object x using object y. Giotto spatial
+subobjects respond to \link[terra:crop]{terra::crop}. For \code{giottoPoints} and \code{giottoPolygon},
+an alternative faster crop operation is implemented through \code{data.table}
+manipulation of the geometry information and are used by default. This mode
+also only allows rectangular subsetting. Additionally, \code{giottoPolygons} will
+be cropped using their centroids so that the entire polygon is either present
+or not instead of the default \code{crop} behavior that would keep the portion of
+the polygon that does fall within the selected crop region.
+Set \code{DT = FALSE} in order to use the default style of terra::crop behavior
+that also allows usage of additional params through ...
 }
 \section{Functions}{
 \itemize{
 \item \code{crop(giottoLargeImage)}: Crop a giottoLargeImage
 
 \item \code{crop(giottoPoints)}: Crop a giottoPoints
+
+\item \code{crop(giottoPolygon)}: Crop a giottoPoints
 
 }}

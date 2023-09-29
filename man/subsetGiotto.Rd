@@ -6,17 +6,15 @@
 \usage{
 subsetGiotto(
   gobject,
-  spat_unit = NULL,
-  feat_type = NULL,
+  spat_unit = ":all:",
+  feat_type = "rna",
   cell_ids = NULL,
   feat_ids = NULL,
   poly_info = NULL,
-  all_spat_units = TRUE,
-  all_feat_types = TRUE,
-  x_max = NULL,
-  x_min = NULL,
-  y_max = NULL,
-  y_min = NULL,
+  all_spat_units = NULL,
+  all_feat_types = NULL,
+  spat_unit_fsub = ":all:",
+  feat_type_ssub = ":all:",
   verbose = FALSE,
   toplevel_params = 2
 )
@@ -24,9 +22,9 @@ subsetGiotto(
 \arguments{
 \item{gobject}{giotto object}
 
-\item{spat_unit}{spatial unit (e.g. "cell")}
-
-\item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
+\item{spat_unit, feat_type}{character vector. (default = ':all:') One or more
+spatial units or feature types to subset. Accepts ':all:' as a token
+to subset across all available.}
 
 \item{cell_ids}{character. cell IDs to keep}
 
@@ -35,11 +33,15 @@ subsetGiotto(
 \item{poly_info}{character. polygon info(s) to subset if present. (defaults
 to be the same as the spat_unit)}
 
-\item{all_spat_units}{subset all spatial units with selected feature ids}
+\item{all_spat_units}{deprecated. use spat_unit_fsub = ':all:'}
 
-\item{all_feat_types}{subset all feature type data with selected cell ids}
+\item{all_feat_types}{deprecated. use feat_type_ssub = ':all:'}
 
-\item{x_max, x_min, y_max, y_min}{minimum and maximum x and y coordinates to keep for feature coordinates}
+\item{spat_unit_fsub}{character vector. (default = ':all:') limit feat_id
+subsets to these spat_units}
+
+\item{feat_type_ssub}{character vector. (default = ':all:') limit cell_id
+subsets to these feat_types}
 
 \item{verbose}{be verbose}
 

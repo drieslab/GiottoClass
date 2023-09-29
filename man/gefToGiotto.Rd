@@ -4,7 +4,7 @@
 \alias{gefToGiotto}
 \title{Convert gef to Giotto}
 \usage{
-gefToGiotto(gef_file, bin_size = "bin100", verbose = FALSE)
+gefToGiotto(gef_file, bin_size = "bin100", verbose = FALSE, h5_file = NULL)
 }
 \arguments{
 \item{gef_file}{path to .gef file}
@@ -12,6 +12,8 @@ gefToGiotto(gef_file, bin_size = "bin100", verbose = FALSE)
 \item{bin_size}{bin size to select from .gef file}
 
 \item{verbose}{be verbose}
+
+\item{h5_file}{name to create and on-disk HDF5 file}
 }
 \description{
 Converts .gef file (output stereo-seq pipeline) into

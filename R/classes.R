@@ -261,7 +261,17 @@ setClass("miscData",
 )
 
 
-
+# ** terraVectData Class ####
+#' @title Basic class for terra SpatVector-based objects
+#' @description
+#' Classes that inherit from this class will contain a spatVector slot meant to
+#' hold and work with terra SpatVector objects
+terraVectData = setClass(
+  'terraVectData',
+  contains = 'VIRTUAL',
+  slots = list(spatVector = "ANY"),
+  prototype = prototype(spatVector = NULL)
+)
 
 
 
@@ -1188,15 +1198,13 @@ setClass("spatEnrObj",
 #' @export
 giottoPolygon <- setClass(
   Class = "giottoPolygon",
-  contains = c("nameData", "giottoSubobject"),
+  contains = c("nameData", "terraVectData", "giottoSubobject"),
   slots = c(
-    spatVector = "ANY",
     spatVectorCentroids = "ANY",
     overlaps = "ANY",
     unique_ID_cache = "character"
   ),
   prototype = list(
-    spatVector = NULL,
     spatVectorCentroids = NULL,
     overlaps = NULL,
     unique_ID_cache = NA_character_
@@ -1268,14 +1276,12 @@ setClass("packedGiottoPolygon",
 #' @export
 giottoPoints <- setClass(
   Class = "giottoPoints",
-  contains = c("featData", 'giottoSubobject'),
+  contains = c("featData", "terraVectData", 'giottoSubobject'),
   slots = c(
-    spatVector = "ANY",
     networks = "ANY",
     unique_ID_cache = "character"
   ),
   prototype = list(
-    spatVector = NULL,
     networks = NULL,
     unique_ID_cache = NA_character_
   )

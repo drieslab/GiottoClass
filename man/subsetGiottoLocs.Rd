@@ -2,12 +2,14 @@
 % Please edit documentation in R/subset.R
 \name{subsetGiottoLocs}
 \alias{subsetGiottoLocs}
+\alias{subsetGiottoLocsMulti}
 \title{Subset by spatial locations}
 \usage{
 subsetGiottoLocs(
   gobject,
   spat_unit = NULL,
   feat_type = NULL,
+  feat_type_ssub = ":all:",
   spat_loc_name = NULL,
   x_max = NULL,
   x_min = NULL,
@@ -15,24 +17,46 @@ subsetGiottoLocs(
   y_min = NULL,
   z_max = NULL,
   z_min = NULL,
-  poly_info = "cell",
+  poly_info = NULL,
   return_gobject = TRUE,
   verbose = FALSE
+)
+
+subsetGiottoLocsMulti(
+  gobject,
+  spat_unit = ":all:",
+  feat_type = NULL,
+  feat_type_ssub = ":all:",
+  spat_loc_name = NULL,
+  x_max = NULL,
+  x_min = NULL,
+  y_max = NULL,
+  y_min = NULL,
+  z_max = NULL,
+  z_min = NULL,
+  poly_info = NULL,
+  return_gobject = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
 \item{gobject}{giotto object}
 
-\item{spat_unit}{spatial unit (e.g. "cell")}
+\item{spat_unit}{spatial unit to subset}
 
-\item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
+\item{feat_type}{(optional) feat type to use if \code{return_gobject = TRUE} and
+a combined data.table output is desired.}
 
-\item{spat_loc_name}{name of spatial locations to use}
+\item{feat_type_ssub}{which feat types across which to apply the spatial
+subset}
+
+\item{spat_loc_name}{name of spatial locations to use within spat_unit}
 
 \item{x_max, x_min, y_max, y_min, z_max, z_min}{minimum and maximum x, y, and z coordinates
 to subset to}
 
-\item{poly_info}{polygon information to use}
+\item{poly_info}{character. polygon information to subset (considered
+separately from the spat_units to subset)}
 
 \item{return_gobject}{return Giotto object}
 
@@ -42,9 +66,24 @@ to subset to}
 giotto object
 }
 \description{
-Subsets Giotto object based on spatial locations.
+Subsets Giotto object spatially by defining a set of
+cropping bounds. The information to be subset is preferred to be from spatial
+locations. If no \code{spat_loc_name} is given, the first available set of
+spatial locations for the \code{spat_unit} will be picked.
+If no spatial locations are available, the polygon information will be subset.
+Spatial IDs surviving the crop are then applied to the rest of the Giotto object
+using \link{subsetGiotto}.
+
+Since spatial subsetting results are unique for each spatial unit, it must
+be performed separately for each spat_unit that is desired to be spatially
+subset.
+Thus, we split the workflow into two functions:
+\itemize{
+\item \link{subsetGiottoLocs} for subsetting a single spat_unit
+\item \link{subsetGiottoLocsMulti} for iterating through every spat_unit requested
+}
 }
 \details{
-Subsets a Giotto based on spatial locations and for one provided spatial unit
-if return_gobject = FALSE, then a filtered combined metadata data.table will be returned
+If \code{return_gobject = FALSE}, then a filtered combined metadata
+data.table will be returned
 }

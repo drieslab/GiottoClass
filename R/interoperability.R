@@ -8,9 +8,12 @@
 #' @name gefToGiotto
 #' @description Converts .gef file (output stereo-seq pipeline) into
 #' giotto subcellular object
+#'
 #' @param gef_file path to .gef file
 #' @param bin_size bin size to select from .gef file
+#' @param h5_file name to create and on-disk HDF5 file
 #' @param verbose be verbose
+#'
 #' @details Function in beta. Converts .gef object to Giotto object.
 #'
 #' There are six possible choices for bin_size: bin1, bin10, bin20, bin50, bin100, bin200.
@@ -18,10 +21,10 @@
 #' See SAW pipeline for additional information about the gef file.
 #' @export
 
-gefToGiotto = function(gef_file, bin_size = 'bin100', verbose = FALSE){
+gefToGiotto = function(gef_file, bin_size = 'bin100', verbose = FALSE, h5_file = NULL){
 
    # data.table vars
-   genes = y = sdimx = sdimy = cell_ID = count = NULL
+   genes = gene_idx = x = y = sdimx = sdimy = cell_ID = bin_ID = count = i.bin_ID = NULL
 
    # package check
    package_check(pkg_name = 'rhdf5', repository = 'Bioc')
@@ -76,6 +79,7 @@ gefToGiotto = function(gef_file, bin_size = 'bin100', verbose = FALSE){
       expression = expMatrix,
       spatial_locs = cell_locations,
       verbose = F,
+      h5_file = h5_file
    )
    if(isTRUE(verbose)) wrap_msg('finished giotto object... \n')
 
@@ -136,6 +140,7 @@ check_py_for_scanpy = function(){
 #' @title Convert anndata to Giotto
 #' @name anndataToGiotto
 #' @description Converts a spatial anndata (e.g. scanpy) .h5ad file into a Giotto object
+#'
 #' @param anndata_path path to the .h5ad file
 #' @param n_key_added equivalent of "key_added" argument from scanpy.pp.neighbors().
 #'                    If multiple spatial networks are in the anndata object, a list of key_added
@@ -154,7 +159,9 @@ check_py_for_scanpy = function(){
 #' @param deluanay_spat_net binary parameter for spatial network. If TRUE, the spatial network is a deluanay network.
 #' @param spat_unit desired spatial unit for conversion, default NULL
 #' @param feat_type desired feature type for conversion, default NULL
+#' @param h5_file name to create and on-disk HDF5 file
 #' @param python_path path to python executable within a conda/miniconda environment
+#'
 #' @return Giotto object
 #' @details Function in beta. Converts a .h5ad file into a Giotto object.
 #'    The returned Giotto Object will take default insructions with the
@@ -167,7 +174,8 @@ anndataToGiotto = function(anndata_path = NULL,
                            deluanay_spat_net = TRUE,
                            spat_unit = NULL,
                            feat_type = NULL,
-                           python_path = NULL) {
+                           python_path = NULL,
+                           h5_file = NULL) {
 
   # Preliminary file checks and guard clauses
   if (is.null(anndata_path)) {
@@ -221,7 +229,8 @@ anndataToGiotto = function(anndata_path = NULL,
   ### Create Minimal giottoObject
   gobject <- createGiottoObject(expression = X,
                                 spatial_locs = sp,
-                                instructions = instrs)
+                                instructions = instrs,
+                                h5_file = h5_file)
 
   ### Add metadata
   cmeta = readCellMetadata(cmeta)
