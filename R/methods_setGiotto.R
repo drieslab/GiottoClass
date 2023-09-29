@@ -3,7 +3,8 @@
 #' @title Set giotto subobjects into giotto object
 #' @name setGiotto
 #' @param gobject giotto object
-#' @param value giottoSubobject to set
+#' @param x giottoSubobject to set
+#' @param \dots additional params to pass to specific Giotto setter functions
 NULL
 
 

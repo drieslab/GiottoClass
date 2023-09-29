@@ -1003,12 +1003,19 @@ subset_giotto = function(gobject,
 #' the subcellular information only without editing the aggregate information,
 #' use [subsetGiottoLocsSubcellular]
 #' @inheritParams data_access_params
+#' @param spat_unit,feat_type character vector. (default = ':all:') One or more
+#' spatial units or feature types to subset. Accepts ':all:' as a token
+#' to subset across all available.
 #' @param cell_ids character. cell IDs to keep
 #' @param feat_ids character. feature IDs to keep
 #' @param poly_info character. polygon info(s) to subset if present. (defaults
 #' to be the same as the spat_unit)
-#' @param all_spat_units subset all spatial units with selected feature ids
-#' @param all_feat_types subset all feature type data with selected cell ids
+#' @param all_spat_units deprecated. use spat_unit_fsub = ':all:'
+#' @param all_feat_types deprecated. use feat_type_ssub = ':all:'
+#' @param spat_unit_fsub character vector. (default = ':all:') limit feat_id
+#' subsets to these spat_units
+#' @param feat_type_ssub character vector. (default = ':all:') limit cell_id
+#' subsets to these feat_types
 #' @param verbose be verbose
 #' @param toplevel_params parameters to extract
 #' @return giotto object

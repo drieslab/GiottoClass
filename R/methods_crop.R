@@ -75,11 +75,11 @@ setMethod('crop', signature('giottoPoints'), function(
 
   } else {
     # non-DT method. terra default.
-    
+
     if (is.null(terra::intersect(terra::ext(x), terra::ext(y)))) {
       warning('crop region is empty', call. = FALSE)
     }
-    
+
     x@spatVector = terra::crop(x@spatVector, y, ...)
   }
 
@@ -125,15 +125,15 @@ setMethod('crop', signature('giottoPolygon'), function(
     x@spatVector = x@spatVector[sub_idx]
     x@spatVectorCentroids = sv[sub_idx]
     # update ID cache (use DT for more efficiency)
-    x@unique_ID_cache = spatDT[sub_idx, poly_ID]
+    x@unique_ID_cache = spatDT[sub_idx, get('poly_ID')]
 
   } else {
     # non-DT method. terra default.
-    
+
     if (is.null(terra::intersect(terra::ext(x), terra::ext(y)))) {
       warning('crop region is empty', call. = FALSE)
     }
-    
+
     args = list(y = y, ...)
     x = do_gpoly(x, what = terra::crop, args = args)
     # update ID cache

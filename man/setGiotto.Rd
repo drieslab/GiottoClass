@@ -43,7 +43,9 @@
 \arguments{
 \item{gobject}{giotto object}
 
-\item{value}{giottoSubobject to set}
+\item{x}{giottoSubobject to set}
+
+\item{\dots}{additional params to pass to specific Giotto setter functions}
 }
 \description{
 Set giotto subobjects into giotto object
