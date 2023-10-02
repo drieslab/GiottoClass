@@ -953,7 +953,7 @@ subset_giotto = function(gobject,
 
 
 
-# Exported subset functions ####
+# exported subset functions ####
 
 
 # Overview of subset functions #
@@ -1271,6 +1271,8 @@ subsetGiottoLocs = function(gobject,
 
 #' @rdname subsetGiottoLocs
 #' @inheritParams subsetGiottoLocs
+#' @param poly_info named list of character vectors. names correspond to spat_unit
+#' and character vectors are the polygons associated with those spat units
 #' @export
 subsetGiottoLocsMulti = function(gobject,
                                  spat_unit = ":all:",
