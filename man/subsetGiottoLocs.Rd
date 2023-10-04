@@ -55,8 +55,8 @@ subset}
 \item{x_max, x_min, y_max, y_min, z_max, z_min}{minimum and maximum x, y, and z coordinates
 to subset to}
 
-\item{poly_info}{character. polygon information to subset (considered
-separately from the spat_units to subset)}
+\item{poly_info}{named list of character vectors. names correspond to spat_unit
+and character vectors are the polygons associated with those spat units}
 
 \item{return_gobject}{return Giotto object}
 

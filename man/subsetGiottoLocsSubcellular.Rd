@@ -6,7 +6,7 @@
 \usage{
 subsetGiottoLocsSubcellular(
   gobject,
-  poly_info,
+  poly_info = NULL,
   feat_type = NULL,
   x_min = NULL,
   x_max = NULL,
@@ -18,25 +18,22 @@ subsetGiottoLocsSubcellular(
 )
 }
 \arguments{
-\item{gobject}{giotto object}
+\item{poly_info}{character. which polygons to spatially subset}
 
-\item{poly_info}{character. polygon information to subset (considered
-separately from the spat_units to subset)}
-
-\item{feat_type}{(optional) feat type to use if \code{return_gobject = TRUE} and
-a combined data.table output is desired.}
-
-\item{x_max, x_min, y_max, y_min, z_max, z_min}{minimum and maximum x, y, and z coordinates
-to subset to}
-
-\item{verbose}{be verbose}
+\item{feat_type}{character. which feature info to spatially subset}
 }
 \value{
 giotto object
 }
 \description{
-Subsets Giotto object based on spatial coordinates
+Subsets Giotto object based on spatial coordinates. This
+subset function is intended for poly_info and feat_types for which there
+are no matching aggregated information.
 }
 \details{
-Subsets a Giotto Subcellular object - without aggregated information - based on spatial coordinates
+This is separate from \link{subsetGiottoLocs} because spat_units with attached
+aggregated information should be removed using a cell_ids-based approach in
+order to ensure that paired information is removed together. Polygons and
+points information without associated aggregated values do not have this
+issue and can be directly spatially subset.
 }

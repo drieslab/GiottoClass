@@ -1,4 +1,6 @@
 
+options("giotto.has_conda" = FALSE)
+
 g = GiottoData::loadGiottoMini('viz')
 sub_cell_ids = spatIDs(g)[1:6]
 sub_feat_ids = featIDs(g)[1:6]
@@ -179,9 +181,39 @@ test_that('subsetGiottoLocs works on one spat_unit', {
 
 
 
-# subsetGiottoLocsMulti ####
+# subsetGiottoLocs - multi ####
+
+test_that("Subsetting multiple spatial units works", {
+
+  g_out = subsetGiottoLocs(
+    gobject = g,
+    spat_unit = c('z0', 'z1'), x_max = 6600
+  )
+
+  # polys are cropped
+  z0_poly = getPolygonInfo(g_out, polygon_name = 'z0')
+  z1_poly = getPolygonInfo(g_out, polygon_name = 'z1')
+  agg_poly = getPolygonInfo(g_out, polygon_name = 'aggregate')
+
+  expect_true({
+    terra::xmax(ext(centroids(z0_poly))) <= 6600 &&
+      terra::xmax(ext(centroids(z1_poly))) <= 6600 &&
+      !terra::xmax(ext(centroids(agg_poly))) <= 6600 # not cropped
+  })
 
 
+  # spatlocs are cropped
+  z0_sl = getSpatialLocations(g_out, spat_unit = 'z0')
+  z1_sl = getSpatialLocations(g_out, spat_unit = 'z1')
+  agg_sl = getSpatialLocations(g_out, spat_unit = 'aggregate')
+
+  expect_true({
+    ext(z0_sl)$xmax <= 6600 &&
+      ext(z1_sl)$xmax <= 6600 &&
+      !ext(agg_sl)$xmax <= 6600 # not cropped
+  })
+
+})
 
 
 
