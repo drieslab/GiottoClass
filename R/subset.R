@@ -695,8 +695,6 @@ subset_feature_info_data = function(feat_info,
 #' @param feat_ids character. feature IDs to keep
 #' @param poly_info character. polygon info(s) to subset if present. (defaults
 #' to be the same as the spat_unit)
-#' @param all_spat_units deprecated. use spat_unit_fsub = ':all:'
-#' @param all_feat_types deprecated. use feat_type_ssub = ':all:'
 #' @param spat_unit_fsub character vector. (default = ':all:') limit feat_id
 #' subsets to these spat_units
 #' @param feat_type_ssub character vector. (default = ':all:') limit cell_id
@@ -716,8 +714,6 @@ subset_giotto = function(gobject,
                          cell_ids = NULL,
                          feat_ids = NULL,
                          poly_info = spat_unit,
-                         all_spat_units = NULL,
-                         all_feat_types = NULL,
                          x_max = NULL,
                          x_min = NULL,
                          y_max = NULL,
@@ -1029,7 +1025,7 @@ subset_giotto_locs <- function(gobject,
       'subsetGiottoLocs: multiple values or :all: passed to param feat_types.
       Giotto subset functions use params spat_unit and feat_type to define on which spatial units and feature types cell_id and feat_id subsets should be performed, respectively.
       -- Spatial subsets can only subset on cell_id.\n
-      subsetGiottoLocs() useS feat_type only to define which set of combined metadata info to generate if return_gobject = FALSE.\n
+      subsetGiottoLocs() uses feat_type only to define which set of combined metadata info to generate if return_gobject = FALSE.\n
       Use param feat_type_ssub instead to define which feature types the cell_id subset is applied across.',
       errWidth = TRUE
     ))
@@ -1086,6 +1082,7 @@ subset_giotto_locs <- function(gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
         poly_info = poly_info,
+        feat_type_ssub = feat_type_ssub,
         x_min = x_min, # pass subsetting params to feat info
         x_max = x_max,
         y_min = y_min,
@@ -1144,7 +1141,8 @@ subset_giotto_locs <- function(gobject,
     subset_object = subset_giotto(
       gobject = gobject,
       spat_unit = spat_unit,
-      feat_type = ":all:",
+      feat_type = feat_type,
+      feat_type_ssub = feat_type_ssub,
       cell_ids = filtered_cell_IDs,
       poly_info = poly_info,
       x_max = x_max, # pass subsetting params to feat_info
@@ -1329,7 +1327,6 @@ subset_giotto_locs_multi <- function(gobject,
 
 
 
-# all_spat_units and all_feat_types - may need name changes
 
 
 
@@ -1378,6 +1375,9 @@ subsetGiotto <- function(gobject,
 
   # handle deprecations
   if (!is.null(all_spat_units)) {
+    if (all_spat_units) spat_unit_fsub = ":all:"
+    else spat_unit_fsub = spat_unit
+
     warning(wrap_txt(
       'subsetGiotto:
       all_spat_units param is deprecated.
@@ -1385,6 +1385,9 @@ subsetGiotto <- function(gobject,
     ))
   }
   if (!is.null(all_feat_types)) {
+    if (all_feat_types) feat_type_ssub = ":all:"
+    else feat_type_ssub = feat_type
+
     warning(wrap_txt(
       'subsetGiotto:
       all_feat_types param is deprecated.
@@ -1754,17 +1757,32 @@ valid_spat_subset_params = function(
 
 
 
-# see subsetGiottoLocs
+# see subset_giotto_locs()
+# This is only ever used with a single spat_unit at a time.
+# This is part of the spatial subsetting pipeline and thus has no need for
+# most of the feature subsetting-related params
+#   feat_type is used in case combined_metadata needs to be generated
+#   feat_tyep_ssub allows finer control over which aggregate information is
+#     also subset for cell_ids within the spatial subset.
 subset_giotto_polygons_workflow = function(gobject = gobject,
                                            return_gobject = return_gobject,
                                            spat_unit = spat_unit,
                                            feat_type = feat_type,
                                            poly_info = poly_info,
+                                           feat_type_ssub = feat_type_ssub,
                                            x_min = x_min,
                                            x_max = x_max,
                                            y_min = y_min,
                                            y_max = y_max,
                                            verbose = verbose) {
+
+  checkmate::assert_character(spat_unit, len = 1L)
+  if (isTRUE(spat_unit == ":all:")) {
+    stop(wrap_txt(
+      "subset_giotto_locs:
+      polygons workflow is incompatible with multiple spat_units at a time."
+    ))
+  }
 
   if (!return_gobject) {
     stop(wrap_txt(
@@ -1792,7 +1810,7 @@ subset_giotto_polygons_workflow = function(gobject = gobject,
 
   subset_object = subset_giotto(
     gobject = gobject,
-    spat_unit = spat_unit,
+    spat_unit = spat_unit, # should be only one at a time
     feat_type = feat_type,
     cell_ids = cropped_IDs,
     poly_info = poly_info,
@@ -1800,8 +1818,7 @@ subset_giotto_polygons_workflow = function(gobject = gobject,
     x_min = x_min,
     y_max = y_max,
     y_min = y_min,
-    all_spat_units = FALSE, # one spat_unit at a time
-    all_feat_types = TRUE, # across all feat types for the spat unit
+    feat_type_ssub = ":all:",
     verbose = verbose
   )
 
