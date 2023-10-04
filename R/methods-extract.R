@@ -184,6 +184,16 @@ setReplaceMethod('[', signature(x = 'coordDataDT', i = 'missing', j = 'missing',
                    x
                  })
 
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'giottoPoints', i = "ANY", j = "missing", drop = "missing"),
+          function(x, i, j) {
+            x@spatVector = x@spatVector[i]
+            x@unique_ID_cache = featIDs(x, uniques = TRUE, use_cache = FALSE)
+            x
+          })
+
+
 # setMethod("[[")
 
 ## * metaData ####
