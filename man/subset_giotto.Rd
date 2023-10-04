@@ -13,8 +13,6 @@ subset_giotto(
   cell_ids = NULL,
   feat_ids = NULL,
   poly_info = spat_unit,
-  all_spat_units = NULL,
-  all_feat_types = NULL,
   x_max = NULL,
   x_min = NULL,
   y_max = NULL,
@@ -42,10 +40,6 @@ subsets to these feat_types}
 
 \item{poly_info}{character. polygon info(s) to subset if present. (defaults
 to be the same as the spat_unit)}
-
-\item{all_spat_units}{deprecated. use spat_unit_fsub = ':all:'}
-
-\item{all_feat_types}{deprecated. use feat_type_ssub = ':all:'}
 
 \item{x_max, x_min, y_max, y_min}{For feature info only. minimum and maximum x
 and y coordinates to keep}
