@@ -1576,6 +1576,7 @@ subsetGiottoLocsMulti = function(gobject,
 #' are no matching aggregated information.
 #' @param poly_info character. which polygons to spatially subset
 #' @param feat_type character. which feature info to spatially subset
+#' @inheritParams subsetGiottoLocs
 #' @return giotto object
 #' @details
 #' This is separate from [subsetGiottoLocs] because spat_units with attached
