@@ -98,6 +98,7 @@ setMethod('crop', signature('giottoPoints'), function(
 setMethod('crop', signature('giottoPolygon'), function(
     x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL, ...
 ) {
+  # A. spatVector cropping
   checkmate::assert_logical(DT)
   if(DT) {
     # converting to DT, subsetting, then regeneration of SpatVector with vect()
@@ -138,6 +139,17 @@ setMethod('crop', signature('giottoPolygon'), function(
     x = do_gpoly(x, what = terra::crop, args = args)
     # update ID cache
     x@unique_ID_cache = unique(terra::values(x@spatVector)$poly_ID)
+  }
+
+  # B. overlaps subsetting
+  if (is.null(x@overlaps)) return(x) # return if none existing
+
+  # iterate through all overlaps, removing cell_ids that were removed in the
+  # crop.
+  for(feat in names(x@overlaps)) {
+
+    cell_id_bool <- terra::as.list(x@overlaps[[feat]])$poly_ID %in% x@unique_ID_cache
+    x@overlaps[[feat]] <- x@overlaps[[feat]][cell_id_bool]
   }
 
   x

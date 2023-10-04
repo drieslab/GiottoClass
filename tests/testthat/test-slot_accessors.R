@@ -724,6 +724,7 @@ test_that('Nearest neighbors requires matching dimreduction', {
 })
 
 test_that('Single: nnNetObj can be set', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   test_ex = setSpatialLocations(test_ex, sl)
   test_ex = setDimReduction(test_ex, dr)
   test_ex = setNearestNetwork(test_ex, nn)
@@ -737,6 +738,7 @@ test_that('Single: nnNetObj can be set', {
 })
 
 test_that('List: nnNetObj can be set', {
+  rlang::local_options(lifecycle_verbosity = "quiet")
   # setup
   featType(ex2) = 'test_feat'
   test_ex = setExpression(test_ex, ex2)

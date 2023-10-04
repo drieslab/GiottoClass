@@ -12,9 +12,7 @@ subset_giotto(
   feat_type_ssub = ":all:",
   cell_ids = NULL,
   feat_ids = NULL,
-  poly_info = NULL,
-  all_spat_units = NULL,
-  all_feat_types = NULL,
+  poly_info = spat_unit,
   x_max = NULL,
   x_min = NULL,
   y_max = NULL,
@@ -43,10 +41,6 @@ subsets to these feat_types}
 \item{poly_info}{character. polygon info(s) to subset if present. (defaults
 to be the same as the spat_unit)}
 
-\item{all_spat_units}{deprecated. use spat_unit_fsub = ':all:'}
-
-\item{all_feat_types}{deprecated. use feat_type_ssub = ':all:'}
-
 \item{x_max, x_min, y_max, y_min}{For feature info only. minimum and maximum x
 and y coordinates to keep}
 
@@ -61,13 +55,17 @@ giotto object
 \description{
 Internal to subset Giotto object including previous analyses for a specific
 spatial unit and feature type.\cr
-This is the master workflow for aggregate data that does any actual subsetting
-of the objects. \link{subsetGiotto}, \link{subsetGiottoLocs}, and \link{subsetGiottoLocsMulti}
-only provide the params to pass to this function. This function helps by
-hiding confusing but needed internal params from the exported functions.\cr
+This is the master workflow for aggregate data subsetting.
+\link{subsetGiotto}, \link{subsetGiottoLocs}, and \link{subsetGiottoLocsMulti}
+only provide the params to pass to this function. This function also
+hides confusing but needed internal params from the exported functions.\cr
 
 The x_max, x_min, y_max, y_min params are only provided for subsetting of the
-feature info downstream of subsetGiottoLocs.\cr
+feature info downstream of \link{subsetGiottoLocs}.\cr
+
+About polygon subsetting:\cr
+Polygons to subset are only subset using their poly_ID values which MUST
+match cell_ids, otherwise incorrect or empty polygons can be returned.
 
 For subsetting the subcellular information only without editing the aggregate
 information, use \link{subsetGiottoLocsSubcellular}
