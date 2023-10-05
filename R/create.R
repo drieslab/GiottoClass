@@ -1747,19 +1747,26 @@ createGiottoPoints = function(x,
   # 2. perform split if needed
   if (is.null(split_keyword)) return(gpoints)
 
+  # create booleans using grepl and the given keywords
   gpoints_feat_ids = featIDs(gpoints, uniques = FALSE)
   split_bools = lapply(split_keyword, function(keyword) {
-    grepl(paste0(keyword, sep = '|'), gpoints_feat_ids)
+    grepl(paste(keyword, sep = '|'), gpoints_feat_ids)
   })
-  default_bool = !Reduce('|', split_bools)
+  # default_bool is the main set of points that do not get selected by any
+  # keywords. Usually the actual features being detected are here. These
+  # will get mapped to the first feat_type.
+  # default_bool must be made as a list for it to combine properly using c()
+  # with split_bools which are already a list of logical vectors
+  default_bool = list(!Reduce('|', split_bools))
   split_bools = c(default_bool, split_bools)
   names(split_bools) = feat_type
 
+  # split the created gpoints object into several using the booleans.
   gpoints_list = lapply(split_bools, function(feat) {
     gpoints[feat]
   })
 
-  # set object name
+  # set object name to match the feat_type.
   for(name_i in seq_along(feat_type)) {
     objName(gpoints_list[[name_i]]) = feat_type[[name_i]]
   }
