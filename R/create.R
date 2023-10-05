@@ -1749,7 +1749,7 @@ createGiottoPoints = function(x,
 
   gpoints_feat_ids = featIDs(gpoints, uniques = FALSE)
   split_bools = lapply(split_keyword, function(keyword) {
-    grepl(paste0(keyword), sep = '|', gpoints_feat_ids)
+    grepl(paste0(keyword, sep = '|'), gpoints_feat_ids)
   })
   default_bool = !Reduce('|', split_bools)
   split_bools = c(default_bool, split_bools)
