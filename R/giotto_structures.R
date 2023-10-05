@@ -518,7 +518,6 @@ smoothGiottoPolygons = function(gpolygon,
 create_spatvector_object_from_dfr = function(x,
                                              verbose = TRUE) {
 
-
   x = data.table::as.data.table(x)
 
   # data.frame like object needs to have 2 coordinate columns and

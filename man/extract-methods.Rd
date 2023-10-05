@@ -20,6 +20,7 @@
 \alias{[,coordDataDT,missing,missing,missing-method}
 \alias{[<-,coordDataDT,missing,missing,ANY-method}
 \alias{[<-,coordDataDT,missing,missing-method}
+\alias{[,giottoPoints,ANY,missing,missing-method}
 \alias{[,metaData,missing,ANY,missing-method}
 \alias{[,metaData,ANY,missing,missing-method}
 \alias{[,metaData,ANY,ANY,missing-method}
@@ -77,6 +78,8 @@
 \S4method{[}{coordDataDT,missing,missing,missing}(x, i, j)
 
 \S4method{[}{coordDataDT,missing,missing,ANY}(x, i, j) <- value
+
+\S4method{[}{giottoPoints,ANY,missing,missing}(x, i, j)
 
 \S4method{[}{metaData,missing,ANY,missing}(x, i, j)
 
