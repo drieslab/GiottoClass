@@ -1670,21 +1670,22 @@ set_expression_values = function(gobject,
 
     h5_file = slot(gobject, 'h5_file')
     internal_path = paste0(feat_type, "_", name)
-    internal_path_dimnames = paste0(internal_path,"_dimnames")
+    #internal_path_dimnames = paste0(internal_path,"_dimnames")
 
     if(file.exists(h5_file)) {
       list_names = HDF5Array::h5ls(file = h5_file)
-      while (internal_path_dimnames %in% list_names[['name']]) {
-        rhdf5::h5delete(file = h5_file, name = internal_path)
+      while (internal_path %in% list_names[['name']]) {
+        #rhdf5::h5delete(file = h5_file, name = internal_path)
         internal_path = paste0(internal_path, "_subset")
-        internal_path_dimnames = paste0(internal_path,"_dimnames")
+        #internal_path_dimnames = paste0(internal_path,"_dimnames")
       }
     }
+    print(internal_path)
 
-    expression_matrix = HDF5Array::writeHDF5Array(x = expression_matrix,
-                                                  filepath = h5_file,
-                                                  name = internal_path,
-                                                  with.dimnames = TRUE)
+    expression_matrix = write_local_HDF5(x = expression_matrix,
+                                         filepath = h5_file,
+                                         name = internal_path,
+                                         with.dimnames = TRUE)
     slot(values, 'exprMat') = internal_path
   }
 
