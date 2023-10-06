@@ -1680,7 +1680,6 @@ set_expression_values = function(gobject,
         #internal_path_dimnames = paste0(internal_path,"_dimnames")
       }
     }
-    print(internal_path)
 
     expression_matrix = write_local_HDF5(x = expression_matrix,
                                          filepath = h5_file,
