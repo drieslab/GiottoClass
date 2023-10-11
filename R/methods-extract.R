@@ -427,6 +427,28 @@ setMethod('[', signature(x = 'giottoPoints', i = 'missing', j = 'missing', drop 
           })
 
 #' @rdname extract-methods
+#' @section \code{`[`} methods:
+#'   Return \code{giottoPoints} spatVector slot
+#' @export
+setMethod('[', signature(x = 'giottoPoints', i = 'gIndex', j = 'missing', drop = 'missing'),
+          function(x, i, j) {
+            x@spatVector = x@spatVector[i]
+            x@unique_ID_cache = featIDs(x, uniques = TRUE, use_cache = FALSE)
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'giottoPoints', i = 'missing', j = 'gIndex', drop = 'missing'),
+          function(x, i, j) {
+            x@spatVector = x@spatVector[,j]
+            if (!'feat_ID' %in% names(x@spatVector)) stop(wrap_txt(
+              'feat_ID must be a kept as a column'
+            ))
+            x
+          })
+
+#' @rdname extract-methods
 #' @aliases [<-,giottoPoints,missing,missing,ANY-method [<-,giottoPoints,missing,missing-method
 #' @docType methods
 #' @section \code{`[<-`} methods:
@@ -447,6 +469,49 @@ setMethod('[', signature(x = 'giottoPolygon', i = 'missing', j = 'missing', drop
           function(x, i, j) {
             x@spatVector
           })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'giottoPolygon', i = 'gIndex', j = 'missing', drop = 'missing'),
+          function(x, i, j) {
+            x@spatVector = x@spatVector[i]
+            x@spatVectorCentroids = x@spatVectorCentroids[i]
+            x@unique_ID_cache = spatIDs(x, uniques = TRUE, use_cache = FALSE)
+
+            if (is.null(x@overlaps)) return(x) # if no overlaps, skip following
+
+            for(feat in names(x@overlaps)) {
+
+              cell_id_bool <- terra::as.list(x@overlaps[[feat]])$poly_ID %in% x@unique_ID_cache
+              x@overlaps[[feat]] <- x@overlaps[[feat]][cell_id_bool]
+
+            }
+
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'giottoPolygon', i = 'missing', j = 'gIndex', drop = 'missing'),
+          function(x, i, j) {
+            x@spatVector = x@spatVector[,j]
+            x@spatVectorCentroids = x@spatVectorCentroids[,j]
+            if (!'poly_ID' %in% names(x@spatVector)) stop(wrap_txt(
+              'poly_ID must be a kept as a column'
+            ))
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'terraVectData', i = 'gIndex', j = 'gIndex', drop = 'missing'),
+          function(x, i, j) {
+            x = x[,j]
+            x = x[i,]
+            x
+          })
+
+
 
 #' @rdname extract-methods
 #' @aliases [<-,giottoPolygon,missing,missing,ANY-method [<-,giottoPolygon,missing,missing-method
