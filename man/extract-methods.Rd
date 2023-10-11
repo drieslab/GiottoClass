@@ -50,9 +50,14 @@
 \alias{[<-,spatGridData,missing,missing,ANY-method}
 \alias{[<-,spatGridData,missing,missing-method}
 \alias{[,giottoPoints,missing,missing,missing-method}
+\alias{[,giottoPoints,gIndex,missing,missing-method}
+\alias{[,giottoPoints,missing,gIndex,missing-method}
 \alias{[<-,giottoPoints,missing,missing,ANY-method}
 \alias{[<-,giottoPoints,missing,missing-method}
 \alias{[,giottoPolygon,missing,missing,missing-method}
+\alias{[,giottoPolygon,gIndex,missing,missing-method}
+\alias{[,giottoPolygon,missing,gIndex,missing-method}
+\alias{[,terraVectData,gIndex,gIndex,missing-method}
 \alias{[<-,giottoPolygon,missing,missing,ANY-method}
 \alias{[<-,giottoPolygon,missing,missing-method}
 \title{Extract or replace parts of an object}
@@ -125,9 +130,19 @@
 
 \S4method{[}{giottoPoints,missing,missing,missing}(x, i, j)
 
+\S4method{[}{giottoPoints,gIndex,missing,missing}(x, i, j)
+
+\S4method{[}{giottoPoints,missing,gIndex,missing}(x, i, j)
+
 \S4method{[}{giottoPoints,missing,missing,ANY}(x, i, j) <- value
 
 \S4method{[}{giottoPolygon,missing,missing,missing}(x, i, j)
+
+\S4method{[}{giottoPolygon,gIndex,missing,missing}(x, i, j)
+
+\S4method{[}{giottoPolygon,missing,gIndex,missing}(x, i, j)
+
+\S4method{[}{terraVectData,gIndex,gIndex,missing}(x, i, j)
 
 \S4method{[}{giottoPolygon,missing,missing,ANY}(x, i, j) <- value
 }
@@ -209,6 +224,9 @@ Return \code{enrData} slot enrichment data.table object from giotto S4
 
 
 Return \code{spatGridData} slot data.table object from giotto S4
+
+
+Return \code{giottoPoints} spatVector slot
 
 
 Return \code{giottoPoints} spatVector slot
