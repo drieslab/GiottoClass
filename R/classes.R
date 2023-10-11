@@ -22,6 +22,13 @@ setClassUnion("nullOrList", c("NULL", "list"))
 #' @noRd
 setClassUnion("nullOrDatatable", c("NULL", "data.table"))
 
+#' @title gIndex
+#' @description
+#' class for handling indices similar to `index` class from \pkg{Matrix}
+#' simple class union (setClassUnion) of "numeric", "logical" and "character".
+#' @keywords internal
+#' @noRd
+setClassUnion('gIndex', c('numeric', 'logical', 'character'))
 
 
 
