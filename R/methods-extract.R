@@ -161,7 +161,6 @@ setMethod('[', signature(x = 'coordDataDT', i = 'ANY', j = 'ANY', drop = 'missin
             x
           })
 
-#' @name [
 #' @rdname extract-methods
 #' @aliases [,coordDataDT,missing,missing,missing-method
 #' @section \code{`[`} methods:
@@ -172,7 +171,6 @@ setMethod('[', signature(x = 'coordDataDT', i = 'missing', j = 'missing', drop =
             x@coordinates
           })
 
-#' @name [
 #' @rdname extract-methods
 #' @aliases [<-,coordDataDT,missing,missing,ANY-method [<-,coordDataDT,missing,missing-method
 #' @docType methods
@@ -438,7 +436,7 @@ setMethod('[', signature(x = 'giottoPoints', i = 'gIndex', j = 'missing', drop =
 # this behavior is different from normal spatvectors
 # SpatVector defaults to col subsetting when character is provided to i
 # subsetting on feat_ID col makes more sense for giottoPoints
-#' @rdname extract_methods
+#' @rdname extract-methods
 #' @export
 setMethod('[', signature(x = 'giottoPoints', i = 'character', j = 'missing', drop = 'missing'),
           function(x, i, j) {
@@ -502,7 +500,7 @@ setMethod('[', signature(x = 'giottoPolygon', i = 'gIndex', j = 'missing', drop 
 # this behavior is different from normal spatvectors
 # SpatVector defaults to col subsetting when character is provided to i
 # subsetting on poly_ID col makes more sense for giottoPolygon
-#' @rdname extract_methods
+#' @rdname extract-methods
 #' @export
 setMethod('[', signature(x = 'giottoPolygon', i = 'character', j = 'missing', drop = 'missing'),
           function(x, i, j) {

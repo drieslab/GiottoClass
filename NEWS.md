@@ -8,6 +8,7 @@
 - Added `crop()` method for `giottoLargeImage`, `giottoPoints`
 - Added `terraVectData` as virtual parent class for `giottoPolygon` and `giottoPoints` classes
 - Added `$` and `$<-` methods for `terraVectData`
+- Added `[` subsetting for `giottoPoints` and `giottoPolygon`
 - Added `setGiotto()` generic
 
 ## Changes

@@ -16,7 +16,6 @@
 \alias{[,coordDataDT,missing,ANY,missing-method}
 \alias{[,coordDataDT,ANY,missing,missing-method}
 \alias{[,coordDataDT,ANY,ANY,missing-method}
-\alias{[}
 \alias{[,coordDataDT,missing,missing,missing-method}
 \alias{[<-,coordDataDT,missing,missing,ANY-method}
 \alias{[<-,coordDataDT,missing,missing-method}
@@ -51,11 +50,13 @@
 \alias{[<-,spatGridData,missing,missing-method}
 \alias{[,giottoPoints,missing,missing,missing-method}
 \alias{[,giottoPoints,gIndex,missing,missing-method}
+\alias{[,giottoPoints,character,missing,missing-method}
 \alias{[,giottoPoints,missing,gIndex,missing-method}
 \alias{[<-,giottoPoints,missing,missing,ANY-method}
 \alias{[<-,giottoPoints,missing,missing-method}
 \alias{[,giottoPolygon,missing,missing,missing-method}
 \alias{[,giottoPolygon,gIndex,missing,missing-method}
+\alias{[,giottoPolygon,character,missing,missing-method}
 \alias{[,giottoPolygon,missing,gIndex,missing-method}
 \alias{[,terraVectData,gIndex,gIndex,missing-method}
 \alias{[<-,giottoPolygon,missing,missing,ANY-method}
@@ -132,6 +133,8 @@
 
 \S4method{[}{giottoPoints,gIndex,missing,missing}(x, i, j)
 
+\S4method{[}{giottoPoints,character,missing,missing}(x, i, j)
+
 \S4method{[}{giottoPoints,missing,gIndex,missing}(x, i, j)
 
 \S4method{[}{giottoPoints,missing,missing,ANY}(x, i, j) <- value
@@ -139,6 +142,8 @@
 \S4method{[}{giottoPolygon,missing,missing,missing}(x, i, j)
 
 \S4method{[}{giottoPolygon,gIndex,missing,missing}(x, i, j)
+
+\S4method{[}{giottoPolygon,character,missing,missing}(x, i, j)
 
 \S4method{[}{giottoPolygon,missing,gIndex,missing}(x, i, j)
 
@@ -224,9 +229,6 @@ Return \code{enrData} slot enrichment data.table object from giotto S4
 
 
 Return \code{spatGridData} slot data.table object from giotto S4
-
-
-Return \code{giottoPoints} spatVector slot
 
 
 Return \code{giottoPoints} spatVector slot
