@@ -427,14 +427,23 @@ setMethod('[', signature(x = 'giottoPoints', i = 'missing', j = 'missing', drop 
           })
 
 #' @rdname extract-methods
-#' @section \code{`[`} methods:
-#'   Return \code{giottoPoints} spatVector slot
 #' @export
 setMethod('[', signature(x = 'giottoPoints', i = 'gIndex', j = 'missing', drop = 'missing'),
           function(x, i, j) {
             x@spatVector = x@spatVector[i]
             x@unique_ID_cache = featIDs(x, uniques = TRUE, use_cache = FALSE)
             x
+          })
+
+# this behavior is different from normal spatvectors
+# SpatVector defaults to col subsetting when character is provided to i
+# subsetting on feat_ID col makes more sense for giottoPoints
+#' @rdname extract_methods
+#' @export
+setMethod('[', signature(x = 'giottoPoints', i = 'character', j = 'missing', drop = 'missing'),
+          function(x, i, j) {
+            sel_bool = x$feat_ID %in% i
+            x[sel_bool]
           })
 
 #' @rdname extract-methods
@@ -488,6 +497,17 @@ setMethod('[', signature(x = 'giottoPolygon', i = 'gIndex', j = 'missing', drop 
             }
 
             x
+          })
+
+# this behavior is different from normal spatvectors
+# SpatVector defaults to col subsetting when character is provided to i
+# subsetting on poly_ID col makes more sense for giottoPolygon
+#' @rdname extract_methods
+#' @export
+setMethod('[', signature(x = 'giottoPolygon', i = 'character', j = 'missing', drop = 'missing'),
+          function(x, i, j) {
+            sel_bool = x$poly_ID %in% i
+            x[sel_bool]
           })
 
 #' @rdname extract-methods
