@@ -321,6 +321,10 @@ gpoly_from_dfr_smoothed_wrapped = function(segmdfr,
 #'
 #' @export
 combineToMultiPolygon = function(x, groups, name = NULL) {
+
+  # DT vars
+  poly_ID = group_ID = part = group_n = geom = NULL
+
   if (!inherits(groups, 'data.frame') ||
       !all(c('poly_ID', 'group_ID') %in% colnames(groups))) {
     stop(wrap_txt(
@@ -424,6 +428,9 @@ dt_to_spatVector_polygon = function(dt,
                                     include_values = TRUE,
                                     specific_values = NULL,
                                     sort_geom = FALSE) {
+
+  # DT vars
+  geom = NULL
 
   assert_data_table(dt)
   assert_logical(include_values)
