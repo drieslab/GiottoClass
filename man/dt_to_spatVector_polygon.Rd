@@ -6,6 +6,15 @@
 \usage{
 dt_to_spatVector_polygon(dt, include_values = TRUE, specific_values = NULL)
 }
+\arguments{
+\item{dt}{\code{data.table}. \pkg{terra} geometry information}
+
+\item{include_values}{\code{logical}. Whether to include additional columns other
+than the geometry information as \code{SpatVector} attributes. Default is TRUE.}
+
+\item{specific_values}{\code{character}. Specific subset of columns to include as
+attributes if \code{include_values = TRUE}.}
+}
 \description{
 convert data.table to spatVector for polygons
 }
