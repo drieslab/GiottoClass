@@ -352,7 +352,11 @@ combineToMultiPolygon = function(x, groups, name = NULL) {
   data.table::setnames(multi_dt, old = 'group_ID', new = 'poly_ID')
   data.table::setcolorder(multi_dt, 'poly_ID')
 
-  multi_sv = dt_to_spatVector_polygon(multi_dt, include_values = TRUE)
+  multi_sv = dt_to_spatVector_polygon(
+    multi_dt,
+    include_values = TRUE,
+    sort_geom = TRUE
+  )
 
   giottoPolygon(
     spatVector = multi_sv,
@@ -413,15 +417,21 @@ spatVector_to_dt = function(spatvector,
 #' than the geometry information as `SpatVector` attributes. Default is TRUE.
 #' @param specific_values `character`. Specific subset of columns to include as
 #' attributes if `include_values = TRUE`.
+#' @param sort_geom `logical`. Whether to sort key the data.table input by
+#' 'geom', 'part', and 'hole' columns.
 #' @keywords internal
 dt_to_spatVector_polygon = function(dt,
                                     include_values = TRUE,
-                                    specific_values = NULL) {
+                                    specific_values = NULL,
+                                    sort_geom = FALSE) {
 
   assert_data_table(dt)
   assert_logical(include_values)
   if (!is.null(specific_values)) assert_character(specific_values)
 
+  # if values are not in order across these cols, an incorrect number of
+  # geometries may be generated
+  if (sort_geom) data.table::setkeyv(dt, c('geom', 'part', 'hole'))
   all_colnames = colnames(dt)
   geom_values = c('geom', 'part', 'x', 'y', 'hole')
   if (!all(geom_values %in% all_colnames))
@@ -440,7 +450,8 @@ dt_to_spatVector_polygon = function(dt,
     }
 
     attr_values = unique(dt[,other_values, with = FALSE])
-    if (nrow(attr_values) != max(dt[, max(geom)])) {
+    if (nrow(attr_values > 0L) &&
+        nrow(attr_values) != max(dt[, max(geom)])) {
       warning(wrap_txt(
         'dt_to_spatVector_polygon:
         Number of attributes does not match number of polygons to create.
