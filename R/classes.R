@@ -33,9 +33,8 @@ setClassUnion('gIndex', c('numeric', 'logical', 'character'))
 
 
 
-
-
 # VIRTUAL CLASSES ####
+
 
 # ** giottoSubobject Class ####
 #' @keywords internal
@@ -43,6 +42,17 @@ setClassUnion('gIndex', c('numeric', 'logical', 'character'))
 setClass(
   'giottoSubobject',
   contains = 'VIRTUAL')
+
+# ** gdtData Class ####
+#' @description
+#' umbrella class for referring to Giotto's normal data.table-based slots for
+#' extraction purposes
+#' @keywords internal
+#' @noRd
+setClass(
+  'gdtData',
+  contains = 'VIRTUAL'
+)
 
 
 # ** nameData Class ####
@@ -76,7 +86,7 @@ setClass("exprData",
 #' @keywords internal
 #' @noRd
 setClass("coordDataDT",
-  contains = "VIRTUAL",
+  contains = c("VIRTUAL", "gdtData"),
   slots = list(coordinates = "data.table"),
   prototype = prototype(coordinates = data.table::data.table())
 )
@@ -99,7 +109,7 @@ setClass("coordDataDT",
 #' @keywords internal
 #' @noRd
 setClass("metaData",
-  contains = "VIRTUAL",
+  contains = c("VIRTUAL", "gdtData"),
   slots = list(
     metaDT = "data.table",
     col_desc = "character"
@@ -119,7 +129,7 @@ setClass("metaData",
 #' @keywords internal
 #' @noRd
 setClass("enrData",
-  contains = "VIRTUAL",
+  contains = c("VIRTUAL", "gdtData"),
   slots = list(
     method = "character",
     enrichDT = "nullOrDatatable"
