@@ -90,6 +90,61 @@ setMethod('$<-', signature(x = 'terraVectData'),
 
 # [ S4 access generic ####
 
+## * gdtData ####
+
+# Make it so that i and j subsets can be written independently
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'gdtData', i = 'ANY', j = 'ANY', drop = 'missing'),
+          function(x, i, j) {
+            x = x[i = i]
+            x = x[j = j]
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'gdtData', i = 'logical', j = 'missing', drop = 'missing'),
+          function(x, i, j) {
+            x_nrow = nrow(x)
+            i_len = length(i)
+
+            if(i_len > x_nrow) {
+              stop('logical subset vector is longer than number of rows',
+                   call. = FALSE)
+            }
+            if (i_len < x_nrow) { # handle recycling
+              i = rep(i, length.out = x_nrow)
+            }
+
+            x[] = x[][i]
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'gdtData', i = 'character', j = 'missing', drop = 'missing'),
+          function(x, i, j) {
+
+            # only appropriate for objects where the spatIDs are in the same
+            # order and number of repeats as the contained data.table
+            x_colnames = colnames(x[])
+            ids = if('cell_ID' %in% x_colnames) spatIDs(x)
+            else if('feat_ID' %in% x_colnames) featIDs(x)
+            else stop(wrap_txt(
+              'Subset object does not contain either cell_ID or feat_ID column'
+            ))
+
+            # make idx vector
+            idx = match(i, ids)
+            x[] = x[][idx]
+            x
+          })
+
+
+
+
+
 ## * coordDataDT ####
 
 
@@ -103,7 +158,6 @@ setMethod('[', signature(x = 'coordDataDT', i = 'missing', j = 'ANY', drop = 'mi
             x@coordinates = x@coordinates[, j = j, with = FALSE]
             x
           })
-
 
 # setMethod('[', signature(x = 'giotto', i = 'character', j = 'missing', drop = 'missing'),
 #           function(x, i, spat_unit = NULL, feat_type = NULL, name = NULL) {
@@ -184,7 +238,7 @@ setReplaceMethod('[', signature(x = 'coordDataDT', i = 'missing', j = 'missing',
 
 #' @rdname extract-methods
 #' @export
-setMethod('[', signature(x = 'giottoPoints', i = "ANY", j = "missing", drop = "missing"),
+setMethod('[', signature(x = 'giottoPoints', i = "gIndex", j = "missing", drop = "missing"),
           function(x, i, j) {
             x@spatVector = x@spatVector[i]
             x@unique_ID_cache = featIDs(x, uniques = TRUE, use_cache = FALSE)
