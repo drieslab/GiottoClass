@@ -232,73 +232,35 @@ compatible_spatial_network = function(spatial_network,
 
 
 
-#' @title Create a spatial weight matrix
-#' @name createSpatialWeightMatrix
-#' @description Generate spatial weight matrix based on the strength of spatial
-#' interactions between nodes. Requires spatial networks to be first generated.
-#' @param gobject giotto object
-#' @param spat_unit spatial unit
-#' @param spatial_network_to_use spatial network information to use
-#' @param method type of weighted matrix to generate. See details
-#' @param wm_name name to assign the weight matrix values
-#' @param return_gobject (default = TRUE) whether to return as the giotto object
-#' with attached results or the bare weighted matrix
-#' @param verbose be verbose
-#' @details
-#' \itemize{
-#'   \item{\code{"distance"} method is calculated using 1/(1+distance) to create an inverse
-#' weighting based on the distance between nodes.}
-#'   \item{\code{"adjacency"} method is a binary matrix with 1 signifying that two nodes
-#' are connected in the spatial network and 0 indicating that they are not.}
-#' }
+
+
+#' @title Convert spatialNetworkObj to igraph
+#' @name spat_net_to_igraph
+#' @description Convert a `spatialNetworkObj` to a non-directed igraph
+#' representation.
+#' @param attr columns to include as edge attributes.
+#' @param spatialNetworkObj spatialNetworkObj
+#' @examples
+#' sn <- GiottoData::loadSubObjectMini('spatialNetworkObj')
+#' # only name attribute
+#' g <- spat_net_to_igraph(sn)
+#'
+#' # view other column info besides to and from cols
+#' head(sn[], 1)
+#' # include distance and weight col info
+#' g <- spat_net_to_igraph(sn, attr = c("distance", "weight"))
 #' @export
-createSpatialWeightMatrix = function(gobject,
-                                     spat_unit = NULL,
-                                     spatial_network_to_use = 'kNN_network',
-                                     method = c('distance', 'adjacency'),
-                                     wm_name = 'spat_weights',
-                                     return_gobject = TRUE,
-                                     verbose = TRUE) {
+spat_net_to_igraph = function(spatialNetworkObj, attr = NULL) {
 
-  # 1. setup
-  spat_unit = set_default_spat_unit(gobject = gobject,
-                                    spat_unit = spat_unit)
+  net_list = as.list(spatialNetworkObj[])
+  cell_ids = spatIDs(spatialNetworkObj)
 
-  method = match.arg(method, choices = c('distance', 'adjacency'))
-
-  sn = getSpatialNetwork(gobject = gobject,
-                         spat_unit = spat_unit,
-                         name = spatial_network_to_use,
-                         output = 'spatialNetworkObj')
-  if(is.null(sn)) stop('Specified spatial network not found')
-
-  # 2. calculate weights
-  if(method == 'distance') {
-    dist_dt = sn[][, c('from', 'to', 'weight')] # inverse distance weights already calculated
-    graph = igraph::graph_from_data_frame(d = dist_dt, directed = FALSE)
-    wm = igraph::get.adjacency(graph = graph, attr = 'weight', sparse = TRUE)
-  }
-  if(method == 'adjacency') {
-    adj_dt = sn[][, c('from', 'to')]
-    graph = igraph::graph_from_data_frame(d = adj_dt, directed = FALSE)
-    wm = igraph::as_adjacency_matrix(graph)
-  }
-
-  # 3. return results
-  if(isTRUE(return_gobject)) {
-
-    sn@misc$weight_matrix[[wm_name]] = wm
-    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    if(isTRUE(verbose)) wrap_msg('Attaching weight matrix to', spatial_network_to_use)
-    gobject = set_spatialNetwork(gobject = gobject,
-                                 spatial_network = sn,
-                                 set_defaults = FALSE,
-                                 verbose = FALSE)
-    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    return(gobject)
-
-  } else return(wm)
-
+  igraph::make_empty_graph(directed = FALSE) %>%
+    igraph::add_vertices(nv = length(cell_ids),
+                         attr = list(name = cell_ids)) %>%
+    igraph::add_edges(edges = rbind(net_list$from,
+                                    net_list$to),
+                      attr = net_list[attr])
 }
 
 
@@ -1488,6 +1450,84 @@ annotateSpatialNetwork = function(gobject,
   return(spatial_network_annot)
 
 }
+
+
+
+
+
+# spatial weight matrix ####
+# TODO move to Giotto?
+
+#' @title Create a spatial weight matrix
+#' @name createSpatialWeightMatrix
+#' @description Generate spatial weight matrix based on the strength of spatial
+#' interactions between nodes. Requires spatial networks to be first generated.
+#' @param gobject giotto object
+#' @param spat_unit spatial unit
+#' @param spatial_network_to_use spatial network information to use
+#' @param method type of weighted matrix to generate. See details
+#' @param wm_name name to assign the weight matrix values
+#' @param return_gobject (default = TRUE) whether to return as the giotto object
+#' with attached results or the bare weighted matrix
+#' @param verbose be verbose
+#' @details
+#' \itemize{
+#'   \item{\code{"distance"} method is calculated using 1/(1+distance) to create an inverse
+#' weighting based on the distance between nodes.}
+#'   \item{\code{"adjacency"} method is a binary matrix with 1 signifying that two nodes
+#' are connected in the spatial network and 0 indicating that they are not.}
+#' }
+#' @export
+createSpatialWeightMatrix = function(gobject,
+                                     spat_unit = NULL,
+                                     spatial_network_to_use = 'kNN_network',
+                                     method = c('distance', 'adjacency'),
+                                     wm_name = 'spat_weights',
+                                     return_gobject = TRUE,
+                                     verbose = TRUE) {
+
+  # 1. setup
+  spat_unit = set_default_spat_unit(gobject = gobject,
+                                    spat_unit = spat_unit)
+
+  method = match.arg(method, choices = c('distance', 'adjacency'))
+
+  sn = getSpatialNetwork(gobject = gobject,
+                         spat_unit = spat_unit,
+                         name = spatial_network_to_use,
+                         output = 'spatialNetworkObj')
+  if(is.null(sn)) stop('Specified spatial network not found')
+
+  # 2. calculate weights
+  if(method == 'distance') {
+    dist_dt = sn[][, c('from', 'to', 'weight')] # inverse distance weights already calculated
+    graph = igraph::graph_from_data_frame(d = dist_dt, directed = FALSE)
+    wm = igraph::get.adjacency(graph = graph, attr = 'weight', sparse = TRUE)
+  }
+  if(method == 'adjacency') {
+    adj_dt = sn[][, c('from', 'to')]
+    graph = igraph::graph_from_data_frame(d = adj_dt, directed = FALSE)
+    wm = igraph::as_adjacency_matrix(graph)
+  }
+
+  # 3. return results
+  if(isTRUE(return_gobject)) {
+
+    sn@misc$weight_matrix[[wm_name]] = wm
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    if(isTRUE(verbose)) wrap_msg('Attaching weight matrix to', spatial_network_to_use)
+    gobject = set_spatialNetwork(gobject = gobject,
+                                 spatial_network = sn,
+                                 set_defaults = FALSE,
+                                 verbose = FALSE)
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    return(gobject)
+
+  } else return(wm)
+
+}
+
+
 
 
 
