@@ -4,7 +4,12 @@
 \alias{dt_to_spatVector_polygon}
 \title{Convert data.table to polygon spatVector}
 \usage{
-dt_to_spatVector_polygon(dt, include_values = TRUE, specific_values = NULL)
+dt_to_spatVector_polygon(
+  dt,
+  include_values = TRUE,
+  specific_values = NULL,
+  sort_geom = FALSE
+)
 }
 \arguments{
 \item{dt}{\code{data.table}. \pkg{terra} geometry information}
@@ -14,6 +19,9 @@ than the geometry information as \code{SpatVector} attributes. Default is TRUE.}
 
 \item{specific_values}{\code{character}. Specific subset of columns to include as
 attributes if \code{include_values = TRUE}.}
+
+\item{sort_geom}{\code{logical}. Whether to sort key the data.table input by
+'geom', 'part', and 'hole' columns.}
 }
 \description{
 convert data.table to spatVector for polygons
