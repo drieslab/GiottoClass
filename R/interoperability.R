@@ -161,6 +161,7 @@ check_py_for_scanpy = function(){
 #' @param feat_type desired feature type for conversion, default NULL
 #' @param h5_file name to create and on-disk HDF5 file
 #' @param python_path path to python executable within a conda/miniconda environment
+#' @param env_name name of environment containing python_path executable
 #'
 #' @return Giotto object
 #' @details Function in beta. Converts a .h5ad file into a Giotto object.
@@ -174,8 +175,9 @@ anndataToGiotto = function(anndata_path = NULL,
                            deluanay_spat_net = TRUE,
                            spat_unit = NULL,
                            feat_type = NULL,
+                           h5_file = NULL,
                            python_path = NULL,
-                           h5_file = NULL) {
+                           env_name = "giotto_env") {
 
   # Preliminary file checks and guard clauses
   if (is.null(anndata_path)) {
@@ -196,7 +198,8 @@ anndataToGiotto = function(anndata_path = NULL,
   # Required step to properly initialize reticualte
   instrs = createGiottoInstructions(python_path = python_path)
 
-  check_py_for_scanpy()
+  scanpy_installed = checkPythonPackage("scanpy", env_to_use = env_name)
+  # should trigger a stop() downstream if not installed
 
   # Import ad2g, a python module for parsing anndata
   ad2g_path <- system.file("python","ad2g.py",package="Giotto")
@@ -492,6 +495,7 @@ anndataToGiotto = function(anndata_path = NULL,
 #' @param spat_unit spatial unit which will be used in conversion.
 #' @param feat_type feature type which will be used in conversion.
 #' @param python_path path to python executable within a conda/miniconda environment
+#' @param env_name name of environment containing python_path executable
 #' @param save_directory directory in which the file will be saved.
 #' @return vector containing .h5ad file path(s)
 #' @details Function in beta. Converts a Giotto object into .h5ad file(s).
@@ -515,6 +519,7 @@ giottoToAnnData <- function(gobject = NULL,
                             spat_unit = NULL,
                             feat_type = NULL,
                             python_path = NULL,
+                            env_name = "giotto_env",
                             save_directory = NULL){
 
   # Check gobject
@@ -522,6 +527,8 @@ giottoToAnnData <- function(gobject = NULL,
   if (is.null(gobject) || invalid_obj) {
     stop(wrap_msg("Please provide a valid Giotto Object for conversion."))
   }
+
+  scanpy_installed = checkPythonPackage("scanpy", env_to_use = env_name)
 
   # Python module import
   g2ad_path <- system.file("python","g2ad.py",package="Giotto")

@@ -11,8 +11,9 @@ anndataToGiotto(
   deluanay_spat_net = TRUE,
   spat_unit = NULL,
   feat_type = NULL,
+  h5_file = NULL,
   python_path = NULL,
-  h5_file = NULL
+  env_name = "giotto_env"
 )
 }
 \arguments{
@@ -40,9 +41,11 @@ Cannot be the same as n_key_added.}
 
 \item{feat_type}{desired feature type for conversion, default NULL}
 
+\item{h5_file}{name to create and on-disk HDF5 file}
+
 \item{python_path}{path to python executable within a conda/miniconda environment}
 
-\item{h5_file}{name to create and on-disk HDF5 file}
+\item{env_name}{name of environment containing python_path executable}
 }
 \value{
 Giotto object
