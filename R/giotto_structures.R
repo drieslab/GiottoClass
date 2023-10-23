@@ -362,6 +362,12 @@ combineToMultiPolygon = function(x, groups, name = NULL) {
     sort_geom = TRUE
   )
 
+  # makeValid is necessary. Very common that there will be cell polys that
+  # overlap each other. This is fine when the polys are independent, however,
+  # when they are combined as a multipolygon, they become self intersecting
+  # geometry and thus not allowed.
+  multi_sv = terra::makeValid(multi_sv)
+
   giottoPolygon(
     spatVector = multi_sv,
     name = name,
