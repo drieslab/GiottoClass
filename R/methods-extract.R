@@ -95,7 +95,7 @@ setMethod('$<-', signature(x = 'terraVectData'),
 # Make it so that i and j subsets can be written independently
 #' @rdname extract-methods
 #' @export
-setMethod('[', signature(x = 'gdtData', i = 'ANY', j = 'ANY', drop = 'missing'),
+setMethod('[', signature(x = 'gdtData', i = 'gIndex', j = 'gIndex', drop = 'missing'),
           function(x, i, j) {
             x = x[i = i]
             x = x[j = j]
@@ -141,21 +141,51 @@ setMethod('[', signature(x = 'gdtData', i = 'character', j = 'missing', drop = '
             x
           })
 
+# enforce subsetting by character for gdtData so that cols to keep can be
+# checked for id col
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'gdtData', i = 'missing', j = 'numeric', drop = 'missing'),
+          function(x, i, j) {
+            c_names = colnames(x[])
+            x = x[j = c_names[j]]
+            x
+          })
 
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'gdtData', i = 'missing', j = 'logical', drop = 'missing'),
+          function(x, i, j) {
+            c_names = colnames(x[j])
+            x = x[j = c_names[j]]
+            x
+          })
 
 
 
 ## * coordDataDT ####
 
-
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'coordDataDT', i = 'ANY', j = 'ANY', drop = 'missing'),
+          function(x, i, j) {
+            x@coordinates = x@coordinates[i = i, j = j, with = FALSE]
+            x
+          })
 
 #' @rdname extract-methods
-#' @section \code{`[`} methods:
-#'   Select rows (i) and cols (j) from giotto S4 coordinates slot
 #' @export
 setMethod('[', signature(x = 'coordDataDT', i = 'missing', j = 'ANY', drop = 'missing'),
           function(x, i, j) {
-            x@coordinates = x@coordinates[, j = j, with = FALSE]
+            x@coordinates = x@coordinates[j = j]
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'coordDataDT', i = 'missing', j = 'character', drop = 'missing'),
+          function(x, i, j) {
+            x@coordinates = x@coordinates[j = unique(c(j, 'cell_ID')), with = FALSE]
             x
           })
 
@@ -203,15 +233,7 @@ setMethod('[', signature(x = 'coordDataDT', i = 'missing', j = 'ANY', drop = 'mi
 #' @export
 setMethod('[', signature(x = 'coordDataDT', i = 'ANY', j = 'missing', drop = 'missing'),
           function(x, i, j) {
-            x@coordinates = x@coordinates[i = i,]
-            x
-          })
-
-#' @rdname extract-methods
-#' @export
-setMethod('[', signature(x = 'coordDataDT', i = 'ANY', j = 'ANY', drop = 'missing'),
-          function(x, i, j) {
-            x@coordinates = x@coordinates[i = i, j = j, with = FALSE]
+            x@coordinates = x@coordinates[i = i]
             x
           })
 
@@ -256,7 +278,16 @@ setMethod('[', signature(x = 'giottoPoints', i = "gIndex", j = "missing", drop =
 #' @export
 setMethod('[', signature(x = 'metaData', i = 'missing', j = 'ANY', drop = 'missing'),
           function(x, i, j) {
-            x@metaDT = x@metaDT[, j = j, with = FALSE]
+            x@metaDT = x@metaDT[j = j]
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'metaData', i = 'missing', j = 'character', drop = 'missing'),
+          function(x, i, j) {
+            id_col = colnames(x@metaDT)[1L]
+            x@metaDT = x@metaDT[, j = unique(c(id_col, j)), with = FALSE]
             x
           })
 
@@ -265,14 +296,6 @@ setMethod('[', signature(x = 'metaData', i = 'missing', j = 'ANY', drop = 'missi
 setMethod('[', signature(x = 'metaData', i = 'ANY', j = 'missing', drop = 'missing'),
           function(x, i, j) {
             x@metaDT = x@metaDT[i = i,]
-            x
-          })
-
-#' @rdname extract-methods
-#' @export
-setMethod('[', signature(x = 'metaData', i = 'ANY', j = 'ANY', drop = 'missing'),
-          function(x, i, j) {
-            x@metaDT = x@metaDT[i = i, j = j, with = FALSE]
             x
           })
 
@@ -433,6 +456,32 @@ setMethod('[', signature(x = 'enrData', i = 'missing', j = 'missing', drop = 'mi
           function(x, i, j) {
             x@enrichDT
           })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'enrData', i = 'ANY', j = 'missing', drop = 'missing'),
+          function(x, i, j) {
+            x@enrichDT = x@enrichDT[i = i,]
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'enrData', i = 'missing', j = 'ANY', drop = 'missing'),
+          function(x, i, j) {
+            x@enrichDT = x@enrichDT[j = j]
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'enrData', i = 'missing', j = 'character', drop = 'missing'),
+          function(x, i, j) {
+            x@enrichDT = x@enrichDT[j = unique(c(j, 'cell_ID')), with = FALSE]
+            x
+          })
+
+
 
 #' @rdname extract-methods
 #' @aliases [<-,enrData,missing,missing,ANY-method [<-,enrData,missing,missing-method

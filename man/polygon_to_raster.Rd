@@ -9,4 +9,3 @@ polygon_to_raster(polygon, field = NULL)
 \description{
 convert polygon to raster
 }
-\keyword{internal}

@@ -21,7 +21,7 @@
 #' @title Convert polygon to raster
 #' @name polygon_to_raster
 #' @description  convert polygon to raster
-#' @keywords internal
+#' @export
 polygon_to_raster = function(polygon, field = NULL) {
 
   pol_xmax = terra::xmax(polygon)
