@@ -297,6 +297,82 @@ gpoly_from_dfr_smoothed_wrapped = function(segmdfr,
 
 
 
+#' @title Combine giottoPolygon geometries
+#' @name combineToMultiPolygon
+#' @param x giottoPolygon
+#' @param groups data.frame with columns 'poly_ID' and 'group_ID' that relates
+#' which polygons should now be combined under which group_ID
+#' @param name (optional) name for the giottoPolygon object
+#' @description
+#' Combine multiple giottoPolygon geometries into a set of multipolygons. Note
+#' that attributes cannot be kept
+#'
+#' @examples
+#' \dontrun{
+#' gpoly = GiottoData::loadSubObjectMini('giottoPolygon')
+#' groups = data.table::data.table(
+#'   poly_ID = gpoly$poly_ID,
+#'   group_ID = sort(rep(LETTERS[1:5], length.out = nrow(gpoly))) # make 5 groups
+#' )
+#' multi_gp = combineToMultiPolygon(gpoly, groups)
+#'
+#' plot(multi_gp['A'])
+#' }
+#'
+#' @export
+combineToMultiPolygon = function(x, groups, name = NULL) {
+
+  # DT vars
+  poly_ID = group_ID = part = group_n = geom = NULL
+
+  if (!inherits(groups, 'data.frame') ||
+      !all(c('poly_ID', 'group_ID') %in% colnames(groups))) {
+    stop(wrap_txt(
+      'groups must be a data.frame with columns \'poly_ID\' and \'group_ID\'',
+      errWidth = TRUE)
+    )
+  }
+
+  # default name
+  if (is.null(name)) name = paste0(objName(x), '_grouped')
+  # create a new table instead of setDT() since provided DF is from user
+  groups_dt = data.table::as.data.table(groups)
+  if (!groups_dt[, is.character(poly_ID)]) {
+    groups_dt[, poly_ID := as.character(poly_ID)]
+  }
+  if (!groups_dt[, is.character(group_ID)]) {
+    groups_dt[, group_ID := as.character(group_ID)]
+  }
+  groups_dt[, part := seq(.N), by = 'group_ID'] # part col
+  groups_dt[, group_n := .N, by = 'group_ID'] # number of polys per group
+  g_ID = groups_dt[, unique(group_ID)]
+  groups_dt[, geom := match(group_ID, g_ID)] # geom col
+
+  poly_dt = data.table::as.data.table(x, geom = 'XY')
+  poly_dt = poly_dt[, c('poly_ID', 'x', 'y', 'hole')] # subset to only needed
+  multi_dt = groups_dt[poly_dt, on = 'poly_ID'] # join on poly_ID
+  multi_dt[, 'poly_ID' := NULL] # then remove old poly_ID col
+  # change group_ID to new poly_ID
+  data.table::setnames(multi_dt, old = 'group_ID', new = 'poly_ID')
+  data.table::setcolorder(multi_dt, 'poly_ID')
+
+  multi_sv = dt_to_spatVector_polygon(
+    multi_dt,
+    include_values = TRUE,
+    sort_geom = TRUE
+  )
+
+  giottoPolygon(
+    spatVector = multi_sv,
+    name = name,
+    unique_ID_cache = g_ID
+  )
+
+}
+
+
+
+
 
 
 
@@ -340,39 +416,62 @@ spatVector_to_dt = function(spatvector,
 #' @title Convert data.table to polygon spatVector
 #' @name dt_to_spatVector_polygon
 #' @description convert data.table to spatVector for polygons
+#' @param dt `data.table`. \pkg{terra} geometry information
+#' @param include_values `logical`. Whether to include additional columns other
+#' than the geometry information as `SpatVector` attributes. Default is TRUE.
+#' @param specific_values `character`. Specific subset of columns to include as
+#' attributes if `include_values = TRUE`.
+#' @param sort_geom `logical`. Whether to sort key the data.table input by
+#' 'geom', 'part', and 'hole' columns.
 #' @keywords internal
 dt_to_spatVector_polygon = function(dt,
                                     include_values = TRUE,
-                                    specific_values = NULL) {
+                                    specific_values = NULL,
+                                    sort_geom = FALSE) {
+
+  # DT vars
+  geom = NULL
 
   assert_data_table(dt)
   assert_logical(include_values)
-  if(!is.null(specific_values)) assert_character(specific_values)
+  if (!is.null(specific_values)) assert_character(specific_values)
 
+  # if values are not in order across these cols, an incorrect number of
+  # geometries may be generated
+  if (sort_geom) data.table::setkeyv(dt, c('geom', 'part', 'hole'))
   all_colnames = colnames(dt)
   geom_values = c('geom', 'part', 'x', 'y', 'hole')
-  if(!all(geom_values %in% all_colnames))
+  if (!all(geom_values %in% all_colnames))
     stop('All columns for \'', paste0(geom_values, collapse = "', '"), '\' are needed')
   other_values = all_colnames[!all_colnames %in% geom_values]
 
-  if(include_values) {
+  # geometry information
+  geom_matrix = as.matrix(dt[,geom_values, with = FALSE])
 
-    if(!is.null(specific_values)) {
+  # attributes information
+  attr_values = NULL
+  if (include_values) {
+    # subset for specific columns to include as attributes
+    if (!is.null(specific_values)) {
       other_values = other_values[other_values %in% specific_values]
     }
 
-    spatVec = terra::vect(x = as.matrix(dt[,geom_values, with = FALSE]),
-                          type = 'polygons', atts = unique(dt[,other_values, with = FALSE]))
-
-  } else {
-
-    spatVec = terra::vect(x = as.matrix(dt[,geom_values, with = FALSE]),
-                          type = 'polygons', atts = NULL)
-
+    attr_values = unique(dt[,other_values, with = FALSE])
+    if (nrow(attr_values > 0L) &&
+        nrow(attr_values) != max(dt[, max(geom)])) {
+      warning(wrap_txt(
+        'dt_to_spatVector_polygon:
+        Number of attributes does not match number of polygons to create.
+        Attributes are ignored.'
+      ), call. = FALSE)
+    }
   }
 
-  return(spatVec)
-
+  terra::vect(
+    x = geom_matrix,
+    type = 'polygons',
+    atts = attr_values
+  )
 }
 
 

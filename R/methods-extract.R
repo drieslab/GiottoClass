@@ -90,20 +90,104 @@ setMethod('$<-', signature(x = 'terraVectData'),
 
 # [ S4 access generic ####
 
-## * coordDataDT ####
+## * gdtData ####
 
-
-
+# Make it so that i and j subsets can be written independently
 #' @rdname extract-methods
-#' @section \code{`[`} methods:
-#'   Select rows (i) and cols (j) from giotto S4 coordinates slot
 #' @export
-setMethod('[', signature(x = 'coordDataDT', i = 'missing', j = 'ANY', drop = 'missing'),
+setMethod('[', signature(x = 'gdtData', i = 'gIndex', j = 'gIndex', drop = 'missing'),
           function(x, i, j) {
-            x@coordinates = x@coordinates[, j = j, with = FALSE]
+            x = x[i = i]
+            x = x[j = j]
             x
           })
 
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'gdtData', i = 'logical', j = 'missing', drop = 'missing'),
+          function(x, i, j) {
+            x_nrow = nrow(x)
+            i_len = length(i)
+
+            if(i_len > x_nrow) {
+              stop('logical subset vector is longer than number of rows',
+                   call. = FALSE)
+            }
+            if (i_len < x_nrow) { # handle recycling
+              i = rep(i, length.out = x_nrow)
+            }
+
+            x[] = x[][i]
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'gdtData', i = 'character', j = 'missing', drop = 'missing'),
+          function(x, i, j) {
+
+            # only appropriate for objects where the spatIDs are in the same
+            # order and number of repeats as the contained data.table
+            x_colnames = colnames(x[])
+            ids = if('cell_ID' %in% x_colnames) spatIDs(x)
+            else if('feat_ID' %in% x_colnames) featIDs(x)
+            else stop(wrap_txt(
+              'Subset object does not contain either cell_ID or feat_ID column'
+            ))
+
+            # make idx vector
+            idx = match(i, ids)
+            x[] = x[][idx]
+            x
+          })
+
+# enforce subsetting by character for gdtData so that cols to keep can be
+# checked for id col
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'gdtData', i = 'missing', j = 'numeric', drop = 'missing'),
+          function(x, i, j) {
+            c_names = colnames(x[])
+            x = x[j = c_names[j]]
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'gdtData', i = 'missing', j = 'logical', drop = 'missing'),
+          function(x, i, j) {
+            c_names = colnames(x[j])
+            x = x[j = c_names[j]]
+            x
+          })
+
+
+
+## * coordDataDT ####
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'coordDataDT', i = 'ANY', j = 'ANY', drop = 'missing'),
+          function(x, i, j) {
+            x@coordinates = x@coordinates[i = i, j = j, with = FALSE]
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'coordDataDT', i = 'missing', j = 'ANY', drop = 'missing'),
+          function(x, i, j) {
+            x@coordinates = x@coordinates[j = j]
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'coordDataDT', i = 'missing', j = 'character', drop = 'missing'),
+          function(x, i, j) {
+            x@coordinates = x@coordinates[j = unique(c(j, 'cell_ID')), with = FALSE]
+            x
+          })
 
 # setMethod('[', signature(x = 'giotto', i = 'character', j = 'missing', drop = 'missing'),
 #           function(x, i, spat_unit = NULL, feat_type = NULL, name = NULL) {
@@ -149,19 +233,10 @@ setMethod('[', signature(x = 'coordDataDT', i = 'missing', j = 'ANY', drop = 'mi
 #' @export
 setMethod('[', signature(x = 'coordDataDT', i = 'ANY', j = 'missing', drop = 'missing'),
           function(x, i, j) {
-            x@coordinates = x@coordinates[i = i,]
+            x@coordinates = x@coordinates[i = i]
             x
           })
 
-#' @rdname extract-methods
-#' @export
-setMethod('[', signature(x = 'coordDataDT', i = 'ANY', j = 'ANY', drop = 'missing'),
-          function(x, i, j) {
-            x@coordinates = x@coordinates[i = i, j = j, with = FALSE]
-            x
-          })
-
-#' @name [
 #' @rdname extract-methods
 #' @aliases [,coordDataDT,missing,missing,missing-method
 #' @section \code{`[`} methods:
@@ -172,7 +247,6 @@ setMethod('[', signature(x = 'coordDataDT', i = 'missing', j = 'missing', drop =
             x@coordinates
           })
 
-#' @name [
 #' @rdname extract-methods
 #' @aliases [<-,coordDataDT,missing,missing,ANY-method [<-,coordDataDT,missing,missing-method
 #' @docType methods
@@ -186,7 +260,7 @@ setReplaceMethod('[', signature(x = 'coordDataDT', i = 'missing', j = 'missing',
 
 #' @rdname extract-methods
 #' @export
-setMethod('[', signature(x = 'giottoPoints', i = "ANY", j = "missing", drop = "missing"),
+setMethod('[', signature(x = 'giottoPoints', i = "gIndex", j = "missing", drop = "missing"),
           function(x, i, j) {
             x@spatVector = x@spatVector[i]
             x@unique_ID_cache = featIDs(x, uniques = TRUE, use_cache = FALSE)
@@ -204,7 +278,16 @@ setMethod('[', signature(x = 'giottoPoints', i = "ANY", j = "missing", drop = "m
 #' @export
 setMethod('[', signature(x = 'metaData', i = 'missing', j = 'ANY', drop = 'missing'),
           function(x, i, j) {
-            x@metaDT = x@metaDT[, j = j, with = FALSE]
+            x@metaDT = x@metaDT[j = j]
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'metaData', i = 'missing', j = 'character', drop = 'missing'),
+          function(x, i, j) {
+            id_col = colnames(x@metaDT)[1L]
+            x@metaDT = x@metaDT[, j = unique(c(id_col, j)), with = FALSE]
             x
           })
 
@@ -213,14 +296,6 @@ setMethod('[', signature(x = 'metaData', i = 'missing', j = 'ANY', drop = 'missi
 setMethod('[', signature(x = 'metaData', i = 'ANY', j = 'missing', drop = 'missing'),
           function(x, i, j) {
             x@metaDT = x@metaDT[i = i,]
-            x
-          })
-
-#' @rdname extract-methods
-#' @export
-setMethod('[', signature(x = 'metaData', i = 'ANY', j = 'ANY', drop = 'missing'),
-          function(x, i, j) {
-            x@metaDT = x@metaDT[i = i, j = j, with = FALSE]
             x
           })
 
@@ -383,6 +458,32 @@ setMethod('[', signature(x = 'enrData', i = 'missing', j = 'missing', drop = 'mi
           })
 
 #' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'enrData', i = 'ANY', j = 'missing', drop = 'missing'),
+          function(x, i, j) {
+            x@enrichDT = x@enrichDT[i = i,]
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'enrData', i = 'missing', j = 'ANY', drop = 'missing'),
+          function(x, i, j) {
+            x@enrichDT = x@enrichDT[j = j]
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'enrData', i = 'missing', j = 'character', drop = 'missing'),
+          function(x, i, j) {
+            x@enrichDT = x@enrichDT[j = unique(c(j, 'cell_ID')), with = FALSE]
+            x
+          })
+
+
+
+#' @rdname extract-methods
 #' @aliases [<-,enrData,missing,missing,ANY-method [<-,enrData,missing,missing-method
 #' @docType methods
 #' @section \code{`[<-`} methods:
@@ -427,6 +528,37 @@ setMethod('[', signature(x = 'giottoPoints', i = 'missing', j = 'missing', drop 
           })
 
 #' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'giottoPoints', i = 'gIndex', j = 'missing', drop = 'missing'),
+          function(x, i, j) {
+            x@spatVector = x@spatVector[i]
+            x@unique_ID_cache = featIDs(x, uniques = TRUE, use_cache = FALSE)
+            x
+          })
+
+# this behavior is different from normal spatvectors
+# SpatVector defaults to col subsetting when character is provided to i
+# subsetting on feat_ID col makes more sense for giottoPoints
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'giottoPoints', i = 'character', j = 'missing', drop = 'missing'),
+          function(x, i, j) {
+            sel_bool = x$feat_ID %in% i
+            x[sel_bool]
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'giottoPoints', i = 'missing', j = 'gIndex', drop = 'missing'),
+          function(x, i, j) {
+            x@spatVector = x@spatVector[,j]
+            if (!'feat_ID' %in% names(x@spatVector)) stop(wrap_txt(
+              'feat_ID must be a kept as a column'
+            ))
+            x
+          })
+
+#' @rdname extract-methods
 #' @aliases [<-,giottoPoints,missing,missing,ANY-method [<-,giottoPoints,missing,missing-method
 #' @docType methods
 #' @section \code{`[<-`} methods:
@@ -447,6 +579,60 @@ setMethod('[', signature(x = 'giottoPolygon', i = 'missing', j = 'missing', drop
           function(x, i, j) {
             x@spatVector
           })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'giottoPolygon', i = 'gIndex', j = 'missing', drop = 'missing'),
+          function(x, i, j) {
+            x@spatVector = x@spatVector[i]
+            x@spatVectorCentroids = x@spatVectorCentroids[i]
+            x@unique_ID_cache = spatIDs(x, uniques = TRUE, use_cache = FALSE)
+
+            if (is.null(x@overlaps)) return(x) # if no overlaps, skip following
+
+            for(feat in names(x@overlaps)) {
+
+              cell_id_bool <- terra::as.list(x@overlaps[[feat]])$poly_ID %in% x@unique_ID_cache
+              x@overlaps[[feat]] <- x@overlaps[[feat]][cell_id_bool]
+
+            }
+
+            x
+          })
+
+# this behavior is different from normal spatvectors
+# SpatVector defaults to col subsetting when character is provided to i
+# subsetting on poly_ID col makes more sense for giottoPolygon
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'giottoPolygon', i = 'character', j = 'missing', drop = 'missing'),
+          function(x, i, j) {
+            sel_bool = x$poly_ID %in% i
+            x[sel_bool]
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'giottoPolygon', i = 'missing', j = 'gIndex', drop = 'missing'),
+          function(x, i, j) {
+            x@spatVector = x@spatVector[,j]
+            x@spatVectorCentroids = x@spatVectorCentroids[,j]
+            if (!'poly_ID' %in% names(x@spatVector)) stop(wrap_txt(
+              'poly_ID must be a kept as a column'
+            ))
+            x
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod('[', signature(x = 'terraVectData', i = 'gIndex', j = 'gIndex', drop = 'missing'),
+          function(x, i, j) {
+            x = x[,j]
+            x = x[i,]
+            x
+          })
+
+
 
 #' @rdname extract-methods
 #' @aliases [<-,giottoPolygon,missing,missing,ANY-method [<-,giottoPolygon,missing,missing-method

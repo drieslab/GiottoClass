@@ -27,6 +27,9 @@ combineMetadata = function(gobject,
                            spat_enr_names = NULL,
                            verbose = TRUE) {
 
+  # DT vars
+  cell_ID = NULL
+
   # Set feat_type and spat_unit
   spat_unit = set_default_spat_unit(gobject = gobject,
                                     spat_unit = spat_unit)
@@ -35,80 +38,45 @@ combineMetadata = function(gobject,
                                     feat_type = feat_type)
 
   # cell metadata
-  metadata = get_cell_metadata(gobject,
-                               spat_unit = spat_unit,
-                               feat_type = feat_type,
-                               output = 'data.table')
+  metadata = get_cell_metadata(
+    gobject,
+    spat_unit = spat_unit,
+    feat_type = feat_type,
+    output = 'data.table'
+  )
 
   # spatial locations
   if(!is.null(spat_loc_name)) {
-    spatial_locs = get_spatial_locations(gobject = gobject,
-                                         spat_unit = spat_unit,
-                                         spat_loc_name = spat_loc_name,
-                                         output = 'data.table',
-                                         copy_obj = TRUE,
-                                         verbose = verbose)
+    spatial_locs = get_spatial_locations(
+      gobject = gobject,
+      spat_unit = spat_unit,
+      spat_loc_name = spat_loc_name,
+      output = 'data.table',
+      copy_obj = TRUE,
+      verbose = verbose
+    )
+
   } else {
     spatial_locs = NULL
   }
 
-  # data.table variables
-  cell_ID = NULL
-
-  if(!is.null(spatial_locs)) {
+  if (!is.null(spatial_locs)) {
     # metadata = cbind(metadata, spatial_locs[, cell_ID := NULL])
-    metadata = data.table::merge.data.table(metadata, spatial_locs, by = 'cell_ID')
+    metadata = data.table::merge.data.table(
+      metadata,
+      spatial_locs,
+      by = 'cell_ID'
+    )
   }
-
 
   # cell/spot enrichment data
-  available_enr = list_spatial_enrichments_names(gobject = gobject,
-                                                 spat_unit = spat_unit,
-                                                 feat_type = feat_type)
-
-  # output warning if not found
-  not_available = spat_enr_names[!spat_enr_names %in% available_enr]
-  if(length(not_available) > 0) {
-    cat('These spatial enrichment results have not been found: \n',
-        not_available)
-  }
-
-  spat_enr_names = spat_enr_names[spat_enr_names %in% available_enr]
-
-  if(!is.null(spat_enr_names) & length(spat_enr_names) > 0) {
-
-    result_list = list()
-    for(spatenr in 1:length(spat_enr_names)) {
-
-      spatenr_name = spat_enr_names[spatenr]
-
-      temp_spat = get_spatial_enrichment(gobject = gobject,
-                                         spat_unit = spat_unit,
-                                         feat_type = feat_type,
-                                         enrichm_name = spatenr_name,
-                                         output = 'data.table',
-                                         copy_obj = TRUE)
-
-      # temp_spat[, 'cell_ID' := NULL]
-
-      result_list[[spatenr]] = temp_spat
-    }
-    # final_meta = do.call('cbind', c(list(metadata), result_list))
-    final_meta = Reduce(
-      function(x, y) data.table::merge.data.table(x, y, by = 'cell_ID'),
-      c(list(metadata), result_list)
-    )
-
-    duplicates = sum(duplicated(colnames(final_meta)))
-    if(duplicates > 0) cat('Some column names are not unique.
-                           If you add results from multiple enrichments,
-                           consider giving the signatures unique names')
-
-  } else {
-
-    final_meta = metadata
-
-  }
+  final_meta = merge_spatial_enrich_info(
+    gobject = gobject,
+    comb_dt = metadata,
+    spat_unit = spat_unit,
+    feat_type = feat_type,
+    spat_enr_names = spat_enr_names
+  )
 
   return(final_meta)
 
@@ -262,6 +230,8 @@ combineSpatialCellMetadataInfo = function(gobject,
 #' @param spat_loc_name spatial location name
 #' @param include_poly_info include information about polygon
 #' @param poly_info polygon information name
+#' @param include_spat_enr include information about spatial enrichment
+#' @param spat_enr_names names of spatial enrichment results to include
 #' @return data.table with combined spatial information
 #' @concept combine cell metadata
 #' @export
@@ -270,7 +240,9 @@ combineCellData = function(gobject,
                            include_spat_locs = TRUE,
                            spat_loc_name = 'raw',
                            include_poly_info = TRUE,
-                           poly_info = 'cell') {
+                           poly_info = 'cell',
+                           include_spat_enr = TRUE,
+                           spat_enr_names = NULL) {
 
   # combine
   # 1. spatial morphology information ( = polygon)
@@ -285,39 +257,49 @@ combineCellData = function(gobject,
                                     feat_type = feat_type)
 
 
-  # get spatial locations
-  if(include_spat_locs == TRUE) {
-    spat_locs_dt = get_spatial_locations(gobject = gobject,
-                                         spat_unit = poly_info,
-                                         spat_loc_name = spat_loc_name,
-                                         output = 'data.table',
-                                         copy_obj = TRUE)
+  ## spatial locations ##
+  if (isTRUE(include_spat_locs)) {
+    spat_locs_dt = get_spatial_locations(
+      gobject = gobject,
+      spat_unit = poly_info,
+      spat_loc_name = spat_loc_name,
+      output = 'data.table',
+      copy_obj = TRUE
+    )
   } else {
     spat_locs_dt = NULL
   }
 
 
-  # get spatial cell information
-  if(include_poly_info == TRUE) {
-    # get spatial cell information
-    spatial_cell_info_spatvec = get_polygon_info(gobject = gobject,
-                                                 polygon_name = poly_info,
-                                                 return_giottoPolygon = FALSE)
-    spatial_cell_info_dt = spatVector_to_dt(spatial_cell_info_spatvec,
-                                            include_values = TRUE)
-    data.table::setnames(spatial_cell_info_dt, old = 'poly_ID', new = 'cell_ID')
+  ## spatial poly ##
+  if (isTRUE(include_poly_info)) {
+    # get spatial poly information
+    spatial_cell_info_spatvec = get_polygon_info(
+      gobject = gobject,
+      polygon_name = poly_info,
+      return_giottoPolygon = FALSE
+    )
+    spatial_cell_info_dt = data.table::as.data.table(
+      spatial_cell_info_spatvec,
+      geom = 'XY',
+      include_values = TRUE
+    )
+    data.table::setnames(spatial_cell_info_dt,
+                         old = 'poly_ID',
+                         new = 'cell_ID')
   } else {
     spatial_cell_info_dt = NULL
   }
 
 
-
-
-  # combine prior information if wanted
-  if(!is.null(spat_locs_dt) & !is.null(spatial_cell_info_dt)) {
-    comb_dt = data.table::merge.data.table(spat_locs_dt,
-                                           spatial_cell_info_dt,
-                                           by = 'cell_ID')
+  # combine spatloc and poly information if desired
+  if (!is.null(spat_locs_dt) &&
+      !is.null(spatial_cell_info_dt)) {
+    comb_dt = data.table::merge.data.table(
+      spat_locs_dt,
+      spatial_cell_info_dt,
+      by = 'cell_ID'
+    )
   } else if(!is.null(spat_locs_dt)) {
     comb_dt = spat_locs_dt
   } else if(!is.null(spatial_cell_info_dt)) {
@@ -326,20 +308,37 @@ combineCellData = function(gobject,
     comb_dt = NULL
   }
 
+  ## spat enrichment ##
+  if (isTRUE(include_spat_enr)) {
+    comb_dt = merge_spatial_enrich_info(
+      gobject = gobject,
+      comb_dt = comb_dt,
+      spat_unit = poly_info,
+      feat_type = feat_type,
+      spat_enr_names = spat_enr_names
+    )
+  }
 
+  ## cell metadata ##
+  # iterate across each requested feat_type
   res_list = list()
-  for(feat in unique(feat_type)) {
-
+  for (feat in unique(feat_type)) {
 
     # get spatial cell metadata
-    cell_meta = get_cell_metadata(gobject = gobject,
-                                  spat_unit = poly_info,
-                                  feat_type = feat,
-                                  output = 'data.table')
+    cell_meta = get_cell_metadata(
+      gobject = gobject,
+      spat_unit = poly_info,
+      feat_type = feat,
+      output = 'data.table'
+    )
 
     # merge
     if(!is.null(comb_dt)) {
-      spatial_cell_info_meta = data.table::merge.data.table(comb_dt, cell_meta, by = 'cell_ID')
+      spatial_cell_info_meta = data.table::merge.data.table(
+        comb_dt,
+        cell_meta,
+        by = 'cell_ID'
+      )
     } else {
       spatial_cell_info_meta = cell_meta
     }
@@ -351,9 +350,6 @@ combineCellData = function(gobject,
   }
 
   return(res_list)
-
-
-
 }
 
 
@@ -563,12 +559,12 @@ calculateSpatCellMetadataProportions = function(gobject,
                                 output = 'data.table')
 
   # merge spatial network and cell metadata
-  network_annot = data.table::merge.data.table(x = sp_network, 
-                                               y = cell_meta[,c('cell_ID', metadata_column), with = FALSE], 
+  network_annot = data.table::merge.data.table(x = sp_network,
+                                               y = cell_meta[,c('cell_ID', metadata_column), with = FALSE],
                                                by.x = 'source', by.y = 'cell_ID')
   setnames(network_annot, old = metadata_column, 'source_clus')
-  network_annot = data.table::merge.data.table(x = network_annot, 
-                                               y = cell_meta[,c('cell_ID', metadata_column), with = FALSE], 
+  network_annot = data.table::merge.data.table(x = network_annot,
+                                               y = cell_meta[,c('cell_ID', metadata_column), with = FALSE],
                                                by.x = 'target', by.y = 'cell_ID')
   setnames(network_annot, old = metadata_column, 'target_clus')
 
@@ -698,6 +694,82 @@ merge_spatial_locs_feat_info = function(spatial_info,
   return(reslistfinal)
 
 }
+
+
+
+
+
+#' @title merge_spatial_enrich_info
+#' @name merge_spatial_enrich_info
+#' @description take a combine data.table result and append spatial enrichment
+#' results.
+#' @keywords internal
+# spat_unit and feat_type are expected to not be NULL.
+merge_spatial_enrich_info = function(gobject,
+                                     comb_dt,
+                                     spat_unit,
+                                     feat_type,
+                                     spat_enr_names = NULL) {
+
+  if (is.null(spat_enr_names)) return(comb_dt) # skip if not requested
+  if (is.null(comb_dt)) return(comb_dt) # skip if no comb_dt to build on
+
+  # detect available cell/spot enrichment data
+  available_enr = list_spatial_enrichments_names(
+    gobject = gobject,
+    spat_unit = spat_unit,
+    feat_type = feat_type
+  )
+
+  # output warning if requested spatial enrichment is not found
+  not_available = spat_enr_names[!spat_enr_names %in% available_enr]
+  if (length(not_available) > 0L) {
+    warning(wrap_txt(
+      'These spatial enrichment results have not been found:\n',
+      not_available
+    ))
+  }
+
+  spat_enr_names = spat_enr_names[spat_enr_names %in% available_enr]
+
+  if (length(spat_enr_names) == 0L) return(comb_dt) # skip if none available
+
+  # get requested spatial enrichments and append them
+  result_list = lapply(spat_enr_names, function(enr_name) {
+
+    getSpatialEnrichment(
+      gobject = gobject,
+      spat_unit = spat_unit,
+      feat_type = feat_type,
+      name = enr_name,
+      output = 'data.table',
+      copy_obj = TRUE,
+      set_defaults = FALSE
+    )
+  })
+
+  final_meta = Reduce(
+    function(x, y) data.table::merge.data.table(x, y, by = 'cell_ID'),
+    c(list(comb_dt), result_list)
+  )
+
+  # detect and warn about any col naming duplications
+  duplicates = final_meta %>%
+    colnames() %>%
+    duplicated() %>%
+    sum()
+  if (duplicates > 0) {
+    wrap_msg(
+      'Some column names are not unique.
+        If you add results from multiple enrichments,',
+      'consider giving the signatures unique names'
+    )
+  }
+
+  return(final_meta)
+}
+
+
 
 
 

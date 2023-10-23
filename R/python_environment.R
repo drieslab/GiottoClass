@@ -22,7 +22,7 @@ checkGiottoEnvironment =  function(mini_install_path = NULL, verbose = TRUE) {
   if (is.null(mini_install_path)){
     conda_path = reticulate::miniconda_path()
   } else if (!dir.exists(mini_install_path)) {
-    if(verbose) wrap_msg(" Unable to find miniconda directory", mini_install_path,
+    if(verbose) GiottoUtils::wrap_msg(" Unable to find miniconda directory", mini_install_path,
                          "\nPlease ensure the directory exists and is provided as a string.")
     return(FALSE)
   } else {
@@ -43,7 +43,7 @@ checkGiottoEnvironment =  function(mini_install_path = NULL, verbose = TRUE) {
     return(TRUE)
 
   } else {
-    if(verbose) wrap_msg('\n giotto environment was expected, but NOT found at \n', full_path, '\n')
+    if(verbose) GiottoUtils::wrap_msg('\n giotto environment was expected, but NOT found at \n', full_path, '\n')
     return(FALSE)
   }
 
@@ -114,7 +114,7 @@ check_giotto_python_modules = function(my_python_path) {
   if (isFALSE(getOption('giotto.has_conda', TRUE))) return(invisible(NULL))
   if (isFALSE(getOption('giotto.use_conda', TRUE))) return(invisible(NULL))
 
-  python_modules = c('pandas', 'igraph', 'leidenalg', 'community', 'networkx', 'sklearn', 'bento-tools')
+  python_modules = c('pandas', 'igraph', 'leidenalg', 'community', 'networkx', 'sklearn')
   for(module in python_modules) {
     if(reticulate::py_module_available(module) == FALSE) {
       warning('module: ', module, ' was not found with python path: ', my_python_path, '\n')
@@ -219,10 +219,6 @@ install_giotto_environment_specific = function(packages_to_install = c('pandas',
                            python_version = python_version)
   }
 
-  # reticulate don't support installation from github yet
-  # using system call instead
-  config <- reticulate::py_discover_config(use_environment='giotto_env')
-  system2(config$python, c("-m", "pip", "install", "git+https://github.com/wwang-chcn/bento-tools.git@giotto_install"))
 
 }
 
@@ -246,7 +242,7 @@ install_giotto_environment = function(force_environment = FALSE,
   if(giotto_installed == TRUE & force_environment == FALSE) {
     # do nothing if already installed and no force required
 
-    if(verbose) wrap_msg('Giotto environment is already installed, set force_environment = TRUE to reinstall \n')
+    if(verbose) GiottoUtils::wrap_msg('Giotto environment is already installed, set force_environment = TRUE to reinstall \n')
 
   } else if(giotto_installed == TRUE & force_environment == TRUE) {
     # reinstall giotto if force required
@@ -357,13 +353,13 @@ installGiottoEnvironment =  function(packages_to_install = c('pandas==1.5.1',
   if (is.null(mini_install_path)){
     conda_path = reticulate::miniconda_path()
   } else if (!dir.exists(mini_install_path)) {
-    stop(wrap_msg(paste0(" Unable to install miniconda in ", 
+    stop(GiottoUtils::wrap_msg(paste0(" Unable to install miniconda in ", 
                          mini_install_path, 
                          "\nPlease ensure the directory has been created and provided as a string.")))
   } else {
     conda_path = mini_install_path
 
-    wrap_msg("NOTICE: Attempting to install the Giotto Environment at a custom path.\n",
+    GiottoUtils::wrap_msg("NOTICE: Attempting to install the Giotto Environment at a custom path.\n",
              "Please note that multiple .yml files are provided in the repository for advanced installation and convenience.",
              "To install the most up-to-date Giotto environment using a .yml file, open a shell",
              " compatible with conda/miniconda and navigate to the directory containing Giotto.",
@@ -378,8 +374,8 @@ installGiottoEnvironment =  function(packages_to_install = c('pandas==1.5.1',
 
     if(!manual_install %in% c("y","Y","n","N")) stop("Invalid input. Please try again.")
 
-    if (manual_install %in% c("y","Y")) stop(wrap_txt("There is no error; this just stops function execution. Please follow the instructions above for manual installation. Thank you!"))
-    else wrap_msg("Continuing with automatic installation...\n")
+    if (manual_install %in% c("y","Y")) stop(GiottoUtils::wrap_txt("There is no error; this just stops function execution. Please follow the instructions above for manual installation. Thank you!"))
+    else GiottoUtils::wrap_msg("Continuing with automatic installation...\n")
 
 
     if(.Platform[['OS.type']] == 'unix') {
@@ -425,7 +421,7 @@ removeGiottoEnvironment = function(mini_path = NULL, verbose = TRUE) {
   if (is.null(mini_path)){
     conda_path = reticulate::miniconda_path()
   } else if (!dir.exists(mini_path)) {
-    stop(wrap_msg(paste0("Directory", mini_path, "could not be found. Please ensure it was entered properly and as a string.")))
+    stop(GiottoUtils::wrap_msg(paste0("Directory", mini_path, "could not be found. Please ensure it was entered properly and as a string.")))
   } else {
     conda_path = mini_path
   }
@@ -441,7 +437,7 @@ removeGiottoEnvironment = function(mini_path = NULL, verbose = TRUE) {
   giotto_installed = checkGiottoEnvironment(verbose = verbose)
 
   if(giotto_installed == FALSE) {
-    wrap_msg('Giotto environment is not found and probably never installed')
+    GiottoUtils::wrap_msg('Giotto environment is not found and probably never installed')
   }
 
   # first remove giotto environment, then install
@@ -470,7 +466,7 @@ set_giotto_python_path = function(python_path = NULL,
   # If a path is provided by the user and it exists,
   # direct reticulate to said executable and exit immediately
   if(!is.null(python_path) && file.exists(python_path)) {
-    if(verbose) wrap_msg('\n external python path provided and will be used \n')
+    if(verbose) GiottoUtils::wrap_msg('\n external python path provided and will be used \n')
     python_path = as.character(python_path)
     reticulate::use_python(required = TRUE, python = python_path)
     return (python_path)
@@ -493,13 +489,13 @@ set_giotto_python_path = function(python_path = NULL,
 
   if(isTRUE(giotto_environment_installed)) {
 
-    if (verbose) wrap_msg('\n no external python path was provided, but a giotto python environment was found and will be used \n')
+    if (verbose) GiottoUtils::wrap_msg('\n no external python path was provided, but a giotto python environment was found and will be used \n')
     #python_path = return_giotto_environment_path_executable()
     reticulate::use_python(required = TRUE, python = python_path)
 
   } else {
 
-    if(verbose) wrap_msg('\n no external python path or giotto environment was specified, will check if a default python path is available \n')
+    if(verbose) GiottoUtils::wrap_msg('\n no external python path or giotto environment was specified, will check if a default python path is available \n')
 
     python_path = try({
       switch(.Platform[['OS.type']],
@@ -508,21 +504,245 @@ set_giotto_python_path = function(python_path = NULL,
     }, silent = TRUE)
 
     if(inherits(python_path, 'try-error')) {
-      wrap_msg('\nno default python path found
+      GiottoUtils::wrap_msg('\nno default python path found
                For full functionality, install python and/or use strategy 1 or 2:')
       python_path = NULL
     } else {
       python_path = python_path
       reticulate::use_python(required = TRUE, python = python_path)
-      if(verbose) wrap_msg('\n A default python path was found: ', python_path, ' and will be used
+      if(verbose) GiottoUtils::wrap_msg('\n A default python path was found: ', python_path, ' and will be used
                             If this is not the correct python path, either')
     }
 
-    wrap_msg('\n 1. use installGiottoEnvironment() to install a local miniconda python environment along with required modules')
-    wrap_msg('\n 2. provide an existing python path to python_path to use your own python path which has all modules installed')
-    wrap_msg('Set options(\"giotto.use_conda\" = FALSE) if python functionalities are not needed')
+    GiottoUtils::wrap_msg('\n 1. use installGiottoEnvironment() to install a local miniconda python environment along with required modules')
+    GiottoUtils::wrap_msg('\n 2. provide an existing python path to python_path to use your own python path which has all modules installed')
+    GiottoUtils::wrap_msg('Set options(\"giotto.use_conda\" = FALSE) if python functionalities are not needed')
   }
 
   return(python_path)
 }
 
+#' @title Prompt User for Python Install
+#' @name py_install_prompt
+#' @param package python package/github url
+#' @param env environment into which package will be installed
+#' @description prompts user to install a package
+#' @keywords internal
+py_install_prompt <- function (package = NULL,
+                               env = NULL){
+  if(is.null(package) | is.null(env)) {
+    stop(GiottoUtils::wrap_txt("Incorrect Usage.\n", errWidth = TRUE))
+  }
+
+  install_py_pkg_msg = paste0("Python package `",
+                              package,
+                              "` is required and not installed.\n")
+  warning(install_py_pkg_msg, immediate. = TRUE)
+  install_py_pkg_msg = paste0("Enter 0 to skip installation and quit.\n")
+  install_py_pkg_msg = paste0(install_py_pkg_msg, "Enter any other number ",
+                              "to install\n`",
+                              package,
+                              "`\nto python environment: `",
+                              env, '`\n\n')
+  resp = as.integer(readline(prompt = install_py_pkg_msg))
+  return(resp)
+
+}
+
+#' @title Install Package from GitHub Link
+#' @name install_github_link_pip
+#' @param link link to github repository containing a python package, 
+#' e.g. `git+https://github.com/TencentAILabHealthcare/pysodb.git`
+#' @param env conda environment to which `link` will be installed via pip
+#' @description
+#' Installs `link` to python `env`
+#' @keywords internal
+install_github_link_pip <- function(link = NULL,
+                                            env = NULL){
+  # Guard 
+  if (is.null(link) | is.null(env)) stop(GiottoUtils::wrap_txt("Incorrect Usage.", errWidth = TRUE))
+
+  config <- reticulate::py_discover_config(use_environment=env)
+  # system commands return 0 if ran successfully, 1 otherwise
+  successful_install = !as.logical(system2(config$python, 
+                                          c("-m", 
+                                            "pip",
+                                            "install",
+                                            link)))
+  if (successful_install) {
+    return(TRUE)
+  } else {
+    git_url_err_msg = "Provided GitHub URL `"
+    git_url_err_msg = paste0(git_url_err_msg, github_package_URL, "`")
+    git_url_err_msg = paste0(git_url_err_msg, " Could not be installed.\n")
+    git_url_err_msg = paste0(git_url_err_msg, 
+                            "Please try again with a different URL.")
+    stop(GiottoUtils::wrap_txt(git_url_err_msg, errWidth = TRUE))
+  }
+}
+
+#' @title Install Python Package with Reticulate
+#' @name install_py_pkg_reticulate
+#' @param package name of python package
+#' @param env name of the environment into which the python 
+#' package should be installed.
+#' @details 
+#' Installs `package` to python `env` after prompting user.
+#' Installation is done via `py_install` from the 
+#' `reticulate` package.
+#' @keywords internal
+install_py_pkg_reticulate <- function(package = NULL,
+                                      env = NULL){
+  resp = py_install_prompt(package = package,
+                           env = env)
+  if(resp != 0){
+    try_install = tryCatch(expr = { 
+      reticulate::py_install(package = package, 
+                             envname = env)
+      return(TRUE)
+
+    }, error = function(e){
+      return(FALSE)
+    })
+
+    if (!try_install){
+      cannot_install_msg = paste0("Could not install `",package)
+      cannot_install_msg = paste0(cannot_install_msg, "` using `reticulate::py_install()`\n")
+
+      GiottoUtils::wrap_msg(cannot_install_msg,
+                            errWidth = TRUE)
+      return(FALSE)
+    }
+  } else {
+    stop(GiottoUtils::wrap_txt("Package not installed.\n", errWidth = TRUE))
+  }
+}
+
+#' @title Check Python Package Installation
+#' @name checkPythonPackage
+#' @param package_name name of python package. See details.
+#' @param github_package_url URL linking to github repository containing
+#' a python package that may be installed with pip,
+#' e.g. `git+https://github.com/TencentAILabHealthcare/pysodb.git`;
+#' see details.
+#' @param env_to_use name of the environment into which the python 
+#' package should be installed.
+#' @description checks python environment for a 
+#' provided package, installs if it is not found.
+#' @details
+#' Parameter `github_package_url` takes precedent over 
+#' `package_name`, i.e. if both are provided, only the github
+#' URL will be installed. This function should only be provided
+#' one parameter, or the other. 
+#' 
+#' @keywords export
+checkPythonPackage <- function (package_name = NULL,
+                              github_package_url = NULL,
+                              env_to_use = "giotto_env"){
+  # Guard clauses
+  if (is.null(package_name) & is.null(github_package_url)){
+    null_input_err_msg = "A python package name must be provided, e.g. `scanpy==1.9.0`"
+    null_input_err_msg = paste0(null_input_err_msg, 
+                                "\nAlternatively, provide a github package URL, ")
+    null_input_err_msg = paste0(null_input_err_msg, 
+                                "e.g. `git+https://github.com/TencentAILabHealthcare/pysodb.git` ")
+    stop(GiottoUtils::wrap_txt(null_input_err_msg, 
+                                errWidth = TRUE))
+  }
+  # Find path to currently initialized python env
+  path_to_env = reticulate::py_config()$pythonhome
+  if (!grepl(env_to_use, path_to_env)){
+    env_err_msg = paste0("Provided python environment `", 
+                        env_to_use,"` is not initialized.")
+    env_err_msg = paste0(env_err_msg, 
+                        "\nThe following python environment is in use: `", 
+                        path_to_env,"`")
+    env_err_msg = paste0(env_err_msg, 
+                        "\nTo initialize `",env_to_use,"`, you must ",
+                        "restart your R session.")
+    stop(GiottoUtils::wrap_txt(env_err_msg,
+                              errWidth = TRUE))
+    }
+  env_str_location = stringr::str_locate(path_to_env, env_to_use)[2]
+  # Change env_to_use from name of environment 
+  # to the full environment path
+  env_to_use = substr(path_to_env, 1, env_str_location)
+
+  env_to_use = path_to_env
+
+
+  # If a github link is provided, install it and exit
+  if (!is.null(github_package_url)){
+    resp = py_install_prompt(package = github_package_url,
+                             env = env_to_use)
+    if (resp != 0){
+      install_status = install_github_link_pip(link = github_package_url,
+                                               env = env_to_use)
+      return(install_status) 
+    } else {
+       stop(GiottoUtils::wrap_txt("Package not installed.\n", errWidth = TRUE))
+    }
+  }
+
+  package_config = reticulate::py_list_packages()
+  pkgs_in_py_env = package_config$package
+  versions = package_config$version
+  
+  # package installed, right version --> exit
+  # package installed, but wrong version --> prompt for install
+  # package not installed --> prompt for install
+  
+  version_number = NULL
+
+  contains_version_number = grepl("==", package_name) 
+  if (contains_version_number){
+    split_package_version = stringr::str_split(package_name, 
+                                               pattern = "==")
+    package_name = split_package_version[[1]][1]
+    version_number = split_package_version[[1]][2]
+  }
+
+  if (package_name %in% pkgs_in_py_env){
+    if (!contains_version_number){
+      # If a version number is not provided,
+      # and the package exists within the 
+      # reticulate package list, exit, 
+      # since it is already installed.
+      return(TRUE)
+
+    } else {
+      # Check that the version numbers match, if provided
+      idx = which(pkgs_in_py_env == package_name)
+      version_match = (version_number == versions[idx])
+
+      if (version_match){
+        # if the versions match, the right version
+        # is installed
+        return(TRUE)
+      } else{ 
+        # Otherwise, install the provided version
+        inst_result = install_py_pkg_reticulate(package = paste0(package_name,
+                                                                 "==",
+                                                                 version_number),
+                                                env = env_to_use)
+        return(inst_result)
+      }
+    }
+  } else {
+    if (!contains_version_number) {
+      # If it is not installed, and has no version
+      # number, install it.
+      inst_result = install_py_pkg_reticulate(package = package_name,
+                                              env = env_to_use)
+    } else{
+      # If it is not installed, and has a version
+      # number, concatenate the package and verion
+      # strings, and install
+      inst_result = install_py_pkg_reticulate(package = paste0(package_name,
+                                                                 "==",
+                                                                 version_number),
+                                                env = env_to_use)
+    }
+    return(inst_result)
+  }
+}
