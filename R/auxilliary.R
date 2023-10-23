@@ -981,53 +981,6 @@ createMetafeats = function(gobject,
 }
 
 
-#' write expression matrix in local HDF5 file
-#'
-#' @param x matrix
-#' @param filepath filepath to h5 file
-#' @param name internal path to expression matrix
-#' @param H5type See `HDF5Array::HDF5RealizationSink`
-#' @param chunkdim The dimensions of the chunks to use for writing the data to disk.
-#' @param level The compression level to use for writing the data to disk.
-#' @param as.sparse logical. Default = TRUE
-#' @param with.dimnames logical
-#' @param verbose logical
-#'
-#' @return HDF5Array
-#' @export
-#'
-write_local_HDF5 <- function (x, filepath = NULL, name = NULL, 
-                              H5type = NULL, chunkdim = NULL, 
-                              level = NULL, as.sparse = TRUE, 
-                              with.dimnames = FALSE, verbose = NA) {
-  if (!(is.logical(as.sparse) && length(as.sparse) == 1L)) 
-    stop(wmsg("'as.sparse' must be NA, TRUE or FALSE"))
-  if (!S4Vectors::isTRUEorFALSE(with.dimnames)) 
-    stop("'with.dimnames' must be TRUE or FALSE")
-  verbose <- DelayedArray:::normarg_verbose(verbose)
-  if (is.na(as.sparse)) 
-    as.sparse <- is_sparse(x)
-  sink_dimnames <- if (with.dimnames) 
-    dimnames(x)
-  else NULL
-  size <- HDF5Array:::compute_max_string_size(x)
-  sink <- HDF5Array::HDF5RealizationSink(dim = dim(x), 
-                                         dimnames = sink_dimnames, 
-                                         type = "double", 
-                                         as.sparse = as.sparse, 
-                                         filepath = filepath, 
-                                         name = name, 
-                                         H5type = H5type, 
-                                         size = size, 
-                                         chunkdim = chunkdim, 
-                                         level = level)
-  sink <- DelayedArray::BLOCK_write_to_sink(sink, x, verbose = verbose)
-  as(sink, "HDF5Array")
-}
-
-
-
-
 
 
 
