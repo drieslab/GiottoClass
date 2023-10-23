@@ -10,7 +10,9 @@ combineCellData(
   include_spat_locs = TRUE,
   spat_loc_name = "raw",
   include_poly_info = TRUE,
-  poly_info = "cell"
+  poly_info = "cell",
+  include_spat_enr = TRUE,
+  spat_enr_names = NULL
 )
 }
 \arguments{
@@ -25,6 +27,10 @@ combineCellData(
 \item{include_poly_info}{include information about polygon}
 
 \item{poly_info}{polygon information name}
+
+\item{include_spat_enr}{include information about spatial enrichment}
+
+\item{spat_enr_names}{names of spatial enrichment results to include}
 }
 \value{
 data.table with combined spatial information
