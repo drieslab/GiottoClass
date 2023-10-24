@@ -29,9 +29,24 @@ polyStamp <- function(stamp_dt,
     stop(wrap_txt('Not all colnames found in spatlocs'))
   }
 
-  # define polys relative to centroid
-  stamp_centroid = c(x = mean(stamp_dt[['x']]),
-                     y = mean(stamp_dt[['y']]))
+  # define polys relative to centroid of stamp_dt
+  # add necessary columns to make a polygon from matrix
+  stamp_dt$geom = 1
+  stamp_dt$part = 0
+  stamp_dt$hole = 0
+
+  setcolorder(stamp_dt, neworder = c("geom", "part", "x", "y", "hole"))
+  stamp_poly = terra::vect(as.matrix(stamp_dt), type = "polygons")
+
+  centroid_dt = spatVector_to_dt2(terra::centroids(stamp_poly),
+                                  include_values = F)
+  
+  stamp_centroid = c(x = centroid_dt$x,
+                     y = centroid_dt$y)
+
+  # stamp_centroid = c(x = mean(stamp_dt[['x']]),
+  #                    y = mean(stamp_dt[['y']]))
+
   rel_vertices = data.table::data.table(x = stamp_dt$x - stamp_centroid[['x']],
                                         y = stamp_dt$y - stamp_centroid[['y']])
 
