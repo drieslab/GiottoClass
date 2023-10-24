@@ -38,8 +38,9 @@ polyStamp <- function(stamp_dt,
   setcolorder(stamp_dt, neworder = c("geom", "part", "x", "y", "hole"))
   stamp_poly = terra::vect(as.matrix(stamp_dt), type = "polygons")
 
-  centroid_dt = spatVector_to_dt2(terra::centroids(stamp_poly),
-                                  include_values = F)
+  centroid_dt = as.data.table(terra::centroids(stamp_poly),
+                              geom = "XY",
+                              include_values = F)
   
   stamp_centroid = c(x = centroid_dt$x,
                      y = centroid_dt$y)
