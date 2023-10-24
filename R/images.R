@@ -813,20 +813,22 @@ dist_giottoLargeImage = function(gobject = NULL,
 
   # get image object
   if(!is.null(gobject) & !is.null(image_name)) {
-    img_obj = get_giottoImage(gobject = gobject,
-                              image_type = 'largeImage',
-                              name = image_name)
+    img_obj = getGiottoImage(gobject = gobject,
+                             image_type = 'largeImage',
+                             name = image_name)
+    img_obj = img_obj@raster_object
   } else if(!is.null(giottoLargeImage)){
     img_obj = giottoLargeImage@raster_object
   } else {
     stop('No giottoLargeImage given \n')
   }
 
-  # plot curve
-  if(method == 'dens') terra::density(img_obj)
-  if(method == 'hist') terra::hist(img_obj)
-
-
+  # plot
+  switch(
+    method,
+    'dens' = terra::density(img_obj),
+    'hist' = terra::hist(img_obj)
+  )
 }
 
 
