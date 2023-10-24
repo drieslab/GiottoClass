@@ -44,9 +44,6 @@ polyStamp <- function(stamp_dt,
   stamp_centroid = c(x = centroid_dt$x,
                      y = centroid_dt$y)
 
-  # stamp_centroid = c(x = mean(stamp_dt[['x']]),
-  #                    y = mean(stamp_dt[['y']]))
-
   rel_vertices = data.table::data.table(x = stamp_dt$x - stamp_centroid[['x']],
                                         y = stamp_dt$y - stamp_centroid[['y']])
 
