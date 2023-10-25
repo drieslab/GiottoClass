@@ -36,6 +36,13 @@ jobs:
         with:
           use-public-rspm: true
 
+      - name: Set up dependencies (dev modules)
+        run: |
+          suppressWarnings({
+            remotes::install_github('drieslab/GiottoUtils@dev', build = FALSE)
+          })
+        shell: Rscript {0}
+
       - name: Set up dependencies (general)
         uses: r-lib/actions/setup-r-dependencies@v2
         env:

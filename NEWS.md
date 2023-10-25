@@ -1,4 +1,10 @@
 
+# GiottoClass 0.1.2
+
+## Added
+- Added: `max_window` and `colors` slots to `giottoLargeImage`
+- Added: `.bitdepth()` internal function to detect image bitdepth from sampled values
+
 
 # GiottoClass 0.1.1 (2023/12/16)
 

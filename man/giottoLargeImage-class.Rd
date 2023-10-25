@@ -23,9 +23,13 @@ class to handle images too large to load in normally through magick
 
 \item{\code{resolution}}{spatial location units covered per pixel}
 
-\item{\code{max_intensity}}{value to set as maximum intensity in color scaling}
+\item{\code{max_intensity}}{approximate maximum value}
 
-\item{\code{min_intensity}}{minimum value found}
+\item{\code{min_intensity}}{approximate minimum value}
+
+\item{\code{max_window}}{value to set as maximum intensity in color scaling}
+
+\item{\code{colors}}{color mappings in hex codes}
 
 \item{\code{is_int}}{values are integers}
 

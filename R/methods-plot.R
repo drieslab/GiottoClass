@@ -23,8 +23,47 @@ NULL
 setMethod("plot", signature(x = "giottoImage", y = "missing"), function(x, y, ...) .plot_giottoimage_mg(giottoImage = x, ...))
 
 #' @describeIn plot-generic Plot \emph{terra}-based giottoLargeImage object. ... param passes to \code{\link{.plot_giottolargeimage}}
+#' @param col character. Colors. The default is grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1)
+#' @param max_intensity (optional) value to treat as maximum intensity in color scale
+#' @param mar numeric vector of length 4 to set the margins of the plot (to make space for the legend). The default is (3, 5, 1.5, 1)
+#' @param asRGB (optional) logical. Force RGB plotting if not automatically detected
+#' @param legend logical or character. If not FALSE a legend is drawn. The character value can be used to indicate where the legend is to be drawn. For example "topright" or "bottomleft"
+#' @param axes logical. Draw axes?
+#' @param maxcell positive integer. Maximum number of cells to use for the plot
+#' @param smooth logical. If TRUE the cell values are smoothed
 #' @export
-setMethod("plot", signature(x = "giottoLargeImage", y = "missing"), function(x, y, ...) .plot_giottolargeimage(giottoLargeImage = x, ...))
+setMethod(
+  'plot',
+  signature(x = 'giottoLargeImage', y = 'missing'),
+  function(x, y, col, max_intensity, mar, asRGB = FALSE, legend = FALSE, axes = TRUE,
+           maxcell = 5e5, smooth = TRUE, ...)
+  {
+    arglist = list(giottoLargeImage = x,
+                   asRGB = asRGB,
+                   legend = legend,
+                   axes = axes,
+                   maxcell = maxcell,
+                   smooth = smooth,
+                   ...)
+
+    # check for pre-0.1.2 class
+    if (is.null(attr(x, "colors"))) {
+      .gstop("This image object is out of date
+             Please run `GiottoClass:::.update_giotto_image()` on this object.",
+             .n = 2)
+    }
+
+    # If no 'col' param, pull from `colors` slot
+    if (missing("col")) arglist$col <- x@colors
+    else arglist$col <- col
+    # if no 'max_intensity' param, pull from `max_window` slot
+    if (missing("max_intensity")) arglist$max_intensity <- x@max_window
+    else arglist$max_intensity <- max_intensity
+    # if mar param provided, use it
+    if (!missing("mar")) arglist$mar <- mar
+
+    do.call(.plot_giottolargeimage, args = arglist)
+  })
 
 #' @describeIn plot-generic Plot \emph{terra}-based giottoPolygon object. ... param passes to \code{\link[terra]{plot}}
 #' @param point_size size of points when plotting giottoPolygon object centroids
@@ -206,7 +245,7 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @param crop_extent (optional) extent object to focus on specific region of image
 #' @param xmax_crop,xmin_crop,ymax_crop,ymin_crop (optional) crop min/max x and y bounds
 #' @param max_intensity (optional) value to treat as maximum intensity in color scale
-#' @param asRGB (optional) boolean. Force RGB plotting if not automatically detected
+#' @param asRGB (optional) logical. Force RGB plotting if not automatically detected
 #' @param stretch character. Option to stretch the values to increase contrast: "lin"
 #' linear or "hist" (histogram)
 #' @param axes boolean. Default = TRUE. Whether to draw axes

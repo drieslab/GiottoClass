@@ -428,6 +428,11 @@ updateGiottoObject <- function(gobject) {
     gobject@h5_file <- NULL
   }
 
+  # GiottoClass 0.1.2 adds max_window and colors slots to giottoLargeImage
+  if (!is.null(gobject@largeImages)) {
+    gobject@largeImages <- lapply(gobject@largeImages, .update_giotto_image)
+  }
+
   # # 3.3.X release adds mirai slot
   # if (is.null(attr(gobject, "mirai"))) {
   #   attr(gobject, "mirai") <- list()
@@ -1464,8 +1469,10 @@ giottoImage <- setClass(
 #' @slot overall_extent terra extent object covering the original extent of image
 #' @slot scale_factor image scaling relative to spatial locations
 #' @slot resolution spatial location units covered per pixel
-#' @slot max_intensity value to set as maximum intensity in color scaling
-#' @slot min_intensity minimum value found
+#' @slot max_intensity approximate maximum value
+#' @slot min_intensity approximate minimum value
+#' @slot max_window value to set as maximum intensity in color scaling
+#' @slot colors color mappings in hex codes
 #' @slot is_int values are integers
 #' @slot file_path file path to the image if given
 #' @slot OS_platform Operating System to run Giotto analysis on
@@ -1476,12 +1483,14 @@ giottoLargeImage <- setClass(
   slots = c(
     name = "ANY",
     raster_object = "ANY",
-    extent = "ANY",
-    overall_extent = "ANY",
+    extent = "ANY", # REMOVE?
+    overall_extent = "ANY", # REMOVE? New slot px_dims as replacement?
     scale_factor = "ANY",
     resolution = "ANY",
-    max_intensity = "ANY",
-    min_intensity = "ANY",
+    max_intensity = "numeric",
+    min_intensity = "numeric",
+    max_window = "numeric", # NEW
+    colors = 'character', # NEW
     is_int = "ANY",
     file_path = "ANY",
     OS_platform = "ANY"
@@ -1493,10 +1502,55 @@ giottoLargeImage <- setClass(
     overall_extent = NULL,
     scale_factor = NULL,
     resolution = NULL,
-    max_intensity = NULL,
-    min_intensity = NULL,
+    max_intensity = NA_real_,
+    min_intensity = NA_real_,
+    max_window = NA_real_,
+    colors = grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1),
     is_int = NULL,
     file_path = NULL,
     OS_platform = NULL
   )
 )
+
+# function for updating image objects if structure definitions have changed
+.update_giotto_image = function(x) {
+  # 0.1.2 release adds colors & max_window slots
+  if (is.null(attr(x, "colors"))) {
+    attr(x, "colors") <- grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1)
+  }
+  if (is.null(attr(x, "max_window"))) {
+    # get a max intensity value
+    if (!is.null(x@max_intensity)) {
+      x@max_intensity <- .spatraster_intensity_range(x@raster_object)[["max"]]
+    }
+
+    attr(x, "max_window") <- .bitdepth(x@max_intensity, return_max = TRUE)
+  }
+
+  # 0.1.x release adds giottoImageStack
+  # deprecate
+
+  return(x)
+}
+
+
+
+## giottoImageStack class ####
+
+## * definition ####
+# giottoImageStack class
+
+# giottoImageStack <- setClass(
+#   Class = "giottoImageStack",
+#
+#   slots = c(
+#     name = 'character',
+#     images = 'giottoLargeImage',
+#     weight = 'numeric'
+#   )
+# )
+
+
+
+
+

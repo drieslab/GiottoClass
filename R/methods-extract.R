@@ -1,6 +1,10 @@
 #' @include generics.R
 NULL
 
+
+# Documentations ------------------------------------------------------------ #
+
+
 #' @title Extract or replace parts of an object
 #' @name extract-methods
 #' @docType methods
@@ -19,6 +23,9 @@ NULL
 #' @section \code{`[<-`} methods:
 #'
 NULL
+
+
+# --------------------------------------------------------------------------- #
 
 # $ S4 access generic ####
 
@@ -48,6 +55,9 @@ setMethod(
   }
 )
 
+
+
+#' @export
 .DollarNames.spatLocsObj <- function(x, pattern) {
   names(x@coordinates)
 }
@@ -78,6 +88,7 @@ setMethod(
   }
 )
 
+#' @export
 .DollarNames.spatEnrObj <- function(x, pattern) {
   names(x@enrichDT)
 }
@@ -106,12 +117,14 @@ setMethod(
   }
 )
 
+#' @export
 .DollarNames.dimObj <- function(x, pattern) {
   names(x@misc)
 }
 
 ## * metaData ####
 
+#' @export
 .DollarNames.metaData <- function(x, pattern) {
   colnames(x@metaDT)
 }
@@ -163,6 +176,7 @@ setMethod(
   }
 )
 
+#' @export
 .DollarNames.terraVectData <- function(x, pattern) {
   names(x@spatVector)
 }

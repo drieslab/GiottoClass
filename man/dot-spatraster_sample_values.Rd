@@ -4,16 +4,27 @@
 \alias{.spatraster_sample_values}
 \title{Sample values from SpatRaster}
 \usage{
-.spatraster_sample_values(raster_object, size = 5000, verbose = TRUE)
+.spatraster_sample_values(
+  raster_object,
+  size = 5000,
+  return_array = FALSE,
+  verbose = NULL,
+  ...
+)
 }
 \arguments{
-\item{raster_object}{terra SpatRaster to sample from}
+\item{raster_object}{terra \code{SpatRaster} to sample from}
 
 \item{size}{rough maximum of pixels allowed when resampling}
 
+\item{return_array}{whether to convert to \code{array}}
+
 \item{verbose}{be verbose}
+
+\item{\dots}{additional params to pass to \code{terra::spatSample}}
 }
 \description{
-Sample values from SpatRaster
+Sample a \code{data.frame} of numerical values from a \code{SpatRaster}, If
+\code{return_array = TRUE} then a sampled \code{array} will be returned instead
 }
 \keyword{internal}
