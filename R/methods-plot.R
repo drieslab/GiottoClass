@@ -213,7 +213,12 @@ plot_giottoLargeImage = function(gobject = NULL,
   if(is.null(max_intensity)) {
     bitDepth = ceiling(log(x = giottoLargeImage@max_intensity, base = 2))
     # Assign discovered bitdepth as max_intensity
-    max_intensity = 2^bitDepth-1
+    max_intensity = 2^bitDepth - 1
+
+    # account for situations where values are scaled from 0 to 1
+    if(max_intensity == 0){
+      max_intensity = 1
+    }
   }
 
   # plot

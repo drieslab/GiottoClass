@@ -1315,7 +1315,7 @@ find_terra_writeRaster_dataType = function(giottoLargeImage = NULL,
 
       if(signed == FALSE) {
         bitDepth = ceiling(log(x = max_intensity, base = 2))
-      } else if(signed == TRUE) {
+      } else if(isTRUE(signed)) {
         intensityMinMax = c(min_intensity, max_intensity)
         intensityMinMax = abs(intensityMinMax)
         bitDepthMinMax = ceiling(log(x = intensityMinMax, base = 2))
@@ -1326,7 +1326,7 @@ find_terra_writeRaster_dataType = function(giottoLargeImage = NULL,
     }
 
   } else if(!is.null(quick_INTS_maxval)) {
-    if(verbose == TRUE) cat('Selecting compatible datatype for given maximum value \n')
+    if(isTRUE(verbose)) cat('Selecting compatible datatype for given maximum value \n')
     bitDepth = ceiling(log(x = quick_INTS_maxval, base = 2))
   }
 
