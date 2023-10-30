@@ -4,14 +4,12 @@
 \alias{giottoToSeuratV5}
 \title{Convert Giotto to Seurat V5}
 \usage{
-giottoToSeuratV5(gobject, spat_unit = NULL, obj_use = NULL, ...)
+giottoToSeuratV5(gobject, spat_unit = NULL, ...)
 }
 \arguments{
 \item{gobject}{Giotto object}
 
 \item{spat_unit}{spatial unit (e.g. 'cell')}
-
-\item{obj_use}{Giotto object (deprecated, use gobject)}
 
 \item{...}{additional params to pass to \code{\link{get_spatial_locations}}}
 }
