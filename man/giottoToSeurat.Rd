@@ -2,7 +2,7 @@
 % Please edit documentation in R/interoperability.R
 \name{giottoToSeurat}
 \alias{giottoToSeurat}
-\title{Convert Giotto to Seurat}
+\title{Deprecated}
 \usage{
 giottoToSeurat(gobject, spat_unit = NULL, obj_use = NULL, ...)
 }
@@ -19,7 +19,6 @@ giottoToSeurat(gobject, spat_unit = NULL, obj_use = NULL, ...)
 Seurat object
 }
 \description{
-Converts Giotto object into a Seurat object. This functions extracts
-specific sets of data belonging to specified spatial unit.
-The default values are 'cell' and 'rna' respectively.
+Deprecated. Please use either \link{giottoToSeuratV4} or
+\link{giottoToSeuratV5}
 }
