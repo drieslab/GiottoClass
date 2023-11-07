@@ -90,25 +90,85 @@ flip_gpoly = function(gpoly,
   }
 
   # 1. perform flip
-  e = terra::ext(gpoly@spatVector)
+  # This initial flip may move the polys and centroids different distances
+  # depending on extent min, so the following shift steps must be processed
+  # indpendently with the respective extents
+  e_p = terra::ext(gpoly@spatVector) # p = poly
+  if(!is.null(gpoly@spatVectorCentroids)) {
+    e_c = terra::ext(gpoly@spatVectorCentroids) # c = centroid
+  }
   gpoly = do_gpoly(x = gpoly,
                    what = terra::flip,
                    args = list(direction = direction))
 
   # 2. perform shift to match line of symmetry
-  if(grepl(direction, 'vertical') & !is.null(y0)) {
-    y_min = as.numeric(e$ymin)
-    dy = y0 - y_min
-    gpoly = do_gpoly(x = gpoly,
-                     what = terra::shift,
-                     args = list(dy = 2 * dy))
+  if(grepl(direction, 'vertical')) { # ------------------------------- #
+    y_min_p <- as.numeric(e_p$ymin)
+
+    if(is.null(y0)) {
+      # flip about p extent
+      # poly - no change
+      # centroid
+      if (!is.null(gpoly@spatVectorCentroids)) {
+        y_min_c <- as.numeric(e_c$ymin)
+        dy_c <- y_min_p - y_min_c
+        gpoly@spatVectorCentroids <- terra::shift(
+          gpoly@spatVectorCentroids,
+          dy = 2 * dy_c
+        )
+      }
+    } else {
+      # flip about y0
+      # poly
+      dy_p <- y0 - y_min_p
+      gpoly@spatVector <- terra::shift(
+        gpoly@spatVector,
+        dy = 2 * dy_p
+      )
+      # centroid
+      if(!is.null(gpoly@spatVectorCentroids)) {
+        y_min_c <- as.numeric(e_c$ymin)
+        dy_c <- y0 - y_min_c
+        gpoly@spatVectorCentroids <- terra::shift(
+          gpoly@spatVectorCentroids,
+          dy = 2 * dy_c
+        )
+      }
+    }
   }
-  if(grepl(direction, 'horizontal') & !is.null(x0)) {
-    x_min = as.numeric(e$xmin)
-    dx = x0 - x_min
-    gpoly = do_gpoly(x = gpoly,
-                     what = terra::shift,
-                     args = list(dx = 2 * dx))
+  if(grepl(direction, 'horizontal')) { # ------------------------------- #
+    x_min_p = as.numeric(e_p$xmin)
+
+    if(is.null(x0)) {
+      # flip about p extent
+      # poly - no change
+      # centroid
+      if (!is.null(gpoly@spatVectorCentroids)) {
+        x_min_c <- as.numeric(e_c$xmin)
+        dx_c <- x_min_p - x_min_c
+        gpoly@spatVectorCentroids <- terra::shift(
+          gpoly@spatVectorCentroids,
+          dx = 2 * dx_c
+        )
+      }
+    } else {
+      # flip about y0
+      # poly
+      dx_p <- x0 - x_min_p
+      gpoly@spatVector <- terra::shift(
+        gpoly@spatVector,
+        dx = 2 * dx_p
+      )
+      # centroid
+      if(!is.null(gpoly@spatVectorCentroids)) {
+        x_min_c <- as.numeric(e_c$xmin)
+        dx_c <- x0 - x_min_c
+        gpoly@spatVectorCentroids <- terra::shift(
+          gpoly@spatVectorCentroids,
+          dx = 2 * dx_c
+        )
+      }
+    }
   }
 
   # 3. return

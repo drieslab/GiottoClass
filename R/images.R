@@ -813,20 +813,22 @@ dist_giottoLargeImage = function(gobject = NULL,
 
   # get image object
   if(!is.null(gobject) & !is.null(image_name)) {
-    img_obj = get_giottoImage(gobject = gobject,
-                              image_type = 'largeImage',
-                              name = image_name)
+    img_obj = getGiottoImage(gobject = gobject,
+                             image_type = 'largeImage',
+                             name = image_name)
+    img_obj = img_obj@raster_object
   } else if(!is.null(giottoLargeImage)){
     img_obj = giottoLargeImage@raster_object
   } else {
     stop('No giottoLargeImage given \n')
   }
 
-  # plot curve
-  if(method == 'dens') terra::density(img_obj)
-  if(method == 'hist') terra::hist(img_obj)
-
-
+  # plot
+  switch(
+    method,
+    'dens' = terra::density(img_obj),
+    'hist' = terra::hist(img_obj)
+  )
 }
 
 
@@ -1313,7 +1315,7 @@ find_terra_writeRaster_dataType = function(giottoLargeImage = NULL,
 
       if(signed == FALSE) {
         bitDepth = ceiling(log(x = max_intensity, base = 2))
-      } else if(signed == TRUE) {
+      } else if(isTRUE(signed)) {
         intensityMinMax = c(min_intensity, max_intensity)
         intensityMinMax = abs(intensityMinMax)
         bitDepthMinMax = ceiling(log(x = intensityMinMax, base = 2))
@@ -1324,7 +1326,7 @@ find_terra_writeRaster_dataType = function(giottoLargeImage = NULL,
     }
 
   } else if(!is.null(quick_INTS_maxval)) {
-    if(verbose == TRUE) cat('Selecting compatible datatype for given maximum value \n')
+    if(isTRUE(verbose)) cat('Selecting compatible datatype for given maximum value \n')
     bitDepth = ceiling(log(x = quick_INTS_maxval, base = 2))
   }
 
