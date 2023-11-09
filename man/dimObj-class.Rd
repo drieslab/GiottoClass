@@ -3,6 +3,7 @@
 \docType{class}
 \name{dimObj-class}
 \alias{dimObj-class}
+\alias{dimObj}
 \title{S4 dimObj Class}
 \description{
 Framework to store dimension reduction information

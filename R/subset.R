@@ -1435,15 +1435,6 @@ subsetGiotto <- function(gobject,
 #' If no spatial locations are available, the polygon information will be subset.
 #' Spatial IDs surviving the crop are then applied to the rest of the Giotto object
 #' using [subsetGiotto].
-#'
-#' Since spatial subsetting results are unique for each spatial unit, it must
-#' be performed separately for each spat_unit that is desired to be spatially
-#' subset.
-#' Thus, we split the workflow into two functions:
-#' \itemize{
-#'   \item [subsetGiottoLocs] for subsetting a single spat_unit
-#'   \item [subsetGiottoLocsMulti] for iterating through every spat_unit requested
-#' }
 #' @inheritParams data_access_params
 #' @param spat_loc_name name of spatial locations to use within spat_unit
 #' @param spat_unit spatial unit to subset
@@ -1524,7 +1515,8 @@ subsetGiottoLocs = function(gobject,
 
 
 
-#' @rdname subsetGiottoLocs
+#' @name subsetGiottoLocsMulti
+#' @title deprecated
 #' @inheritParams subsetGiottoLocs
 #' @param poly_info named list of character vectors. names correspond to spat_unit
 #' and character vectors are the polygons associated with those spat units

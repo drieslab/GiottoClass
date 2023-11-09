@@ -6,10 +6,13 @@
 \alias{centroids,giottoPolygon-method}
 \title{centroids-generic}
 \usage{
-\S4method{centroids}{giottoPolygon}(x)
+\S4method{centroids}{giottoPolygon}(x, append_gpolygon = FALSE)
 }
 \arguments{
 \item{x}{object}
+
+\item{append_gpolygon}{whether to append the centroids results to the
+\code{giottoPolygon} instead of returning bare \code{SpatVector}. Defaults to FALSE}
 }
 \description{
 Access centroids information from polygon objects

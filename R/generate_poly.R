@@ -41,7 +41,7 @@ polyStamp <- function(stamp_dt,
   centroid_dt = data.table::as.data.table(terra::centroids(stamp_poly),
                               geom = "XY",
                               include_values = F)
-  
+
   stamp_centroid = c(x = centroid_dt$x,
                      y = centroid_dt$y)
 
@@ -279,3 +279,9 @@ makePseudoVisium <- function(extent = NULL,
                               skip_eval_dfr = TRUE,
                               copy_dt = FALSE)
 }
+
+
+
+
+
+

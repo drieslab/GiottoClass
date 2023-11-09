@@ -3,6 +3,7 @@
 \docType{class}
 \name{cellMetaObj-class}
 \alias{cellMetaObj-class}
+\alias{cellMetaObj}
 \title{S4 cellMetaObj}
 \description{
 Framework to store cell metadata

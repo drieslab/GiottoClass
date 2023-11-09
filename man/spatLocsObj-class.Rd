@@ -3,6 +3,7 @@
 \docType{class}
 \name{spatLocsObj-class}
 \alias{spatLocsObj-class}
+\alias{spatLocsObj}
 \title{S4 spatLocsObj Class}
 \description{
 Framework to store spatial location information
