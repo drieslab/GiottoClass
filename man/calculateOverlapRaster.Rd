@@ -22,11 +22,11 @@ calculateOverlapRaster(
 
 \item{name_overlap}{name for the overlap results (default to feat_info parameter)}
 
-\item{spatial_info}{polygon information}
+\item{spatial_info}{character. name polygon information}
 
 \item{poly_ID_names}{(optional) list of poly_IDs to use}
 
-\item{feat_info}{feature information}
+\item{feat_info}{character. name of feature information}
 
 \item{feat_subset_column}{feature info column to subset features with}
 
@@ -42,7 +42,8 @@ calculateOverlapRaster(
 giotto object or spatVector with overlapping information
 }
 \description{
-calculate overlap between cellular structures (polygons) and features (points)
+calculate overlap between cellular structures (polygons) and
+features (points)
 }
 \details{
 Serial overlapping function.
