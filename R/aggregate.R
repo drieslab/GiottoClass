@@ -53,7 +53,7 @@ polygon_to_raster = function(polygon, field = NULL) {
 #' @title calculateOverlapRaster
 #' @name calculateOverlapRaster
 #' @description calculate overlap between cellular structures (polygons) and
-#' features (points)
+#' features (points).
 #' @param gobject giotto object
 #' @param name_overlap name for the overlap results (default to feat_info parameter)
 #' @param spatial_info character. name polygon information
@@ -67,6 +67,7 @@ polygon_to_raster = function(polygon, field = NULL) {
 #' @return giotto object or spatVector with overlapping information
 #' @details Serial overlapping function.
 #' @concept overlap
+#' @seealso [calculate_overlap_raster()]
 #' @export
 calculateOverlapRaster = function(
     gobject,
@@ -129,6 +130,7 @@ calculateOverlapRaster = function(
   overlap_points = calculate_overlap_raster(
     spatvec = spatvec,
     pointvec = pointvec,
+    count_info_column = count_info_column,
     verbose = verbose
   )
 
@@ -147,13 +149,21 @@ calculateOverlapRaster = function(
 
 
 #' @name calculate_overlap_raster
-#' @title Find feature points overlapped by rasterized polygon
+#' @title Find feature points overlapped by rasterized polygon.
+#' @description Core workflow function that accepts simple `SpatVector` inputs,
+#' performs rasterization of the polys and then checks for overlaps.
 #' @param spatvec `SpatVector` polygon from a `giottoPolygon` object
 #' @param pointvec `SpatVector` points from a `giottoPoints` object
+#' @param count_info_column column with count information (optional)
 #' @param verbose be verbose
 #' @return `SpatVector` of overlapped points info
+#' @concept overlap
+#' @seealso [calculateOverlapRaster()]
 #' @export
-calculate_overlap_raster = function(spatvec, pointvec, verbose = TRUE) {
+calculate_overlap_raster = function(spatvec,
+                                    pointvec,
+                                    count_info_column = NULL,
+                                    verbose = TRUE) {
 
   # DT vars
   poly_ID = poly_i = ID = x = y = feat_ID = feat_ID_uniq = NULL

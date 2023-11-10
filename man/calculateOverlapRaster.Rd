@@ -43,9 +43,12 @@ giotto object or spatVector with overlapping information
 }
 \description{
 calculate overlap between cellular structures (polygons) and
-features (points)
+features (points).
 }
 \details{
 Serial overlapping function.
+}
+\seealso{
+\code{\link[=calculate_overlap_raster]{calculate_overlap_raster()}}
 }
 \concept{overlap}
