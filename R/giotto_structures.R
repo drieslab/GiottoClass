@@ -582,8 +582,10 @@ smoothGiottoPolygons = function(gpolygon,
 #' @param x data.frame object
 #' @param verbose be verbose
 #' @keywords internal
-create_spatvector_object_from_dfr = function(x,
-                                             verbose = TRUE) {
+create_spatvector_object_from_dfr = function(
+    x,
+    verbose = TRUE
+) {
 
   x = data.table::as.data.table(x)
 

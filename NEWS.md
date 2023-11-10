@@ -8,8 +8,9 @@
 - Added `crop()` method for `giottoLargeImage`, `giottoPoints`
 - Added `terraVectData` as virtual parent class for `giottoPolygon` and `giottoPoints` classes
 - Added `$` and `$<-` methods for `terraVectData`
-- Added `[` subsetting for `giottoPoints` and `giottoPolygon`
+- Added `[` subsetting for `giottoPoints` and `giottoPolygon` with numerical, logical, and character (by ID)
 - Added `setGiotto()` generic
+- Added `as.sf()` and `as.stars()` converters for `giottoPoints` and `giottoPolygon` 
 
 ## Changes
 - Improved performance of gefToGiotto()

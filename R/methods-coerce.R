@@ -17,11 +17,21 @@ NULL
 #' @title Coerce to sf
 #' @name as.sf
 #' @param x The object to coerce
+#' @param drop When TRUE, returned object will be the sf object instead of
+#' wrapped in a `giottoPoints` or `giottoPolygon` object
+#' @family As coercion functions
+NULL
+
+#' @title Coerce to stars
+#' @name as.stars
+#' @param x The object to coerce
+#' @param drop When TRUE, returned object will be the sf object instead of
+#' wrapped in a `giottoPoints` or `giottoPolygon` object
 #' @family As coercion functions
 NULL
 # ---------------------------------------------------------------- #
 
-# SpatVector -> DT ####
+# to DT ####
 #' @rdname as.data.table
 #' @method as.data.table SpatVector
 #' @export
@@ -55,7 +65,7 @@ as.data.table.giottoPoints <- function(x, ...) {
 }
 
 
-# DT -> SpatVector ####
+# to SpatVector ####
 # TODO
 # as.points / as.polygon generics from terra are an option, but terra deals with
 # this kind of conversion using vect() usually
@@ -72,7 +82,7 @@ as.data.table.giottoPoints <- function(x, ...) {
 
 
 
-# SpatVector -> sf ####
+# to sf ####
 #' @rdname as.sf
 #' @export
 setMethod('as.sf', signature('SpatVector'),
@@ -81,12 +91,70 @@ setMethod('as.sf', signature('SpatVector'),
 #' @rdname as.sf
 #' @export
 setMethod('as.sf', signature('giottoPolygon'),
-          function(x) spatvector_to_sf(x[]))
+          function(x, drop = TRUE) {
+
+            if (isTRUE(drop)) {
+              return(spatvector_to_sf(x[]))
+            } else {
+              x <- do_gpoly(x = x, what = spatvector_to_sf, args = list())
+              return(x)
+            }
+          })
 
 #' @rdname as.sf
 #' @export
 setMethod('as.sf', signature('giottoPoints'),
-          function(x) spatvector_to_sf(x[]))
+          function(x, drop = TRUE) {
+            s <- spatvector_to_sf(x[])
+
+            if (isTRUE(drop)) {
+              return(s)
+            } else {
+              x[] <- s
+              return(x)
+            }
+          })
+
+# to stars ####
+
+# st_as_stars does not handle SpatVector. Only SpatRaster
+# however, conversions from sf work fine
+#' @rdname as.stars
+#' @export
+setMethod('as.stars', signature('SpatVector'),
+          function(x) {
+            as.sf(x) %>%
+              stars::st_as_stars()
+          })
+
+#' @rdname as.stars
+#' @export
+setMethod('as.stars', signature('giottoPolygon'),
+          function(x, drop = TRUE) {
+            if (isTRUE(drop)) {
+              return(as.stars(x[]))
+            } else {
+              x <- as.sf(x, drop = FALSE)
+              x <- do_gpoly(x = x, what = stars::st_as_stars, args = list())
+              return(x)
+            }
+          })
+
+#' @rdname as.stars
+#' @export
+setMethod('as.stars', signature('giottoPoints'),
+          function(x, drop = TRUE) {
+            s <- as.stars(x[])
+
+            if (isTRUE(drop)) {
+              return(s)
+            } else {
+              x[] <- s
+              return(x)
+            }
+          })
+
+
 
 # internals ####
 

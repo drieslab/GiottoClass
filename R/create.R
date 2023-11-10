@@ -659,12 +659,6 @@ createGiottoObjectSubcellular = function(gpolygons = NULL,
       centroidsDT_loc = centroidsDT[, .(poly_ID, x, y)]
       colnames(centroidsDT_loc) = c('cell_ID', 'sdimx', 'sdimy')
 
-      # gobject = set_spatial_locations(gobject = gobject,
-      #                                 spat_unit = polygon_info,
-      #                                 spat_loc_name = 'raw',
-      #                                 spatlocs = centroidsDT_loc,
-      #                                 verbose = FALSE)
-
       locsObj = create_spat_locs_obj(name = 'raw',
                                      coordinates = centroidsDT_loc,
                                      spat_unit = polygon_info,
@@ -778,9 +772,7 @@ createGiottoObjectSubcellular = function(gpolygons = NULL,
         gobject@feat_metadata[[feat_type]] = data.table::as.data.table(gobject@feat_metadata[[feat_type]])
         gobject@feat_metadata[[feat_type]][, feat_ID := gobject@feat_ID[[feat_type]]]
       }
-
     }
-
   }
 
 
