@@ -2344,7 +2344,7 @@ distGiottoImage = function(gobject = NULL,
 #' @param alpha global alpha value to use. Numeric. Scales from 0 to 1, with 0
 #'   being fully transparent and 1 being fully visible
 #' @return image array with 4th channel for transparency
-#' @keywords internal
+#' @export
 add_img_array_alpha = function(x,
                                alpha) {
   img_dims = dim(x)

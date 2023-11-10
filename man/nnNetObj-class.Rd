@@ -3,6 +3,7 @@
 \docType{class}
 \name{nnNetObj-class}
 \alias{nnNetObj-class}
+\alias{nnNetObj}
 \title{S4 nnNetObj}
 \description{
 Framework to store nearest neighbor network information

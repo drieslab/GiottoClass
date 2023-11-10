@@ -21,4 +21,3 @@ Add alpha channel to image array
 \details{
 Add 4th alpha channel to 3 channel RGB image arrays
 }
-\keyword{internal}

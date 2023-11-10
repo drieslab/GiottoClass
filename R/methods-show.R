@@ -98,7 +98,7 @@ setMethod(
       cat('attached images ------------------\n')
       if('image' %in% avail_im$img_type) {
         if(sum(avail_im$img_type == 'image') > 3) {
-          cat(  'giottoLargeImage :', sum(avail_im$img_type == 'image'), 'items...\n')
+          cat(  'giottoImage      :', sum(avail_im$img_type == 'image'), 'items...\n')
         } else {
           cat('giottoImage      :', wrap_txt(avail_im[img_type == 'image', name]), '\n')
         }
