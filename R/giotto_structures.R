@@ -255,44 +255,6 @@ fix_multipart_geoms = function(spatVector) {
 
 
 
-# Parallelized giottoPolygon creation workflows #
-
-# Internal function to create a giottoPolygon object, smooth it, then wrap it so
-# that results are portable/possible to use with parallelization.
-# dotparams are passed to smoothGiottoPolygons
-#' @title Polygon creation and smoothing for parallel
-#' @name gpoly_from_dfr_smoothed_wrapped
-#' @keywords internal
-gpoly_from_dfr_smoothed_wrapped = function(segmdfr,
-                                           name = 'cell',
-                                           calc_centroids = FALSE,
-                                           smooth_polygons = FALSE,
-                                           vertices = 20L,
-                                           k = 3L,
-                                           set_neg_to_zero = TRUE,
-                                           skip_eval_dfr = FALSE,
-                                           copy_dt = TRUE,
-                                           verbose = TRUE) {
-
-  gpoly = createGiottoPolygonsFromDfr(segmdfr = segmdfr,
-                                      name = name,
-                                      calc_centroids = FALSE,
-                                      skip_eval_dfr = skip_eval_dfr,
-                                      copy_dt = copy_dt,
-                                      verbose = verbose)
-  if(isTRUE(smooth_polygons)) gpoly = smoothGiottoPolygons(gpolygon = gpoly,
-                                                           vertices = vertices,
-                                                           k = k,
-                                                           set_neg_to_zero = set_neg_to_zero)
-  if(isTRUE(calc_centroids)) gpoly = calculate_centroids_polygons(gpolygon = gpoly,
-                                                                  append_gpolygon = TRUE)
-
-  slot(gpoly, 'spatVector') = terra::wrap(slot(gpoly, 'spatVector'))
-  if(isTRUE(calc_centroids)) {
-    slot(gpoly, 'spatVectorCentroids') = terra::wrap(slot(gpoly, 'spatVectorCentroids'))
-  }
-  return(gpoly)
-}
 
 
 
@@ -620,8 +582,10 @@ smoothGiottoPolygons = function(gpolygon,
 #' @param x data.frame object
 #' @param verbose be verbose
 #' @keywords internal
-create_spatvector_object_from_dfr = function(x,
-                                             verbose = TRUE) {
+create_spatvector_object_from_dfr = function(
+    x,
+    verbose = TRUE
+) {
 
   x = data.table::as.data.table(x)
 

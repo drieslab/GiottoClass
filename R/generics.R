@@ -69,4 +69,5 @@ setGeneric('setGiotto', function(gobject, x, ...) standardGeneric('setGiotto'))
 
 # coerce ####
 setGeneric('as.sf', function(x, ...) standardGeneric('as.sf'))
+setGeneric('as.stars', function(x, ...) standardGeneric('as.stars'))
 

@@ -3,6 +3,7 @@
 \docType{class}
 \name{featMetaObj-class}
 \alias{featMetaObj-class}
+\alias{featMetaObj}
 \title{S4 featMetaObj}
 \description{
 Framework to store feature metadata

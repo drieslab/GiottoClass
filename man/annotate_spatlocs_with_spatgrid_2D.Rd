@@ -17,4 +17,3 @@ annotated spatial location data.table
 \description{
 annotate spatial locations with 2D spatial grid information
 }
-\keyword{internal}
