@@ -73,7 +73,7 @@ gp_list
 
 # subsetting
 gpoints[c(1,3)] # numerical
-gpoints[c(T,F,F)] # logical
+gpoints[c(TRUE, FALSE, FALSE)] # logical
 gpoints[c('a', 'f')] # character subsetting is keyed on feat_ID attribute
 gpoints[] # drop to SpatVector
 }
