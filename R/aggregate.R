@@ -20,6 +20,9 @@
 
 #' @title Convert polygon to raster
 #' @name polygon_to_raster
+#' @param polygon SpatVector polygon to rasterize
+#' @param field character. Name of attribute of polygon that should be used
+#' when rasterizing to assign values. Passing NULL uses the first attribute.
 #' @description  convert polygon to raster
 #' @export
 polygon_to_raster = function(polygon, field = NULL) {

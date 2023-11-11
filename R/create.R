@@ -1,6 +1,7 @@
 #' @include classes.R
 #' @include slot_accessors.R
 #' @include package_imports.R
+#' @include generics.R
 NULL
 
 
@@ -1684,87 +1685,138 @@ create_featureNetwork_object = function(name = 'feat_network',
 }
 
 
+# * createGiottoPoints ####
 # create Giotto points from data.frame or spatVector
 
 #' @title Create giotto points object
 #' @name createGiottoPoints
-#' @description Creates Giotto point object from a structured dataframe-like object
+#' @description Create a `giottoPoints` object that is used to represent
+#' subcellular point-type features. The main values are contained within the
+#' `spatVector` slot, which should contain spatial point data and also an
+#' associated set of attributes for at least `feat_ID` (name of the feature being
+#' described) and `feat_ID_uniq` (a unique integer identifier for each specific
+#' point).
 #' @param x spatVector or data.frame-like object with points coordinate information (x, y, feat_ID)
 #' @param feat_type character. feature type. Provide more than one value if
 #' using the `split_keyword` param. For each set of keywords to split by, an
 #' additional feat_type should be provided in the same order.
 #' @param verbose be verbose
 #' @param split_keyword list of character vectors of keywords to split the
-#' giottoPoints object based on their feat_ID.
+#' giottoPoints object based on their feat_ID. Keywords will be `grepl()`
+#' matched against the feature IDs information.
 #' @param unique_IDs (optional) character vector of unique IDs present within
 #' the spatVector data. Provided for cacheing purposes
+#' @examples
+#' # data.frame input
+#' x = data.frame(
+#'   ID = letters[1:6],
+#'   x = 1:6,
+#'   y = 6:1
+#' )
+#' gpoints = createGiottoPoints(x)
+#' plot(gpoints,
+#'   raster = FALSE, # don't plot with rasterization or it will be hard to see
+#'   cex = 0.5
+#' )
+#'
+#' # with a split_keyword
+#' # Use this when values to read in contain multiple sets of information that
+#' # should be put into separate objects.
+#' gp_list = createGiottoPoints(x,
+#'   feat_type = c('feat_a', 'feat_b'),
+#'   split_keyword = list(c('b', 'c'))
+#' )
+#' gp_list
+#'
+#' # subsetting
+#' gpoints[c(1,3)] # numerical
+#' gpoints[c(TRUE, FALSE, FALSE)] # logical
+#' gpoints[c('a', 'f')] # character subsetting is keyed on feat_ID attribute
+#' gpoints[] # drop to SpatVector
 #' @return giottoPoints
-#' @concept polygon
+#' @concept points
+NULL
+
+#' @rdname createGiottoPoints
 #' @export
-createGiottoPoints = function(x,
-                              feat_type = 'rna',
-                              verbose = TRUE,
-                              split_keyword = NULL,
-                              unique_IDs = NULL) {
-  checkmate::assert_character(feat_type)
-  if (!is.null(split_keyword)) checkmate::assert_list(split_keyword)
+setMethod(
+  'createGiottoPoints', signature('SpatVector'),
+  function(x,
+           feat_type = 'rna',
+           verbose = TRUE,
+           split_keyword = NULL,
+           unique_IDs = NULL)
+  {
+    checkmate::assert_character(feat_type)
+    if (!is.null(split_keyword)) checkmate::assert_list(split_keyword)
 
-  # 1. read in data
-  if (inherits(x, 'data.frame')) {
-
-    spatvec = create_spatvector_object_from_dfr(
-      x = x,
-      verbose = verbose
-    )
-    gpoints = create_giotto_points_object(
-      feat_type = feat_type[[1]],
-      spatVector = spatvec,
-      unique_IDs = unique_IDs
-    )
-
-  } else if (inherits(x, 'SpatVector')) {
-
+    # 1. format SpatVector and create inital giottoPoints object
     gpoints = create_giotto_points_object(
       feat_type = feat_type[[1]],
       spatVector = x,
       unique_IDs = unique_IDs
     )
 
-  } else {
+    # 2. perform split if needed
+    if (is.null(split_keyword)) return(gpoints)
 
-    stop('Class ', class(x), ' is not supported')
+    # create booleans using grepl and the given keywords
+    gpoints_feat_ids = featIDs(gpoints, uniques = FALSE)
+    split_bools = lapply(split_keyword, function(keyword) {
+      grepl(paste(keyword, collapse = '|'), gpoints_feat_ids)
+    })
+    # default_bool is the main set of points that do not get selected by any
+    # keywords. Usually the actual features being detected are here. These
+    # will get mapped to the first feat_type.
+    # default_bool must be made as a list for it to combine properly using c()
+    # with split_bools which are already a list of logical vectors
+    default_bool = list(!Reduce('|', split_bools))
+    split_bools = c(default_bool, split_bools)
+    names(split_bools) = feat_type
 
+    # split the created gpoints object into several using the booleans.
+    gpoints_list = lapply(split_bools, function(feat) {
+      gpoints[feat]
+    })
+
+    # set object name to match the feat_type.
+    for(name_i in seq_along(feat_type)) {
+      objName(gpoints_list[[name_i]]) = feat_type[[name_i]]
+    }
+
+    return(gpoints_list)
   }
+)
 
-  # 2. perform split if needed
-  if (is.null(split_keyword)) return(gpoints)
+#' @rdname createGiottoPoints
+#' @export
+setMethod(
+  'createGiottoPoints', signature('data.frame'),
+  function(x,
+           feat_type = 'rna',
+           verbose = TRUE,
+           split_keyword = NULL,
+           unique_IDs = NULL)
+  {
+    checkmate::assert_character(feat_type)
+    if (!is.null(split_keyword)) checkmate::assert_list(split_keyword)
 
-  # create booleans using grepl and the given keywords
-  gpoints_feat_ids = featIDs(gpoints, uniques = FALSE)
-  split_bools = lapply(split_keyword, function(keyword) {
-    grepl(paste(keyword, sep = '|'), gpoints_feat_ids)
-  })
-  # default_bool is the main set of points that do not get selected by any
-  # keywords. Usually the actual features being detected are here. These
-  # will get mapped to the first feat_type.
-  # default_bool must be made as a list for it to combine properly using c()
-  # with split_bools which are already a list of logical vectors
-  default_bool = list(!Reduce('|', split_bools))
-  split_bools = c(default_bool, split_bools)
-  names(split_bools) = feat_type
+    # format and convert to SpatVector
+    spatvec = create_spatvector_object_from_dfr(
+      x = x,
+      verbose = verbose
+    )
 
-  # split the created gpoints object into several using the booleans.
-  gpoints_list = lapply(split_bools, function(feat) {
-    gpoints[feat]
-  })
-
-  # set object name to match the feat_type.
-  for(name_i in seq_along(feat_type)) {
-    objName(gpoints_list[[name_i]]) = feat_type[[name_i]]
+    # pass to SpatVector method
+    createGiottoPoints(
+      x = spatvec,
+      feat_type = feat_type,
+      verbose = verbose,
+      split_keyword = split_keyword,
+      unique_IDs = unique_IDs
+    )
   }
-
-  return(gpoints_list)
-}
+)
 
 
 

@@ -27,6 +27,10 @@ setGeneric('spatShift', function(x, ...) standardGeneric('spatShift'))
 setGeneric('overlaps', function(x, ...) standardGeneric('overlaps'))
 
 
+# Object creation ####
+setGeneric('createGiottoPoints', function(x, ...) standardGeneric('createGiottoPoints'))
+
+
 # Object Characteristics ####
 
 ## nrow() S4 generic ####
