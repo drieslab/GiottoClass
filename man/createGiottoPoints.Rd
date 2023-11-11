@@ -2,9 +2,19 @@
 % Please edit documentation in R/create.R
 \name{createGiottoPoints}
 \alias{createGiottoPoints}
+\alias{createGiottoPoints,SpatVector-method}
+\alias{createGiottoPoints,data.frame-method}
 \title{Create giotto points object}
 \usage{
-createGiottoPoints(
+\S4method{createGiottoPoints}{SpatVector}(
+  x,
+  feat_type = "rna",
+  verbose = TRUE,
+  split_keyword = NULL,
+  unique_IDs = NULL
+)
+
+\S4method{createGiottoPoints}{data.frame}(
   x,
   feat_type = "rna",
   verbose = TRUE,
@@ -22,7 +32,8 @@ additional feat_type should be provided in the same order.}
 \item{verbose}{be verbose}
 
 \item{split_keyword}{list of character vectors of keywords to split the
-giottoPoints object based on their feat_ID.}
+giottoPoints object based on their feat_ID. Keywords will be \code{grepl()}
+matched against the feature IDs information.}
 
 \item{unique_IDs}{(optional) character vector of unique IDs present within
 the spatVector data. Provided for cacheing purposes}
@@ -31,6 +42,39 @@ the spatVector data. Provided for cacheing purposes}
 giottoPoints
 }
 \description{
-Creates Giotto point object from a structured dataframe-like object
+Create a \code{giottoPoints} object that is used to represent
+subcellular point-type features. The main values are contained within the
+\code{spatVector} slot, which should contain spatial point data and also an
+associated set of attributes for at least \code{feat_ID} (name of the feature being
+described) and \code{feat_ID_uniq} (a unique integer identifier for each specific
+point).
 }
-\concept{polygon}
+\examples{
+# data.frame input
+x = data.frame(
+  ID = letters[1:6],
+  x = 1:6,
+  y = 6:1
+)
+gpoints = createGiottoPoints(x)
+plot(gpoints,
+  raster = FALSE, # don't plot with rasterization or it will be hard to see
+  cex = 0.5
+)
+
+# with a split_keyword
+# Use this when values to read in contain multiple sets of information that
+# should be put into separate objects.
+gp_list = createGiottoPoints(x,
+  feat_type = c('feat_a', 'feat_b'),
+  split_keyword = list(c('b', 'c'))
+)
+gp_list
+
+# subsetting
+gpoints[c(1,3)] # numerical
+gpoints[c(T,F,F)] # logical
+gpoints[c('a', 'f')] # character subsetting is keyed on feat_ID attribute
+gpoints[] # drop to SpatVector
+}
+\concept{points}

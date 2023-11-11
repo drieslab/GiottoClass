@@ -140,7 +140,6 @@ colMeans_flex = function(mymatrix) {
 #' @title t_flex
 #' @name t_flex
 #' @param mymatrix matrix to use
-#' @include generics.R
 #' @keywords internal
 #' @export
 t_flex = function(mymatrix) {
