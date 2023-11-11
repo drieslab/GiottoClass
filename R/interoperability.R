@@ -1668,7 +1668,7 @@ seuratToGiottoV5 = function(sobject,
     }
     if("layers" %in% slotNames(sobject@assays[[spatial_assay]])){
       if(!is.null(slot(sobject, 'assays')[[spatial_assay]]@layers)){
-        normexp = LayerData(object = sobject, assay = spatial_assay) # TODO unknown fn ref
+        normexp = SeuratObject::LayerData(object = sobject, assay = spatial_assay)
       }
     }
 
