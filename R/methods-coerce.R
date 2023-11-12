@@ -14,6 +14,14 @@
 #' @family As coercion functions
 NULL
 
+#' @title Coerce to sp
+#' @name as.sp
+#' @param x The object to coerce
+#' @param drop When TRUE, returned object will be the sp object instead of
+#' wrapped in a `giottoPoints` or `giottoPolygon` object
+#' @family As coercion functions
+NULL
+
 #' @title Coerce to sf
 #' @name as.sf
 #' @param x The object to coerce
@@ -25,10 +33,19 @@ NULL
 #' @title Coerce to stars
 #' @name as.stars
 #' @param x The object to coerce
-#' @param drop When TRUE, returned object will be the sf object instead of
+#' @param drop When TRUE, returned object will be the stars object instead of
 #' wrapped in a `giottoPoints` or `giottoPolygon` object
 #' @family As coercion functions
 NULL
+
+#' @title Coerce to terra
+#' @name as.terra
+#' @param x The object ot coerce
+#' @param drop When TRUE, returned object will be the terra object instead of
+#' wrapped in a `giottoPoints` or `giottoPolygon` object
+#' @family As coercion functions
+NULL
+
 # ---------------------------------------------------------------- #
 
 # to DT ####
@@ -80,13 +97,90 @@ as.data.table.giottoPoints <- function(x, ...) {
 
 
 
+# Spatial Ecosystem Converters ####
+
+# * to sp ####
+
+#' @rdname as.sp
+#' @export
+setMethod('as.sp', signature('sf'), function(x) {
+  GiottoUtils::package_check('sp')
+  as(x, "Spatial")
+})
+
+#' @rdname as.sp
+#' @export
+setMethod('as.sp', signature('SpatVector'), function(x) {
+  GiottoUtils::package_check('sp')
+  as(x, "Spatial")
+})
+
+#' @rdname as.sp
+#' @export
+setMethod('as.sp', signature('stars'), function(x) {
+  GiottoUtils::package_check('sp')
+  as(x, "Spatial")
+})
+
+#' @rdname as.sp
+#' @export
+setMethod('as.sp', signature('sp'), function(x) {
+  GiottoUtils::package_check('sp')
+  x
+})
+
+#' @rdname as.sp
+#' @export
+setMethod('as.sp', signature('giottoPolygon'), function(x, drop = TRUE) {
+  if (isTRUE(drop)) {
+    return(as.sp(x[]))
+  } else {
+    x <- do_gpoly(x = x, what = as.sp, args = list())
+    return(x)
+  }
+})
+
+#' @rdname as.sp
+#' @export
+setMethod('as.sp', signature('giottoPoints'), function(x, drop = TRUE) {
+  s <- as.sp(x[])
+
+  if (isTRUE(drop)) {
+    return(s)
+  } else {
+    x[] <- s
+    return(x)
+  }
+})
 
 
-# to sf ####
+# * to sf ####
 #' @rdname as.sf
 #' @export
-setMethod('as.sf', signature('SpatVector'),
-          function(x) spatvector_to_sf(x))
+setMethod('as.sf', signature('SpatVector'), function(x) {
+  spatvector_to_sf(x)
+})
+
+#' @rdname as.sf
+#' @export
+setMethod('as.sf', signature('sp'), function(x) {
+  GiottoUtils::package_check('sf')
+  sf::st_as_sf()
+})
+
+#' @rdname as.sf
+#' @export
+setMethod('as.sf', signature('stars'), function(x) {
+  GiottoUtils::package_check('sf')
+  sf::st_as_sf(x)
+})
+
+#' @rdname as.sf
+#' @export
+setMethod('as.sf', signature('sf'), function(x) {
+  GiottoUtils::package_check('sf')
+  x
+})
 
 #' @rdname as.sf
 #' @export
@@ -94,9 +188,9 @@ setMethod('as.sf', signature('giottoPolygon'),
           function(x, drop = TRUE) {
 
             if (isTRUE(drop)) {
-              return(spatvector_to_sf(x[]))
+              return(as.sf(x[]))
             } else {
-              x <- do_gpoly(x = x, what = spatvector_to_sf, args = list())
+              x <- do_gpoly(x = x, what = as.sf, args = list())
               return(x)
             }
           })
@@ -105,7 +199,7 @@ setMethod('as.sf', signature('giottoPolygon'),
 #' @export
 setMethod('as.sf', signature('giottoPoints'),
           function(x, drop = TRUE) {
-            s <- spatvector_to_sf(x[])
+            s <- as.sf(x[])
 
             if (isTRUE(drop)) {
               return(s)
@@ -115,7 +209,7 @@ setMethod('as.sf', signature('giottoPoints'),
             }
           })
 
-# to stars ####
+# * to stars ####
 
 # st_as_stars does not handle SpatVector. Only SpatRaster
 # however, conversions from sf work fine
@@ -123,8 +217,33 @@ setMethod('as.sf', signature('giottoPoints'),
 #' @export
 setMethod('as.stars', signature('SpatVector'),
           function(x) {
+            GiottoUtils::package_check('stars')
             as.sf(x) %>%
               stars::st_as_stars()
+          })
+
+#' @rdname as.stars
+#' @export
+setMethod('as.stars', signature('sf'),
+          function(x) {
+            GiottoUtils::package_check('stars')
+            stars::st_as_stars(x)
+          })
+
+#' @rdname as.stars
+#' @export
+setMethod('as.stars', signature('sp'),
+          function(x) {
+            GiottoUtils::package_check('stars')
+            stars::st_as_stars(x)
+          })
+
+#' @rdname as.stars
+#' @export
+setMethod('as.stars', signature('stars'),
+          function(x) {
+            GiottoUtils::package_check('stars')
+            x
           })
 
 #' @rdname as.stars
@@ -134,8 +253,7 @@ setMethod('as.stars', signature('giottoPolygon'),
             if (isTRUE(drop)) {
               return(as.stars(x[]))
             } else {
-              x <- as.sf(x, drop = FALSE)
-              x <- do_gpoly(x = x, what = stars::st_as_stars, args = list())
+              x <- do_gpoly(x = x, what = as.stars, args = list())
               return(x)
             }
           })
@@ -154,6 +272,77 @@ setMethod('as.stars', signature('giottoPoints'),
             }
           })
 
+# * to terra ####
+
+#' @rdname as.terra
+#' @export
+setMethod('as.terra', signature('SpatVector'),
+          function(x) {
+            x
+          })
+
+#' @rdname as.terra
+#' @export
+setMethod('as.terra', signature('sf'),
+          function(x) {
+            terra::vect(x)
+          })
+
+#' @rdname as.terra
+#' @param type whether data is 'vector' or 'raster'
+#' @export
+setMethod('as.terra', signature('stars'),
+          function(x, type = c('vector', 'raster')) {
+            GiottoUtils::package_check('sf')
+            type = match.arg(type, choices = c('vector', 'raster'))
+
+            x <- switch(
+              type,
+              'vector' = {
+                x %>%
+                  sf::st_as_sf() %>%
+                  terra::vect()
+              },
+              'raster' = {
+                x %>%
+                  terra::rast()
+              }
+            )
+
+            return(x)
+          })
+
+#' @rdname as.terra
+#' @export
+setMethod('as.terra', signature('sp'), function(x) {
+  terra::vect(x)
+})
+
+#' @rdname as.terra
+#' @export
+setMethod('as.terra', signature('giottoPolygon'),
+          function(x, drop = TRUE, ...) {
+            if (isTRUE(drop)) {
+              return(as.terra(x[], ...))
+            } else {
+              x <- do_gpoly(x = x, what = as.terra, args = list(...))
+              return(x)
+            }
+          })
+
+#' @rdname as.terra
+#' @export
+setMethod('as.terra', signature('giottoPoints'),
+          function(x, drop = TRUE) {
+            s <- as.terra(x[])
+
+            if (isTRUE(drop)) {
+              return(s)
+            } else {
+              x[] <- s
+              return(x)
+            }
+          })
 
 
 # internals ####

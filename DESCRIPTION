@@ -60,6 +60,7 @@ Suggests:
     sf,
     SingleCellExperiment,
     SpatialExperiment,
+    stars,
     SummarizedExperiment,
     testthat (>= 3.0.0),
     qs

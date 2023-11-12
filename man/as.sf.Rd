@@ -3,11 +3,20 @@
 \name{as.sf}
 \alias{as.sf}
 \alias{as.sf,SpatVector-method}
+\alias{as.sf,sp-method}
+\alias{as.sf,stars-method}
+\alias{as.sf,sf-method}
 \alias{as.sf,giottoPolygon-method}
 \alias{as.sf,giottoPoints-method}
 \title{Coerce to sf}
 \usage{
 \S4method{as.sf}{SpatVector}(x)
+
+\S4method{as.sf}{sp}(x)
+
+\S4method{as.sf}{stars}(x)
+
+\S4method{as.sf}{sf}(x)
 
 \S4method{as.sf}{giottoPolygon}(x, drop = TRUE)
 
@@ -25,6 +34,8 @@ Coerce to sf
 \seealso{
 Other As coercion functions: 
 \code{\link{as.data.table}()},
-\code{\link{as.stars}()}
+\code{\link{as.sp}()},
+\code{\link{as.stars}()},
+\code{\link{as.terra}()}
 }
 \concept{As coercion functions}

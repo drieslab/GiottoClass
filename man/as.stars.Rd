@@ -3,11 +3,20 @@
 \name{as.stars}
 \alias{as.stars}
 \alias{as.stars,SpatVector-method}
+\alias{as.stars,sf-method}
+\alias{as.stars,sp-method}
+\alias{as.stars,stars-method}
 \alias{as.stars,giottoPolygon-method}
 \alias{as.stars,giottoPoints-method}
 \title{Coerce to stars}
 \usage{
 \S4method{as.stars}{SpatVector}(x)
+
+\S4method{as.stars}{sf}(x)
+
+\S4method{as.stars}{sp}(x)
+
+\S4method{as.stars}{stars}(x)
 
 \S4method{as.stars}{giottoPolygon}(x, drop = TRUE)
 
@@ -16,7 +25,7 @@
 \arguments{
 \item{x}{The object to coerce}
 
-\item{drop}{When TRUE, returned object will be the sf object instead of
+\item{drop}{When TRUE, returned object will be the stars object instead of
 wrapped in a \code{giottoPoints} or \code{giottoPolygon} object}
 }
 \description{
@@ -25,6 +34,8 @@ Coerce to stars
 \seealso{
 Other As coercion functions: 
 \code{\link{as.data.table}()},
-\code{\link{as.sf}()}
+\code{\link{as.sf}()},
+\code{\link{as.sp}()},
+\code{\link{as.terra}()}
 }
 \concept{As coercion functions}
