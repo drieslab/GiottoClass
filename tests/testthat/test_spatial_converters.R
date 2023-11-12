@@ -1,6 +1,8 @@
 
 # raster is needed for sp converter
-if (!GiottoUtils::package_check('raster')) {
+if (inherits(try(GiottoUtils::package_check('raster'),
+                 silent = TRUE),
+             'try_error')) {
   install.packages('raster')
 }
 
