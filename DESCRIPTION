@@ -57,6 +57,7 @@ Suggests:
     S4Vectors,
     scattermore,
     Seurat,
+    SeuratObject,
     sf,
     SingleCellExperiment,
     SpatialExperiment,

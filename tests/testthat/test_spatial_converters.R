@@ -1,4 +1,9 @@
 
+# raster is needed for sp converter
+if (!GiottoUtils::package_check('raster')) {
+  install.packages('raster')
+}
+
 # create dummy data
 points_dt <- data.table::data.table(
   feat_ID = letters[1:10],
