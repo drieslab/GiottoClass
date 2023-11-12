@@ -40,7 +40,7 @@ NULL
 
 #' @title Coerce to terra
 #' @name as.terra
-#' @param x The object ot coerce
+#' @param x The object to coerce
 #' @param drop When TRUE, returned object will be the terra object instead of
 #' wrapped in a `giottoPoints` or `giottoPolygon` object
 #' @family As coercion functions
@@ -100,6 +100,7 @@ as.data.table.giottoPoints <- function(x, ...) {
 # Spatial Ecosystem Converters ####
 
 # * to sp ####
+# Spatial class covers both SpatialPolygonsDataFrame and SpatialPointsDataFrame
 
 #' @rdname as.sp
 #' @export
@@ -112,6 +113,7 @@ setMethod('as.sp', signature('sf'), function(x) {
 #' @export
 setMethod('as.sp', signature('SpatVector'), function(x) {
   GiottoUtils::package_check('sp')
+  GiottoUtils::package_check('raster') # needed for this conversion
   as(x, "Spatial")
 })
 
@@ -124,7 +126,7 @@ setMethod('as.sp', signature('stars'), function(x) {
 
 #' @rdname as.sp
 #' @export
-setMethod('as.sp', signature('sp'), function(x) {
+setMethod('as.sp', signature('Spatial'), function(x) {
   GiottoUtils::package_check('sp')
   x
 })
@@ -163,9 +165,9 @@ setMethod('as.sf', signature('SpatVector'), function(x) {
 
 #' @rdname as.sf
 #' @export
-setMethod('as.sf', signature('sp'), function(x) {
+setMethod('as.sf', signature('Spatial'), function(x) {
   GiottoUtils::package_check('sf')
-  sf::st_as_sf()
+  sf::st_as_sf(x)
 })
 
 #' @rdname as.sf
@@ -232,7 +234,7 @@ setMethod('as.stars', signature('sf'),
 
 #' @rdname as.stars
 #' @export
-setMethod('as.stars', signature('sp'),
+setMethod('as.stars', signature('Spatial'),
           function(x) {
             GiottoUtils::package_check('stars')
             stars::st_as_stars(x)
@@ -314,7 +316,7 @@ setMethod('as.terra', signature('stars'),
 
 #' @rdname as.terra
 #' @export
-setMethod('as.terra', signature('sp'), function(x) {
+setMethod('as.terra', signature('Spatial'), function(x) {
   terra::vect(x)
 })
 
