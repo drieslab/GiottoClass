@@ -17,7 +17,10 @@ do_gpoly = function(x, what, args = NULL) {
   }
   if(!is.null(x@overlaps)) {
     x@overlaps = lapply(x@overlaps, function(sv) {
-      if(inherits(sv, 'SpatVector')) {
+      spatial_classes = c(
+        'SpatVector', 'sf', 'SpatialPolygonsDataFrame', 'SpatialPointsDataFrame', 'stars'
+        )
+      if(inherits(sv, spatial_classes)) {
         do.call(what, args = append(list(sv), args))
       } else {
         sv
