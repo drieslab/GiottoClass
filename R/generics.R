@@ -29,6 +29,7 @@ setGeneric('overlaps', function(x, ...) standardGeneric('overlaps'))
 
 # Object creation ####
 setGeneric('createGiottoPoints', function(x, ...) standardGeneric('createGiottoPoints'))
+setGeneric('createGiottoPolygon', function(x, ...) standardGeneric('createGiottoPolygon'))
 
 
 # Object Characteristics ####
