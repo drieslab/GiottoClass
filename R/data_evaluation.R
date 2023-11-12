@@ -786,7 +786,7 @@ evaluate_spatial_info = function(spatial_info,
                                  cores = determine_cores(),
                                  verbose = TRUE) {
 
-  # data.table vars
+  # NSE vars
   geom = poly_ID = NULL
 
   ## 1. load or read spatial information data ##
@@ -853,38 +853,6 @@ evaluate_spatial_info = function(spatial_info,
                      unique_IDs = unique_IDs)
 
   return(return_list)
-
-
-  # ## 2. check and name columns ##
-  # nr_cols = ncol(spatial_info)
-  #
-  # if(nr_cols < 4) stop('Spatial information needs to have at least 4 columns: \n',
-  #                      'x, y, (z) information columns \n',
-  #                      'cell ID and polygon point column \n')
-  #
-  # column_classes = lapply(spatial_info, FUN = class)
-  #
-  # # 3D or 2D data
-  # if(all(column_classes[1:3] == 'numeric')) {
-  #   colnames(spatial_info)[1:5] = c('sdimx', 'sdimy', 'sdimz', 'cell_ID', 'point')
-  # } else if(all(column_classes[1:2] == 'numeric')){
-  #   colnames(spatial_info)[1:4] = c('sdimx', 'sdimy', 'cell_ID', 'point')
-  # } else {
-  #   stop('First 3 or 2 columns need to be numeric for 3D and 2D data respectively')
-  # }
-
-
-
-  # ## 3. check cell ID ##
-  # spatial_locs_cell_IDs = spatial_locs[['cell_ID']]
-  #
-  # spatial_info_cell_IDs = spatial_info[['cell_ID']]
-  #
-  # if(all(spatial_info_cell_IDs %in% spatial_locs_cell_IDs)) {
-  #   return(spatial_info)
-  # } else {
-  #   stop('cell IDs in spatial information are missing in the spatial locations slot')
-  # }
 
 }
 
