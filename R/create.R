@@ -1870,11 +1870,158 @@ create_giotto_points_object = function(feat_type = 'rna',
 
 
 
-## segmMaskToPolygon
+# * createGiottoPolygon ####
+
+#' @name createGiottoPolygon
+#' @title Create giotto polygons object
+#' @description Create a `giottoPolygon` object that is used to represent
+#' spatial annotations and polygons. Inputs can be from a structured data.frame
+#' object where three of the columns should correspond to x/y vertices and the
+#' polygon ID and additional columns are set as attributes, a spatial file
+#' such as wkt, .shp, or .GeoJSON, or a mask file (e.g. segmentation results)
+#' @param x input. Filepath to a .GeoJSON or a mask image file. Can also be a
+#' data.frame with vertex 'x', 'y', and 'poly_ID' information.
+#' @param name name for polygons
+#' @param calc_centroids calculate centroids for polygons
+#' @param verbose be verbose
+NULL
+
+#' @rdname createGiottoPolygon
+#' @export
+setMethod(
+  'createGiottoPolygon', signature('SpatVector'),
+  function(x, name = 'cell', calc_centroids = FALSE, verbose = TRUE)
+  {
+    res_list <- evaluate_gpoly_spatvector(input_sv = x, verbose = verbose)
+    spatvector = res_list$spatvector
+    unique_IDs = res_list$unique_IDs
+
+    # create giottoPolygon object
+    g_polygon = create_giotto_polygon_object(
+      name = name,
+      spatVector = spatvector,
+      spatVectorCentroids = NULL,
+      unique_IDs = NULL
+    )
+
+    # add centroids
+    if(isTRUE(calc_centroids)) {
+      g_polygon = calculate_centroids_polygons(
+        gpolygon = g_polygon,
+        name = 'centroids',
+        append_gpolygon = TRUE
+      )
+    }
+
+    return(g_polygon)
+  }
+)
+
+#' @rdname createGiottoPolygon
+#' @param mask_method how the mask file defines individual segmentation annotations
+#' @param remove_background_polygon try to remove background polygon (default: FALSE)
+#' @param background_algo algorithm to remove background polygon
+#' @param fill_holes fill holes within created polygons
+#' @param poly_IDs unique names for each polygon in the mask file
+#' @param flip_vertical flip mask figure in a vertical manner
+#' @param shift_vertical_step shift vertical (boolean or numerical)
+#' @param flip_horizontal flip mask figure in a horizontal manner
+#' @param shift_horizontal_step shift horizontal (boolean or numerical)
+#' @param fix_multipart try to split polygons with multiple parts (default: TRUE)
+#' @param remove_unvalid_polygons remove unvalid polygons (default: TRUE)
+#' @export
+setMethod(
+  'createGiottoPolygon', signature('SpatRaster'),
+  function(x,
+           name = 'cell',
+           mask_method = c('guess', 'single', 'multiple'),
+           remove_background_polygon = FALSE,
+           background_algo = c('range'),
+           fill_holes = TRUE,
+           poly_IDs = NULL,
+           flip_vertical = TRUE,
+           shift_vertical_step = TRUE,
+           flip_horizontal = TRUE,
+           shift_horizontal_step = TRUE,
+           fix_multipart = TRUE,
+           remove_unvalid_polygons = TRUE,
+           calc_centroids = FALSE,
+           verbose = TRUE)
+  {
+    # verbose not used
+
+    createGiottoPolygonsFromMask(
+      maskfile = x,
+      name = name,
+      mask_method = mask_method,
+      remove_background_polygon = remove_background_polygon,
+      background_algo = background_algo,
+      fill_holes = fill_holes,
+      poly_IDs = poly_IDs,
+      flip_vertical = flip_vertical,
+      shift_vertical_step = shift_vertical_step,
+      flip_horizontal = flip_horizontal,
+      shift_horizontal_step = shift_horizontal_step,
+      fix_multipart = fix_multipart,
+      remove_unvalid_polygons = remove_unvalid_polygons,
+      calc_centroids = calc_centroids
+    )
+  }
+)
+
+#' @rdname createGiottoPolygon
+#' @export
+setMethod(
+  'createGiottoPolygon', signature('data.frame'),
+  function(x,
+           name = 'cell',
+           calc_centroids = FALSE,
+           skip_eval_dfr = FALSE,
+           copy_dt = TRUE,
+           verbose = TRUE)
+  {
+    createGiottoPolygonsFromDfr(
+      segmdfr = x,
+      name = name,
+      calc_centroids = calc_centroids,
+      skip_eval_dfr = skip_eval_dfr,
+      copy_dt = copy_dt,
+      verbose = verbose
+    )
+  }
+)
+
+#' @rdname createGiottoPolygon
+#' @param \dots additional params to pass. For character method, params pass to
+#' SpatRaster or SpatVector methods, depending on whether x was a filepath to
+#' a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.
+#' @export
+setMethod(
+  'createGiottoPolygon', signature('character'),
+  function(x, ...)
+  {
+    checkmate::assert_file_exists(x)
+
+    # try success means it should be mask file
+    # try failure means it should be vector file
+    try_rast <- try({terra::rast(x)}, silent = TRUE)
+
+    # mask workflow
+    if (inherits(try_rast, 'SpatRaster')) {
+      return(createGiottoPolygon(x, ...))
+    }
+
+    # file workflow
+    return(createGiottoPolygon(
+      x = terra::vect(x),
+      ...
+    ))
+  }
+)
+
 
 #' @title Create giotto polygons from mask file
-#' @name createGiottoPolygonsFromMask
-#' @description Creates Giotto polygon object from a mask file (e.g. segmentation results)
+#' @rdname createGiottoPolygon
 #' @param maskfile path to mask file
 #' @param mask_method how the mask file defines individual segmentation annotations
 #' @param name name for polygons
@@ -1913,29 +2060,36 @@ createGiottoPolygonsFromMask = function(maskfile,
   # select background algo
   background_algo = match.arg(background_algo, choices = 'range')
 
-  # check if mask file exists
-  maskfile = path.expand(maskfile)
-  if(!file.exists(maskfile)) {
-    stop('path : ', maskfile, ' does not exist \n')
-  }
-
   # mask method
   # single: single mask value for all segmented cells
   # multiple: multiple mask values and thus a unique value for each segmented cell
   mask_method = match.arg(mask_method, choices = c('guess', 'single', 'multiple'))
 
+
+  # if maskfile input is not a spatraster, read it in as spatraster
+  # if it is spatraster, skip
+  if (!inherits(maskfile, 'SpatRaster')) {
+    # check if mask file exists
+    maskfile <- path.expand(maskfile)
+    if(!file.exists(maskfile)) {
+      stop('path : ', maskfile, ' does not exist \n')
+    }
+    terra_rast <- create_terra_spatRaster(maskfile)
+  } else {
+    terra_rast <- maskfile
+  }
+
   # create polygons from mask
-  terra_rast = create_terra_spatRaster(maskfile)
   rast_dimensions = dim(terra_rast)
   terra_polygon = terra::as.polygons(x = terra_rast, value = TRUE)
 
   # fill holes
-  if(fill_holes == TRUE) {
+  if(isTRUE(fill_holes)) {
     terra_polygon = terra::fillHoles(terra_polygon)
   }
 
   # remove unvalid polygons
-  if(remove_unvalid_polygons == TRUE) {
+  if(isTRUE(remove_unvalid_polygons)) {
     valid_index = terra::is.valid(terra_polygon)
     terra_polygon = terra_polygon[valid_index]
   }
@@ -1944,12 +2098,12 @@ createGiottoPolygonsFromMask = function(maskfile,
   spatVecDT = spatVector_to_dt(terra_polygon)
 
   ## flip across axes ##
-  if(flip_vertical == TRUE) {
+  if(isTRUE(flip_vertical)) {
     # terra_polygon = terra::flip(terra_polygon, direction = 'vertical')
     spatVecDT[, y := -y]
   }
 
-  if(flip_horizontal == TRUE) {
+  if(isTRUE(flip_horizontal)) {
     # terra_polygon = terra::flip(terra_polygon, direction = 'horizontal')
     spatVecDT[, x := -x]
   }
@@ -1975,19 +2129,17 @@ createGiottoPolygonsFromMask = function(maskfile,
     terra_polygon = g_polygon@spatVector
   }
 
-  #names(terra_polygon) = 'mask'
-
 
 
   ## shift values ##
-  if(shift_vertical_step == TRUE) {
+  if(identical(shift_vertical_step, TRUE)) {
     shift_vertical_step = rast_dimensions[1] # nrows of raster
   } else if(is.numeric(shift_vertical_step)) {
     shift_vertical_step = shift_vertical_step
   } else {
     shift_vertical_step = 0
   }
-  if(shift_horizontal_step == TRUE) {
+  if(identical(shift_horizontal_step, TRUE)) {
     shift_horizontal_step = rast_dimensions[2] # ncols of raster
   } else if(is.numeric(shift_horizontal_step)) {
     shift_horizontal_step = shift_horizontal_step
@@ -1995,16 +2147,15 @@ createGiottoPolygonsFromMask = function(maskfile,
     shift_horizontal_step = 0
   }
 
-  #print(shift_horizontal_step) uneccessary to print?
-  #print(shift_vertical_step) uneccessary to print?
-
-  terra_polygon = terra::shift(terra_polygon,
-                               dx = shift_horizontal_step,
-                               dy = shift_vertical_step)
+  terra_polygon = terra::shift(
+    terra_polygon,
+    dx = shift_horizontal_step,
+    dy = shift_vertical_step
+  )
 
 
   # remove background polygon
-  if(remove_background_polygon == TRUE) {
+  if(isTRUE(remove_background_polygon)) {
 
     if(background_algo == 'range') {
       backgr_poly_id = identify_background_range_polygons(terra_polygon)
@@ -2019,7 +2170,7 @@ createGiottoPolygonsFromMask = function(maskfile,
   # provide own cell_ID name
   if(!is.null(poly_IDs)) {
 
-    if(remove_unvalid_polygons == TRUE) {
+    if(isTRUE(remove_unvalid_polygons)) {
       poly_IDs = poly_IDs[valid_index]
     }
 
@@ -2037,28 +2188,23 @@ createGiottoPolygonsFromMask = function(maskfile,
                                            spatVectorCentroids = NULL)
 
   # add centroids
-  if(calc_centroids == TRUE) {
+  if(isTRUE(calc_centroids)) {
     g_polygon = calculate_centroids_polygons(gpolygon = g_polygon,
                                              name = 'centroids',
                                              append_gpolygon = TRUE)
   }
 
-
   return(g_polygon)
-
 }
 
 
 
 
-## segmDfrToPolygon
+
 
 
 #' @title Create giotto polygons from dataframe
-#' @name createGiottoPolygonsFromDfr
-#' @description Creates Giotto polygon object from a structured dataframe-like object.
-#' Three of the columns should correspond to x/y vertices and the polygon ID.
-#' Additional columns are set as attributes
+#' @rdname createGiottoPolygon
 #' @param segmdfr data.frame-like object with polygon coordinate information (x, y, poly_ID)
 #' with x and y being vertex information for the polygon referenced by poly_ID. See details
 #' for how columns are selected for coordinate and ID information.
@@ -2068,7 +2214,6 @@ createGiottoPolygonsFromMask = function(maskfile,
 #' @param copy_dt (default TRUE) if segmdfr is provided as dt, this determines
 #' whether a copy is made
 #' @param verbose be verbose
-#' @return giotto polygon object
 #' @details When determining which column within the tabular data is intended to
 #' provide polygon information, Giotto first checks the column names for 'x', 'y',
 #' and 'poly_ID'. If any of these are discovered, they are directly selected. If
@@ -2116,13 +2261,11 @@ createGiottoPolygonsFromDfr = function(segmdfr,
 
 
 #' @title Create giotto polygons from GeoJSON
-#' @name createGiottoPolygonsFromGeoJSON
-#' @description Creates Giotto polygon object from a .GeoJSON file
+#' @rdname createGiottoPolygon
 #' @param GeoJSON path to .GeoJSON file
 #' @param name name for the \code{giottoPolygon} object created
 #' @param calc_centroids (default FALSE) calculate centroids for polygons
 #' @param verbose be verbose
-#' @return giotto polygon object
 #' @concept polygon
 #' @export
 createGiottoPolygonsFromGeoJSON = function(GeoJSON,
@@ -2158,9 +2301,6 @@ createGiottoPolygonsFromGeoJSON = function(GeoJSON,
 
 
 
-
-## extension of spatVector object
-## name should match the cellular structure
 
 #' @title Create a giotto polygon object
 #' @name create_giotto_polygon_object
