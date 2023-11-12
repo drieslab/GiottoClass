@@ -3,7 +3,7 @@
 \name{as.sf}
 \alias{as.sf}
 \alias{as.sf,SpatVector-method}
-\alias{as.sf,sp-method}
+\alias{as.sf,Spatial-method}
 \alias{as.sf,stars-method}
 \alias{as.sf,sf-method}
 \alias{as.sf,giottoPolygon-method}
@@ -12,7 +12,7 @@
 \usage{
 \S4method{as.sf}{SpatVector}(x)
 
-\S4method{as.sf}{sp}(x)
+\S4method{as.sf}{Spatial}(x)
 
 \S4method{as.sf}{stars}(x)
 
