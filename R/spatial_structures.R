@@ -145,19 +145,19 @@ calculate_distance_and_weight <- function(networkDT = NULL,
 
 #' @title get_distance
 #' @name get_distance
-#' @description estimate average distance between neighboring cells with network table as input
+#' @description estimate average distance between neighboring cells with network
+#' table as input
 #' @param networkDT networkDT
 #' @param method method
-#' @keywords internal
+#' @export
 get_distance <- function(networkDT,
-                         method=c("mean","median")
+                         method = c("mean","median")
 ){
-
-  if (method=="median"){
-    distance = stats::median(networkDT$distance)
-  }else if(method=="mean"){
-    distance = mean(networkDT$distance)
-  }
+  distance = switch(
+    method,
+    "median" = stats::median(networkDT$distance),
+    "mean" =  mean(networkDT$distance)
+  )
   return(distance)
 }
 
@@ -1987,7 +1987,7 @@ createSpatialGrid <- function(gobject,
 #' @param spatloc spatial_locs slot from giotto object
 #' @param spatgrid selected spatial_grid slot from giotto object
 #' @return annotated spatial location data.table
-#' @keywords internal
+#' @export
 annotate_spatlocs_with_spatgrid_2D = function(spatloc,
                                               spatgrid) {
 
@@ -2031,7 +2031,7 @@ annotate_spatlocs_with_spatgrid_2D = function(spatloc,
 #' @param spatloc spatial_locs slot from giotto object
 #' @param spatgrid selected spatial_grid slot from giotto object
 #' @return annotated spatial location data.table
-#' @keywords internal
+#' @export
 annotate_spatlocs_with_spatgrid_3D = function(spatloc,
                                               spatgrid) {
 

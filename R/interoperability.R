@@ -1504,7 +1504,8 @@ giottoToSeuratV5 <- function(gobject,
 #' @param sobject Input Seurat object to convert to Giotto object
 #' @param spatial_assay Specify name of the spatial assay slot in Seurat. Default is \code{"Spatial"}.
 #' @param dim_reduction Specify which dimensional reduction computations to fetch from
-#'  Default is \code{"Vizgen"}.
+#' @param subcellular_assay Specify name of the subcellular assay in input object.
+#' Default is \code{"Vizgen"}.
 #' @export
 seuratToGiotto = function(sobject,
                           spatial_assay = 'Spatial',
@@ -1671,7 +1672,7 @@ seuratToGiottoV5 = function(sobject,
     }
     if("layers" %in% slotNames(sobject@assays[[spatial_assay]])){
       if(!is.null(slot(sobject, 'assays')[[spatial_assay]]@layers)){
-        normexp = LayerData(object = sobject, assay = spatial_assay)
+        normexp = SeuratObject::LayerData(object = sobject, assay = spatial_assay)
       }
     }
 

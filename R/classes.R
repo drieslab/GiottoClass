@@ -475,7 +475,8 @@ updateGiottoObject <- function(gobject) {
 #' that are provided in the expression slot.
 #'
 #'
-#' @export
+#' @export giotto
+#' @exportClass giotto
 giotto <- setClass(
   "giotto",
   slots = c(
@@ -658,8 +659,8 @@ check_expr_obj <- function(object) {
 #' @slot feat_type feature type of expression (e.g. 'rna', 'protein')
 #' @slot provenance origin data of expression information (if applicable)
 #' @slot misc misc
-#' @export
-setClass("exprObj",
+#' @exportClass exprObj
+exprObj = setClass("exprObj",
   contains = c("nameData", "exprData", "spatFeatData", "miscData", 'giottoSubobject'),
   validity = check_expr_obj
 )
@@ -713,8 +714,8 @@ check_cell_meta_obj <- function(object) {
 #' @slot spat_unit spatial unit of aggregated expression (e.g. 'cell')
 #' @slot feat_type feature type of aggregated expression (e.g. 'rna', 'protein')
 #' @slot provenance origin data of aggregated expression information (if applicable)
-#' @export
-setClass("cellMetaObj",
+#' @exportClass cellMetaObj
+cellMetaObj = setClass("cellMetaObj",
   contains = c("metaData", "spatFeatData", "giottoSubobject"),
   validity = check_cell_meta_obj
 )
@@ -758,8 +759,8 @@ check_feat_meta_obj <- function(object) {
 #' @slot spat_unit spatial unit of aggregated expression (e.g. 'cell')
 #' @slot feat_type feature type of aggregated expression (e.g. 'rna', 'protein')
 #' @slot provenance origin data of aggregated expression information (if applicable)
-#' @export
-setClass("featMetaObj",
+#' @exportClass featMetaObj
+featMetaObj = setClass("featMetaObj",
   contains = c("metaData", "spatFeatData", 'giottoSubobject'),
   validity = check_feat_meta_obj
 )
@@ -825,8 +826,8 @@ check_dim_obj <- function(object) {
 #' @slot reduction_method method used to generate dimension reduction
 #' @slot coordinates embedding coordinates
 #' @slot misc method-specific additional outputs
-#' @export
-setClass("dimObj",
+#' @exportClass dimObj
+dimObj = setClass("dimObj",
   contains = c("nameData", "spatFeatData", 'giottoSubobject'),
   slots = c(
     reduction = "character",
@@ -888,8 +889,8 @@ S3toS4dimObj <- function(object) {
 #' @slot spat_unit spatial unit of data
 #' @slot provenance origin of aggregated information (if applicable)
 #' @slot misc misc
-#' @export
-setClass("nnNetObj",
+#' @exportClass nnNetObj
+nnNetObj = setClass("nnNetObj",
   contains = c("nameData", "nnData", "spatFeatData", "miscData", 'giottoSubobject')
 )
 
@@ -955,8 +956,8 @@ check_spat_locs_obj <- function(object) {
 #' @slot coordinates data.table of spatial coordinates/locations
 #' @slot spat_unit spatial unit tag
 #' @slot provenance origin of aggregated information (if applicable)
-#' @export
-setClass("spatLocsObj",
+#' @exportClass spatLocsObj
+spatLocsObj =  setClass("spatLocsObj",
   contains = c("nameData", "coordDataDT", "spatData", "miscData", 'giottoSubobject'),
   validity = check_spat_locs_obj
 )
@@ -1467,7 +1468,8 @@ giottoImage <- setClass(
 #' @slot is_int values are integers
 #' @slot file_path file path to the image if given
 #' @slot OS_platform Operating System to run Giotto analysis on
-#' @export
+#' @export giottoLargeImage
+#' @exportClass giottoLargeImage
 giottoLargeImage <- setClass(
   Class = "giottoLargeImage",
   slots = c(

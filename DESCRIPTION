@@ -1,6 +1,6 @@
 Package: GiottoClass
 Title: Giotto Suite object definitions and framework
-Version: 0.0.0.9007
+Version: 0.0.0.9009
 Authors@R: c(
 	person("Ruben", "Dries", email = "rubendries@gmail.com",
 		 role = c("aut", "cre")),
@@ -60,6 +60,7 @@ Suggests:
     sf,
     SingleCellExperiment,
     SpatialExperiment,
+    stars,
     SummarizedExperiment,
     testthat (>= 3.0.0),
     qs
@@ -72,13 +73,13 @@ Collate:
     'package_imports.R'
     'classes.R'
     'combine_metadata.R'
+    'generics.R'
     'slot_accessors.R'
     'create.R'
     'data_evaluation.R'
     'data_input.R'
     'dd.R'
     'defaults.R'
-    'generics.R'
     'flex_functions.R'
     'function_logging.R'
     'generate_poly.R'

@@ -70,6 +70,29 @@ setMethod('spin', signature(x = 'spatLocsObj'),
 
 # internals ####
 
+#' @param DT data.table with xy values
+#' @param xy character vector of the columns that contain respectively x and y
+#' info
+#' @noRd
+rotate2D = function(DT, xy = c('x', 'y'), rotate_rad = NULL, rotate_deg = NULL) {
+  if (is.null(rotate_rad) && is.null(rotate_deg) ||
+      !is.null(rotate_rad) && !is.null(rotate_deg)) {
+    stop(wrap_txt(
+      "GiottoClass: rotate2D:
+      rotation must be supplied through one of 'rotate_rad' or 'rotate_deg'")
+    )
+  }
+
+  if (!is.null(rotate_deg)) rotate_rad = radians(deg = rotate_deg)
+
+  xvals = DT[, xy[[1L]], with = FALSE]
+  yvals = DT[, xy[[2L]], with = FALSE]
+  DT[, (xy[[1L]]) := xvals*cos(rotate_rad) + yvals*sin(rotate_rad)]
+  DT[, (xy[[2L]]) := -xvals*sin(rotate_rad) + yvals*cos(rotate_rad)]
+  return(DT)
+}
+
+# TODO cleanup rotate_spatial_locations code using rotate2D
 
 #' @title Rotate spatial locations
 #' @name rotate_spatial_locations
