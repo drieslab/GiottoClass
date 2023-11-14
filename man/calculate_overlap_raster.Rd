@@ -31,3 +31,4 @@ performs rasterization of the polys and then checks for overlaps.
 \code{\link[=calculateOverlapRaster]{calculateOverlapRaster()}}
 }
 \concept{overlap}
+\keyword{internal}
