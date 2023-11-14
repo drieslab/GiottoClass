@@ -428,7 +428,7 @@ dt_to_spatVector_polygon = function(dt,
     }
 
     attr_values = unique(dt[,other_values, with = FALSE])
-    if (nrow(attr_values > 0L) &&
+    if (nrow(attr_values) > 0L &&
         nrow(attr_values) != max(dt[, max(geom)])) {
       warning(wrap_txt(
         'dt_to_spatVector_polygon:

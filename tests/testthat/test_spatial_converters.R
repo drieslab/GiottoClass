@@ -91,13 +91,11 @@ test_that('sf to sp works', {
   expect_class(gpoints_out, 'giottoPoints')
   expect_class(gpoints_out@spatVector, 'Spatial')
 
-  # TODO empty geometries not supported by sp
-  # The return of overlaps info as single vertex polys needs to be fixed first.
-  # suppressWarnings(gpoly_out <- as.sp(sf_gpolys, drop = FALSE))
-  # expect_class(gpoly_out, 'giottoPolygon')
-  # expect_class(gpoly_out@spatVector, 'Spatial')
-  # expect_class(gpoly_out@spatVectorCentroids, 'Spatial')
-  # expect_class(gpoly_out@overlaps$rna, 'Spatial') # TODO this should be points
+  gpoly_out <- as.sp(sf_gpolys, drop = FALSE)
+  expect_class(gpoly_out, 'giottoPolygon')
+  expect_class(gpoly_out@spatVector, 'Spatial')
+  expect_class(gpoly_out@spatVectorCentroids, 'Spatial')
+  expect_class(gpoly_out@overlaps$rna, 'Spatial') # TODO this should be points
 })
 
 test_that('sf to stars works', {
@@ -142,13 +140,11 @@ test_that('stars to sp works', {
   expect_class(gpoints_out, 'giottoPoints')
   expect_class(gpoints_out@spatVector, 'Spatial')
 
-  # TODO empty geometries not supported by sp
-  # The return of overlaps info as single vertex polys needs to be fixed first.
-  # suppressWarnings(gpoly_out <- as.sp(stars_gpolys, drop = FALSE))
-  # expect_class(gpoly_out, 'giottoPolygon')
-  # expect_class(gpoly_out@spatVector, 'Spatial')
-  # expect_class(gpoly_out@spatVectorCentroids, 'Spatial')
-  # expect_class(gpoly_out@overlaps$rna, 'Spatial')
+  gpoly_out <- as.sp(stars_gpolys, drop = FALSE)
+  expect_class(gpoly_out, 'giottoPolygon')
+  expect_class(gpoly_out@spatVector, 'Spatial')
+  expect_class(gpoly_out@spatVectorCentroids, 'Spatial')
+  expect_class(gpoly_out@overlaps$rna, 'Spatial')
 })
 
 test_that('stars to terra works', {
@@ -170,7 +166,7 @@ test_that('stars to terra works', {
 
 # convert from sp ####
 sp_gpoints <- as.sp(terra_gpoints, drop = FALSE)
-suppressWarnings(sp_gpolys <- as.sp(terra_gpolys, drop = FALSE))
+sp_gpolys <- as.sp(terra_gpolys, drop = FALSE)
 
 test_that('sp to sf works', {
   sf_out <- as.sf(sp_gpoints)
