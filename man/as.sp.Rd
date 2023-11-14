@@ -5,7 +5,7 @@
 \alias{as.sp,sf-method}
 \alias{as.sp,SpatVector-method}
 \alias{as.sp,stars-method}
-\alias{as.sp,sp-method}
+\alias{as.sp,Spatial-method}
 \alias{as.sp,giottoPolygon-method}
 \alias{as.sp,giottoPoints-method}
 \title{Coerce to sp}
@@ -16,7 +16,7 @@
 
 \S4method{as.sp}{stars}(x)
 
-\S4method{as.sp}{sp}(x)
+\S4method{as.sp}{Spatial}(x)
 
 \S4method{as.sp}{giottoPolygon}(x, drop = TRUE)
 

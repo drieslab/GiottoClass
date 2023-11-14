@@ -49,6 +49,10 @@ if(!isGeneric('rownames')) setOldClass('rownames')
 setGeneric('copy', function(x) standardGeneric('copy'), useAsDefault = data.table::copy)
 
 
+# spatial operations ####
+setGeneric('calculateOverlap', function(x, y, ...) standardGeneric('calculateOverlap'))
+
+
 # Giotto subnesting ####
 # All methods and documentations found in methods-nesting.R
 
