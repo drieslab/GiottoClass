@@ -551,22 +551,22 @@ calculate_overlap_raster = function(spatvec,
   poly_ID = poly_i = ID = x = y = feat_ID = feat_ID_uniq = NULL
 
   # spatial vector to raster
-  if(verbose) cat('1. convert polygon to raster \n')
+  if(verbose) GiottoUtils::wrap_msg('1. convert polygon to raster \n')
   spatrast_res = polygon_to_raster(spatvec, field = 'poly_ID')
   spatrast = spatrast_res[['raster']]
   ID_vector = spatrast_res[['ID_vector']]
 
   ## overlap between raster and point
-  if(verbose) cat('2. overlap raster and points \n')
+  if(verbose) GiottoUtils::wrap_msg('2. overlap raster and points \n')
   overlap_test = terra::extract(x = spatrast, y = pointvec)
 
   # add poly_ID information
-  if(verbose) cat('3. add polygon information \n')
+  if(verbose) GiottoUtils::wrap_msg('3. add polygon information \n')
   overlap_test_dt = data.table::as.data.table(overlap_test)
   overlap_test_dt[, poly_ID := ID_vector[poly_i]]
 
   # add point information
-  if(verbose) cat('4. add points information \n')
+  if(verbose) GiottoUtils::wrap_msg('4. add points information \n')
   pointvec_dt = data.table::as.data.table(pointvec, geom = "XY")
 
   pointvec_dt_x = pointvec_dt$x ; names(pointvec_dt_x) = pointvec_dt$geom
@@ -584,11 +584,11 @@ calculate_overlap_raster = function(spatvec,
     overlap_test_dt[, c(count_info_column) := pointvec_dt_count[ID]]
   }
 
-  if(verbose) cat('5. create overlap polygon information \n')
+  if(verbose) GiottoUtils::wrap_msg('5. create overlap polygon information \n')
   overlap_test_dt_spatvector = terra::vect(
     x = as.matrix(overlap_test_dt[, c('x', 'y'), with = F]),
     type = "points",
-    atts = overlap_test_dt[, c('poly_ID', 'feat_ID', 'feat_ID_uniq', count_info_column), with = F]
+    atts = overlap_test_dt[, c('poly_ID', 'feat_ID', 'feat_ID_uniq', count_info_column), with = FALSE]
   )
   names(overlap_test_dt_spatvector) = c(
     'poly_ID', 'feat_ID', 'feat_ID_uniq', count_info_column
@@ -1029,110 +1029,328 @@ calculateOverlapParallel = function(gobject,
 
 
 
+# overlapToMatrix methods ####
+
 
 ## transfer overlap results to matrix ####
 
 #' @title overlapToMatrix
 #' @name overlapToMatrix
-#' @description create a count matrix based on overlap results from \code{\link{calculateOverlapRaster}}, \code{\link{calculateOverlapSerial}}, or \code{\link{calculateOverlapParallel}}
-#' @param gobject giotto object
+#' @description create a count matrix based on overlap results from
+#' \code{\link{calculateOverlap}}
+#' @param x object containing overlaps info. Can be giotto object or SpatVector
+#' points or data.table of overlaps generated from `calculateOverlap`
 #' @param name name for the overlap count matrix
-#' @param poly_info polygon information
-#' @param feat_info feature information
 #' @param count_info_column column with count information
-#' @param return_gobject return giotto object (default: TRUE)
-#' @return giotto object or count matrix
+#' @param \dots additional params to pass to methods
 #' @concept overlap
+#' @return giotto object or count matrix
+NULL
+
+
+# * gobject ####
+#' @rdname overlapToMatrix
+#' @param poly_info character. Polygon information to use
+#' @param feat_info character. Feature information to use
+#' @param type character. Type of overlap data (either 'point' or 'intensity')
+#' @param return_gobject return giotto object (default: TRUE)
+#' @param verbose be verbose
 #' @export
-overlapToMatrix = function(gobject,
-                           name = 'raw',
-                           poly_info = 'cell',
-                           feat_info = 'rna',
-                           count_info_column = NULL,
-                           return_gobject = TRUE) {
+setMethod(
+  'overlapToMatrix', signature('giotto'), function(
+    x,
+    name = 'raw',
+    poly_info = 'cell',
+    feat_info = 'rna',
+    type = c('point', 'intensity'),
+    count_info_column = NULL,
+    aggr_function = "sum",
+    return_gobject = TRUE,
+    verbose = TRUE,
+    ...
+  )
+  {
+    type = match.arg(type, choices = c('point', 'intensity'))
+    checkmate::assert_character(name, len = 1L)
+    checkmate::assert_character(poly_info, len = 1L)
+    checkmate::assert_character(feat_info, len = 1L)
+    if (!is.null(count_info_column)) {
+      checkmate::assert_character(count_info_column, len = 1L)
+    }
+    checkmate::assert_logical(return_gobject)
 
-  # define for data.table
-  poly_ID = NULL
+    # get data
+    gpoly = getPolygonInfo(
+      gobject = x,
+      polygon_name = poly_info,
+      return_giottoPolygon = TRUE
+    )
 
-  overlap_spatvec = get_polygon_info(gobject = gobject,
-                                     polygon_name = poly_info,
-                                     polygon_overlap = feat_info)
+    o2m_args <- list(
+      x = gpoly,
+      col_names = spatIDs(x, spat_unit = poly_info),
+      row_names = featIDs(x, feat_type = feat_info),
+      count_info_column = count_info_column,
+      aggr_function = aggr_function,
+      output = 'data.table',
+      type = type,
+      verbose = verbose,
+      ...
+    )
 
-  if(is.null(overlap_spatvec)) {
-    cat('overlap between ', poly_info, ' and ', feat_info, ' has not been found \n')
-    stop('Run calculateOverlap() first')
+    # pass to giottoPolygon method
+    aggr_dtoverlap <- do.call(overlapToMatrix, args = o2m_args)
+
+    # create matrix
+    overlapmatrixDT = data.table::dcast(
+      data = aggr_dtoverlap,
+      formula = feat_ID~poly_ID,
+      value.var = 'N',
+      fill = 0
+    )
+    overlapmatrix = dt_to_matrix(overlapmatrixDT)
+
+    mat_r_names <- rownames(overlapmatrix)
+    mat_c_names <- colnames(overlapmatrix)
+    overlapmatrix <- overlapmatrix[match(sort(mat_r_names), mat_r_names),
+                                   match(sort(mat_c_names), mat_c_names)]
+
+    overlapExprObj = create_expr_obj(
+      name = name,
+      exprMat = overlapmatrix,
+      spat_unit = poly_info,
+      feat_type = feat_info,
+      provenance = poly_info
+    )
+
+    if(isTRUE(return_gobject)) {
+
+      centroidsDT <- centroids(gpoly) %>%
+        data.table::as.data.table(geom = 'XY')
+      centroidsDT_loc <- centroidsDT[, c('poly_ID', 'x', 'y')]
+      data.table::setnames(
+        centroidsDT_loc,
+        old = c('poly_ID', 'x', 'y'),
+        new = c('cell_ID', 'sdimx', 'sdimy')
+      )
+
+      spatlocs <- createSpatLocsObj(
+        coordinates = centroidsDT_loc,
+        name = name,
+        spat_unit = poly_info,
+        provenance = poly_info,
+        verbose = FALSE
+      )
+
+      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+      x <- setSpatialLocations(
+        gobject = x,
+        x = spatlocs,
+        initialize = FALSE,
+        verbose = FALSE
+      )
+      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+      x <- setExpression(
+        gobject = x,
+        x = overlapExprObj,
+        initialize = TRUE,
+        verbose = FALSE
+      )
+      ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+      return(x)
+    } else {
+      return(overlapExprObj)
+    }
   }
-
-  dtoverlap = spatVector_to_dt(overlap_spatvec)
-  dtoverlap = dtoverlap[!is.na(poly_ID)] # removes points that have no overlap with any polygons
-  #dtoverlap[, poly_ID := ifelse(is.na(poly_ID), 'no_overlap', poly_ID), by = 1:nrow(dtoverlap)]
+)
 
 
-  if(!is.null(count_info_column)) {
+# * giottoPolygon ####
+#' @rdname overlapToMatrix
+#' @export
+setMethod(
+  'overlapToMatrix', signature('giottoPolygon'), function(
+    x,
+    feat_info = 'rna',
+    type = c('point', 'intensity'),
+    count_info_column = NULL,
+    output = c('Matrix', 'data.table'),
+    ...
+  ){
+    type = match.arg(type, choices = c('point', 'intensity'))
 
-    if(!count_info_column %in% colnames(dtoverlap)) stop('count_info_column ', count_info_column, ' does not exist')
+    overlaps_data <- switch(
+      type,
+      'point' = overlaps(x)[[feat_info]],
+      'intensity' = overlaps(x)[['intensity']][[feat_info]]
+    )
 
-    # aggregate counts of features
-    dtoverlap[, c(count_info_column) := as.numeric(get(count_info_column))]
-    aggr_dtoverlap = dtoverlap[, base::sum(get(count_info_column)), by = c('poly_ID', 'feat_ID')]
-    data.table::setnames(aggr_dtoverlap, 'V1', 'N')
-  } else {
+    # ensure data exists
+    if (is.null(overlaps_data)) {
+      stop(GiottoUtils::wrap_txt(
+        'No overlaps found between', objName(x), 'and', feat_info, '
+        Please run calculateOverlap() first.',
+        errWidth = TRUE
+      ), call. = FALSE)
+    }
 
-    # aggregate individual features
-    aggr_dtoverlap = dtoverlap[, .N, by = c('poly_ID', 'feat_ID')]
+    # pass to SpatVector method
+    overlapToMatrix(
+      x = overlaps_data,
+      count_info_column = count_info_column,
+      output = output,
+      ...
+    )
   }
+)
 
 
+# * SpatVector ####
+# points
+#' @rdname overlapToMatrix
+#' @param col_names,row_names character vector. (optional) Set of row and col
+#' names that are expected to exist. This fixes the dimensions of the matrix
+#' since the overlaps information does not directly report rows and cols where
+#' no values were detected.
+#' @export
+setMethod(
+  'overlapToMatrix', signature('SpatVector'), function(
+    x,
+    col_names = NULL,
+    row_names = NULL,
+    count_info_column = NULL,
+    output = c('Matrix', 'data.table'),
+    verbose = TRUE,
+    ...
+  ) {
+    output = match.arg(
+      toupper(output),
+      choices = c('MATRIX', 'DATA.TABLE')
+    )
 
-  # get all feature and cell information
-  all_feats = gobject@feat_ID[[feat_info]]
-  missing_feats = all_feats[!all_feats %in% unique(aggr_dtoverlap$feat_ID)]
+    # NSE vars
+    poly_ID = NULL
 
-  all_ids = gobject@cell_ID[[poly_info]]
-  missing_ids = all_ids[!all_ids %in% unique(aggr_dtoverlap$poly_ID)]
+    # 1. convert to DT and cleanup
+    dtoverlap = data.table::as.data.table(x, geom = c('XY'))
+    # remove points that have no overlap with any polygons
+    dtoverlap = dtoverlap[!is.na(poly_ID)]
 
-  # create missing cell values, only if there are missing cell IDs!
-  if(!length(missing_ids) == 0) {
-    first_feature = aggr_dtoverlap[['feat_ID']][[1]]
-    missing_dt = data.table::data.table(poly_ID = missing_ids, feat_ID = first_feature, N = 0)
-    aggr_dtoverlap = rbind(aggr_dtoverlap, missing_dt)
+
+    # 2. Perform aggregation to counts DT
+    if(!is.null(count_info_column)) { # if there is a counts col
+
+      if(!count_info_column %in% colnames(dtoverlap)) {
+        stop('count_info_column ', count_info_column, ' does not exist')
+      }
+
+      # aggregate counts of features
+      dtoverlap[, c(count_info_column) := as.numeric(get(count_info_column))]
+      aggr_dtoverlap = dtoverlap[, base::sum(get(count_info_column)), by = c('poly_ID', 'feat_ID')]
+      data.table::setnames(aggr_dtoverlap, 'V1', 'N')
+    } else { # if no counts col
+
+      # aggregate individual features
+      aggr_dtoverlap = dtoverlap[, .N, by = c('poly_ID', 'feat_ID')]
+    }
+
+    # 3. missing IDs repair
+
+    if (!is.null(col_names) && !is.null(row_names)) {
+      # get all feature and cell information
+      missing_feats = row_names[!row_names %in% unique(aggr_dtoverlap$feat_ID)]
+      missing_ids = col_names[!col_names %in% unique(aggr_dtoverlap$poly_ID)]
+
+      # create missing cell values, only if there are missing cell IDs!
+      if(!length(missing_ids) == 0) {
+        first_feature = aggr_dtoverlap[['feat_ID']][[1]]
+        missing_dt = data.table::data.table(poly_ID = missing_ids, feat_ID = first_feature, N = 0)
+        aggr_dtoverlap = rbind(aggr_dtoverlap, missing_dt)
+      }
+
+      if(!length(missing_feats) == 0) {
+        first_cell = aggr_dtoverlap[['poly_ID']][[1]]
+        missing_dt = data.table::data.table(poly_ID = first_cell, feat_ID = missing_feats, N = 0)
+        aggr_dtoverlap = rbind(aggr_dtoverlap, missing_dt)
+      }
+
+      # TODO: creating missing feature values
+    } else {
+      if(isTRUE(verbose) && output == "MATRIX") {
+        warning(GiottoUtils::wrap_txt(
+          "[overlapToMatrix] expected col_names and row_names not provided together.
+          Points aggregation Matrix output may be missing some cols and rows where no detections were found."
+        ), call. = FALSE)
+      }
+    }
+
+
+    # 4. return
+    switch(
+      output,
+      'DATA.TABLE' = return(aggr_dtoverlap),
+      'MATRIX' = {
+        # create matrix
+        overlapmatrixDT = data.table::dcast(
+          data = aggr_dtoverlap,
+          formula = feat_ID~poly_ID,
+          value.var = 'N',
+          fill = 0
+        )
+        return(dt_to_matrix(overlapmatrixDT))
+      }
+    )
   }
+)
 
-  if(!length(missing_feats) == 0) {
-    first_cell = aggr_dtoverlap[['poly_ID']][[1]]
-    missing_dt = data.table::data.table(poly_ID = first_cell, feat_ID = missing_feats, N = 0)
-    aggr_dtoverlap = rbind(aggr_dtoverlap, missing_dt)
+# * data.frame ####
+# images
+#' @rdname overlapToMatrix
+#' @param aggr_function function to aggregate image information (default = sum)
+#' @export
+setMethod(
+  'overlapToMatrix', signature('data.table'), function(
+    x,
+    name = 'raw',
+    aggr_function = 'sum',
+    output = c('Matrix', 'data.table')
+  ) {
+    output = match.arg(
+      toupper(output),
+      choices = c('MATRIX', 'DATA.TABLE')
+    )
+    checkmate::assert_character(name, len = 1L)
+
+    melt_image_info <- data.table::melt.data.table(
+      data = image_info,
+      id.vars = 'poly_ID',
+      variable.name = 'feat_ID'
+    )
+
+    aggr_fun = get(aggr_function)
+    aggr_comb = melt_image_info[, aggr_fun(value), by = .(poly_ID, feat_ID)]
+    data.table::setnames(aggr_comb, 'V1', 'aggregation')
+
+    switch(
+      output,
+      'DATA.TABLE' = return(aggr_comb),
+      'MATRIX' = {
+        # create matrix
+        overlapmatrixDT <- data.table::dcast(
+          data = aggr_comb,
+          formula = feat_ID~poly_ID,
+          value.var = 'aggregation',
+          fill = 0
+        )
+        return(dt_to_matrix(overlapmatrixDT))
+      }
+    )
   }
+)
 
-
-  # TODO: creating missing feature values
-
-  # create matrix
-  overlapmatrixDT = data.table::dcast(data = aggr_dtoverlap,
-                                      formula = feat_ID~poly_ID,
-                                      value.var = 'N', fill = 0)
-  overlapmatrix = dt_to_matrix(overlapmatrixDT)
-
-  overlapmatrix = overlapmatrix[match(gobject@feat_ID[[feat_info]], rownames(overlapmatrix)),
-                                match(gobject@cell_ID[[poly_info]], colnames(overlapmatrix))]
-
-  overlapExprObj = create_expr_obj(name = name,
-                                   exprMat = overlapmatrix,
-                                   spat_unit = poly_info,
-                                   feat_type = feat_info,
-                                   provenance = poly_info)
-
-  if(return_gobject == TRUE) {
-    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    gobject = set_expression_values(gobject, values = overlapExprObj)
-    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-
-    return(gobject)
-  } else {
-    return(overlapExprObj)
-  }
-
-}
 
 
 
@@ -1174,7 +1392,7 @@ overlapToMatrixMultiPoly = function(gobject,
 
     # check if matrix already exists, if not try to make it
     if(!name %in% expr_names) {
-      gobject = overlapToMatrix(gobject = gobject,
+      gobject = overlapToMatrix(x = gobject,
                                 poly_info = poly_info_set,
                                 feat_info = feat_info,
                                 name = name)
