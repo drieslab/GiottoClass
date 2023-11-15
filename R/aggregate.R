@@ -1054,6 +1054,7 @@ NULL
 #' @param feat_info character. Feature information to use
 #' @param type character. Type of overlap data (either 'point' or 'intensity')
 #' @param return_gobject return giotto object (default: TRUE)
+#' @param verbose be verbose
 #' @export
 setMethod(
   'overlapToMatrix', signature('giotto'), function(
@@ -1065,6 +1066,7 @@ setMethod(
     count_info_column = NULL,
     aggr_function = "sum",
     return_gobject = TRUE,
+    verbose = TRUE,
     ...
   )
   {
@@ -1086,39 +1088,18 @@ setMethod(
 
     o2m_args <- list(
       x = gpoly,
+      col_names = spatIDs(x, spat_unit = poly_info),
+      row_names = featIDs(x, feat_type = feat_info),
       count_info_column = count_info_column,
+      aggr_function = aggr_function,
       output = 'data.table',
       type = type,
+      verbose = verbose,
       ...
     )
 
     # pass to giottoPolygon method
     aggr_dtoverlap <- do.call(overlapToMatrix, args = o2m_args)
-
-    # missing ID repair from points workflow
-    if (type == 'point') {
-      # get all feature and cell information
-      all_feats = featIDs(x, feat_type = feat_info)
-      missing_feats = all_feats[!all_feats %in% unique(aggr_dtoverlap$feat_ID)]
-
-      all_ids = spatIDs(x, spat_unit = poly_info)
-      missing_ids = all_ids[!all_ids %in% unique(aggr_dtoverlap$poly_ID)]
-
-      # create missing cell values, only if there are missing cell IDs!
-      if(!length(missing_ids) == 0) {
-        first_feature = aggr_dtoverlap[['feat_ID']][[1]]
-        missing_dt = data.table::data.table(poly_ID = missing_ids, feat_ID = first_feature, N = 0)
-        aggr_dtoverlap = rbind(aggr_dtoverlap, missing_dt)
-      }
-
-      if(!length(missing_feats) == 0) {
-        first_cell = aggr_dtoverlap[['poly_ID']][[1]]
-        missing_dt = data.table::data.table(poly_ID = first_cell, feat_ID = missing_feats, N = 0)
-        aggr_dtoverlap = rbind(aggr_dtoverlap, missing_dt)
-      }
-
-      # TODO: creating missing feature values
-    }
 
     # create matrix
     overlapmatrixDT = data.table::dcast(
@@ -1230,12 +1211,19 @@ setMethod(
 # * SpatVector ####
 # points
 #' @rdname overlapToMatrix
+#' @param col_names,row_names character vector. (optional) Set of row and col
+#' names that are expected to exist. This fixes the dimensions of the matrix
+#' since the overlaps information does not directly report rows and cols where
+#' no values were detected.
 #' @export
 setMethod(
   'overlapToMatrix', signature('SpatVector'), function(
     x,
+    col_names = NULL,
+    row_names = NULL,
     count_info_column = NULL,
     output = c('Matrix', 'data.table'),
+    verbose = TRUE,
     ...
   ) {
     output = match.arg(
@@ -1269,6 +1257,38 @@ setMethod(
       aggr_dtoverlap = dtoverlap[, .N, by = c('poly_ID', 'feat_ID')]
     }
 
+    # 3. missing IDs repair
+
+    if (!is.null(col_names) && !is.null(row_names)) {
+      # get all feature and cell information
+      missing_feats = row_names[!row_names %in% unique(aggr_dtoverlap$feat_ID)]
+      missing_ids = col_names[!col_names %in% unique(aggr_dtoverlap$poly_ID)]
+
+      # create missing cell values, only if there are missing cell IDs!
+      if(!length(missing_ids) == 0) {
+        first_feature = aggr_dtoverlap[['feat_ID']][[1]]
+        missing_dt = data.table::data.table(poly_ID = missing_ids, feat_ID = first_feature, N = 0)
+        aggr_dtoverlap = rbind(aggr_dtoverlap, missing_dt)
+      }
+
+      if(!length(missing_feats) == 0) {
+        first_cell = aggr_dtoverlap[['poly_ID']][[1]]
+        missing_dt = data.table::data.table(poly_ID = first_cell, feat_ID = missing_feats, N = 0)
+        aggr_dtoverlap = rbind(aggr_dtoverlap, missing_dt)
+      }
+
+      # TODO: creating missing feature values
+    } else {
+      if(isTRUE(verbose) && output == "MATRIX") {
+        warning(GiottoUtils::wrap_txt(
+          "[overlapToMatrix] expected col_names and row_names not provided together.
+          Points aggregation Matrix output may be missing some cols and rows where no detections were found."
+        ), call. = FALSE)
+      }
+    }
+
+
+    # 4. return
     switch(
       output,
       'DATA.TABLE' = return(aggr_dtoverlap),
