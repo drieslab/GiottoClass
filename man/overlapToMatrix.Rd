@@ -17,6 +17,7 @@
   count_info_column = NULL,
   aggr_function = "sum",
   return_gobject = TRUE,
+  verbose = TRUE,
   ...
 )
 
@@ -31,17 +32,15 @@
 
 \S4method{overlapToMatrix}{SpatVector}(
   x,
+  col_names = NULL,
+  row_names = NULL,
   count_info_column = NULL,
   output = c("Matrix", "data.table"),
+  verbose = TRUE,
   ...
 )
 
-\S4method{overlapToMatrix}{data.table}(
-  x,
-  name = "raw",
-  aggr_function = "sum",
-  output = c("Matrix", "data.table")
-)
+\S4method{overlapToMatrix}{data.table}(x, aggr_function = "sum", output = c("Matrix", "data.table"))
 }
 \arguments{
 \item{x}{object containing overlaps info. Can be giotto object or SpatVector
@@ -61,7 +60,14 @@ points or data.table of overlaps generated from \code{calculateOverlap}}
 
 \item{return_gobject}{return giotto object (default: TRUE)}
 
+\item{verbose}{be verbose}
+
 \item{\dots}{additional params to pass to methods}
+
+\item{col_names, row_names}{character vector. (optional) Set of row and col
+names that are expected to exist. This fixes the dimensions of the matrix
+since the overlaps information does not directly report rows and cols where
+no values were detected.}
 }
 \value{
 giotto object or count matrix
