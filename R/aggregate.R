@@ -1324,8 +1324,11 @@ setMethod(
     )
     checkmate::assert_character(name, len = 1L)
 
+    # NSE vars
+    value = poly_ID = feat_ID = NULL
+
     melt_image_info <- data.table::melt.data.table(
-      data = image_info,
+      data = x,
       id.vars = 'poly_ID',
       variable.name = 'feat_ID'
     )
