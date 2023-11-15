@@ -1092,24 +1092,18 @@ setMethod(
       row_names = featIDs(x, feat_type = feat_info),
       count_info_column = count_info_column,
       aggr_function = aggr_function,
-      output = 'data.table',
+      # output = 'Matrix', # Do not specify here. methods must return
+      #                      something that operates similarly to a [matrix]
+      #                      object by default.
       type = type,
       verbose = verbose,
       ...
     )
 
     # pass to giottoPolygon method
-    aggr_dtoverlap <- do.call(overlapToMatrix, args = o2m_args)
+    overlapmatrix <- do.call(overlapToMatrix, args = o2m_args)
 
-    # create matrix
-    overlapmatrixDT = data.table::dcast(
-      data = aggr_dtoverlap,
-      formula = feat_ID~poly_ID,
-      value.var = 'N',
-      fill = 0
-    )
-    overlapmatrix = dt_to_matrix(overlapmatrixDT)
-
+    # order matrix row/col
     mat_r_names <- rownames(overlapmatrix)
     mat_c_names <- colnames(overlapmatrix)
     overlapmatrix <- overlapmatrix[match(sort(mat_r_names), mat_r_names),
@@ -1296,8 +1290,8 @@ setMethod(
         # create matrix
         overlapmatrixDT = data.table::dcast(
           data = aggr_dtoverlap,
-          formula = feat_ID~poly_ID,
-          value.var = 'N',
+          formula = feat_ID ~ poly_ID,
+          value.var = "N",
           fill = 0
         )
         return(dt_to_matrix(overlapmatrixDT))
@@ -1314,7 +1308,6 @@ setMethod(
 setMethod(
   'overlapToMatrix', signature('data.table'), function(
     x,
-    name = 'raw',
     aggr_function = 'sum',
     output = c('Matrix', 'data.table')
   ) {
@@ -1322,7 +1315,6 @@ setMethod(
       toupper(output),
       choices = c('MATRIX', 'DATA.TABLE')
     )
-    checkmate::assert_character(name, len = 1L)
 
     # NSE vars
     value = poly_ID = feat_ID = NULL
@@ -1335,7 +1327,7 @@ setMethod(
 
     aggr_fun = get(aggr_function)
     aggr_comb = melt_image_info[, aggr_fun(value), by = .(poly_ID, feat_ID)]
-    data.table::setnames(aggr_comb, 'V1', 'aggregation')
+    data.table::setnames(aggr_comb, "V1", "aggregation")
 
     switch(
       output,
@@ -1344,8 +1336,8 @@ setMethod(
         # create matrix
         overlapmatrixDT <- data.table::dcast(
           data = aggr_comb,
-          formula = feat_ID~poly_ID,
-          value.var = 'aggregation',
+          formula = feat_ID ~ poly_ID,
+          value.var = "aggregation",
           fill = 0
         )
         return(dt_to_matrix(overlapmatrixDT))
