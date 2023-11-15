@@ -51,6 +51,7 @@ setGeneric('copy', function(x) standardGeneric('copy'), useAsDefault = data.tabl
 
 # spatial operations ####
 setGeneric('calculateOverlap', function(x, y, ...) standardGeneric('calculateOverlap'))
+setGeneric('overlapToMatrix', function(x, ...) standardGeneric('overlapToMatrix'))
 
 
 # Giotto subnesting ####

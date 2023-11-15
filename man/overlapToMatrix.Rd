@@ -2,34 +2,72 @@
 % Please edit documentation in R/aggregate.R
 \name{overlapToMatrix}
 \alias{overlapToMatrix}
+\alias{overlapToMatrix,giotto-method}
+\alias{overlapToMatrix,giottoPolygon-method}
+\alias{overlapToMatrix,SpatVector-method}
+\alias{overlapToMatrix,data.table-method}
 \title{overlapToMatrix}
 \usage{
-overlapToMatrix(
-  gobject,
+\S4method{overlapToMatrix}{giotto}(
+  x,
   name = "raw",
   poly_info = "cell",
   feat_info = "rna",
+  type = c("point", "intensity"),
   count_info_column = NULL,
-  return_gobject = TRUE
+  aggr_function = "sum",
+  return_gobject = TRUE,
+  ...
+)
+
+\S4method{overlapToMatrix}{giottoPolygon}(
+  x,
+  feat_info = "rna",
+  type = c("point", "intensity"),
+  count_info_column = NULL,
+  output = c("Matrix", "data.table"),
+  ...
+)
+
+\S4method{overlapToMatrix}{SpatVector}(
+  x,
+  count_info_column = NULL,
+  output = c("Matrix", "data.table"),
+  ...
+)
+
+\S4method{overlapToMatrix}{data.table}(
+  x,
+  name = "raw",
+  aggr_function = "sum",
+  output = c("Matrix", "data.table")
 )
 }
 \arguments{
-\item{gobject}{giotto object}
+\item{x}{object containing overlaps info. Can be giotto object or SpatVector
+points or data.table of overlaps generated from \code{calculateOverlap}}
 
 \item{name}{name for the overlap count matrix}
 
-\item{poly_info}{polygon information}
+\item{poly_info}{character. Polygon information to use}
 
-\item{feat_info}{feature information}
+\item{feat_info}{character. Feature information to use}
+
+\item{type}{character. Type of overlap data (either 'point' or 'intensity')}
 
 \item{count_info_column}{column with count information}
 
+\item{aggr_function}{function to aggregate image information (default = sum)}
+
 \item{return_gobject}{return giotto object (default: TRUE)}
+
+\item{\dots}{additional params to pass to methods}
 }
 \value{
 giotto object or count matrix
 }
 \description{
-create a count matrix based on overlap results from \code{\link{calculateOverlapRaster}}, \code{\link{calculateOverlapSerial}}, or \code{\link{calculateOverlapParallel}}
+create a count matrix based on overlap results from
+\code{\link{calculateOverlap}}
 }
 \concept{overlap}
