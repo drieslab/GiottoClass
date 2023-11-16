@@ -49,10 +49,10 @@ def add_batch(adata: AnnData, cell_shape: pd.DataFrame):
     adata.uns['points']['batch'] = adata.uns['points']['batch'].astype('category')
 
 
-def create_AnnData(trainscripts, cell_shape, nucleus_shape) -> AnnData:
+def create_AnnData(transcripts, cell_shape, nucleus_shape) -> AnnData:
     """
-    Create an AnnData object from trainscripts, cell_shape and nucleus_shape
-    :param trainscripts: a dataframe with columns: cell_id, gene, counts
+    Create an AnnData object from transcripts, cell_shape and nucleus_shape
+    :param transcripts: a dataframe with columns: cell_id, gene, counts
     :param cell_shape: a dataframe with columns: cell_id, x, y
     :param nucleus_shape: a dataframe with columns: cell_id, x, y
     :return: an AnnData object
@@ -60,7 +60,7 @@ def create_AnnData(trainscripts, cell_shape, nucleus_shape) -> AnnData:
     Note: subsetted giotto object will preserve all cell and nucleus shapes, which will cause long execution time
     """
     # --- processing input ---
-    trainscripts = pd.DataFrame(trainscripts)
+    transcripts = pd.DataFrame(transcripts)
     cell_shape = pd.DataFrame(cell_shape)
     cell_shape['cell_id'] = cell_shape['cell_id'].astype('str').astype('category')
     if 'batch' in cell_shape.columns:
@@ -79,7 +79,7 @@ def create_AnnData(trainscripts, cell_shape, nucleus_shape) -> AnnData:
     # Let Giotto perform the filtering
 
     # --- create AnnData ---
-    adata: AnnData = bt.io.prepare(molecules=trainscripts, cell_seg=cell_seg, other_seg={'nucleus': nucleus_seg})  # type: ignore
+    adata: AnnData = bt.io.prepare(molecules=transcripts, cell_seg=cell_seg, other_seg={'nucleus': nucleus_seg})  # type: ignore
     add_batch(adata, cell_shape)
 
     # --- filter genes ---

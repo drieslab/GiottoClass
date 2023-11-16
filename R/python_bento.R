@@ -40,7 +40,7 @@ createBentoAdata <- function(gobject = NULL,
   # Create AnnData object
   g2bento_path <- system.file("python","g2bento.py",package="GiottoClass")
   reticulate::source_python(g2bento_path)
-  bento_adata <- create_AnnData(trainscripts=t_df, cell_shape=cell_poly, nucleus_shape=nucleus_poly)
+  bento_adata <- create_AnnData(transcripts=t_df, cell_shape=cell_poly, nucleus_shape=nucleus_poly)
   
   return(bento_adata)
 }
