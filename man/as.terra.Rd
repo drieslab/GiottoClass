@@ -5,7 +5,7 @@
 \alias{as.terra,SpatVector-method}
 \alias{as.terra,sf-method}
 \alias{as.terra,stars-method}
-\alias{as.terra,sp-method}
+\alias{as.terra,Spatial-method}
 \alias{as.terra,giottoPolygon-method}
 \alias{as.terra,giottoPoints-method}
 \title{Coerce to terra}
@@ -16,14 +16,14 @@
 
 \S4method{as.terra}{stars}(x, type = c("vector", "raster"))
 
-\S4method{as.terra}{sp}(x)
+\S4method{as.terra}{Spatial}(x)
 
 \S4method{as.terra}{giottoPolygon}(x, drop = TRUE, ...)
 
 \S4method{as.terra}{giottoPoints}(x, drop = TRUE)
 }
 \arguments{
-\item{x}{The object ot coerce}
+\item{x}{The object to coerce}
 
 \item{type}{whether data is 'vector' or 'raster'}
 
