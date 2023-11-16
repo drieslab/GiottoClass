@@ -11,7 +11,7 @@ Authors@R: c(
   person("Matthew", "O'Brien", email = "mobrien2@bu.edu",
 	   role = c("aut")),
 	person("Joselyn", "Chávez", email = "joselynchavezf@gmail.com",
-	   role = c("aut"))
+	   role = c("aut"), comment = c(ORCID = "0000-0002-4974-4591"))
 	)
 Description: This package contains the Giotto object and subobject class
   definitions and frameworks. Functionalities relating to data ingestion, basic object
