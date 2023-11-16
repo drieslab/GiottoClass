@@ -17,7 +17,10 @@ do_gpoly = function(x, what, args = NULL) {
   }
   if(!is.null(x@overlaps)) {
     x@overlaps = lapply(x@overlaps, function(sv) {
-      if(inherits(sv, 'SpatVector')) {
+      spatial_classes = c(
+        'SpatVector', 'sf', 'SpatialPolygonsDataFrame', 'SpatialPointsDataFrame', 'stars'
+        )
+      if(inherits(sv, spatial_classes)) {
         do.call(what, args = append(list(sv), args))
       } else {
         sv
@@ -255,44 +258,6 @@ fix_multipart_geoms = function(spatVector) {
 
 
 
-# Parallelized giottoPolygon creation workflows #
-
-# Internal function to create a giottoPolygon object, smooth it, then wrap it so
-# that results are portable/possible to use with parallelization.
-# dotparams are passed to smoothGiottoPolygons
-#' @title Polygon creation and smoothing for parallel
-#' @name gpoly_from_dfr_smoothed_wrapped
-#' @keywords internal
-gpoly_from_dfr_smoothed_wrapped = function(segmdfr,
-                                           name = 'cell',
-                                           calc_centroids = FALSE,
-                                           smooth_polygons = FALSE,
-                                           vertices = 20L,
-                                           k = 3L,
-                                           set_neg_to_zero = TRUE,
-                                           skip_eval_dfr = FALSE,
-                                           copy_dt = TRUE,
-                                           verbose = TRUE) {
-
-  gpoly = createGiottoPolygonsFromDfr(segmdfr = segmdfr,
-                                      name = name,
-                                      calc_centroids = FALSE,
-                                      skip_eval_dfr = skip_eval_dfr,
-                                      copy_dt = copy_dt,
-                                      verbose = verbose)
-  if(isTRUE(smooth_polygons)) gpoly = smoothGiottoPolygons(gpolygon = gpoly,
-                                                           vertices = vertices,
-                                                           k = k,
-                                                           set_neg_to_zero = set_neg_to_zero)
-  if(isTRUE(calc_centroids)) gpoly = calculate_centroids_polygons(gpolygon = gpoly,
-                                                                  append_gpolygon = TRUE)
-
-  slot(gpoly, 'spatVector') = terra::wrap(slot(gpoly, 'spatVector'))
-  if(isTRUE(calc_centroids)) {
-    slot(gpoly, 'spatVectorCentroids') = terra::wrap(slot(gpoly, 'spatVectorCentroids'))
-  }
-  return(gpoly)
-}
 
 
 
@@ -361,6 +326,12 @@ combineToMultiPolygon = function(x, groups, name = NULL) {
     include_values = TRUE,
     sort_geom = TRUE
   )
+
+  # makeValid is necessary. Very common that there will be cell polys that
+  # overlap each other. This is fine when the polys are independent, however,
+  # when they are combined as a multipolygon, they become self intersecting
+  # geometry and thus not allowed.
+  multi_sv = terra::makeValid(multi_sv)
 
   giottoPolygon(
     spatVector = multi_sv,
@@ -457,7 +428,7 @@ dt_to_spatVector_polygon = function(dt,
     }
 
     attr_values = unique(dt[,other_values, with = FALSE])
-    if (nrow(attr_values > 0L) &&
+    if (nrow(attr_values) > 0L &&
         nrow(attr_values) != max(dt[, max(geom)])) {
       warning(wrap_txt(
         'dt_to_spatVector_polygon:
@@ -614,8 +585,10 @@ smoothGiottoPolygons = function(gpolygon,
 #' @param x data.frame object
 #' @param verbose be verbose
 #' @keywords internal
-create_spatvector_object_from_dfr = function(x,
-                                             verbose = TRUE) {
+create_spatvector_object_from_dfr = function(
+    x,
+    verbose = TRUE
+) {
 
   x = data.table::as.data.table(x)
 

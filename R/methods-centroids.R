@@ -15,12 +15,28 @@ NULL
 # ---------------------------------------------------------------- #
 
 #' @rdname centroids-generic
+#' @param append_gpolygon whether to append the centroids results to the
+#' `giottoPolygon` instead of returning bare `SpatVector`. Defaults to FALSE
 #' @export
-setMethod('centroids', signature(x = 'giottoPolygon'),
-          function(x) {
-            if(!is.null(x@spatVectorCentroids)) {
-              return(x@spatVectorCentroids)
-            } else {
-              return(terra::centroids(x@spatVector))
-            }
-          })
+setMethod(
+  'centroids', signature(x = 'giottoPolygon'),
+  function(x, append_gpolygon = FALSE)
+  {
+    if (!is.null(x@spatVectorCentroids)) { # centroids exist in gpoly
+      if (isTRUE(append_gpolygon)) {
+        return(x)
+      } else {
+        return(x@spatVectorCentroids)
+      }
+
+    } else { # centroids do not exist in gpoly
+      ctrds = terra::centroids(x@spatVector)
+      if (isTRUE(append_gpolygon)) {
+        x@spatVectorCentroids <- ctrds
+        return(x)
+      } else {
+        return(ctrds)
+      }
+    }
+  }
+)

@@ -20,7 +20,7 @@
 #' @keywords internal
 #' @export
 mean_flex = function(x, ...) {
-
+  
   if(inherits(x, 'HDF5Matrix')) {
     return(Matrix::mean(x, ...))
   } else if(inherits(x, 'dgCMatrix')) {
@@ -40,12 +40,11 @@ mean_flex = function(x, ...) {
 #' @keywords internal
 #' @export
 rowSums_flex = function(mymatrix) {
-
-  if(inherits(mymatrix, 'HDF5Matrix')) {
-    return(Matrix::rowSums(mymatrix))
+  
+  if(inherits(mymatrix, 'DelayedArray')) {
+    #return(Matrix::rowSums(mymatrix))
     # } else if(inherits(mymatrix, 'DelayedMatrix')) {
-    #   print("This is an DelayedMatrix")
-    #   return(DelayedMatrixStats::rowSums2(mymatrix))
+    return(DelayedMatrixStats::rowSums2(mymatrix))
   } else if(inherits(mymatrix, 'dgCMatrix')) {
     return(Matrix::rowSums(mymatrix)) # replace with sparseMatrixStats
   } else if(inherits(mymatrix, 'Matrix')) {
@@ -66,12 +65,12 @@ rowSums_flex = function(mymatrix) {
 #' @keywords internal
 #' @export
 rowMeans_flex = function(mymatrix) {
-
+  
   # replace by MatrixGenerics?
-  if(inherits(mymatrix, 'HDF5Matrix')) {
-    return(Matrix::rowMeans(mymatrix))
+  if(inherits(mymatrix, 'DelayedArray')) {
+    #return(Matrix::rowMeans(mymatrix))
     # } else  if(inherits(mymatrix, 'DelayedMatrix')) {
-    #   return(DelayedMatrixStats::rowMeans2(mymatrix))
+    return(DelayedMatrixStats::rowMeans2(mymatrix))
   } else if(inherits(mymatrix, 'dgCMatrix')) {
     return(Matrix::rowMeans(mymatrix)) # replace with sparseMatrixStats
   } else if(inherits(mymatrix, 'Matrix')) {
@@ -81,7 +80,7 @@ rowMeans_flex = function(mymatrix) {
     temp_res = matrixStats::rowMeans2(temp_matrix)
     names(temp_res) = rownames(temp_matrix)
     return(temp_res)
-
+    
   }
 }
 
@@ -93,11 +92,11 @@ rowMeans_flex = function(mymatrix) {
 #' @keywords internal
 #' @export
 colSums_flex = function(mymatrix) {
-
-  if(inherits(mymatrix, 'HDF5Matrix')) {
-    return(Matrix::colSums(mymatrix))
+  
+  if(inherits(mymatrix, 'DelayedArray')) {
+    return(DelayedMatrixStats::colSums2(mymatrix))
+    #return(Matrix::colSums(mymatrix))
     # } else if(inherits(mymatrix, 'DelayedMatrix')) {
-    #   return(DelayedMatrixStats::colSums2(mymatrix))
   } else if(inherits(mymatrix, 'dgCMatrix')) {
     return(Matrix::colSums(mymatrix)) # replace with sparseMatrixStats
   } else if(inherits(mymatrix, 'Matrix')) {
@@ -118,11 +117,11 @@ colSums_flex = function(mymatrix) {
 #' @keywords internal
 #' @export
 colMeans_flex = function(mymatrix) {
-
-  if(inherits(mymatrix, 'HDF5Matrix')) {
-    return(Matrix::colMeans(mymatrix))
+  
+  if(inherits(mymatrix, 'DelayedArray')) {
+    #return(Matrix::colMeans(mymatrix))
     # } else if(inherits(mymatrix, 'DelayedMatrix')) {
-    #   return(DelayedMatrixStats::colMeans2(mymatrix))
+    return(DelayedMatrixStats::colMeans2(mymatrix))
   } else if(inherits(mymatrix, 'dgCMatrix')) {
     return(Matrix::colMeans(mymatrix)) # replace with sparseMatrixStats
   } else if(inherits(mymatrix, 'Matrix')) {
@@ -140,16 +139,13 @@ colMeans_flex = function(mymatrix) {
 #' @title t_flex
 #' @name t_flex
 #' @param mymatrix matrix to use
-#' @include generics.R
 #' @keywords internal
 #' @export
 t_flex = function(mymatrix) {
-
-  if(inherits(mymatrix, 'HDF5Matrix')) {
-    package_check('HDF5Array', repository = 'Bioc')
-    return(methods::as(t(mymatrix), 'HDF5Matrix'))
-    # } else if(inherits(mymatrix, 'DelayedMatrix')) {
-    #   return(t(mymatrix))
+  
+  if(inherits(mymatrix, 'DelayedArray')) {
+    #return(methods::as(t(mymatrix), 'HDF5Matrix'))
+    return(DelayedArray::t(mymatrix))
   } else if(inherits(mymatrix, 'dgCMatrix')) {
     return(Matrix::t(mymatrix)) # replace with sparseMatrixStats
   } else if(inherits(mymatrix, 'Matrix')) {
@@ -239,20 +235,26 @@ my_rowMeans = function(x, method = c('arithmic', 'geometric'), offset = 0.1) {
 #' @return standardized matrix
 #' @export
 standardise_flex = function (x, center = TRUE, scale = TRUE) {
-
-  if (center & scale) {
-    y = t_flex(x) - colMeans_flex(x)
-    y = y/sqrt(rowSums_flex(y^2)) * sqrt((dim(x)[1] - 1))
-    y = t_flex(y)
-  }
-  else if (center & !scale) {
-    y = t_flex(x) - colMeans_flex(x)
-    y = t_flex(y)
-  }
-  else if (!center & scale) {
-    csd = matrixStats::colSds(x)
-    y = t_flex(t_flex(x) / csd )
+  
+  if(inherits(x, 'DelayedArray')) {
+    y = ScaledMatrix::ScaledMatrix(x = x, center = center, scale = scale)
   } else {
-    y = x
+    if (center & scale) {
+      y = t_flex(x) - colMeans_flex(x)
+      y = y/sqrt(rowSums_flex(y^2)) * sqrt((dim(x)[1] - 1))
+      y = t_flex(y)
+    }
+    else if (center & !scale) {
+      y = t_flex(x) - colMeans_flex(x)
+      y = t_flex(y)
+    }
+    else if (!center & scale) {
+      csd = matrixStats::colSds(x)
+      #csd = DelayedMatrixStats::colSds(x)
+      y = t_flex(t_flex(x) / csd )
+    } else {
+      y = x
+    }
   }
+  
 }

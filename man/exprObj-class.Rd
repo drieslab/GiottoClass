@@ -3,6 +3,7 @@
 \docType{class}
 \name{exprObj-class}
 \alias{exprObj-class}
+\alias{exprObj}
 \title{S4 exprObj}
 \description{
 Framework to store aggregated expression information

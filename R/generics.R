@@ -27,6 +27,11 @@ setGeneric('spatShift', function(x, ...) standardGeneric('spatShift'))
 setGeneric('overlaps', function(x, ...) standardGeneric('overlaps'))
 
 
+# Object creation ####
+setGeneric('createGiottoPoints', function(x, ...) standardGeneric('createGiottoPoints'))
+setGeneric('createGiottoPolygon', function(x, ...) standardGeneric('createGiottoPolygon'))
+
+
 # Object Characteristics ####
 
 ## nrow() S4 generic ####
@@ -42,6 +47,11 @@ if(!isGeneric('rownames')) setOldClass('rownames')
 
 # copy() S4 generic ####
 setGeneric('copy', function(x) standardGeneric('copy'), useAsDefault = data.table::copy)
+
+
+# spatial operations ####
+setGeneric('calculateOverlap', function(x, y, ...) standardGeneric('calculateOverlap'))
+setGeneric('overlapToMatrix', function(x, ...) standardGeneric('overlapToMatrix'))
 
 
 # Giotto subnesting ####
@@ -69,4 +79,7 @@ setGeneric('setGiotto', function(gobject, x, ...) standardGeneric('setGiotto'))
 
 # coerce ####
 setGeneric('as.sf', function(x, ...) standardGeneric('as.sf'))
+setGeneric('as.sp', function(x, ...) standardGeneric('as.sp'))
+setGeneric('as.stars', function(x, ...) standardGeneric('as.stars'))
+setGeneric('as.terra', function(x, ...) standardGeneric('as.terra'))
 
