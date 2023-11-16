@@ -1,4 +1,5 @@
 #' @importFrom methods new
+#' @importFrom methods as
 #' @importFrom methods rbind2
 #' @importFrom methods setMethod
 #' @importFrom methods show

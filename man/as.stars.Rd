@@ -4,7 +4,7 @@
 \alias{as.stars}
 \alias{as.stars,SpatVector-method}
 \alias{as.stars,sf-method}
-\alias{as.stars,sp-method}
+\alias{as.stars,Spatial-method}
 \alias{as.stars,stars-method}
 \alias{as.stars,giottoPolygon-method}
 \alias{as.stars,giottoPoints-method}
@@ -14,7 +14,7 @@
 
 \S4method{as.stars}{sf}(x)
 
-\S4method{as.stars}{sp}(x)
+\S4method{as.stars}{Spatial}(x)
 
 \S4method{as.stars}{stars}(x)
 

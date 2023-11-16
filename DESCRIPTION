@@ -1,6 +1,6 @@
 Package: GiottoClass
 Title: Giotto Suite object definitions and framework
-Version: 0.0.0.9009
+Version: 0.0.0.9010
 Authors@R: c(
 	person("Ruben", "Dries", email = "rubendries@gmail.com",
 		 role = c("aut", "cre")),
@@ -57,6 +57,7 @@ Suggests:
     S4Vectors,
     scattermore,
     Seurat,
+    SeuratObject,
     sf,
     SingleCellExperiment,
     SpatialExperiment,
@@ -68,12 +69,12 @@ Remotes: drieslab/GiottoUtils
 Config/testthat/edition: 3
 Collate: 
     'NN_network.R'
-    'aggregate.R'
-    'auxilliary.R'
     'package_imports.R'
     'classes.R'
-    'combine_metadata.R'
     'generics.R'
+    'aggregate.R'
+    'auxilliary.R'
+    'combine_metadata.R'
     'slot_accessors.R'
     'create.R'
     'data_evaluation.R'
