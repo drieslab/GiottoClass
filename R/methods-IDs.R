@@ -9,8 +9,6 @@ NULL
 #' the single-cell level) and feature IDs of a giotto object or subobject
 #' @aliases spatIDs featIDs
 #' @param x an object
-#' @param spat_unit (optional) specify which spatial unit
-#' @param feat_type (optional) specify which feature type
 #' @param ... additional parameters to pass
 #' @include classes.R
 #' @usage
@@ -29,6 +27,7 @@ NULL
 
 
 #' @rdname spatIDs-generic
+#' @param spat_unit (optional) specify which spatial unit
 #' @export
 setMethod('spatIDs', signature(x = 'giotto'),
           function(x, spat_unit = NULL, ...) {
@@ -103,6 +102,7 @@ setMethod('spatIDs', signature(x = 'nnNetObj'),
 
 
 #' @rdname spatIDs-generic
+#' @param feat_type (optional) specify which feature type
 #' @export
 setMethod('featIDs', signature(x = 'giotto'),
           function(x, feat_type = NULL, ...) {
