@@ -17,8 +17,8 @@ NULL
 #' @title R spatial conversions
 #' @name r_spatial_conversions
 #' @param x The object to coerce
-#' @param drop When TRUE, returned object will be the sp object instead of
-#' wrapped in a `giottoPoints` or `giottoPolygon` object
+#' @param drop When TRUE, returned object will be of the desired object type
+#' instead of wrapped in a `giottoPoints` or `giottoPolygon` object
 #' @family As coercion functions
 NULL
 
