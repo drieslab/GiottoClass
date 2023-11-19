@@ -51,6 +51,7 @@ Suggests:
     geometry,
     GiottoData,
     HDF5Array (>= 1.18.1),
+    raster,
     remotes,
     rhdf5,
     rlang,

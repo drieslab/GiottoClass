@@ -37,9 +37,6 @@ Coerce to data.table if possible
 }
 \seealso{
 Other As coercion functions: 
-\code{\link{as.sf}()},
-\code{\link{as.sp}()},
-\code{\link{as.stars}()},
-\code{\link{as.terra}()}
+\code{\link{r_spatial_conversions}}
 }
 \concept{As coercion functions}
