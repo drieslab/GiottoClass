@@ -58,53 +58,47 @@ the single-cell level) and feature IDs of a giotto object or subobject</p>
 <span><span class="co">## Default S4 method for signatures:</span></span>
 <span><span class="co">## 'giotto', 'exprObj', 'spatLocsObj', 'cellMetaObj', 'spatialNetworkObj' 'dimObj'</span></span>
 <span></span>
-<span><span class="co"># S4 method for giotto,missing</span></span>
-<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">spat_unit</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="co"># S4 method for giotto</span></span>
+<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, spat_unit <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for giotto,character</span></span>
-<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">spat_unit</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="co"># S4 method for exprObj</span></span>
+<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for exprObj,missing</span></span>
-<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">spat_unit</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="co"># S4 method for spatLocsObj</span></span>
+<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for spatLocsObj,missing</span></span>
-<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">spat_unit</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="co"># S4 method for cellMetaObj</span></span>
+<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for cellMetaObj,missing</span></span>
-<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">spat_unit</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="co"># S4 method for spatialNetworkObj</span></span>
+<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for spatialNetworkObj,missing</span></span>
-<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">spat_unit</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="co"># S4 method for dimObj</span></span>
+<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for dimObj,missing</span></span>
-<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">spat_unit</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for giottoPolygon,missing</span></span>
+<span><span class="co"># S4 method for giottoPolygon</span></span>
 <span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, use_cache <span class="op">=</span> <span class="cn">TRUE</span>, uniques <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for spatEnrObj,missing</span></span>
-<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">spat_unit</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="co"># S4 method for spatEnrObj</span></span>
+<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for nnNetObj,missing</span></span>
-<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">spat_unit</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="co"># S4 method for nnNetObj</span></span>
+<span><span class="fu">spatIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for giotto,missing</span></span>
-<span><span class="fu">featIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">feat_type</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="co"># S4 method for giotto</span></span>
+<span><span class="fu">featIDs</span><span class="op">(</span><span class="va">x</span>, feat_type <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for giotto,character</span></span>
-<span><span class="fu">featIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">feat_type</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="co"># S4 method for exprObj</span></span>
+<span><span class="fu">featIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for exprObj,missing</span></span>
-<span><span class="fu">featIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">feat_type</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="co"># S4 method for featMetaObj</span></span>
+<span><span class="fu">featIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for featMetaObj,missing</span></span>
-<span><span class="fu">featIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">feat_type</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for giottoPoints,missing</span></span>
+<span><span class="co"># S4 method for giottoPoints</span></span>
 <span><span class="fu">featIDs</span><span class="op">(</span><span class="va">x</span>, use_cache <span class="op">=</span> <span class="cn">TRUE</span>, uniques <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for spatEnrObj,missing</span></span>
-<span><span class="fu">featIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">feat_type</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># S4 method for spatEnrObj</span></span>
+<span><span class="fu">featIDs</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">

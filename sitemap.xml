@@ -112,18 +112,6 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/as.data.table.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/as.sf.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/as.sp.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/as.stars.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/as.terra.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/calculateMetaTable.html</loc>
   </url>
   <url>
@@ -866,6 +854,9 @@
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/py_install_prompt.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/r_spatial_conversions.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/rbind-generic.html</loc>
