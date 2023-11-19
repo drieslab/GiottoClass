@@ -79,8 +79,8 @@
 \arguments{
 \item{x}{The object to coerce}
 
-\item{drop}{When TRUE, returned object will be the sp object instead of
-wrapped in a \code{giottoPoints} or \code{giottoPolygon} object}
+\item{drop}{When TRUE, returned object will be of the desired object type
+instead of wrapped in a \code{giottoPoints} or \code{giottoPolygon} object}
 
 \item{type}{whether data is 'vector' or 'raster'}
 }

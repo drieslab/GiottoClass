@@ -44,13 +44,6 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
-      - name: Set up dependencies (GiottoData)
-        run: |
-          suppressWarnings({
-            remotes::install_github('drieslab/GiottoData@suite_modular', build = FALSE)
-          })
-        shell: Rscript {0}
-
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
