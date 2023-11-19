@@ -1,5 +1,7 @@
 # Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+name: pkgdown build
+
 on:
   push:
     branches: [main, master]
@@ -27,7 +29,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup pandoc
-      - uses: r-lib/actions/setup-pandoc@v2
+        uses: r-lib/actions/setup-pandoc@v2
 
       - name: Setup R environment
         uses: r-lib/actions/setup-r@v2
