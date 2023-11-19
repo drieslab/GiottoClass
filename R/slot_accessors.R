@@ -3724,13 +3724,15 @@ setSpatialGrid = function(gobject,
 #' @param polygon_name name of polygons. Default "cell"
 #' @param polygon_overlap include polygon overlap information
 #' @param return_giottoPolygon (Defaults to FALSE) Return as giottoPolygon S4 object
+#' @param verbose be verbose
 #' @family polygon info data accessor functions
 #' @family functions to get data from giotto object
 #' @export
 get_polygon_info = function(gobject,
                             polygon_name = NULL,
                             polygon_overlap = NULL,
-                            return_giottoPolygon = FALSE) {
+                            return_giottoPolygon = FALSE,
+                            verbose = TRUE) {
 
   deprecate_soft('3.3.0', what = 'get_polygon_info()', with = 'getPolygonInfo()')
 
@@ -3743,7 +3745,10 @@ get_polygon_info = function(gobject,
       polygon_name = 'cell' # Default to 'cell' as polygon_name if available
     } else {
       polygon_name = potential_names[1] # Select 1st available name if 'cell' is missing
-      message('No polygon information named "cell" discovered.\n selecting first available ("',polygon_name,'")')
+      if (isTRUE(verbose)) {
+        wrap_msg('No polygon information named "cell" discovered.
+                 Selecting first available ("',polygon_name,'")')
+      }
     }
   }
 
@@ -3780,23 +3785,28 @@ get_polygon_info = function(gobject,
 #' @param polygon_name name of polygons. Default is "cell"
 #' @param polygon_overlap include polygon overlap information
 #' @param return_giottoPolygon (Defaults to FALSE) Return as giottoPolygon S4 object
+#' @param verbose be verbose
 #' @family polygon info data accessor functions
 #' @family functions to get data from giotto object
 #' @export
 getPolygonInfo = function(gobject = NULL,
                           polygon_name = NULL,
                           polygon_overlap = NULL,
-                          return_giottoPolygon = FALSE) {
+                          return_giottoPolygon = FALSE,
+                          verbose = TRUE) {
   if (!inherits(gobject, 'giotto')){
     wrap_msg("Unable to get polygon spatVector from non-Giotto object.")
     stop(wrap_txt("Please provide a Giotto object to the gobject argument.",
                   errWidth = TRUE))
   }
 
-  poly_info = get_polygon_info(gobject = gobject,
-                               polygon_name = polygon_name,
-                               polygon_overlap = polygon_overlap,
-                               return_giottoPolygon = return_giottoPolygon)
+  poly_info = get_polygon_info(
+    gobject = gobject,
+    polygon_name = polygon_name,
+    polygon_overlap = polygon_overlap,
+    return_giottoPolygon = return_giottoPolygon,
+    verbose = verbose
+  )
 
   return (poly_info)
 }

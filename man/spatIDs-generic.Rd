@@ -4,22 +4,20 @@
 \alias{spatIDs-generic}
 \alias{spatIDs}
 \alias{featIDs}
-\alias{spatIDs,giotto,missing-method}
-\alias{spatIDs,giotto,character-method}
-\alias{spatIDs,exprObj,missing-method}
-\alias{spatIDs,spatLocsObj,missing-method}
-\alias{spatIDs,cellMetaObj,missing-method}
-\alias{spatIDs,spatialNetworkObj,missing-method}
-\alias{spatIDs,dimObj,missing-method}
-\alias{spatIDs,giottoPolygon,missing-method}
-\alias{spatIDs,spatEnrObj,missing-method}
-\alias{spatIDs,nnNetObj,missing-method}
-\alias{featIDs,giotto,missing-method}
-\alias{featIDs,giotto,character-method}
-\alias{featIDs,exprObj,missing-method}
-\alias{featIDs,featMetaObj,missing-method}
-\alias{featIDs,giottoPoints,missing-method}
-\alias{featIDs,spatEnrObj,missing-method}
+\alias{spatIDs,giotto-method}
+\alias{spatIDs,exprObj-method}
+\alias{spatIDs,spatLocsObj-method}
+\alias{spatIDs,cellMetaObj-method}
+\alias{spatIDs,spatialNetworkObj-method}
+\alias{spatIDs,dimObj-method}
+\alias{spatIDs,giottoPolygon-method}
+\alias{spatIDs,spatEnrObj-method}
+\alias{spatIDs,nnNetObj-method}
+\alias{featIDs,giotto-method}
+\alias{featIDs,exprObj-method}
+\alias{featIDs,featMetaObj-method}
+\alias{featIDs,giottoPoints-method}
+\alias{featIDs,spatEnrObj-method}
 \title{Spatial and feature IDs}
 \usage{
 spatIDs(x, spat_unit, ...)
@@ -29,37 +27,33 @@ featIDs(x, feat_type, ...)
 ## Default S4 method for signatures:
 ## 'giotto', 'exprObj', 'spatLocsObj', 'cellMetaObj', 'spatialNetworkObj' 'dimObj'
 
-\S4method{spatIDs}{giotto,missing}(x, spat_unit, ...)
+\S4method{spatIDs}{giotto}(x, spat_unit = NULL, ...)
 
-\S4method{spatIDs}{giotto,character}(x, spat_unit, ...)
+\S4method{spatIDs}{exprObj}(x, ...)
 
-\S4method{spatIDs}{exprObj,missing}(x, spat_unit, ...)
+\S4method{spatIDs}{spatLocsObj}(x, ...)
 
-\S4method{spatIDs}{spatLocsObj,missing}(x, spat_unit, ...)
+\S4method{spatIDs}{cellMetaObj}(x, ...)
 
-\S4method{spatIDs}{cellMetaObj,missing}(x, spat_unit, ...)
+\S4method{spatIDs}{spatialNetworkObj}(x, ...)
 
-\S4method{spatIDs}{spatialNetworkObj,missing}(x, spat_unit, ...)
+\S4method{spatIDs}{dimObj}(x, ...)
 
-\S4method{spatIDs}{dimObj,missing}(x, spat_unit, ...)
+\S4method{spatIDs}{giottoPolygon}(x, use_cache = TRUE, uniques = TRUE, ...)
 
-\S4method{spatIDs}{giottoPolygon,missing}(x, use_cache = TRUE, uniques = TRUE, ...)
+\S4method{spatIDs}{spatEnrObj}(x, ...)
 
-\S4method{spatIDs}{spatEnrObj,missing}(x, spat_unit, ...)
+\S4method{spatIDs}{nnNetObj}(x, ...)
 
-\S4method{spatIDs}{nnNetObj,missing}(x, spat_unit, ...)
+\S4method{featIDs}{giotto}(x, feat_type = NULL, ...)
 
-\S4method{featIDs}{giotto,missing}(x, feat_type, ...)
+\S4method{featIDs}{exprObj}(x, ...)
 
-\S4method{featIDs}{giotto,character}(x, feat_type, ...)
+\S4method{featIDs}{featMetaObj}(x, ...)
 
-\S4method{featIDs}{exprObj,missing}(x, feat_type, ...)
+\S4method{featIDs}{giottoPoints}(x, use_cache = TRUE, uniques = TRUE, ...)
 
-\S4method{featIDs}{featMetaObj,missing}(x, feat_type, ...)
-
-\S4method{featIDs}{giottoPoints,missing}(x, use_cache = TRUE, uniques = TRUE, ...)
-
-\S4method{featIDs}{spatEnrObj,missing}(x, feat_type, ...)
+\S4method{featIDs}{spatEnrObj}(x, ...)
 }
 \arguments{
 \item{x}{an object}

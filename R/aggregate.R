@@ -1060,8 +1060,8 @@ setMethod(
   'overlapToMatrix', signature('giotto'), function(
     x,
     name = 'raw',
-    poly_info = 'cell',
-    feat_info = 'rna',
+    poly_info = NULL,
+    feat_info = NULL,
     type = c('point', 'intensity'),
     count_info_column = NULL,
     aggr_function = "sum",
@@ -1070,26 +1070,33 @@ setMethod(
     ...
   )
   {
+
     type = match.arg(type, choices = c('point', 'intensity'))
     checkmate::assert_character(name, len = 1L)
-    checkmate::assert_character(poly_info, len = 1L)
-    checkmate::assert_character(feat_info, len = 1L)
     if (!is.null(count_info_column)) {
       checkmate::assert_character(count_info_column, len = 1L)
     }
     checkmate::assert_logical(return_gobject)
 
+    poly_info <- set_default_spat_unit(gobject = x,
+                                       spat_unit = poly_info)
+    feat_info <- set_default_feat_type(gobject = x,
+                                       spat_unit = poly_info,
+                                       feat_type = feat_info)
+
     # get data
     gpoly = getPolygonInfo(
       gobject = x,
       polygon_name = poly_info,
-      return_giottoPolygon = TRUE
+      return_giottoPolygon = TRUE,
+      verbose = verbose
     )
 
     o2m_args <- list(
       x = gpoly,
       col_names = spatIDs(x, spat_unit = poly_info),
       row_names = featIDs(x, feat_type = feat_info),
+      feat_info = feat_info,
       count_info_column = count_info_column,
       aggr_function = aggr_function,
       # output = 'Matrix', # Do not specify here. methods must return
@@ -1237,7 +1244,7 @@ setMethod(
     # 2. Perform aggregation to counts DT
     if(!is.null(count_info_column)) { # if there is a counts col
 
-      if(!count_info_column %in% colnames(dtoverlap)) {
+      if (!count_info_column %in% colnames(dtoverlap)) {
         stop('count_info_column ', count_info_column, ' does not exist')
       }
 

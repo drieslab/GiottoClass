@@ -8,7 +8,8 @@ getPolygonInfo(
   gobject = NULL,
   polygon_name = NULL,
   polygon_overlap = NULL,
-  return_giottoPolygon = FALSE
+  return_giottoPolygon = FALSE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ getPolygonInfo(
 \item{polygon_overlap}{include polygon overlap information}
 
 \item{return_giottoPolygon}{(Defaults to FALSE) Return as giottoPolygon S4 object}
+
+\item{verbose}{be verbose}
 }
 \description{
 Get giotto polygon spatVector
