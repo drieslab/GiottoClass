@@ -45,6 +45,7 @@ Imports:
     terra (>= 1.7-39)
 Suggests: 
     Biobase,
+    chihaya,
     DelayedArray,
     exactextractr,
     geometry,
