@@ -72,7 +72,8 @@ setMethod('ext<-', signature(x = 'giottoPolygon', value = 'SpatExtent'), functio
 #' @rdname ext-generic
 #' @export
 setMethod('ext<-', signature(x = 'giottoLargeImage', value = 'SpatExtent'), function(x, value) {
-  terra::ext(x@raster_object) = value
+  terra::ext(x@raster_object) <- value
+  x@extent <- value
   x
 })
 

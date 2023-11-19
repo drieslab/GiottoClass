@@ -1409,9 +1409,16 @@ get_expression_values = function(gobject,
   # Read matrix from h5 file if needed
   if(!is.null(slot(gobject, 'h5_file'))) {
     matrix_path = expr_vals[]
-    expression_matrix = HDF5Array::HDF5Array(filepath = slot(gobject, 'h5_file'),
-                                             name = matrix_path,
-                                             as.sparse = TRUE)
+
+    if(grepl('scaled', matrix_path)) {
+      expression_matrix = HDF5Array::HDF5Array(filepath = slot(gobject, 'h5_file'),
+                                               name = matrix_path,
+                                               as.sparse = TRUE)
+    } else {
+      expression_matrix = chihaya::loadDelayed(file = slot(gobject, 'h5_file'),
+                                               path = matrix_path)
+    }
+
     slot(expr_vals,'exprMat') = expression_matrix
   }
 
@@ -1681,10 +1688,21 @@ set_expression_values = function(gobject,
       }
     }
 
-    expression_matrix = write_local_HDF5(x = expression_matrix,
-                                         filepath = h5_file,
-                                         name = internal_path,
-                                         with.dimnames = TRUE)
+    if(!inherits(expression_matrix, 'DelayedArray')) {
+      chihaya::saveDelayed(x = DelayedArray::DelayedArray(expression_matrix),
+                           file = h5_file,
+                           path = internal_path)
+    } else if (inherits(expression_matrix, 'ScaledMatrix')) {
+      expression_matrix = HDF5Array::writeHDF5Array(expression_matrix,
+                                                    filepath = h5_file,
+                                                    name = internal_path,
+                                                    with.dimnames = TRUE)
+    } else {
+      chihaya::saveDelayed(x = expression_matrix,
+                           file = h5_file,
+                           path = internal_path)
+    }
+
     slot(values, 'exprMat') = internal_path
   }
 
@@ -3724,14 +3742,15 @@ setSpatialGrid = function(gobject,
 #' @param polygon_name name of polygons. Default "cell"
 #' @param polygon_overlap include polygon overlap information
 #' @param return_giottoPolygon (Defaults to FALSE) Return as giottoPolygon S4 object
+#' @param verbose be verbose
 #' @family polygon info data accessor functions
 #' @family functions to get data from giotto object
 #' @export
 get_polygon_info = function(gobject,
                             polygon_name = NULL,
                             polygon_overlap = NULL,
-                            return_giottoPolygon = FALSE) {
-
+                            return_giottoPolygon = FALSE,
+                            verbose = TRUE) {
   deprecate_soft('3.3.0', what = 'get_polygon_info()', with = 'getPolygonInfo()')
 
   potential_names = names(slot(gobject, 'spatial_info'))
@@ -3743,7 +3762,10 @@ get_polygon_info = function(gobject,
       polygon_name = 'cell' # Default to 'cell' as polygon_name if available
     } else {
       polygon_name = potential_names[1] # Select 1st available name if 'cell' is missing
-      message('No polygon information named "cell" discovered.\n selecting first available ("',polygon_name,'")')
+      if (isTRUE(verbose)) {
+        wrap_msg('No polygon information named "cell" discovered.
+                 Selecting first available ("',polygon_name,'")')
+      }
     }
   }
 
@@ -3780,24 +3802,28 @@ get_polygon_info = function(gobject,
 #' @param polygon_name name of polygons. Default is "cell"
 #' @param polygon_overlap include polygon overlap information
 #' @param return_giottoPolygon (Defaults to FALSE) Return as giottoPolygon S4 object
+#' @param verbose be verbose
 #' @family polygon info data accessor functions
 #' @family functions to get data from giotto object
 #' @export
 getPolygonInfo = function(gobject = NULL,
                           polygon_name = NULL,
                           polygon_overlap = NULL,
-                          return_giottoPolygon = FALSE) {
+                          return_giottoPolygon = FALSE,
+                          verbose = TRUE) {
   if (!inherits(gobject, 'giotto')){
     wrap_msg("Unable to get polygon spatVector from non-Giotto object.")
     stop(wrap_txt("Please provide a Giotto object to the gobject argument.",
                   errWidth = TRUE))
   }
 
-  poly_info = get_polygon_info(gobject = gobject,
-                               polygon_name = polygon_name,
-                               polygon_overlap = polygon_overlap,
-                               return_giottoPolygon = return_giottoPolygon)
-
+  poly_info = get_polygon_info(
+    gobject = gobject,
+    polygon_name = polygon_name,
+    polygon_overlap = polygon_overlap,
+    return_giottoPolygon = return_giottoPolygon,
+    verbose = verbose
+  )
   return (poly_info)
 }
 
