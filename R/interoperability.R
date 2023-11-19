@@ -43,7 +43,10 @@ gefToGiotto = function(gef_file, bin_size = 'bin100', verbose = FALSE, h5_file =
    geneDT = data.table::as.data.table(geneExpData[['gene']])
 
    exprDT = data.table::as.data.table(geneExpData[['expression']])
-   exprDT$count = as.integer(exprDT$count)
+   exprDT[ , count := lapply(.SD, as.integer), .SDcols = "count"]
+   data.table::setorder(exprDT, x, y) # sort by x, y coords (ascending)
+   geneDT = data.table::as.data.table(geneExpData[['gene']])
+   
    if(isTRUE(verbose)) wrap_msg('finished reading in .gef', bin_size, '\n')
 
    # 2. create spatial locations
@@ -70,7 +73,8 @@ gefToGiotto = function(gef_file, bin_size = 'bin100', verbose = FALSE, h5_file =
                                      x = exprDT$count)
 
    colnames(expMatrix) = cell_locations$cell_ID
-   rownames(expMatrix) = unique(exprDT, by = c("genes", "gene_idx"))$genes
+   rownames(expMatrix) = geneDT$gene
+   rm(exprDT)
    if(isTRUE(verbose)) wrap_msg('finished expression matrix')
 
    # 4. create minimal giotto object

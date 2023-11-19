@@ -49,35 +49,44 @@ def add_batch(adata: AnnData, cell_shape: pd.DataFrame):
     adata.uns['points']['batch'] = adata.uns['points']['batch'].astype('category')
 
 
-def create_AnnData(trainscripts, cell_shape, nucleus_shape) -> AnnData:
+def create_AnnData(transcripts, cell_shape, nucleus_shape) -> AnnData:
+    """
+    Create an AnnData object from transcripts, cell_shape and nucleus_shape
+    :param transcripts: a dataframe with columns: cell_id, gene, counts
+    :param cell_shape: a dataframe with columns: cell_id, x, y
+    :param nucleus_shape: a dataframe with columns: cell_id, x, y
+    :return: an AnnData object
+
+    Note: subsetted giotto object will preserve all cell and nucleus shapes, which will cause long execution time
+    """
     # --- processing input ---
-    trainscripts = pd.DataFrame(trainscripts)
+    transcripts = pd.DataFrame(transcripts)
     cell_shape = pd.DataFrame(cell_shape)
-    cell_shape['cell_id'] = cell_shape['cell_id'].astype('category')
+    cell_shape['cell_id'] = cell_shape['cell_id'].astype('str').astype('category')
     if 'batch' in cell_shape.columns:
-        cell_shape['batch'] = cell_shape['batch'].astype('category')
+        cell_shape['batch'] = cell_shape['batch'].astype('str').astype('category')
     nucleus_shape = pd.DataFrame(nucleus_shape)
-    nucleus_shape['cell_id'] = nucleus_shape['cell_id'].astype('category')
+    nucleus_shape['cell_id'] = nucleus_shape['cell_id'].astype('str').astype('category')
+    if 'batch' in cell_shape.columns:
+        nucleus_shape['batch'] = nucleus_shape['batch'].astype('str').astype('category')
 
     # --- create shape ---
+    info(message='Creating cell and nucleus segmentation dataframes')
     cell_seg = create_seg_df(cell_shape, x='x', y='y', cell_id='cell_id')
     nucleus_seg = create_seg_df(nucleus_shape, x='x', y='y', cell_id='cell_id')
-    if cell_seg.shape[0] > 500:
-        warning('cell_seg has more than 500 cells, processing may take a long time.')
 
     # --- filter cells ---
     # Let Giotto perform the filtering
-    legal_cells = pd.Series([True] * cell_seg.shape[0])
 
     # --- create AnnData ---
-    adata: AnnData = bt.io.prepare(molecules=trainscripts, cell_seg=cell_seg, other_seg={'nucleus': nucleus_seg})  # type: ignore
+    adata: AnnData = bt.io.prepare(molecules=transcripts, cell_seg=cell_seg, other_seg={'nucleus': nucleus_seg})  # type: ignore
     add_batch(adata, cell_shape)
 
     # --- filter genes ---
     # Interim measures
     # subsetting methods (both AnnData and Giotto) may preserve genes that are not in the subsetted adata
     legal_genes = adata.var_names.isin(set(adata.uns['points']['gene'].values))
-    filtered_adata = adata[legal_cells,legal_genes] # type: ignore
+    filtered_adata = adata[:,legal_genes] # type: ignore
     filtered_adata.uns['points']['gene'] = filtered_adata.uns['points']['gene'].cat.remove_unused_categories()
 
     # Interim measures

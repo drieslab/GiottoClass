@@ -1409,9 +1409,16 @@ get_expression_values = function(gobject,
   # Read matrix from h5 file if needed
   if(!is.null(slot(gobject, 'h5_file'))) {
     matrix_path = expr_vals[]
-    expression_matrix = HDF5Array::HDF5Array(filepath = slot(gobject, 'h5_file'),
-                                             name = matrix_path,
-                                             as.sparse = TRUE)
+
+    if(grepl('scaled', matrix_path)) {
+      expression_matrix = HDF5Array::HDF5Array(filepath = slot(gobject, 'h5_file'),
+                                               name = matrix_path,
+                                               as.sparse = TRUE)
+    } else {
+      expression_matrix = chihaya::loadDelayed(file = slot(gobject, 'h5_file'),
+                                               path = matrix_path)
+    }
+
     slot(expr_vals,'exprMat') = expression_matrix
   }
 
@@ -1681,10 +1688,21 @@ set_expression_values = function(gobject,
       }
     }
 
-    expression_matrix = write_local_HDF5(x = expression_matrix,
-                                         filepath = h5_file,
-                                         name = internal_path,
-                                         with.dimnames = TRUE)
+    if(!inherits(expression_matrix, 'DelayedArray')) {
+      chihaya::saveDelayed(x = DelayedArray::DelayedArray(expression_matrix),
+                           file = h5_file,
+                           path = internal_path)
+    } else if (inherits(expression_matrix, 'ScaledMatrix')) {
+      expression_matrix = HDF5Array::writeHDF5Array(expression_matrix,
+                                                    filepath = h5_file,
+                                                    name = internal_path,
+                                                    with.dimnames = TRUE)
+    } else {
+      chihaya::saveDelayed(x = expression_matrix,
+                           file = h5_file,
+                           path = internal_path)
+    }
+
     slot(values, 'exprMat') = internal_path
   }
 
@@ -3733,7 +3751,6 @@ get_polygon_info = function(gobject,
                             polygon_overlap = NULL,
                             return_giottoPolygon = FALSE,
                             verbose = TRUE) {
-
   deprecate_soft('3.3.0', what = 'get_polygon_info()', with = 'getPolygonInfo()')
 
   potential_names = names(slot(gobject, 'spatial_info'))
@@ -3807,7 +3824,6 @@ getPolygonInfo = function(gobject = NULL,
     return_giottoPolygon = return_giottoPolygon,
     verbose = verbose
   )
-
   return (poly_info)
 }
 
