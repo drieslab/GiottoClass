@@ -116,20 +116,20 @@ joining spatial information as selected through param <code>join_method</code>:<
 by numeric vectors of values supplied through <code>x_shift</code>, <code>y_shift</code>,
 <code>x_padding</code>, and <code>y_padding</code>. This is particularly useful for data
 that is provided as tiles or ROIs or when analyzing multiple spatial datasets
-together and keeping their spatial data separate.</p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>\strong{If shift values are given then a value is needed <span class="cf">for</span> each giotto object</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>to be joined <span class="cf">in</span> \code{gobject_list}. Order matters.}If a regular step value is desired instead of a specific list of values, use</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>\code{x_padding} and \code{y_padding}. Both shift and padding values can be used</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>at the same time.Leaving \code{x_shift} and \code{y_shift} values as \code{<span class="cn">NULL</span>} will have Giotto</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>estimate an appropriate \code{x_shift} value based on the x dimension of</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>available image objects. If no image objects are available, a default behavior of</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>\code{x_padding <span class="ot">=</span> <span class="dv">1000</span>} will be applied.</span></code></pre></div></li>
+together and keeping their spatial data separate.</p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>\strong{If shift values are given then a value is needed <span class="cf">for</span> each giotto object</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>to be joined <span class="cf">in</span> \code{gobject_list}. Order matters.}If a regular step value is desired instead of a specific list of values, use</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>\code{x_padding} and \code{y_padding}. Both shift and padding values can be used</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>at the same time.Leaving \code{x_shift} and \code{y_shift} values as \code{<span class="cn">NULL</span>} will have Giotto</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>estimate an appropriate \code{x_shift} value based on the x dimension of</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>available image objects. If no image objects are available, a default behavior of</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>\code{x_padding <span class="ot">=</span> <span class="dv">1000</span>} will be applied.</span></code></pre></div></li>
 <li><p><strong><code>"z_stack"</code></strong> 
 Datasets are spatially combined with no change to x and y
 spatial locations, but a z value is incorporated for each dataset based on input
 supplied through param <code>z_vals</code>. To specify a z value for each dataset to
 join, a numeric vector must be given with a value for each element in <code>gobject_list</code>.
-Order matters.</p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Alternatively, a single numeric value can be supplied to \code{z_vals} <span class="cf">in</span> which</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>case this input will be treated as a z step value.</span></code></pre></div></li>
+Order matters.</p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>Alternatively, a single numeric value can be supplied to \code{z_vals} <span class="cf">in</span> which</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>case this input will be treated as a z step value.</span></code></pre></div></li>
 <li><p><strong><code>"no_change"</code></strong> 
 No changes are applied to the spatial locations of the datasets when joining.</p></li>
 </ul></div>
