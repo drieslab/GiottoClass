@@ -11,8 +11,8 @@
 \S4method{overlapToMatrix}{giotto}(
   x,
   name = "raw",
-  poly_info = "cell",
-  feat_info = "rna",
+  poly_info = NULL,
+  feat_info = NULL,
   type = c("point", "intensity"),
   count_info_column = NULL,
   aggr_function = "sum",

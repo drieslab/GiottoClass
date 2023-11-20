@@ -45,11 +45,13 @@ Imports:
     terra (>= 1.7-39)
 Suggests: 
     Biobase,
+    chihaya,
     DelayedArray,
     exactextractr,
     geometry,
     GiottoData,
     HDF5Array (>= 1.18.1),
+    raster,
     remotes,
     rhdf5,
     rlang,
