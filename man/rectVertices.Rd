@@ -18,5 +18,11 @@ Generates vertex coordinates for a rectangle with dimensions given
 through \code{dims} param.
 }
 \seealso{
-polyStamp circleVertices hexVertices
+\link{generate_grid}
+
+Other polygon stamping: 
+\code{\link{circleVertices}()},
+\code{\link{hexVertices}()},
+\code{\link{polyStamp}()}
 }
+\concept{polygon stamping}

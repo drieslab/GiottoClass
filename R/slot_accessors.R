@@ -421,16 +421,6 @@ set_feat_id = function(gobject,
     fi_avail = list_feature_info(gobject = gobject)
 
     if(feat_type %in% expr_avail$feat_type) { # preferred from expression
-      # IDs = lapply(seq(nrow(expr_avail)), function(expr_i) {
-      #   ex_ID = featIDs(
-      #     get_expression_values(gobject = gobject,
-      #                           spat_unit = expr_avail$spat_unit[[expr_i]],
-      #                           feat_type = feat_type,
-      #                           values = expr_avail$name[[expr_i]],
-      #                           output = 'exprObj')
-      #   )
-      # })
-      # feat_IDs = unique(unlist(IDs))
 
       feat_IDs = featIDs(get_expression_values(
         gobject = gobject,

@@ -2,18 +2,36 @@
 % Please edit documentation in R/generate_poly.R
 \name{tessellate}
 \alias{tessellate}
-\title{tessellate}
+\alias{tesselate}
+\title{Tessellated grid of polygons}
 \usage{
-tessellate(extent, shape = c("hexagon", "square"), radius, name = "grid")
+tessellate(
+  extent,
+  shape = c("hexagon", "square"),
+  shape_size = NULL,
+  gap = 0,
+  radius = NULL,
+  id_prefix = NULL,
+  name = "grid"
+)
 }
 \arguments{
 \item{extent}{SpatExtent or anything else a SpatExtent can be extracted or created from}
 
 \item{shape}{Shape of the tessellation grid. Available options are "hexagon" and "square".}
 
-\item{radius}{numeric. Radius size of the tessellation grid.}
+\item{shape_size}{numeric. Size of shape to tesselate. (i.e. diameter for
+circles and hexagons, side length for squares)}
+
+\item{gap}{numeric. Gap to add between tesselated polygons}
+
+\item{radius}{deprecated. numeric. Radius size of the tessellation grid.}
+
+\item{id_prefix}{character. prefix to add to poly_ID names generated}
 
 \item{name}{name of giottoPolygons grid to make}
+
+\item{ccd}{center to center distance of tesselation grid}
 }
 \value{
 A giottoPolygon

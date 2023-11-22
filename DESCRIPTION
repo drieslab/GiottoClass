@@ -47,6 +47,7 @@ Suggests:
     Biobase,
     chihaya,
     DelayedArray,
+    DelayedMatrixStats (>= 1.24.0),
     exactextractr,
     geometry,
     GiottoData,
