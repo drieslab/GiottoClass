@@ -43,7 +43,7 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
   ## set instructions ##
   ## ---------------- ##
 
-  # set default instructions (no recursive initialize)
+  # set default instructions (make sure initialize = FALSE)
   if(is.null(instructions(.Object))) {
     instructions(.Object, initialize = FALSE) = createGiottoInstructions()
   }
@@ -671,25 +671,6 @@ init_cell_and_feat_IDs = function(gobject) {
                           verbose = FALSE,
                           set_defaults = TRUE)
   }
-
-  # 2. ensure cell_ID and colnames for each matrix are the same
-  # for(expr_i in seq(avail_expr[, .N])) {
-  #   spatial_unit = avail_expr[expr_i, spat_unit]
-  #   feature_type = avail_expr[expr_i, feat_type]
-  #   data = avail_expr[expr_i, name]
-  #
-  #   colnames_matrix = colnames(get_expression_values(gobject,
-  #                                                    spat_unit = spatial_unit,
-  #                                                    feat_type = feature_type,
-  #                                                    values = data,
-  #                                                    output = 'matrix'))
-  #   gobj_cell_ID = get_cell_id(gobject,
-  #                              spat_unit = spatial_unit)
-  #   if(!identical(colnames_matrix, gobj_cell_ID)) {
-  #     stop('Colnames are not the same for feat: ', feature_type,', spatial unit: ', spatial_unit ,', and data: ', data)
-  #   }
-  # }
-
 
   # 2. set feat_ID for each feature
   for(feature_type in used_feat_types) {
