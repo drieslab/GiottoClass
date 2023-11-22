@@ -19,5 +19,11 @@ Generates vertex coordinates for a circle around (0,0) with the
 given radius. Modified from \pkg{packcircles}.
 }
 \seealso{
-polyStamp rectVertices hexVertices
+\link{generate_grid}
+
+Other polygon stamping: 
+\code{\link{hexVertices}()},
+\code{\link{polyStamp}()},
+\code{\link{rectVertices}()}
 }
+\concept{polygon stamping}

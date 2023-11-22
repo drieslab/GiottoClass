@@ -35,3 +35,12 @@ returns a data.table of polygon vertices
 Takes a given stamp polygon and places it at each spatial location
 provided.
 }
+\seealso{
+\link{generate_grid}
+
+Other polygon stamping: 
+\code{\link{circleVertices}()},
+\code{\link{hexVertices}()},
+\code{\link{rectVertices}()}
+}
+\concept{polygon stamping}

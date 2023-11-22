@@ -19,5 +19,11 @@ a data.table of regular hexagon vertices
 Generates vertex coordinates for a regular hexagon.
 }
 \seealso{
-polyStamp circleVertices rectVertices
+\link{generate_grid}
+
+Other polygon stamping: 
+\code{\link{circleVertices}()},
+\code{\link{polyStamp}()},
+\code{\link{rectVertices}()}
 }
+\concept{polygon stamping}
