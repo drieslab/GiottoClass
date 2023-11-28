@@ -1,5 +1,3 @@
-
-
 # docs ----------------------------------------------------------- #
 #' @title Coerce to data.table
 #' @name as.data.table
@@ -31,15 +29,15 @@ NULL
 #' @export
 as.data.table.SpatVector <- function(x, keep.rownames = FALSE, geom = NULL, include_values = TRUE, ...) {
   # if looking for polygon XY...
-  if(terra::is.polygons(x)) {
-    if(!is.null(geom)) {
-      if(geom == 'XY') {
+  if (terra::is.polygons(x)) {
+    if (!is.null(geom)) {
+      if (geom == "XY") {
         return(spatVector_to_dt(x, include_values = include_values))
       }
     }
   }
   # all other conditions: pass to terra then set as DT
-  out = terra::as.data.frame(x, geom = geom, ...) %>%
+  out <- terra::as.data.frame(x, geom = geom, ...) %>%
     data.table::setDT()
   return(out)
 }
@@ -81,36 +79,36 @@ as.data.table.giottoPoints <- function(x, ...) {
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.sp', signature('sf'), function(x) {
-  GiottoUtils::package_check('sp')
+setMethod("as.sp", signature("sf"), function(x) {
+  GiottoUtils::package_check("sp")
   as(x, "Spatial")
 })
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.sp', signature('SpatVector'), function(x) {
-  GiottoUtils::package_check('sp')
-  GiottoUtils::package_check('raster') # needed for this conversion
+setMethod("as.sp", signature("SpatVector"), function(x) {
+  GiottoUtils::package_check("sp")
+  GiottoUtils::package_check("raster") # needed for this conversion
   as(x, "Spatial")
 })
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.sp', signature('stars'), function(x) {
-  GiottoUtils::package_check('sp')
+setMethod("as.sp", signature("stars"), function(x) {
+  GiottoUtils::package_check("sp")
   as(x, "Spatial")
 })
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.sp', signature('Spatial'), function(x) {
-  GiottoUtils::package_check('sp')
+setMethod("as.sp", signature("Spatial"), function(x) {
+  GiottoUtils::package_check("sp")
   x
 })
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.sp', signature('giottoPolygon'), function(x, drop = TRUE) {
+setMethod("as.sp", signature("giottoPolygon"), function(x, drop = TRUE) {
   if (isTRUE(drop)) {
     return(as.sp(x[]))
   } else {
@@ -121,7 +119,7 @@ setMethod('as.sp', signature('giottoPolygon'), function(x, drop = TRUE) {
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.sp', signature('giottoPoints'), function(x, drop = TRUE) {
+setMethod("as.sp", signature("giottoPoints"), function(x, drop = TRUE) {
   s <- as.sp(x[])
 
   if (isTRUE(drop)) {
@@ -136,57 +134,60 @@ setMethod('as.sp', signature('giottoPoints'), function(x, drop = TRUE) {
 # * to sf ####
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.sf', signature('SpatVector'), function(x) {
+setMethod("as.sf", signature("SpatVector"), function(x) {
   spatvector_to_sf(x)
 })
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.sf', signature('Spatial'), function(x) {
-  GiottoUtils::package_check('sf')
+setMethod("as.sf", signature("Spatial"), function(x) {
+  GiottoUtils::package_check("sf")
   sf::st_as_sf(x)
 })
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.sf', signature('stars'), function(x) {
-  GiottoUtils::package_check('sf')
+setMethod("as.sf", signature("stars"), function(x) {
+  GiottoUtils::package_check("sf")
   sf::st_as_sf(x)
 })
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.sf', signature('sf'), function(x) {
-  GiottoUtils::package_check('sf')
+setMethod("as.sf", signature("sf"), function(x) {
+  GiottoUtils::package_check("sf")
   x
 })
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.sf', signature('giottoPolygon'),
-          function(x, drop = TRUE) {
-
-            if (isTRUE(drop)) {
-              return(as.sf(x[]))
-            } else {
-              x <- do_gpoly(x = x, what = as.sf, args = list())
-              return(x)
-            }
-          })
+setMethod(
+  "as.sf", signature("giottoPolygon"),
+  function(x, drop = TRUE) {
+    if (isTRUE(drop)) {
+      return(as.sf(x[]))
+    } else {
+      x <- do_gpoly(x = x, what = as.sf, args = list())
+      return(x)
+    }
+  }
+)
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.sf', signature('giottoPoints'),
-          function(x, drop = TRUE) {
-            s <- as.sf(x[])
+setMethod(
+  "as.sf", signature("giottoPoints"),
+  function(x, drop = TRUE) {
+    s <- as.sf(x[])
 
-            if (isTRUE(drop)) {
-              return(s)
-            } else {
-              x[] <- s
-              return(x)
-            }
-          })
+    if (isTRUE(drop)) {
+      return(s)
+    } else {
+      x[] <- s
+      return(x)
+    }
+  }
+)
 
 # * to stars ####
 
@@ -194,151 +195,171 @@ setMethod('as.sf', signature('giottoPoints'),
 # however, conversions from sf work fine
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.stars', signature('SpatVector'),
-          function(x) {
-            GiottoUtils::package_check('stars')
-            as.sf(x) %>%
-              stars::st_as_stars()
-          })
+setMethod(
+  "as.stars", signature("SpatVector"),
+  function(x) {
+    GiottoUtils::package_check("stars")
+    as.sf(x) %>%
+      stars::st_as_stars()
+  }
+)
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.stars', signature('sf'),
-          function(x) {
-            GiottoUtils::package_check('stars')
-            stars::st_as_stars(x)
-          })
+setMethod(
+  "as.stars", signature("sf"),
+  function(x) {
+    GiottoUtils::package_check("stars")
+    stars::st_as_stars(x)
+  }
+)
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.stars', signature('Spatial'),
-          function(x) {
-            GiottoUtils::package_check('stars')
-            stars::st_as_stars(x)
-          })
+setMethod(
+  "as.stars", signature("Spatial"),
+  function(x) {
+    GiottoUtils::package_check("stars")
+    stars::st_as_stars(x)
+  }
+)
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.stars', signature('stars'),
-          function(x) {
-            GiottoUtils::package_check('stars')
-            x
-          })
+setMethod(
+  "as.stars", signature("stars"),
+  function(x) {
+    GiottoUtils::package_check("stars")
+    x
+  }
+)
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.stars', signature('giottoPolygon'),
-          function(x, drop = TRUE) {
-            if (isTRUE(drop)) {
-              return(as.stars(x[]))
-            } else {
-              x <- do_gpoly(x = x, what = as.stars, args = list())
-              return(x)
-            }
-          })
+setMethod(
+  "as.stars", signature("giottoPolygon"),
+  function(x, drop = TRUE) {
+    if (isTRUE(drop)) {
+      return(as.stars(x[]))
+    } else {
+      x <- do_gpoly(x = x, what = as.stars, args = list())
+      return(x)
+    }
+  }
+)
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.stars', signature('giottoPoints'),
-          function(x, drop = TRUE) {
-            s <- as.stars(x[])
+setMethod(
+  "as.stars", signature("giottoPoints"),
+  function(x, drop = TRUE) {
+    s <- as.stars(x[])
 
-            if (isTRUE(drop)) {
-              return(s)
-            } else {
-              x[] <- s
-              return(x)
-            }
-          })
+    if (isTRUE(drop)) {
+      return(s)
+    } else {
+      x[] <- s
+      return(x)
+    }
+  }
+)
 
 # * to terra ####
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.terra', signature('SpatVector'),
-          function(x) {
-            x
-          })
+setMethod(
+  "as.terra", signature("SpatVector"),
+  function(x) {
+    x
+  }
+)
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.terra', signature('sf'),
-          function(x) {
-            terra::vect(x)
-          })
+setMethod(
+  "as.terra", signature("sf"),
+  function(x) {
+    terra::vect(x)
+  }
+)
 
 #' @rdname r_spatial_conversions
 #' @param type whether data is 'vector' or 'raster'
 #' @export
-setMethod('as.terra', signature('stars'),
-          function(x, type = c('vector', 'raster')) {
-            GiottoUtils::package_check('sf')
-            type = match.arg(type, choices = c('vector', 'raster'))
+setMethod(
+  "as.terra", signature("stars"),
+  function(x, type = c("vector", "raster")) {
+    GiottoUtils::package_check("sf")
+    type <- match.arg(type, choices = c("vector", "raster"))
 
-            x <- switch(
-              type,
-              'vector' = {
-                x %>%
-                  sf::st_as_sf() %>%
-                  terra::vect()
-              },
-              'raster' = {
-                x %>%
-                  terra::rast()
-              }
-            )
+    x <- switch(type,
+      "vector" = {
+        x %>%
+          sf::st_as_sf() %>%
+          terra::vect()
+      },
+      "raster" = {
+        x %>%
+          terra::rast()
+      }
+    )
 
-            return(x)
-          })
+    return(x)
+  }
+)
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.terra', signature('Spatial'), function(x) {
+setMethod("as.terra", signature("Spatial"), function(x) {
   terra::vect(x)
 })
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.terra', signature('giottoPolygon'),
-          function(x, drop = TRUE) {
-            if (isTRUE(drop)) {
-              return(as.terra(x[]))
-            } else {
-              x <- do_gpoly(x = x, what = as.terra, args = list())
-              return(x)
-            }
-          })
+setMethod(
+  "as.terra", signature("giottoPolygon"),
+  function(x, drop = TRUE) {
+    if (isTRUE(drop)) {
+      return(as.terra(x[]))
+    } else {
+      x <- do_gpoly(x = x, what = as.terra, args = list())
+      return(x)
+    }
+  }
+)
 
 #' @rdname r_spatial_conversions
 #' @export
-setMethod('as.terra', signature('giottoPoints'),
-          function(x, drop = TRUE) {
-            s <- as.terra(x[])
+setMethod(
+  "as.terra", signature("giottoPoints"),
+  function(x, drop = TRUE) {
+    s <- as.terra(x[])
 
-            if (isTRUE(drop)) {
-              return(s)
-            } else {
-              x[] <- s
-              return(x)
-            }
-          })
+    if (isTRUE(drop)) {
+      return(s)
+    } else {
+      x[] <- s
+      return(x)
+    }
+  }
+)
 
 
 # internals ####
 
 
-spatvector_to_sf = function(x) {
-  package_check('sf', repository = 'CRAN')
+spatvector_to_sf <- function(x) {
+  package_check("sf", repository = "CRAN")
 
   out <- try(expr = sf::st_as_sf(x), silent = TRUE)
 
   # workaround if st_as_sf does not work on a spatvector
-  if(inherits(out, 'try-error')) {
-    d <- terra::as.data.frame(x, geom = 'hex')
-    d$geometry <- structure(as.list(d$geometry), class = 'WKB')
-    out <- sf::st_as_sf(x = d, crs = x@ptr$get_crs('wkt'))
+  if (inherits(out, "try-error")) {
+    d <- terra::as.data.frame(x, geom = "hex")
+    d$geometry <- structure(as.list(d$geometry), class = "WKB")
+    out <- sf::st_as_sf(x = d, crs = x@ptr$get_crs("wkt"))
   }
-  assert_class(out, 'sf')
+  assert_class(out, "sf")
   return(out)
 }
-

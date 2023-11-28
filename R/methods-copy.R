@@ -1,4 +1,3 @@
-
 #' @include generics.R
 NULL
 
@@ -13,7 +12,7 @@ NULL
 
 #' @describeIn copy-generic Copy \emph{data.table}-based spatial locations object.
 #' @export
-setMethod('copy', signature(x = 'coordDataDT'), function(x) {
-  x@coordinates = data.table::copy(x@coordinates)
+setMethod("copy", signature(x = "coordDataDT"), function(x) {
+  x@coordinates <- data.table::copy(x@coordinates)
   x
 })

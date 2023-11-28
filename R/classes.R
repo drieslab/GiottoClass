@@ -28,7 +28,7 @@ setClassUnion("nullOrDatatable", c("NULL", "data.table"))
 #' simple class union (setClassUnion) of "numeric", "logical" and "character".
 #' @keywords internal
 #' @noRd
-setClassUnion('gIndex', c('numeric', 'logical', 'character'))
+setClassUnion("gIndex", c("numeric", "logical", "character"))
 
 
 
@@ -40,8 +40,9 @@ setClassUnion('gIndex', c('numeric', 'logical', 'character'))
 #' @keywords internal
 #' @noRd
 setClass(
-  'giottoSubobject',
-  contains = 'VIRTUAL')
+  "giottoSubobject",
+  contains = "VIRTUAL"
+)
 
 # ** gdtData Class ####
 #' @description
@@ -50,8 +51,8 @@ setClass(
 #' @keywords internal
 #' @noRd
 setClass(
-  'gdtData',
-  contains = 'VIRTUAL'
+  "gdtData",
+  contains = "VIRTUAL"
 )
 
 
@@ -283,9 +284,9 @@ setClass("miscData",
 #' @description
 #' Classes that inherit from this class will contain a spatVector slot meant to
 #' hold and work with terra SpatVector objects
-terraVectData = setClass(
-  'terraVectData',
-  contains = 'VIRTUAL',
+terraVectData <- setClass(
+  "terraVectData",
+  contains = "VIRTUAL",
   slots = list(spatVector = "ANY"),
   prototype = prototype(spatVector = NULL)
 )
@@ -660,8 +661,8 @@ check_expr_obj <- function(object) {
 #' @slot provenance origin data of expression information (if applicable)
 #' @slot misc misc
 #' @exportClass exprObj
-exprObj = setClass("exprObj",
-  contains = c("nameData", "exprData", "spatFeatData", "miscData", 'giottoSubobject'),
+exprObj <- setClass("exprObj",
+  contains = c("nameData", "exprData", "spatFeatData", "miscData", "giottoSubobject"),
   validity = check_expr_obj
 )
 
@@ -715,7 +716,7 @@ check_cell_meta_obj <- function(object) {
 #' @slot feat_type feature type of aggregated expression (e.g. 'rna', 'protein')
 #' @slot provenance origin data of aggregated expression information (if applicable)
 #' @exportClass cellMetaObj
-cellMetaObj = setClass("cellMetaObj",
+cellMetaObj <- setClass("cellMetaObj",
   contains = c("metaData", "spatFeatData", "giottoSubobject"),
   validity = check_cell_meta_obj
 )
@@ -760,8 +761,8 @@ check_feat_meta_obj <- function(object) {
 #' @slot feat_type feature type of aggregated expression (e.g. 'rna', 'protein')
 #' @slot provenance origin data of aggregated expression information (if applicable)
 #' @exportClass featMetaObj
-featMetaObj = setClass("featMetaObj",
-  contains = c("metaData", "spatFeatData", 'giottoSubobject'),
+featMetaObj <- setClass("featMetaObj",
+  contains = c("metaData", "spatFeatData", "giottoSubobject"),
   validity = check_feat_meta_obj
 )
 
@@ -827,8 +828,8 @@ check_dim_obj <- function(object) {
 #' @slot coordinates embedding coordinates
 #' @slot misc method-specific additional outputs
 #' @exportClass dimObj
-dimObj = setClass("dimObj",
-  contains = c("nameData", "spatFeatData", 'giottoSubobject'),
+dimObj <- setClass("dimObj",
+  contains = c("nameData", "spatFeatData", "giottoSubobject"),
   slots = c(
     reduction = "character",
     reduction_method = "character",
@@ -890,8 +891,8 @@ S3toS4dimObj <- function(object) {
 #' @slot provenance origin of aggregated information (if applicable)
 #' @slot misc misc
 #' @exportClass nnNetObj
-nnNetObj = setClass("nnNetObj",
-  contains = c("nameData", "nnData", "spatFeatData", "miscData", 'giottoSubobject')
+nnNetObj <- setClass("nnNetObj",
+  contains = c("nameData", "nnData", "spatFeatData", "miscData", "giottoSubobject")
 )
 
 
@@ -957,8 +958,8 @@ check_spat_locs_obj <- function(object) {
 #' @slot spat_unit spatial unit tag
 #' @slot provenance origin of aggregated information (if applicable)
 #' @exportClass spatLocsObj
-spatLocsObj =  setClass("spatLocsObj",
-  contains = c("nameData", "coordDataDT", "spatData", "miscData", 'giottoSubobject'),
+spatLocsObj <- setClass("spatLocsObj",
+  contains = c("nameData", "coordDataDT", "spatData", "miscData", "giottoSubobject"),
   validity = check_spat_locs_obj
 )
 
@@ -1029,7 +1030,7 @@ check_spat_net_obj <- function(object) {
 #' slot (filtered).
 #' @export
 setClass("spatialNetworkObj",
-  contains = c("nameData", "spatNetData", "spatData", "miscData", 'giottoSubobject'),
+  contains = c("nameData", "spatNetData", "spatData", "miscData", "giottoSubobject"),
   slots = c(crossSectionObjects = "ANY"),
   prototype = list(crossSectionObjects = NULL),
   validity = check_spat_net_obj
@@ -1138,7 +1139,7 @@ check_spat_grid_obj <- function(object) {
 #' Grids can be annotated with both spatial and feature information
 #' @export
 setClass("spatialGridObj",
-  contains = c("nameData", "spatGridData", "spatFeatData", "miscData", 'giottoSubobject'),
+  contains = c("nameData", "spatGridData", "spatFeatData", "miscData", "giottoSubobject"),
   validity = check_spat_grid_obj
 )
 
@@ -1189,7 +1190,7 @@ S3toS4spatialGridObj <- function(object) {
 #' @slot misc misc
 #' @export
 setClass("spatEnrObj",
-  contains = c("nameData", "enrData", "spatFeatData", "miscData", 'giottoSubobject')
+  contains = c("nameData", "enrData", "spatFeatData", "miscData", "giottoSubobject")
 )
 
 
@@ -1294,7 +1295,7 @@ setClass("packedGiottoPolygon",
 #' @export
 giottoPoints <- setClass(
   Class = "giottoPoints",
-  contains = c("featData", "terraVectData", 'giottoSubobject'),
+  contains = c("featData", "terraVectData", "giottoSubobject"),
   slots = c(
     networks = "ANY",
     unique_ID_cache = "character"
@@ -1379,7 +1380,7 @@ setClass(
 #' @export
 featureNetwork <- setClass(
   Class = "featureNetwork",
-  contains = c("nameData", 'giottoSubobject'),
+  contains = c("nameData", "giottoSubobject"),
   slots = c(
     network_datatable = "ANY",
     network_lookup_id = "ANY",

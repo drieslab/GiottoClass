@@ -9,13 +9,13 @@
 #' @return bento_adata bento adata object
 #' @export
 createBentoAdata <- function(gobject = NULL,
-                             env_to_use = "giotto_env"){
-  if(!c("giotto") %in% class(gobject)) stop(wrap_txt("Please provide a valid Giotto Object.", errWidth=TRUE))
+                             env_to_use = "giotto_env") {
+  if (!c("giotto") %in% class(gobject)) stop(wrap_txt("Please provide a valid Giotto Object.", errWidth = TRUE))
   # Transcripts
   transcripts_df <- as.data.frame(sf::st_as_sf(gobject@feat_info$rna@spatVector))
-  coordinates_df <- lapply(transcripts_df['geometry'], sf::st_coordinates)$geometry
+  coordinates_df <- lapply(transcripts_df["geometry"], sf::st_coordinates)$geometry
   t_df <- as.data.frame(cbind(coordinates_df, transcripts_df[c("feat_ID")]))
-  colnames(t_df) <- c('x','y','gene')
+  colnames(t_df) <- c("x", "y", "gene")
 
   # Cell shapes
   # TODO: Add batch information based on?
@@ -28,19 +28,23 @@ createBentoAdata <- function(gobject = NULL,
   nucleus_poly <- data.frame(cell_id = nucleus_poly$poly_ID, x = nucleus_poly$x, y = nucleus_poly$y, batch = 0L)
 
   # Install bento-tools / Check python environment for bento-tools
-  bento_installed = checkPythonPackage(package_name = "bento-tools",
-                                       env_to_use = env_to_use)
+  bento_installed <- checkPythonPackage(
+    package_name = "bento-tools",
+    env_to_use = env_to_use
+  )
   if (!bento_installed) {
-    bento_installed = checkPythonPackage(github_package_url = "git+https://github.com/wwang-chcn/bento-tools.git",
-                                       env_to_use = env_to_use)
+    bento_installed <- checkPythonPackage(
+      github_package_url = "git+https://github.com/wwang-chcn/bento-tools.git",
+      env_to_use = env_to_use
+    )
   }
-  # Will crash downstream if installation unsuccessful/denied 
+  # Will crash downstream if installation unsuccessful/denied
   # or if the package is not found.
 
   # Create AnnData object
-  g2bento_path <- system.file("python","g2bento.py",package="GiottoClass")
+  g2bento_path <- system.file("python", "g2bento.py", package = "GiottoClass")
   reticulate::source_python(g2bento_path)
-  bento_adata <- create_AnnData(transcripts=t_df, cell_shape=cell_poly, nucleus_shape=nucleus_poly)
-  
+  bento_adata <- create_AnnData(transcripts = t_df, cell_shape = cell_poly, nucleus_shape = nucleus_poly)
+
   return(bento_adata)
 }
