@@ -30,8 +30,6 @@ circles and hexagons, side length for squares)}
 \item{id_prefix}{character. prefix to add to poly_ID names generated}
 
 \item{name}{name of giottoPolygons grid to make}
-
-\item{ccd}{center to center distance of tesselation grid}
 }
 \value{
 A giottoPolygon
