@@ -4,12 +4,12 @@
 # CREATE GIOTTO OBJECT FOR TESTING
 
 # no need for python env in these tests
-options('giotto.use_conda' = FALSE)
+options("giotto.use_conda" = FALSE)
 # silence deprecated internals
 rlang::local_options(lifecycle_verbosity = "quiet")
 
 suppressWarnings({
-  instrs = createGiottoInstructions(
+  instrs <- createGiottoInstructions(
     show_plot = TRUE,
     return_plot = NULL,
     save_plot = FALSE,
@@ -21,17 +21,20 @@ suppressWarnings({
     width = NULL,
     is_docker = FALSE,
     plot_count = 0,
-    fiji_path = NULL)
+    fiji_path = NULL
+  )
 })
 
 
-expression_matrix = matrix(1:100, nrow = 10)
-colnames(expression_matrix) = paste0("cell",1:10)
-colnames(expression_matrix) = paste0("feature",1:10)
+expression_matrix <- matrix(1:100, nrow = 10)
+colnames(expression_matrix) <- paste0("cell", 1:10)
+colnames(expression_matrix) <- paste0("feature", 1:10)
 
-gobject = createGiottoObject(expression = expression_matrix,
-                             instructions = instrs,
-                             verbose = FALSE)
+gobject <- createGiottoObject(
+  expression = expression_matrix,
+  instructions = instrs,
+  verbose = FALSE
+)
 
 # createGiottoInstructions
 test_that("Instructions are created", {
@@ -40,7 +43,6 @@ test_that("Instructions are created", {
 
 # readGiottoInstructions
 test_that("readGiottoInstructions reads a few giotto object params correctly", {
-
   expect_type(readGiottoInstructions(gobject, param = "show_plot"), "logical")
   expect_type(readGiottoInstructions(gobject, param = "plot_format"), "character")
   expect_type(readGiottoInstructions(gobject, param = "dpi"), "double")
@@ -52,7 +54,7 @@ test_that("showGiottoInstructions returns expected list", {
 })
 
 # changeGiottoInstructions
-gobject = changeGiottoInstructions(
+gobject <- changeGiottoInstructions(
   gobject,
   params = c("show_plot", "save_plot"),
   new_values = c(FALSE, TRUE),
@@ -65,10 +67,9 @@ test_that("changeGiottoInstructions changes instruction params in object", {
 })
 
 # replaceGiottoInstructions
-gobject = replaceGiottoInstructions(gobject, instrs)
+gobject <- replaceGiottoInstructions(gobject, instrs)
 
 test_that("replaceGiottoInstructions returns object instructions to original", {
   expect_true(readGiottoInstructions(gobject, param = "show_plot"))
   expect_false(readGiottoInstructions(gobject, param = "save_plot"))
 })
-

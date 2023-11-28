@@ -1,4 +1,3 @@
-
 #' @include generics.R
 NULL
 
@@ -12,8 +11,8 @@ NULL
 
 #' @rdname row-plus-colnames-generic
 #' @export
-setMethod('colnames', signature(x = 'exprObj'), function(x) colnames(x[]))
+setMethod("colnames", signature(x = "exprObj"), function(x) colnames(x[]))
 
 #' @rdname row-plus-colnames-generic
 #' @export
-setMethod('rownames', signature(x = 'exprObj'), function(x) rownames(x[]))
+setMethod("rownames", signature(x = "exprObj"), function(x) rownames(x[]))

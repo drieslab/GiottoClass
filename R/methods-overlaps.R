@@ -1,4 +1,3 @@
-
 #' @include generics.R
 NULL
 
@@ -15,13 +14,15 @@ NULL
 #' @describeIn overlaps-generic Get overlaps information from giottoPolygon
 #' @param name (optional) name of overlaps information to retrieve
 #' @export
-setMethod('overlaps', signature(x = 'giottoPolygon'),
-          function(x, name = NULL) {
-            if(is.null(name)) {
-              # return entire list
-              return(x@overlaps)
-            } else {
-              # return named entry
-              return(x@overlaps[[name]])
-            }
-          })
+setMethod(
+  "overlaps", signature(x = "giottoPolygon"),
+  function(x, name = NULL) {
+    if (is.null(name)) {
+      # return entire list
+      return(x@overlaps)
+    } else {
+      # return named entry
+      return(x@overlaps[[name]])
+    }
+  }
+)

@@ -1,4 +1,3 @@
-
 #' @include classes.R
 #' @include package_imports.R
 NULL
@@ -11,14 +10,13 @@ NULL
 # giotto ####
 #' @noRd
 #' @keywords internal
-setMethod('initialize', signature('giotto'), function(.Object, ...) {
-
-  .Object = methods::callNextMethod()
-  .Object = updateGiottoObject(.Object)
+setMethod("initialize", signature("giotto"), function(.Object, ...) {
+  .Object <- methods::callNextMethod()
+  .Object <- updateGiottoObject(.Object)
 
 
   # DT vars
-  spat_unit = feat_type = NULL
+  spat_unit <- feat_type <- NULL
 
   # a = list(...)
 
@@ -44,12 +42,12 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
   ## ---------------- ##
 
   # set default instructions (make sure initialize = FALSE)
-  if(is.null(instructions(.Object))) {
-    instructions(.Object, initialize = FALSE) = createGiottoInstructions()
+  if (is.null(instructions(.Object))) {
+    instructions(.Object, initialize = FALSE) <- createGiottoInstructions()
   }
 
   ## test python module availability if a python env is expected ##
-  check_giotto_python_modules(my_python_path = instructions(.Object, 'python_path'))
+  check_giotto_python_modules(my_python_path = instructions(.Object, "python_path"))
 
 
 
@@ -57,78 +55,82 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
   ## -------------- ##
 
   # detect expression and subcellular data
-  avail_expr = list_expression(.Object)
-  avail_si = list_spatial_info(.Object)
-  avail_fi = list_feature_info(.Object)
+  avail_expr <- list_expression(.Object)
+  avail_si <- list_spatial_info(.Object)
+  avail_fi <- list_feature_info(.Object)
 
-  used_spat_units = unique(c(avail_expr$spat_unit, avail_si$spat_info))
-  used_feat_types = unique(c(avail_expr$feat_type, avail_fi$feat_info))
+  used_spat_units <- unique(c(avail_expr$spat_unit, avail_si$spat_info))
+  used_feat_types <- unique(c(avail_expr$feat_type, avail_fi$feat_info))
 
   # detect ID slots
-  avail_cid = list_cell_id_names(.Object)
-  avail_fid = list_cell_id_names(.Object)
+  avail_cid <- list_cell_id_names(.Object)
+  avail_fid <- list_cell_id_names(.Object)
 
   # detect metadata slots
-  avail_cm = list_cell_metadata(.Object)
-  avail_fm = list_feat_metadata(.Object)
+  avail_cm <- list_cell_metadata(.Object)
+  avail_fm <- list_feat_metadata(.Object)
 
   # detect spatial location slot
-  avail_sl = list_spatial_locations(.Object)
+  avail_sl <- list_spatial_locations(.Object)
 
   # detect nearest network slot
-  avail_nn = list_nearest_networks(.Object)
+  avail_nn <- list_nearest_networks(.Object)
 
   # detect dimension reduction slot
-  avail_dr = list_dim_reductions(.Object)
+  avail_dr <- list_dim_reductions(.Object)
 
   # detect spatial network slot
-  avail_sn = list_spatial_networks(.Object)
+  avail_sn <- list_spatial_networks(.Object)
 
   # detect spatial enrichment slot
-  avail_se = list_spatial_enrichments(.Object)
+  avail_se <- list_spatial_enrichments(.Object)
 
 
   ## Perform any subobject updates ##
   ## ----------------------------- ##
 
   # Feature Info #
-  if(!is.null(avail_fi)) {
-    info_list = get_feature_info_list(.Object)
+  if (!is.null(avail_fi)) {
+    info_list <- get_feature_info_list(.Object)
     # update S4 object if needed
-    info_list = lapply(info_list, function(info) {
-      try_val = try(validObject(info), silent = TRUE)
-      if(inherits(try_val, 'try-error')) {
-        info = updateGiottoPointsObject(info)
+    info_list <- lapply(info_list, function(info) {
+      try_val <- try(validObject(info), silent = TRUE)
+      if (inherits(try_val, "try-error")) {
+        info <- updateGiottoPointsObject(info)
       }
       return(info)
     })
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    .Object = setFeatureInfo(gobject = .Object,
-                             x = info_list,
-                             verbose = FALSE,
-                             initialize = FALSE)
+    .Object <- setFeatureInfo(
+      gobject = .Object,
+      x = info_list,
+      verbose = FALSE,
+      initialize = FALSE
+    )
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   }
 
 
   # Spatial Info #
-  if(!is.null(avail_si)) {
-    info_list = get_polygon_info_list(.Object)
+  if (!is.null(avail_si)) {
+    info_list <- get_polygon_info_list(.Object)
 
     # update S4 object if needed
-    info_list = lapply(info_list, function(info) {
-      try_val = try(validObject(info), silent = TRUE)
-      if(inherits(try_val, 'try-error')) {
-        info = updateGiottoPolygonObject(info)
+    info_list <- lapply(info_list, function(info) {
+      try_val <- try(validObject(info), silent = TRUE)
+      if (inherits(try_val, "try-error")) {
+        info <- updateGiottoPolygonObject(info)
       }
       return(info)
     })
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    .Object = setPolygonInfo(gobject = .Object,
-                             x = info_list,
-                             verbose = FALSE,
-                             centroids_to_spatlocs = FALSE,
-                             initialize = FALSE)
+    .Object <- setPolygonInfo(
+      gobject = .Object,
+      x = info_list,
+      verbose = FALSE,
+      centroids_to_spatlocs = FALSE,
+      initialize = FALSE
+    )
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   }
 
@@ -141,21 +143,23 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
   ## ------------------------------------------ ##
 
   # detect if actives are set in giotto instructions
-  active_su = try(instructions(.Object, 'active_spat_unit'), silent = TRUE)
-  active_ft = try(instructions(.Object, 'active_feat_type'), silent = TRUE)
+  active_su <- try(instructions(.Object, "active_spat_unit"), silent = TRUE)
+  active_ft <- try(instructions(.Object, "active_feat_type"), silent = TRUE)
 
   # determine actives using defaults if data exists then set
-  if(inherits(active_su, 'try-error')) {
-    if(!is.null(avail_expr) | !is.null(avail_si)) {
-      active_su = set_default_spat_unit(gobject = .Object)
-      instructions(.Object, 'active_spat_unit', initialize = FALSE) = active_su
+  if (inherits(active_su, "try-error")) {
+    if (!is.null(avail_expr) | !is.null(avail_si)) {
+      active_su <- set_default_spat_unit(gobject = .Object)
+      instructions(.Object, "active_spat_unit", initialize = FALSE) <- active_su
     }
   }
-  if(inherits(active_ft, 'try-error')) {
-    if(!is.null(avail_expr) | !is.null(avail_fi)) {
-      active_ft = set_default_feat_type(gobject = .Object,
-                                        spat_unit = active_su)
-      instructions(.Object, 'active_feat_type', initialize = FALSE) = active_ft
+  if (inherits(active_ft, "try-error")) {
+    if (!is.null(avail_expr) | !is.null(avail_fi)) {
+      active_ft <- set_default_feat_type(
+        gobject = .Object,
+        spat_unit = active_su
+      )
+      instructions(.Object, "active_feat_type", initialize = FALSE) <- active_ft
     }
   }
 
@@ -166,12 +170,12 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
 
   ## Set expression_feat ##
   ## ------------------- ##
-  e_feat = used_feat_types
-  if('rna' %in% e_feat) {
-    rna_idx = which(e_feat == 'rna')
-    e_feat = c(e_feat[rna_idx], e_feat[-rna_idx])
+  e_feat <- used_feat_types
+  if ("rna" %in% e_feat) {
+    rna_idx <- which(e_feat == "rna")
+    e_feat <- c(e_feat[rna_idx], e_feat[-rna_idx])
   }
-  .Object@expression_feat = e_feat
+  .Object@expression_feat <- e_feat
 
 
 
@@ -183,26 +187,26 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
   # cell IDs can be expected to be constant across a spatial unit
 
   # expression
-  if(!is.null(avail_expr)) {
-    unique_expr_sets = unique(avail_expr[, .(spat_unit, feat_type)])
+  if (!is.null(avail_expr)) {
+    unique_expr_sets <- unique(avail_expr[, .(spat_unit, feat_type)])
 
-    for(set_i in nrow(unique_expr_sets)) {
-      exp_list = get_expression_values_list(
+    for (set_i in nrow(unique_expr_sets)) {
+      exp_list <- get_expression_values_list(
         gobject = .Object,
         spat_unit = unique_expr_sets$spat_unit[[set_i]],
         feat_type = unique_expr_sets$feat_type[[set_i]],
-        output = 'exprObj',
+        output = "exprObj",
         set_defaults = FALSE
       )
 
-      exp_list_names = lapply(exp_list, spatIDs)
-      list_match = sapply(exp_list_names, setequal, exp_list_names[[1L]])
-      if(!all(list_match)) {
+      exp_list_names <- lapply(exp_list, spatIDs)
+      list_match <- sapply(exp_list_names, setequal, exp_list_names[[1L]])
+      if (!all(list_match)) {
         print(list_match)
         warning(wrap_txt(
-          'spat_unit:', unique_expr_sets$spat_unit[[set_i]], '/',
-          'feat_type:', unique_expr_sets$feat_type[[set_i]],
-          '\nNot all expression matrices share the same cell_IDs'
+          "spat_unit:", unique_expr_sets$spat_unit[[set_i]], "/",
+          "feat_type:", unique_expr_sets$feat_type[[set_i]],
+          "\nNot all expression matrices share the same cell_IDs"
         ))
       }
     }
@@ -235,7 +239,7 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
   # expression information is PREFERRED for ID initialization.              #
   # subcellular information, being raw data may also be used.               #
 
-  .Object = init_cell_and_feat_IDs(gobject = .Object)
+  .Object <- init_cell_and_feat_IDs(gobject = .Object)
 
 
 
@@ -251,19 +255,18 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
 
 
 
-  for(spatial_unit in used_spat_units) {
-    for(feature_type in used_feat_types) {
-
-      provenance = NULL
+  for (spatial_unit in used_spat_units) {
+    for (feature_type in used_feat_types) {
+      provenance <- NULL
       # get expression for provenance info
-      if(!is.null(avail_expr)) {
-        if(nrow(avail_expr[spat_unit == spatial_unit &
-                           feat_type == feature_type]) != 0L) {
-          provenance = prov(get_expression_values(
+      if (!is.null(avail_expr)) {
+        if (nrow(avail_expr[spat_unit == spatial_unit &
+          feat_type == feature_type]) != 0L) {
+          provenance <- prov(get_expression_values(
             gobject = .Object,
             spat_unit = spatial_unit,
             feat_type = feature_type,
-            output = 'exprObj',
+            output = "exprObj",
             set_defaults = FALSE
           ))
         }
@@ -272,23 +275,23 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
       # initialize if no metadata exists OR none for this spat/feat
 
       # cell metadata
-      if(is.null(avail_cm)) {
+      if (is.null(avail_cm)) {
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        .Object = set_cell_metadata(
+        .Object <- set_cell_metadata(
           gobject = .Object,
-          metadata = 'initialize',
+          metadata = "initialize",
           spat_unit = spatial_unit,
           feat_type = feature_type,
           verbose = FALSE,
           set_defaults = FALSE
         )
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      } else if(nrow(avail_cm[spat_unit == spatial_unit &
-                              feat_type == feature_type]) == 0L) {
+      } else if (nrow(avail_cm[spat_unit == spatial_unit &
+        feat_type == feature_type]) == 0L) {
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        .Object = set_cell_metadata(
+        .Object <- set_cell_metadata(
           gobject = .Object,
-          metadata = 'initialize',
+          metadata = "initialize",
           spat_unit = spatial_unit,
           feat_type = feature_type,
           verbose = FALSE,
@@ -298,23 +301,23 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
       }
 
       # feature metadata
-      if(is.null(avail_fm)) {
+      if (is.null(avail_fm)) {
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        .Object = set_feature_metadata(
+        .Object <- set_feature_metadata(
           gobject = .Object,
-          metadata = 'initialize',
+          metadata = "initialize",
           spat_unit = spatial_unit,
           feat_type = feature_type,
           verbose = FALSE,
           set_defaults = FALSE
         )
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      } else if(nrow(avail_fm[spat_unit == spatial_unit &
-                              feat_type == feature_type]) == 0L) {
+      } else if (nrow(avail_fm[spat_unit == spatial_unit &
+        feat_type == feature_type]) == 0L) {
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        .Object = set_feature_metadata(
+        .Object <- set_feature_metadata(
           gobject = .Object,
-          metadata = 'initialize',
+          metadata = "initialize",
           spat_unit = spatial_unit,
           feat_type = feature_type,
           verbose = FALSE,
@@ -325,27 +328,30 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
 
 
       # update provenance (always happens for all metadata objects)
-      if(is.null(provenance)) next() # skip if no provenance info
+      if (is.null(provenance)) next() # skip if no provenance info
 
-      cm = get_cell_metadata(gobject = .Object,
-                             spat_unit = spatial_unit,
-                             feat_type = feature_type,
-                             output = 'cellMetaObj',
-                             copy_obj = FALSE,
-                             set_defaults = FALSE)
-      fm = get_feature_metadata(gobject = .Object,
-                                spat_unit = spatial_unit,
-                                feat_type = feature_type,
-                                output = 'featMetaObj',
-                                copy_obj = FALSE,
-                                set_defaults = FALSE)
-      prov(cm) = provenance
-      prov(fm) = provenance
+      cm <- get_cell_metadata(
+        gobject = .Object,
+        spat_unit = spatial_unit,
+        feat_type = feature_type,
+        output = "cellMetaObj",
+        copy_obj = FALSE,
+        set_defaults = FALSE
+      )
+      fm <- get_feature_metadata(
+        gobject = .Object,
+        spat_unit = spatial_unit,
+        feat_type = feature_type,
+        output = "featMetaObj",
+        copy_obj = FALSE,
+        set_defaults = FALSE
+      )
+      prov(cm) <- provenance
+      prov(fm) <- provenance
       ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      .Object = set_cell_metadata(gobject = .Object, metadata = cm, verbose = FALSE)
-      .Object = set_feature_metadata(gobject = .Object, metadata = fm, verbose = FALSE)
+      .Object <- set_cell_metadata(gobject = .Object, metadata = cm, verbose = FALSE)
+      .Object <- set_feature_metadata(gobject = .Object, metadata = fm, verbose = FALSE)
       ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-
     }
   }
 
@@ -354,11 +360,11 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
   ## Metadata ##
   ## ------------- ##
 
-  if(!is.null(avail_cm)) {
+  if (!is.null(avail_cm)) {
     check_cell_metadata(gobject = .Object) # modifies by reference
   }
 
-  if(!is.null(avail_fm)) {
+  if (!is.null(avail_fm)) {
     check_feat_metadata(gobject = .Object) # modifies by reference
   }
 
@@ -366,7 +372,7 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
   ## Spatial locations ##
   ## ----------------- ##
 
-  if(!is.null(avail_expr) & !is.null(avail_sl)) {
+  if (!is.null(avail_expr) & !is.null(avail_sl)) {
     # 1. ensure spatial locations and expression matrices have the same cell IDs
     # 2. give cell IDs if not provided
     check_spatial_location_data(gobject = .Object) # modifies by reference
@@ -377,7 +383,7 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
   ## Spatial network ##
   ## --------------- ##
 
-  if(!is.null(avail_sl) & !is.null(avail_sn)) {
+  if (!is.null(avail_sl) & !is.null(avail_sn)) {
     # 1. ensure vertices have same IDs as seen in spat_unit for gobject
     # 2. ensure spatial locations of same spat_unit exists
     check_spatial_networks(gobject = .Object)
@@ -388,7 +394,7 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
   ## Spatial enrichment ##
   ## ------------------ ##
 
-  if(!is.null(avail_sl) & !is.null(avail_se)) {
+  if (!is.null(avail_sl) & !is.null(avail_se)) {
     # 1. ensure IDs in enrichment match gobject for same spat_unit
     # 2. ensure spatial locations exist for same spat_unit
     check_spatial_enrichment(gobject = .Object)
@@ -399,7 +405,7 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
   ## Nearest networks ##
   ## ---------------- ##
 
-  if(!is.null(avail_expr) & !is.null(avail_nn)) {
+  if (!is.null(avail_expr) & !is.null(avail_nn)) {
     check_nearest_networks(gobject = .Object)
   }
 
@@ -408,8 +414,8 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
   ## Dimension reduction ##
   ## ------------------- ##
 
-  if(!is.null(avail_dr)) {
-    .Object = check_dimension_reduction(gobject = .Object)
+  if (!is.null(avail_dr)) {
+    .Object <- check_dimension_reduction(gobject = .Object)
   }
 
 
@@ -417,7 +423,7 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
   ## Spatial info ##
   ## ------------ ##
 
-  if(!is.null(avail_si) & !is.null(avail_sl)) {
+  if (!is.null(avail_si) & !is.null(avail_sl)) {
     check_spatial_info(gobject = .Object)
   }
 
@@ -432,7 +438,6 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
 
 
   .Object
-
 })
 
 
@@ -452,61 +457,69 @@ setMethod('initialize', signature('giotto'), function(.Object, ...) {
 
 
 ## metaData ####
-setMethod('initialize', 'metaData',
-          function(.Object, ...) {
-            .Object = methods::callNextMethod()
-            # prepare DT for set by reference
-            if(!is.null(.Object@metaDT)) {
-              .Object@metaDT = data.table::setalloccol(.Object@metaDT)
-            }
-            .Object
-          })
+setMethod(
+  "initialize", "metaData",
+  function(.Object, ...) {
+    .Object <- methods::callNextMethod()
+    # prepare DT for set by reference
+    if (!is.null(.Object@metaDT)) {
+      .Object@metaDT <- data.table::setalloccol(.Object@metaDT)
+    }
+    .Object
+  }
+)
 
 
 
 ## enrData ####
-setMethod('initialize', 'enrData',
-          function(.Object, ...) {
-            .Object = methods::callNextMethod()
-            # prepare DT for set by reference
-            if(!is.null(.Object@enrichDT)) {
-              .Object@enrichDT = data.table::setalloccol(.Object@enrichDT)
-            }
-            .Object
-          })
+setMethod(
+  "initialize", "enrData",
+  function(.Object, ...) {
+    .Object <- methods::callNextMethod()
+    # prepare DT for set by reference
+    if (!is.null(.Object@enrichDT)) {
+      .Object@enrichDT <- data.table::setalloccol(.Object@enrichDT)
+    }
+    .Object
+  }
+)
 
 
 
 
 
 ## spatNetData ####
-setMethod('initialize', 'spatNetData',
-          function(.Object, ...) {
-            .Object = methods::callNextMethod()
-            # prepare DT for set by reference
-            if(!is.null(.Object@networkDT)) {
-              .Object@networkDT = data.table::setalloccol(.Object@networkDT)
-            }
-            if(!is.null(.Object@networkDT_before_filter)) {
-              .Object@networkDT_before_filter = data.table::setalloccol(.Object@networkDT_before_filter)
-            }
-            .Object
-          })
+setMethod(
+  "initialize", "spatNetData",
+  function(.Object, ...) {
+    .Object <- methods::callNextMethod()
+    # prepare DT for set by reference
+    if (!is.null(.Object@networkDT)) {
+      .Object@networkDT <- data.table::setalloccol(.Object@networkDT)
+    }
+    if (!is.null(.Object@networkDT_before_filter)) {
+      .Object@networkDT_before_filter <- data.table::setalloccol(.Object@networkDT_before_filter)
+    }
+    .Object
+  }
+)
 
 
 
 
 
 ## coordDataDT ####
-setMethod('initialize', 'coordDataDT',
-          function(.Object, ...) {
-            .Object = methods::callNextMethod()
-            # prepare DT for set by reference
-            if(!is.null(.Object@coordinates)) {
-              .Object@coordinates = data.table::setalloccol(.Object@coordinates)
-            }
-            .Object
-          })
+setMethod(
+  "initialize", "coordDataDT",
+  function(.Object, ...) {
+    .Object <- methods::callNextMethod()
+    # prepare DT for set by reference
+    if (!is.null(.Object@coordinates)) {
+      .Object@coordinates <- data.table::setalloccol(.Object@coordinates)
+    }
+    .Object
+  }
+)
 
 
 
@@ -514,15 +527,17 @@ setMethod('initialize', 'coordDataDT',
 
 
 ## spatGridData ####
-setMethod('initialize', 'spatGridData',
-          function(.Object, ...) {
-            .Object = methods::callNextMethod()
-            # prepare DT for set by reference
-            if(!is.null(.Object@gridDT)) {
-              .Object@gridDT = data.table::setalloccol(.Object@gridDT)
-            }
-            .Object
-          })
+setMethod(
+  "initialize", "spatGridData",
+  function(.Object, ...) {
+    .Object <- methods::callNextMethod()
+    # prepare DT for set by reference
+    if (!is.null(.Object@gridDT)) {
+      .Object@gridDT <- data.table::setalloccol(.Object@gridDT)
+    }
+    .Object
+  }
+)
 
 
 
@@ -644,46 +659,48 @@ setMethod('initialize', 'spatGridData',
 #' have the same set of cell_IDs
 #' @keywords internal
 #' @noRd
-init_cell_and_feat_IDs = function(gobject) {
-
-  spat_unit = feat_type = name = NULL
+init_cell_and_feat_IDs <- function(gobject) {
+  spat_unit <- feat_type <- name <- NULL
 
   # wipe values
-  slot(gobject, 'cell_ID') = NULL
-  slot(gobject, 'feat_ID') = NULL
+  slot(gobject, "cell_ID") <- NULL
+  slot(gobject, "feat_ID") <- NULL
 
   # find available expr and info
-  avail_expr = list_expression(gobject)
-  avail_si = list_spatial_info(gobject)
-  avail_fi = list_feature_info(gobject)
+  avail_expr <- list_expression(gobject)
+  avail_si <- list_spatial_info(gobject)
+  avail_fi <- list_feature_info(gobject)
 
-  used_spat_units = unique(c(avail_expr$spat_unit, avail_si$spat_info))
-  used_feat_types = unique(c(avail_expr$feat_type, avail_fi$feat_info))
+  used_spat_units <- unique(c(avail_expr$spat_unit, avail_si$spat_info))
+  used_feat_types <- unique(c(avail_expr$feat_type, avail_fi$feat_info))
 
   # 1. set cell_ID for each region
   # each regions can have multiple features, but the cell_IDs (spatial units) should be the same
   # Select spatial unit to initialize then pass to set_cell_id
   # set_cell_id decides which data to initialize from
-  for(spatial_unit in used_spat_units) {
-    gobject = set_cell_id(gobject = gobject,
-                          spat_unit = spatial_unit,
-                          cell_IDs = 'initialize',
-                          verbose = FALSE,
-                          set_defaults = TRUE)
+  for (spatial_unit in used_spat_units) {
+    gobject <- set_cell_id(
+      gobject = gobject,
+      spat_unit = spatial_unit,
+      cell_IDs = "initialize",
+      verbose = FALSE,
+      set_defaults = TRUE
+    )
   }
 
   # 2. set feat_ID for each feature
-  for(feature_type in used_feat_types) {
-    gobject = set_feat_id(gobject = gobject,
-                          feat_type = feature_type,
-                          feat_IDs = 'initialize',
-                          verbose = FALSE,
-                          set_defaults = TRUE)
+  for (feature_type in used_feat_types) {
+    gobject <- set_feat_id(
+      gobject = gobject,
+      feat_type = feature_type,
+      feat_IDs = "initialize",
+      verbose = FALSE,
+      set_defaults = TRUE
+    )
   }
 
 
   return(gobject)
-
 }
 
 
@@ -699,48 +716,51 @@ init_cell_and_feat_IDs = function(gobject) {
 #' @param provenance provenance information (optional)
 #' and feature type in the giotto object.
 #' @keywords internal
-init_cell_metadata = function(gobject,
-                              provenance = NULL) {
-
+init_cell_metadata <- function(gobject,
+                               provenance = NULL) {
   # data.table vars
-  spat_unit = feat_type = NULL
+  spat_unit <- feat_type <- NULL
 
-  avail_expr = list_expression(gobject)
-  avail_spat_info = list_spatial_info_names(gobject)
-  avail_feat_info = list_feature_info_names(gobject)
+  avail_expr <- list_expression(gobject)
+  avail_spat_info <- list_spatial_info_names(gobject)
+  avail_feat_info <- list_feature_info_names(gobject)
 
   # If no spatial_info then initialize for all expression matrices
-  if(is.null(avail_spat_info)) {
-    for(expr_i in seq(avail_expr[, .N])) {
+  if (is.null(avail_spat_info)) {
+    for (expr_i in seq(avail_expr[, .N])) {
       # initialize relevant metadata
 
       ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      gobject = set_cell_metadata(gobject = gobject,
-                                  spat_unit = avail_expr[expr_i, spat_unit],
-                                  feat_type = avail_expr[expr_i, feat_type],
-                                  provenance = if(is.null(provenance)) avail_expr[expr_i, spat_unit] else provenance,
-                                  metadata = 'initialize',
-                                  verbose = FALSE)
+      gobject <- set_cell_metadata(
+        gobject = gobject,
+        spat_unit = avail_expr[expr_i, spat_unit],
+        feat_type = avail_expr[expr_i, feat_type],
+        provenance = if (is.null(provenance)) avail_expr[expr_i, spat_unit] else provenance,
+        metadata = "initialize",
+        verbose = FALSE
+      )
       ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-
     }
   } else {
     # if spatial_info present then initialize by spat_unit from spat_info,
     # but prefer feat_type from expression
-    if(is.null(avail_expr)) avail_to_use = unique(avail_feat_info)
-    else avail_to_use = unique(avail_expr[, feat_type])
-    for(poly in avail_spat_info) {
-      for(feature_type in unique(avail_to_use)) {
-
+    if (is.null(avail_expr)) {
+      avail_to_use <- unique(avail_feat_info)
+    } else {
+      avail_to_use <- unique(avail_expr[, feat_type])
+    }
+    for (poly in avail_spat_info) {
+      for (feature_type in unique(avail_to_use)) {
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        gobject = set_cell_metadata(gobject = gobject,
-                                    spat_unit = poly,
-                                    feat_type = feature_type,
-                                    provenance = if(is.null(provenance)) poly else provenance,
-                                    metadata = 'initialize',
-                                    verbose = FALSE)
+        gobject <- set_cell_metadata(
+          gobject = gobject,
+          spat_unit = poly,
+          feat_type = feature_type,
+          provenance = if (is.null(provenance)) poly else provenance,
+          metadata = "initialize",
+          verbose = FALSE
+        )
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-
       }
     }
   }
@@ -758,51 +778,53 @@ init_cell_metadata = function(gobject,
 #' @param gobject giotto object
 #' @param provenance provenance information (optional)
 #' @keywords internal
-init_feat_metadata = function(gobject,
-                              provenance = NULL) {
-
+init_feat_metadata <- function(gobject,
+                               provenance = NULL) {
   # data.table vars
-  spat_unit = feat_type = NULL
+  spat_unit <- feat_type <- NULL
 
-  avail_expr = list_expression(gobject)
-  avail_spat_info = list_spatial_info_names(gobject)
-  avail_feat_info = list_feature_info_names(gobject)
+  avail_expr <- list_expression(gobject)
+  avail_spat_info <- list_spatial_info_names(gobject)
+  avail_feat_info <- list_feature_info_names(gobject)
 
   # If no spatial_info then initialize by expression mat
-  if(is.null(avail_spat_info)) {
-    for(expr_i in seq(avail_expr[, .N])) {
+  if (is.null(avail_spat_info)) {
+    for (expr_i in seq(avail_expr[, .N])) {
       # initialize relevant metadata
 
       ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-      gobject = set_feature_metadata(gobject = gobject,
-                                     spat_unit = avail_expr[expr_i, spat_unit],
-                                     feat_type = avail_expr[expr_i, feat_type],
-                                     provenance = if(is.null(provenance)) avail_expr[expr_i, spat_unit] else provenance,
-                                     metadata = 'initialize',
-                                     verbose = FALSE)
+      gobject <- set_feature_metadata(
+        gobject = gobject,
+        spat_unit = avail_expr[expr_i, spat_unit],
+        feat_type = avail_expr[expr_i, feat_type],
+        provenance = if (is.null(provenance)) avail_expr[expr_i, spat_unit] else provenance,
+        metadata = "initialize",
+        verbose = FALSE
+      )
       ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-
     }
   } else {
     # if spatial_info present then initialize by spat_unit from spat_info,
     # but prefer feat_type from expression
-    if(is.null(avail_expr)) avail_to_use = unique(avail_feat_info)
-    else avail_to_use = unique(avail_expr[, feat_type])
-    for(poly in avail_spat_info) {
-      for(feature_type in unique(avail_to_use)) {
-
+    if (is.null(avail_expr)) {
+      avail_to_use <- unique(avail_feat_info)
+    } else {
+      avail_to_use <- unique(avail_expr[, feat_type])
+    }
+    for (poly in avail_spat_info) {
+      for (feature_type in unique(avail_to_use)) {
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        gobject = set_feature_metadata(gobject = gobject,
-                                       spat_unit = poly,
-                                       feat_type = feature_type,
-                                       provenance = if(is.null(provenance)) poly else provenance,
-                                       metadata = 'initialize',
-                                       verbose = FALSE)
+        gobject <- set_feature_metadata(
+          gobject = gobject,
+          spat_unit = poly,
+          feat_type = feature_type,
+          provenance = if (is.null(provenance)) poly else provenance,
+          metadata = "initialize",
+          verbose = FALSE
+        )
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-
       }
     }
   }
   return(gobject)
 }
-

@@ -1,4 +1,3 @@
-
 #' @include generics.R
 NULL
 
@@ -29,69 +28,87 @@ NULL
 #' @rdname spatIDs-generic
 #' @param spat_unit (optional) specify which spatial unit
 #' @export
-setMethod('spatIDs', signature(x = 'giotto'),
-          function(x, spat_unit = NULL, ...) {
-            as.character(get_cell_id(gobject = x, spat_unit, ...))
-          })
+setMethod(
+  "spatIDs", signature(x = "giotto"),
+  function(x, spat_unit = NULL, ...) {
+    as.character(get_cell_id(gobject = x, spat_unit, ...))
+  }
+)
 #' @rdname spatIDs-generic
 #' @export
-setMethod('spatIDs', signature(x = c('exprObj')),
-          function(x, ...) {
-            as.character(colnames(x[]))
-          })
+setMethod(
+  "spatIDs", signature(x = c("exprObj")),
+  function(x, ...) {
+    as.character(colnames(x[]))
+  }
+)
 #' @rdname spatIDs-generic
 #' @export
-setMethod('spatIDs', signature(x = c('spatLocsObj')),
-          function(x, ...) {
-            as.character(x[]$cell_ID)
-          })
+setMethod(
+  "spatIDs", signature(x = c("spatLocsObj")),
+  function(x, ...) {
+    as.character(x[]$cell_ID)
+  }
+)
 #' @rdname spatIDs-generic
 #' @export
-setMethod('spatIDs', signature(x = c('cellMetaObj')),
-          function(x, ...) {
-            as.character(x[]$cell_ID)
-          })
+setMethod(
+  "spatIDs", signature(x = c("cellMetaObj")),
+  function(x, ...) {
+    as.character(x[]$cell_ID)
+  }
+)
 #' @rdname spatIDs-generic
 #' @export
-setMethod('spatIDs', signature(x = c('spatialNetworkObj')),
-          function(x, ...) {
-            as.character(unique(c(x[]$from, x[]$to)))
-          })
+setMethod(
+  "spatIDs", signature(x = c("spatialNetworkObj")),
+  function(x, ...) {
+    as.character(unique(c(x[]$from, x[]$to)))
+  }
+)
 #' @rdname spatIDs-generic
 #' @export
-setMethod('spatIDs', signature(x = 'dimObj'),
-          function(x, ...) {
-            as.character(rownames(x@coordinates))
-          })
+setMethod(
+  "spatIDs", signature(x = "dimObj"),
+  function(x, ...) {
+    as.character(rownames(x@coordinates))
+  }
+)
 #' @rdname spatIDs-generic
 #' @param use_cache use cached IDs if available (gpoly and gpoints only)
 #' @param uniques return unique ID values only (currently gpoly and gpoints only)
 #' @export
-setMethod('spatIDs', signature(x = 'giottoPolygon'),
-          function(x, use_cache = TRUE, uniques = TRUE, ...) {
-            if (!all(is.na(x@unique_ID_cache)) &&
-                isTRUE(use_cache) &&
-                isTRUE(uniques)) {
-              return(as.character(x@unique_ID_cache))
-            }
+setMethod(
+  "spatIDs", signature(x = "giottoPolygon"),
+  function(x, use_cache = TRUE, uniques = TRUE, ...) {
+    if (!all(is.na(x@unique_ID_cache)) &&
+      isTRUE(use_cache) &&
+      isTRUE(uniques)) {
+      return(as.character(x@unique_ID_cache))
+    }
 
-            # getting as list first is more performant
-            out = as.character(terra::as.list(x@spatVector)$poly_ID)
-            if (isTRUE(uniques)) out = unique(out)
-            return(out)
-          })
+    # getting as list first is more performant
+    out <- as.character(terra::as.list(x@spatVector)$poly_ID)
+    if (isTRUE(uniques)) out <- unique(out)
+    return(out)
+  }
+)
 #' @rdname spatIDs-generic
 #' @export
-setMethod('spatIDs', signature(x = 'spatEnrObj'),
-          function(x, ...) {
-            as.character(x@enrichDT$cell_ID)
-          })
+setMethod(
+  "spatIDs", signature(x = "spatEnrObj"),
+  function(x, ...) {
+    as.character(x@enrichDT$cell_ID)
+  }
+)
 #' @rdname spatIDs-generic
 #' @export
-setMethod('spatIDs', signature(x = 'nnNetObj'),
-          function(x, ...) {
-            as.character(unique(names(igraph::V(x@igraph))))
-          })
+setMethod(
+  "spatIDs", signature(x = "nnNetObj"),
+  function(x, ...) {
+    as.character(unique(names(igraph::V(x@igraph))))
+  }
+)
 
 
 
@@ -104,43 +121,51 @@ setMethod('spatIDs', signature(x = 'nnNetObj'),
 #' @rdname spatIDs-generic
 #' @param feat_type (optional) specify which feature type
 #' @export
-setMethod('featIDs', signature(x = 'giotto'),
-          function(x, feat_type = NULL, ...) {
-            as.character(get_feat_id(gobject = x, feat_type, ...))
-          })
+setMethod(
+  "featIDs", signature(x = "giotto"),
+  function(x, feat_type = NULL, ...) {
+    as.character(get_feat_id(gobject = x, feat_type, ...))
+  }
+)
 #' @rdname spatIDs-generic
 #' @export
-setMethod('featIDs', signature(x = 'exprObj'),
-          function(x, ...) {
-            as.character(rownames(x[]))
-          })
+setMethod(
+  "featIDs", signature(x = "exprObj"),
+  function(x, ...) {
+    as.character(rownames(x[]))
+  }
+)
 #' @rdname spatIDs-generic
 #' @export
-setMethod('featIDs', signature(x = 'featMetaObj'),
-          function(x, ...) {
-            as.character(x[]$feat_ID)
-          })
+setMethod(
+  "featIDs", signature(x = "featMetaObj"),
+  function(x, ...) {
+    as.character(x[]$feat_ID)
+  }
+)
 #' @rdname spatIDs-generic
 #' @export
-setMethod('featIDs', signature(x = 'giottoPoints'),
-          function(x, use_cache = TRUE, uniques = TRUE, ...) {
-            if (!all(is.na(x@unique_ID_cache)) &&
-                isTRUE(use_cache) &&
-                isTRUE(uniques)) {
-              return(as.character(x@unique_ID_cache))
-            }
+setMethod(
+  "featIDs", signature(x = "giottoPoints"),
+  function(x, use_cache = TRUE, uniques = TRUE, ...) {
+    if (!all(is.na(x@unique_ID_cache)) &&
+      isTRUE(use_cache) &&
+      isTRUE(uniques)) {
+      return(as.character(x@unique_ID_cache))
+    }
 
-            # getting as list is more performant than directly using `$`
-            out = as.character(terra::as.list(x@spatVector)$feat_ID)
-            if (isTRUE(uniques)) out = unique(out)
-            return(out)
-          })
+    # getting as list is more performant than directly using `$`
+    out <- as.character(terra::as.list(x@spatVector)$feat_ID)
+    if (isTRUE(uniques)) out <- unique(out)
+    return(out)
+  }
+)
 #' @rdname spatIDs-generic
 #' @export
-setMethod('featIDs', signature(x = 'spatEnrObj'),
-          function(x, ...) {
-            as.character(colnames(x@enrichDT[, -'cell_ID']))
-          })
+setMethod(
+  "featIDs", signature(x = "spatEnrObj"),
+  function(x, ...) {
+    as.character(colnames(x@enrichDT[, -"cell_ID"]))
+  }
+)
 # no features generic for dimObj
-
-
