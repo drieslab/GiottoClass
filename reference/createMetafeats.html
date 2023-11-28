@@ -109,9 +109,9 @@ cluster_vector = c(1, 1, 2, 2); names(cluster_vector) = c('geneA', 'geneB', 'gen
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="co"># load a dataset</span></span></span>
-<span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu">GiottoData</span><span class="fu">::</span><span class="fu"><a href="https://drieslab.github.io/GiottoData/reference/loadGiottoMini.html" class="external-link">loadGiottoMini</a></span><span class="op">(</span><span class="st">'viz'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu">GiottoData</span><span class="fu">::</span><span class="fu"><a href="https://drieslab.github.io/GiottoData/reference/loadGiottoMini.html" class="external-link">loadGiottoMini</a></span><span class="op">(</span><span class="st">"viz"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># set a spat unit to use</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="activeSpatUnit-generic.html">activeSpatUnit</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">'aggregate'</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="activeSpatUnit-generic.html">activeSpatUnit</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"aggregate"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># create the metafeats</span></span></span>
 <span class="r-in"><span><span class="co"># We do this by making an annotation vector which is a numerical vector</span></span></span>
@@ -120,7 +120,7 @@ cluster_vector = c(1, 1, 2, 2); names(cluster_vector) = c('geneA', 'geneB', 'gen
 <span class="r-in"><span><span class="co"># Here we create an example annotation vector by arbitrarily using the first 6</span></span></span>
 <span class="r-in"><span><span class="co"># features and putting 3 in cluster 1 and the other 3 in cluster 2.</span></span></span>
 <span class="r-in"><span><span class="va">feats_to_use</span> <span class="op">&lt;-</span> <span class="fu"><a href="spatIDs-generic.html">featIDs</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">clust_to_use</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">clust_to_use</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">clust_to_use</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">feats_to_use</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># show</span></span></span>
@@ -129,13 +129,13 @@ cluster_vector = c(1, 1, 2, 2); names(cluster_vector) = c('geneA', 'geneB', 'gen
 <span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu">createMetafeats</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  gobject <span class="op">=</span> <span class="va">g</span>,</span></span>
 <span class="r-in"><span>  feat_clusters <span class="op">=</span> <span class="va">clust_to_use</span>,</span></span>
-<span class="r-in"><span>  name <span class="op">=</span> <span class="st">'new_metagene'</span></span></span>
+<span class="r-in"><span>  name <span class="op">=</span> <span class="st">"new_metagene"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">GiottoVisuals</span><span class="fu">::</span><span class="fu">spatCellPlot</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  gobject <span class="op">=</span> <span class="va">g</span>,</span></span>
-<span class="r-in"><span>  spat_enr_names <span class="op">=</span> <span class="st">'new_metagene'</span>,</span></span>
-<span class="r-in"><span>  cell_annotation_values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'1'</span>, <span class="st">'2'</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  spat_enr_names <span class="op">=</span> <span class="st">"new_metagene"</span>,</span></span>
+<span class="r-in"><span>  cell_annotation_values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span>, <span class="st">"2"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  point_size <span class="op">=</span> <span class="fl">3.5</span>,</span></span>
 <span class="r-in"><span>  cow_n_col <span class="op">=</span> <span class="fl">2</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>

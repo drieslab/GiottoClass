@@ -119,12 +119,12 @@ the spatVector data. Provided for cacheing purposes</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># data.frame input</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  ID <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>  x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">6</span>,</span></span>
 <span class="r-in"><span>  y <span class="op">=</span> <span class="fl">6</span><span class="op">:</span><span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">gpoints</span> <span class="op">=</span> <span class="fu">createGiottoPoints</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gpoints</span> <span class="op">&lt;-</span> <span class="fu">createGiottoPoints</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting col "ID" as feat_ID column</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting cols "x" and "y" as x and y respectively</span>
 <span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">gpoints</span>,</span></span>
@@ -136,9 +136,9 @@ the spatVector data. Provided for cacheing purposes</p></dd>
 <span class="r-in"><span><span class="co"># with a split_keyword</span></span></span>
 <span class="r-in"><span><span class="co"># Use this when values to read in contain multiple sets of information that</span></span></span>
 <span class="r-in"><span><span class="co"># should be put into separate objects.</span></span></span>
-<span class="r-in"><span><span class="va">gp_list</span> <span class="op">=</span> <span class="fu">createGiottoPoints</span><span class="op">(</span><span class="va">x</span>,</span></span>
-<span class="r-in"><span>  feat_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'feat_a'</span>, <span class="st">'feat_b'</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  split_keyword <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'b'</span>, <span class="st">'c'</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gp_list</span> <span class="op">&lt;-</span> <span class="fu">createGiottoPoints</span><span class="op">(</span><span class="va">x</span>,</span></span>
+<span class="r-in"><span>  feat_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"feat_a"</span>, <span class="st">"feat_b"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  split_keyword <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"b"</span>, <span class="st">"c"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting col "ID" as feat_ID column</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting cols "x" and "y" as x and y respectively</span>
@@ -176,7 +176,7 @@ the spatVector data. Provided for cacheing purposes</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># subsetting</span></span></span>
-<span class="r-in"><span><span class="va">gpoints</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span> <span class="co"># numerical</span></span></span>
+<span class="r-in"><span><span class="va">gpoints</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">]</span> <span class="co"># numerical</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> An object of class giottoPoints</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> feat_type : "rna"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Feature Information:</span>
@@ -204,7 +204,7 @@ the spatVector data. Provided for cacheing purposes</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  values      :       a            1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      d            4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="va">gpoints</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'a'</span>, <span class="st">'f'</span><span class="op">)</span><span class="op">]</span> <span class="co"># character subsetting is keyed on feat_ID attribute</span></span></span>
+<span class="r-in"><span><span class="va">gpoints</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"f"</span><span class="op">)</span><span class="op">]</span> <span class="co"># character subsetting is keyed on feat_ID attribute</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> An object of class giottoPoints</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> feat_type : "rna"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Feature Information:</span>
