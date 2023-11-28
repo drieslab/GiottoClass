@@ -183,7 +183,6 @@ hexVertices <- function(radius, major_axis = c("v", "h")) {
 #' @param shape Shape of the tessellation grid. Available options are "hexagon" and "square".
 #' @param shape_size numeric. Size of shape to tesselate. (i.e. diameter for
 #' circles and hexagons, side length for squares)
-#' @param ccd center to center distance of tesselation grid
 #' @param name name of giottoPolygons grid to make
 #' @param gap numeric. Gap to add between tesselated polygons
 #' @param id_prefix character. prefix to add to poly_ID names generated

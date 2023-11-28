@@ -16,7 +16,7 @@ Convert a \code{spatialNetworkObj} to a non-directed igraph
 representation.
 }
 \examples{
-sn <- GiottoData::loadSubObjectMini('spatialNetworkObj')
+sn <- GiottoData::loadSubObjectMini("spatialNetworkObj")
 # only name attribute
 g <- spat_net_to_igraph(sn)
 
