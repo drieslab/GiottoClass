@@ -88,18 +88,22 @@ to overlap}
 
 \item{y}{Object with features to overlap: \code{giottoPoints}, \code{giottoLargeImage},
 \code{SpatVector} points or \code{SpatRaster}}
+
+\item{return_gpolygon}{default = TRUE. Whether to return the entire
+giottoPolygon provided to \code{x}, but with the overlaps information appended or
+as a bare terra \code{SpatVector}}
 }
 \description{
 Calculate features overlapped by polygons
 }
 \examples{
 \dontrun{
-x = GiottoData::loadSubObjectMini('giottoPolygon')
-y = GiottoData::loadSubObjectMini('giottoPoints')
-x@overlaps = NULL
+x <- GiottoData::loadSubObjectMini("giottoPolygon")
+y <- GiottoData::loadSubObjectMini("giottoPoints")
+x@overlaps <- NULL
 overlaps(x) # Should now be NULL
 
-a = calculateOverlap(x, y)
+a <- calculateOverlap(x, y)
 overlaps(a)
 }
 }

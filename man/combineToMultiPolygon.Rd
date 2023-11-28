@@ -20,14 +20,14 @@ that attributes cannot be kept
 }
 \examples{
 \dontrun{
-gpoly = GiottoData::loadSubObjectMini('giottoPolygon')
-groups = data.table::data.table(
+gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
+groups <- data.table::data.table(
   poly_ID = gpoly$poly_ID,
   group_ID = sort(rep(LETTERS[1:5], length.out = nrow(gpoly))) # make 5 groups
 )
-multi_gp = combineToMultiPolygon(gpoly, groups)
+multi_gp <- combineToMultiPolygon(gpoly, groups)
 
-plot(multi_gp['A'])
+plot(multi_gp["A"])
 }
 
 }

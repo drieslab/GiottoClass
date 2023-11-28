@@ -51,12 +51,12 @@ point).
 }
 \examples{
 # data.frame input
-x = data.frame(
+x <- data.frame(
   ID = letters[1:6],
   x = 1:6,
   y = 6:1
 )
-gpoints = createGiottoPoints(x)
+gpoints <- createGiottoPoints(x)
 plot(gpoints,
   raster = FALSE, # don't plot with rasterization or it will be hard to see
   cex = 0.5
@@ -65,16 +65,16 @@ plot(gpoints,
 # with a split_keyword
 # Use this when values to read in contain multiple sets of information that
 # should be put into separate objects.
-gp_list = createGiottoPoints(x,
-  feat_type = c('feat_a', 'feat_b'),
-  split_keyword = list(c('b', 'c'))
+gp_list <- createGiottoPoints(x,
+  feat_type = c("feat_a", "feat_b"),
+  split_keyword = list(c("b", "c"))
 )
 gp_list
 
 # subsetting
-gpoints[c(1,3)] # numerical
+gpoints[c(1, 3)] # numerical
 gpoints[c(TRUE, FALSE, FALSE)] # logical
-gpoints[c('a', 'f')] # character subsetting is keyed on feat_ID attribute
+gpoints[c("a", "f")] # character subsetting is keyed on feat_ID attribute
 gpoints[] # drop to SpatVector
 }
 \concept{points}

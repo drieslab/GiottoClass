@@ -20,13 +20,6 @@
 \alias{featIDs,spatEnrObj-method}
 \title{Spatial and feature IDs}
 \usage{
-spatIDs(x, spat_unit, ...)
-
-featIDs(x, feat_type, ...)
-
-## Default S4 method for signatures:
-## 'giotto', 'exprObj', 'spatLocsObj', 'cellMetaObj', 'spatialNetworkObj' 'dimObj'
-
 \S4method{spatIDs}{giotto}(x, spat_unit = NULL, ...)
 
 \S4method{spatIDs}{exprObj}(x, ...)

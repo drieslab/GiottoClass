@@ -242,6 +242,9 @@ setMethod(
 # * gpoly gpoints ####
 #' @rdname calculateOverlap
 #' @param name_overlap name for the overlap results (default to feat_info parameter)
+#' @param return_gpolygon default = TRUE. Whether to return the entire
+#' giottoPolygon provided to `x`, but with the overlaps information appended or
+#' as a bare terra `SpatVector`
 #' @examples
 #' \dontrun{
 #' x <- GiottoData::loadSubObjectMini("giottoPolygon")
@@ -1153,6 +1156,7 @@ setMethod(
 
 # * giottoPolygon ####
 #' @rdname overlapToMatrix
+#' @param output data format/class to return the results as
 #' @export
 setMethod(
   "overlapToMatrix", signature("giottoPolygon"), function(

@@ -10,13 +10,6 @@ NULL
 #' @param x an object
 #' @param ... additional parameters to pass
 #' @include classes.R
-#' @usage
-#' spatIDs(x, spat_unit, ...)
-#'
-#' featIDs(x, feat_type, ...)
-#'
-#' ## Default S4 method for signatures:
-#' ## 'giotto', 'exprObj', 'spatLocsObj', 'cellMetaObj', 'spatialNetworkObj' 'dimObj'
 NULL
 
 
