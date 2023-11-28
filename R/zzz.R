@@ -20,6 +20,8 @@
   #   }
   # }
 
+  # set GiottoClass options
+  options('giotto.use_conda' = FALSE)
 
   ## print version number ##
 
