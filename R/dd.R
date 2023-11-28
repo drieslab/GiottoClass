@@ -1,5 +1,3 @@
-
-
 # ------------------------------------------------------------------------- #
 # This script contains reusable dummy documentation / templates for
 # commonly used params.

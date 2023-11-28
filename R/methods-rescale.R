@@ -1,6 +1,3 @@
-
-
-
 # docs -------------------------------------------------------------- #
 #' @title Rescale an object
 #' @name rescale-generic
@@ -21,24 +18,30 @@ NULL
 
 #' @describeIn rescale-generic Rescale spatLocsObj
 #' @export
-setMethod('rescale', signature('spatLocsObj'),
-          function(x, fx = 1, fy = fx, fz = fx, x0, y0, z0) {
-  # data.table vars
-  sdimx = sdimy = sdimz = NULL
+setMethod(
+  "rescale", signature("spatLocsObj"),
+  function(x, fx = 1, fy = fx, fz = fx, x0, y0, z0) {
+    # data.table vars
+    sdimx <- sdimy <- sdimz <- NULL
 
-  # find center
-  if(missing(x0)) x0 = x[][, mean(range(sdimx))]
-  if(missing(y0)) y0 = x[][, mean(range(sdimy))]
-  if('sdimz' %in% names(x[]) & missing(z0)) {
-    z0 = x[][, mean(range(sdimz))]
-  } else z0 = 0
+    # find center
+    if (missing(x0)) x0 <- x[][, mean(range(sdimx))]
+    if (missing(y0)) y0 <- x[][, mean(range(sdimy))]
+    if ("sdimz" %in% names(x[]) & missing(z0)) {
+      z0 <- x[][, mean(range(sdimz))]
+    } else {
+      z0 <- 0
+    }
 
-  # perform scaling
-  x[] = scale_spatial_locations(spatlocs = x[],
-                                scale_factor = c(x = fx, y = fy, z = fz),
-                                scenter = c(x = x0, y = y0, z = z0))
-  x
-})
+    # perform scaling
+    x[] <- scale_spatial_locations(
+      spatlocs = x[],
+      scale_factor = c(x = fx, y = fy, z = fz),
+      scenter = c(x = x0, y = y0, z = z0)
+    )
+    x
+  }
+)
 
 
 
@@ -64,41 +67,40 @@ setMethod('rescale', signature('spatLocsObj'),
 #' x, y, and z (if available) dimensions or as a vector of named values for 'x',
 #' 'y', (and 'z').
 #' @keywords internal
-scale_spatial_locations = function(spatlocs,
-                                   scale_factor = c(x=1,y=1,z=1),
-                                   scenter = c(x=0,y=0,z=0)) {
-
+scale_spatial_locations <- function(spatlocs,
+                                    scale_factor = c(x = 1, y = 1, z = 1),
+                                    scenter = c(x = 0, y = 0, z = 0)) {
   # data.table vars
-  sdimx = sdimy = sdimz = NULL
+  sdimx <- sdimy <- sdimz <- NULL
 
-  hasZ = 'sdimz' %in% names(spatlocs)
+  hasZ <- "sdimz" %in% names(spatlocs)
 
-  if(length(scale_factor) == 1) scale_factor = c(x = scale_factor, y = scale_factor, z = scale_factor)
-  if(!all(names(scenter) %in% c('x','y','z'))) stop('scenter value names not recognized')
-  if(!all(names(scale_factor) %in% c('x','y','z'))) stop('scale_factor value names not recognized')
+  if (length(scale_factor) == 1) scale_factor <- c(x = scale_factor, y = scale_factor, z = scale_factor)
+  if (!all(names(scenter) %in% c("x", "y", "z"))) stop("scenter value names not recognized")
+  if (!all(names(scale_factor) %in% c("x", "y", "z"))) stop("scale_factor value names not recognized")
 
   # Adjust for scaling center
-  spatlocs[, sdimx := sdimx - scenter[['x']]]
-  spatlocs[, sdimy := sdimy - scenter[['y']]]
+  spatlocs[, sdimx := sdimx - scenter[["x"]]]
+  spatlocs[, sdimy := sdimy - scenter[["y"]]]
 
   # Perform scale
-  spatlocs[, sdimx := sdimx*scale_factor[['x']]]
-  spatlocs[, sdimy := sdimy*scale_factor[['y']]]
+  spatlocs[, sdimx := sdimx * scale_factor[["x"]]]
+  spatlocs[, sdimy := sdimy * scale_factor[["y"]]]
 
-  if(isTRUE(hasZ)) {
+  if (isTRUE(hasZ)) {
     # Adjust for scaling z center
-    spatlocs[, sdimz := sdimz - scenter[['z']]]
+    spatlocs[, sdimz := sdimz - scenter[["z"]]]
 
     # Perform z scale
-    spatlocs[, sdimz := sdimz*scale_factor[['z']]]
+    spatlocs[, sdimz := sdimz * scale_factor[["z"]]]
 
     # Revert z scaling center adjustments
-    spatlocs[, sdimz := sdimz + scenter[['z']]]
+    spatlocs[, sdimz := sdimz + scenter[["z"]]]
   }
 
   # Revert scaling center adjustments
-  spatlocs[, sdimx := sdimx + scenter[['x']]]
-  spatlocs[, sdimy := sdimy + scenter[['y']]]
+  spatlocs[, sdimx := sdimx + scenter[["x"]]]
+  spatlocs[, sdimy := sdimy + scenter[["y"]]]
 
   return(spatlocs)
 }
@@ -113,32 +115,30 @@ scale_spatial_locations = function(spatlocs,
 #' @name rescale_polygons
 #' @description  rescale individual polygons by a factor x and y
 #' @keywords internal
-rescale_polygons = function(spatVector,
-                            spatVectorCentroids,
-                            fx = 0.5, fy = 0.5) {
-
+rescale_polygons <- function(spatVector,
+                             spatVectorCentroids,
+                             fx = 0.5, fy = 0.5) {
   # DT vars
-  poly_ID = NULL
+  poly_ID <- NULL
 
-  spatVectorCentroidsDT = spatVector_to_dt(spatVectorCentroids)
+  spatVectorCentroidsDT <- spatVector_to_dt(spatVectorCentroids)
 
-  cell_ids = spatVector$poly_ID
+  cell_ids <- spatVector$poly_ID
 
-  l = lapply(cell_ids, FUN = function(id) {
+  l <- lapply(cell_ids, FUN = function(id) {
+    single_polygon <- spatVector[spatVector$poly_ID == id]
+    single_centroid <- spatVectorCentroidsDT[poly_ID == id]
 
-    single_polygon = spatVector[spatVector$poly_ID == id]
-    single_centroid = spatVectorCentroidsDT[poly_ID == id]
-
-    single_polygon_resc = terra::rescale(x = single_polygon,
-                                         fx = fx, fy = fy,
-                                         x0 = single_centroid$x,
-                                         y0 = single_centroid$y)
-
+    single_polygon_resc <- terra::rescale(
+      x = single_polygon,
+      fx = fx, fy = fy,
+      x0 = single_centroid$x,
+      y0 = single_centroid$y
+    )
   })
 
-  new_polygons = do.call('rbind', l)
+  new_polygons <- do.call("rbind", l)
   return(new_polygons)
-
 }
 
 
@@ -156,51 +156,54 @@ rescale_polygons = function(spatVector,
 #' @return giotto object
 #' @concept polygon scaling
 #' @export
-rescalePolygons = function(gobject,
-                           poly_info = 'cell',
-                           name = 'rescaled_cell',
-                           fx = 0.5,
-                           fy = 0.5,
-                           calculate_centroids = TRUE,
-                           return_gobject = TRUE) {
-
+rescalePolygons <- function(gobject,
+                            poly_info = "cell",
+                            name = "rescaled_cell",
+                            fx = 0.5,
+                            fy = 0.5,
+                            calculate_centroids = TRUE,
+                            return_gobject = TRUE) {
   # 1. get polygon information
-  original = get_polygon_info(gobject = gobject,
-                              polygon_name = poly_info,
-                              return_giottoPolygon = TRUE)
+  original <- get_polygon_info(
+    gobject = gobject,
+    polygon_name = poly_info,
+    return_giottoPolygon = TRUE
+  )
 
-  original_vector =  slot(original, 'spatVector')
-  original_centroids =  slot(original, 'spatVectorCentroids')
+  original_vector <- slot(original, "spatVector")
+  original_centroids <- slot(original, "spatVectorCentroids")
 
-  if(is.null(original_centroids)) {
+  if (is.null(original_centroids)) {
     stop("Selected polygons don't have associated centroid,
          use addSpatialCentroidLocations() ")
   }
 
 
   # 2. rescale polygon
-  rescaled_original = rescale_polygons(original_vector,
-                                       original_centroids,
-                                       fx = fx, fy = fy)
+  rescaled_original <- rescale_polygons(original_vector,
+    original_centroids,
+    fx = fx, fy = fy
+  )
 
   # 3. create new Giotto polygon and calculate centroids
-  S4_polygon = create_giotto_polygon_object(name = name,
-                                            spatVector = rescaled_original)
-  if(calculate_centroids) {
-    S4_polygon = calculate_centroids_polygons(gpolygon = S4_polygon,
-                                              append_gpolygon = TRUE)
+  S4_polygon <- create_giotto_polygon_object(
+    name = name,
+    spatVector = rescaled_original
+  )
+  if (calculate_centroids) {
+    S4_polygon <- calculate_centroids_polygons(
+      gpolygon = S4_polygon,
+      append_gpolygon = TRUE
+    )
   }
 
 
   # 4. return object or S4 polygon
-  if(return_gobject) {
-
+  if (return_gobject) {
     # TODO: update parameters
-    gobject = setPolygonInfo(gobject = gobject, x = S4_polygon)
+    gobject <- setPolygonInfo(gobject = gobject, x = S4_polygon)
     return(gobject)
   } else {
     return(S4_polygon)
   }
-
-
 }

@@ -1,8 +1,3 @@
-
-
-
-
-
 #' @title stitchFieldCoordinates
 #' @name stitchFieldCoordinates
 #' @description Helper function to stitch field coordinates together to form one complete picture
@@ -29,60 +24,56 @@ stitchFieldCoordinates <- function(location_file,
                                    offset_file,
                                    cumulate_offset_x = F,
                                    cumulate_offset_y = F,
-                                   field_col = 'Field of View',
-                                   X_coord_col = 'X',
-                                   Y_coord_col = 'Y',
+                                   field_col = "Field of View",
+                                   X_coord_col = "X",
+                                   Y_coord_col = "Y",
                                    reverse_final_x = F,
                                    reverse_final_y = T) {
-
-
   # data.table variables
-  x_offset_final = x_offset = y_offset_final = y_offset = field = NULL
+  x_offset_final <- x_offset <- y_offset_final <- y_offset <- field <- NULL
 
 
   # cumulate offset values or not for offset file
-  if(cumulate_offset_x == TRUE) {
+  if (cumulate_offset_x == TRUE) {
     offset_file[, x_offset_final := cumsum(x_offset)]
   } else {
     offset_file[, x_offset_final := x_offset]
   }
 
-  if(cumulate_offset_y == TRUE) {
+  if (cumulate_offset_y == TRUE) {
     offset_file[, y_offset_final := cumsum(y_offset)]
   } else {
     offset_file[, y_offset_final := y_offset]
   }
 
-  copy_loc_file = data.table::copy(location_file)
+  copy_loc_file <- data.table::copy(location_file)
 
-  new_x_coord = rep(0, nrow(copy_loc_file))
-  new_y_coord = rep(0, nrow(copy_loc_file))
+  new_x_coord <- rep(0, nrow(copy_loc_file))
+  new_y_coord <- rep(0, nrow(copy_loc_file))
 
-  for(row in 1:nrow(copy_loc_file)) {
+  for (row in 1:nrow(copy_loc_file)) {
+    myrow <- copy_loc_file[row, ]
 
-    myrow = copy_loc_file[row,]
+    field_select <- myrow[[field_col]]
+    X_select <- myrow[[X_coord_col]]
+    Y_select <- myrow[[Y_coord_col]]
 
-    field_select = myrow[[field_col]]
-    X_select = myrow[[X_coord_col]]
-    Y_select = myrow[[Y_coord_col]]
+    X_offset <- offset_file[field == field_select][["x_offset_final"]]
+    Y_offset <- offset_file[field == field_select][["y_offset_final"]]
 
-    X_offset = offset_file[field == field_select][['x_offset_final']]
-    Y_offset = offset_file[field == field_select][['y_offset_final']]
+    final_x <- X_select + X_offset
+    final_y <- Y_select + Y_offset
 
-    final_x = X_select+X_offset
-    final_y = Y_select+Y_offset
-
-    new_x_coord[row] = final_x
-    new_y_coord[row] = final_y
-
+    new_x_coord[row] <- final_x
+    new_y_coord[row] <- final_y
   }
 
-  if(reverse_final_x == TRUE) new_x_coord = new_x_coord*-1
-  if(reverse_final_y == TRUE) new_y_coord = new_y_coord*-1
+  if (reverse_final_x == TRUE) new_x_coord <- new_x_coord * -1
+  if (reverse_final_y == TRUE) new_y_coord <- new_y_coord * -1
 
-  copy_loc_file = data.table(copy_loc_file)
+  copy_loc_file <- data.table(copy_loc_file)
 
-  copy_loc_file[, c('X_final', 'Y_final') := list(new_x_coord, new_y_coord)]
+  copy_loc_file[, c("X_final", "Y_final") := list(new_x_coord, new_y_coord)]
 
   return(copy_loc_file)
 }
@@ -95,25 +86,24 @@ stitchFieldCoordinates <- function(location_file,
 #' @param Xtilespan numerical value specifying the width of each tile
 #' @param Ytilespan numerical value specifying the height of each tile
 #' @export
-stitchTileCoordinates <- function (location_file,
-                                   Xtilespan,
-                                   Ytilespan) {
-
+stitchTileCoordinates <- function(location_file,
+                                  Xtilespan,
+                                  Ytilespan) {
   # data.table variables
-  Xcoord = X.X = XtileIndex = Ycoord = Y.Y = YtileIndex = NULL
+  Xcoord <- X.X <- XtileIndex <- Ycoord <- Y.Y <- YtileIndex <- NULL
 
-  if (is.null(location_file$X.X)){
+  if (is.null(location_file$X.X)) {
     print("X coordinates missing in input file.")
-  }else if (is.null(location_file$Y.Y)){
+  } else if (is.null(location_file$Y.Y)) {
     print("Y coordinates missing in input file.")
-  } else if (is.null(location_file$XtileIndex)){
+  } else if (is.null(location_file$XtileIndex)) {
     print("X tile index missing in input file.")
-  }else if (is.null(location_file$YtileIndex)){
+  } else if (is.null(location_file$YtileIndex)) {
     print("Y tile index missing in input file.")
-  }else{
-    copy_loc_file = data.table::copy(location_file)
-    copy_loc_file[,Xcoord := X.X + Xtilespan*(XtileIndex-1)]
-    copy_loc_file[,Ycoord := Y.Y + Ytilespan*(YtileIndex-1)]
+  } else {
+    copy_loc_file <- data.table::copy(location_file)
+    copy_loc_file[, Xcoord := X.X + Xtilespan * (XtileIndex - 1)]
+    copy_loc_file[, Ycoord := Y.Y + Ytilespan * (YtileIndex - 1)]
     return(copy_loc_file)
   }
 }

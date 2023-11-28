@@ -1,5 +1,3 @@
-
-
 # docs ----------------------------------------------------------- #
 #' @title Flip an object
 #' @name flip-generic
@@ -17,46 +15,58 @@ NULL
 
 #' @describeIn flip-generic Flip a giottoPolygon object
 #' @export
-setMethod('flip', signature(x = 'giottoPolygon'),
-          function(x, direction = 'vertical', x0 = 0, y0 = 0, ...) {
-            flip_gpoly(gpoly = x, direction = direction, x0 = x0, y0 = y0)
-          })
+setMethod(
+  "flip", signature(x = "giottoPolygon"),
+  function(x, direction = "vertical", x0 = 0, y0 = 0, ...) {
+    flip_gpoly(gpoly = x, direction = direction, x0 = x0, y0 = y0)
+  }
+)
 
 #' @describeIn flip-generic Flip a giottoPoints object
 #' @export
-setMethod('flip', signature(x = 'giottoPoints'),
-          function(x, direction = 'vertical', x0 = 0, y0 = 0, ...) {
-            flip_gpoints(gpoints = x, direction = direction, x0 = x0, y0 = y0)
-          })
+setMethod(
+  "flip", signature(x = "giottoPoints"),
+  function(x, direction = "vertical", x0 = 0, y0 = 0, ...) {
+    flip_gpoints(gpoints = x, direction = direction, x0 = x0, y0 = y0)
+  }
+)
 
 #' @describeIn flip-generic Flip a spatLocsObj
 #' @export
-setMethod('flip', signature(x = 'spatLocsObj'),
-          function(x, direction = 'vertical', x0 = 0, y0 = 0, ...) {
-            flip_spatlocs(sl = x, direction = direction, x0 = x0, y0 = y0)
-          })
+setMethod(
+  "flip", signature(x = "spatLocsObj"),
+  function(x, direction = "vertical", x0 = 0, y0 = 0, ...) {
+    flip_spatlocs(sl = x, direction = direction, x0 = x0, y0 = y0)
+  }
+)
 
 #' @describeIn flip-generic Flip a spatialNetworkObj
 #' @export
-setMethod('flip', signature(x = 'spatialNetworkObj'),
-          function(x, direction = 'vertical', x0 = 0, y0 = 0, ...) {
-            flip_spatnet(sn = x, direction = direction, x0 = x0, y0 = y0)
-          })
+setMethod(
+  "flip", signature(x = "spatialNetworkObj"),
+  function(x, direction = "vertical", x0 = 0, y0 = 0, ...) {
+    flip_spatnet(sn = x, direction = direction, x0 = x0, y0 = y0)
+  }
+)
 
 # TODO apply as instructions for lazy eval after crop/resampling
 #' @describeIn flip-generic Flip a giottoLargeImage
 #' @export
-setMethod('flip', signature(x = 'giottoLargeImage'),
-          function(x, direction = 'vertical', x0 = 0, y0 = 0, ...) {
-            flip_large_image(image = x, direction = direction, x0 = x0, y0 = y0)
-          })
+setMethod(
+  "flip", signature(x = "giottoLargeImage"),
+  function(x, direction = "vertical", x0 = 0, y0 = 0, ...) {
+    flip_large_image(image = x, direction = direction, x0 = x0, y0 = y0)
+  }
+)
 
 #' @describeIn flip-generic Flip a SpatExtent
 #' @export
-setMethod('flip', signature(x = 'SpatExtent'),
-          function(x, direction = 'vertical', x0 = 0, y0 = 0) {
-            flip_extent(e = x, direction = direction, x0 = x0, y0 = y0)
-          })
+setMethod(
+  "flip", signature(x = "SpatExtent"),
+  function(x, direction = "vertical", x0 = 0, y0 = 0) {
+    flip_extent(e = x, direction = direction, x0 = x0, y0 = y0)
+  }
+)
 
 
 
@@ -76,16 +86,16 @@ setMethod('flip', signature(x = 'SpatExtent'),
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-flip_gpoly = function(gpoly,
-                      direction = 'vertical',
-                      x0 = 0,
-                      y0 = 0) {
-  checkmate::assert_class(gpoly, 'giottoPolygon')
+flip_gpoly <- function(gpoly,
+                       direction = "vertical",
+                       x0 = 0,
+                       y0 = 0) {
+  checkmate::assert_class(gpoly, "giottoPolygon")
   checkmate::assert_character(direction)
-  if(!is.null(x0)) {
+  if (!is.null(x0)) {
     checkmate::assert_numeric(x0)
   }
-  if(!is.null(y0)) {
+  if (!is.null(y0)) {
     checkmate::assert_numeric(y0)
   }
 
@@ -93,19 +103,21 @@ flip_gpoly = function(gpoly,
   # This initial flip may move the polys and centroids different distances
   # depending on extent min, so the following shift steps must be processed
   # indpendently with the respective extents
-  e_p = terra::ext(gpoly@spatVector) # p = poly
-  if(!is.null(gpoly@spatVectorCentroids)) {
-    e_c = terra::ext(gpoly@spatVectorCentroids) # c = centroid
+  e_p <- terra::ext(gpoly@spatVector) # p = poly
+  if (!is.null(gpoly@spatVectorCentroids)) {
+    e_c <- terra::ext(gpoly@spatVectorCentroids) # c = centroid
   }
-  gpoly = do_gpoly(x = gpoly,
-                   what = terra::flip,
-                   args = list(direction = direction))
+  gpoly <- do_gpoly(
+    x = gpoly,
+    what = terra::flip,
+    args = list(direction = direction)
+  )
 
   # 2. perform shift to match line of symmetry
-  if(grepl(direction, 'vertical')) { # ------------------------------- #
+  if (grepl(direction, "vertical")) { # ------------------------------- #
     y_min_p <- as.numeric(e_p$ymin)
 
-    if(is.null(y0)) {
+    if (is.null(y0)) {
       # flip about p extent
       # poly - no change
       # centroid
@@ -126,7 +138,7 @@ flip_gpoly = function(gpoly,
         dy = 2 * dy_p
       )
       # centroid
-      if(!is.null(gpoly@spatVectorCentroids)) {
+      if (!is.null(gpoly@spatVectorCentroids)) {
         y_min_c <- as.numeric(e_c$ymin)
         dy_c <- y0 - y_min_c
         gpoly@spatVectorCentroids <- terra::shift(
@@ -136,10 +148,10 @@ flip_gpoly = function(gpoly,
       }
     }
   }
-  if(grepl(direction, 'horizontal')) { # ------------------------------- #
-    x_min_p = as.numeric(e_p$xmin)
+  if (grepl(direction, "horizontal")) { # ------------------------------- #
+    x_min_p <- as.numeric(e_p$xmin)
 
-    if(is.null(x0)) {
+    if (is.null(x0)) {
       # flip about p extent
       # poly - no change
       # centroid
@@ -160,7 +172,7 @@ flip_gpoly = function(gpoly,
         dx = 2 * dx_p
       )
       # centroid
-      if(!is.null(gpoly@spatVectorCentroids)) {
+      if (!is.null(gpoly@spatVectorCentroids)) {
         x_min_c <- as.numeric(e_c$xmin)
         dx_c <- x0 - x_min_c
         gpoly@spatVectorCentroids <- terra::shift(
@@ -194,39 +206,39 @@ flip_gpoly = function(gpoly,
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-flip_large_image = function(image,
-                            direction = 'vertical',
-                            x0 = 0,
-                            y0 = 0) {
-  checkmate::assert_class(image, 'giottoLargeImage')
+flip_large_image <- function(image,
+                             direction = "vertical",
+                             x0 = 0,
+                             y0 = 0) {
+  checkmate::assert_class(image, "giottoLargeImage")
   checkmate::assert_character(direction)
-  if(!is.null(x0)) {
+  if (!is.null(x0)) {
     checkmate::assert_numeric(x0)
   }
-  if(!is.null(y0)) {
+  if (!is.null(y0)) {
     checkmate::assert_numeric(y0)
   }
 
   # 1. perform flip
-  e = ext(image)
-  image@raster_object = terra::flip(image@raster_object,
-                                    direction = direction)
+  e <- ext(image)
+  image@raster_object <- terra::flip(image@raster_object,
+    direction = direction
+  )
 
   # 2. perform shift to match line of symmetry
-  if(grepl(direction, 'vertical') & !is.null(y0)) {
-    y_range = as.numeric(c(e$ymin, e$ymax))
-    dy = 2*y0 - y_range[1] - y_range[2]
-    image = spatShift(x = image, dy = dy)
+  if (grepl(direction, "vertical") & !is.null(y0)) {
+    y_range <- as.numeric(c(e$ymin, e$ymax))
+    dy <- 2 * y0 - y_range[1] - y_range[2]
+    image <- spatShift(x = image, dy = dy)
   }
-  if(grepl(direction, 'horizontal') & !is.null(x0)) {
-    x_range = as.numeric(c(e$xmin, e$xmax))
-    dx = 2*x0 - x_range[1] - x_range[2]
-    image = spatShift(x = image, dx = dx)
+  if (grepl(direction, "horizontal") & !is.null(x0)) {
+    x_range <- as.numeric(c(e$xmin, e$xmax))
+    dx <- 2 * x0 - x_range[1] - x_range[2]
+    image <- spatShift(x = image, dx = dx)
   }
 
   # 3. return
   return(image)
-
 }
 
 
@@ -243,43 +255,47 @@ flip_large_image = function(image,
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-flip_gpoints = function(gpoints,
-                        direction = 'vertical',
-                        x0 = 0,
-                        y0 = 0) {
-  checkmate::assert_class(gpoints, 'giottoPoints')
+flip_gpoints <- function(gpoints,
+                         direction = "vertical",
+                         x0 = 0,
+                         y0 = 0) {
+  checkmate::assert_class(gpoints, "giottoPoints")
   checkmate::assert_character(direction)
-  if(!is.null(x0)) {
+  if (!is.null(x0)) {
     checkmate::assert_numeric(x0)
   }
-  if(!is.null(y0)) {
+  if (!is.null(y0)) {
     checkmate::assert_numeric(y0)
   }
 
   # !will need to update for networks information!
 
   # 1. perform flip
-  e = terra::ext(gpoints@spatVector)
-  gpoints@spatVector = terra::flip(gpoints@spatVector,
-                                   direction = direction)
+  e <- terra::ext(gpoints@spatVector)
+  gpoints@spatVector <- terra::flip(gpoints@spatVector,
+    direction = direction
+  )
 
   # 2. perform shift to match line of symmetry
-  if(grepl(direction, 'vertical') & !is.null(y0)) {
-    y_min = as.numeric(e$ymin)
-    dy = y0 - y_min
-    gpoints@spatVector = terra::shift(x = gpoints@spatVector,
-                                      dy = 2 * dy)
+  if (grepl(direction, "vertical") & !is.null(y0)) {
+    y_min <- as.numeric(e$ymin)
+    dy <- y0 - y_min
+    gpoints@spatVector <- terra::shift(
+      x = gpoints@spatVector,
+      dy = 2 * dy
+    )
   }
-  if(grepl(direction, 'horizontal') & !is.null(x0)) {
-    x_min = as.numeric(e$xmin)
-    dx = x0 - x_min
-    gpoints@spatVector = terra::shift(x = gpoints@spatVector,
-                                      dx = 2 * dx)
+  if (grepl(direction, "horizontal") & !is.null(x0)) {
+    x_min <- as.numeric(e$xmin)
+    dx <- x0 - x_min
+    gpoints@spatVector <- terra::shift(
+      x = gpoints@spatVector,
+      dx = 2 * dx
+    )
   }
 
   # 3. return
   return(gpoints)
-
 }
 
 
@@ -295,32 +311,32 @@ flip_gpoints = function(gpoints,
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-flip_spatlocs = function(sl,
-                         direction = 'vertical',
-                         x0 = 0,
-                         y0 = 0,
-                         copy_obj = TRUE) {
-  sdimy = sdimx = NULL
+flip_spatlocs <- function(sl,
+                          direction = "vertical",
+                          x0 = 0,
+                          y0 = 0,
+                          copy_obj = TRUE) {
+  sdimy <- sdimx <- NULL
 
-  checkmate::assert_class(sl, 'spatLocsObj')
+  checkmate::assert_class(sl, "spatLocsObj")
   checkmate::assert_character(direction)
-  if(!is.null(x0)) {
+  if (!is.null(x0)) {
     checkmate::assert_numeric(x0)
   }
-  if(!is.null(y0)) {
+  if (!is.null(y0)) {
     checkmate::assert_numeric(y0)
   }
 
-  if(isTRUE(copy_obj)) sl = copy(sl)
+  if (isTRUE(copy_obj)) sl <- copy(sl)
 
-  if(grepl(direction, 'vertical')) {
-    y_min = sl[][, min(sdimy)]
-    if(is.null(y0)) y0 = y_min
+  if (grepl(direction, "vertical")) {
+    y_min <- sl[][, min(sdimy)]
+    if (is.null(y0)) y0 <- y_min
     sl[][, sdimy := -sdimy + (2 * y0)]
   }
-  if(grepl(direction, 'horizontal')) {
-    x_min = sl[][, min(sdimx)]
-    if(is.null(x0)) x0 = x_min
+  if (grepl(direction, "horizontal")) {
+    x_min <- sl[][, min(sdimx)]
+    if (is.null(x0)) x0 <- x_min
     sl[][, sdimx := -sdimx + (2 * x0)]
   }
 
@@ -339,37 +355,39 @@ flip_spatlocs = function(sl,
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-flip_spatnet = function(sn,
-                        direction = 'vertical',
-                        x0 = 0,
-                        y0 = 0,
-                        copy_obj = TRUE) {
-  sdimy_begin = sdimy_end = sdimx_begin = sdimx_end = NULL
+flip_spatnet <- function(sn,
+                         direction = "vertical",
+                         x0 = 0,
+                         y0 = 0,
+                         copy_obj = TRUE) {
+  sdimy_begin <- sdimy_end <- sdimx_begin <- sdimx_end <- NULL
 
-  checkmate::assert_class(sn, 'spatialNetworkObj')
+  checkmate::assert_class(sn, "spatialNetworkObj")
   checkmate::assert_character(direction)
-  if(!is.null(x0)) {
+  if (!is.null(x0)) {
     checkmate::assert_numeric(x0)
   }
-  if(!is.null(y0)) {
+  if (!is.null(y0)) {
     checkmate::assert_numeric(y0)
   }
 
-  if(isTRUE(copy_obj)) sn = copy(sn)
+  if (isTRUE(copy_obj)) sn <- copy(sn)
 
-  if(grepl(direction, 'vertical')) {
-    y_min = sn[][, min(sdimy_begin, sdimy_end)]
-    if(is.null(y0)) y0 = y_min
-    sn[][, c('sdimy_begin', 'sdimy_end') := .(-sdimy_begin + (2 * y0), -sdimy_end + (2 * y0))]
-    if(!is.null(sn@networkDT_before_filter))
-      sn@networkDT_before_filter[, c('sdimy_begin', 'sdimy_end') := .(-sdimy_begin + (2 * y0), -sdimy_end + (2 * y0))]
+  if (grepl(direction, "vertical")) {
+    y_min <- sn[][, min(sdimy_begin, sdimy_end)]
+    if (is.null(y0)) y0 <- y_min
+    sn[][, c("sdimy_begin", "sdimy_end") := .(-sdimy_begin + (2 * y0), -sdimy_end + (2 * y0))]
+    if (!is.null(sn@networkDT_before_filter)) {
+      sn@networkDT_before_filter[, c("sdimy_begin", "sdimy_end") := .(-sdimy_begin + (2 * y0), -sdimy_end + (2 * y0))]
+    }
   }
-  if(grepl(direction, 'horizontal')) {
-    x_min = sn[][, min(sdimx_begin, sdimx_end)]
-    if(is.null(x0)) x0 = x_min
-    sn[][, c('sdimx_begin', 'sdimx_end') := .(-sdimx_begin + (2 * x0), -sdimx_end + (2 * x0))]
-    if(!is.null(sn@networkDT_before_filter))
-      sn@networkDT_before_filter[, c('sdimx_begin', 'sdimx_end') := .(-sdimx_begin + (2 * x0), -sdimx_end + (2 * x0))]
+  if (grepl(direction, "horizontal")) {
+    x_min <- sn[][, min(sdimx_begin, sdimx_end)]
+    if (is.null(x0)) x0 <- x_min
+    sn[][, c("sdimx_begin", "sdimx_end") := .(-sdimx_begin + (2 * x0), -sdimx_end + (2 * x0))]
+    if (!is.null(sn@networkDT_before_filter)) {
+      sn@networkDT_before_filter[, c("sdimx_begin", "sdimx_end") := .(-sdimx_begin + (2 * x0), -sdimx_end + (2 * x0))]
+    }
   }
 
   return(sn)
@@ -388,30 +406,29 @@ flip_spatnet = function(sn,
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-flip_extent = function(e,
-                       direction = 'vertical',
-                       x0 = 0,
-                       y0 = 0) {
-
-  checkmate::assert_class(e, 'SpatExtent')
+flip_extent <- function(e,
+                        direction = "vertical",
+                        x0 = 0,
+                        y0 = 0) {
+  checkmate::assert_class(e, "SpatExtent")
   checkmate::assert_character(direction)
-  if(!is.null(x0)) {
+  if (!is.null(x0)) {
     checkmate::assert_numeric(x0)
   }
-  if(!is.null(y0)) {
+  if (!is.null(y0)) {
     checkmate::assert_numeric(y0)
   }
 
-  y_vals = as.numeric(c(e$ymin, e$ymax))
-  x_vals = as.numeric(c(e$xmin, e$xmax))
+  y_vals <- as.numeric(c(e$ymin, e$ymax))
+  x_vals <- as.numeric(c(e$xmin, e$xmax))
 
-  if(grepl(direction, 'vertical')) {
-    if(is.null(y0)) y0 = y_vals[1] # set bound min as line of sym (terra default)
-    y_vals = -y_vals + (2 * y0)
+  if (grepl(direction, "vertical")) {
+    if (is.null(y0)) y0 <- y_vals[1] # set bound min as line of sym (terra default)
+    y_vals <- -y_vals + (2 * y0)
   }
-  if(grepl(direction, 'horizontal')) {
-    if(is.null(x0)) x0 = x_vals[1] # set bound min as line of sym (terra default)
-    x_vals = -x_vals + (2 * x0)
+  if (grepl(direction, "horizontal")) {
+    if (is.null(x0)) x0 <- x_vals[1] # set bound min as line of sym (terra default)
+    x_vals <- -x_vals + (2 * x0)
   }
 
   terra::ext(c(sort(x_vals), sort(y_vals)))
