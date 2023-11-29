@@ -26,7 +26,7 @@ specific technologies are found in the base Giotto package.
 
 ## Installation
 
-You can install the development version of GiottoClass like so:
+You can install GiottoClass like:
 
 ``` r
 library(devtools)
