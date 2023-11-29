@@ -212,7 +212,7 @@ reference:
   - seuratToGiottoV5
   - spatialExperimentToGiotto
   - giottoMasterToSuite
-  - gefToGiotto,
+  - gefToGiotto
 - subtitle: To
   desc: Convert Giotto Object to other frameworks
 - contents:
