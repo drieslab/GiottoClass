@@ -19,9 +19,6 @@ template:
     primary: "#7E69AE"
     code_font: {google: "JetBrains Mono"}
 
-development:
-  mode: auto
-
 navbar:
   bg: light
   structure:
