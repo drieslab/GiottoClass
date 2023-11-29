@@ -35,8 +35,32 @@ returns a data.table of polygon vertices
 Takes a given stamp polygon and places it at each spatial location
 provided.
 }
+\examples{
+
+# stamp shapes
+hex <- hexVertices(radius = 1)
+spatlocs <- data.table::data.table(
+  sdimx = rnorm(10, mean = 5, sd = 20),
+  sdimy = rnorm(10, mean = 5, sd = 20),
+  cell_ID = paste0("spot_", 1:10)
+)
+random_hex <- polyStamp(hex, spatlocs)
+random_hex_poly <- createGiottoPolygon(random_hex)
+plot(random_hex_poly)
+
+# make a grid of shapes
+e <- c(0, 1000, 0, 1000)
+tg <- triGrid(extent = e, ccd = 100, id_prefix = 'bin_')
+
+r <- rectVertices(dims = c(x = 60, y = 50))
+
+rect_grid_dt <- polyStamp(stamp_dt = r, spatlocs = tg)
+rect_poly <- createGiottoPolygon(rect_grid_dt)
+plot(rect_poly)
+
+}
 \seealso{
-\link{generate_grid}
+\link{generate_grid} \link{tessellate}
 
 Other polygon stamping: 
 \code{\link{circleVertices}()},

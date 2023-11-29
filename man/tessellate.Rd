@@ -11,7 +11,7 @@ tessellate(
   shape_size = NULL,
   gap = 0,
   radius = NULL,
-  id_prefix = NULL,
+  id_prefix = "ID_",
   name = "grid"
 )
 }
@@ -20,10 +20,10 @@ tessellate(
 
 \item{shape}{Shape of the tessellation grid. Available options are "hexagon" and "square".}
 
-\item{shape_size}{numeric. Size of shape to tesselate. (i.e. diameter for
-circles and hexagons, side length for squares)}
+\item{shape_size}{numeric. Size of shape to tessellate. (x-axis width for
+hexagons, side length for squares)}
 
-\item{gap}{numeric. Gap to add between tesselated polygons}
+\item{gap}{numeric. Shrink polygons to add a gap between tessellated polygons}
 
 \item{radius}{deprecated. numeric. Radius size of the tessellation grid.}
 
@@ -38,6 +38,24 @@ A giottoPolygon
 Generates a tessellated grid of polygons within the provided spatial extent
 }
 \details{
-This function generates a tessellated grid of spatial locations based on the input spatial locations. The shape of the tessellation grid can be either hexagonal or square. The radius parameter determines the size of the grid cells or the bin size.
+This function generates a tessellated grid of spatial locations
+based on the input spatial locations. The shape of the tessellation grid
+can be either hexagonal or square. The shape_size parameter determines the
+size of the grid cells or the bin size.
+}
+\examples{
+# Create an extent across which to generate tessellated polygons
+e <- ext(0, 100, 0, 100)
+# produce hexagons with a diameter of 10
+x <- tessellate(extent = e, shape = "hexagon", shape_size = 10)
+plot(x)
+
+# same size grid, but now with a gap
+x <- tessellate(extent = e, shape = "hexagon", shape_size = 10, gap = 1)
+plot(x)
+
+# square grid with a gap
+x <- tessellate(extent = e, shape = "square", shape_size = 10, gap = 1)
+plot(x)
 }
 \concept{spatial location}
