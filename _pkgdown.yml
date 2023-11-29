@@ -34,4 +34,48 @@ home:
   sidebar:
     structure: [links, license, community, citation, authors, dev]
 
-
+reference:
+- title: Getters
+- desc: Get data out of a Giotto Object
+- contents:
+  - getCellMetadata
+  - getFeatureMetadata
+  - getPolygonInfo
+  - getFeatureInfo
+  - getExpression
+  - getSpatialLocations
+  - getSpatialNetwork
+  - getSpatialEnrichment
+  - getDimReduction
+  - getMultiomics
+  - getNearestNetwork
+  - getGiottoImage
+- title: Setters
+- desc: Set data into a Giotto Object
+- contents:
+  - setGiotto
+  - setCellMetadata
+  - setFeatureMetadata
+  - setPolygonInfo
+  - setFeatureInfo
+  - setExpression
+  - setSpatialLocations
+  - setSpatialNetwork
+  - setSpatialEnrichment
+  - setDimReduction
+  - setMultiomics
+  - setNearestNetwork
+  - setGiottoImage
+- title: Show slot
+  desc: Show Giotto object slot contents
+- contents:
+  - showGiottoCellMetadata
+  - showGiottoFeatMetadata
+  - showGiottoSpatialInfo
+  - showGiottoFeatInfo
+  - showGiottoExpression
+  - showGiottoSpatLocs
+  - showGiottoSpatNetworks
+  - showGiottoSpatEnrichments
+  - showGiottoDimRed
+  - showGiottoImageNames
