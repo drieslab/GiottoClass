@@ -2030,12 +2030,17 @@ extract_points_list <- function(pointslist,
 # add Giotto points object to existing Giotto object
 # cell IDs needs to match
 
-#' @title Add giotto points object to giotto object
+
+#' @title Add subcellular giotto points object to giotto object
 #' @name addGiottoPoints
 #' @description Adds Giotto points to an existing Giotto object
 #' @param gobject giotto object
-#' @param gpoints list of giotto point objects, see \code{\link{createGiottoPoints}}
 #' @return giotto object
+#' @concept polygon
+NULL
+
+#' @rdname addGiottoPoints
+#' @param gpoints list of giotto point objects, see \code{\link{createGiottoPoints}}
 #' @concept polygon
 #' @export
 addGiottoPoints <- function(gobject,
@@ -2097,13 +2102,9 @@ addGiottoPoints <- function(gobject,
 }
 
 
-#' Add sub cellular 3D coordinates to Giotto object
-#'
-#' @param gobject  A Giotto object.
+#' @rdname addGiottoPoints
 #' @param coords A \link{data.frame} or `spatVector` with at least xyz coordinates and feature ids.
 #' @param feat_type a character. The feat_type must previously exist in the Giotto object. Default = "rna".
-#'
-#' @return A Giotto object with a `spatVector` object in the feat_info slot
 #' @export
 addGiottoPoints3D <- function(gobject, coords, feat_type = "rna") {
   # verify gobject class

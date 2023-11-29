@@ -2,14 +2,21 @@
 % Please edit documentation in R/data_input.R
 \name{addGiottoPoints}
 \alias{addGiottoPoints}
-\title{Add giotto points object to giotto object}
+\alias{addGiottoPoints3D}
+\title{Add subcellular giotto points object to giotto object}
 \usage{
 addGiottoPoints(gobject, gpoints)
+
+addGiottoPoints3D(gobject, coords, feat_type = "rna")
 }
 \arguments{
 \item{gobject}{giotto object}
 
 \item{gpoints}{list of giotto point objects, see \code{\link{createGiottoPoints}}}
+
+\item{coords}{A \link{data.frame} or \code{spatVector} with at least xyz coordinates and feature ids.}
+
+\item{feat_type}{a character. The feat_type must previously exist in the Giotto object. Default = "rna".}
 }
 \value{
 giotto object
