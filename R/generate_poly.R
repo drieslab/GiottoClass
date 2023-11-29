@@ -64,7 +64,7 @@ polyStamp <- function(stamp_dt,
 
   centroid_dt <- data.table::as.data.table(terra::centroids(stamp_poly),
     geom = "XY",
-    include_values = F
+    include_values = FALSE
   )
 
   stamp_centroid <- c(
