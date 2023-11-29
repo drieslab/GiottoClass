@@ -6,9 +6,9 @@
 \alias{orthoGrid}
 \title{Spatial grids}
 \usage{
-triGrid(extent, ccd, id_prefix = NULL)
+triGrid(extent, ccd, id_prefix = "ID_")
 
-orthoGrid(extent, ccd, id_prefix = NULL)
+orthoGrid(extent, ccd, id_prefix = "ID_")
 }
 \arguments{
 \item{extent}{SpatExtent or anything else a SpatExtent can be extracted or
@@ -20,5 +20,13 @@ created from}
 }
 \description{
 Generate a spatial grid of spatial locations
+}
+\examples{
+e <- ext(0, 100, 0, 100)
+x <- triGrid(extent = e, ccd = 10)
+plot(x$sdimx, x$sdimy, asp = 1L)
+
+x <- orthoGrid(extent = e, ccd = 10)
+plot(x$sdimx, x$sdimy, asp = 1L)
 }
 \concept{spatial location}

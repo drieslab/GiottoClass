@@ -23,4 +23,9 @@ Generates a pseudo-visium grid of spots across a provided spatial extent
 This function generates a pseudo-Visium grid of spots based on the input spatial locations.
 The micron_size param is used to determine the size of the spots
 }
+\examples{
+e <- ext(0, 2000, 0, 2000)
+x <- makePseudoVisium(extent = e, micron_size = 1)
+plot(x)
+}
 \concept{spatial location}
