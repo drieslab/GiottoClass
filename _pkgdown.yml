@@ -23,8 +23,7 @@ development:
   mode: auto
 
 navbar:
-  bg: dark
-  type: dark
+  bg: light
   structure:
     left:
     - intro

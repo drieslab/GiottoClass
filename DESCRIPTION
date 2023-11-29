@@ -10,7 +10,7 @@ Authors@R: c(
 		 role = c("aut")),
     person("Matthew", "O'Brien", email = "mobrien2@bu.edu",
 	     role = c("aut")),
-	person("Joselyn", "Chávez", email = "joselynchavezf@gmail.com",
+	person("Joselyn C.", "Chávez-Fuentes", email = "joselynchavezf@gmail.com",
 	     role = c("aut"), comment = c(ORCID = "0000-0002-4974-4591")),
 	person("Edward", "Ruiz", email = "ecruiz@bu.edu",
 		 role = c("aut"))
