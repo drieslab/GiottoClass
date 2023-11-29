@@ -234,6 +234,7 @@ reference:
   - combineToMultiPolygon
 - subtitle: Feature
   desc: Calculate spatial features overlapped by polygons
+- contents:
   - calculateOverlap
   - calculateOverlapRaster
   - calculateOverlapPolygonImages
@@ -242,11 +243,13 @@ reference:
   - overlaps-generic
 - subtitle: Matrix
   desc: Convert overlapped features to raw expression matrix
+- contents:
   - overlapImagesToMatrix
   - overlapToMatrix
   - overlapToMatrixMultiPoly
 - subtitle: Centroids
   desc: Centroid calculation
+- contents:
   - addSpatialCentroidLocations
   - addSpatialCentroidLocationsLayer
   - centroids-generic
@@ -365,11 +368,10 @@ reference:
   - get_prev_fname
 - title: Utilities
   desc: Utility functions that are used in other code
+- contents:
   - polygon_to_raster
   - getRainbowColors
   - smoothGiottoPolygons
-
-
 - title: Deprecated
   desc: Deprecated and/or less supported older functions. Some of these functions are here for compatibility and internal purposes.
 - contents:
