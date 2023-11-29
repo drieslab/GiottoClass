@@ -1,9 +1,12 @@
-# Giotto Class 0.0.1 (Release TBD)
+# GiottoClass 0.0.1
+
 
 ## Breaking Changes
+
 - Giotto subsetting rework
 
 ## Added
+
 - Added `terraVectData` as virtual parent class for `giottoPolygon` and `giottoPoints` classes
 - Added `$` and `$<-` methods for `terraVectData`
 - Added `ext<-()` method for `giottoPolygon`, `giottoPoints`
@@ -17,6 +20,7 @@
 - Added  DelayedMatrixStats to suggests
 
 ## Changes
+
 - Improved performance of gefToGiotto()
 - Updated `spatIDs()` and `featIDs()` methods for `giottoPolygon` and `giottoPoints` to allow returning non-unique IDs
 - Added check for `plot()` when `giottoPolygon` or `giottoPoints` objects contain no geometries
