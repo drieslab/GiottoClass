@@ -48,7 +48,7 @@ jobs:
       - name: Set up dependencies (GiottoData)
         run: |
           suppressWarnings({
-            remotes::install_github('drieslab/GiottoData@suite_modular', build = FALSE)
+            remotes::install_github('drieslab/GiottoData', build = FALSE)
           })
         shell: Rscript {0}
 
