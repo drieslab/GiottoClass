@@ -15,7 +15,30 @@
 #' @param verbose be verbose
 #' @return returns a data.table of polygon vertices
 #' @family polygon stamping
-#' @seealso [generate_grid]
+#' @examples
+#'
+#' # stamp shapes
+#' hex <- hexVertices(radius = 1)
+#' spatlocs <- data.table::data.table(
+#'   sdimx = rnorm(10, mean = 5, sd = 20),
+#'   sdimy = rnorm(10, mean = 5, sd = 20),
+#'   cell_ID = paste0("spot_", 1:10)
+#' )
+#' random_hex <- polyStamp(hex, spatlocs)
+#' random_hex_poly <- createGiottoPolygon(random_hex)
+#' plot(random_hex_poly)
+#'
+#' # make a grid of shapes
+#' e <- c(0, 1000, 0, 1000)
+#' tg <- triGrid(extent = e, ccd = 100, id_prefix = 'bin_')
+#'
+#' r <- rectVertices(dims = c(x = 60, y = 50))
+#'
+#' rect_grid_dt <- polyStamp(stamp_dt = r, spatlocs = tg)
+#' rect_poly <- createGiottoPolygon(rect_grid_dt)
+#' plot(rect_poly)
+#'
+#' @seealso [generate_grid] [tessellate]
 #' @export
 polyStamp <- function(stamp_dt,
                       spatlocs,
@@ -181,14 +204,31 @@ hexVertices <- function(radius, major_axis = c("v", "h")) {
 #' @description Generates a tessellated grid of polygons within the provided spatial extent
 #' @param extent SpatExtent or anything else a SpatExtent can be extracted or created from
 #' @param shape Shape of the tessellation grid. Available options are "hexagon" and "square".
-#' @param shape_size numeric. Size of shape to tesselate. (i.e. diameter for
-#' circles and hexagons, side length for squares)
+#' @param shape_size numeric. Size of shape to tessellate. (x-axis width for
+#' hexagons, side length for squares)
 #' @param name name of giottoPolygons grid to make
-#' @param gap numeric. Gap to add between tesselated polygons
+#' @param gap numeric. Shrink polygons to add a gap between tessellated polygons
 #' @param id_prefix character. prefix to add to poly_ID names generated
 #' @param radius deprecated. numeric. Radius size of the tessellation grid.
 #' @return A giottoPolygon
-#' @details This function generates a tessellated grid of spatial locations based on the input spatial locations. The shape of the tessellation grid can be either hexagonal or square. The radius parameter determines the size of the grid cells or the bin size.
+#' @details This function generates a tessellated grid of spatial locations
+#' based on the input spatial locations. The shape of the tessellation grid
+#' can be either hexagonal or square. The shape_size parameter determines the
+#' size of the grid cells or the bin size.
+#' @examples
+#' # Create an extent across which to generate tessellated polygons
+#' e <- ext(0, 100, 0, 100)
+#' # produce hexagons with a diameter of 10
+#' x <- tessellate(extent = e, shape = "hexagon", shape_size = 10)
+#' plot(x)
+#'
+#' # same size grid, but now with a gap
+#' x <- tessellate(extent = e, shape = "hexagon", shape_size = 10, gap = 1)
+#' plot(x)
+#'
+#' # square grid with a gap
+#' x <- tessellate(extent = e, shape = "square", shape_size = 10, gap = 1)
+#' plot(x)
 #' @concept spatial location
 #' @export
 tessellate <- function(extent,
@@ -196,7 +236,7 @@ tessellate <- function(extent,
                        shape_size = NULL,
                        gap = 0,
                        radius = NULL,
-                       id_prefix = NULL,
+                       id_prefix = "ID_",
                        name = "grid") {
   if (is.null(radius) && is.null(shape_size)) stop("shape_size must be given")
   if (!is.null(radius)) shape_size <- radius * 2
@@ -219,17 +259,17 @@ tessellate <- function(extent,
 
   # generate shape to tessellate
   stamp_dt <- switch(shape,
-    "hexagon" = hexVertices(radius = shape_size / 2 - gap, major_axis = "v"),
+    "hexagon" = hexVertices(radius = (shape_size / 2 / sqrt(0.75)) - gap, major_axis = "v"),
     "square" = rectVertices(dims = c(
-      x = (shape_size / 2 - gap),
-      y = (shape_size / 2 - gap)
+      x = (shape_size - gap),
+      y = (shape_size - gap)
     ))
   )
 
   # get grid centers to tessellate
   centers <- switch(grid,
-    "triangular" = triGrid(extent, ccd = shape_size / 2, id_prefix = id_prefix),
-    "orthogonal" = orthoGrid(extent, ccd = shape_size / 2, id_prefix = id_prefix)
+    "triangular" = triGrid(extent, ccd = shape_size, id_prefix = id_prefix),
+    "orthogonal" = orthoGrid(extent, ccd = shape_size, id_prefix = id_prefix)
   )
 
 
@@ -257,19 +297,26 @@ tessellate <- function(extent,
 #' created from
 #' @param ccd center to center distance
 #' @param id_prefix character. prefix to add to ID names generated
+#' @examples
+#' e <- ext(0, 100, 0, 100)
+#' x <- triGrid(extent = e, ccd = 10)
+#' plot(x$sdimx, x$sdimy, asp = 1L)
+#'
+#' x <- orthoGrid(extent = e, ccd = 10)
+#' plot(x$sdimx, x$sdimy, asp = 1L)
 #' @concept spatial location
 NULL
 
 #' @rdname generate_grid
 #' @export
-triGrid <- function(extent, ccd, id_prefix = NULL) {
+triGrid <- function(extent, ccd, id_prefix = "ID_") {
   e <- ext(extent)[]
   # Create a tessellation grid of points where the hexagons will be centered
-  # Adjust the y-sequence spacing to be 1.5*ccd for hexagonal packing
-  y_seq <- seq(e[["ymin"]], e[["ymax"]], by = ccd * 1.5)
+  # Adjust the y-sequence spacing to be 1.5/2*ccd for hexagonal packing
+  y_seq <- seq(e[["ymin"]] + (0.5 * ccd), e[["ymax"]] - (0.5 * ccd), by = ccd * sqrt(0.75))
   centers <- data.table::rbindlist(lapply(seq_along(y_seq), function(i) {
-    x_start <- if (i %% 2 == 0) e[["xmin"]] else e[["xmin"]] + ccd * sqrt(3) / 2
-    x_seq <- seq(x_start, e[["xmax"]], by = ccd * sqrt(3))
+    x_start <- if (i %% 2 == 0) e[["xmin"]] + (0.5 * ccd) else e[["xmin"]] + ccd
+    x_seq <- seq(x_start, e[["xmax"]] - (0.5 * ccd), by = ccd)
     data.table::data.table(sdimx = x_seq, sdimy = y_seq[i])
   }))
 
@@ -280,11 +327,11 @@ triGrid <- function(extent, ccd, id_prefix = NULL) {
 
 #' @rdname generate_grid
 #' @export
-orthoGrid <- function(extent, ccd, id_prefix = NULL) {
+orthoGrid <- function(extent, ccd, id_prefix = "ID_") {
   e <- ext(extent)[]
   # Create a tessellation grid of points where the squares will be centered
-  x_seq <- seq(e[["xmin"]], e[["xmax"]], by = ccd)
-  y_seq <- seq(e[["ymin"]], e[["ymax"]], by = ccd)
+  x_seq <- seq(e[["xmin"]] + (0.5 * ccd), e[["xmax"]] - (0.5 * ccd), by = ccd)
+  y_seq <- seq(e[["ymin"]] + (0.5 * ccd), e[["ymax"]] - (0.5 * ccd), by = ccd)
   centers <- expand.grid(sdimx = x_seq, sdimy = y_seq)
   centers$cell_ID <- paste0(id_prefix, seq(nrow(centers)))
   setDT(centers)
@@ -312,6 +359,10 @@ orthoGrid <- function(extent, ccd, id_prefix = NULL) {
 #' @return A giottoPolygon for the pseudo-visium spots.
 #' @details This function generates a pseudo-Visium grid of spots based on the input spatial locations.
 #' The micron_size param is used to determine the size of the spots
+#' @examples
+#' e <- ext(0, 2000, 0, 2000)
+#' x <- makePseudoVisium(extent = e, micron_size = 1)
+#' plot(x)
 #' @concept spatial location
 #' @export
 makePseudoVisium <- function(extent = NULL,
