@@ -2,8 +2,13 @@ url: https://drieslab.github.io/GiottoClass/
 
 
 authors:
+  Ruben Dries:
+    href: https://www.drieslab.com
+  Guo-Cheng Yuan:
+    href: https://labs.icahn.mssm.edu/yuanlab/
   Joselyn Chávez:
     href: https://josschavezf.github.io
+
 
 
 template:
@@ -18,6 +23,8 @@ development:
   mode: auto
 
 navbar:
+  bg: dark
+  type: dark
   structure:
     left:
     - intro
