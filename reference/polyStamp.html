@@ -97,13 +97,47 @@ be stamped. Column names are 'cell_ID', 'sdimx' and 'sdimy' by default</p></dd>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><a href="generate_grid.html">generate_grid</a></p>
+    <div class="dont-index"><p><a href="generate_grid.html">generate_grid</a> <a href="tessellate.html">tessellate</a></p>
 <p>Other polygon stamping: 
 <code><a href="circleVertices.html">circleVertices</a>()</code>,
 <code><a href="hexVertices.html">hexVertices</a>()</code>,
 <code><a href="rectVertices.html">rectVertices</a>()</code></p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># stamp shapes</span></span></span>
+<span class="r-in"><span><span class="va">hex</span> <span class="op">&lt;-</span> <span class="fu"><a href="hexVertices.html">hexVertices</a></span><span class="op">(</span>radius <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">spatlocs</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  sdimx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span>, mean <span class="op">=</span> <span class="fl">5</span>, sd <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  sdimy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span>, mean <span class="op">=</span> <span class="fl">5</span>, sd <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  cell_ID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"spot_"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">random_hex</span> <span class="op">&lt;-</span> <span class="fu">polyStamp</span><span class="op">(</span><span class="va">hex</span>, <span class="va">spatlocs</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10 polygons generated</span>
+<span class="r-in"><span><span class="va">random_hex_poly</span> <span class="op">&lt;-</span> <span class="fu"><a href="createGiottoPolygon.html">createGiottoPolygon</a></span><span class="op">(</span><span class="va">random_hex</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting col "poly_ID" as poly_ID column</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting cols "x" and "y" as x and y respectively</span>
+<span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">random_hex_poly</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="polyStamp-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># make a grid of shapes</span></span></span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1000</span>, <span class="fl">0</span>, <span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tg</span> <span class="op">&lt;-</span> <span class="fu"><a href="generate_grid.html">triGrid</a></span><span class="op">(</span>extent <span class="op">=</span> <span class="va">e</span>, ccd <span class="op">=</span> <span class="fl">100</span>, id_prefix <span class="op">=</span> <span class="st">'bin_'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="rectVertices.html">rectVertices</a></span><span class="op">(</span>dims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">60</span>, y <span class="op">=</span> <span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">rect_grid_dt</span> <span class="op">&lt;-</span> <span class="fu">polyStamp</span><span class="op">(</span>stamp_dt <span class="op">=</span> <span class="va">r</span>, spatlocs <span class="op">=</span> <span class="va">tg</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 104 polygons generated</span>
+<span class="r-in"><span><span class="va">rect_poly</span> <span class="op">&lt;-</span> <span class="fu"><a href="createGiottoPolygon.html">createGiottoPolygon</a></span><span class="op">(</span><span class="va">rect_grid_dt</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting col "poly_ID" as poly_ID column</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting cols "x" and "y" as x and y respectively</span>
+<span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">rect_poly</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="polyStamp-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

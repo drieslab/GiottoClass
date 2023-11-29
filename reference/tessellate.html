@@ -54,7 +54,7 @@
 <span>  shape_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  gap <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  radius <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  id_prefix <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  id_prefix <span class="op">=</span> <span class="st">"ID_"</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"grid"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -70,12 +70,12 @@
 
 
 <dt>shape_size</dt>
-<dd><p>numeric. Size of shape to tesselate. (i.e. diameter for
-circles and hexagons, side length for squares)</p></dd>
+<dd><p>numeric. Size of shape to tessellate. (x-axis width for
+hexagons, side length for squares)</p></dd>
 
 
 <dt>gap</dt>
-<dd><p>numeric. Gap to add between tesselated polygons</p></dd>
+<dd><p>numeric. Shrink polygons to add a gap between tessellated polygons</p></dd>
 
 
 <dt>radius</dt>
@@ -98,9 +98,35 @@ circles and hexagons, side length for squares)</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function generates a tessellated grid of spatial locations based on the input spatial locations. The shape of the tessellation grid can be either hexagonal or square. The radius parameter determines the size of the grid cells or the bin size.</p>
+    <p>This function generates a tessellated grid of spatial locations
+based on the input spatial locations. The shape of the tessellation grid
+can be either hexagonal or square. The shape_size parameter determines the
+size of the grid cells or the bin size.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create an extent across which to generate tessellated polygons</span></span></span>
+<span class="r-in"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu">ext</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># produce hexagons with a diameter of 10</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">tessellate</span><span class="op">(</span>extent <span class="op">=</span> <span class="va">e</span>, shape <span class="op">=</span> <span class="st">"hexagon"</span>, shape_size <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 104 polygons generated</span>
+<span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="tessellate-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># same size grid, but now with a gap</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">tessellate</span><span class="op">(</span>extent <span class="op">=</span> <span class="va">e</span>, shape <span class="op">=</span> <span class="st">"hexagon"</span>, shape_size <span class="op">=</span> <span class="fl">10</span>, gap <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 104 polygons generated</span>
+<span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="tessellate-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># square grid with a gap</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">tessellate</span><span class="op">(</span>extent <span class="op">=</span> <span class="va">e</span>, shape <span class="op">=</span> <span class="st">"square"</span>, shape_size <span class="op">=</span> <span class="fl">10</span>, gap <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 100 polygons generated</span>
+<span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="tessellate-3.png" alt="" width="700" height="433"></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
