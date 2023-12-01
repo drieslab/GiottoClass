@@ -1043,23 +1043,39 @@ addSpatialCentroidLocations <- function(gobject,
                                         provenance = poly_info,
                                         return_gobject = TRUE,
                                         verbose = TRUE) {
+  # provenance setup #
+  # Require that provenance is a user-provided named list if length of poly_info
+  # is greater than 1.
+  # Provenance may often have length greater than 1, but map to a single
+  # spat_unit, however at least one provenance is expected per spat_unit. We
+  # differentiate these situations by ensuring that each poly_info/spat_unit
+  # maps to an entry within a list object. The entry within that list may be a
+  # character vector of length greater than 1.
   if (length(poly_info) > 1) {
-    if (!inherits(provenance, "list") | length(provenance) != length(poly_info)) {
+    if (!inherits(provenance, "list") ||
+        length(provenance) != length(poly_info)) {
       stop(wrap_txt(
         "If more than one poly_info is supplied at a time, then provenance must",
         "be a list of equal length",
         errWidth = TRUE
       ))
     }
-
-    # setup provenance list
-    p_names <- names(provenance)
-    if (is.null(p_names)) names(provenance) <- poly_info
-  } else {
-    provenance <- list(provenance)
-    names(provenance) <- poly_info
   }
 
+  # Ensure that provenance is a list in remaining cases
+  if (!inherits(provenance, 'list')) {
+    provenance <- list(provenance)
+  }
+
+  # name provenance list by poly_info
+  p_names <- names(provenance)
+  if (is.null(p_names)) names(provenance) <- poly_info
+  if (!setequal(names(provenance), poly_info)) {
+    stop(wrap_txt(
+      'Names of provenance list:', names(provenance),
+      '\nBut expected from poly_info:', poly_info
+    ))
+  }
 
   potential_polygon_names <- list_spatial_info_names(gobject)
 
