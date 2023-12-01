@@ -7,6 +7,7 @@
 .spatraster_sample_values(
   raster_object,
   size = 5000,
+  output = c("data.frame", "array", "magick", "EBImage"),
   return_array = FALSE,
   verbose = NULL,
   ...
@@ -17,6 +18,8 @@
 
 \item{size}{rough maximum of pixels allowed when resampling}
 
+\item{output}{what output to return as. Defaults to "data.frame"}
+
 \item{return_array}{whether to convert to \code{array}}
 
 \item{verbose}{be verbose}
@@ -24,7 +27,7 @@
 \item{\dots}{additional params to pass to \code{terra::spatSample}}
 }
 \description{
-Sample a \code{data.frame} of numerical values from a \code{SpatRaster}, If
-\code{return_array = TRUE} then a sampled \code{array} will be returned instead
+Sample numerical values from a \code{SpatRaster}. The output format depends on the
+value of the \code{output} param.
 }
 \keyword{internal}

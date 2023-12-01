@@ -752,52 +752,78 @@ plot_auto_largeImage_resample <- function(gobject,
 
 
 
-
+# TODO deprecate return_array
 #' @title Sample values from SpatRaster
 #' @name .spatraster_sample_values
 #' @description
-#' Sample a `data.frame` of numerical values from a `SpatRaster`, If
-#' `return_array = TRUE` then a sampled `array` will be returned instead
+#' Sample numerical values from a `SpatRaster`. The output format depends on the
+#' value of the `output` param.
 #' @param raster_object terra `SpatRaster` to sample from
 #' @param size rough maximum of pixels allowed when resampling
+#' @param output what output to return as. Defaults to "data.frame"
 #' @param return_array whether to convert to `array`
 #' @param verbose be verbose
 #' @param \dots additional params to pass to `terra::spatSample`
 #' @keywords internal
 .spatraster_sample_values <- function(raster_object,
                                       size = 5000,
+                                      output = c('data.frame', 'array', 'magick', 'EBImage'),
                                       return_array = FALSE,
                                       verbose = NULL,
                                       ...) {
-  argslist = list(x = raster_object,
-                  size = size,
-                  as.df = TRUE, # default behavior
-                  method = 'regular',
-                  value = TRUE,
-                  ...)
 
-  if (isTRUE(return_array)) {
+  output <- match.arg(
+    arg = output,
+    choices =  c('data.frame', 'array', 'magick', 'EBImage')
+  )
+
+  # account for possible giottoLargeImage input
+  if (inherits(raster_object, 'giottoLargeImage')) {
+    raster_object <- raster_object@raster_object
+  }
+
+  # assemble argslist for terra::spatSample()
+  argslist <- list(
+    x = raster_object,
+    size = size,
+    as.df = TRUE, # default behavior
+    method = 'regular',
+    value = TRUE,
+    ...
+  )
+
+  if (output != 'data.frame') {
+    # if desired output is not data.frame, all other outputs require raster
     argslist$as.raster <- TRUE
     argslist$as.df <- FALSE
   }
 
-  res = do.call(terra::spatSample, args = argslist)
+  res <- do.call(terra::spatSample, args = argslist)
 
   # convert and handle NA values
-  if (isTRUE(return_array)) {
-    res = terra::as.array(res)
-    na_bool = is.na(res)
-    res[na_bool] <- 0L
-  }
   if (isTRUE(argslist$as.df)) {
-    res = stats::na.omit(res)
+    res <- stats::na.omit(res) # data.frame remove NAs
+  } else {
+    # all others
+    res <- terra::as.array(res)
+    na_bool <- is.na(res)
+    res[na_bool] <- 0L # set NA values to 0
+
+    # convert to specified image type if desired.
+    # Note that there is a conversion of image values to range of 0-1
+    if (output %in% c('magick', 'EBImage')) {
+      res <- magick::image_read(res/max(res))
+    }
+    if (output == 'EBImage') {
+      res <- magick::as_EBImage(res)
+    }
   }
 
   if (nrow(res) == 0) {
     vmsg(.v = verbose, "No values discovered when sampling for image characteristics")
   }
 
-  res
+  return(res)
 }
 
 
