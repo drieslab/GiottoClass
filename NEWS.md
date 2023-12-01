@@ -1,5 +1,14 @@
-# GiottoClass 0.0.1
 
+# Giotto Class 0.1.1 (TBD)
+
+## Breaking Changes
+
+## Added
+
+## Changes
+- Fixed: Provenance now not accidentally created as a list in `addSpatialCentroidLocations()`
+
+# Giotto Class 0.1.0 (23/11/29)
 
 ## Breaking Changes
 
