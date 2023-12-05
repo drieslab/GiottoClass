@@ -815,7 +815,7 @@ evaluate_spatial_info <- function(spatial_info,
     spatial_info <- path.expand(spatial_info)
     if (!file.exists(spatial_info)) stop("path to spatial information does not exist")
 
-    if (file_extension(spatial_info) %in% c("shp", "geojson", "wkt")) {
+    if (any(file_extension(spatial_info) %in% c("shp", "geojson", "wkt"))) {
       spatial_info <- terra::vect(spatial_info)
       spatial_info <- evaluate_gpoly_spatvector(spatial_info)
       return(spatial_info)

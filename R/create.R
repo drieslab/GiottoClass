@@ -1881,6 +1881,7 @@ create_giotto_points_object <- function(feat_type = "rna",
     stop("spatVector needs to be a spatVector object from the terra package")
   }
 
+  terra::crs(spatVector) <- NULL
   g_points@spatVector <- spatVector
 
   ## 2. provide feature id
@@ -2329,7 +2330,7 @@ createGiottoPolygonsFromGeoJSON <- function(GeoJSON,
   )
 
   # add centroids
-  if (calc_centroids == TRUE) {
+  if (isTRUE(calc_centroids)) {
     g_polygon <- calculate_centroids_polygons(
       gpolygon = g_polygon,
       name = "centroids",
@@ -2373,6 +2374,7 @@ create_giotto_polygon_object <- function(name = "cell",
     stop("spatVector needs to be a SpatVector object from the terra package")
   }
 
+  terra::crs(spatVector) <- NULL
   g_polygon@spatVector <- spatVector
 
 
