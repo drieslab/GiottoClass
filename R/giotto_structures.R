@@ -644,28 +644,6 @@ create_spatvector_object_from_dfr <- function(
 
 # helper functions ####
 
-#' @title Convert spatVector to data.table
-#' @name spatVector_to_dt2
-#' @description convert spatVector to data.table. Faster and more barebones and
-#' only suitable for points data
-#' @keywords internal
-spatVector_to_dt2 <- function(spatvector,
-                              include_values = TRUE) {
-  if (isTRUE(include_values)) {
-    DT_values <- cbind(
-      terra::crds(spatvector),
-      terra::values(spatvector)
-    ) %>%
-      data.table::setDT()
-  } else {
-    DT_values <- terra::crds(spatvector) %>%
-      data.table::as.data.table()
-  }
-
-  return(DT_values)
-}
-
-
 
 # data.table to spatVector
 

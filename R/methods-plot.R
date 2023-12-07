@@ -319,6 +319,7 @@ plot_giotto_points_raster <- function(data, feats = NULL, ...) {
   args_list <- list(...)
 
   opar <- par(no.readonly = TRUE)
+  on.exit(par(opar), add = TRUE)
 
 
   # raster size
@@ -332,84 +333,80 @@ plot_giotto_points_raster <- function(data, feats = NULL, ...) {
   args_list$ann <- FALSE
 
   if (is.null(feats)) {
-    dataDT <- spatVector_to_dt2(
-      spatvector = data,
-      include_values = FALSE
-    )
+    include_values = FALSE
   } else {
-    dataDT <- spatVector_to_dt2(
-      spatvector = data,
-      include_values = TRUE
-    )
+    include_values = TRUE
   }
 
+  dataDT <- data.table::as.data.table(
+    x = data,
+    geom = "XY",
+    include_values = include_values
+  )
 
-  tryCatch({
-    par(mar = c(2.7, 3.5, 2, 2))
+browser()
+par(mar = c(2.7, 3.5, 2, 2))
 
-    if (length(feats) == 0L) {
-      plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
-      u <- par("usr") # coordinates of the plot area
-      rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
-      par(new = TRUE)
+if (length(feats) == 0L) {
+  plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
+  u <- par("usr") # coordinates of the plot area
+  rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
+  par(new = TRUE)
 
-      args_list$x <- dataDT$x
-      args_list$y <- dataDT$y
-      args_list$col <- "white"
-      do.call(scattermore::scattermoreplot, args_list)
-    } else if (length(feats) == 1L) {
-      plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
-      u <- par("usr") # coordinates of the plot area
-      rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
-      par(new = TRUE)
+  args_list$x <- dataDT$x
+  args_list$y <- dataDT$y
+  args_list$col <- "white"
+  do.call(scattermore::scattermoreplot, args_list)
+} else if (length(feats) == 1L) {
 
-      dataDT <- dataDT[feat_ID == feats]
-      args_list$x <- dataDT$x
-      args_list$y <- dataDT$y
-      args_list$col <- "white"
-      do.call(scattermore::scattermoreplot, args_list)
-    } else {
-      feat_color_idx <- feat_ID <- NULL
+  plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
+  u <- par("usr") # coordinates of the plot area
+  rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
+  par(new = TRUE)
 
-      # save current graphical parameters
+  dataDT <- dataDT[feat_ID == feats]
+  args_list$x <- dataDT$x
+  args_list$y <- dataDT$y
+  args_list$col <- "white"
+  do.call(scattermore::scattermoreplot, args_list)
+} else {
+  feat_color_idx <- feat_ID <- NULL
 
-
-      feat_colors <- getRainbowColors(length(feats))
-
-      data.table::setkey(dataDT, "feat_ID")
-      dataDT <- dataDT[feat_ID %in% feats]
-      dataDT[, feat_color_idx :=
-        sapply(feat_ID, function(feat_i) which(feats == feat_i))]
-
-      args_list$x <- dataDT$x
-      args_list$y <- dataDT$y
-      args_list$col <- feat_colors[dataDT$feat_color_idx]
+  # save current graphical parameters
 
 
+  feat_colors <- getRainbowColors(length(feats))
 
-      par(mar = c(2.7, 3.5, 2, 4))
-      plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
-      u <- par("usr") # coordinates of the plot area
-      rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
-      par(new = TRUE)
+  data.table::setkey(dataDT, "feat_ID")
+  dataDT <- dataDT[feat_ID %in% feats]
+  dataDT[, feat_color_idx :=
+           sapply(feat_ID, function(feat_i) which(feats == feat_i))]
 
-      do.call(scattermore::scattermoreplot, args_list)
-      legend(
-        x = "topright",
-        inset = c(-1.3 / dev.size()[1], 0),
-        legend = feats,
-        col = feat_colors,
-        bty = "n",
-        pch = 20,
-        cex = 0.6,
-        title = "feat_ID",
-        xpd = TRUE
-      )
-    }
-  }, finally = {
-    # back to the default graphical parameters
-    par(opar)
-  })
+  args_list$x <- dataDT$x
+  args_list$y <- dataDT$y
+  args_list$col <- feat_colors[dataDT$feat_color_idx]
+
+
+
+  par(mar = c(2.7, 3.5, 2, 4))
+  plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
+  u <- par("usr") # coordinates of the plot area
+  rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
+  par(new = TRUE)
+
+  do.call(scattermore::scattermoreplot, args_list)
+  legend(
+    x = "topright",
+    inset = c(-1.3 / dev.size()[1], 0),
+    legend = feats,
+    col = feat_colors,
+    bty = "n",
+    pch = 20,
+    cex = 0.6,
+    title = "feat_ID",
+    xpd = TRUE
+  )
+}
 }
 
 
