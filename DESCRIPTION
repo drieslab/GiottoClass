@@ -37,7 +37,7 @@ Imports:
     deldir (>= 1.0.6),
     igraph (>= 1.2.4.1),
     magick,
-    Matrix,
+    Matrix (>=1.6.3),
     matrixStats (>= 0.55.0),
     methods,
     reshape2,
