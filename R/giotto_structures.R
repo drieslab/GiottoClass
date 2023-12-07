@@ -384,9 +384,9 @@ dt_to_spatVector_polygon <- function(dt,
   # DT vars
   geom <- NULL
 
-  assert_data_table(dt)
-  assert_logical(include_values)
-  if (!is.null(specific_values)) assert_character(specific_values)
+  checkmate::assert_data_table(dt)
+  checkmate::assert_logical(include_values)
+  if (!is.null(specific_values)) checkmate::assert_character(specific_values)
 
   # if values are not in order across these cols, an incorrect number of
   # geometries may be generated
@@ -802,7 +802,7 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
     knn_sptial.norm[, to_feat := featDT_vec[to]]
     knn_sptial.norm[, from_to_feat := paste0(from_feat, "--", to_feat)]
 
-    knn_sptial.norm <- sort_combine_two_DT_columns(
+    knn_sptial.norm <- dt_sort_combine_two_columns(
       DT = knn_sptial.norm,
       column1 = "from_feat", column2 = "to_feat",
       myname = "comb_feat"

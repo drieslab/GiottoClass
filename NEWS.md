@@ -2,8 +2,10 @@
 # Giotto Class 0.1.1 (TBD)
 
 ## Breaking Changes
+- Removed: `getRainbowColors()` to *GiottoUtils*
 
 ## Added
+- Added: `.gstop()` for GiottoClass specific errors
 
 ## Changes
 - Fixed: Provenance now not accidentally created as a list in `addSpatialCentroidLocations()`

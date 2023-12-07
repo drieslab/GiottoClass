@@ -14,6 +14,7 @@ NULL
 
 #' @title R spatial conversions
 #' @name r_spatial_conversions
+#' @aliases as.sf as.sp as.stars as.terra
 #' @param x The object to coerce
 #' @param drop When TRUE, returned object will be of the desired object type
 #' instead of wrapped in a `giottoPoints` or `giottoPolygon` object
@@ -360,6 +361,6 @@ spatvector_to_sf <- function(x) {
     d$geometry <- structure(as.list(d$geometry), class = "WKB")
     out <- sf::st_as_sf(x = d, crs = x@ptr$get_crs("wkt"))
   }
-  assert_class(out, "sf")
+  checkmate::assert_class(out, "sf")
   return(out)
 }

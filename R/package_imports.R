@@ -11,7 +11,6 @@
 #' @importFrom graphics segments
 #' @importFrom graphics legend par rect
 #' @importFrom grDevices dev.size
-#' @importFrom grDevices rainbow
 #' @importMethodsFrom terra spin
 #' @importMethodsFrom terra flip
 #' @importMethodsFrom terra rescale

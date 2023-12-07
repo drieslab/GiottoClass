@@ -2,6 +2,10 @@
 % Please edit documentation in R/methods-coerce.R
 \name{r_spatial_conversions}
 \alias{r_spatial_conversions}
+\alias{as.sf}
+\alias{as.sp}
+\alias{as.stars}
+\alias{as.terra}
 \alias{as.sp,sf-method}
 \alias{as.sp,SpatVector-method}
 \alias{as.sp,stars-method}

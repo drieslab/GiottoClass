@@ -185,17 +185,16 @@ setMethod(
           image_type = "largeImage"
         )
         spatrast <- img@raster_object
-        names(spatrast) <- i_n
+        names(spatrast) <- i_n # ensure name is applied
         return(spatrast)
       })
 
       B <- do.call("c", image_list)
     } else {
-      stop(wrap_txt(
+      .gstop(
         "No feat_info or image_names provided.
-        No data to overlap.",
-        errWidth = TRUE
-      ))
+        No data to overlap.", .n = 3L
+      )
     }
 
 
@@ -335,6 +334,9 @@ setMethod(
 # easier to set those up in code that is closer to the data representation
 # level, depending on how the data representation is designed.
 
+# SpatRaster supplied to param y is expected to contain one or more layers of
+# raster data
+
 # * SpatVector SpatRaster ####
 #' @rdname calculateOverlap
 #' @export
@@ -348,16 +350,22 @@ setMethod(
     checkmate::assert_true(terra::is.polygons(x))
     GiottoUtils::package_check("exactextractr")
 
+    image_names <- names(y)
+
+    # NSE vars
+    coverage_fraction <- NULL
+
     # subset polys if needed
     if (!is.null(poly_subset_ids)) {
       x <- x[x$poly_ID %in% poly_subset_ids]
     }
 
-    # convert to sf
+    # convert polys to sf
     sf_x <- as.sf(x)
 
-    if (isTRUE(verbose)) print("1. start extraction")
+    vmsg(.v = verbose, "Start image extract")
 
+    # perform extraction, producing list of results
     extract_res <- exactextractr::exact_extract(
       x = y,
       y = sf_x,
@@ -365,14 +373,14 @@ setMethod(
       ...
     )
 
+    vmsg(.v = verbose, "End image extract")
+
     # rbind and convert output to data.table
-    dt_exact <- data.table::setDT(do.call("rbind", extract_res))
+    dt_exact <- data.table::as.data.table(do.call("rbind", extract_res))
 
     # prepare output
-    # if (isTRUE(verbose)) print(dt_exact)
-    colnames(dt_exact)[2:(length(image_names) + 1)] <- image_names # probably not needed anymore
+    colnames(dt_exact)[2:(length(image_names) + 1)] <- image_names
     dt_exact[, coverage_fraction := NULL]
-    # if (isTRUE(verbose)) print(dt_exact)
 
     return(dt_exact)
   }
@@ -1175,11 +1183,10 @@ setMethod(
 
     # ensure data exists
     if (is.null(overlaps_data)) {
-      stop(GiottoUtils::wrap_txt(
+      .gstop(
         "No overlaps found between", objName(x), "and", feat_info, "
-        Please run calculateOverlap() first.",
-        errWidth = TRUE
-      ), call. = FALSE)
+        Please run calculateOverlap() first.", .n = 3L
+      )
     }
 
     # pass to SpatVector method
@@ -1228,7 +1235,7 @@ setMethod(
     if (!is.null(count_info_column)) { # if there is a counts col
 
       if (!count_info_column %in% colnames(dtoverlap)) {
-        stop("count_info_column ", count_info_column, " does not exist")
+        .gstop("count_info_column ", count_info_column, " does not exist", .n = 3L)
       }
 
       # aggregate counts of features
@@ -1594,7 +1601,7 @@ combine_matrices <- function(mat_list,
     mat <- mat_list[[mat_i]]
 
     if (!inherits(mat, c("matrix", "dgCMatrix"))) {
-      stop("Matrix needs to be a base or sparse matrix from the Matrix package")
+      .gstop("Matrix needs to be a base or sparse matrix from the Matrix package")
     }
 
     if (inherits(mat, "matrix")) mat <- methods::as(mat, "dgCMatrix")

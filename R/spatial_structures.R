@@ -40,7 +40,7 @@ convert_to_full_spatial_network <- function(reduced_spatial_network_DT) {
   full_spatial_network_DT[, rank_int := 1:.N, by = "source"]
 
   # create unified column
-  full_spatial_network_DT <- sort_combine_two_DT_columns(full_spatial_network_DT, "source", "target", "rnk_src_trgt")
+  full_spatial_network_DT <- dt_sort_combine_two_columns(full_spatial_network_DT, "source", "target", "rnk_src_trgt")
 
   return(full_spatial_network_DT)
 }
@@ -1524,7 +1524,7 @@ annotateSpatialNetwork <- function(gobject,
   spatial_network_annot[, from_to := paste0(from_cell_type, "-", to_cell_type)]
 
   # unified direction, due to 'sort'
-  spatial_network_annot <- sort_combine_two_DT_columns(spatial_network_annot,
+  spatial_network_annot <- dt_sort_combine_two_columns(spatial_network_annot,
     column1 = "from_cell_type",
     column2 = "to_cell_type",
     myname = "unified_int"

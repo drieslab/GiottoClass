@@ -470,29 +470,3 @@ plot_giotto_polygon <- function(x, point_size = 0.1,
     }
   }
 }
-
-
-# base palettes ####
-
-
-#' @title getRainbowColors
-#' @description Returns a number of rainbow colors spaced around the spectrum.
-#' Only 100 unique colors will be supplied after which they are recycled.
-#' @param n number of colors wanted
-#' @return character vector of hexadecimal rainbow colors
-#' @export
-getRainbowColors <- function(n) {
-  n <- as.integer(n)
-  if (n < 1L) stop(wrap_txt("getRainbowColors 'n' colors wanted must be at least 1\n", errWidth = TRUE), call. = FALSE)
-  rcols <- rev(grDevices::rainbow(100L, start = 0.1, end = 0.9))
-
-  if (n < 100L) {
-    return(rcols[seq(1L, 100L, 100L / n)][seq(n)])
-  }
-  if (n == 100L) {
-    return(rcols)
-  }
-  if (n > 100L) {
-    return(rep(rcols, length.out = n))
-  }
-}

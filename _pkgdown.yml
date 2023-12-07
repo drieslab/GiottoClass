@@ -382,7 +382,6 @@ reference:
   desc: Utility functions that are used in other code
 - contents:
   - polygon_to_raster
-  - getRainbowColors
   - smoothGiottoPolygons
 - title: Deprecated
   desc: Deprecated and/or less supported older functions. Some of these functions are here for compatibility and internal purposes.

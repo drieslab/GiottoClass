@@ -1875,7 +1875,7 @@ extract_polygon_list <- function(polygonlist,
 addGiottoPolygons <- function(gobject,
                               gpolygons) {
   # check input
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   if (!inherits(gpolygons, "list")) {
     stop("gpolygons needs to be a list of one or more giottoPolygon objects")
