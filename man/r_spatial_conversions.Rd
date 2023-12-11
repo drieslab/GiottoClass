@@ -93,6 +93,8 @@ R spatial conversions
 }
 \seealso{
 Other As coercion functions: 
-\code{\link{as.data.table}()}
+\code{\link{as.data.table}()},
+\code{\link{as.points}()},
+\code{\link{as.polygons}()}
 }
 \concept{As coercion functions}

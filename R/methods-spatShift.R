@@ -204,7 +204,7 @@ shift_gpoly <- function(gpoly,
   if (copy_obj) gpoly@spatVector <- terra::deepcopy(gpoly@spatVector)
 
   if (!all(dx == 0, dy == 0)) {
-    gpoly <- do_gpoly(gpoly,
+    gpoly <- .do_gpoly(gpoly,
       what = terra::shift,
       args = list(
         dx = dx,

@@ -23,7 +23,7 @@ options("lifecycle_verbosity" = "quiet")
 
 # giottoPolygon ####
 sv <- gpoly[]
-DT <- spatVector_to_dt(sv)
+DT <- .spatvector_to_dt(sv)
 DF <- data.table::setDF(DT)
 gp_IDs <- spatIDs(gpoly)
 
@@ -121,7 +121,7 @@ nnDT_min[, c("weight", "shared", "rank") := NULL]
 ### input evaluation ####
 
 test_that("Eval of nnNetObj returns nnNetObj", {
-  expect_identical(evaluate_nearest_networks(nn), nn)
+  expect_identical(.evaluate_nearest_networks(nn), nn)
 })
 
 
@@ -136,11 +136,11 @@ test_that("Eval of nnNetObj returns nnNetObj", {
 test_that("Eval with missing info throws error", {
   nnDT_min <- data.table::copy(nnDT_min)
   nnDT_min[, distance := NULL]
-  expect_error(evaluate_nearest_networks(nnDT_min), regexp = "Unable to coerce")
+  expect_error(.evaluate_nearest_networks(nnDT_min), regexp = "Unable to coerce")
 })
 
 test_that("Eval with minimum info works", {
-  ig_new <- expect_no_error(evaluate_nearest_networks(nnDT_min))
+  ig_new <- expect_no_error(.evaluate_nearest_networks(nnDT_min))
   expect_s3_class(ig_new, "igraph")
   expect_true(all(c("distance", "weight") %in% igraph::list.edge.attributes(ig_new)))
   expect_true("name" %in% igraph::list.vertex.attributes(ig_new))
@@ -155,22 +155,22 @@ test_that("Eval with minimum info works", {
 
 ### input evaluation ####
 test_that("Eval of igraph returns igraph", {
-  expect_s3_class(evaluate_nearest_networks(ig), "igraph")
+  expect_s3_class(.evaluate_nearest_networks(ig), "igraph")
 })
 
 test_that("Eval of igraph with no distance attr fails", {
   ig_nodist <- igraph::delete_edge_attr(ig, "distance")
-  expect_error(evaluate_nearest_networks(ig_nodist), regexp = "distance")
+  expect_error(.evaluate_nearest_networks(ig_nodist), regexp = "distance")
 })
 
 test_that("Eval of igraph with no name attr fails", {
   ig_noname <- igraph::delete_vertex_attr(ig, "name")
-  expect_error(evaluate_nearest_networks(ig_noname), regexp = "name")
+  expect_error(.evaluate_nearest_networks(ig_noname), regexp = "name")
 })
 
 test_that("Eval of minimal igraph adds weight attr", {
   ig_min <- igraph::delete_edge_attr(ig, "weight")
-  ig_min <- evaluate_nearest_networks(ig_min)
+  ig_min <- .evaluate_nearest_networks(ig_min)
   expect_s3_class(ig_min, "igraph")
   expect_true(all(c("distance", "weight") %in% igraph::list.edge.attributes(ig_min)))
   expect_true("name" %in% igraph::list.vertex.attributes(ig_min))

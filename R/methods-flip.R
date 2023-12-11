@@ -107,7 +107,7 @@ flip_gpoly <- function(gpoly,
   if (!is.null(gpoly@spatVectorCentroids)) {
     e_c <- terra::ext(gpoly@spatVectorCentroids) # c = centroid
   }
-  gpoly <- do_gpoly(
+  gpoly <- .do_gpoly(
     x = gpoly,
     what = terra::flip,
     args = list(direction = direction)

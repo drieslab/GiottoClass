@@ -624,11 +624,11 @@ setClass(
 # exprObj Class
 
 #' @title Check exprObj
-#' @name check_expr_obj
+#' @name .check_expr_obj
 #' @description Check function for S4 exprObj
 #' @param object S4 exprObj to check
 #' @keywords internal
-check_expr_obj <- function(object) {
+.check_expr_obj <- function(object) {
   errors <- character()
 
   # Check for expr info
@@ -663,7 +663,7 @@ check_expr_obj <- function(object) {
 #' @exportClass exprObj
 exprObj <- setClass("exprObj",
   contains = c("nameData", "exprData", "spatFeatData", "miscData", "giottoSubobject"),
-  validity = check_expr_obj
+  validity = .check_expr_obj
 )
 
 
@@ -683,11 +683,11 @@ exprObj <- setClass("exprObj",
 
 # * Check ####
 #' @title Check cell metadata object
-#' @name check_cell_meta_obj
+#' @name .check_cell_meta_obj
 #' @description Function to check S4 cellMetaObj
 #' @param object S4 cellMetaObj to check
 #' @keywords internal
-check_cell_meta_obj <- function(object) {
+.check_cell_meta_obj <- function(object) {
   errors <- character()
 
   if (!"cell_ID" %in% colnames(object@metaDT)) {
@@ -718,7 +718,7 @@ check_cell_meta_obj <- function(object) {
 #' @exportClass cellMetaObj
 cellMetaObj <- setClass("cellMetaObj",
   contains = c("metaData", "spatFeatData", "giottoSubobject"),
-  validity = check_cell_meta_obj
+  validity = .check_cell_meta_obj
 )
 
 
@@ -728,11 +728,11 @@ cellMetaObj <- setClass("cellMetaObj",
 
 # * Check ####
 #' @title Check feature metadata object
-#' @name check_feat_meta_obj
+#' @name .check_feat_meta_obj
 #' @description Function to check S4 featMetaObj
 #' @param object S4 featMetaObj to check
 #' @keywords internal
-check_feat_meta_obj <- function(object) {
+.check_feat_meta_obj <- function(object) {
   errors <- character()
 
   if (!"feat_ID" %in% colnames(object@metaDT)) {
@@ -763,7 +763,7 @@ check_feat_meta_obj <- function(object) {
 #' @exportClass featMetaObj
 featMetaObj <- setClass("featMetaObj",
   contains = c("metaData", "spatFeatData", "giottoSubobject"),
-  validity = check_feat_meta_obj
+  validity = .check_feat_meta_obj
 )
 
 
@@ -779,11 +779,11 @@ featMetaObj <- setClass("featMetaObj",
 # dimObj Class
 
 #' @title Check dimObj
-#' @name check_dim_obj
+#' @name .check_dim_obj
 #' @description check function for S4 dimObj
 #' @param object S4 dimObj to check
 #' @keywords internal
-check_dim_obj <- function(object) {
+.check_dim_obj <- function(object) {
   errors <- character()
   length_reduction_method <- length(object@reduction_method)
   if (length_reduction_method > 1) {
@@ -803,7 +803,7 @@ check_dim_obj <- function(object) {
     errors <- c(errors, msg)
   }
 
-  # This check applied using check_dimension_reduction()
+  # This check applied using .check_dimension_reduction()
   # if(!inherits(rownames(object@coordinates, 'character'))) {
   #   msg = 'Dim reduction coordinate rownames must be character'
   #   errors = c(errors, msg)
@@ -842,7 +842,7 @@ dimObj <- setClass("dimObj",
     coordinates = NULL,
     misc = NULL
   ),
-  validity = check_dim_obj
+  validity = .check_dim_obj
 )
 
 
@@ -921,11 +921,11 @@ nnNetObj <- setClass("nnNetObj",
 # spatLocsObj Class
 
 #' @title Check spatLocsObj
-#' @name check_spat_locs_obj
+#' @name .check_spat_locs_obj
 #' @description Check function for S4 spatLocsObj
 #' @param object S4 spatLocsObj to check
 #' @keywords internal
-check_spat_locs_obj <- function(object) {
+.check_spat_locs_obj <- function(object) {
   errors <- character()
 
   if (!"sdimx" %in% colnames(slot(object, "coordinates"))) {
@@ -938,7 +938,7 @@ check_spat_locs_obj <- function(object) {
     errors <- c(errors, msg)
   }
 
-  # Allow check_spatial_location_data() to compensate for missing cell_ID
+  # Allow .check_spatial_location_data() to compensate for missing cell_ID
   if (!"cell_ID" %in% colnames(slot(object, "coordinates"))) {
     msg <- 'Column "cell_ID" for cell ID was not found'
     errors <- c(errors, msg)
@@ -960,7 +960,7 @@ check_spat_locs_obj <- function(object) {
 #' @exportClass spatLocsObj
 spatLocsObj <- setClass("spatLocsObj",
   contains = c("nameData", "coordDataDT", "spatData", "miscData", "giottoSubobject"),
-  validity = check_spat_locs_obj
+  validity = .check_spat_locs_obj
 )
 
 
@@ -982,11 +982,11 @@ spatLocsObj <- setClass("spatLocsObj",
 # spatialNetworkObj Class
 
 #' @title Check spatialNetworkObj
-#' @name check_spat_net_obj
+#' @name .check_spat_net_obj
 #' @description Check function for S4 spatialNetworkObj
 #' @param object S4 spatialNetworkObj to check
 #' @keywords internal
-check_spat_net_obj <- function(object) {
+.check_spat_net_obj <- function(object) {
   errors <- character()
   method_slot <- slot(object, "method")
   length_method <- length(method_slot)
@@ -1033,7 +1033,7 @@ setClass("spatialNetworkObj",
   contains = c("nameData", "spatNetData", "spatData", "miscData", "giottoSubobject"),
   slots = c(crossSectionObjects = "ANY"),
   prototype = list(crossSectionObjects = NULL),
-  validity = check_spat_net_obj
+  validity = .check_spat_net_obj
 )
 
 
@@ -1090,11 +1090,11 @@ S3toS4spatNetObj <- function(object,
 # spatialGridObj Class
 
 #' @title Check spatialGridObj
-#' @name check_spat_grid_obj
+#' @name .check_spat_grid_obj
 #' @description Check function for S4 spatialGridObj
 #' @param object S4 spatialGridObj to check
 #' @keywords internal
-check_spat_grid_obj <- function(object) {
+.check_spat_grid_obj <- function(object) {
   errors <- character()
   method_slot <- slot(object, "method")
   length_method <- length(method_slot)
@@ -1140,7 +1140,7 @@ check_spat_grid_obj <- function(object) {
 #' @export
 setClass("spatialGridObj",
   contains = c("nameData", "spatGridData", "spatFeatData", "miscData", "giottoSubobject"),
-  validity = check_spat_grid_obj
+  validity = .check_spat_grid_obj
 )
 
 

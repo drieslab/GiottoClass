@@ -46,6 +46,9 @@ setMethod("nrow", signature("spatialNetworkObj"), function(x) nrow(x@networkDT))
 #' @export
 setMethod("nrow", signature("enrData"), function(x) nrow(x@enrichDT))
 
+#' @rdname dims-generic
+#' @export
+setMethod("nrow", signature("dimObj"), function(x) nrow(x@coordinates))
 
 
 
@@ -72,6 +75,11 @@ setMethod("ncol", signature("metaData"), function(x) ncol(x@metaDT))
 #' @describeIn dims-generic Find cols of giotto S4s with enrData
 #' @export
 setMethod("ncol", signature("enrData"), function(x) ncol(x@enrichDT))
+
+#' @rdname dims-generic
+#' @export
+setMethod("ncol", signature("dimObj"), function(x) ncol(x@coordinates))
+
 
 
 

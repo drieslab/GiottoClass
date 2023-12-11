@@ -64,7 +64,7 @@ setMethod("ext<-", signature(x = "giottoPolygon", value = "SpatExtent"), functio
     diff(new_ext[c(2, 1)]) / diff(old_ext[c(2, 1)]),
     diff(new_ext[c(4, 3)]) / diff(old_ext[c(4, 3)])
   )
-  x <- do_gpoly(x, terra::rescale, args = list(fx = xy_scale[1], fy = xy_scale[2], x0 = old_ext[1L], y0 = old_ext[3L]))
+  x <- .do_gpoly(x, terra::rescale, args = list(fx = xy_scale[1], fy = xy_scale[2], x0 = old_ext[1L], y0 = old_ext[3L]))
   x <- spatShift(x, dx = new_ext[1L] - old_ext[1L], dy = new_ext[3L] - old_ext[3L])
   x
 })

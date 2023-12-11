@@ -1096,7 +1096,7 @@ createMetafeats <- function(gobject,
 #' the objects back in the giotto object
 #' @param gobject giotto object
 #' @keywords internal
-giotto_alloc_dt_slots <- function(gobject) {
+.giotto_alloc_dt <- function(gobject) {
   # data.table vars
   spat_unit <- feat_type <- name <- NULL
 

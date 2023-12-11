@@ -2,10 +2,10 @@
 % Please edit documentation in R/images.R
 \name{density_giottoLargeImage}
 \alias{density_giottoLargeImage}
-\alias{dist_giottoLargeImage}
+\alias{.dist_giottolargeimage}
 \title{Plot smoothed curve of giotto largeImage intensity values}
 \usage{
-dist_giottoLargeImage(
+.dist_giottolargeimage(
   gobject = NULL,
   image_name = NULL,
   giottoLargeImage = NULL,

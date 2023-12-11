@@ -2,11 +2,11 @@
 
 
 #' @title Subset expression data
-#' @name subset_expression_data
+#' @name .subset_expression_data
 #' @description Subset expression data from giotto object
 #' @keywords internal
 #' @noRd
-subset_expression_data <- function(gobject,
+.subset_expression_data <- function(gobject,
                                    feat_type = ":all:",
                                    spat_unit = ":all:",
                                    spat_unit_fsub = ":all:",
@@ -84,14 +84,14 @@ subset_expression_data <- function(gobject,
     if (isTRUE(avail_ex[ex_i]$subset_cells) &&
       !isTRUE(avail_ex[ex_i]$subset_feats)) {
       filter_bool_cells <- spatIDs(ex) %in% cell_ids
-      ex[] <- finalize_expr_subset(ex[][, filter_bool_cells])
+      ex[] <- .finalize_expr_subset(ex[][, filter_bool_cells])
     }
 
     ## feat only subsets
     if (!isTRUE(avail_ex[ex_i]$subset_cells) &&
       isTRUE(avail_ex[ex_i]$subset_feats)) {
       filter_bool_feats <- featIDs(ex) %in% feat_ids
-      ex[] <- finalize_expr_subset(ex[][filter_bool_feats, ])
+      ex[] <- .finalize_expr_subset(ex[][filter_bool_feats, ])
     }
 
     ## cell and feat subsets
@@ -99,7 +99,7 @@ subset_expression_data <- function(gobject,
       isTRUE(avail_ex[ex_i]$subset_feats)) {
       filter_bool_cells <- spatIDs(ex) %in% cell_ids
       filter_bool_feats <- featIDs(ex) %in% feat_ids
-      ex[] <- finalize_expr_subset(ex[][filter_bool_feats, filter_bool_cells])
+      ex[] <- .finalize_expr_subset(ex[][filter_bool_feats, filter_bool_cells])
     }
 
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -122,11 +122,11 @@ subset_expression_data <- function(gobject,
 
 
 #' @title Subset spatial locations
-#' @name subset_spatial_locations
+#' @name .subset_spatial_locations
 #' @description Subset location data from giotto object
 #' @keywords internal
 #' @noRd
-subset_spatial_locations <- function(gobject,
+.subset_spatial_locations <- function(gobject,
                                      spat_unit = ":all:",
                                      cell_ids = NULL) {
   if (isTRUE(spat_unit == ":all:")) spat_unit <- NULL
@@ -164,12 +164,13 @@ subset_spatial_locations <- function(gobject,
 
 
 #' @title Subset cell metadata
-#' @name subset_cell_metadata
+#' @name .subset_cell_metadata
 #' @description Subset cell metadata from giotto object
 #' @inheritParams data_access_params
 #' @param cell_ids cell ids to keep
 #' @keywords internal
-subset_cell_metadata <- function(gobject,
+#' @noRd
+.subset_cell_metadata <- function(gobject,
                                  spat_unit = ":all:",
                                  feat_type_ssub = ":all:",
                                  cell_ids = NULL) {
@@ -214,12 +215,13 @@ subset_cell_metadata <- function(gobject,
 
 
 #' @title Subset feature metadata
-#' @name subset_feature_metadata
+#' @name .subset_feature_metadata
 #' @description Subset feature metadata from giotto object
 #' @inheritParams data_access_params
 #' @param feat_ids feature ids to keep
 #' @keywords internal
-subset_feature_metadata <- function(gobject,
+#' @noRd
+.subset_feature_metadata <- function(gobject,
                                     feat_type = ":all:",
                                     spat_unit_fsub = ":all:",
                                     feat_ids = NULL) {
@@ -262,12 +264,12 @@ subset_feature_metadata <- function(gobject,
 
 
 #' @title Subset spatial network
-#' @name subset_spatial_network
+#' @name .subset_spatial_network
 #' @description subset ALL spatial networks from giotto object of the given
 #' spat_unit
 #' @keywords internal
 #' @noRd
-subset_spatial_network <- function(gobject,
+.subset_spatial_network <- function(gobject,
                                    spat_unit = ":all:",
                                    cell_ids = NULL) {
   # DT vars
@@ -312,11 +314,11 @@ subset_spatial_network <- function(gobject,
 
 
 #' @title Subset dimension reduction
-#' @name subset_dimension_reduction
+#' @name .subset_dimension_reduction
 #' @description Subset dimension reduction results from giotto object
 #' @keywords internal
 #' @noRd
-subset_dimension_reduction <- function(gobject,
+.subset_dimension_reduction <- function(gobject,
                                        spat_unit = ":all:",
                                        feat_type = ":all:",
                                        spat_unit_fsub = ":all:",
@@ -409,11 +411,11 @@ subset_dimension_reduction <- function(gobject,
 
 # TODO expand this to include NNs that might be made from feature dim reducs
 #' @title Subset nearest network
-#' @name subset_nearest_network
+#' @name .subset_nearest_network
 #' @description Subset nearest network results from giotto object
 #' @keywords internal
 #' @noRd
-subset_nearest_network <- function(gobject,
+.subset_nearest_network <- function(gobject,
                                    spat_unit = ":all:",
                                    feat_type_ssub = ":all:",
                                    cell_ids = NULL) {
@@ -456,11 +458,11 @@ subset_nearest_network <- function(gobject,
 
 
 #' @title Subset spatial enrichment
-#' @name subset_spatial_enrichment
+#' @name .subset_spatial_enrichment
 #' @description Subset spatial enrichment results from giotto object
 #' @keywords internal
 #' @noRd
-subset_spatial_enrichment <- function(gobject,
+.subset_spatial_enrichment <- function(gobject,
                                       spat_unit = ":all:",
                                       feat_type_ssub = ":all:",
                                       cell_ids = NULL) {
@@ -511,7 +513,7 @@ subset_spatial_enrichment <- function(gobject,
 
 
 #' @title Subset spatial info data
-#' @name subset_spatial_info_data
+#' @name .subset_spatial_info_data
 #' @description Subset all spatial info (polygon) data.
 #' @param spatial_info contents of the Giotto spatial_info slot
 #' @param cell_ids character. cell ids to keep
@@ -521,7 +523,7 @@ subset_spatial_enrichment <- function(gobject,
 #' @param feat_ids character. feat ids to keep
 #' @keywords internal
 #' @noRd
-subset_spatial_info_data <- function(spatial_info,
+.subset_spatial_info_data <- function(spatial_info,
                                      cell_ids = NULL,
                                      poly_info = "cell",
                                      feat_type = NULL,
@@ -568,7 +570,7 @@ subset_spatial_info_data <- function(spatial_info,
 
       # subset the giottoPolygon object for the cell_ids and the specified
       # feat_type overlap information (if existing) for the feat_ids
-      spat_subset <- subset_giotto_polygon_object(
+      spat_subset <- .subset_giotto_polygon_object(
         gpolygon = si,
         cell_ids = cell_ids,
         feat_ids = feat_ids,
@@ -604,7 +606,7 @@ subset_spatial_info_data <- function(spatial_info,
 
 
 #' @title Subset feature info data
-#' @name subset_feature_info_data
+#' @name .subset_feature_info_data
 #' @description Subset all spatial feature (points) data
 #' @param feat_info contents of giotto object feat_info slot
 #' @param feat_ids character. feat ids to keep
@@ -613,7 +615,7 @@ subset_spatial_info_data <- function(spatial_info,
 #' @param verbose be verbose
 #' @keywords internal
 #' @noRd
-subset_feature_info_data <- function(feat_info,
+.subset_feature_info_data <- function(feat_info,
                                      feat_ids = NULL,
                                      feat_type = "rna",
                                      x_min = NULL,
@@ -628,7 +630,7 @@ subset_feature_info_data <- function(feat_info,
     if (isTRUE(feat %in% feat_type)) {
       if (verbose) cat("subset feature info:", feat)
 
-      feat_subset <- subset_giotto_points_object(
+      feat_subset <- .subset_giotto_points_object(
         gpoints = feat_info[[feat]],
         feat_ids = feat_ids,
         x_min = x_min,
@@ -662,7 +664,7 @@ subset_feature_info_data <- function(feat_info,
 
 
 
-#' @title subset_giotto
+#' @title .subset_giotto
 #' @description
 #' Internal to subset Giotto object including previous analyses for a specific
 #' spatial unit and feature type.\cr
@@ -699,7 +701,7 @@ subset_feature_info_data <- function(feat_info,
 #' extracted
 #' @return giotto object
 #' @keywords internal
-subset_giotto <- function(gobject,
+.subset_giotto <- function(gobject,
                           spat_unit = ":all:",
                           feat_type = "rna", # see note below
                           spat_unit_fsub = ":all:",
@@ -762,7 +764,7 @@ subset_giotto <- function(gobject,
 
   ## FILTER ##
   # filter expression data
-  gobject <- subset_expression_data(
+  gobject <- .subset_expression_data(
     gobject = gobject,
     cell_ids = cell_ids,
     feat_ids = feat_ids,
@@ -777,7 +779,7 @@ subset_giotto <- function(gobject,
 
   # filter spatial locations
 
-  gobject <- subset_spatial_locations(
+  gobject <- .subset_spatial_locations(
     gobject = gobject,
     cell_ids = cell_ids,
     spat_unit = spat_unit
@@ -789,7 +791,7 @@ subset_giotto <- function(gobject,
 
   ## cell & feature metadata ##
   # cell metadata
-  gobject <- subset_cell_metadata(
+  gobject <- .subset_cell_metadata(
     gobject = gobject,
     spat_unit = spat_unit,
     feat_type_ssub = feat_type_ssub,
@@ -799,7 +801,7 @@ subset_giotto <- function(gobject,
   if (verbose) cat("completed 4: subset cell metadata \n")
 
   # feature metadata
-  gobject <- subset_feature_metadata(
+  gobject <- .subset_feature_metadata(
     gobject = gobject,
     feat_type = feat_type,
     spat_unit_fsub = spat_unit_fsub,
@@ -811,7 +813,7 @@ subset_giotto <- function(gobject,
 
   ## spatial network & grid ##
   # cell spatial network
-  gobject <- subset_spatial_network(
+  gobject <- .subset_spatial_network(
     gobject = gobject,
     spat_unit = spat_unit,
     cell_ids = cell_ids
@@ -826,7 +828,7 @@ subset_giotto <- function(gobject,
 
   ## dimension reduction ##
   # cell dim reduction
-  gobject <- subset_dimension_reduction(
+  gobject <- .subset_dimension_reduction(
     gobject = gobject,
     spat_unit = spat_unit,
     feat_type = feat_type,
@@ -841,7 +843,7 @@ subset_giotto <- function(gobject,
 
 
   ## nn network ##
-  gobject <- subset_nearest_network(
+  gobject <- .subset_nearest_network(
     gobject = gobject,
     spat_unit = spat_unit,
     feat_type_ssub = feat_type_ssub,
@@ -852,7 +854,7 @@ subset_giotto <- function(gobject,
 
 
   ## spatial enrichment ##
-  gobject <- subset_spatial_enrichment(
+  gobject <- .subset_spatial_enrichment(
     gobject = gobject,
     spat_unit = spat_unit,
     feat_type_ssub = feat_type_ssub,
@@ -882,7 +884,7 @@ subset_giotto <- function(gobject,
       # poly_IDs and the cell_ids to keep for each polygon.
       # Lack of overlap means that all polygon geometries will be removed for
       # that giottoPolygon object.
-      gobject@spatial_info <- subset_spatial_info_data(
+      gobject@spatial_info <- .subset_spatial_info_data(
         spatial_info = gobject@spatial_info,
         feat_type = feat_type,
         cell_ids = cell_ids,
@@ -899,7 +901,7 @@ subset_giotto <- function(gobject,
 
   ## feature info
   if (!is.null(gobject@feat_info)) {
-    gobject@feat_info <- subset_feature_info_data(
+    gobject@feat_info <- .subset_feature_info_data(
       feat_info = gobject@feat_info,
       feat_ids = feat_ids,
       feat_type = feat_type,
@@ -978,13 +980,13 @@ subset_giotto <- function(gobject,
 # This function only spatially subsets one spatial unit at a time
 # As much as possible, the aggregate spatial locations are prioritized for this
 # subsetting. The cell_IDs that result from the spatial subset are then applied
-# to the rest of the Giotto object using subset_giotto().
+# to the rest of the Giotto object using .subset_giotto().
 #
 # The subset for the rest of the object is cell_id-based even for the polygons
 # because of possible differences in the centroid placements across different
 # sets of polygons. As such, the polygons to remove through poly_info MUST have
 # matching poly_IDs for the aggregate spat_unit being used in the subset.
-subset_giotto_locs <- function(gobject,
+.subset_giotto_locs <- function(gobject,
                                spat_unit = NULL,
                                feat_type = NULL,
                                feat_type_ssub = ":all:",
@@ -1037,16 +1039,16 @@ subset_giotto_locs <- function(gobject,
   # wrong or erroneously empty results will be returned.
   #
   # A warning check for empty gpolys after subsetting is performed in
-  # subset_giotto_polygon_object()
+  # .subset_giotto_polygon_object()
   # A warning check for no overlap between cell_ids to keep and poly_IDs is
-  # performed in subset_spatial_info_data()
+  # performed in .subset_spatial_info_data()
   if (isTRUE(poly_info == ":all:")) {
     poly_info <- list_spatial_info_names(gobject)
   }
 
 
   # 1. Check spatial params
-  valid_spat_subset_params(
+  .valid_spat_subset_params(
     x_min = x_min, x_max = x_max,
     y_min = y_min, y_max = y_max,
     z_min = z_min, z_max = z_max
@@ -1066,7 +1068,7 @@ subset_giotto_locs <- function(gobject,
 
       # if spatlocs missing, use alternate method with spatial_info
     } else if (!is.null(slot(gobject, "spatial_info"))) {
-      subset_object <- subset_giotto_polygons_workflow(
+      subset_object <- .subset_giotto_polygons_workflow(
         gobject = gobject,
         return_gobject = return_gobject,
         spat_unit = spat_unit,
@@ -1128,7 +1130,7 @@ subset_giotto_locs <- function(gobject,
 
     # assumes that all spatlocs within a spat unit contain the same cell_IDs
     # additionally, all values passed to poly_info must use matching cell_IDs
-    subset_object <- subset_giotto(
+    subset_object <- .subset_giotto(
       gobject = gobject,
       spat_unit = spat_unit,
       feat_type = feat_type,
@@ -1158,7 +1160,7 @@ subset_giotto_locs <- function(gobject,
 # the names of a named list style input.
 # Since polygons are provided through named list, any polygons with no matching
 # aggregate information should be subsetted with subsetGiottoLocsSubcellular().
-subset_giotto_locs_multi <- function(gobject,
+.subset_giotto_locs_multi <- function(gobject,
                                      spat_unit = ":all:",
                                      feat_type = NULL,
                                      feat_type_ssub = ":all:",
@@ -1388,7 +1390,7 @@ subsetGiotto <- function(gobject,
     ))
   }
 
-  subset_giotto(
+  .subset_giotto(
     gobject = gobject,
     spat_unit = spat_unit,
     feat_type = feat_type,
@@ -1461,7 +1463,7 @@ subsetGiottoLocs <- function(gobject,
   if (length(spat_unit) > 1L ||
     isTRUE(spat_unit == ":all:")) {
     # for subsetting across multiple
-    subset_giotto_locs_multi(
+    .subset_giotto_locs_multi(
       gobject = gobject,
       spat_unit = spat_unit,
       feat_type = feat_type,
@@ -1477,7 +1479,7 @@ subsetGiottoLocs <- function(gobject,
     )
   } else {
     # for subsetting single spat_unit
-    subset_giotto_locs(
+    .subset_giotto_locs(
       gobject = gobject,
       spat_unit = spat_unit,
       feat_type = feat_type,
@@ -1583,7 +1585,7 @@ subsetGiottoLocsSubcellular <- function(gobject,
   }
 
   # Check spatial params
-  valid_spat_subset_params(
+  .valid_spat_subset_params(
     x_min = x_min, x_max = x_max,
     y_min = y_min, y_max = y_max,
     z_min = z_min, z_max = z_max
@@ -1695,7 +1697,7 @@ subsetGiottoLocsSubcellular <- function(gobject,
 
 # helpers ####
 
-valid_spat_subset_params <- function(
+.valid_spat_subset_params <- function(
     x_min = NULL,
     x_max = NULL,
     y_min = NULL,
@@ -1734,14 +1736,14 @@ valid_spat_subset_params <- function(
 
 
 
-# see subset_giotto_locs()
+# see .subset_giotto_locs()
 # This is only ever used with a single spat_unit at a time.
 # This is part of the spatial subsetting pipeline and thus has no need for
 # most of the feature subsetting-related params
 #   feat_type is used in case combined_metadata needs to be generated
 #   feat_tyep_ssub allows finer control over which aggregate information is
 #     also subset for cell_ids within the spatial subset.
-subset_giotto_polygons_workflow <- function(gobject = gobject,
+.subset_giotto_polygons_workflow <- function(gobject = gobject,
                                             return_gobject = return_gobject,
                                             spat_unit = spat_unit,
                                             feat_type = feat_type,
@@ -1784,7 +1786,7 @@ subset_giotto_polygons_workflow <- function(gobject = gobject,
 
   cropped_IDs <- unique(unlist(cropped_IDs))
 
-  subset_object <- subset_giotto(
+  subset_object <- .subset_giotto(
     gobject = gobject,
     spat_unit = spat_unit, # should be only one at a time
     feat_type = feat_type,
@@ -1807,7 +1809,7 @@ subset_giotto_polygons_workflow <- function(gobject = gobject,
 ## object subsetting ####
 
 #' @title Subset giotto polygon object
-#' @name subset_giotto_polygon_object
+#' @name .subset_giotto_polygon_object
 #' @description Subset a single giotto polygon object for cell_ids and feat_ids
 #' @param gpolygon giottoPolygon object to subset
 #' @param cell_ids character. cell_ids to keep
@@ -1816,7 +1818,7 @@ subset_giotto_polygons_workflow <- function(gobject = gobject,
 #' are present within the giottoPolygon object
 #' @keywords internal
 #' @noRd
-subset_giotto_polygon_object <- function(gpolygon,
+.subset_giotto_polygon_object <- function(gpolygon,
                                          cell_ids = NULL,
                                          feat_ids = NULL,
                                          feat_type = NULL) {
@@ -1871,12 +1873,12 @@ subset_giotto_polygon_object <- function(gpolygon,
 
 
 #' @title Subset giotto points object
-#' @name subset_giotto_points_object
+#' @name .subset_giotto_points_object
 #' @description Subset a single giotto points object
 #' @details Subset on feature ids and on x,y coordinates
 #' @keywords internal
 #' @noRd
-subset_giotto_points_object <- function(gpoints,
+.subset_giotto_points_object <- function(gpoints,
                                         feat_ids = NULL,
                                         x_min = NULL,
                                         x_max = NULL,
@@ -1927,9 +1929,9 @@ subset_giotto_points_object <- function(gpoints,
 
 
 
-# see subset_expression_data
+# see .subset_expression_data
 # runs expression finalizer, if any
-finalize_expr_subset <- function(ex_mat) {
+.finalize_expr_subset <- function(ex_mat) {
   if (methods::is(ex_mat[], "HDF5Array")) {
     ex_mat[] <- DelayedArray::realize(ex_mat[], "HDF5Array")
   }

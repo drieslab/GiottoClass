@@ -1,18 +1,59 @@
 # EVALUATION FUNCTIONS
 # --------------------------------------------------------------------------- #
-# Internal functions to evaluate raw inputs into formats that are directly
-# compatible with Giotto's functionality
-#
-# Often called from the class constructor functions
+# Internal functions to evaluate raw inputs into formats that are
+# directly compatible with Giotto's functionality.
+# Note that these only format the data the output from this function still needs
+# to be put into a Giotto subobject.
 # --------------------------------------------------------------------------- #
 
 
 
+# These functions are difficult to convert to an S4 generic since they have
+# since many data types have overlapping allowed signatures.
+# If we want to make these functionalities available to other modules, using a
+# centralized wrapper function like below is a solution.
+#
+# TODO switch the internal functions to have the same set of core params so that
+# they can properly be documented together
 
-
-
-
-
+#' @name evaluate_input
+#' @title Evaluate raw inputs to Giotto formatting
+#' @description
+#' Experimental. Evaluate raw inputs into formats that are directly compatible with
+#' Giotto's functionality. Note that this function only formats the data.
+#' The output from this function still needs to be put into a Giotto
+#' subobject.\cr
+#' This is a wrapper function for the individual GiottoClass evaluation functions.
+#' @param type character. Type of giotto data to evaluate to.
+#' @param x data to evaluate
+#' @param \dots additional params to pass
+#' @export
+evaluate_input <- function(type, x, ...) {
+  type <- match.arg(type,
+                    c("expression",
+                      "cell_meta",
+                      "feat_meta",
+                      "spat_locs",
+                      "spat_net",
+                      "spat_enr",
+                      "dim_reduc",
+                      "nn_net",
+                      "spat_info",
+                      "feat_info"))
+  switch(
+    type,
+    "expression" = .evaluate_expr_matrix(x, ...),
+    "cell_meta" = .evaluate_cell_metadata(x, ...),
+    "feat_meta" = .evaluate_feat_metadata(x, ...),
+    "spat_locs" = .evaluate_spatial_locations(x, ...),
+    "spat_net" = .evaluate_spatial_network(x, ...),
+    "spat_enr" = .evaluate_spatial_enrichment(x, ...),
+    "dim_reduc" = .evaluate_dimension_reduction(x, ...),
+    "nn_net" = .evaluate_nearest_networks(x, ...),
+    "spat_info" = .evaluate_spatial_info(x, ...),
+    "feat_info" = .evaluate_feat_info(x, ...)
+  )
+}
 
 
 
@@ -20,7 +61,7 @@
 # Expression ####
 
 #' @title Evaluate expression matrix
-#' @name evaluate_expr_matrix
+#' @name .evaluate_expr_matrix
 #' @description Evaluate expression matrices that are provided as input and converts
 #' them to preferred format for Giotto object. A filepath can also be provided through
 #' \code{inputmatrix} param. If this is done, the function will attempt to read the
@@ -32,17 +73,17 @@
 #' @details The inputmatrix can be a matrix, sparse matrix, data.frame, data.table or path to any of these.
 #' @keywords internal
 #' @noRd
-evaluate_expr_matrix <- function(inputmatrix,
-                                 sparse = TRUE,
-                                 cores = determine_cores(),
-                                 feat_type = "rna",
-                                 expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
+.evaluate_expr_matrix <- function(inputmatrix,
+                                  sparse = TRUE,
+                                  cores = determine_cores(),
+                                  feat_type = "rna",
+                                  expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
   if (inherits(inputmatrix, "character")) {
     inputmatrix <- path.expand(inputmatrix)
     mymatrix <- readExprMatrix(inputmatrix,
-      cores = cores,
-      expression_matrix_class = expression_matrix_class,
-      feat_type = feat_type
+                               cores = cores,
+                               expression_matrix_class = expression_matrix_class,
+                               feat_type = feat_type
     )
   } else if (expression_matrix_class[1] == "DelayedArray") {
     mymatrix <- DelayedArray::DelayedArray(inputmatrix)
@@ -54,30 +95,30 @@ evaluate_expr_matrix <- function(inputmatrix,
     if (sparse == TRUE) {
       # force sparse class
       mymatrix <- Matrix::Matrix(as.matrix(inputmatrix[, -1]),
-        dimnames = list(
-          inputmatrix[[1]],
-          colnames(inputmatrix[, -1])
-        ), sparse = TRUE
+                                 dimnames = list(
+                                   inputmatrix[[1]],
+                                   colnames(inputmatrix[, -1])
+                                 ), sparse = TRUE
       )
     } else {
       # let Matrix decide
       mymatrix <- Matrix::Matrix(as.matrix(inputmatrix[, -1]),
-        dimnames = list(
-          inputmatrix[[1]],
-          colnames(inputmatrix[, -1])
-        )
+                                 dimnames = list(
+                                   inputmatrix[[1]],
+                                   colnames(inputmatrix[, -1])
+                                 )
       )
     }
   } else if (inherits(inputmatrix, what = c("data.frame", "matrix"))) {
     mymatrix <- methods::as(as.matrix(inputmatrix), "sparseMatrix")
   } else if (inherits(inputmatrix, "exprObj")) {
-    inputmatrix[] <- evaluate_expr_matrix(inputmatrix[], sparse = sparse, cores = cores, expression_matrix_class = expression_matrix_class)
+    inputmatrix[] <- .evaluate_expr_matrix(inputmatrix[], sparse = sparse, cores = cores, expression_matrix_class = expression_matrix_class)
     mymatrix <- inputmatrix
   } else {
-    stop(wrap_txt("expression input needs to be a path to matrix-like data or an",
-      "object of class 'Matrix', 'data.table', 'data.frame' or 'matrix'",
-      errWidth = TRUE
-    ))
+    .gstop(
+      "expression input needs to be a path to matrix-like data or an",
+      "object of class 'Matrix', 'data.table', 'data.frame' or 'matrix'"
+    )
   }
 
 
@@ -104,25 +145,21 @@ evaluate_expr_matrix <- function(inputmatrix,
 #' @param cores cores to use if reading in the information
 #' @keywords internal
 #' @noRd
-evaluate_cell_metadata <- function(metadata,
-                                   cores = determine_cores(),
-                                   verbose = TRUE) {
+.evaluate_cell_metadata <- function(metadata,
+                                    cores = determine_cores(),
+                                    verbose = TRUE) {
   # data.table vars
   cell_ID <- NULL
 
   # Get data as data.table
   if (!any(class(metadata) %in% c("data.table", "data.frame", "matrix", "character"))) {
-    stop(wrap_txt("metadata needs to be a data.table or data.frame-like object",
-      "or a path to one of these",
-      errWidth = TRUE
-    ))
+    .gstop("metadata needs to be a data.table or data.frame-like object",
+           "or a path to one of these")
   }
   if (inherits(metadata, "character")) {
     metadata <- path.expand(metadata)
     if (!file.exists(metadata)) {
-      stop(wrap_txt("path to metadata does not exist",
-        errWidth = TRUE
-      ))
+      .gstop("path to metadata does not exist")
     }
     metadata <- data.table::fread(input = metadata, nThread = cores)
   } else {
@@ -140,9 +177,7 @@ evaluate_cell_metadata <- function(metadata,
 
     # ensure unique entries
     if (any(metadata[, duplicated(cell_ID)])) {
-      stop(wrap_txt("Cell metadata: duplicates found in cell_ID column.",
-        errWidth = TRUE
-      ))
+      .gstop("Cell metadata: duplicates found in cell_ID column.")
     }
   } else {
     warning(wrap_txt("Cell metadata input: no col named cell_ID.
@@ -166,25 +201,21 @@ evaluate_cell_metadata <- function(metadata,
 
 #' @keywords internal
 #' @noRd
-evaluate_feat_metadata <- function(metadata,
-                                   cores = determine_cores(),
-                                   verbose = TRUE) {
+.evaluate_feat_metadata <- function(metadata,
+                                    cores = determine_cores(),
+                                    verbose = TRUE) {
   # data.table vars
   feat_ID <- NULL
 
   # Get data as data.table
   if (!any(class(metadata) %in% c("data.table", "data.frame", "matrix", "character"))) {
-    stop(wrap_txt("metadata needs to be a data.table or data.frame-like object",
-      "or a path to one of these",
-      errWidth = TRUE
-    ))
+    .gstop("metadata needs to be a data.table or data.frame-like object",
+           "or a path to one of these")
   }
   if (inherits(metadata, "character")) {
     metadata <- path.expand(metadata)
     if (!file.exists(metadata)) {
-      stop(wrap_txt("path to metadata does not exist",
-        errWidth = TRUE
-      ))
+      .gstop("path to metadata does not exist")
     }
     metadata <- data.table::fread(input = metadata, nThread = cores)
   } else {
@@ -202,9 +233,7 @@ evaluate_feat_metadata <- function(metadata,
 
     # ensure unique entries
     if (any(metadata[, duplicated(feat_ID)])) {
-      stop(wrap_txt("Feature metadata: duplicates found in feat_ID column.",
-        errWidth = TRUE
-      ))
+      .gstop("Feature metadata: duplicates found in feat_ID column.")
     }
   } else {
     warning(wrap_txt("Feature metadata input: no col named feat_ID.
@@ -226,125 +255,29 @@ evaluate_feat_metadata <- function(metadata,
 
 # Spatial ####
 
-#' @title evaluate_spatial_locations_OLD
-#' @name evaluate_spatial_locations_OLD
-#' @description Evaluate spatial location input
-#' @param spatial_locs spatial locations to evaluate
-#' @param cores how many cores to use
-#' @param dummy_n number of rows to create dummy spaial locations
-#' @param expr_matrix expression matrix to compare the cell IDs with
-#' @return data.table
-#' @keywords internal
-#' @noRd
-evaluate_spatial_locations_OLD <- function(spatial_locs,
-                                           cores = 1,
-                                           dummy_n = 2,
-                                           expr_matrix = NULL,
-                                           verbose = TRUE) {
-  if (is.null(spatial_locs)) {
-    warning("\n spatial locations are not given, dummy 2D data will be created \n")
-
-    # create 2D rectangular dummy positions
-    ceil_value <- ceiling(sqrt(dummy_n))
-    dummy_matrix <- t(utils::combn(x = ceil_value, m = 2))
-    final_dummy <- rbind(
-      matrix(data = rep(1:ceil_value, 2), ncol = 2),
-      dummy_matrix,
-      dummy_matrix[, c(2, 1)]
-    )
-    final_dummy <- final_dummy[1:dummy_n, ]
-
-    spatial_locs <- data.table::data.table(
-      sdimx = final_dummy[, 1],
-      sdimy = final_dummy[, 2]
-    )
-  } else {
-    if (!any(class(spatial_locs) %in% c("data.table", "data.frame", "matrix", "character"))) {
-      stop("spatial_locs needs to be a data.table or data.frame-like object or a path to one of these")
-    }
-    if (methods::is(spatial_locs, "character")) {
-      if (!file.exists(spatial_locs)) stop("path to spatial locations does not exist")
-      spatial_locs <- data.table::fread(input = spatial_locs, nThread = cores)
-    } else {
-      spatial_locs <- data.table::as.data.table(spatial_locs)
-    }
-
-
-    # check if all columns are numeric
-    column_classes <- lapply(spatial_locs, FUN = class)
-    # non_numeric_classes = column_classes[column_classes != 'numeric']
-    non_numeric_classes <- column_classes[!column_classes %in% c("numeric", "integer")]
-
-    if (length(non_numeric_classes) > 0) {
-      non_numeric_indices <- which(!column_classes %in% c("numeric", "integer"))
-
-      if (isTRUE(verbose)) {
-        wrap_msg(
-          "There are non numeric or integer columns for the spatial location input at column position(s): ", non_numeric_indices,
-          "\n The first non-numeric column will be considered as a cell ID to test for consistency with the expression matrix",
-          "\n Other non numeric columns will be removed\n\n"
-        )
-      }
-
-
-      if (!is.null(expr_matrix)) {
-        potential_cell_IDs <- spatial_locs[[non_numeric_indices[1]]]
-        expr_matrix_IDs <- colnames(expr_matrix)
-
-        if (!identical(potential_cell_IDs, expr_matrix_IDs)) {
-          warning("The cell IDs from the expression matrix and spatial locations do not seem to be identical")
-        }
-      }
-
-
-      spatial_locs <- spatial_locs[, -non_numeric_indices, with = F]
-    }
-
-    # check number of columns: too few
-    if (ncol(spatial_locs) < 2) {
-      stop("There need to be at least 2 numeric columns for spatial locations \n")
-    }
-
-    # check number of columns: too many
-    if (ncol(spatial_locs) > 3) {
-      warning("There are more than 3 columns for spatial locations, only the first 3 will be used \n")
-      spatial_locs <- spatial_locs[, 1:3]
-    }
-  }
-
-
-  return(spatial_locs)
-}
-
-
-
-
-
-
-
 
 
 
 
 #' @title Evaluate spatial locations
-#' @name evaluate_spatial_locations
+#' @name .evaluate_spatial_locations
 #' @description Evaluate spatial location input
 #' @param spatial_locs spatial locations to evaluate
 #' @param cores how many cores to use
 #' @return data.table
 #' @keywords internal
 #' @noRd
-evaluate_spatial_locations <- function(spatial_locs,
-                                       cores = determine_cores(),
-                                       verbose = TRUE) {
+.evaluate_spatial_locations <- function(spatial_locs,
+                                        cores = determine_cores(),
+                                        verbose = TRUE) {
   # data.table variables
   cell_ID <- NULL
 
   if (!any(class(spatial_locs) %in% c("data.table", "data.frame", "matrix", "character"))) {
-    stop("spatial_locs needs to be a data.table or data.frame-like object or a path to one of these")
+    .gstop("spatial_locs needs to be a data.table or data.frame-like object or a path to one of these")
   }
   if (inherits(spatial_locs, "character")) {
-    if (!file.exists(spatial_locs)) stop("path to spatial locations does not exist")
+    if (!file.exists(spatial_locs)) .gstop("path to spatial locations does not exist")
     spatial_locs <- data.table::fread(input = spatial_locs, nThread = cores)
   } else {
     spatial_locs <- tryCatch(
@@ -364,14 +297,12 @@ evaluate_spatial_locations <- function(spatial_locs,
   if (length(non_numeric_classes) > 0) {
     non_numeric_indices <- which(!column_classes %in% c("numeric", "integer"))
 
-    if (isTRUE(verbose)) {
-      wrap_msg(
-        "There are non numeric or integer columns for the spatial location input at column position(s): ", non_numeric_indices,
-        "\n The first non-numeric column will be considered as a cell ID to test for consistency with the expression matrix",
-        "\n Other non numeric columns will be removed"
-      )
-    }
-
+    vmsg(
+      .v = verbose,
+      "There are non numeric or integer columns for the spatial location input at column position(s): ", non_numeric_indices,
+      "\n The first non-numeric column will be considered as a cell ID to test for consistency with the expression matrix",
+      "\n Other non numeric columns will be removed"
+    )
 
     potential_cell_IDs <- spatial_locs[[names(non_numeric_classes)[[1]]]]
 
@@ -380,7 +311,7 @@ evaluate_spatial_locations <- function(spatial_locs,
 
   # check number of columns: too few
   if (ncol(spatial_locs) < 2) {
-    stop("There need to be at least 2 numeric columns for spatial locations \n")
+    .gstop("There need to be at least 2 numeric columns for spatial locations \n")
   }
 
   # check number of columns: too many
@@ -411,20 +342,18 @@ evaluate_spatial_locations <- function(spatial_locs,
 
 
 #' @title Evaluate spatial network
-#' @name evaluate_spatial_network
+#' @name .evaluate_spatial_network
 #' @description function to evaluate a spatial network
 #' @keywords internal
 #' @noRd
-evaluate_spatial_network <- function(spatial_network) {
+.evaluate_spatial_network <- function(spatial_network) {
   if (inherits(spatial_network, "spatialNetworkObj")) {
-    spatial_network[] <- evaluate_spatial_network(spatial_network[])
+    spatial_network[] <- .evaluate_spatial_network(spatial_network[])
     return(spatial_network)
   }
 
   if (!inherits(spatial_network, "data.frame")) {
-    stop(wrap_txt("The spatial network must be a data.frame(-like) object",
-      errWidth = TRUE
-    ))
+    .gstop("The spatial network must be a data.frame(-like) object")
   }
   if (!inherits(spatial_network, "data.table")) {
     spatial_network <- data.table::setDT(spatial_network)
@@ -441,7 +370,7 @@ evaluate_spatial_network <- function(spatial_network) {
   missing_cols <- required_cols[!required_cols %in% netw_names]
 
   if (length(missing_cols) > 0) {
-    stop("missing columns: ", list(missing_cols))
+    .gstop("missing columns: ", list(missing_cols))
   }
 
   return(spatial_network)
@@ -456,28 +385,26 @@ evaluate_spatial_network <- function(spatial_network) {
 
 
 
-#' @name evaluate_spatial_enrichment
+#' @name .evaluate_spatial_enrichment
 #' @description evaluate spatial enrichment input into data.table format
 #' compatible with spatEnrObj
 #' @keywords internal
 #' @noRd
-evaluate_spatial_enrichment <- function(spatial_enrichment,
-                                        provenance = NULL,
-                                        cores = determine_cores(),
-                                        verbose = TRUE) {
+.evaluate_spatial_enrichment <- function(spatial_enrichment,
+                                         provenance = NULL,
+                                         cores = determine_cores(),
+                                         verbose = TRUE) {
   # data.table vars
   cell_ID <- NULL
 
   if (!any(class(unlist(spatial_enrichment)) %in%
-    c("data.table", "data.frame", "matrix", "character"))) {
-    stop(wrap_txt("spatial enrichment needss to be a data.table or data.frame-like",
-      "object or a path to one of these",
-      errWidth = TRUE
-    ))
+           c("data.table", "data.frame", "matrix", "character"))) {
+    .gstop("spatial enrichment needs to be a data.table or data.frame-like",
+           "object or a path to one of these")
   }
   if (inherits(spatial_enrichment, "character")) {
     if (!file.exists(path.expand(spatial_enrichment))) {
-      stop(wrap_txt("path to spatial enrichment info does not exist"))
+      .gstop("path to spatial enrichment info does not exist")
     }
 
     spatial_enrichment <- data.table::fread(
@@ -502,15 +429,14 @@ evaluate_spatial_enrichment <- function(spatial_enrichment,
   if (length(non_numeric_classes) > 0L) {
     non_numeric_indices <- which(!column_classes %in% c("numeric", "integer"))
 
-    if (isTRUE(verbose)) {
-      wrap_msg(
-        "There are non numeric or integer columns for the spatial enrichment",
-        "input at column position(s):", non_numeric_indices,
-        "\nThe first non-numeric column will be considered as a cell ID to",
-        "test for consistency with the expression matrix.
+    vmsg(
+      .v = verbose,
+      "There are non numeric or integer columns for the spatial enrichment",
+      "input at column position(s):", non_numeric_indices,
+      "\nThe first non-numeric column will be considered as a cell ID to",
+      "test for consistency with the expression matrix.
                Other non-numeric columns will be removed."
-      )
-    }
+    )
 
     potential_cell_IDs <- spatial_enrichment[[names(non_numeric_classes)[[1L]]]]
 
@@ -520,10 +446,8 @@ evaluate_spatial_enrichment <- function(spatial_enrichment,
 
   # check number of columns: too few
   if (ncol(spatial_enrichment) < 1L) {
-    stop(wrap_txt("There has to be at least 2 columns (1 for cell IDs, and",
-      "at least one other for enrichment data",
-      errWidth = TRUE
-    ))
+    .gstop("There has to be at least 2 columns (1 for cell IDs, and",
+           "at least one other for enrichment data")
   }
 
   # Assign first non-numeric as cell_ID
@@ -545,23 +469,21 @@ evaluate_spatial_enrichment <- function(spatial_enrichment,
 
 
 
-#' @name evaluate_dimension_reduction
+#' @name .evaluate_dimension_reduction
 #' @description evaluate dimension reduction input into dimObj matrix
 #' @keywords internal
 #' @noRd
-evaluate_dimension_reduction <- function(dimension_reduction) {
+.evaluate_dimension_reduction <- function(dimension_reduction) {
   # object level
   if (inherits(dimension_reduction, "dimObj")) {
-    dimension_reduction[] <- evaluate_dimension_reduction(dimension_reduction[])
+    dimension_reduction[] <- .evaluate_dimension_reduction(dimension_reduction[])
     return(dimension_reduction)
   }
 
   # coordinates slot matrix
   dimension_reduction <- try(as.matrix(dimension_reduction), silent = TRUE)
   if (inherits(dimension_reduction, "try-error")) {
-    stop(wrap_txt("Dimension reduction coordinate input must be coercible to matrix",
-      errWidth = TRUE
-    ))
+    .gstop("Dimension reduction coordinate input must be coercible to matrix")
   }
   return(dimension_reduction)
 }
@@ -574,38 +496,36 @@ evaluate_dimension_reduction <- function(dimension_reduction) {
 
 
 #' @title Evaluate nearest networks
-#' @name evaluate_nearest_networks
+#' @name .evaluate_nearest_networks
 #' @description Evaluate nearest networks input into igraph for input into
 #' nnNetObj
 #' @keywords internal
 #' @details Minimal input is a data.frame-like input containing 'from', 'to',
 #' and 'distance' information
 #' @noRd
-evaluate_nearest_networks <- function(nn_network) {
+.evaluate_nearest_networks <- function(nn_network) {
   # data.table vars
   weight <- distance <- NULL
 
   if (inherits(nn_network, "nnNetObj")) {
-    nn_network[] <- evaluate_nearest_networks(nn_network = nn_network[])
+    nn_network[] <- .evaluate_nearest_networks(nn_network = nn_network[])
     return(nn_network)
   } else if (inherits(nn_network, "igraph")) {
     v_attr <- igraph::list.vertex.attributes(nn_network)
     e_attr <- igraph::list.edge.attributes(nn_network)
 
     if (!"name" %in% v_attr) {
-      stop(wrap_txt(
+      .gstop(
         'nearest network igraph input MUST have vertex attribute "name".
-      Discovered vertex attributes:', v_attr,
-        errWidth = TRUE
-      ))
+        Discovered vertex attributes:', v_attr
+      )
     }
 
     if (!"distance" %in% e_attr) {
-      stop(wrap_txt(
+      .gstop(
         'nearest network igraph input MUST have edge attribute "distance".
-      Discovered edge attributes:', e_attr,
-        errWidth = TRUE
-      ))
+        Discovered edge attributes:', e_attr
+      )
     }
 
     if (!"weight" %in% e_attr) {
@@ -621,8 +541,8 @@ evaluate_nearest_networks <- function(nn_network) {
 
     # if minimal input not given, throw error
     if (!all(c("from", "to", "distance") %in% colnames(nn_network))) {
-      stop(wrap_txt("Unable to coerce data.frame type object to nnNetObj igraph
-                    Needed columns: from, to, distance", errWidth = TRUE))
+      .gstop("Unable to coerce data.frame type object to nnNetObj igraph
+             Needed columns: from, to, distance")
     }
 
     # generate weights
@@ -647,8 +567,8 @@ evaluate_nearest_networks <- function(nn_network) {
 #' a data.table with those key columns renamed to 'x', 'y', and 'poly_ID' if necessary.
 #' @keywords internal
 #' @noRd
-evaluate_gpoly_dfr <- function(input_dt,
-                               verbose = TRUE) {
+.evaluate_gpoly_dfr <- function(input_dt,
+                                verbose = TRUE) {
   x <- y <- poly_ID <- NULL
 
   # data.frame like object needs to have 2 coordinate columns and
@@ -723,8 +643,8 @@ evaluate_gpoly_dfr <- function(input_dt,
 #' @param verbose be verbose
 #' @return list of SpatVector and unique_IDs
 #' @noRd
-evaluate_gpoly_spatvector <- function(input_sv,
-                                      verbose = TRUE) {
+.evaluate_gpoly_spatvector <- function(input_sv,
+                                       verbose = TRUE) {
   # determine sv type
   sv_type <- terra::geomtype(input_sv)
 
@@ -789,7 +709,7 @@ evaluate_gpoly_spatvector <- function(input_sv,
 
 
 #' @title Evaluate spatial info
-#' @name evaluate_spatial_info
+#' @name .evaluate_spatial_info
 #' @description Evaluate spatial information input into a SpatVector for
 #' giottoPolygon creation
 #' @param spatial_info spatial information to evaluate
@@ -801,11 +721,11 @@ evaluate_gpoly_spatvector <- function(input_sv,
 #' @return list of SpatVector and unique polygon IDs that it contains
 #' @keywords internal
 #' @noRd
-evaluate_spatial_info <- function(spatial_info,
-                                  skip_eval_dfr = FALSE,
-                                  copy_dt = TRUE,
-                                  cores = determine_cores(),
-                                  verbose = TRUE) {
+.evaluate_spatial_info <- function(spatial_info,
+                                   skip_eval_dfr = FALSE,
+                                   copy_dt = TRUE,
+                                   cores = determine_cores(),
+                                   verbose = TRUE) {
   # NSE vars
   geom <- poly_ID <- NULL
 
@@ -813,11 +733,11 @@ evaluate_spatial_info <- function(spatial_info,
   ## 1.1 read from file
   if (inherits(spatial_info, "character")) {
     spatial_info <- path.expand(spatial_info)
-    if (!file.exists(spatial_info)) stop("path to spatial information does not exist")
+    if (!file.exists(spatial_info)) .gstop("path to spatial information does not exist")
 
     if (any(file_extension(spatial_info) %in% c("shp", "geojson", "wkt"))) {
       spatial_info <- terra::vect(spatial_info)
-      spatial_info <- evaluate_gpoly_spatvector(spatial_info)
+      spatial_info <- .evaluate_gpoly_spatvector(spatial_info)
       return(spatial_info)
     } else {
       spatial_info <- data.table::fread(input = spatial_info, nThread = cores)
@@ -832,24 +752,22 @@ evaluate_spatial_info <- function(spatial_info,
 
     ## 1.3 SpatVector input
   } else if (inherits(spatial_info, "SpatVector")) {
-    spatial_info <- evaluate_gpoly_spatvector(spatial_info)
+    spatial_info <- .evaluate_gpoly_spatvector(spatial_info)
     return(spatial_info)
 
     ## 1.4 Other inputs
   } else {
     spatial_info <- try(data.table::as.data.table(spatial_info), silent = TRUE)
     if (inherits(spatial_info, "try-error")) {
-      stop(wrap_txt("If spatial information is provided then it needs to be a",
-        "file path or a data.frame-like object",
-        errWidth = TRUE
-      ))
+      .gstop("If spatial information is provided then it needs to be a",
+             "file path or a data.frame-like object")
     }
   }
 
 
   # 2. data.frame info evaluation
   if (!isTRUE(skip_eval_dfr)) {
-    spatial_info <- evaluate_gpoly_dfr(
+    spatial_info <- .evaluate_gpoly_dfr(
       input_dt = spatial_info,
       verbose = verbose
     )
@@ -869,8 +787,8 @@ evaluate_spatial_info <- function(spatial_info,
   unique_IDs <- spatial_info[, unique(poly_ID)]
 
   # 4. create spatvector
-  spatial_info <- dt_to_spatVector_polygon(spatial_info,
-    include_values = TRUE
+  spatial_info <- .dt_to_spatvector_polygon(spatial_info,
+                                           include_values = TRUE
   )
 
   return_list <- list(
@@ -892,7 +810,7 @@ evaluate_spatial_info <- function(spatial_info,
 # Feature info ####
 
 #' @title Evaluate feature info
-#' @name evaluate_feat_info
+#' @name .evaluate_feat_info
 #' @description Evaluate spatial feature information input
 #' @param spatial_feat_info spatial feature information to evaluate
 #' @param cores how many cores to use
@@ -900,18 +818,18 @@ evaluate_spatial_info <- function(spatial_info,
 #' @return data.table
 #' @keywords internal
 #' @noRd
-evaluate_feat_info <- function(spatial_feat_info,
-                               feat_type,
-                               cores = determine_cores(),
-                               feat_ID) {
+.evaluate_feat_info <- function(spatial_feat_info,
+                                feat_type,
+                                cores = determine_cores(),
+                                feat_ID) {
   ## 1. load or read spatial information data ##
   if (inherits(spatial_feat_info, "character")) {
-    if (!file.exists(spatial_feat_info)) stop("path to spatial information does not exist")
+    if (!file.exists(spatial_feat_info)) .gstop("path to spatial information does not exist")
     spatial_feat_info <- data.table::fread(input = spatial_feat_info, nThread = cores)
   } else if (inherits(spatial_feat_info, "data.frame")) {
     spatial_feat_info <- data.table::as.data.table(spatial_feat_info)
   } else {
-    stop("If spatial feature information is provided then it needs to be a file path or a data.frame-like object")
+    .gstop("If spatial feature information is provided then it needs to be a file path or a data.frame-like object")
   }
 
 
@@ -919,7 +837,7 @@ evaluate_feat_info <- function(spatial_feat_info,
   nr_cols <- ncol(spatial_feat_info)
 
   if (nr_cols < 3) {
-    stop(
+    .gstop(
       "Spatial feature information needs to have at least 3 columns: \n",
       "x, y, (z) information columns \n",
       "and feature ID column \n"
@@ -935,7 +853,7 @@ evaluate_feat_info <- function(spatial_feat_info,
   } else if (all(column_classes[1:2] == "numeric")) {
     colnames(spatial_feat_info)[1:3] <- c("sdimx", "sdimy", "feat_ID")
   } else {
-    stop("First 3 or 2 columns need to be numeric for 3D and 2D data respectively")
+    .gstop("First 3 or 2 columns need to be numeric for 3D and 2D data respectively")
   }
 
 
@@ -947,6 +865,6 @@ evaluate_feat_info <- function(spatial_feat_info,
   if (all(spatial_feature_info_feat_IDs %in% feat_ID)) {
     return(spatial_feat_info)
   } else {
-    stop("feat IDs in spatial feature information are missing in the feature ID slot")
+    .gstop("feat IDs in spatial feature information are missing in the feature ID slot")
   }
 }

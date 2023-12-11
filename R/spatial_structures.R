@@ -3,9 +3,9 @@
 
 #' @title convert_to_full_spatial_network
 #' @name convert_to_full_spatial_network
+#' @description convert to a full spatial network
 #' @param reduced_spatial_network_DT reduced spatial network in data.table format
 #' @keywords internal
-#' @description convert to a full spatial network
 #' @export
 convert_to_full_spatial_network <- function(reduced_spatial_network_DT) {
   # data.table variables
@@ -47,9 +47,10 @@ convert_to_full_spatial_network <- function(reduced_spatial_network_DT) {
 
 #' @title convert_to_reduced_spatial_network
 #' @name convert_to_reduced_spatial_network
+#' @description convert to a reduced spatial network
 #' @param full_spatial_network_DT full spatial network in data.table format
 #' @keywords internal
-#' @description convert to a reduced spatial network
+#' @export
 convert_to_reduced_spatial_network <- function(full_spatial_network_DT) {
   # data.table variables
   rnk_src_trgt <- NULL
@@ -74,16 +75,17 @@ convert_to_reduced_spatial_network <- function(full_spatial_network_DT) {
 
 
 
-#' @title calculate_distance_and_weight
-#' @name calculate_distance_and_weight
+#' @title Calculate spatial network distance and weight
+#' @name .calculate_distance_and_weight
 #' @param networkDT spatial network as data.table
 #' @param sdimx spatial dimension x
 #' @param sdimy spatial dimension y
 #' @param sdimz spatial dimension z
 #' @param d2_or_d3 number of dimensions
-#' @description calculate_distance_and_weight
+#' @description Calculate distance and weight metrics of a data.table spatial
+#' network
 #' @keywords internal
-calculate_distance_and_weight <- function(networkDT = NULL,
+.calculate_distance_and_weight <- function(networkDT = NULL,
                                           sdimx = "sdimx",
                                           sdimy = "sdimy",
                                           sdimz = "sdimz",
@@ -161,14 +163,14 @@ get_distance <- function(networkDT,
 
 
 
-#' @title filter_network
-#' @name filter_network
-#' @description function to filter a spatial network
+#' @title Filter spatial network
+#' @name .filter_network
+#' @description Filter a spatial network by spatial characteristics
 #' @param networkDT spatial network in data.table format
 #' @param maximum_distance maximum distance between cell centroids
 #' @param minimum_k minimum number of neighbors
 #' @keywords internal
-filter_network <- function(networkDT = NULL,
+.filter_network <- function(networkDT = NULL,
                            maximum_distance = NULL,
                            minimum_k = NULL) {
   # data.table variables
@@ -204,7 +206,7 @@ filter_network <- function(networkDT = NULL,
 compatible_spatial_network <- function(spatial_network,
                                        expression_matrix) {
   # first evaluate spatial network
-  spatial_network <- evaluate_spatial_network(spatial_network)
+  spatial_network <- .evaluate_spatial_network(spatial_network)
 
   # compatible network
   # all network nodes need to be found back in the column names
@@ -268,10 +270,10 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
 
 ## Delaunay network ####
 
-#' @title create_delaunayNetwork_geometry
+#' @title .create_delaunaynetwork_geometry
 #' @description Create a spatial Delaunay network.
 #' @keywords internal
-create_delaunayNetwork_geometry <- function(spatial_locations,
+.create_delaunaynetwork_geometry <- function(spatial_locations,
                                             sdimx = "sdimx",
                                             sdimy = "sdimy",
                                             options = "Pp",
@@ -337,10 +339,10 @@ create_delaunayNetwork_geometry <- function(spatial_locations,
   return(out_object)
 }
 
-#' @title create_delaunayNetwork_geometry_3D
+#' @title .create_delaunaynetwork_geometry_3d
 #' @description Create a spatial 3D Delaunay network with geometry
 #' @keywords internal
-create_delaunayNetwork_geometry_3D <- function(spatial_locations,
+.create_delaunaynetwork_geometry_3d <- function(spatial_locations,
                                                sdimx = "sdimx",
                                                sdimy = "sdimy",
                                                sdimz = "sdimz",
@@ -415,10 +417,10 @@ create_delaunayNetwork_geometry_3D <- function(spatial_locations,
   return(out_object)
 }
 
-#' @title create_delaunayNetwork_RTriangle
+#' @title .create_delaunaynetwork_RTriangle
 #' @description Create a spatial Delaunay network with RTriangle
 #' @keywords internal
-create_delaunayNetwork_RTriangle <- function(spatial_locations,
+.create_delaunaynetwork_RTriangle <- function(spatial_locations,
                                              sdimx = "sdimx",
                                              sdimy = "sdimy",
                                              Y = TRUE,
@@ -473,10 +475,10 @@ create_delaunayNetwork_RTriangle <- function(spatial_locations,
 }
 
 
-#' @title create_delaunayNetwork_deldir
+#' @title .create_delaunaynetwork_deldir
 #' @description Create a spatial Delaunay network with deldir
 #' @keywords internal
-create_delaunayNetwork_deldir <- function(spatial_locations,
+.create_delaunaynetwork_deldir <- function(spatial_locations,
                                           sdimx = "sdimx",
                                           sdimy = "sdimy",
                                           ...) {
@@ -530,10 +532,10 @@ create_delaunayNetwork_deldir <- function(spatial_locations,
 
 
 
-#' @title create_delaunayNetwork2D
+#' @title .create_delaunaynetwork_2d
 #' @description Create a spatial 2D Delaunay network.
 #' @keywords internal
-create_delaunayNetwork2D <- function(gobject,
+.create_delaunaynetwork_2d <- function(gobject,
                                      method = c("delaunayn_geometry", "RTriangle", "deldir"),
                                      spat_unit = NULL,
                                      spat_loc_name = "raw",
@@ -575,7 +577,7 @@ create_delaunayNetwork2D <- function(gobject,
 
 
   if (method == "RTriangle") {
-    delaunay_output <- create_delaunayNetwork_RTriangle(
+    delaunay_output <- .create_delaunaynetwork_RTriangle(
       spatial_locations = spatial_locations[],
       sdimx = sdimx,
       sdimy = sdimy,
@@ -599,7 +601,7 @@ create_delaunayNetwork2D <- function(gobject,
     outputObj <- outputObj
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   } else if (method == "deldir") {
-    delaunay_output <- create_delaunayNetwork_deldir(
+    delaunay_output <- .create_delaunaynetwork_deldir(
       spatial_locations = spatial_locations[],
       sdimx = sdimx,
       sdimy = sdimy,
@@ -617,7 +619,7 @@ create_delaunayNetwork2D <- function(gobject,
     outputObj <- outputObj
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   } else if (method == "delaunayn_geometry") {
-    delaunay_output <- create_delaunayNetwork_geometry(
+    delaunay_output <- .create_delaunaynetwork_geometry(
       spatial_locations = spatial_locations[],
       sdimx = sdimx,
       sdimy = sdimy,
@@ -636,13 +638,13 @@ create_delaunayNetwork2D <- function(gobject,
 
 
   ## calculate distance and weight + filter ##
-  delaunay_network_DT <- calculate_distance_and_weight(delaunay_network_DT,
+  delaunay_network_DT <- .calculate_distance_and_weight(delaunay_network_DT,
     sdimx = sdimx,
     sdimy = sdimy,
     d2_or_d3 = 2L
   )
   networkDT_before_filter <- delaunay_network_DT
-  delaunay_network_DT <- filter_network(delaunay_network_DT,
+  delaunay_network_DT <- .filter_network(delaunay_network_DT,
     maximum_distance = maximum_distance,
     minimum_k = minimum_k
   )
@@ -736,10 +738,10 @@ create_delaunayNetwork2D <- function(gobject,
 
 
 
-#' @title create_delaunayNetwork3D
+#' @title .create_delaunaynetwork_3d
 #' @description Create a spatial 3D Delaunay network.
 #' @keywords internal
-create_delaunayNetwork3D <- function(gobject,
+.create_delaunaynetwork_3d <- function(gobject,
                                      method = "delaunayn_geometry",
                                      spat_unit = NULL,
                                      spat_loc_name = "raw",
@@ -776,7 +778,7 @@ create_delaunayNetwork3D <- function(gobject,
 
   ## delaunay geometry method ##
   if (method == "delaunayn_geometry") {
-    delaunay_output <- create_delaunayNetwork_geometry_3D(
+    delaunay_output <- .create_delaunaynetwork_geometry_3d(
       spatial_locations = spatial_locations[],
       sdimx = sdimx,
       sdimy = sdimy,
@@ -795,13 +797,13 @@ create_delaunayNetwork3D <- function(gobject,
   }
 
   ## calculate distance and weight + filter ##
-  networkDT_before_filter <- calculate_distance_and_weight(delaunay_network_DT,
+  networkDT_before_filter <- .calculate_distance_and_weight(delaunay_network_DT,
     sdimx = sdimx,
     sdimy = sdimy,
     sdimz = sdimz,
     d2_or_d3 = 3
   )
-  delaunay_network_DT <- filter_network(networkDT_before_filter,
+  delaunay_network_DT <- .filter_network(networkDT_before_filter,
     maximum_distance = maximum_distance,
     minimum_k = minimum_k
   )
@@ -952,7 +954,7 @@ createSpatialDelaunayNetwork <- function(gobject,
     first_dimension <- colnames(spatial_locations)[[1]]
     second_dimension <- colnames(spatial_locations)[[2]]
 
-    out <- create_delaunayNetwork2D(
+    out <- .create_delaunaynetwork_2d(
       gobject = gobject,
       method = method,
       spat_unit = spat_unit,
@@ -979,7 +981,7 @@ createSpatialDelaunayNetwork <- function(gobject,
       second_dimension <- colnames(spatial_locations)[[2]]
       third_dimension <- colnames(spatial_locations)[[3]]
 
-      out <- create_delaunayNetwork3D(
+      out <- .create_delaunaynetwork_3d(
         gobject = gobject,
         method = method,
         spat_unit = spat_unit,
@@ -1621,11 +1623,11 @@ createSpatialWeightMatrix <- function(gobject,
 
 ## Spatial grid ####
 
-#' @title find_grid_3D
-#' @name find_grid_3D
+#' @title .find_grid_3d
+#' @name .find_grid_3d
 #' @description find grid location in 3D
 #' @keywords internal
-find_grid_3D <- function(grid_DT, x_loc, y_loc, z_loc) {
+.find_grid_3d <- function(grid_DT, x_loc, y_loc, z_loc) {
   # data.table variables
   x_start <- x_end <- y_start <- y_end <- z_start <- z_end <- NULL
 
@@ -1633,11 +1635,11 @@ find_grid_3D <- function(grid_DT, x_loc, y_loc, z_loc) {
   return(name)
 }
 
-#' @title find_grid_2D
-#' @name find_grid_2D
+#' @title .find_grid_2d
+#' @name .find_grid_2d
 #' @description find grid location in 2D
 #' @keywords internal
-find_grid_2D <- function(grid_DT, x_loc, y_loc) {
+.find_grid_2d <- function(grid_DT, x_loc, y_loc) {
   # data.table variables
   x_start <- x_end <- y_start <- y_end <- NULL
 
@@ -1645,11 +1647,11 @@ find_grid_2D <- function(grid_DT, x_loc, y_loc) {
   return(name)
 }
 
-#' @title find_grid_x
-#' @name find_grid_x
+#' @title .find_grid_x
+#' @name .find_grid_x
 #' @description find grid location on x-axis
 #' @keywords internal
-find_grid_x <- function(grid_DT, x_loc) {
+.find_grid_x <- function(grid_DT, x_loc) {
   # data.table variables
   x_start <- x_end <- gr_x_name <- NULL
 
@@ -1658,11 +1660,11 @@ find_grid_x <- function(grid_DT, x_loc) {
   return(name_x)
 }
 
-#' @title find_grid_y
-#' @name find_grid_y
+#' @title .find_grid_y
+#' @name .find_grid_y
 #' @description find grid location on y-axis
 #' @keywords internal
-find_grid_y <- function(grid_DT, y_loc) {
+.find_grid_y <- function(grid_DT, y_loc) {
   # data.table variables
   y_start <- y_end <- gr_y_name <- NULL
 
@@ -1671,11 +1673,11 @@ find_grid_y <- function(grid_DT, y_loc) {
   return(name_y)
 }
 
-#' @title find_grid_z
-#' @name find_grid_z
+#' @title .find_grid_z
+#' @name .find_grid_z
 #' @description find grid location on z-axis
 #' @keywords internal
-find_grid_z <- function(grid_DT, z_loc) {
+.find_grid_z <- function(grid_DT, z_loc) {
   # data.table variables
   z_start <- z_end <- gr_z_name <- NULL
 
@@ -1686,10 +1688,10 @@ find_grid_z <- function(grid_DT, z_loc) {
 
 
 
-#' @title create_spatialGrid_default_2D
+#' @title .create_spatialgrid_default_2d
 #' @description create a 2D spatial grid
 #' @keywords internal
-create_spatialGrid_default_2D <- function(gobject,
+.create_spatialgrid_default_2d <- function(gobject,
                                           spat_unit = NULL,
                                           spat_loc_name = "raw",
                                           sdimx_stepsize = NULL,
@@ -1774,10 +1776,10 @@ create_spatialGrid_default_2D <- function(gobject,
 }
 
 
-#' @title create_spatialGrid_default_3D
+#' @title .create_spatialgrid_default_3d
 #' @description create a 3D spatial grid
 #' @keywords internal
-create_spatialGrid_default_3D <- function(gobject,
+.create_spatialgrid_default_3d <- function(gobject,
                                           spat_unit = NULL,
                                           spat_loc_name = "raw",
                                           sdimx_stepsize = NULL,
@@ -1924,7 +1926,7 @@ createSpatialDefaultGrid <- function(gobject,
   }
 
   if (length(c(sdimx_stepsize, sdimy_stepsize, sdimz_stepsize)) == 3) {
-    resultgrid <- create_spatialGrid_default_3D(
+    resultgrid <- .create_spatialgrid_default_3d(
       gobject = gobject,
       spat_unit = spat_unit,
       spat_loc_name = spat_loc_name,
@@ -1934,7 +1936,7 @@ createSpatialDefaultGrid <- function(gobject,
       minimum_padding = minimum_padding
     )
   } else if (!is.null(sdimx_stepsize) & !is.null(sdimy_stepsize)) {
-    resultgrid <- create_spatialGrid_default_2D(
+    resultgrid <- .create_spatialgrid_default_2d(
       gobject = gobject,
       spat_unit = spat_unit,
       spat_loc_name = spat_loc_name,

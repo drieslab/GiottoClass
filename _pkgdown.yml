@@ -71,7 +71,7 @@ reference:
   - readSpatEnrichData
   - readSpatLocsData
   - readSpatNetData
-  - read_feature_metadata
+  - .read_feature_metadata
 - subtitle: Create
   desc: Create Giotto-native objects
 - contents:
@@ -399,7 +399,6 @@ reference:
   - get_spatialNetwork
   - get_spatial_enrichment
   - get_spatial_locations
-  - aggregateStacksPolygonsOLD
   - createSpatialDefaultGrid
   - createSpatialGrid
   - setSpatialGrid

@@ -121,7 +121,7 @@ rescale_polygons <- function(spatVector,
   # DT vars
   poly_ID <- NULL
 
-  spatVectorCentroidsDT <- spatVector_to_dt(spatVectorCentroids)
+  spatVectorCentroidsDT <- .spatvector_to_dt(spatVectorCentroids)
 
   cell_ids <- spatVector$poly_ID
 
@@ -191,7 +191,7 @@ rescalePolygons <- function(gobject,
     spatVector = rescaled_original
   )
   if (calculate_centroids) {
-    S4_polygon <- calculate_centroids_polygons(
+    S4_polygon <- .calculate_centroids_polygons(
       gpolygon = S4_polygon,
       append_gpolygon = TRUE
     )

@@ -16,7 +16,7 @@ setMethod(
   function(x, angle, x0 = NULL, y0 = NULL) {
     if (is.null(x0)) x0 <- terra::mean(terra::ext(x@spatVector))[1]
     if (is.null(y0)) y0 <- terra::mean(terra::ext(x@spatVector))[2]
-    return(do_gpoly(x = x, what = "terra"::"spin", args = list(angle = angle, x0 = x0, y0 = y0)))
+    return(.do_gpoly(x = x, what = "terra"::"spin", args = list(angle = angle, x0 = x0, y0 = y0)))
   }
 )
 

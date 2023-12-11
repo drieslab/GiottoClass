@@ -34,7 +34,7 @@ setMethod("crop", signature("giottoLargeImage"), function(x, y, ...) {
   }
   x@raster_object <- terra::crop(x@raster_object, y, ...)
   x@extent <- ext(x@raster_object)
-  intensity_range <- spatraster_intensity_range(x@raster_object)
+  intensity_range <- .spatraster_intensity_range(x@raster_object)
   x@min_intensity <- intensity_range[["min"]]
   x@max_intensity <- intensity_range[["max"]]
 
@@ -131,7 +131,7 @@ setMethod("crop", signature("giottoPolygon"), function(
     }
 
     args <- list(y = y, ...)
-    x <- do_gpoly(x, what = terra::crop, args = args)
+    x <- .do_gpoly(x, what = terra::crop, args = args)
     # update ID cache
     x@unique_ID_cache <- unique(terra::values(x@spatVector)$poly_ID)
   }

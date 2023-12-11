@@ -8,6 +8,7 @@
 \alias{plot,giottoPolygon,missing-method}
 \alias{plot,giottoPoints,missing-method}
 \alias{plot,spatLocsObj,missing-method}
+\alias{plot,dimObj,missing-method}
 \alias{plot,spatialNetworkObj,missing-method}
 \title{Preview a Giotto spatial object}
 \usage{
@@ -15,11 +16,19 @@
 
 \S4method{plot}{giottoLargeImage,missing}(x, y, ...)
 
-\S4method{plot}{giottoPolygon,missing}(x, point_size = 0.1, type = c("poly", "centroid"), ...)
+\S4method{plot}{giottoPolygon,missing}(
+  x,
+  point_size = 0.6,
+  type = c("poly", "centroid"),
+  max_poly = getOption("giotto.plot_max_poly", 10000),
+  ...
+)
 
 \S4method{plot}{giottoPoints,missing}(x, point_size = 0, feats = NULL, raster = TRUE, raster_size = 600, ...)
 
 \S4method{plot}{spatLocsObj,missing}(x, y, ...)
+
+\S4method{plot}{dimObj,missing}(x, dims = c(1, 2), ...)
 
 \S4method{plot}{spatialNetworkObj,missing}(x, y, ...)
 }
@@ -34,27 +43,35 @@
 
 \item{type}{what to plot: either 'poly' (default) or polygon 'centroid'}
 
+\item{max_poly}{numeric. If \code{type} is not specified, maximum number of
+polygons to plot before automatically switching to centroids plotting.
+Default is 1e4. This value is settable using options("giotto.plot_max_poly")}
+
 \item{feats}{specific features to plot within giottoPoints object (defaults to NULL, meaning all available features)}
 
 \item{raster}{default = TRUE, whether to plot points as rasterized plot with
 size based on \code{size} param}
 
 \item{raster_size}{Default is 600. Only used when \code{raster} is TRUE}
+
+\item{dims}{dimensions to plot}
 }
 \description{
 S4 generic for previewing Giotto's image and subcellular objects.
 }
 \section{Functions}{
 \itemize{
-\item \code{plot(x = giottoImage, y = missing)}: Plot \emph{magick}-based giottoImage object. ... param passes to \code{\link{plot_giottoImage_MG}}
+\item \code{plot(x = giottoImage, y = missing)}: Plot \emph{magick}-based giottoImage object. ... param passes to \code{\link{.plot_giottoimage_mg}}
 
-\item \code{plot(x = giottoLargeImage, y = missing)}: Plot \emph{terra}-based giottoLargeImage object. ... param passes to \code{\link{plot_giottoLargeImage}}
+\item \code{plot(x = giottoLargeImage, y = missing)}: Plot \emph{terra}-based giottoLargeImage object. ... param passes to \code{\link{.plot_giottolargeimage}}
 
 \item \code{plot(x = giottoPolygon, y = missing)}: Plot \emph{terra}-based giottoPolygon object. ... param passes to \code{\link[terra]{plot}}
 
 \item \code{plot(x = giottoPoints, y = missing)}: \emph{terra}-based giottoPoint object. ... param passes to \code{\link[terra]{plot}}
 
 \item \code{plot(x = spatLocsObj, y = missing)}: Plot a spatLocsObj
+
+\item \code{plot(x = dimObj, y = missing)}: Plot a dimObj
 
 \item \code{plot(x = spatialNetworkObj, y = missing)}: Plot a spatialNetworkObj
 

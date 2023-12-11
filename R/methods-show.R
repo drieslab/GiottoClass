@@ -175,7 +175,7 @@ setMethod(
       cat("\n First four colnames:")
       cat("\n", wrap_txt(head(colnames(slot(object, "exprMat")), 4), strWidth = 40), "\n")
     } else if (inherits(slot(object, "exprMat"), "denseMatrix")) {
-      abb_mat(object, nrows = 10, ncols = 10, header = FALSE)
+      .abbrev_mat(object, nrows = 10, ncols = 10, header = FALSE)
     } else {
       # * other matrices *
       print(slot(object, "exprMat"))

@@ -193,7 +193,7 @@ setMethod(
     } else {
       .gstop(
         "No feat_info or image_names provided.
-        No data to overlap.", .n = 3L
+        No data to overlap.", .n = 2L
       )
     }
 
@@ -416,7 +416,7 @@ setMethod(
       y <- y[bool_vector]
     }
 
-    calculate_overlap_raster(
+    .calculate_overlap_raster(
       spatvec = x,
       pointvec = y,
       count_info_column = count_info_column,
@@ -447,7 +447,7 @@ setMethod(
 #' @return giotto object or spatVector with overlapping information
 #' @details Serial overlapping function.
 #' @concept overlap
-#' @seealso [calculate_overlap_raster()]
+#' @seealso [.calculate_overlap_raster()]
 #' @export
 calculateOverlapRaster <- function(
     gobject,
@@ -505,7 +505,7 @@ calculateOverlapRaster <- function(
   }
 
   # run overlap workflow
-  overlap_points <- calculate_overlap_raster(
+  overlap_points <- .calculate_overlap_raster(
     spatvec = spatvec,
     pointvec = pointvec,
     count_info_column = count_info_column,
@@ -524,7 +524,7 @@ calculateOverlapRaster <- function(
 
 
 
-#' @name calculate_overlap_raster
+#' @name .calculate_overlap_raster
 #' @title Find feature points overlapped by rasterized polygon.
 #' @description Core workflow function that accepts simple `SpatVector` inputs,
 #' performs rasterization of the polys and then checks for overlaps.
@@ -536,7 +536,7 @@ calculateOverlapRaster <- function(
 #' @concept overlap
 #' @seealso [calculateOverlapRaster()]
 #' @keywords internal
-calculate_overlap_raster <- function(spatvec,
+.calculate_overlap_raster <- function(spatvec,
                                      pointvec,
                                      count_info_column = NULL,
                                      verbose = TRUE) {
@@ -597,10 +597,10 @@ calculate_overlap_raster <- function(spatvec,
 
 
 #' @title Overlap points -- single polygon
-#' @name overlap_points_single_polygon
+#' @name .overlap_points_single_polygon
 #' @description  overlap for a single polygon
 #' @keywords internal
-overlap_points_single_polygon <- function(spatvec,
+.overlap_points_single_polygon <- function(spatvec,
                                           poly_ID_name,
                                           pointvec_dt) {
   # define for data.table
@@ -612,7 +612,7 @@ overlap_points_single_polygon <- function(spatvec,
 
   ## extract potential features (points) based on limits
   one_polygon_pointvec_dt <- pointvec_dt[x > terra::xmin(ext_limits) & x < terra::xmax(ext_limits)][y > terra::ymin(ext_limits) & y < terra::ymax(ext_limits)]
-  one_polygon_pointsvec <- dt_to_spatVector_points(one_polygon_pointvec_dt)
+  one_polygon_pointsvec <- .dt_to_spatvector_points(one_polygon_pointvec_dt)
 
   ## calculate intersection between single polygon and points
   one_polygon_overlap <- terra::intersect(
@@ -679,7 +679,7 @@ calculateOverlapPolygonImages <- function(gobject,
 
   # calculate centroids for poly_info if not present
   if (is.null(poly_info@spatVectorCentroids)) {
-    poly_info <- calculate_centroids_polygons(
+    poly_info <- .calculate_centroids_polygons(
       gpolygon = poly_info,
       name = "centroids",
       append_gpolygon = TRUE
@@ -770,11 +770,11 @@ calculateOverlapPolygonImages <- function(gobject,
 
 
 #' @title Overlap points per polgyon
-#' @name overlap_points_per_polygon
+#' @name .overlap_points_per_polygon
 #' @description Loop to overlap each single polygon
 #' @keywords internal
-#' @seealso \code{\link{overlap_points_single_polygon}}
-overlap_points_per_polygon <- function(spatvec,
+#' @seealso \code{\link{.overlap_points_single_polygon}}
+.overlap_points_per_polygon <- function(spatvec,
                                        pointvec,
                                        poly_ID_names,
                                        verbose = TRUE) {
@@ -782,7 +782,7 @@ overlap_points_per_polygon <- function(spatvec,
   spatvec <- spatvec[terra::is.valid(spatvec)]
 
   # points polygon
-  pointvec_dt <- spatVector_to_dt(pointvec)
+  pointvec_dt <- .spatvector_to_dt(pointvec)
 
   # get polygon names
   unique_cell_names <- unique(spatvec$poly_ID)
@@ -795,7 +795,7 @@ overlap_points_per_polygon <- function(spatvec,
   for (poly_ID_name in poly_ID_names) {
     if (verbose == TRUE) print(poly_ID_name)
 
-    result <- overlap_points_single_polygon(
+    result <- .overlap_points_single_polygon(
       spatvec = spatvec,
       poly_ID_name = poly_ID_name,
       pointvec_dt = pointvec_dt
@@ -870,7 +870,7 @@ calculateOverlapSerial <- function(gobject,
 
 
 
-    spatvec_result <- overlap_points_per_polygon(
+    spatvec_result <- .overlap_points_per_polygon(
       spatvec = selected_spatvec,
       pointvec = pointvec,
       poly_ID_names = selected_poly_ID_names,
@@ -898,10 +898,10 @@ calculateOverlapSerial <- function(gobject,
 
 
 #' @title Overlap points per polygon -- wrapped
-#' @name overlap_points_per_polygon_wrapped
+#' @name .overlap_points_per_polygon_wrapped
 #' @description overlap wrapped polygons
 #' @keywords internal
-overlap_points_per_polygon_wrapped <- function(spatvec_wrapped,
+.overlap_points_per_polygon_wrapped <- function(spatvec_wrapped,
                                                pointvec_wrapped,
                                                poly_ID_names) {
   unwrap_spatvec <- terra::vect(spatvec_wrapped)
@@ -913,7 +913,7 @@ overlap_points_per_polygon_wrapped <- function(spatvec_wrapped,
     }
   }
 
-  intersect_res <- overlap_points_per_polygon(
+  intersect_res <- .overlap_points_per_polygon(
     spatvec = unwrap_spatvec,
     pointvec = unwrap_pointvec,
     poly_ID_names = poly_ID_names,
@@ -987,7 +987,7 @@ calculateOverlapParallel <- function(gobject,
   result1 <- lapply_flex(
     X = 1:length(spatvec_wrap_list),
     FUN = function(x) {
-      test <- overlap_points_per_polygon_wrapped(
+      test <- .overlap_points_per_polygon_wrapped(
         spatvec_wrapped = spatvec_wrap_list[[x]],
         pointvec_wrapped = pointvec_wrap,
         poly_ID_names = "all"
@@ -1185,7 +1185,7 @@ setMethod(
     if (is.null(overlaps_data)) {
       .gstop(
         "No overlaps found between", objName(x), "and", feat_info, "
-        Please run calculateOverlap() first.", .n = 3L
+        Please run calculateOverlap() first.", .n = 2L
       )
     }
 
@@ -1235,7 +1235,7 @@ setMethod(
     if (!is.null(count_info_column)) { # if there is a counts col
 
       if (!count_info_column %in% colnames(dtoverlap)) {
-        .gstop("count_info_column ", count_info_column, " does not exist", .n = 3L)
+        .gstop("count_info_column ", count_info_column, " does not exist", .n = 2L)
       }
 
       # aggregate counts of features
@@ -1524,7 +1524,7 @@ overlapImagesToMatrix <- function(gobject,
 
     # add spatial locations
     centroidsDT <- gobject@spatial_info[[poly_info]]@spatVectorCentroids
-    centroidsDT <- spatVector_to_dt(centroidsDT)
+    centroidsDT <- .spatvector_to_dt(centroidsDT)
     centroidsDT_loc <- centroidsDT[, .(poly_ID, x, y)]
     colnames(centroidsDT_loc) <- c("cell_ID", "sdimx", "sdimy")
 
@@ -1584,9 +1584,7 @@ overlapImagesToMatrix <- function(gobject,
 # understanding of the cell's expression
 
 
-#' @title combine_matrices
-#' @keywords internal
-combine_matrices <- function(mat_list,
+.combine_matrices <- function(mat_list,
                              summarize = "sum") {
   # data.table vars
   i <- j <- x <- i2 <- j2 <- NULL
@@ -1695,7 +1693,7 @@ aggregateStacksExpression <- function(gobject,
     )
     matrix_list[[spat_unit]] <- mat
   }
-  combined_matrix <- combine_matrices(matrix_list,
+  combined_matrix <- .combine_matrices(matrix_list,
     summarize = summarize
   )
 
@@ -1749,9 +1747,8 @@ aggregateStacksExpression <- function(gobject,
 }
 
 
-#' @title combine_spatlocs
-#' @keywords internal
-combine_spatlocs <- function(spatlocs_list,
+
+.combine_spatlocs <- function(spatlocs_list,
                              summarize = "mean") {
   # data.table vars
   sdimx <- sdimy <- sdimz <- NULL
@@ -1799,7 +1796,7 @@ aggregateStacksLocations <- function(gobject,
     )
     locs_list[[spat_unit]] <- locDT
   }
-  combined_locs <- combine_spatlocs(
+  combined_locs <- .combine_spatlocs(
     spatlocs_list = locs_list,
     summarize = summarize
   )
@@ -1825,12 +1822,11 @@ aggregateStacksLocations <- function(gobject,
 }
 
 
-#' @title combine_polygons
-#' @keywords internal
-combine_polygons <- function(polygon_list) {
+
+.combine_polygons <- function(polygon_list) {
   polygon_DT <- data.table::rbindlist(polygon_list)
 
-  polygon <- dt_to_spatVector_polygon(polygon_DT)
+  polygon <- .dt_to_spatvector_polygon(polygon_DT)
 
   # TODO: maybe replace step 1 and 2 with polygon_to_raster()
   # TODO: how to define number of columns and rows?
@@ -1859,55 +1855,46 @@ combine_polygons <- function(polygon_list) {
 
 
 
-#' @title aggregateStacksPolygonsOLD
-#' @name aggregateStacksPolygonsOLD
-#' @description aggregate polygons from different z-stacks
-#' @param gobject giotto object
-#' @param spat_units spatial units to aggregate
-#' @param new_spat_unit new name for aggregated spatial unit
-#' @return giotto object
-#' @family aggregate stacks
-#' @export
-#'
-aggregateStacksPolygonsOLD <- function(gobject,
-                                       spat_units,
-                                       new_spat_unit = "aggregate") {
-  # aggregate spatvectors
-  polygon_list <- list()
 
-  for (i in 1:length(spat_units)) {
-    spat_unit <- spat_units[i]
-    vecDT <- gobject@spatial_info[[spat_unit]]@spatVector
-    vecDT <- spatVector_to_dt(vecDT)
-    vecDT <- vecDT[, c("geom", "part", "x", "y", "hole", "poly_ID"), with = FALSE]
-    vecDT[, "stack" := i]
-    polygon_list[[spat_unit]] <- vecDT
-  }
-
-  combined_polygons <- combine_polygons(polygon_list = polygon_list)
-
-  gpolygon <- create_giotto_polygon_object(
-    name = new_spat_unit,
-    spatVector = combined_polygons,
-    spatVectorCentroids = NULL,
-    overlaps = NULL
-  )
-
-  gobject <- set_polygon_info(
-    gobject = gobject,
-    polygon_name = new_spat_unit,
-    gpolygon = gpolygon,
-    verbose = F
-  )
-
-  return(gobject)
-}
+# aggregateStacksPolygonsOLD <- function(gobject,
+#                                        spat_units,
+#                                        new_spat_unit = "aggregate") {
+#   # aggregate spatvectors
+#   polygon_list <- list()
+#
+#   for (i in 1:length(spat_units)) {
+#     spat_unit <- spat_units[i]
+#     vecDT <- gobject@spatial_info[[spat_unit]]@spatVector
+#     vecDT <- .spatvector_to_dt(vecDT)
+#     vecDT <- vecDT[, c("geom", "part", "x", "y", "hole", "poly_ID"), with = FALSE]
+#     vecDT[, "stack" := i]
+#     polygon_list[[spat_unit]] <- vecDT
+#   }
+#
+#   combined_polygons <- .combine_polygons(polygon_list = polygon_list)
+#
+#   gpolygon <- create_giotto_polygon_object(
+#     name = new_spat_unit,
+#     spatVector = combined_polygons,
+#     spatVectorCentroids = NULL,
+#     overlaps = NULL
+#   )
+#
+#   gobject <- set_polygon_info(
+#     gobject = gobject,
+#     polygon_name = new_spat_unit,
+#     gpolygon = gpolygon,
+#     verbose = F
+#   )
+#
+#   return(gobject)
+# }
 
 
-#' @title combine_stack_spatVectors
+#' @title .combine_stack_spatvectors
 #' @description combines/aggregates polygons with the same cell ID from different z-stacks
 #' @keywords internal
-combine_stack_spatVectors <- function(gobject,
+.combine_stack_spatvectors <- function(gobject,
                                       spat_units,
                                       for_loop = FALSE,
                                       for_loop_group_size = 100) {
@@ -1929,8 +1916,8 @@ combine_stack_spatVectors <- function(gobject,
 
   # TODO: check if all stackspatvectors are identical
   # skip polygon aggregation step and simply keep one spatvector
-  # dt_z0 = spatVector_to_dt(stackspatvector_z0)
-  # dt_z1 = spatVector_to_dt(stackspatvector_z1)
+  # dt_z0 = .spatvector_to_dt(stackspatvector_z0)
+  # dt_z1 = .spatvector_to_dt(stackspatvector_z1)
   # identical(dt_z0[,.(x,y)], dt_z1[,.(x,y)])
 
 
@@ -1984,7 +1971,7 @@ aggregateStacksPolygons <- function(gobject,
                                     for_loop = FALSE,
                                     for_loop_group_size = 100) {
   # aggregate spatvectors
-  aggregated_spatVec <- combine_stack_spatVectors(
+  aggregated_spatVec <- .combine_stack_spatvectors(
     gobject = gobject,
     spat_units = spat_units,
     for_loop = for_loop,
@@ -2033,7 +2020,7 @@ aggregateStacksPolygonOverlaps <- function(gobject,
     vecDT <- gobject@spatial_info[[spat_unit]]@overlaps[[feat_type]]
 
     if (!is.null(vecDT)) {
-      vecDT <- spatVector_to_dt(vecDT)
+      vecDT <- .spatvector_to_dt(vecDT)
       vecDT[, "stack" := i]
       polygon_list[[spat_unit]] <- vecDT
     }
@@ -2043,7 +2030,7 @@ aggregateStacksPolygonOverlaps <- function(gobject,
     wrap_msg("No feature overlaps found for stack aggregation \n")
   } else {
     polygon_DT <- data.table::rbindlist(polygon_list)
-    polygon <- dt_to_spatVector_points(
+    polygon <- .dt_to_spatvector_points(
       dt = polygon_DT,
       include_values = TRUE
     )

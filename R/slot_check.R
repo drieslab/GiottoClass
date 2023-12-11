@@ -2,7 +2,7 @@
 
 #' @keywords internal
 #' @noRd
-check_cell_metadata <- function(gobject,
+.check_cell_metadata <- function(gobject,
                                 verbose = TRUE) {
   # data.table vars
   cell_ID <- spat_unit <- NULL
@@ -115,7 +115,7 @@ check_cell_metadata <- function(gobject,
 
 #' @keywords internal
 #' @noRd
-check_feat_metadata <- function(gobject,
+.check_feat_metadata <- function(gobject,
                                 verbose = TRUE) {
   # data.table vars
   feat_ID <- spat_unit <- feat_type <- NULL
@@ -254,11 +254,11 @@ check_feat_metadata <- function(gobject,
 
 
 #' @title Check spatial location data
-#' @name check_spatial_location_data
+#' @name .check_spatial_location_data
 #' @description check cell ID (spatial unit) names between spatial location and expression data.
 #' It will look for identical IDs after sorting.
 #' @keywords internal
-check_spatial_location_data <- function(gobject) {
+.check_spatial_location_data <- function(gobject) {
   # define for data.table
   cell_ID <- spat_unit <- name <- NULL
 
@@ -327,7 +327,7 @@ check_spatial_location_data <- function(gobject) {
 
 #' @keywords internal
 #' @noRd
-check_spatial_networks <- function(gobject) {
+.check_spatial_networks <- function(gobject) {
   # DT vars
   spat_unit <- NULL
 
@@ -376,11 +376,11 @@ check_spatial_networks <- function(gobject) {
 
 
 
-#' @name check_spatial_enrichment
+#' @name .check_spatial_enrichment
 #' @description check the spatial enrichment information within the gobject
 #' @keywords internal
 #' @noRd
-check_spatial_enrichment <- function(gobject) {
+.check_spatial_enrichment <- function(gobject) {
   # DT vars
   spat_unit <- NULL
 
@@ -434,10 +434,10 @@ check_spatial_enrichment <- function(gobject) {
 
 
 
-#' @name check_dimension_reduction
+#' @name .check_dimension_reduction
 #' @keywords internal
 #' @noRd
-check_dimension_reduction <- function(gobject) {
+.check_dimension_reduction <- function(gobject) {
   # DT vars
   spat_unit <- feat_type <- NULL
 
@@ -538,7 +538,7 @@ check_dimension_reduction <- function(gobject) {
 
 #' @keywords internal
 #' @noRd
-check_nearest_networks <- function(gobject) {
+.check_nearest_networks <- function(gobject) {
   # DT vars
   spat_unit <- feat_type <- NULL
 
@@ -594,10 +594,10 @@ check_nearest_networks <- function(gobject) {
 
 
 
-#' @name check_spatial_info
+#' @name .check_spatial_info
 #' @keywords internal
 #' @noRd
-check_spatial_info <- function(gobject) {
+.check_spatial_info <- function(gobject) {
   # DT vars
   spat_unit <- NULL
 
@@ -647,9 +647,9 @@ check_spatial_info <- function(gobject) {
 
 
 
-#' @name check_feature_info
+#' @name .check_feature_info
 #' @keywords internal
 #' @noRd
-check_feature_info <- function(gobject) {
+.check_feature_info <- function(gobject) {
   # TODO ... expr info or meta info w/ IDs not in feature info
 }

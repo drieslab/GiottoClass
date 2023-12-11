@@ -48,7 +48,73 @@ setMethod(
   }
 )
 
+.DollarNames.spatLocsObj <- function(x, pattern) {
+  names(x@coordinates)
+}
+
+
+
+## * spatEnrObj ####
+#' @rdname extract-methods
+#' @section \code{`$`} methods:
+#'   Select by colname from giotto S4 enrObj
+#' @export
+setMethod(
+  "$", signature(x = "spatEnrObj"),
+  function(x, name) {
+    x@enrichDT[[as.character(name)]]
+  }
+)
+
+#' @rdname extract-methods
+#' @section \code{`$`} methods:
+#'   Set values by colname into giotto S4 dimObj.
+#' @export
+setMethod(
+  "$<-", signature(x = "spatEnrObj"),
+  function(x, name, value) {
+    x@enrichDT[[as.character(name)]] <- value
+    return(x)
+  }
+)
+
+.DollarNames.spatEnrObj <- function(x, pattern) {
+  names(x@enrichDT)
+}
+
+
+## * dimObj ####
+
+#' @rdname extract-methods
+#' @section \code{`$`} methods:
+#'   Select entries in misc slot from giotto S4 dimObj.
+#' @export
+setMethod(
+  "$", signature(x = "dimObj"),
+  function(x, name) x@misc[[name]]
+)
+
+#' @rdname extract-methods
+#' @section \code{`$`} methods:
+#'   Set entries in misc slot from giotto S4 dimObj.
+#' @export
+setMethod(
+  "$<-", signature(x = "dimObj"),
+  function(x, name, value) {
+    x@misc[[name]] <- value
+    return(x)
+  }
+)
+
+.DollarNames.dimObj <- function(x, pattern) {
+  names(x@misc)
+}
+
 ## * metaData ####
+
+.DollarNames.metaData <- function(x, pattern) {
+  colnames(x@metaDT)
+}
 
 #' @rdname extract-methods
 #' @section \code{`$`} methods:
@@ -97,6 +163,9 @@ setMethod(
   }
 )
 
+.DollarNames.terraVectData <- function(x, pattern) {
+  names(x@spatVector)
+}
 
 
 # [ S4 access generic ####
@@ -370,7 +439,7 @@ setMethod(
 )
 
 
-## * dimObj (temp) ####
+## * dimObj ####
 
 #' @rdname extract-methods
 #' @export
@@ -647,9 +716,9 @@ setMethod(
   function(x, i, j) {
     x@spatVector <- x@spatVector[, j]
     if (!"feat_ID" %in% names(x@spatVector)) {
-      stop(wrap_txt(
-        "feat_ID must be a kept as a column"
-      ))
+      .gstop(
+        "feat_ID must be kept as a column", .n = 2L
+      )
     }
     x
   }
@@ -724,9 +793,9 @@ setMethod(
     x@spatVector <- x@spatVector[, j]
     x@spatVectorCentroids <- x@spatVectorCentroids[, j]
     if (!"poly_ID" %in% names(x@spatVector)) {
-      stop(wrap_txt(
-        "poly_ID must be a kept as a column"
-      ))
+      .gstop(
+        "poly_ID must be kept as a column", .n = 2L
+      )
     }
     x
   }

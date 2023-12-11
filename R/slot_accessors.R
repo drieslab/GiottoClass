@@ -838,7 +838,7 @@ set_cell_metadata <- function(gobject,
   } else {
     # 4.2 if nested list structure, extract spat_unit/feat_type
     if (inherits(metadata, "list")) {
-      cellMetaObj_list <- read_cell_metadata(gobject,
+      cellMetaObj_list <- .read_cell_metadata(gobject,
         metadata = metadata,
         provenance = if (is.null(provenance)) spat_unit else provenance
       )
@@ -4073,7 +4073,7 @@ setPolygonInfo <- function(gobject,
     if (inherits(x, "giottoPolygon") & isTRUE(centroids_to_spatlocs)) {
       if (!is.null(x@spatVectorCentroids)) {
         centroids <- x@spatVectorCentroids
-        centroidsDT <- spatVector_to_dt(centroids)
+        centroidsDT <- .spatvector_to_dt(centroids)
         centroidsDT_loc <- centroidsDT[, .(poly_ID, x, y)]
         colnames(centroidsDT_loc) <- c("cell_ID", "sdimx", "sdimy")
 
@@ -4124,7 +4124,7 @@ setPolygonInfo <- function(gobject,
         if (inherits(x[[obj_i]], "giottoPolygon") & isTRUE(centroids_to_spatlocs)) {
           if (!is.null(x[[obj_i]]@spatVectorCentroids)) {
             centroids <- x[[obj_i]]@spatVectorCentroids
-            centroidsDT <- spatVector_to_dt(centroids)
+            centroidsDT <- .spatvector_to_dt(centroids)
             centroidsDT_loc <- centroidsDT[, .(poly_ID, x, y)]
             colnames(centroidsDT_loc) <- c("cell_ID", "sdimx", "sdimy")
 

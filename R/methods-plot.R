@@ -18,25 +18,41 @@ NULL
 
 
 
-#' @describeIn plot-generic Plot \emph{magick}-based giottoImage object. ... param passes to \code{\link{plot_giottoImage_MG}}
+#' @describeIn plot-generic Plot \emph{magick}-based giottoImage object. ... param passes to \code{\link{.plot_giottoimage_mg}}
 #' @export
-setMethod("plot", signature(x = "giottoImage", y = "missing"), function(x, y, ...) plot_giottoImage_MG(giottoImage = x, ...))
+setMethod("plot", signature(x = "giottoImage", y = "missing"), function(x, y, ...) .plot_giottoimage_mg(giottoImage = x, ...))
 
-#' @describeIn plot-generic Plot \emph{terra}-based giottoLargeImage object. ... param passes to \code{\link{plot_giottoLargeImage}}
+#' @describeIn plot-generic Plot \emph{terra}-based giottoLargeImage object. ... param passes to \code{\link{.plot_giottolargeimage}}
 #' @export
-setMethod("plot", signature(x = "giottoLargeImage", y = "missing"), function(x, y, ...) plot_giottoLargeImage(giottoLargeImage = x, ...))
+setMethod("plot", signature(x = "giottoLargeImage", y = "missing"), function(x, y, ...) .plot_giottolargeimage(giottoLargeImage = x, ...))
 
 #' @describeIn plot-generic Plot \emph{terra}-based giottoPolygon object. ... param passes to \code{\link[terra]{plot}}
 #' @param point_size size of points when plotting giottoPolygon object centroids
 #' @param type what to plot: either 'poly' (default) or polygon 'centroid'
+#' @param max_poly numeric. If `type` is not specified, maximum number of
+#' polygons to plot before automatically switching to centroids plotting.
+#' Default is 1e4. This value is settable using options("giotto.plot_max_poly")
 #' @export
 setMethod(
   "plot", signature(x = "giottoPolygon", y = "missing"),
-  function(x, point_size = 0.1, type = c("poly", "centroid"), ...) {
+  function(
+    x,
+    point_size = 0.6,
+    type = c("poly", "centroid"),
+    max_poly = getOption("giotto.plot_max_poly", 1e4),
+    ...
+  ) {
     if (length(x@unique_ID_cache) == 0) {
       stop(wrap_txt("No geometries to plot"), call. = FALSE)
     }
-    plot_giotto_polygon(x = x, point_size = point_size, type = type, ...)
+
+    # if greater than max_poly, simplify to centroid
+    if (nrow(x) > max_poly &&
+        length(type) == 2L) {
+      type <- "centroid"
+    }
+
+    .plot_giotto_polygon(x = x, point_size = point_size, type = type, ...)
   }
 )
 
@@ -53,7 +69,7 @@ setMethod(
     if (length(x@unique_ID_cache) == 0) {
       stop(wrap_txt("No geometries to plot"), call. = FALSE)
     }
-    plot_giotto_points(
+    .plot_giotto_points(
       x = x, point_size = point_size, feats = feats,
       raster = raster, raster_size = raster_size, ...
     )
@@ -66,8 +82,8 @@ setMethod(
 setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) {
   l <- list(...)
   if (is.null(l$asp)) l$asp <- 1
-  if (is.null(l$xlab)) l$xlab <- ""
-  if (is.null(l$ylab)) l$ylab <- ""
+  if (is.null(l$xlab)) l$xlab <- "x coordinates"
+  if (is.null(l$ylab)) l$ylab <- "y coordinates"
   if (is.null(l$cex)) l$cex <- 0.5
   if (nrow(x) > 10000L) {
     if (is.null(l$pch)) l$pch <- "."
@@ -75,6 +91,31 @@ setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) 
 
   do.call("plot", append(l, list(x = x[]$sdimx, y = x[]$sdimy)))
 })
+
+#' @describeIn plot-generic Plot a dimObj
+#' @param dims dimensions to plot
+#' @export
+setMethod(
+  "plot", signature(x = "dimObj", y = "missing"),
+  function(
+    x, dims = c(1,2), ...
+  ) {
+    plot_vals <- x[][, dims]
+
+    l <- list(...)
+    if (is.null(l$asp)) l$asp <- 1
+    if (is.null(l$xlab)) l$xlab <- colnames(plot_vals)[1L]
+    if (is.null(l$ylab)) l$ylab <- colnames(plot_vals)[2L]
+    if (is.null(l$cex)) l$cex <- 0.5
+    if (nrow(x) > 10000L) {
+      if (is.null(l$pch)) l$pch <- "."
+    } else {
+      if (is.null(l$pch)) l$pch <- 20
+    }
+
+    do.call("plot", append(l, list(x = plot_vals[,1], y = plot_vals[,2])))
+  }
+)
 
 
 #' @describeIn plot-generic Plot a spatialNetworkObj
@@ -126,15 +167,15 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 
 # internals ####
 
-#' @title plot_giottoImage_MG
-#' @name plot_giottoImage_MG
+#' @title .plot_giottoimage_mg
+#' @name .plot_giottoimage_mg
 #' @description get and plot a giottoImage either directly or from a giotto object
 #' @param gobject giotto object
 #' @param image_name name of giotto image \code{\link{showGiottoImageNames}}
 #' @param giottoImage giottoImage object
 #' @return plot
 #' @keywords internal
-plot_giottoImage_MG <- function(gobject = NULL,
+.plot_giottoimage_mg <- function(gobject = NULL,
                                 image_name = NULL,
                                 giottoImage = NULL) {
   if (!is.null(giottoImage)) {
@@ -156,8 +197,8 @@ plot_giottoImage_MG <- function(gobject = NULL,
 
 # TODO link this up to plot_auto_largeImage_resample() ?
 
-#' @title plot_giottoLargeImage
-#' @name plot_giottoLargeImage
+#' @title .plot_giottolargeimage
+#' @name .plot_giottolargeimage
 #' @description Plot a \emph{downsampled} version of giottoLargeImage. Cropping can increase plot resolution of region of interest.
 #' @param gobject giotto object
 #' @param largeImage_name name of giottoLargeImage
@@ -183,7 +224,7 @@ plot_giottoImage_MG <- function(gobject = NULL,
 #' depending on image type
 #' @return plot
 #' @keywords internal
-plot_giottoLargeImage <- function(gobject = NULL,
+.plot_giottolargeimage <- function(gobject = NULL,
                                   largeImage_name = NULL,
                                   giottoLargeImage = NULL,
                                   crop_extent = NULL,
@@ -266,7 +307,7 @@ plot_giottoLargeImage <- function(gobject = NULL,
 
 
 
-#' @name plot_giotto_points
+#' @name .plot_giotto_points
 #' @title Plot a giotto points object
 #' @param x giottoPoints object
 #' @param point_size (default = 0.1) size of plotted points
@@ -276,7 +317,7 @@ plot_giottoLargeImage <- function(gobject = NULL,
 #' @param ... additional params to pass to plot functions
 #' @keywords internal
 #' @noRd
-plot_giotto_points <- function(x,
+.plot_giotto_points <- function(x,
                                point_size = 0,
                                feats = NULL,
                                raster = TRUE,
@@ -301,9 +342,9 @@ plot_giotto_points <- function(x,
       install.packages('scattermore')"
     )
     args_list$size <- raster_size
-    do.call("plot_giotto_points_raster", args_list)
+    do.call(".plot_giotto_points_raster", args_list)
   } else {
-    do.call("plot_giotto_points_vector", args_list)
+    do.call(".plot_giotto_points_vector", args_list)
   }
 }
 
@@ -315,7 +356,7 @@ plot_giotto_points <- function(x,
 #' Rasterized plotting workflow for giottoPoints via scattermore
 #' @param ... additional params to pass
 #' @noRd
-plot_giotto_points_raster <- function(data, feats = NULL, ...) {
+.plot_giotto_points_raster <- function(data, feats = NULL, ...) {
   args_list <- list(...)
 
   opar <- par(no.readonly = TRUE)
@@ -325,7 +366,10 @@ plot_giotto_points_raster <- function(data, feats = NULL, ...) {
   # raster size
   if (is.null(args_list$size)) {
     args_list$size <- c(600, 600)
-  } else if (length(args_list$size) == 1L) args_list$size <- rep(args_list$size, 2L)
+  } else if (length(args_list$size) == 1L) {
+    # if size provided as single value, replicate to give a square window
+    args_list$size <- rep(args_list$size, 2L)
+  }
 
   # axis font size
   if (is.null(args_list$cex.axis)) args_list$cex.axis <- 0.7
@@ -344,37 +388,85 @@ plot_giotto_points_raster <- function(data, feats = NULL, ...) {
     include_values = include_values
   )
 
-browser()
-par(mar = c(2.7, 3.5, 2, 2))
 
-if (length(feats) == 0L) {
+  if (length(feats) == 0L) {
+
+    .plot_giotto_points_all(
+      dataDT = dataDT,
+      args_list = args_list
+    )
+
+  } else if (length(feats) == 1L) {
+
+    .plot_giotto_points_one(
+      dataDT = dataDT,
+      feats = feats,
+      args_list = args_list
+    )
+
+  } else {
+
+    .plot_giotto_points_several(
+      dataDT = dataDT,
+      feats = feats,
+      args_list = args_list
+    )
+
+  }
+}
+
+
+
+.plot_giotto_points_all <- function(dataDT, args_list) {
+  par(mar = c(2.7, 3.5, 2, 2))
+
+  args_list$x <- dataDT$x
+  args_list$y <- dataDT$y
+  args_list$col <- "white"
+
   plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
   u <- par("usr") # coordinates of the plot area
   rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
   par(new = TRUE)
 
+  do.call(scattermore::scattermoreplot, args_list)
+}
+
+
+
+.plot_giotto_points_one <- function(dataDT, feats, args_list) {
+
+  if (!feats %in% dataDT[, feat_ID]) {
+    .gstop(vector_to_string(feats), "not found in giottoPoints", .n = 6L)
+  }
+
+  par(mar = c(2.7, 3.5, 2, 2))
+
+  dataDT <- dataDT[feat_ID == feats] # select single feats's data
   args_list$x <- dataDT$x
   args_list$y <- dataDT$y
   args_list$col <- "white"
-  do.call(scattermore::scattermoreplot, args_list)
-} else if (length(feats) == 1L) {
 
   plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
   u <- par("usr") # coordinates of the plot area
   rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
   par(new = TRUE)
 
-  dataDT <- dataDT[feat_ID == feats]
-  args_list$x <- dataDT$x
-  args_list$y <- dataDT$y
-  args_list$col <- "white"
   do.call(scattermore::scattermoreplot, args_list)
-} else {
+}
+
+
+
+.plot_giotto_points_several <- function(dataDT, feats, args_list) {
+  # NSE vars
   feat_color_idx <- feat_ID <- NULL
 
-  # save current graphical parameters
+  missing_feats <- feats[!feats %in% dataDT[, feat_ID]]
+  if (length(missing_feats) > 0L) {
+    .gstop(vector_to_string(missing_feats), "not found in giottoPoints", .n = 6L)
+  }
 
-
+  par(mar = c(2.7, 3.5, 2, 4))
   feat_colors <- getRainbowColors(length(feats))
 
   data.table::setkey(dataDT, "feat_ID")
@@ -386,9 +478,6 @@ if (length(feats) == 0L) {
   args_list$y <- dataDT$y
   args_list$col <- feat_colors[dataDT$feat_color_idx]
 
-
-
-  par(mar = c(2.7, 3.5, 2, 4))
   plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
   u <- par("usr") # coordinates of the plot area
   rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
@@ -407,7 +496,10 @@ if (length(feats) == 0L) {
     xpd = TRUE
   )
 }
-}
+
+
+
+
 
 
 
@@ -417,7 +509,7 @@ if (length(feats) == 0L) {
 #' @param ... additional params to pass
 #' Vectorized plotting workflow for giottoPoints via base plot()
 #' @noRd
-plot_giotto_points_vector <- function(data, feats = NULL, ...) {
+.plot_giotto_points_vector <- function(data, feats = NULL, ...) {
   args_list <- list(...)
 
   # base plot does not understand cex of 0
@@ -445,15 +537,15 @@ plot_giotto_points_vector <- function(data, feats = NULL, ...) {
 
 
 
-#' @name plot_giotto_polygon
+#' @name .plot_giotto_polygon
 #' @title Plot a giotto polygon object
 #' @param x giottoPolygon object
-#' @param point_size (default = 0.1) size of plotted points when plotting centroids
+#' @param point_size (default = 0.6) size of plotted points when plotting centroids
 #' @param type (default is poly) plot the 'polygon' or its 'centroid'
 #' @param ... additional params to pass to plot function
 #' @keywords internal
 #' @noRd
-plot_giotto_polygon <- function(x, point_size = 0.1,
+.plot_giotto_polygon <- function(x, point_size = 0.6,
                                 type = c("poly", "centroid"), ...) {
   type <- match.arg(type, choices = c("poly", "centroid"))
   if (type == "poly") {
