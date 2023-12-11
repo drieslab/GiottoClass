@@ -111,16 +111,20 @@ setMethod(
 
 
 #' @rdname as.points
+#' @param include_values `logical`. Whether to include additional columns other
+#' than the geometry information as `SpatVector` attributes. Default is TRUE.
+#' @param specific_values `character`. Specific subset of columns to include as
+#' attributes if `include_values = TRUE`.
 #' @export
 setMethod(
   "as.points", signature("data.frame"),
   function(
-    x, include_values = TRUE, specific_values = NULL, sort_geom = FALSE
+    x, include_values = TRUE, specific_values = NULL
   ) {
-    .dt_to_spatVector_points(
+    .dt_to_spatvector_points(
       dt = data.table::setDT(x),
-      specific_values = specific_values,
-      sort_geom = sort_geom
+      include_values = include_values,
+      specific_values = specific_values
     )
   }
 )
@@ -511,7 +515,7 @@ setMethod(
 
 
 #' @title Convert point data data.table to spatVector
-#' @name .dt_to_spatVector_points
+#' @name .dt_to_spatvector_points
 #' @description data.table to spatVector for points
 #' @param dt data.table
 #' @param include_values boolean. Include additional values from data.table as
@@ -519,7 +523,7 @@ setMethod(
 #' @param specific_values specific values to include as attributes if
 #' include_values == TRUE
 #' @keywords internal
-.dt_to_spatVector_points <- function(dt,
+.dt_to_spatvector_points <- function(dt,
                                      include_values = TRUE,
                                      specific_values = NULL) {
   all_colnames <- colnames(dt)

@@ -436,6 +436,9 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 
 .plot_giotto_points_one <- function(dataDT, feats, args_list) {
 
+  # NSE vars
+  feat_ID <- NULL
+
   if (!feats %in% dataDT[, feat_ID]) {
     .gstop(vector_to_string(feats), "not found in giottoPoints", .n = 6L)
   }

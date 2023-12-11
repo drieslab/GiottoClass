@@ -2,7 +2,7 @@
 % Please edit documentation in R/subset.R
 \name{.subset_giotto}
 \alias{.subset_giotto}
-\title{.subset_giotto}
+\title{Subset Giotto}
 \usage{
 .subset_giotto(
   gobject,

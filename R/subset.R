@@ -663,8 +663,8 @@
 # and feat_ID subset is applied only to ft == b.
 
 
-
-#' @title .subset_giotto
+#' @name .subset_giotto
+#' @title Subset Giotto
 #' @description
 #' Internal to subset Giotto object including previous analyses for a specific
 #' spatial unit and feature type.\cr
