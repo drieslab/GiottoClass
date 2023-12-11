@@ -708,7 +708,7 @@ checkPythonPackage <- function(package_name = NULL,
       errWidth = TRUE
     ))
   }
-  env_str_location <- GiottoUtils::string_locate(path_to_env, env_to_use)[2]
+  env_str_location <- GiottoUtils::str_locate2(path_to_env, env_to_use)[2]
   # Change env_to_use from name of environment
   # to the full environment path
   env_to_use <- substr(path_to_env, 1, env_str_location)

@@ -440,7 +440,7 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
   feat_ID <- NULL
 
   if (!feats %in% dataDT[, feat_ID]) {
-    .gstop(vector_to_string(feats), "not found in giottoPoints", .n = 6L)
+    .gstop(str_vector(feats), "not found in giottoPoints", .n = 6L)
   }
 
   par(mar = c(2.7, 3.5, 2, 2))
@@ -466,7 +466,7 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 
   missing_feats <- feats[!feats %in% dataDT[, feat_ID]]
   if (length(missing_feats) > 0L) {
-    .gstop(vector_to_string(missing_feats), "not found in giottoPoints", .n = 6L)
+    .gstop(str_vector(missing_feats), "not found in giottoPoints", .n = 6L)
   }
 
   par(mar = c(2.7, 3.5, 2, 4))
