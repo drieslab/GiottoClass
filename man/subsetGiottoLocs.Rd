@@ -18,7 +18,8 @@ subsetGiottoLocs(
   z_min = NULL,
   poly_info = NULL,
   return_gobject = TRUE,
-  verbose = FALSE
+  verbose = FALSE,
+  toplevel_params = 5
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ separately from the spat_units to subset)}
 \item{return_gobject}{return Giotto object}
 
 \item{verbose}{be verbose}
+
+\item{toplevel_params}{parameters to extract}
 }
 \value{
 giotto object

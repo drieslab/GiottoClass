@@ -16,6 +16,7 @@
 - Added: `as.polygons()` `data.frame` method for correctly formatted data.tables (replaces internal `dt_to_spatvector_polygon()`)
 - Added: `as.polygons()` `data.frame` method for correctly formatted data.tables (replaces internal `dt_to_spatvector_points()`)
 - Added: autocompletes for `$` with `spatLocsObj`, `spatEnrObj`, `dimObj`, `cellMetaObj`, `featMetaObj`, `giottoPolygon`, `giottoPoints`
+- Added: `toplevel_params` param to `subsetGiottoLocs()`
 
 ## Changes
 - Fixed: Provenance now not accidentally created as a list in `addSpatialCentroidLocations()`

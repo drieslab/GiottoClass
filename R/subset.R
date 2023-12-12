@@ -999,7 +999,8 @@
                                z_min = NULL,
                                poly_info = spat_unit,
                                return_gobject = TRUE,
-                               verbose = FALSE) {
+                               verbose = FALSE,
+                               toplevel_params = 5L) {
   spat_unit <- set_default_spat_unit(
     gobject = gobject,
     spat_unit = spat_unit
@@ -1012,26 +1013,25 @@
 
   # check :all: params
   if (length(feat_type) > 1L ||
-    isTRUE(feat_type == ":all:")) {
-    stop(wrap_txt(
+      isTRUE(feat_type == ":all:")) {
+    .gstop(
       "subsetGiottoLocs: multiple values or :all: passed to param feat_types.
       Giotto subset functions use params spat_unit and feat_type to define on which spatial units and feature types cell_id and feat_id subsets should be performed, respectively.
       -- Spatial subsets can only subset on cell_id.\n
       subsetGiottoLocs() uses feat_type only to define which set of combined metadata info to generate if return_gobject = FALSE.\n
-      Use param feat_type_ssub instead to define which feature types the cell_id subset is applied across.",
-      errWidth = TRUE
-    ))
+      Use param feat_type_ssub instead to define which feature types the cell_id subset is applied across."
+    )
   }
 
   # Usage of spat_unit = :all: IS NOT allowed for this function
   # throw error if more than one supplied or ":all:" is passed
   checkmate::assert_character(spat_unit)
   if (length(spat_unit) > 1 ||
-    isTRUE(spat_unit == ":all:")) {
-    stop(wrap_txt(
+      isTRUE(spat_unit == ":all:")) {
+    .gstop(
       "subsetGiottoLocs: Length of spat_unit > 1
-    Use subsetGiottoLocsMulti() for spatial subsets across multiple spat_units"
-    ))
+      Use subsetGiottoLocsMulti() for spatial subsets across multiple spat_units"
+    )
   }
 
   # Usage of poly_info = :all: IS allowed for this function, but requires that
@@ -1079,7 +1079,8 @@
         x_max = x_max,
         y_min = y_min,
         y_max = y_max,
-        verbose = verbose
+        verbose = verbose,
+        toplevel_params = toplevel_params
       )
       return(subset_object)
     } else {
@@ -1141,7 +1142,8 @@
       x_min = x_min,
       y_max = y_max,
       y_min = y_min,
-      verbose = verbose
+      verbose = verbose,
+      toplevel_params = toplevel_params
     )
 
     return(subset_object)
@@ -1173,7 +1175,8 @@
                                      z_min = NULL,
                                      poly_info = NULL,
                                      return_gobject = TRUE,
-                                     verbose = TRUE) {
+                                     verbose = TRUE,
+                                     toplevel_params = 5L) {
   if (!is.null(spat_unit)) checkmate::assert_character(spat_unit)
   if (!is.null(feat_type)) checkmate::assert_character(feat_type)
   # poly_info check is more detailed and performed below
@@ -1249,7 +1252,8 @@
         z_min = z_min,
         poly_info = poly_info_selected,
         return_gobject = return_gobject,
-        verbose = verbose
+        verbose = verbose,
+        toplevel_params = toplevel_params
       )
     } else {
       # accumulate list of combined metadata tables
@@ -1267,7 +1271,8 @@
         z_min = z_min,
         poly_info = poly_info_selected,
         return_gobject = return_gobject,
-        verbose = verbose
+        verbose = verbose,
+        toplevel_params = toplevel_params
       )
     }
   }
@@ -1442,6 +1447,7 @@ subsetGiotto <- function(gobject,
 #' separately from the spat_units to subset)
 #' @param return_gobject return Giotto object
 #' @param verbose be verbose
+#' @param toplevel_params parameters to extract
 #' @return giotto object
 #' @details If `return_gobject = FALSE`, then a filtered combined metadata
 #' data.table will be returned
@@ -1459,40 +1465,17 @@ subsetGiottoLocs <- function(gobject,
                              z_min = NULL,
                              poly_info = NULL,
                              return_gobject = TRUE,
-                             verbose = FALSE) {
+                             verbose = FALSE,
+                             toplevel_params = 5) {
+
+  args_list <- get_args_list()
+
   if (length(spat_unit) > 1L ||
-    isTRUE(spat_unit == ":all:")) {
+      isTRUE(spat_unit == ":all:")) {
     # for subsetting across multiple
-    .subset_giotto_locs_multi(
-      gobject = gobject,
-      spat_unit = spat_unit,
-      feat_type = feat_type,
-      feat_type_ssub = feat_type_ssub,
-      spat_loc_name = spat_loc_name,
-      x_max = x_max,
-      x_min = x_min,
-      y_max = y_max,
-      y_min = y_min,
-      poly_info = poly_info,
-      return_gobject = return_gobject,
-      verbose = verbose
-    )
+    do.call(.subset_giotto_locs_multi, args = args_list)
   } else {
-    # for subsetting single spat_unit
-    .subset_giotto_locs(
-      gobject = gobject,
-      spat_unit = spat_unit,
-      feat_type = feat_type,
-      feat_type_ssub = feat_type_ssub,
-      spat_loc_name = spat_loc_name,
-      x_max = x_max,
-      x_min = x_min,
-      y_max = y_max,
-      y_min = y_min,
-      poly_info = poly_info,
-      return_gobject = return_gobject,
-      verbose = verbose
-    )
+    do.call(.subset_giotto_locs, args = args_list)
   }
 }
 
@@ -1528,20 +1511,9 @@ subsetGiottoLocsMulti <- function(gobject,
     "subsetGiottoLocsMulti() is deprecated. Use subsetGiottoLocs() in the future."
   ))
 
-  subsetGiottoLocs(
-    gobject = gobject,
-    spat_unit = spat_unit,
-    feat_type = feat_type,
-    feat_type_ssub = feat_type_ssub,
-    spat_loc_name = spat_loc_name,
-    x_max = x_max,
-    x_min = x_min,
-    y_max = y_max,
-    y_min = y_min,
-    poly_info = poly_info,
-    return_gobject = return_gobject,
-    verbose = verbose
-  )
+  args_list <- get_args_list()
+
+  do.call(subsetGiottoLocs, args = args_list)
 }
 
 
@@ -1753,7 +1725,8 @@ subsetGiottoLocsSubcellular <- function(gobject,
                                             x_max = x_max,
                                             y_min = y_min,
                                             y_max = y_max,
-                                            verbose = verbose) {
+                                            verbose = verbose,
+                                            toplevel_params = 4L) {
   checkmate::assert_character(spat_unit, len = 1L)
   if (isTRUE(spat_unit == ":all:")) {
     stop(wrap_txt(
@@ -1797,7 +1770,8 @@ subsetGiottoLocsSubcellular <- function(gobject,
     y_max = y_max,
     y_min = y_min,
     feat_type_ssub = ":all:",
-    verbose = verbose
+    verbose = verbose,
+    toplevel_params = toplevel_params
   )
 
   return(subset_object)
