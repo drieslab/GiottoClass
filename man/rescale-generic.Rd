@@ -3,9 +3,21 @@
 \name{rescale-generic}
 \alias{rescale-generic}
 \alias{rescale,spatLocsObj-method}
+\alias{rescale,data.frame-method}
 \title{Rescale an object}
 \usage{
 \S4method{rescale}{spatLocsObj}(x, fx = 1, fy = fx, fz = fx, x0, y0, z0)
+
+\S4method{rescale}{data.frame}(
+  x,
+  fx = 1,
+  fy = fx,
+  fz = fx,
+  x0,
+  y0,
+  z0,
+  geom = c("sdimx", "sdimy", "sdimz")
+)
 }
 \arguments{
 \item{x}{object}
@@ -22,13 +34,11 @@
 
 \item{z0}{numeric. z-coordinate of the center of rescaling. If missing, the center of the extent of x is used
 (only for supported objects)}
+
+\item{geom}{character. Named vector of colnames of x, y, (z) coordinate columns.
+Default is \code{c("sdimx", "sdimy", "sdimz")}}
 }
 \description{
 Rescale an object spatially. Z dimension scaling is supported for
 some types of subobjects.
 }
-\section{Functions}{
-\itemize{
-\item \code{rescale(spatLocsObj)}: Rescale spatLocsObj
-
-}}

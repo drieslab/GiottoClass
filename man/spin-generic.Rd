@@ -5,6 +5,7 @@
 \alias{spin,giottoPolygon-method}
 \alias{spin,giottoPoints-method}
 \alias{spin,spatLocsObj-method}
+\alias{spin,data.frame-method}
 \title{Spin an object}
 \usage{
 \S4method{spin}{giottoPolygon}(x, angle, x0 = NULL, y0 = NULL)
@@ -20,6 +21,18 @@
   xy_angle = NULL,
   zy_angle = NULL,
   xz_angle = NULL
+)
+
+\S4method{spin}{data.frame}(
+  x,
+  angle = NULL,
+  x0 = NULL,
+  y0 = NULL,
+  z0 = NULL,
+  xy_angle = NULL,
+  zy_angle = NULL,
+  xz_angle = NULL,
+  geom = c("sdimx", "sdimy", "sdimz")
 )
 }
 \arguments{
@@ -40,6 +53,9 @@ Overrides angle param}
 \item{zy_angle}{spatLocsObj specific. zy plane rotation}
 
 \item{xz_angle}{spatLocsObj specific. xz plane rotation}
+
+\item{geom}{character. Named vector of colnames of x, y, (z) coordinate columns.
+Default is \code{c("sdimx", "sdimy", "sdimz")}}
 }
 \description{
 Spin (rotate) an object spatially (limited to xy rotations)

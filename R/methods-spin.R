@@ -48,6 +48,31 @@ setMethod(
   "spin", signature(x = "spatLocsObj"),
   function(x, angle = NULL, x0 = NULL, y0 = NULL, z0 = NULL,
            xy_angle = NULL, zy_angle = NULL, xz_angle = NULL) {
+
+    argslist <- get_args_list()
+    argslist$x <- x[]
+
+    # pass to data.frame method
+    x[] <- do.call(spin, argslist)
+
+    return(x)
+  }
+)
+
+
+#' @rdname spin-generic
+#' @param geom character. Named vector of colnames of x, y, (z) coordinate columns.
+#' Default is `c("sdimx", "sdimy", "sdimz")`
+#' @export
+setMethod(
+  "spin",
+  signature(x = 'data.frame'),
+  function(x, angle = NULL, x0 = NULL, y0 = NULL, z0 = NULL,
+           xy_angle = NULL, zy_angle = NULL, xz_angle = NULL,
+           geom = c("sdimx", "sdimy", "sdimz")) {
+
+    x <- data.table::as.data.table(x)
+
     if (!is.null(angle)) xy_angle <- angle
     if (is.null(xy_angle)) xy_angle <- 0
     if (is.null(zy_angle)) zy_angle <- 0
@@ -55,17 +80,21 @@ setMethod(
     angles <- c(xy = xy_angle, zy = zy_angle, xz = xz_angle)
     angles <- radians(angles)
 
-    if (is.null(x0)) x0 <- mean(c(min(x[]$sdimx), max(x[]$sdimx)))
-    if (is.null(y0)) y0 <- mean(c(min(x[]$sdimy), max(x[]$sdimy)))
-    if ("sdimz" %in% colnames(x[])) {
+    # get rotation centers
+    if (is.null(x0)) x0 <- x[, mean(range(get(geom[1L]))), ]
+    if (is.null(y0)) y0 <- x[, mean(range(get(geom[2L])))]
+
+    if (geom[3L] %in% colnames(x)) {
       if (is.null(z0)) {
-        z0 <- mean(c(min(x[]$sdimz), max(x[]$sdimz)))
+        z0 <- x[, mean(range(get(geom[3L])))]
       } else {
         z0 <- 0
       }
     }
-    x[] <- rotate_spatial_locations(
-      spatlocs = x[],
+
+    # perform rotation(s)
+    x <- .rotate_spatial_locations(
+      spatlocs = x,
       rotateradians = angles,
       rcenter = c(x = x0, y = y0, z = z0)
     )
@@ -74,26 +103,26 @@ setMethod(
 )
 
 
-
-
-
 # internals ####
 
-#' @param DT data.table with xy values
-#' @param xy character vector of the columns that contain respectively x and y
-#' info
-#' @noRd
-rotate2D <- function(DT, xy = c("x", "y"), rotate_rad = NULL, rotate_deg = NULL) {
+# Accepts a data.table with coordinates information
+# 2D rotations always involve values across two coordinate axes. In this function,
+# the 2 axes across which the rotation are applied are referred to as x and y.
+# The columns in the data.table that contain the coordinate values are provided
+# through the xy param.
+# Either rotate_rad or rotate_deg may be provided. Internally, the function
+# converts everything to radians.
+.rotate_2d <- function(DT, xy = c("x", "y"), rotate_rad = NULL, rotate_deg = NULL) {
+  # send error if both angle inputs exist or both are missing
   if (is.null(rotate_rad) && is.null(rotate_deg) ||
-    !is.null(rotate_rad) && !is.null(rotate_deg)) {
-    stop(wrap_txt(
-      "GiottoClass: rotate2D:
-      rotation must be supplied through one of 'rotate_rad' or 'rotate_deg'"
-    ))
+      !is.null(rotate_rad) && !is.null(rotate_deg)) {
+    .gstop("rotation must be supplied through one of 'rotate_rad' or 'rotate_deg'")
   }
 
+  # ensure that rotate_rad exists
   if (!is.null(rotate_deg)) rotate_rad <- radians(deg = rotate_deg)
 
+  # perform coordinate rotation
   xvals <- DT[, xy[[1L]], with = FALSE]
   yvals <- DT[, xy[[2L]], with = FALSE]
   DT[, (xy[[1L]]) := xvals * cos(rotate_rad) + yvals * sin(rotate_rad)]
@@ -101,64 +130,82 @@ rotate2D <- function(DT, xy = c("x", "y"), rotate_rad = NULL, rotate_deg = NULL)
   return(DT)
 }
 
-# TODO cleanup rotate_spatial_locations code using rotate2D
+
 
 #' @title Rotate spatial locations
-#' @name rotate_spatial_locations
+#' @name .rotate_spatial_locations
 #' @description Rotate given spatlocs by given radians
 #' @param spatlocs spatial locations to use
 #' @param rotateradians Named vector of radians for rotation along each of the 3 coordinate
 #' axes. If only a single value is provided, it will be treated as xy rotation.
 #' @param rcenter center of rotation given as vector xy(z) coordinates (defaults to coordinate center)
+#' @param geom character. Named vector of colames of x, y, z coordinate columns.
+#' Default is `c("sdimx", "sdimy", "sdimz")`
 #' @details Radians are provided through \code{rotateradians} param as a named vector
 #' with values for \code{xy} (yaw), \code{zy} (pitch), \code{xz} (roll)
 #' @keywords internal
-rotate_spatial_locations <- function(spatlocs,
+.rotate_spatial_locations <- function(spatlocs,
                                      rotateradians = c(xy = 0, zy = 0, xz = 0),
-                                     rcenter = c(x = 0, y = 0, z = 0)) {
+                                     rcenter = c(0, 0, 0),
+                                     geom = c('sdimx', 'sdimy', 'sdimz')) {
+
+  checkmate::assert_data_table(spatlocs)
+
+  xyz <- c('x', 'y', 'z')
+  if (is.null(names(rcenter))) names(rcenter) <- xyz
+  if (is.null(names(geom))) names(geom) <- xyz
+
   if (length(rotateradians) == 1) rotateradians <- c(xy = rotateradians, zy = 0, xz = 0)
   if (!all(names(rotateradians) %in% c("xy", "zy", "xz"))) stop("rotateradians value names not recognized")
-  if (!all(names(rcenter) %in% c("x", "y", "z"))) stop("rcenter value names not recognized")
-  hasZ <- "sdimz" %in% names(spatlocs)
+  if (!all(names(rcenter) %in% xyz)) stop("rcenter value names not recognized")
+  if (!all(names(geom) %in% xyz)) stop("geom value names not recognized")
+
+  hasZ <- geom[["z"]] %in% colnames(spatlocs)
 
   # xy center of rotation adjustment
-  spatlocs$sdimx <- spatlocs$sdimx - rcenter[["x"]]
-  spatlocs$sdimy <- spatlocs$sdimy - rcenter[["y"]]
-
-  xvals <- spatlocs$sdimx
-  yvals <- spatlocs$sdimy
+  spatlocs[, (geom[["x"]]) := get(geom[["x"]]) - rcenter[["x"]]]
+  spatlocs[, (geom[["y"]]) := get(geom[["y"]]) - rcenter[["y"]]]
 
   # Perform rotation XY
   if (rotateradians[["xy"]] != 0) {
-    spatlocs$sdimx <- xvals * cos(rotateradians[["xy"]]) + yvals * sin(rotateradians[["xy"]])
-    spatlocs$sdimy <- -xvals * sin(rotateradians[["xy"]]) + yvals * cos(rotateradians[["xy"]])
+    spatlocs <- .rotate_2d(
+      spatlocs,
+      xy = c("sdimx", "sdimy"),
+      rotate_rad = rotateradians[["xy"]]
+    )
   }
 
   # if z values are available
-  if (isTRUE(hasZ)) {
+  if (hasZ) {
     # z center of rotation adjustment
-    spatlocs$sdimz <- spatlocs$sdimz - rcenter[["z"]]
+    spatlocs[, (geom[["z"]]) := get(geom[["z"]]) - rcenter[["z"]]]
 
     zvals <- spatlocs$sdimz
 
     # Perform rotations
     if (rotateradians[["zy"]] != 0) {
-      spatlocs$sdimz <- zvals * cos(rotateradians[["zy"]]) + yvals * sin(rotateradians[["zy"]])
-      spatlocs$sdimy <- -zvals * sin(rotateradians[["zy"]]) + yvals * cos(rotateradians[["zy"]])
+      spatlocs <- .rotate_2d(
+        spatlocs,
+        xy = c(geom[["z"]], geom[["y"]]),
+        rotate_rad = rotateradians[["zy"]]
+      )
     }
 
     if (rotateradians[["xz"]] != 0) {
-      spatlocs$sdimx <- xvals * cos(rotateradians[["xz"]]) + zvals * sin(rotateradians[["xz"]])
-      spatlocs$sdimz <- -xvals * sin(rotateradians[["xz"]]) + zvals * cos(rotateradians[["xz"]])
+      spatlocs <- .rotate_2d(
+        spatlocs,
+        xy = c(geom[["x"]], geom[["z"]]),
+        rotate_rad = rotateradians[["xz"]]
+      )
     }
 
     # Revert z center of rotation adjustment
-    spatlocs$sdimz <- spatlocs$sdimz + rcenter[["z"]]
+    spatlocs[, (geom[["z"]]) := get(geom[["z"]]) + rcenter[["z"]]]
   }
 
   # Revert xy center of rotation adjustment
-  spatlocs$sdimx <- spatlocs$sdimx + rcenter[["x"]]
-  spatlocs$sdimy <- spatlocs$sdimy + rcenter[["y"]]
+  spatlocs[, (geom[["x"]]) := get(geom[["x"]]) + rcenter[["x"]]]
+  spatlocs[, (geom[["y"]]) := get(geom[["y"]]) + rcenter[["y"]]]
 
   return(spatlocs)
 }

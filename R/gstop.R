@@ -9,7 +9,7 @@
                    .prefix = " ",
                    .initial = "",
                    .n = 1L,
-                   .call = FALSE) {
+                   .call = TRUE) {
   GiottoUtils::gstop(
     ...,
     sep = sep,

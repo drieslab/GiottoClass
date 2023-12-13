@@ -17,11 +17,42 @@ NULL
 
 #' @describeIn spatShift Shift the locations of a spatLocsObj
 #' @export
-setMethod("spatShift", signature("spatLocsObj"), function(x, dx = 0, dy = 0, dz = 0,
-                                                          copy_obj = TRUE, ...) {
-  x[] <- shift_spatial_locations(spatlocs = x[], dx = dx, dy = dy, dz = dz, ...)
-  return(x)
-})
+setMethod(
+  "spatShift", signature("spatLocsObj"),
+  function(x, dx = 0, dy = 0, dz = 0, copy_obj = TRUE, ...)
+  {
+    argslist <- get_args_list()
+    argslist$x <- x[]
+
+    # pass to data.frame method
+    x[] <- do.call(spatShift, argslist)
+
+    return(x)
+  }
+)
+
+#' @rdname spatShift
+#' @export
+setMethod(
+  "spatShift", signature("data.frame"),
+  function(
+    x, dx = 0, dy = 0, dz = 0, copy_obj = TRUE,
+    geom = c("sdimx", "sdimy", "sdimz"), ...
+  ) {
+
+    x <- data.table::as.data.table(x)
+    x <- .shift_spatial_locations(
+      spatlocs = x,
+      dx = dx, dy = dy, dz = dz,
+      copy_obj = copy_obj,
+      geom = geom, ...
+    )
+
+    return(x)
+  }
+)
+
+
 #' @describeIn spatShift Shift the locations of a spatialNetworkObj
 #' @export
 setMethod("spatShift", signature("spatialNetworkObj"), function(x, dx = 0, dy = 0, dz = 0,
@@ -64,52 +95,35 @@ setMethod("spatShift", signature("giottoLargeImage"), function(x, dx = 0, dy = 0
 
 # internals ####
 
-# internal for deprecation
-xy_translate_spatial_locations <- function(...) {
-  .Deprecated(new = "shift_spatial_locations")
-
-  shift_spatial_locations(...)
-}
-
 
 #' @title Shift spatial locations
-#' @name shift_spatial_locations
+#' @name .shift_spatial_locations
 #' @description Shift given coordinates by given translation values
 #' @param spatlocs spatial locations to use
 #' @param dx value to shift coordinates in the positive x direction
 #' @param dy value to shift coordinates in the positive y direction
 #' @param dz value to shift coordinates in the positive z direction
-#' @param xtranslate deprecated. use dx
-#' @param ytranslate deprecated. use dy
-#' @param ztranslate deprecated. use dz
 #' @param copy_obj copy/duplicate object (default = TRUE)
 #' @keywords internal
-shift_spatial_locations <- function(spatlocs,
+.shift_spatial_locations <- function(spatlocs,
                                     dx = 0,
                                     dy = 0,
                                     dz = 0,
-                                    xtranslate = NULL,
-                                    ytranslate = NULL,
-                                    ztranslate = NULL,
+                                    geom = c("sdimx", "sdimy", "sdimz"),
                                     copy_obj = TRUE) {
-  sdimx <- sdimy <- sdimz <- NULL
 
-  if (!is.null(xtranslate)) {
-    warning(wrap_txt("xtranslate is deprecated. use dx"))
-    dx <- xtranslate
-  }
-  if (!is.null(ytranslate)) {
-    warning(wrap_txt("ytranslate is deprecated. use dy"))
-    dy <- ytranslate
-  }
-  if (!is.null(ztranslate)) {
-    warning(wrap_txt("ztranslate is deprecated. use dz"))
-    dz <- ztranslate
-  }
+  if(copy_obj) spatlocs <- data.table::copy(spatlocs)
 
-  spatlocs[, sdimx := sdimx + dx]
-  spatlocs[, sdimy := sdimy + dy]
-  if ("sdimz" %in% names(spatlocs)) spatlocs[, sdimz := sdimz + dz]
+  xyz <- c("x", "y", "z")
+
+  if (is.null(names(geom))) names(geom) <- xyz
+  if (!all(names(geom) %in% xyz)) stop("geom value names not recognized")
+
+  spatlocs[, (geom[["x"]]) := get(geom[["x"]]) + dx]
+  spatlocs[, (geom[["y"]]) := get(geom[["y"]]) + dy]
+  if (geom[["z"]] %in% colnames(spatlocs)) {
+    spatlocs[, (geom[["z"]]) := get(geom[["z"]]) + dz]
+  }
 
   return(spatlocs)
 }
