@@ -51,11 +51,11 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
   }
 }
 
-#' @title return_giotto_environment_path
+#' @title .giotto_environment_path
 #' @description returns the path to the detected giotto environment
 #' @return string path
 #' @keywords internal
-return_giotto_environment_path <- function() {
+.giotto_environment_path <- function() {
   ## get operating system
   os_specific_system <- get_os()
 
@@ -76,11 +76,11 @@ return_giotto_environment_path <- function() {
   }
 }
 
-#' @title return_giotto_environment_path_executable
+#' @title .giotto_environment_path_executable
 #' @description returns the path to the detected giotto environment executable
 #' @return string path
 #' @keywords internal
-return_giotto_environment_path_executable <- function() {
+.giotto_environment_path_executable <- function() {
   ## get operating system
   os_specific_system <- get_os()
 
@@ -104,11 +104,11 @@ return_giotto_environment_path_executable <- function() {
 
 
 
-#' @name check_giotto_python_modules
+#' @name .check_giotto_python_modules
 #' @title Check if Giotto python modules are in python environment
 #' @param my_python_path path to python environment
 #' @keywords internal
-check_giotto_python_modules <- function(my_python_path) {
+.check_giotto_python_modules <- function(my_python_path) {
   if (isFALSE(getOption("giotto.has_conda", TRUE))) {
     return(invisible(NULL))
   }
@@ -130,10 +130,10 @@ check_giotto_python_modules <- function(my_python_path) {
 
 
 
-#' @title install_giotto_environment_specific
+#' @title .install_giotto_environment_specific
 #' @description installation of giotto environment
 #' @keywords internal
-install_giotto_environment_specific <- function(packages_to_install = c(
+.install_giotto_environment_specific <- function(packages_to_install = c(
                                                   "pandas", "networkx", "python-igraph",
                                                   "leidenalg", "python-louvain", "python.app",
                                                   "scikit-learn"
@@ -234,10 +234,10 @@ install_giotto_environment_specific <- function(packages_to_install = c(
 }
 
 
-#' @title install_giotto_environment
+#' @title .install_giotto_environment
 #' @description installation options of giotto environment
 #' @keywords internal
-install_giotto_environment <- function(force_environment = FALSE,
+.install_giotto_environment <- function(force_environment = FALSE,
                                        packages_to_install = c(
                                          "pandas", "networkx", "python-igraph",
                                          "leidenalg", "python-louvain", "python.app",
@@ -271,7 +271,7 @@ install_giotto_environment <- function(force_environment = FALSE,
     # first remove giotto environment, then install
     reticulate::conda_remove(envname = "giotto_env", conda = conda_full_path)
 
-    install_giotto_environment_specific(
+    .install_giotto_environment_specific(
       packages_to_install = packages_to_install,
       python_version = python_version,
       mini_install_path = mini_install_path,
@@ -279,7 +279,7 @@ install_giotto_environment <- function(force_environment = FALSE,
     )
   } else {
     # install giotto if nothing is found
-    install_giotto_environment_specific(
+    .install_giotto_environment_specific(
       packages_to_install = packages_to_install,
       python_version = python_version,
       mini_install_path = mini_install_path,
@@ -416,7 +416,7 @@ installGiottoEnvironment <- function(packages_to_install = c(
 
 
   ## 2. install giotto environment
-  install_giotto_environment(
+  .install_giotto_environment(
     force_environment = force_environment,
     packages_to_install = packages_to_install,
     python_version = python_version,
@@ -508,7 +508,7 @@ set_giotto_python_path <- function(python_path = NULL,
 
   if (isTRUE(giotto_environment_installed)) {
     if (verbose) GiottoUtils::wrap_msg("\n no external python path was provided, but a giotto python environment was found and will be used \n")
-    # python_path = return_giotto_environment_path_executable()
+    # python_path = .giotto_environment_path_executable()
     reticulate::use_python(required = TRUE, python = python_path)
   } else {
     if (verbose) GiottoUtils::wrap_msg("\n no external python path or giotto environment was specified, will check if a default python path is available \n")
@@ -543,12 +543,12 @@ set_giotto_python_path <- function(python_path = NULL,
 }
 
 #' @title Prompt User for Python Install
-#' @name py_install_prompt
+#' @name .py_install_prompt
 #' @param package python package/github url
 #' @param env environment into which package will be installed
 #' @description prompts user to install a package
 #' @keywords internal
-py_install_prompt <- function(package = NULL,
+.py_install_prompt <- function(package = NULL,
                               env = NULL) {
   if (is.null(package) | is.null(env)) {
     stop(GiottoUtils::wrap_txt("Incorrect Usage.\n", errWidth = TRUE))
@@ -573,14 +573,14 @@ py_install_prompt <- function(package = NULL,
 }
 
 #' @title Install Package from GitHub Link
-#' @name install_github_link_pip
+#' @name .install_github_link_pip
 #' @param link link to github repository containing a python package,
 #' e.g. `git+https://github.com/TencentAILabHealthcare/pysodb.git`
 #' @param env conda environment to which `link` will be installed via pip
 #' @description
 #' Installs `link` to python `env`
 #' @keywords internal
-install_github_link_pip <- function(link = NULL,
+.install_github_link_pip <- function(link = NULL,
                                     env = NULL) {
   # Guard
   if (is.null(link) | is.null(env)) stop(GiottoUtils::wrap_txt("Incorrect Usage.", errWidth = TRUE))
@@ -611,7 +611,7 @@ install_github_link_pip <- function(link = NULL,
 }
 
 #' @title Install Python Package with Reticulate
-#' @name install_py_pkg_reticulate
+#' @name .install_py_pkg_reticulate
 #' @param package name of python package
 #' @param env name of the environment into which the python
 #' package should be installed.
@@ -620,9 +620,9 @@ install_github_link_pip <- function(link = NULL,
 #' Installation is done via `py_install` from the
 #' `reticulate` package.
 #' @keywords internal
-install_py_pkg_reticulate <- function(package = NULL,
+.install_py_pkg_reticulate <- function(package = NULL,
                                       env = NULL) {
-  resp <- py_install_prompt(
+  resp <- .py_install_prompt(
     package = package,
     env = env
   )
@@ -708,7 +708,7 @@ checkPythonPackage <- function(package_name = NULL,
       errWidth = TRUE
     ))
   }
-  env_str_location <- stringr::str_locate(path_to_env, env_to_use)[2]
+  env_str_location <- GiottoUtils::str_locate2(path_to_env, env_to_use)[2]
   # Change env_to_use from name of environment
   # to the full environment path
   env_to_use <- substr(path_to_env, 1, env_str_location)
@@ -718,12 +718,12 @@ checkPythonPackage <- function(package_name = NULL,
 
   # If a github link is provided, install it and exit
   if (!is.null(github_package_url)) {
-    resp <- py_install_prompt(
+    resp <- .py_install_prompt(
       package = github_package_url,
       env = env_to_use
     )
     if (resp != 0) {
-      install_status <- install_github_link_pip(
+      install_status <- .install_github_link_pip(
         link = github_package_url,
         env = env_to_use
       )
@@ -745,8 +745,8 @@ checkPythonPackage <- function(package_name = NULL,
 
   contains_version_number <- grepl("==", package_name)
   if (contains_version_number) {
-    split_package_version <- stringr::str_split(package_name,
-      pattern = "=="
+    split_package_version <- strsplit(package_name,
+      split = "=="
     )
     package_name <- split_package_version[[1]][1]
     version_number <- split_package_version[[1]][2]
@@ -770,7 +770,7 @@ checkPythonPackage <- function(package_name = NULL,
         return(TRUE)
       } else {
         # Otherwise, install the provided version
-        inst_result <- install_py_pkg_reticulate(
+        inst_result <- .install_py_pkg_reticulate(
           package = paste0(
             package_name,
             "==",
@@ -785,7 +785,7 @@ checkPythonPackage <- function(package_name = NULL,
     if (!contains_version_number) {
       # If it is not installed, and has no version
       # number, install it.
-      inst_result <- install_py_pkg_reticulate(
+      inst_result <- .install_py_pkg_reticulate(
         package = package_name,
         env = env_to_use
       )
@@ -793,7 +793,7 @@ checkPythonPackage <- function(package_name = NULL,
       # If it is not installed, and has a version
       # number, concatenate the package and verion
       # strings, and install
-      inst_result <- install_py_pkg_reticulate(
+      inst_result <- .install_py_pkg_reticulate(
         package = paste0(
           package_name,
           "==",

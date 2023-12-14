@@ -78,4 +78,3 @@ When set to \code{FALSE}, only method A is used.
 \seealso{
 \code{\link[terra]{spatSample}}
 }
-\keyword{internal}

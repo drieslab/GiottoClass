@@ -1,6 +1,7 @@
 # # docs ----------------------------------------------------------- #
 #' @title Wrap giotto terra pointer information
-#' @name wrap-generic
+#' @name wrap
+#' @aliases vect
 #' @description Extension of wrap methods from terra for Giotto's terra-based S4
 #' objects. Allows pointer information to be packaged into memory so that it can
 #' be passed over a connection (e.g. nodes on a computer cluster)
@@ -11,7 +12,7 @@ NULL
 # terra-based object serialization ####
 ## wrap methods ####
 
-#' @describeIn wrap-generic Wrap giottoPolygon
+#' @describeIn wrap Wrap giottoPolygon
 #' @export
 setMethod(
   "wrap", signature(x = "giottoPolygon"),
@@ -37,7 +38,7 @@ setMethod(
 )
 
 
-#' @describeIn wrap-generic Wrap giotto
+#' @describeIn wrap Wrap giotto
 #' @export
 setMethod(
   "wrap", signature(x = "giotto"),
@@ -55,7 +56,7 @@ setMethod(
 )
 
 
-#' @describeIn wrap-generic Wrap giottoPoints
+#' @describeIn wrap Wrap giottoPoints
 #' @export
 setMethod(
   "wrap", signature(x = "giottoPoints"),
@@ -78,7 +79,7 @@ setMethod(
 ## unwrap methods ####
 # For compatibility before terra 1.6.41, vect will be used
 
-#' @describeIn wrap-generic Unwrap giottoPolygon
+#' @describeIn wrap Unwrap giottoPolygon
 #' @export
 setMethod(
   "vect", signature(x = "packedGiottoPolygon"),
@@ -111,7 +112,7 @@ setMethod(
 )
 
 
-#' @describeIn wrap-generic Unwrap giottoPolygon
+#' @describeIn wrap Unwrap giottoPolygon
 #' @export
 setMethod(
   "vect", signature(x = "packedGiottoPoints"),
@@ -133,7 +134,7 @@ setMethod(
 )
 
 
-#' @describeIn wrap-generic Unwrap giotto
+#' @describeIn wrap Unwrap giotto
 #' @export
 setMethod(
   "vect", signature(x = "packedGiotto"),

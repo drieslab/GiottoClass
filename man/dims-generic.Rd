@@ -9,9 +9,11 @@
 \alias{nrow,metaData-method}
 \alias{nrow,spatialNetworkObj-method}
 \alias{nrow,enrData-method}
+\alias{nrow,dimObj-method}
 \alias{ncol,exprData-method}
 \alias{ncol,metaData-method}
 \alias{ncol,enrData-method}
+\alias{ncol,dimObj-method}
 \alias{dim,exprData-method}
 \alias{dim,metaData-method}
 \alias{dim,enrData-method}
@@ -32,11 +34,15 @@
 
 \S4method{nrow}{enrData}(x)
 
+\S4method{nrow}{dimObj}(x)
+
 \S4method{ncol}{exprData}(x)
 
 \S4method{ncol}{metaData}(x)
 
 \S4method{ncol}{enrData}(x)
+
+\S4method{ncol}{dimObj}(x)
 
 \S4method{dim}{exprData}(x)
 

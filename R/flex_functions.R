@@ -232,6 +232,8 @@ my_rowMeans <- function(x, method = c("arithmic", "geometric"), offset = 0.1) {
 #' @export
 standardise_flex <- function(x, center = TRUE, scale = TRUE) {
   if (inherits(x, "DelayedArray")) {
+    package_check('ScaledMatrix')
+
     y <- ScaledMatrix::ScaledMatrix(x = x, center = center, scale = scale)
   } else {
     if (center & scale) {

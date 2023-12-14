@@ -3,6 +3,7 @@
 \name{spatShift}
 \alias{spatShift}
 \alias{spatShift,spatLocsObj-method}
+\alias{spatShift,data.frame-method}
 \alias{spatShift,spatialNetworkObj-method}
 \alias{spatShift,giottoPolygon-method}
 \alias{spatShift,giottoPoints-method}
@@ -10,6 +11,16 @@
 \title{Spatially shift an object}
 \usage{
 \S4method{spatShift}{spatLocsObj}(x, dx = 0, dy = 0, dz = 0, copy_obj = TRUE, ...)
+
+\S4method{spatShift}{data.frame}(
+  x,
+  dx = 0,
+  dy = 0,
+  dz = 0,
+  copy_obj = TRUE,
+  geom = c("sdimx", "sdimy", "sdimz"),
+  ...
+)
 
 \S4method{spatShift}{spatialNetworkObj}(x, dx = 0, dy = 0, dz = 0, copy_obj = TRUE, ...)
 
@@ -31,6 +42,9 @@
 \item{copy_obj}{Default = TRUE}
 
 \item{...}{additional params to pass to methods}
+
+\item{geom}{character. Named vector of colnames of x, y, (z) coordinate columns.
+Default is \code{c("sdimx", "sdimy", "sdimz")}}
 }
 \description{
 Shift the spatial locations of an object

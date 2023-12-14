@@ -1,6 +1,6 @@
 # docs -------------------------------------------------------------- #
 #' @title Rescale an object
-#' @name rescale-generic
+#' @name rescale
 #' @description Rescale an object spatially. Z dimension scaling is supported for
 #' some types of subobjects.
 #' @param x object
@@ -16,33 +16,49 @@ NULL
 
 
 
-#' @describeIn rescale-generic Rescale spatLocsObj
+#' @rdname rescale
 #' @export
 setMethod(
   "rescale", signature("spatLocsObj"),
   function(x, fx = 1, fy = fx, fz = fx, x0, y0, z0) {
-    # data.table vars
-    sdimx <- sdimy <- sdimz <- NULL
 
-    # find center
-    if (missing(x0)) x0 <- x[][, mean(range(sdimx))]
-    if (missing(y0)) y0 <- x[][, mean(range(sdimy))]
-    if ("sdimz" %in% names(x[]) & missing(z0)) {
-      z0 <- x[][, mean(range(sdimz))]
-    } else {
-      z0 <- 0
-    }
+    argslist <- GiottoUtils::get_args_list()
+    argslist$x <- x[]
 
-    # perform scaling
-    x[] <- scale_spatial_locations(
-      spatlocs = x[],
-      scale_factor = c(x = fx, y = fy, z = fz),
-      scenter = c(x = x0, y = y0, z = z0)
-    )
+    # call data.frame method
+    x[] <- do.call(rescale, args = argslist)
     x
   }
 )
 
+#' @rdname rescale
+#' @param geom character. Named vector of colnames of x, y, (z) coordinate columns.
+#' Default is `c("sdimx", "sdimy", "sdimz")`
+setMethod(
+  "rescale", signature("data.frame"),
+  function(x, fx = 1, fy = fx, fz = fx, x0, y0, z0,
+           geom = c("sdimx", "sdimy", "sdimz")) {
+
+    x <- data.table::as.data.table(x)
+
+    # find center
+    if (missing(x0)) x0 <- x[, mean(range(get(geom[1L])))]
+    if (missing(y0)) y0 <- x[, mean(range(get(geom[2L])))]
+    if ("sdimz" %in% names(x) & missing(z0)) {
+      z0 <- x[, mean(range(get(geom[3L])))]
+    } else {
+      z0 <- 0
+    }
+
+    x <- .scale_spatial_locations(
+      spatlocs = x,
+      scale_factor = c(x = fx, y = fy, z = fz),
+      scenter = c(x = x0, y = y0, z = z0),
+      geom = c("sdimx", "sdimy", "sdimz")
+    )
+    x
+  }
+)
 
 
 # TODO more methods for other objects
@@ -55,52 +71,63 @@ setMethod(
 # internals ####
 
 #' @title Scale spatial locations
-#' @name scale_spatial_locations
+#' @name .scale_spatial_locations
 #' @description Simple scaling of spatial locations by given \code{scale_factor}.
 #' Values will be scaled from the coordinate origin or coordinates provided through
-#' \code{scenter} param.
-#' @param spatlocs spatial locations information to scale
-#' @param scale_factor scaling factor to apply to coordinates.
+#' \code{scenter} param. Default values supply values for z axis, but these
+#' values will only be applied if input `data.table` has z information as
+#' detected by the third item in the `geom` param.
+#' @param spatlocs data.table. spatial locations information to scale
+#' @param scale_factor scaling factor to apply to coordinates. Default is
+#' `c(1, 1, 1)`
 #' @param scenter center from which to scale spatial coordinates. Given as vector
-#' of xy(z) coordinates.
+#' of xy(z) coordinates. Default is `c(0, 0, 0)`
+#' @param geom character. Named vector of colnames of x, y, (z) coordinate columns.
+#' Default is `c("sdimx", "sdimy", "sdimz")`
 #' @details \code{scale_factor} either given as a single value where it will be applied to
 #' x, y, and z (if available) dimensions or as a vector of named values for 'x',
 #' 'y', (and 'z').
 #' @keywords internal
-scale_spatial_locations <- function(spatlocs,
-                                    scale_factor = c(x = 1, y = 1, z = 1),
-                                    scenter = c(x = 0, y = 0, z = 0)) {
-  # data.table vars
-  sdimx <- sdimy <- sdimz <- NULL
+.scale_spatial_locations <- function(spatlocs,
+                                    scale_factor = c(1, 1, 1),
+                                    scenter = c(0, 0, 0),
+                                    geom = c("sdimx", "sdimy", "sdimz")) {
+  checkmate::assert_data_table(spatlocs)
 
-  hasZ <- "sdimz" %in% names(spatlocs)
+  xyz <- c("x", "y", "z")
+  if (is.null(names(scale_factor))) names(scale_factor) <- xyz
+  if (is.null(names(scenter))) names(scenter) <- xyz
+  if (is.null(names(geom))) names(geom) <- xyz
+
+  hasZ <- geom[["z"]] %in% colnames(spatlocs)
 
   if (length(scale_factor) == 1) scale_factor <- c(x = scale_factor, y = scale_factor, z = scale_factor)
-  if (!all(names(scenter) %in% c("x", "y", "z"))) stop("scenter value names not recognized")
-  if (!all(names(scale_factor) %in% c("x", "y", "z"))) stop("scale_factor value names not recognized")
+  if (!all(names(scenter) %in% xyz)) stop("scenter value names not recognized")
+  if (!all(names(scale_factor) %in% xyz)) stop("scale_factor value names not recognized")
+  if (!all(names(geom) %in% xyz)) stop("geom value names not recognized")
 
   # Adjust for scaling center
-  spatlocs[, sdimx := sdimx - scenter[["x"]]]
-  spatlocs[, sdimy := sdimy - scenter[["y"]]]
+  spatlocs[, (geom[["x"]]) := get(geom[["x"]]) - scenter[["x"]]]
+  spatlocs[, (geom[["y"]]) := get(geom[["y"]]) - scenter[["y"]]]
 
   # Perform scale
-  spatlocs[, sdimx := sdimx * scale_factor[["x"]]]
-  spatlocs[, sdimy := sdimy * scale_factor[["y"]]]
+  spatlocs[, (geom[["x"]]) := get(geom[["x"]]) * scale_factor[["x"]]]
+  spatlocs[, (geom[["y"]]) := get(geom[["y"]]) * scale_factor[["y"]]]
 
   if (isTRUE(hasZ)) {
     # Adjust for scaling z center
-    spatlocs[, sdimz := sdimz - scenter[["z"]]]
+    spatlocs[, (geom[["z"]]) := get(geom[["z"]]) - scenter[["z"]]]
 
     # Perform z scale
-    spatlocs[, sdimz := sdimz * scale_factor[["z"]]]
+    spatlocs[, (geom[["z"]]) := get(geom[["z"]]) * scale_factor[["z"]]]
 
     # Revert z scaling center adjustments
-    spatlocs[, sdimz := sdimz + scenter[["z"]]]
+    spatlocs[, (geom[["z"]]) := get(geom[["z"]]) + scenter[["z"]]]
   }
 
   # Revert scaling center adjustments
-  spatlocs[, sdimx := sdimx + scenter[["x"]]]
-  spatlocs[, sdimy := sdimy + scenter[["y"]]]
+  spatlocs[, (geom[["x"]]) := get(geom[["x"]]) + scenter[["x"]]]
+  spatlocs[, (geom[["y"]]) := get(geom[["y"]]) + scenter[["y"]]]
 
   return(spatlocs)
 }
@@ -111,17 +138,17 @@ scale_spatial_locations <- function(spatlocs,
 
 
 
-#' @title rescale polygons
-#' @name rescale_polygons
+#' @title Rescale polygons
+#' @name .rescale_polygons
 #' @description  rescale individual polygons by a factor x and y
 #' @keywords internal
-rescale_polygons <- function(spatVector,
+.rescale_polygons <- function(spatVector,
                              spatVectorCentroids,
                              fx = 0.5, fy = 0.5) {
   # DT vars
   poly_ID <- NULL
 
-  spatVectorCentroidsDT <- spatVector_to_dt(spatVectorCentroids)
+  spatVectorCentroidsDT <- .spatvector_to_dt(spatVectorCentroids)
 
   cell_ids <- spatVector$poly_ID
 
@@ -180,7 +207,7 @@ rescalePolygons <- function(gobject,
 
 
   # 2. rescale polygon
-  rescaled_original <- rescale_polygons(original_vector,
+  rescaled_original <- .rescale_polygons(original_vector,
     original_centroids,
     fx = fx, fy = fy
   )
@@ -191,7 +218,7 @@ rescalePolygons <- function(gobject,
     spatVector = rescaled_original
   )
   if (calculate_centroids) {
-    S4_polygon <- calculate_centroids_polygons(
+    S4_polygon <- .calculate_centroids_polygons(
       gpolygon = S4_polygon,
       append_gpolygon = TRUE
     )

@@ -39,7 +39,7 @@ showGiottoExpression <- function(gobject, nrows = 4, ncols = 4) {
       if (inherits(dataObj[], "sparseMatrix")) {
         objPrints[[obj_i]] <- capture.output(show(dataObj))
       } else if (inherits(dataObj[], c("denseMatrix", "matrix", "data.frame"))) {
-        objPrints[[obj_i]] <- capture.output(abb_mat(dataObj, nrows, ncols))
+        objPrints[[obj_i]] <- capture.output(.abbrev_mat(dataObj, nrows, ncols))
       } else {
         # directly print slot (catch)
         objPrints[[obj_i]] <- capture.output(show(slot(dataObj, "exprMat")))
@@ -66,7 +66,7 @@ showGiottoExpression <- function(gobject, nrows = 4, ncols = 4) {
 
 
     # 4. print information
-    print_leaf(
+    .print_leaf(
       level_index = 1,
       availableDT = available_data,
       inherit_last = TRUE,
@@ -139,7 +139,7 @@ showGiottoCellMetadata <- function(gobject,
 
 
     # 4. print information
-    print_leaf(
+    .print_leaf(
       level_index = 1,
       availableDT = available_data,
       inherit_last = TRUE,
@@ -211,7 +211,7 @@ showGiottoFeatMetadata <- function(gobject,
 
 
     # 4. print information
-    print_leaf(
+    .print_leaf(
       level_index = 1,
       availableDT = available_data,
       inherit_last = TRUE,
@@ -260,7 +260,7 @@ showGiottoSpatLocs <- function(gobject,
       # collect object prints
       objRows[[obj_i]] <- nrow(dataObj[])
 
-      objPrints[[obj_i]] <- capture.output(abb_spatlocs(dataObj, nrows))
+      objPrints[[obj_i]] <- capture.output(.abbrev_spatlocs(dataObj, nrows))
     }
 
     # object printblock edits
@@ -286,7 +286,7 @@ showGiottoSpatLocs <- function(gobject,
     }
 
     # 4. print information
-    print_leaf(
+    .print_leaf(
       level_index = 1,
       availableDT = available_data,
       inherit_last = TRUE,
@@ -458,7 +458,7 @@ showGiottoDimRed <- function(gobject,
         "\n\n.\n"
       )
 
-      print_leaf(
+      .print_leaf(
         level_index = 2, # skip over dim reduction layer
         availableDT = available_data[data_type == data_type_red],
         inherit_last = TRUE,
@@ -551,7 +551,7 @@ showGiottoNearestNetworks <- function(gobject,
     }
 
     # 4. Print information
-    print_leaf(
+    .print_leaf(
       level_index = 1,
       availableDT = available_data,
       inherit_last = TRUE,
@@ -675,7 +675,7 @@ showGiottoSpatNetworks <- function(gobject,
     }
 
     # 4. Print information
-    print_leaf(
+    .print_leaf(
       level_index = 1,
       availableDT = available_data,
       inherit_last = TRUE,
@@ -762,7 +762,7 @@ showGiottoSpatGrids <- function(gobject,
     }
 
     # 4. Print information
-    print_leaf(
+    .print_leaf(
       level_index = 1,
       availableDT = available_data,
       inherit_last = TRUE,
@@ -813,7 +813,7 @@ showGiottoImageNames <- function(gobject) {
 ## internals ####
 
 #' @title Hierarchical tree printing
-#' @name print_leaf
+#' @name .print_leaf
 #' @param level_index Which col of availability matrix to start print from
 #' @param availableDT availability matrix given as data.table
 #' @param inherit_last (boolean) determine behavior from previous level for last level (intended for values print)
@@ -822,7 +822,7 @@ showGiottoImageNames <- function(gobject) {
 #' @keywords internal
 #' @details Much inspiration taken from https://rdrr.io/cran/fs/src/R/tree.R
 #' @keywords internal
-print_leaf <- function(level_index,
+.print_leaf <- function(level_index,
                        availableDT,
                        inherit_last = TRUE,
                        indent) {
@@ -836,7 +836,7 @@ print_leaf <- function(level_index,
     } else {
       if (i == length(leafs)) {
         cat(indent, ch$b, leafs[[i]], "\n", sep = "")
-        print_leaf(
+        .print_leaf(
           level_index = level_index + 1, # increment level_index
           availableDT = availableDT[as.vector(availableDT[, level_index, with = FALSE] == leafs[[i]])], # pass subset
           inherit_last = inherit_last,
@@ -844,7 +844,7 @@ print_leaf <- function(level_index,
         )
       } else {
         cat(indent, ch$t, leafs[[i]], "\n", sep = "")
-        print_leaf(
+        .print_leaf(
           level_index = level_index + 1,
           availableDT = availableDT[as.vector(availableDT[, level_index, with = FALSE] == leafs[[i]])], # pass subset
           inherit_last = inherit_last,
@@ -858,11 +858,11 @@ print_leaf <- function(level_index,
 
 
 #' @title Print abbreviated matrix
-#' @name abb_mat
+#' @name .abbrev_mat
 #' @description print abbreviated matrix exprObj. Works for Matrix pkg denseMatrix,
 #' matrix, data.frame and classes that inherit them.
 #' @keywords internal
-abb_mat <- function(exprObj, nrows, ncols, header = TRUE) {
+.abbrev_mat <- function(exprObj, nrows, ncols, header = TRUE) {
   mat <- as.matrix(exprObj[])
   four_names <- head(colnames(mat), 4)
   mat_cols <- ncol(mat)
@@ -895,10 +895,10 @@ abb_mat <- function(exprObj, nrows, ncols, header = TRUE) {
 
 
 #' @title Print abbreviated spatlocs
-#' @name abb_spatlocs
+#' @name .abbrev_spatlocs
 #' @description print abbreviated spatLocsObj
 #' @keywords internal
-abb_spatlocs <- function(spatLocsObj, nrows) {
+.abbrev_spatlocs <- function(spatLocsObj, nrows) {
   # data.table vars
   sdimx <- sdimy <- NULL
 

@@ -9,6 +9,10 @@
 \alias{`$<-`}
 \alias{$,coordDataDT-method}
 \alias{$<-,coordDataDT-method}
+\alias{$,spatEnrObj-method}
+\alias{$<-,spatEnrObj-method}
+\alias{$,dimObj-method}
+\alias{$<-,dimObj-method}
 \alias{$,metaData-method}
 \alias{$<-,metaData-method}
 \alias{$,terraVectData-method}
@@ -74,6 +78,14 @@
 \S4method{$}{coordDataDT}(x, name)
 
 \S4method{$}{coordDataDT}(x, name) <- value
+
+\S4method{$}{spatEnrObj}(x, name)
+
+\S4method{$}{spatEnrObj}(x, name) <- value
+
+\S4method{$}{dimObj}(x, name)
+
+\S4method{$}{dimObj}(x, name) <- value
 
 \S4method{$}{metaData}(x, name)
 
@@ -197,6 +209,18 @@ or replace parts.
 
 
 Select by colname from giotto S4 data.table coordinates slot.
+
+
+Select by colname from giotto S4 enrObj
+
+
+Set values by colname into giotto S4 dimObj.
+
+
+Select entries in misc slot from giotto S4 dimObj.
+
+
+Set entries in misc slot from giotto S4 dimObj.
 
 
 Select by colname from giotto S4 data.table metaDT slot.

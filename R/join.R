@@ -1,10 +1,10 @@
 #### joining giotto object ####
 
-#' @title join_expression_matrices
-#' @name join_expression_matrices
+#' @title .join_expression_matrices
+#' @name .join_expression_matrices
 #' @keywords internal
 #' @noRd
-join_expression_matrices <- function(matrix_list) {
+.join_expression_matrices <- function(matrix_list) {
   # find all features
   final_feats <- list()
   for (matr_i in 1:length(matrix_list)) {
@@ -40,29 +40,29 @@ join_expression_matrices <- function(matrix_list) {
   return(list(matrix = combined_matrix, sort_all_feats = final_feats))
 }
 
-#' @title join_spatlocs
-#' @name join_spatlocs
+#' @title .join_spatlocs
+#' @name .join_spatlocs
 #' @keywords internal
 #' @noRd
-join_spatlocs <- function(dt_list) {
+.join_spatlocs <- function(dt_list) {
   final_list <- do.call("rbind", dt_list) # breaks DT reference
   return(final_list)
 }
 
-#' @title join_cell_meta
-#' @name join_cell_meta
+#' @title .join_cell_meta
+#' @name .join_cell_meta
 #' @keywords internal
 #' @noRd
-join_cell_meta <- function(dt_list) {
+.join_cell_meta <- function(dt_list) {
   final_list <- do.call("rbind", dt_list)
   return(final_list)
 }
 
-#' @title join_feat_meta
-#' @name join_feat_meta
+#' @title .join_feat_meta
+#' @name .join_feat_meta
 #' @keywords internal
 #' @noRd
-join_feat_meta <- function(dt_list) {
+.join_feat_meta <- function(dt_list) {
   feat_ID <- NULL
 
   comb_meta <- do.call("rbind", c(dt_list, fill = TRUE))
@@ -724,9 +724,9 @@ joinGiottoObjects <- function(gobject_list,
         )
       })
 
-      if (!prov_match(expr_list)) warning(wrap_txt("expression: provenance mismatch"))
+      if (!.prov_match(expr_list)) warning(wrap_txt("expression: provenance mismatch"))
 
-      combmat <- join_expression_matrices(matrix_list = lapply(expr_list, function(expr) expr[]))
+      combmat <- .join_expression_matrices(matrix_list = lapply(expr_list, function(expr) expr[]))
       expr_list[[1]][] <- combmat[["matrix"]]
 
       ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -767,9 +767,9 @@ joinGiottoObjects <- function(gobject_list,
       )
     })
 
-    if (!prov_match(sl_list)) warning(wrap_txt("spatial locations: provenance mismatch"))
+    if (!.prov_match(sl_list)) warning(wrap_txt("spatial locations: provenance mismatch"))
 
-    combspatlocs <- join_spatlocs(dt_list = lapply(sl_list, function(sl) sl[]))
+    combspatlocs <- .join_spatlocs(dt_list = lapply(sl_list, function(sl) sl[]))
     sl_list[[1]][] <- combspatlocs
 
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -794,7 +794,7 @@ joinGiottoObjects <- function(gobject_list,
         cellmeta <- updated_object_list[[gobj_i]]@cell_metadata[[spat_unit]][[feat_type]][]
         savelist[[gobj_i]] <- cellmeta
       }
-      combcellmeta <- join_cell_meta(dt_list = savelist)
+      combcellmeta <- .join_cell_meta(dt_list = savelist)
 
       S4_cell_meta <- get_cell_metadata(
         gobject = first_obj,
@@ -834,9 +834,9 @@ joinGiottoObjects <- function(gobject_list,
         )
       })
 
-      if (!prov_match(fm_list)) warning(wrap_txt("feature metadata: provenance mismatch"))
+      if (!.prov_match(fm_list)) warning(wrap_txt("feature metadata: provenance mismatch"))
 
-      comb_fm <- join_feat_meta(dt_list = lapply(fm_list, function(fm) fm[]))
+      comb_fm <- .join_feat_meta(dt_list = lapply(fm_list, function(fm) fm[]))
       fm_list[[1]][] <- comb_fm
 
       ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###

@@ -36,7 +36,7 @@ setMethod("t", signature("giottoPoints"), function(x) {
 #' @rdname transpose-generic
 #' @export
 setMethod("t", signature("giottoPolygon"), function(x) {
-  x <- do_gpoly(x, "t")
+  x <- .do_gpoly(x, "t")
   x
 })
 

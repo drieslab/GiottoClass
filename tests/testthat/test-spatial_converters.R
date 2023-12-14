@@ -3,6 +3,8 @@ if (!requireNamespace("raster", quietly = TRUE)) {
   install.packages("raster")
 }
 
+library(checkmate)
+
 # create dummy data
 points_dt <- data.table::data.table(
   feat_ID = letters[1:10],

@@ -11,7 +11,6 @@
 #' @importFrom graphics segments
 #' @importFrom graphics legend par rect
 #' @importFrom grDevices dev.size
-#' @importFrom grDevices rainbow
 #' @importMethodsFrom terra spin
 #' @importMethodsFrom terra flip
 #' @importMethodsFrom terra rescale
@@ -24,6 +23,7 @@
 #' @importMethodsFrom terra vect
 #' @importMethodsFrom terra crop
 #' @importMethodsFrom terra as.data.frame
+#' @importMethodsFrom terra as.polygons as.points
 #' @importMethodsFrom terra nrow ncol
 #' @importClassesFrom terra SpatExtent
 #' @importClassesFrom terra SpatVector

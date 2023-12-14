@@ -312,7 +312,7 @@ createGiottoObject <- function(expression,
 
     # 1. ensure spatial locations and expression matrices have the same cell IDs
     # 2. give cell IDs if not provided
-    check_spatial_location_data(gobject) # modifies by reference
+    .check_spatial_location_data(gobject) # modifies by reference
   } else {
     if (verbose == TRUE) warning(wrap_txt("No spatial locations have been provided, dummy locations will be created"))
 
@@ -686,7 +686,7 @@ createGiottoObjectSubcellular <- function(gpolygons = NULL,
 
   if (verbose) cat("1. Start extracting polygon information \n")
 
-  polygon_res <- extract_polygon_list(
+  polygon_res <- .extract_polygon_list(
     polygonlist = gpolygons,
     polygon_mask_list_params = polygon_mask_list_params,
     polygon_dfr_list_params = polygon_dfr_list_params
@@ -702,7 +702,7 @@ createGiottoObjectSubcellular <- function(gpolygons = NULL,
     if (!is.null(centroidsDT)) {
       if (verbose) cat(" - Add centroid / spatial locations for ", polygon_info, " \n")
 
-      centroidsDT <- spatVector_to_dt(centroidsDT)
+      centroidsDT <- .spatvector_to_dt(centroidsDT)
       centroidsDT_loc <- centroidsDT[, .(poly_ID, x, y)]
       colnames(centroidsDT_loc) <- c("cell_ID", "sdimx", "sdimy")
 
@@ -736,7 +736,7 @@ createGiottoObjectSubcellular <- function(gpolygons = NULL,
   if (!is.null(gpoints)) {
     if (verbose) cat("3. Start extracting spatial feature information \n")
 
-    points_res <- extract_points_list(pointslist = gpoints)
+    points_res <- .extract_points_list(pointslist = gpoints)
     gobject@feat_info <- points_res
 
     if (verbose) cat("4. Finished extracting spatial feature information \n")
@@ -1072,7 +1072,7 @@ createExprObj <- function(expression_data,
                           provenance = NULL,
                           misc = NULL,
                           expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
-  exprMat <- evaluate_expr_matrix(expression_data,
+  exprMat <- .evaluate_expr_matrix(expression_data,
     expression_matrix_class = expression_matrix_class,
     feat_type = feat_type
   )
@@ -1136,7 +1136,7 @@ createCellMetaObj <- function(metadata,
                               provenance = NULL,
                               col_desc = NULL,
                               verbose = TRUE) {
-  metadata <- evaluate_cell_metadata(
+  metadata <- .evaluate_cell_metadata(
     metadata = metadata,
     verbose = verbose
   )
@@ -1198,7 +1198,7 @@ createFeatMetaObj <- function(metadata,
                               provenance = NULL,
                               col_desc = NULL,
                               verbose = TRUE) {
-  metadata <- evaluate_feat_metadata(
+  metadata <- .evaluate_feat_metadata(
     metadata = metadata,
     verbose = verbose
   )
@@ -1268,7 +1268,7 @@ createDimObj <- function(coordinates,
                          provenance = NULL,
                          misc = NULL,
                          my_rownames = NULL) {
-  coordinates <- evaluate_dimension_reduction(coordinates)
+  coordinates <- .evaluate_dimension_reduction(coordinates)
 
   create_dim_obj(
     name = name,
@@ -1356,7 +1356,7 @@ createNearestNetObj <- function(name = "test",
     igraph <- NULL
   } else {
     # convert igraph input to preferred format
-    igraph <- evaluate_nearest_networks(network)
+    igraph <- .evaluate_nearest_networks(network)
   }
 
   create_nn_net_obj(
@@ -1424,7 +1424,7 @@ createSpatLocsObj <- function(coordinates,
                               misc = NULL,
                               verbose = TRUE) {
   # convert coordinates input to preferred format
-  coordinates <- evaluate_spatial_locations(
+  coordinates <- .evaluate_spatial_locations(
     spatial_locs = coordinates,
     verbose = verbose
   )
@@ -1509,7 +1509,7 @@ createSpatNetObj <- function(network,
                              cellShapeObj = NULL,
                              crossSectionObjects = NULL,
                              misc = NULL) {
-  networkDT <- evaluate_spatial_network(network)
+  networkDT <- .evaluate_spatial_network(network)
 
   create_spat_net_obj(
     name = name,
@@ -1589,7 +1589,7 @@ createSpatEnrObj <- function(enrichment_data,
                              provenance = NULL,
                              misc = NULL,
                              verbose = TRUE) {
-  enrichDT <- evaluate_spatial_enrichment(enrichment_data, verbose = verbose)
+  enrichDT <- .evaluate_spatial_enrichment(enrichment_data, verbose = verbose)
 
   create_spat_enr_obj(
     name = name,
@@ -1838,7 +1838,7 @@ setMethod(
     if (!is.null(split_keyword)) checkmate::assert_list(split_keyword)
 
     # format and convert to SpatVector
-    spatvec <- create_spatvector_object_from_dfr(
+    spatvec <- .create_spatvector_object_from_dfr(
       x = x,
       verbose = verbose
     )
@@ -1881,6 +1881,7 @@ create_giotto_points_object <- function(feat_type = "rna",
     stop("spatVector needs to be a spatVector object from the terra package")
   }
 
+  terra::crs(spatVector) <- NULL
   g_points@spatVector <- spatVector
 
   ## 2. provide feature id
@@ -1927,7 +1928,7 @@ NULL
 setMethod(
   "createGiottoPolygon", signature("SpatVector"),
   function(x, name = "cell", calc_centroids = FALSE, verbose = TRUE) {
-    res_list <- evaluate_gpoly_spatvector(input_sv = x, verbose = verbose)
+    res_list <- .evaluate_gpoly_spatvector(input_sv = x, verbose = verbose)
     spatvector <- res_list$spatvector
     unique_IDs <- res_list$unique_IDs
 
@@ -1941,7 +1942,7 @@ setMethod(
 
     # add centroids
     if (isTRUE(calc_centroids)) {
-      g_polygon <- calculate_centroids_polygons(
+      g_polygon <- .calculate_centroids_polygons(
         gpolygon = g_polygon,
         name = "centroids",
         append_gpolygon = TRUE
@@ -2110,7 +2111,7 @@ createGiottoPolygonsFromMask <- function(maskfile,
     if (!file.exists(maskfile)) {
       stop("path : ", maskfile, " does not exist \n")
     }
-    terra_rast <- create_terra_spatRaster(maskfile)
+    terra_rast <- .create_terra_spatraster(maskfile)
   } else {
     terra_rast <- maskfile
   }
@@ -2131,7 +2132,7 @@ createGiottoPolygonsFromMask <- function(maskfile,
   }
 
 
-  spatVecDT <- spatVector_to_dt(terra_polygon)
+  spatVecDT <- .spatvector_to_dt(terra_polygon)
 
   ## flip across axes ##
   if (isTRUE(flip_vertical)) {
@@ -2193,7 +2194,7 @@ createGiottoPolygonsFromMask <- function(maskfile,
   # remove background polygon
   if (isTRUE(remove_background_polygon)) {
     if (background_algo == "range") {
-      backgr_poly_id <- identify_background_range_polygons(terra_polygon)
+      backgr_poly_id <- .identify_background_range_polygons(terra_polygon)
       # print(backgr_poly_id) uneccessary to print?
     }
 
@@ -2224,7 +2225,7 @@ createGiottoPolygonsFromMask <- function(maskfile,
 
   # add centroids
   if (isTRUE(calc_centroids)) {
-    g_polygon <- calculate_centroids_polygons(
+    g_polygon <- .calculate_centroids_polygons(
       gpolygon = g_polygon,
       name = "centroids",
       append_gpolygon = TRUE
@@ -2266,7 +2267,7 @@ createGiottoPolygonsFromDfr <- function(segmdfr,
                                         verbose = TRUE,
                                         skip_eval_dfr = FALSE,
                                         copy_dt = TRUE) {
-  eval_list <- evaluate_spatial_info(
+  eval_list <- .evaluate_spatial_info(
     spatial_info = segmdfr,
     skip_eval_dfr = skip_eval_dfr,
     copy_dt = copy_dt,
@@ -2285,7 +2286,7 @@ createGiottoPolygonsFromDfr <- function(segmdfr,
 
   # add centroids
   if (calc_centroids == TRUE) {
-    g_polygon <- calculate_centroids_polygons(
+    g_polygon <- .calculate_centroids_polygons(
       gpolygon = g_polygon,
       name = "centroids",
       append_gpolygon = TRUE
@@ -2313,7 +2314,7 @@ createGiottoPolygonsFromGeoJSON <- function(GeoJSON,
                                             name = "cell",
                                             calc_centroids = FALSE,
                                             verbose = TRUE) {
-  eval_list <- evaluate_spatial_info(
+  eval_list <- .evaluate_spatial_info(
     spatial_info = GeoJSON,
     verbose = verbose
   )
@@ -2329,8 +2330,8 @@ createGiottoPolygonsFromGeoJSON <- function(GeoJSON,
   )
 
   # add centroids
-  if (calc_centroids == TRUE) {
-    g_polygon <- calculate_centroids_polygons(
+  if (isTRUE(calc_centroids)) {
+    g_polygon <- .calculate_centroids_polygons(
       gpolygon = g_polygon,
       name = "centroids",
       append_gpolygon = TRUE
@@ -2373,6 +2374,7 @@ create_giotto_polygon_object <- function(name = "cell",
     stop("spatVector needs to be a SpatVector object from the terra package")
   }
 
+  terra::crs(spatVector) <- NULL
   g_polygon@spatVector <- spatVector
 
 
@@ -2712,7 +2714,7 @@ createGiottoLargeImage <- function(raster_object,
   if (!inherits(raster_object, "SpatRaster")) {
     if (file.exists(raster_object)) {
       g_imageL@file_path <- raster_object
-      raster_object <- create_terra_spatRaster(image_path = raster_object)
+      raster_object <- .create_terra_spatraster(image_path = raster_object)
     } else {
       stop("raster_object needs to be a'SpatRaster' object from the terra package or \n
            an existing path that can be read by terra::rast()")
@@ -2812,13 +2814,13 @@ createGiottoLargeImage <- function(raster_object,
 
 
   ## 5. Get image characteristics by sampling
-  sample_values <- spatraster_sample_values(raster_object, size = 5000, verbose = verbose)
+  sample_values <- .spatraster_sample_values(raster_object, size = 5000, verbose = verbose)
 
   if (nrow(sample_values) == 0) {
     if (verbose == TRUE) cat("No values discovered when sampling for image characteristics")
   } else {
     # find estimated intensity range
-    intensity_range <- spatraster_intensity_range(
+    intensity_range <- .spatraster_intensity_range(
       raster_object = raster_object,
       sample_values = sample_values
     )
@@ -2826,7 +2828,7 @@ createGiottoLargeImage <- function(raster_object,
     g_imageL@max_intensity <- intensity_range[["max"]]
 
     # find out if image is int or floating point
-    is_int <- spatraster_is_int(
+    is_int <- .spatraster_is_int(
       raster_object = raster_object,
       sample_values = sample_values
     )

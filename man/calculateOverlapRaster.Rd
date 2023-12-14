@@ -49,6 +49,6 @@ features (points).
 Serial overlapping function.
 }
 \seealso{
-\code{\link[=calculate_overlap_raster]{calculate_overlap_raster()}}
+\code{\link[=.calculate_overlap_raster]{.calculate_overlap_raster()}}
 }
 \concept{overlap}

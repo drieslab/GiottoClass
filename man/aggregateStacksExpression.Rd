@@ -39,7 +39,6 @@ aggregate expression matrices from different z-stacks
 Other aggregate stacks: 
 \code{\link{aggregateStacksLocations}()},
 \code{\link{aggregateStacksPolygonOverlaps}()},
-\code{\link{aggregateStacksPolygonsOLD}()},
 \code{\link{aggregateStacksPolygons}()},
 \code{\link{aggregateStacks}()}
 }

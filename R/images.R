@@ -538,10 +538,10 @@ reconnect_giottoImage_MG <- function(giottoImage,
 
 
 #' @title Load image as a terra spatRaster object
-#' @name create_terra_spatRaster
+#' @name .create_terra_spatraster
 #' @param image_path existing full filepath to image to be loaded as a terra spatRaster
 #' @keywords internal
-create_terra_spatRaster <- function(image_path) {
+.create_terra_spatraster <- function(image_path) {
   raster_object <- try(suppressWarnings(terra::rast(x = image_path)))
   if (inherits(raster_object, "try-error")) {
     stop(raster_object, " can not be read by terra::rast() \n")
@@ -600,7 +600,6 @@ create_terra_spatRaster <- function(image_path) {
 #' decreased resolution when cropping after sampling
 #' @return a \code{giottoLargeImage} cropped and resampled properly for plotting
 #' @seealso \code{\link[terra]{spatSample}}
-#' @keywords internal
 #' @export
 plot_auto_largeImage_resample <- function(gobject,
                                           giottoLargeImage = NULL,
@@ -644,7 +643,7 @@ plot_auto_largeImage_resample <- function(gobject,
     )
 
     # Find centroids then if there are more than 100, sample 30%
-    sub_obj <- calculate_centroids_polygons(sub_obj)
+    sub_obj <- .calculate_centroids_polygons(sub_obj)
     sampleSize <- ifelse(nrow(sub_obj) > 100, ceiling(0.3 * nrow(sub_obj)), nrow(sub_obj))
 
     centroid_sample_DT <- slot(sub_obj, "spatVectorCentroids") %>%
@@ -755,12 +754,12 @@ plot_auto_largeImage_resample <- function(gobject,
 
 
 #' @title Sample values from SpatRaster
-#' @name spatraster_sample_values
+#' @name .spatraster_sample_values
 #' @param raster_object terra SpatRaster to sample from
 #' @param size rough maximum of pixels allowed when resampling
 #' @param verbose be verbose
 #' @keywords internal
-spatraster_sample_values <- function(raster_object, size = 5000, verbose = TRUE) {
+.spatraster_sample_values <- function(raster_object, size = 5000, verbose = TRUE) {
   res <- stats::na.omit(
     terra::spatSample(
       raster_object,
@@ -781,13 +780,13 @@ spatraster_sample_values <- function(raster_object, size = 5000, verbose = TRUE)
 
 
 #' @title Find SpatRaster intensity range
-#' @name spatraster_intensity_range
+#' @name .spatraster_intensity_range
 #' @keywords internal
 #' @noRd
 #' @return named numeric vector of min then max detected values
-spatraster_intensity_range <- function(
+.spatraster_intensity_range <- function(
     raster_object,
-    sample_values = spatraster_sample_values(raster_object)) {
+    sample_values = .spatraster_sample_values(raster_object)) {
   # get intensity range
   srMinmax <- suppressWarnings(terra::minmax(raster_object))
   if (sum(is.infinite(srMinmax)) == 0) { # pull minmax values from terra spatRaster obj if img was small enough for them to be calculated
@@ -805,13 +804,13 @@ spatraster_intensity_range <- function(
 
 
 #' @title Find SpatRaster int or floating point
-#' @name spatraster_is_int
+#' @name .spatraster_is_int
 #' @keywords internal
 #' @noRd
 #' @return logical
-spatraster_is_int <- function(
+.spatraster_is_int <- function(
     raster_object,
-    sample_values = spatraster_sample_values(raster_object)) {
+    sample_values = .spatraster_sample_values(raster_object)) {
   # find out if image is int or floating point
   identical(sample_values, round(sample_values))
 }
@@ -829,7 +828,7 @@ spatraster_is_int <- function(
 #' @param giottoLargeImage giotto large image object
 #' @param method method of plotting image distribution
 #' @keywords internal
-dist_giottoLargeImage <- function(gobject = NULL,
+.dist_giottolargeimage <- function(gobject = NULL,
                                   image_name = NULL,
                                   giottoLargeImage = NULL,
                                   method = "dens") {
@@ -981,7 +980,7 @@ stitchGiottoLargeImage <- function(largeImage_list = NULL,
 
   # Determine datatype from first giottoLargeImage
   if (is.null(dataType)) {
-    dataType <- find_terra_writeRaster_dataType(giottoLargeImage = largeImage_list[[1]])
+    dataType <- .terra_writeraster_datatype(giottoLargeImage = largeImage_list[[1]])
   }
 
   # For loop to extract raster_objects
@@ -1295,8 +1294,8 @@ convertGiottoLargeImageToMG <- function(gobject = NULL,
 }
 
 
-#' @title find_terra_writeRaster_dataType
-#' @name find_terra_writeRaster_dataType
+#' @title .terra_writeraster_datatype
+#' @name .terra_writeraster_datatype
 #' @description find likely compatible datatype for given image characteristics.
 #'   Values given in arguments take priority over those found from giottoLargeImage
 #'   metadata
@@ -1311,7 +1310,7 @@ convertGiottoLargeImageToMG <- function(gobject = NULL,
 #' @param verbose be verbose
 #' @keywords internal
 #' @return datatype for terra writeRaster function
-find_terra_writeRaster_dataType <- function(giottoLargeImage = NULL,
+.terra_writeraster_datatype <- function(giottoLargeImage = NULL,
                                             quick_INTS_maxval = NULL,
                                             max_intensity = NULL,
                                             min_intensity = NULL,
@@ -1491,7 +1490,7 @@ writeGiottoLargeImage <- function(giottoLargeImage = NULL,
 
   ## 2. Get likely compatible dataType
   if (is.null(dataType)) {
-    dataType <- find_terra_writeRaster_dataType(
+    dataType <- .terra_writeraster_datatype(
       giottoLargeImage = giottoLargeImage,
       quick_INTS_maxval = max_intensity
     )
@@ -1795,7 +1794,7 @@ addGiottoLargeImage <- function(gobject = NULL,
 reconnect_giottoLargeImage <- function(giottoLargeImage,
                                        image_path) {
   # load in new terra raster objects
-  raster_object <- create_terra_spatRaster(image_path = image_path)
+  raster_object <- .create_terra_spatraster(image_path = image_path)
 
   # replace old raster objects and inherit tracked extents
   giottoLargeImage@raster_object <- raster_object
@@ -1879,10 +1878,10 @@ plotGiottoImage <- function(gobject = NULL,
   # cat('Plotting ', image_type, ': "', image_name, '" ... \n', sep = '')
 
   if (image_type == "image") {
-    plot_giottoImage_MG(giottoImage = img_obj)
+    .plot_giottoimage_mg(giottoImage = img_obj)
   }
   if (image_type == "largeImage") {
-    plot_giottoLargeImage(
+    .plot_giottolargeimage(
       giottoLargeImage = img_obj,
       crop_extent = largeImage_crop_params_list$crop_extent,
       xmax_crop = largeImage_crop_params_list$xmax_crop,
@@ -2390,7 +2389,7 @@ distGiottoImage <- function(gobject = NULL,
 
   # run specific function
   if (image_type == "largeImage") {
-    dist_giottoLargeImage(
+    .dist_giottolargeimage(
       gobject = gobject,
       image_name = image_name,
       giottoLargeImage = giottoLargeImage,

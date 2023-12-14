@@ -71,7 +71,7 @@ reference:
   - readSpatEnrichData
   - readSpatLocsData
   - readSpatNetData
-  - read_feature_metadata
+  - .read_feature_metadata
 - subtitle: Create
   desc: Create Giotto-native objects
 - contents:
@@ -382,7 +382,6 @@ reference:
   desc: Utility functions that are used in other code
 - contents:
   - polygon_to_raster
-  - getRainbowColors
   - smoothGiottoPolygons
 - title: Deprecated
   desc: Deprecated and/or less supported older functions. Some of these functions are here for compatibility and internal purposes.
@@ -400,7 +399,6 @@ reference:
   - get_spatialNetwork
   - get_spatial_enrichment
   - get_spatial_locations
-  - aggregateStacksPolygonsOLD
   - createSpatialDefaultGrid
   - createSpatialGrid
   - setSpatialGrid
