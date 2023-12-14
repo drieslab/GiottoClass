@@ -31,8 +31,3 @@
 #' @import data.table
 #' @import utils
 NULL
-
-#' @export
-GiottoUtils::getDistinctColors
-#' @export
-GiottoUtils::getRainbowColors

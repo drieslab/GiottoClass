@@ -132,5 +132,6 @@ Collate:
     'spatial_structures.R'
     'stitch_coordinates.R'
     'subset.R'
+    'suite_reexports.R'
     'zzz.R'
 URL: https://drieslab.github.io/GiottoClass/
