@@ -32,6 +32,8 @@ setMethod(
 )
 
 #' @rdname spatShift
+#' @param geom character. Named vector of colnames of x, y, (z) coordinate columns.
+#' Default is `c("sdimx", "sdimy", "sdimz")`
 #' @export
 setMethod(
   "spatShift", signature("data.frame"),

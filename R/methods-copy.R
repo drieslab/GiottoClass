@@ -2,7 +2,7 @@
 NULL
 
 #' @title Copy an entire object
-#' @name copy-generic
+#' @name copy
 #' @description S4 generic for Giotto's S4 subobjects to return with full copies of
 #' certain subobjects that usually return referenced information.
 #' @param x a Giotto S4 class subobject
@@ -10,7 +10,7 @@ NULL
 #' @aliases copy
 NULL
 
-#' @describeIn copy-generic Copy \emph{data.table}-based spatial locations object.
+#' @describeIn copy Copy \emph{data.table}-based spatial locations object.
 #' @export
 setMethod("copy", signature(x = "coordDataDT"), function(x) {
   x@coordinates <- data.table::copy(x@coordinates)

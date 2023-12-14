@@ -1,6 +1,6 @@
 # docs -------------------------------------------------------------- #
 #' @title Rescale an object
-#' @name rescale-generic
+#' @name rescale
 #' @description Rescale an object spatially. Z dimension scaling is supported for
 #' some types of subobjects.
 #' @param x object
@@ -16,7 +16,7 @@ NULL
 
 
 
-#' @rdname rescale-generic
+#' @rdname rescale
 #' @export
 setMethod(
   "rescale", signature("spatLocsObj"),
@@ -31,7 +31,7 @@ setMethod(
   }
 )
 
-#' @rdname rescale-generic
+#' @rdname rescale
 #' @param geom character. Named vector of colnames of x, y, (z) coordinate columns.
 #' Default is `c("sdimx", "sdimy", "sdimz")`
 setMethod(

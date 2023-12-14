@@ -1,6 +1,6 @@
 # documentation ####
 
-#' @name crop-generic
+#' @name crop
 #' @title Crop to a spatial subset
 #' @description Spatially subset an object x using object y. Giotto spatial
 #' subobjects respond to [terra::crop]. For `giottoPoints` and `giottoPolygon`,
@@ -26,7 +26,7 @@ NULL
 
 
 
-#' @describeIn crop-generic Crop a giottoLargeImage
+#' @describeIn crop Crop a giottoLargeImage
 #' @export
 setMethod("crop", signature("giottoLargeImage"), function(x, y, ...) {
   if (is.null(terra::intersect(terra::ext(x), terra::ext(y)))) {
@@ -42,7 +42,7 @@ setMethod("crop", signature("giottoLargeImage"), function(x, y, ...) {
 })
 
 
-#' @describeIn crop-generic Crop a giottoPoints
+#' @describeIn crop Crop a giottoPoints
 #' @param DT logical. Use alternative DT subsetting for crop operation
 #' @param xmin,xmax,ymin,ymax only used if DT = TRUE. Set extent bounds
 #' independently
@@ -58,7 +58,7 @@ setMethod("crop", signature("giottoPoints"), function(
     n_single_bounds <- 4 - sum(sapply(list(xmin, xmax, ymin, ymax), is.null))
 
     # 1. get final crop bounds (numeric vector of xmin, xmax, ymin, ymax)
-    b <- determine_crop_bounds(x, y, missing_y, n_single_bounds, xmin, xmax, ymin, ymax)
+    b <- .determine_crop_bounds(x, y, missing_y, n_single_bounds, xmin, xmax, ymin, ymax)
 
     # 2. convert to DT
     sv <- x@spatVector
@@ -87,7 +87,7 @@ setMethod("crop", signature("giottoPoints"), function(
 
 
 
-#' @describeIn crop-generic Crop a giottoPoints
+#' @describeIn crop Crop a giottoPoints
 #' @param DT logical. Use alternative DT subsetting for crop operation
 #' @param xmin,xmax,ymin,ymax only used if DT = TRUE. Set extent bounds
 #' independently
@@ -104,7 +104,7 @@ setMethod("crop", signature("giottoPolygon"), function(
     n_single_bounds <- 4 - sum(sapply(list(xmin, xmax, ymin, ymax), is.null))
 
     # 1. get final crop bounds (numeric vector of xmin, xmax, ymin, ymax)
-    b <- determine_crop_bounds(x, y, missing_y, n_single_bounds, xmin, xmax, ymin, ymax)
+    b <- .determine_crop_bounds(x, y, missing_y, n_single_bounds, xmin, xmax, ymin, ymax)
 
     # 2. convert to DT
     sv <- x@spatVectorCentroids
@@ -164,7 +164,7 @@ setMethod("crop", signature("giottoPolygon"), function(
 #
 # returns a numeric vector of the 4 bounds in the order of:
 #   xmin, xmax, ymin, ymax
-determine_crop_bounds <- function(x, y, missing_y, n_single_bounds, xmin, xmax, ymin, ymax) {
+.determine_crop_bounds <- function(x, y, missing_y, n_single_bounds, xmin, xmax, ymin, ymax) {
   # check cropping params
   # ONLY y OR the single spat bounds can be used at any one time
   if ((missing_y && n_single_bounds == 0) ||

@@ -1,6 +1,6 @@
 # docs ----------------------------------------------------------- #
 #' @title Flip an object
-#' @name flip-generic
+#' @name flip
 #' @description Flip an object over a designated x or y value depending on
 #' direction param input. Note that this behavior may be different from terra's
 #' @param x object
@@ -13,58 +13,58 @@
 NULL
 # ---------------------------------------------------------------- #
 
-#' @describeIn flip-generic Flip a giottoPolygon object
+#' @describeIn flip Flip a giottoPolygon object
 #' @export
 setMethod(
   "flip", signature(x = "giottoPolygon"),
   function(x, direction = "vertical", x0 = 0, y0 = 0, ...) {
-    flip_gpoly(gpoly = x, direction = direction, x0 = x0, y0 = y0)
+    .flip_gpoly(gpoly = x, direction = direction, x0 = x0, y0 = y0)
   }
 )
 
-#' @describeIn flip-generic Flip a giottoPoints object
+#' @describeIn flip Flip a giottoPoints object
 #' @export
 setMethod(
   "flip", signature(x = "giottoPoints"),
   function(x, direction = "vertical", x0 = 0, y0 = 0, ...) {
-    flip_gpoints(gpoints = x, direction = direction, x0 = x0, y0 = y0)
+    .flip_gpoints(gpoints = x, direction = direction, x0 = x0, y0 = y0)
   }
 )
 
-#' @describeIn flip-generic Flip a spatLocsObj
+#' @describeIn flip Flip a spatLocsObj
 #' @export
 setMethod(
   "flip", signature(x = "spatLocsObj"),
   function(x, direction = "vertical", x0 = 0, y0 = 0, ...) {
-    flip_spatlocs(sl = x, direction = direction, x0 = x0, y0 = y0)
+    .flip_spatlocs(sl = x, direction = direction, x0 = x0, y0 = y0)
   }
 )
 
-#' @describeIn flip-generic Flip a spatialNetworkObj
+#' @describeIn flip Flip a spatialNetworkObj
 #' @export
 setMethod(
   "flip", signature(x = "spatialNetworkObj"),
   function(x, direction = "vertical", x0 = 0, y0 = 0, ...) {
-    flip_spatnet(sn = x, direction = direction, x0 = x0, y0 = y0)
+    .flip_spatnet(sn = x, direction = direction, x0 = x0, y0 = y0)
   }
 )
 
 # TODO apply as instructions for lazy eval after crop/resampling
-#' @describeIn flip-generic Flip a giottoLargeImage
+#' @describeIn flip Flip a giottoLargeImage
 #' @export
 setMethod(
   "flip", signature(x = "giottoLargeImage"),
   function(x, direction = "vertical", x0 = 0, y0 = 0, ...) {
-    flip_large_image(image = x, direction = direction, x0 = x0, y0 = y0)
+    .flip_large_image(image = x, direction = direction, x0 = x0, y0 = y0)
   }
 )
 
-#' @describeIn flip-generic Flip a SpatExtent
+#' @describeIn flip Flip a SpatExtent
 #' @export
 setMethod(
   "flip", signature(x = "SpatExtent"),
   function(x, direction = "vertical", x0 = 0, y0 = 0) {
-    flip_extent(e = x, direction = direction, x0 = x0, y0 = y0)
+    .flip_extent(e = x, direction = direction, x0 = x0, y0 = y0)
   }
 )
 
@@ -73,7 +73,7 @@ setMethod(
 # internals ####
 #
 #
-#' @name flip_gpoly
+#' @name .flip_gpoly
 #' @title Flip a giottoPolygon object
 #' @description Flip a giottoPolygon over a designated x or y value depending on
 #' direction param input. Note that this behavior is different from terra's
@@ -86,7 +86,7 @@ setMethod(
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-flip_gpoly <- function(gpoly,
+.flip_gpoly <- function(gpoly,
                        direction = "vertical",
                        x0 = 0,
                        y0 = 0) {
@@ -193,7 +193,7 @@ flip_gpoly <- function(gpoly,
 
 
 
-#' @name flip_large_image
+#' @name .flip_large_image
 #' @title Flip a giottoLargeImage object
 #' @description Flip a giottoPoints over a designated x or y value depending on
 #' direction param input. Note that this behavior is different from terra's
@@ -206,7 +206,7 @@ flip_gpoly <- function(gpoly,
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-flip_large_image <- function(image,
+.flip_large_image <- function(image,
                              direction = "vertical",
                              x0 = 0,
                              y0 = 0) {
@@ -242,7 +242,7 @@ flip_large_image <- function(image,
 }
 
 
-#' @name flip_gpoints
+#' @name .flip_gpoints
 #' @title Flip a giottoPoints object
 #' @description Flip a giottoPoints over a designated x or y value depending on
 #' direction param input. Note that this behavior is different from terra's
@@ -255,7 +255,7 @@ flip_large_image <- function(image,
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-flip_gpoints <- function(gpoints,
+.flip_gpoints <- function(gpoints,
                          direction = "vertical",
                          x0 = 0,
                          y0 = 0) {
@@ -302,7 +302,7 @@ flip_gpoints <- function(gpoints,
 
 
 
-#' @name flip_spatlocs
+#' @name .flip_spatlocs
 #' @param sl spatLocsObj
 #' @param direction character. Direction to flip. Should be either partial match to 'vertical' or 'horizontal'
 #' @param x0 x value to flip horizontally over (ignored for vertical). Pass NULL
@@ -311,7 +311,7 @@ flip_gpoints <- function(gpoints,
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-flip_spatlocs <- function(sl,
+.flip_spatlocs <- function(sl,
                           direction = "vertical",
                           x0 = 0,
                           y0 = 0,
@@ -346,7 +346,7 @@ flip_spatlocs <- function(sl,
 
 
 
-#' @name flip_spatnet
+#' @name .flip_spatnet
 #' @param sn spatialNetworkObj
 #' @param direction character. Direction to flip. Should be either partial match to 'vertical' or 'horizontal'
 #' @param x0 x value to flip horizontally over (ignored for vertical). Pass NULL
@@ -355,7 +355,7 @@ flip_spatlocs <- function(sl,
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-flip_spatnet <- function(sn,
+.flip_spatnet <- function(sn,
                          direction = "vertical",
                          x0 = 0,
                          y0 = 0,
@@ -396,7 +396,7 @@ flip_spatnet <- function(sn,
 
 
 
-#' @name flip_extent
+#' @name .flip_extent
 #' @title Flip a SpatExtent
 #' @param e extent
 #' @param direction character. Direction to flip. Should be either partial match to 'vertical' or 'horizontal'
@@ -406,7 +406,7 @@ flip_spatnet <- function(sn,
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-flip_extent <- function(e,
+.flip_extent <- function(e,
                         direction = "vertical",
                         x0 = 0,
                         y0 = 0) {

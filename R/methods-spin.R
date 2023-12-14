@@ -1,7 +1,7 @@
 ## spin ####
 
 #' @title Spin an object
-#' @name spin-generic
+#' @name spin
 #' @description Spin (rotate) an object spatially (limited to xy rotations)
 #' @param x object
 #' @param angle numeric. Angle of rotation in degrees
@@ -9,7 +9,7 @@
 #' @param y0 numeric. y-coordinate of the center of rotation. Defaults to center y val if not given.
 NULL
 
-#' @describeIn spin-generic Spin a giottoPolygon object
+#' @describeIn spin Spin a giottoPolygon object
 #' @export
 setMethod(
   "spin", signature(x = "giottoPolygon"),
@@ -20,7 +20,7 @@ setMethod(
   }
 )
 
-#' @describeIn spin-generic Spin a giottoPoints object
+#' @describeIn spin Spin a giottoPoints object
 #' @export
 setMethod(
   "spin", signature(x = "giottoPoints"),
@@ -36,7 +36,7 @@ setMethod(
   }
 )
 
-#' @describeIn spin-generic Spin a spatLocsObj
+#' @describeIn spin Spin a spatLocsObj
 #' @param z0 spatLocsObj specific. Numeric. z-coordinate of the center of rotation.
 #' Depending on if z data is present, defaults to either 0 or center z val if not given.
 #' @param xy_angle spatLocsObj specific. xy plane rotation in degrees.
@@ -60,7 +60,7 @@ setMethod(
 )
 
 
-#' @rdname spin-generic
+#' @rdname spin
 #' @param geom character. Named vector of colnames of x, y, (z) coordinate columns.
 #' Default is `c("sdimx", "sdimy", "sdimz")`
 #' @export
