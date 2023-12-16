@@ -1,5 +1,5 @@
 
-# Giotto Class 0.1.1 (TBD)
+# Giotto Class 0.1.1 (2023/12/16)
 
 ## Breaking Changes
 - Removed: `getRainbowColors()` to *GiottoUtils*
