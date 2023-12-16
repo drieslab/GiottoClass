@@ -399,7 +399,7 @@ loadGiotto <- function(path_to_folder,
 
   ## 6. overallocate for data.tables
   # (data.tables when read from disk have a truelength of 0)
-  gobject <- giotto_alloc_dt_slots(gobject)
+  gobject <- .giotto_alloc_dt(gobject)
 
 
   return(gobject)

@@ -37,6 +37,8 @@ Coerce to data.table if possible
 }
 \seealso{
 Other As coercion functions: 
+\code{\link{as.points}()},
+\code{\link{as.polygons}()},
 \code{\link{r_spatial_conversions}}
 }
 \concept{As coercion functions}

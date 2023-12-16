@@ -209,7 +209,7 @@ read_s4_nesting <- function(x) {
 get_cell_id <- function(gobject,
                         spat_unit = NULL,
                         set_defaults = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (isTRUE(set_defaults)) {
     spat_unit <- set_default_spat_unit(
       gobject = gobject,
@@ -255,7 +255,7 @@ set_cell_id <- function(gobject,
                         cell_IDs,
                         set_defaults = TRUE,
                         verbose = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   # set default spat_unit
   if (isTRUE(set_defaults)) {
@@ -342,7 +342,7 @@ set_cell_id <- function(gobject,
 get_feat_id <- function(gobject,
                         feat_type = NULL,
                         set_defaults = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (isTRUE(set_defaults)) {
     spat_unit <- set_default_spat_unit(
       gobject = gobject,
@@ -393,7 +393,7 @@ set_feat_id <- function(gobject,
                         feat_IDs,
                         set_defaults = TRUE,
                         verbose = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   if (isTRUE(set_defaults)) {
     if (identical(feat_IDs, "initialize")) {
@@ -656,7 +656,7 @@ setCellMetadata <- function(gobject,
                             provenance = NULL,
                             verbose = TRUE,
                             initialize = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(x)) {
     stop(wrap_txt("x param (data to set) must be given",
       errWidth = TRUE
@@ -751,7 +751,7 @@ set_cell_metadata <- function(gobject,
   # data.table vars
   cell_ID <- NULL
 
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(metadata)) stop(wrap_txt("metadata param must be given"))
 
   if (!inherits(metadata, c("cellMetaObj", "NULL")) &
@@ -838,7 +838,7 @@ set_cell_metadata <- function(gobject,
   } else {
     # 4.2 if nested list structure, extract spat_unit/feat_type
     if (inherits(metadata, "list")) {
-      cellMetaObj_list <- read_cell_metadata(gobject,
+      cellMetaObj_list <- .read_cell_metadata(gobject,
         metadata = metadata,
         provenance = if (is.null(provenance)) spat_unit else provenance
       )
@@ -1051,7 +1051,7 @@ setFeatureMetadata <- function(gobject,
                                provenance = NULL,
                                verbose = TRUE,
                                initialize = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(x)) {
     stop(wrap_txt("x param (data to set) must be given",
       errWidth = TRUE
@@ -1141,7 +1141,7 @@ set_feature_metadata <- function(gobject,
   # data.table vars
   feat_ID <- NULL
 
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(metadata)) stop(wrap_txt("metadata param must be given"))
 
   if (!inherits(metadata, c("featMetaObj", "NULL")) &
@@ -1334,7 +1334,7 @@ getExpression <- function(gobject,
                           output = c("exprObj", "matrix"),
                           set_defaults = TRUE) {
   # 0. Check input
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   output <- match.arg(output, choices = c("exprObj", "matrix"))
 
 
@@ -1400,7 +1400,7 @@ get_expression_values <- function(gobject,
                                   set_defaults = TRUE) {
   deprecate_soft("3.3.0", "get_expression_values()", "getExpression()")
 
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   output <- match.arg(output, choices = c("exprObj", "matrix"))
 
@@ -1501,7 +1501,7 @@ get_expression_values_list <- function(gobject,
                                        feat_type = NULL,
                                        output = c("exprObj", "matrix"),
                                        set_defaults = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   output <- match.arg(output, choices = c("exprObj", "matrix"))
 
@@ -1555,7 +1555,7 @@ setExpression <- function(gobject,
                           provenance = NULL,
                           verbose = TRUE,
                           initialize = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(x)) stop(wrap_txt("x param (data to set) must be given"))
 
   # 1. Determine user inputs
@@ -1647,7 +1647,7 @@ set_expression_values <- function(gobject,
                                   initialize = FALSE) {
   deprecate_soft("3.3.0", what = "set_expression_values()", with = "setExpression()")
 
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   if (!inherits(values, c("exprObj", "NULL"))) {
     stop(wrap_txt(deparse(substitute(values)), "is not exprObj (set)
@@ -2156,7 +2156,7 @@ get_spatial_locations_list <- function(gobject,
                                        copy_obj = TRUE,
                                        verbose = TRUE,
                                        set_defaults = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   output <- match.arg(output, choices = c("spatLocsObj", "data.table"))
 
@@ -2211,7 +2211,7 @@ setSpatialLocations <- function(gobject,
                                 provenance = NULL,
                                 verbose = TRUE,
                                 initialize = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(x)) stop(wrap_txt("x (data to set) param must be given"))
 
 
@@ -2316,7 +2316,7 @@ set_spatial_locations <- function(gobject,
                                   initialize = FALSE) {
   deprecate_soft("3.3.0", what = "set_spatial_locations()", with = "setSpatialLocations()")
 
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(spatlocs)) stop(wrap_txt("spatlocs param must be given"))
 
   # 0. pass to external if not native formats
@@ -2438,7 +2438,7 @@ get_dimReduction <- function(gobject,
                              set_defaults = TRUE) {
   deprecate_soft(when = "3.3.0", "get_dimReduction()", "getDimReduction()")
 
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   # to be deprecated ('data.table' -> 'matrix')
   if (!identical(output, c("dimObj", "matrix"))) {
@@ -2551,7 +2551,7 @@ get_dim_reduction_list <- function(gobject,
                                    reduction = c("cells", "feats"),
                                    output = c("dimObj", "matrix"),
                                    set_defaults = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   reduction <- match.arg(reduction, choices = c("cells", "feats"))
 
@@ -2619,7 +2619,7 @@ setDimReduction <- function(gobject,
                             provenance = NULL,
                             verbose = TRUE,
                             initialize = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   reduction <- match.arg(reduction, choices = c("cells", "feats"))
   # reduction_method = match.arg(reduction_method, choices = c('pca', 'umap', 'tsne'))
   if (!methods::hasArg(x)) stop(wrap_txt("x (data to set) param must be given"))
@@ -2729,7 +2729,7 @@ set_dimReduction <- function(gobject,
                              initialize = FALSE) {
   deprecate_soft("3.3.0", what = "set_dimReduction()", with = "setDimReduction()")
 
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   reduction <- match.arg(reduction, choices = c("cells", "feats"))
   # reduction_method = match.arg(reduction_method, choices = c('pca', 'umap', 'tsne'))
   if (!methods::hasArg(dimObject)) stop(wrap_txt("dimObject param must be given"))
@@ -2982,7 +2982,7 @@ get_nearest_network_list <- function(gobject,
                                      feat_type = NULL,
                                      output = c("nnNetObj", "igraph", "data.table"),
                                      set_defaults = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   output <- match.arg(output, choices = c("nnNetObj", "igraph", "data.table"))
 
@@ -3047,7 +3047,7 @@ setNearestNetwork <- function(gobject,
                               provenance = NULL,
                               verbose = TRUE,
                               initialize = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(x)) stop(wrap_txt("x (data to set) param must be given"))
 
 
@@ -3151,7 +3151,7 @@ set_NearestNetwork <- function(gobject,
                                initialize = FALSE) {
   deprecate_soft("3.3.0", what = "set_NearestNetwork()", with = "setNearestNetwork()")
 
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(nn_network)) stop(wrap_txt("nn_network param must be given"))
 
   # 0. stop if not native formats
@@ -3401,7 +3401,7 @@ get_spatial_network_list <- function(gobject,
                                      ),
                                      set_defaults = TRUE,
                                      copy_obj = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   output <- match.arg(output, choices = c(
     "spatialNetworkObj",
@@ -3465,7 +3465,7 @@ setSpatialNetwork <- function(gobject,
                               provenance = NULL,
                               verbose = TRUE,
                               initialize = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(x)) stop(wrap_txt("x param (data to set) must be given"))
 
 
@@ -3557,7 +3557,7 @@ set_spatialNetwork <- function(gobject,
                                initialize = FALSE) {
   deprecate_soft("3.3.0", what = "set_spatialNetwork()", with = "setSpatialNetwork()")
 
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(spatial_network)) stop(wrap_txt("spatial_network param must be given"))
 
   # 0. stop if not native formats
@@ -3997,7 +3997,7 @@ getPolygonInfo <- function(gobject = NULL,
 #' @noRd
 get_polygon_info_list <- function(gobject,
                                   return_giottoPolygon = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   data_list <- slot(gobject, "spatial_info")
 
@@ -4046,7 +4046,7 @@ setPolygonInfo <- function(gobject,
   # data.table vars
   poly_ID <- y <- NULL
 
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(x)) stop(wrap_txt("x param (data to be set) must be given"))
 
 
@@ -4073,7 +4073,7 @@ setPolygonInfo <- function(gobject,
     if (inherits(x, "giottoPolygon") & isTRUE(centroids_to_spatlocs)) {
       if (!is.null(x@spatVectorCentroids)) {
         centroids <- x@spatVectorCentroids
-        centroidsDT <- spatVector_to_dt(centroids)
+        centroidsDT <- .spatvector_to_dt(centroids)
         centroidsDT_loc <- centroidsDT[, .(poly_ID, x, y)]
         colnames(centroidsDT_loc) <- c("cell_ID", "sdimx", "sdimy")
 
@@ -4124,7 +4124,7 @@ setPolygonInfo <- function(gobject,
         if (inherits(x[[obj_i]], "giottoPolygon") & isTRUE(centroids_to_spatlocs)) {
           if (!is.null(x[[obj_i]]@spatVectorCentroids)) {
             centroids <- x[[obj_i]]@spatVectorCentroids
-            centroidsDT <- spatVector_to_dt(centroids)
+            centroidsDT <- .spatvector_to_dt(centroids)
             centroidsDT_loc <- centroidsDT[, .(poly_ID, x, y)]
             colnames(centroidsDT_loc) <- c("cell_ID", "sdimx", "sdimy")
 
@@ -4191,7 +4191,7 @@ set_polygon_info <- function(gobject,
                              initialize = FALSE) {
   deprecate_soft("3.3.0", what = "set_polygon_info()", with = "setPolygonInfo()")
 
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(gpolygon)) stop(wrap_txt("gpolygon param must be given"))
 
   # 0. stop if not native formats
@@ -4362,7 +4362,7 @@ get_feature_info <- function(gobject,
                              return_giottoPoints = FALSE) {
   deprecate_soft("3.3.0", what = "get_feature_info()", with = "getFeatureInfo()")
 
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   # specify feat_type
   if (isTRUE(set_defaults)) {
@@ -4398,7 +4398,7 @@ get_feature_info <- function(gobject,
 #' @noRd
 get_feature_info_list <- function(gobject,
                                   return_giottoPoints = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   data_list <- slot(gobject, "feat_info")
 
@@ -4431,7 +4431,7 @@ setFeatureInfo <- function(gobject,
                            feat_type = NULL,
                            verbose = TRUE,
                            initialize = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(x)) stop(wrap_txt("x param (data to set) must be given"))
 
   # 1. Determine user inputs
@@ -4510,7 +4510,7 @@ set_feature_info <- function(gobject,
                              gpolygon = NULL) {
   deprecate_soft("3.3.0", what = "set_feature_info()", with = "setFeatureInfo()")
 
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(gpoints) & !methods::hasArg(gpolygon)) stop(wrap_txt("gpoints param must be given"))
 
   if (!is.null(gpolygon)) { # deprecation
@@ -4766,7 +4766,7 @@ get_spatial_enrichment_list <- function(gobject,
                                         output = c("spatEnrObj", "data.table"),
                                         copy_obj = TRUE,
                                         set_defaults = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   output <- match.arg(output, choices = c("spatEnrObj", "data.table"))
 
@@ -4823,7 +4823,7 @@ setSpatialEnrichment <- function(gobject,
                                  provenance = NULL,
                                  verbose = TRUE,
                                  initialize = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(x)) stop(wrap_txt("x param (data to set) must be given"))
 
   # check hierarchical slots
@@ -4916,7 +4916,7 @@ set_spatial_enrichment <- function(gobject,
                                    initialize = FALSE) {
   deprecate_soft("3.3.0", what = "set_spatial_enrichment()", with = "setSpatialEnrichment()")
 
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!methods::hasArg(spatenrichment)) stop(wrap_txt("spatenrichment param must be given"))
 
   # 0. stop if not native formats
@@ -5224,7 +5224,7 @@ getGiottoImage <- function(gobject = NULL,
 #' @noRd
 get_giotto_image_list <- function(gobject,
                                   image_type = c("image", "largeImage")) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   image_type <- match.arg(image_type, choices = c("image", "largeImage"))
 

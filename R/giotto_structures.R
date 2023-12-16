@@ -1,13 +1,16 @@
 ## ** cell shape polygons ####
 
-#' @title do_gpoly
-#' @name do_gpoly
-#' @description Perform function on all spatVector-based slots of giottoPolygon
+#' @title Do giottoPolygon
+#' @name .do_gpoly
+#' @description giottoPolygon objects carry 3 pieces of spatial information.
+#' The polygons, their centroids, and the polygon overlapped features. All of
+#' these need to be updated when spatial manipulations are applied. This function
+#' simplifies performing functions on all SpatVector-based slots.
 #' @param x giottoPolygon
 #' @param what a call to do
 #' @param args a \code{list} of additional args
 #' @keywords internal
-do_gpoly <- function(x, what, args = NULL) {
+.do_gpoly <- function(x, what, args = NULL) {
   x@spatVector <- do.call(what, args = append(list(x@spatVector), args))
   if (!is.null(x@spatVectorCentroids)) {
     x@spatVectorCentroids <- do.call(what, args = append(list(x@spatVectorCentroids), args))
@@ -31,27 +34,6 @@ do_gpoly <- function(x, what, args = NULL) {
 
 
 
-#' @title Convert polygon to raster
-#' @name polygon_to_raster_OLD
-#' @description function to convert terra SpatVector Polygon shape into a terra SpatRaster
-#' TODO: can be removed
-#' @keywords internal
-polygon_to_raster_OLD <- function(polygon, field = NULL) {
-  pol_xmax <- terra::xmax(polygon)
-  pol_ymax <- terra::ymax(polygon)
-  r <- terra::rast(polygon, ncols = pol_xmax, nrows = pol_ymax)
-
-  if (is.null(field)) {
-    field <- names(polygon)[1]
-  }
-
-  poly_rast <- terra::rasterize(x = polygon, r, field = field)
-
-  return(poly_rast)
-}
-
-
-
 
 
 
@@ -59,10 +41,10 @@ polygon_to_raster_OLD <- function(polygon, field = NULL) {
 
 
 #' @title Identify background range polygons
-#' @name identify_background_range_polygons
+#' @name .identify_background_range_polygons
 #' @description function to remove background polygon based on largest range
 #' @keywords internal
-identify_background_range_polygons <- function(spatVector) {
+.identify_background_range_polygons <- function(spatVector) {
   # define for data.table
   x <- y <- geom <- V1 <- NULL
 
@@ -84,13 +66,14 @@ identify_background_range_polygons <- function(spatVector) {
 }
 
 
+# TODO not used
 
 #' @title Create segmentation polygons
-#' @name create_segm_polygons
+#' @name .create_segm_polygons
 #' @description creates giotto polygons from segmentation mask data
 #' @return giotto polygon
 #' @keywords internal
-create_segm_polygons <- function(maskfile,
+.create_segm_polygons <- function(maskfile,
                                  name = "cell",
                                  poly_IDs = NULL,
                                  flip_vertical = TRUE,
@@ -102,7 +85,7 @@ create_segm_polygons <- function(maskfile,
     stop("path : ", maskfile, " does not exist \n")
   }
 
-  terra_rast <- create_terra_spatRaster(maskfile)
+  terra_rast <- .create_terra_spatraster(maskfile)
   rast_dimensions <- dim(terra_rast)
 
   terra_polygon <- terra::as.polygons(x = terra_rast, value = TRUE)
@@ -141,7 +124,7 @@ create_segm_polygons <- function(maskfile,
 
   # remove background polygon
   if (remove_background_polygon == TRUE) {
-    mask_id <- identify_background_range_polygons(terra_polygon)
+    mask_id <- .identify_background_range_polygons(terra_polygon)
     terra_polygon <- terra::subset(x = terra_polygon, terra_polygon[["mask"]] != mask_id)
   }
 
@@ -166,10 +149,10 @@ create_segm_polygons <- function(maskfile,
 
 
 #' @title Calculate polygon centroids
-#' @name calculate_centroids_polygons
+#' @name .calculate_centroids_polygons
 #' @description calculates centroids from selected polygons
 #' @keywords internal
-calculate_centroids_polygons <- function(gpolygon,
+.calculate_centroids_polygons <- function(gpolygon,
                                          name = "centroids",
                                          append_gpolygon = TRUE) {
   terra_polygon_centroids <- terra::centroids(slot(gpolygon, "spatVector"))
@@ -184,15 +167,18 @@ calculate_centroids_polygons <- function(gpolygon,
 
 
 
+# TODO Remove this? This is not necessarily an error with the polygons and may
+# be desired in some cases. Also the code is not currently used anywhere.
+
 #' @title Split multi-part polygons
-#' @name fix_multipart_geoms
+#' @name .fix_multipart_geoms
 #' @description function to split geoms (polygons) that have multiple parts
 #' @keywords internal
-fix_multipart_geoms <- function(spatVector) {
+.fix_multipart_geoms <- function(spatVector) {
   # data.table variables
   x <- y <- geom <- part <- NULL
 
-  spatVecDT <- spatVector_to_dt(spatVector)
+  spatVecDT <- .spatvector_to_dt(spatVector)
   uniq_multi <- unique(spatVecDT[part == 2]$geom)
 
   # geoms to keep
@@ -305,7 +291,7 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
   data.table::setnames(multi_dt, old = "group_ID", new = "poly_ID")
   data.table::setcolorder(multi_dt, "poly_ID")
 
-  multi_sv <- dt_to_spatVector_polygon(
+  multi_sv <- .dt_to_spatvector_polygon(
     multi_dt,
     include_values = TRUE,
     sort_geom = TRUE
@@ -336,107 +322,18 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 
 # helper functions ####
 
-# convert spatVector to data.table
-
-#' @title Convert spatVector to data.table
-#' @name spatVector_to_dt
-#' @description  convert spatVector to data.table
-#' @keywords internal
-#' @export
-spatVector_to_dt <- function(spatvector,
-                             include_values = TRUE) {
-  # define for :=
-  geom <- NULL
-
-  DT_geom <- data.table::as.data.table(terra::geom(spatvector))
-
-  if (isTRUE(include_values)) {
-    DT_values <- data.table::as.data.table(terra::values(spatvector))
-    DT_values[, geom := 1:nrow(DT_values)]
-    DT_full <- data.table::merge.data.table(DT_geom, DT_values, by = "geom")
-    return(DT_full)
-  } else {
-    return(DT_geom)
-  }
-}
-
-
-
-
-
-
-
-#' @title Convert data.table to polygon spatVector
-#' @name dt_to_spatVector_polygon
-#' @description convert data.table to spatVector for polygons
-#' @param dt `data.table`. \pkg{terra} geometry information
-#' @param include_values `logical`. Whether to include additional columns other
-#' than the geometry information as `SpatVector` attributes. Default is TRUE.
-#' @param specific_values `character`. Specific subset of columns to include as
-#' attributes if `include_values = TRUE`.
-#' @param sort_geom `logical`. Whether to sort key the data.table input by
-#' 'geom', 'part', and 'hole' columns.
-#' @keywords internal
-dt_to_spatVector_polygon <- function(dt,
-                                     include_values = TRUE,
-                                     specific_values = NULL,
-                                     sort_geom = FALSE) {
-  # DT vars
-  geom <- NULL
-
-  assert_data_table(dt)
-  assert_logical(include_values)
-  if (!is.null(specific_values)) assert_character(specific_values)
-
-  # if values are not in order across these cols, an incorrect number of
-  # geometries may be generated
-  if (sort_geom) data.table::setkeyv(dt, c("geom", "part", "hole"))
-  all_colnames <- colnames(dt)
-  geom_values <- c("geom", "part", "x", "y", "hole")
-  if (!all(geom_values %in% all_colnames)) {
-    stop("All columns for '", paste0(geom_values, collapse = "', '"), "' are needed")
-  }
-  other_values <- all_colnames[!all_colnames %in% geom_values]
-
-  # geometry information
-  geom_matrix <- as.matrix(dt[, geom_values, with = FALSE])
-
-  # attributes information
-  attr_values <- NULL
-  if (include_values) {
-    # subset for specific columns to include as attributes
-    if (!is.null(specific_values)) {
-      other_values <- other_values[other_values %in% specific_values]
-    }
-
-    attr_values <- unique(dt[, other_values, with = FALSE])
-    if (nrow(attr_values) > 0L &&
-      nrow(attr_values) != max(dt[, max(geom)])) {
-      warning(wrap_txt(
-        "dt_to_spatVector_polygon:
-        Number of attributes does not match number of polygons to create.
-        Attributes are ignored."
-      ), call. = FALSE)
-    }
-  }
-
-  terra::vect(
-    x = geom_matrix,
-    type = "polygons",
-    atts = attr_values
-  )
-}
+# Conversion helpers moved to methods-coerce.R #
 
 
 #' @title Convert spline to polygon
-#' @name spline_poly
+#' @name .spline_poly
 #' @description spline polynomial to smooth polygon
 #' @param xy xy
 #' @param vertices vertices
 #' @param k k
 #' @param ... additional params to pass
 #' @keywords internal
-spline_poly <- function(xy, vertices = 20, k = 3, ...) {
+.spline_poly <- function(xy, vertices = 20, k = 3, ...) {
   # Assert: xy is an n by 2 matrix with n >= k.
 
   # Wrap k vertices around each end.
@@ -477,14 +374,14 @@ smoothGiottoPolygons <- function(gpolygon,
                                  k = 3,
                                  set_neg_to_zero = TRUE,
                                  ...) {
-  # define for .()
+  # NSE vars
   x <- NULL
   y <- NULL
 
   # define for data.table [] subsetting
   geom <- NULL
 
-  polygDT <- spatVector_to_dt(gpolygon@spatVector)
+  polygDT <- .spatvector_to_dt(gpolygon@spatVector)
 
   # store other values
   all_colnames <- colnames(polygDT)
@@ -493,7 +390,7 @@ smoothGiottoPolygons <- function(gpolygon,
   other_values_uniq_dt <- unique(polygDT[, c("geom", "part", "hole", other_values), with = F])
 
   # apply smoothing to each polygon
-  comb <- lapply(1:length(unique(polygDT$geom)), FUN = function(z) {
+  comb <- lapply(seq_along(unique(polygDT$geom)), function(z) {
     polygMat <- as.matrix(polygDT[geom == z, .(x, y)])
 
     # adjust k to maximum value
@@ -503,7 +400,7 @@ smoothGiottoPolygons <- function(gpolygon,
       k <- max_k
     }
 
-    polygDT_smooth <- data.table::as.data.table(spline_poly(polygMat, vertices = vertices, k = k, ...))
+    polygDT_smooth <- data.table::as.data.table(.spline_poly(polygMat, vertices = vertices, k = k, ...))
     polygDT_smooth[, geom := z]
   })
   comb_res <- do.call("rbind", comb)
@@ -519,17 +416,7 @@ smoothGiottoPolygons <- function(gpolygon,
     comb_res[, y := ifelse(y < 0, 0, y)]
   }
 
-  new_spatvec <- dt_to_spatVector_polygon(comb_res)
-
-  # for(ID in new_spatvec$poly_ID) {
-  #   bool = terra::is.valid(new_spatvec[new_spatvec$poly_ID == ID])
-  #   if(!isTRUE(bool)) {
-  #     print(ID)
-  #     #plot(new_spatvec[new_spatvec$poly_ID == ID])
-  #     #orig_spatvector = gpolygon@spatVector
-  #     #new_spatvec[new_spatvec$poly_ID == ID] = orig_spatvector[orig_spatvector$poly_ID == ID]
-  #   }
-  # }
+  new_spatvec <- .dt_to_spatvector_polygon(comb_res)
 
   new_gpolygon <- create_giotto_polygon_object(
     name = gpolygon@name,
@@ -558,14 +445,14 @@ smoothGiottoPolygons <- function(gpolygon,
 
 
 #' @title Create terra spatvector object from a data.frame
-#' @name create_spatvector_object_from_dfr
+#' @name .create_spatvector_object_from_dfr
 #' @description create terra spatvector from a data.frame where cols 1 and 2 must
 #' be x and y coordinates respectively. Additional columns are set as attributes
 #' to the points where the first additional (col 3) should be the feat_ID.
 #' @param x data.frame object
 #' @param verbose be verbose
 #' @keywords internal
-create_spatvector_object_from_dfr <- function(
+.create_spatvector_object_from_dfr <- function(
     x,
     verbose = TRUE) {
   x <- data.table::as.data.table(x)
@@ -642,69 +529,6 @@ create_spatvector_object_from_dfr <- function(
 
 
 
-# helper functions ####
-
-#' @title Convert spatVector to data.table
-#' @name spatVector_to_dt2
-#' @description convert spatVector to data.table. Faster and more barebones and
-#' only suitable for points data
-#' @keywords internal
-spatVector_to_dt2 <- function(spatvector,
-                              include_values = TRUE) {
-  if (isTRUE(include_values)) {
-    DT_values <- cbind(
-      terra::crds(spatvector),
-      terra::values(spatvector)
-    ) %>%
-      data.table::setDT()
-  } else {
-    DT_values <- terra::crds(spatvector) %>%
-      data.table::as.data.table()
-  }
-
-  return(DT_values)
-}
-
-
-
-# data.table to spatVector
-
-
-#' @title Convert point data data.table to spatVector
-#' @name dt_to_spatVector_points
-#' @description data.table to spatVector for points
-#' @param dt data.table
-#' @param include_values boolean. Include additional values from data.table as
-#' attributes paired with created terra spatVector
-#' @param specific_values specific values to include as attributes if
-#' include_values == TRUE
-#' @keywords internal
-dt_to_spatVector_points <- function(dt,
-                                    include_values = TRUE,
-                                    specific_values = NULL) {
-  all_colnames <- colnames(dt)
-  geom_values <- c("geom", "part", "x", "y", "hole")
-  other_values <- all_colnames[!all_colnames %in% geom_values]
-
-  if (include_values == TRUE) {
-    if (!is.null(specific_values)) {
-      other_values <- other_values[other_values %in% specific_values]
-    }
-
-
-    spatVec <- terra::vect(
-      x = as.matrix(dt[, geom_values, with = F]),
-      type = "points", atts = dt[, other_values, with = F]
-    )
-  } else {
-    spatVec <- terra::vect(
-      x = as.matrix(dt[, geom_values, with = F]),
-      type = "points", atts = NULL
-    )
-  }
-
-  return(spatVec)
-}
 
 
 
@@ -745,7 +569,7 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
 
   ## 2. get spatial feature info and convert to matrix
   if (verbose == TRUE) cat("Convert feature spatial info to matrix \n")
-  featDT <- spatVector_to_dt(gobject@feat_info[[feat_type]]@spatVector)
+  featDT <- .spatvector_to_dt(gobject@feat_info[[feat_type]]@spatVector)
   spatial_locations_matrix <- as.matrix(featDT[, c("x", "y", NULL), with = F])
 
   # store lookup table to keep information about unique ID
@@ -802,7 +626,7 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
     knn_sptial.norm[, to_feat := featDT_vec[to]]
     knn_sptial.norm[, from_to_feat := paste0(from_feat, "--", to_feat)]
 
-    knn_sptial.norm <- sort_combine_two_DT_columns(
+    knn_sptial.norm <- dt_sort_combine_two_columns(
       DT = knn_sptial.norm,
       column1 = "from_feat", column2 = "to_feat",
       myname = "comb_feat"
@@ -950,13 +774,13 @@ addSpatialCentroidLocationsLayer <- function(gobject,
 
   gpoly <- get_polygon_info(gobject, polygon_name = poly_info, return_giottoPolygon = TRUE)
 
-  extended_spatvector <- calculate_centroids_polygons(
+  extended_spatvector <- .calculate_centroids_polygons(
     gpolygon = gpoly,
     name = "centroids",
     append_gpolygon = TRUE
   )
 
-  centroid_spatvector <- spatVector_to_dt(extended_spatvector@spatVectorCentroids)
+  centroid_spatvector <- .spatvector_to_dt(extended_spatvector@spatVectorCentroids)
 
   # this could be 3D
   spatial_locs <- centroid_spatvector[, .(x, y, poly_ID)]
@@ -1043,23 +867,39 @@ addSpatialCentroidLocations <- function(gobject,
                                         provenance = poly_info,
                                         return_gobject = TRUE,
                                         verbose = TRUE) {
+  # provenance setup #
+  # Require that provenance is a user-provided named list if length of poly_info
+  # is greater than 1.
+  # Provenance may often have length greater than 1, but map to a single
+  # spat_unit, however at least one provenance is expected per spat_unit. We
+  # differentiate these situations by ensuring that each poly_info/spat_unit
+  # maps to an entry within a list object. The entry within that list may be a
+  # character vector of length greater than 1.
   if (length(poly_info) > 1) {
-    if (!inherits(provenance, "list") | length(provenance) != length(poly_info)) {
+    if (!inherits(provenance, "list") ||
+        length(provenance) != length(poly_info)) {
       stop(wrap_txt(
         "If more than one poly_info is supplied at a time, then provenance must",
         "be a list of equal length",
         errWidth = TRUE
       ))
     }
-
-    # setup provenance list
-    p_names <- names(provenance)
-    if (is.null(p_names)) names(provenance) <- poly_info
-  } else {
-    provenance <- list(provenance)
-    names(provenance) <- poly_info
   }
 
+  # Ensure that provenance is a list in remaining cases
+  if (!inherits(provenance, 'list')) {
+    provenance <- list(provenance)
+  }
+
+  # name provenance list by poly_info
+  p_names <- names(provenance)
+  if (is.null(p_names)) names(provenance) <- poly_info
+  if (!setequal(names(provenance), poly_info)) {
+    stop(wrap_txt(
+      'Names of provenance list:', names(provenance),
+      '\nBut expected from poly_info:', poly_info
+    ))
+  }
 
   potential_polygon_names <- list_spatial_info_names(gobject)
 

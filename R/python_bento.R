@@ -19,12 +19,12 @@ createBentoAdata <- function(gobject = NULL,
 
   # Cell shapes
   # TODO: Add batch information based on?
-  cell_poly <- spatVector_to_dt(gobject@spatial_info$cell@spatVector)
+  cell_poly <- .spatvector_to_dt(gobject@spatial_info$cell@spatVector)
   cell_poly <- data.frame(cell_id = cell_poly$poly_ID, x = cell_poly$x, y = cell_poly$y, batch = 0L)
 
   # Nuclei shapes
   # TODO: Add batch information based on?
-  nucleus_poly <- spatVector_to_dt(gobject@spatial_info$nucleus@spatVector)
+  nucleus_poly <- .spatvector_to_dt(gobject@spatial_info$nucleus@spatVector)
   nucleus_poly <- data.frame(cell_id = nucleus_poly$poly_ID, x = nucleus_poly$x, y = nucleus_poly$y, batch = 0L)
 
   # Install bento-tools / Check python environment for bento-tools

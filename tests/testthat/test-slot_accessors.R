@@ -8,7 +8,7 @@ suppressWarnings({
   giotto_object <- giotto()
 })
 
-
+library(checkmate)
 
 
 # GETTERS ####

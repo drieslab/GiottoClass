@@ -28,7 +28,7 @@ spatQueryGiottoPolygons <- function(gobject,
                                     name = "query_polys",
                                     feat_type = NULL,
                                     clip = TRUE) {
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
   if (!is.null(name)) checkmate::assert_character(name)
   checkmate::assert_list(filters, types = "character")
   if (!length(filters <= 2)) stop(wrap_txt("At least two elements in filters are needed."))

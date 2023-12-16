@@ -47,7 +47,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
   }
 
   ## test python module availability if a python env is expected ##
-  check_giotto_python_modules(my_python_path = instructions(.Object, "python_path"))
+  .check_giotto_python_modules(my_python_path = instructions(.Object, "python_path"))
 
 
 
@@ -361,11 +361,11 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
   ## ------------- ##
 
   if (!is.null(avail_cm)) {
-    check_cell_metadata(gobject = .Object) # modifies by reference
+    .check_cell_metadata(gobject = .Object) # modifies by reference
   }
 
   if (!is.null(avail_fm)) {
-    check_feat_metadata(gobject = .Object) # modifies by reference
+    .check_feat_metadata(gobject = .Object) # modifies by reference
   }
 
 
@@ -375,7 +375,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
   if (!is.null(avail_expr) & !is.null(avail_sl)) {
     # 1. ensure spatial locations and expression matrices have the same cell IDs
     # 2. give cell IDs if not provided
-    check_spatial_location_data(gobject = .Object) # modifies by reference
+    .check_spatial_location_data(gobject = .Object) # modifies by reference
   }
 
 
@@ -386,7 +386,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
   if (!is.null(avail_sl) & !is.null(avail_sn)) {
     # 1. ensure vertices have same IDs as seen in spat_unit for gobject
     # 2. ensure spatial locations of same spat_unit exists
-    check_spatial_networks(gobject = .Object)
+    .check_spatial_networks(gobject = .Object)
   }
 
 
@@ -397,7 +397,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
   if (!is.null(avail_sl) & !is.null(avail_se)) {
     # 1. ensure IDs in enrichment match gobject for same spat_unit
     # 2. ensure spatial locations exist for same spat_unit
-    check_spatial_enrichment(gobject = .Object)
+    .check_spatial_enrichment(gobject = .Object)
   }
 
 
@@ -406,7 +406,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
   ## ---------------- ##
 
   if (!is.null(avail_expr) & !is.null(avail_nn)) {
-    check_nearest_networks(gobject = .Object)
+    .check_nearest_networks(gobject = .Object)
   }
 
 
@@ -415,7 +415,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
   ## ------------------- ##
 
   if (!is.null(avail_dr)) {
-    .Object <- check_dimension_reduction(gobject = .Object)
+    .Object <- .check_dimension_reduction(gobject = .Object)
   }
 
 
@@ -424,7 +424,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
   ## ------------ ##
 
   if (!is.null(avail_si) & !is.null(avail_sl)) {
-    check_spatial_info(gobject = .Object)
+    .check_spatial_info(gobject = .Object)
   }
 
 
@@ -569,7 +569,7 @@ setMethod(
 #               if(is.null(igraph)) igraph = NULL
 #               else {
 #                 # Convert igraph input to preferred format
-#                 igraph = evaluate_nearest_networks(igraph)
+#                 igraph = .evaluate_nearest_networks(igraph)
 #               }
 #
 #               # return to arg list
@@ -601,7 +601,7 @@ setMethod(
 #                   cell_ID = NA_character_
 #                 )
 #               } else {
-#                 coordinates = evaluate_spatial_locations(coordinates)
+#                 coordinates = .evaluate_spatial_locations(coordinates)
 #               }
 #
 #               # return to arg list
@@ -629,7 +629,7 @@ setMethod(
 #               if(is.null(exprMat)) exprMat = matrix()
 #               else {
 #                 # Convert matrix input to preferred format
-#                 exprMat = evaluate_expr_matrix(exprMat)
+#                 exprMat = .evaluate_expr_matrix(exprMat)
 #               }
 #
 #               # return to arg list

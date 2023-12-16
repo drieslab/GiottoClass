@@ -70,7 +70,7 @@ combineMetadata <- function(gobject,
   }
 
   # cell/spot enrichment data
-  final_meta <- merge_spatial_enrich_info(
+  final_meta <- .merge_spatial_enrich_info(
     gobject = gobject,
     comb_dt = metadata,
     spat_unit = spat_unit,
@@ -146,7 +146,7 @@ combineSpatialCellFeatureInfo <- function(gobject,
       stop("There is no available spatial feature location information for ", feat, "\n")
     }
 
-    output <- merge_spatial_locs_feat_info(
+    output <- .merge_spatial_locs_feat_info(
       spatial_info = spatial_cell_info,
       feature_info = spatial_feat_locs
     )
@@ -316,7 +316,7 @@ combineCellData <- function(gobject,
 
   ## spat enrichment ##
   if (isTRUE(include_spat_enr)) {
-    comb_dt <- merge_spatial_enrich_info(
+    comb_dt <- .merge_spatial_enrich_info(
       gobject = gobject,
       comb_dt = comb_dt,
       spat_unit = poly_info,
@@ -409,7 +409,7 @@ combineFeatureData <- function(gobject,
         feat_type = feat,
         return_giottoPoints = FALSE
       )
-      feat_info <- spatVector_to_dt(feat_info_spatvec)
+      feat_info <- .spatvector_to_dt(feat_info_spatvec)
       if (!is.null(sel_feats[[feat]])) {
         selected_features <- sel_feats[[feat]]
         feat_info <- feat_info[feat_ID %in% selected_features]
@@ -486,7 +486,7 @@ combineFeatureOverlapData <- function(gobject,
           polygon_name = poly,
           polygon_overlap = feat
         )
-        feat_overlap_info <- spatVector_to_dt(feat_overlap_info_spatvec)
+        feat_overlap_info <- .spatvector_to_dt(feat_overlap_info_spatvec)
 
         if (!is.null(sel_feats[[feat]])) {
           selected_features <- sel_feats[[feat]]
@@ -681,11 +681,11 @@ calculateSpatCellMetadataProportions <- function(gobject,
 
 # internals ####
 
-#' @title merge_spatial_locs_feat_info
-#' @name merge_spatial_locs_feat_info
+#' @title .merge_spatial_locs_feat_info
+#' @name .merge_spatial_locs_feat_info
 #' @description merge spatial cell and feature location information
 #' @keywords internal
-merge_spatial_locs_feat_info <- function(spatial_info,
+.merge_spatial_locs_feat_info <- function(spatial_info,
                                          feature_info) {
   # data.table variables
   cell_ID <- used <- NULL
@@ -720,13 +720,13 @@ merge_spatial_locs_feat_info <- function(spatial_info,
 
 
 
-#' @title merge_spatial_enrich_info
-#' @name merge_spatial_enrich_info
+#' @title .merge_spatial_enrich_info
+#' @name .merge_spatial_enrich_info
 #' @description take a combine data.table result and append spatial enrichment
 #' results.
 #' @keywords internal
 # spat_unit and feat_type are expected to not be NULL.
-merge_spatial_enrich_info <- function(gobject,
+.merge_spatial_enrich_info <- function(gobject,
                                       comb_dt,
                                       spat_unit,
                                       feat_type,

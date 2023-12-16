@@ -5,6 +5,7 @@
 # 'aggregate' spat_unit that combines the detected TX content of all z layers
 # included.
 
+library(checkmate)
 
 # Ignore internal usage of deprecated accessors
 lifecycle_opt <- getOption("lifecycle_verbosity")

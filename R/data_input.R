@@ -28,9 +28,11 @@ readExprMatrix <- function(path,
 
   # read and convert
   DT <- suppressWarnings(data.table::fread(input = path, nThread = cores))
-  spM <- Matrix::Matrix(as.matrix(DT[, -1]), dimnames = list(DT[[1]], colnames(DT[, -1])), sparse = T)
+  spM <- Matrix::Matrix(as.matrix(DT[, -1]),
+                        dimnames = list(DT[[1]], colnames(DT[, -1])),
+                        sparse = TRUE)
 
-  if (transpose == TRUE) {
+  if (isTRUE(transpose)) {
     spM <- t_flex(spM)
   }
 
@@ -84,7 +86,7 @@ readExprData <- function(data_list,
                          verbose = TRUE,
                          provenance = NULL,
                          expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
-  read_expression_data(
+  .read_expression_data(
     expr_list = data_list,
     sparse = sparse,
     cores = cores,
@@ -98,7 +100,7 @@ readExprData <- function(data_list,
 
 #' @keywords internal
 #' @noRd
-read_expression_data <- function(expr_list = NULL,
+.read_expression_data <- function(expr_list = NULL,
                                  sparse = TRUE,
                                  cores = determine_cores(),
                                  default_spat_unit = NULL,
@@ -285,7 +287,7 @@ read_expression_data <- function(expr_list = NULL,
 
 
 #' @title Read cell metadata
-#' @name read_cell_metadata
+#' @name readCellMetadata
 #' @description read cell metadata from list
 #' @param data_list nested list of cell metadata information
 #' @inheritParams read_data_params
@@ -295,7 +297,7 @@ readCellMetadata <- function(data_list,
                              default_feat_type = NULL,
                              provenance = NULL,
                              verbose = TRUE) {
-  read_cell_metadata(
+  .read_cell_metadata(
     metadata = data_list,
     default_spat_unit = default_spat_unit,
     default_feat_type = default_feat_type,
@@ -308,13 +310,13 @@ readCellMetadata <- function(data_list,
 
 
 #' @title Read cell metadata
-#' @name read_cell_metadata
+#' @name .read_cell_metadata
 #' @description read cell metadata from list
 #' @param metadata nested list of cell metadata information
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
 #' @keywords internal
-read_cell_metadata <- function(metadata,
+.read_cell_metadata <- function(metadata,
                                default_spat_unit = NULL,
                                default_feat_type = NULL,
                                provenance = NULL,
@@ -351,7 +353,7 @@ read_cell_metadata <- function(metadata,
 
   # read nesting
   if (list_depth == 1L) {
-    if (isTRUE(verbose)) message("list depth of 1")
+    vmsg(.v = verbose, .is_debug = TRUE, "list depth of 1")
 
     feat_type_names <- names(metadata)
     if (is.null(feat_type_names) & isTRUE(verbose)) {
@@ -367,7 +369,7 @@ read_cell_metadata <- function(metadata,
     }
     spat_unit_list <- rep(default_spat_unit, length(obj_list)) # assume
   } else if (list_depth == 2L) {
-    if (isTRUE(verbose)) message("list depth of 2")
+    vmsg(.v = verbose, .is_debug = TRUE, "list depth of 2")
 
     spat_unit_names <- names(metadata)
     if (is.null(spat_unit_names) & isTRUE(verbose)) {
@@ -445,7 +447,7 @@ read_cell_metadata <- function(metadata,
 
 
 #' @title Read feature metadata
-#' @name read_feature_metadata
+#' @name readFeatMetadata
 #' @description read feature metadata from listt
 #' @param data_list nested list of feature metadata information
 #' @inheritParams read_data_params
@@ -455,7 +457,7 @@ readFeatMetadata <- function(data_list,
                              default_feat_type = NULL,
                              provenance = NULL,
                              verbose = TRUE) {
-  read_feature_metadata(
+  .read_feature_metadata(
     metadata = data_list,
     default_spat_unit = NULL,
     default_feat_type = NULL,
@@ -469,7 +471,7 @@ readFeatMetadata <- function(data_list,
 
 #' @keywords internal
 #' @noRd
-read_feature_metadata <- function(metadata,
+.read_feature_metadata <- function(metadata,
                                   default_spat_unit = NULL,
                                   default_feat_type = NULL,
                                   provenance = NULL,
@@ -619,7 +621,7 @@ readSpatLocsData <- function(data_list,
                              provenance = NULL,
                              cores = determine_cores(),
                              verbose = TRUE) {
-  spatLocsObj_list <- read_spatial_location_data(
+  spatLocsObj_list <- .read_spatial_location_data(
     spat_loc_list = data_list,
     default_spat_unit = default_spat_unit,
     cores = cores,
@@ -633,7 +635,7 @@ readSpatLocsData <- function(data_list,
 
 
 #' @noRd
-read_spatial_location_data <- function(spat_loc_list,
+.read_spatial_location_data <- function(spat_loc_list,
                                        default_spat_unit = NULL,
                                        provenance = NULL,
                                        cores = determine_cores(),
@@ -795,7 +797,7 @@ readSpatNetData <- function(data_list,
                             default_spat_unit = NULL,
                             provenance = NULL,
                             verbose = TRUE) {
-  read_spatial_networks(
+  .read_spatial_networks(
     spatial_network = data_list,
     default_spat_unit = default_spat_unit,
     provenance = provenance,
@@ -808,7 +810,7 @@ readSpatNetData <- function(data_list,
 
 #' @keywords internal
 #' @noRd
-read_spatial_networks <- function(spatial_network,
+.read_spatial_networks <- function(spatial_network,
                                   default_spat_unit = NULL,
                                   provenance = NULL,
                                   verbose = TRUE) {
@@ -955,7 +957,7 @@ readSpatEnrichData <- function(data_list,
                                default_feat_type = NULL,
                                provenance = NULL,
                                verbose = TRUE) {
-  read_spatial_enrichment(
+  .read_spatial_enrichment(
     spatial_enrichment = data_list,
     default_spat_unit = default_spat_unit,
     default_feat_type = default_feat_type,
@@ -969,7 +971,7 @@ readSpatEnrichData <- function(data_list,
 
 #' @keywords internal
 #' @noRd
-read_spatial_enrichment <- function(spatial_enrichment,
+.read_spatial_enrichment <- function(spatial_enrichment,
                                     default_spat_unit = NULL,
                                     default_feat_type = NULL,
                                     provenance = NULL,
@@ -1196,7 +1198,7 @@ readDimReducData <- function(data_list,
                              verbose = TRUE) {
   reduction <- match.arg(reduction, choices = c("cells", "feats"))
 
-  read_dimension_reduction(
+  .read_dimension_reduction(
     dimension_reduction = data_list,
     default_spat_unit = default_spat_unit,
     default_feat_type = default_feat_type,
@@ -1210,7 +1212,7 @@ readDimReducData <- function(data_list,
 
 #' @keywords internal
 #' @noRd
-read_dimension_reduction <- function(dimension_reduction,
+.read_dimension_reduction <- function(dimension_reduction,
                                      default_spat_unit = NULL,
                                      default_feat_type = NULL,
                                      reduction = c("cells", "feats"),
@@ -1440,7 +1442,7 @@ readNearestNetData <- function(data_list,
                                default_feat_type = NULL,
                                provenance = NULL,
                                verbose = TRUE) {
-  read_nearest_networks(
+  .read_nearest_networks(
     nn_network = data_list,
     default_spat_unit = default_spat_unit,
     default_feat_type = default_feat_type,
@@ -1453,7 +1455,7 @@ readNearestNetData <- function(data_list,
 
 #' @keywords internal
 #' @noRd
-read_nearest_networks <- function(nn_network,
+.read_nearest_networks <- function(nn_network,
                                   default_spat_unit = NULL,
                                   default_feat_type = NULL,
                                   provenance = NULL,
@@ -1729,7 +1731,7 @@ readPolygonData <- function(data_list,
 
 
   # pass to internal
-  extract_polygon_list(
+  .extract_polygon_list(
     polygonlist = data_list,
     input = input,
     default_name = default_name,
@@ -1745,7 +1747,7 @@ readPolygonData <- function(data_list,
 
 
 #' @title Extract list of polygons
-#' @name extract_polygon_list
+#' @name .extract_polygon_list
 #' @description Function extract list of polygons when given raw input as either
 #' mask or tabular data. Calls the respective createGiottoPolygons functions. \cr
 #' If a \code{giottoPolygon} object is passed then no edits will be made other
@@ -1761,7 +1763,7 @@ readPolygonData <- function(data_list,
 #' @param verbose be verbose
 #' @keywords internal
 #' @noRd
-extract_polygon_list <- function(polygonlist,
+.extract_polygon_list <- function(polygonlist,
                                  input = "guess",
                                  default_name = "cell",
                                  polygon_mask_list_params,
@@ -1875,7 +1877,7 @@ extract_polygon_list <- function(polygonlist,
 addGiottoPolygons <- function(gobject,
                               gpolygons) {
   # check input
-  guard_against_notgiotto(gobject)
+  assert_giotto(gobject)
 
   if (!inherits(gpolygons, "list")) {
     stop("gpolygons needs to be a list of one or more giottoPolygon objects")
@@ -1930,7 +1932,7 @@ readFeatData <- function(data_list,
   }
 
 
-  extract_points_list(
+  .extract_points_list(
     pointslist = data_list,
     verbose = verbose
   )
@@ -1941,13 +1943,13 @@ readFeatData <- function(data_list,
 
 
 #' @title Extract list of giotto points objects
-#' @name extract_points_list
+#' @name .extract_points_list
 #' @description to extract list of giotto points
 #' @param pointslist list of inputs from which to create giotto points objects
 #' @param verbose be verbose
 #' @keywords internal
 #' @noRd
-extract_points_list <- function(pointslist,
+.extract_points_list <- function(pointslist,
                                 verbose = TRUE) {
   named_list <- FALSE
 
