@@ -71,7 +71,7 @@ reference:
   - readSpatEnrichData
   - readSpatLocsData
   - readSpatNetData
-  - .read_feature_metadata
+  - readFeatureMetadata
 - subtitle: Create
   desc: Create Giotto-native objects
 - contents:
