@@ -1,5 +1,6 @@
 
-# Giotto Class 0.1.1 (2023/12/16)
+
+# GiottoClass 0.1.1 (2023/12/16)
 
 ## Breaking Changes
 - Removed: `getRainbowColors()` to *GiottoUtils*
@@ -24,7 +25,9 @@
 - Changed: `giottoPolygon` `plot()` now automatically switches to centroid plotting with more than 1e4 polys
 - Changed: Package internal functions now have `.` prefix
 
-# Giotto Class 0.1.0 (23/11/29)
+
+
+# GiottoClass 0.1.0 (23/11/29)
 
 ## Breaking Changes
 
