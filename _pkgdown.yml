@@ -75,6 +75,7 @@ reference:
   - readNearestNetData
 - subtitle: evaluate
   desc: Evaluate and format data for usage with Giotto
+- contents:
   - evaluate_input
 - subtitle: Create
   desc: Create Giotto-native objects
