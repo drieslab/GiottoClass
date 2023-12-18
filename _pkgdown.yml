@@ -223,22 +223,13 @@ reference:
 - subtitle: From
   desc: Convert from other frameworks to Giotto
 - contents:
-  - anndataToGiotto
-  - seuratToGiotto
-  - seuratToGiottoV4
-  - seuratToGiottoV5
-  - spatialExperimentToGiotto
+  - matches("ToGiotto")
   - giottoMasterToSuite
-  - gefToGiotto
 - subtitle: To
   desc: Convert Giotto Object to other frameworks
 - contents:
-  - giottoToAnnData
+  - starts_with("giottoTo")
   - createBentoAdata
-  - giottoToSeurat
-  - giottoToSeuratV4
-  - giottoToSeuratV5
-  - giottoToSpatialExperiment
 - title: Aggregate
 - subtitle: Polygon
   desc: Polygon and spatial unit aggregation and combination
