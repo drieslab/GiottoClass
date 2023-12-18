@@ -27,7 +27,7 @@
 
 
 
-# GiottoClass 0.1.0 (23/11/29)
+# GiottoClass 0.1.0 (2023/11/29)
 
 ## Breaking Changes
 
