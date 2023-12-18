@@ -62,16 +62,17 @@ reference:
 - subtitle: Read
   desc: Read data in and create Giotto-native objects
 - contents:
-  - readDimReducData
+  - readCellMetadata
+  - readFeatMetadata
+  - readPolygonData
+  - readFeatData
   - readExprData
   - readExprMatrix
-  - readFeatData
-  - readNearestNetData
-  - readPolygonData
-  - readSpatEnrichData
   - readSpatLocsData
   - readSpatNetData
-  - readFeatureMetadata
+  - readSpatEnrichData
+  - readDimReducData
+  - readNearestNetData
 - subtitle: Create
   desc: Create Giotto-native objects
 - contents:
