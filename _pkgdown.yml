@@ -377,8 +377,6 @@ reference:
   - objHistory
   - update_giotto_params
   - showProcessingSteps
-  - get_args
-  - get_prev_fname
 - title: Utilities
   desc: Utility functions that are used in other code
 - contents:
