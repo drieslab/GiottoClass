@@ -44,7 +44,89 @@
       
     </div>
 
-  </main></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.1" id="giottoclass-011-20231216">GiottoClass 0.1.1 (2023/12/16)<a class="anchor" aria-label="anchor" href="#giottoclass-011-20231216"></a></h2>
+<div class="section level3">
+<h3 id="breaking-changes-0-1-1">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-1-1"></a></h3>
+<ul><li>Removed: <code><a href="https://drieslab.github.io/Giotto/reference/getRainbowColors.html" class="external-link">getRainbowColors()</a></code> to <em>GiottoUtils</em>
+</li>
+<li>Removed: <code>get_prev_fname()</code> and <code>get_args()</code> to <em>GiottoUtils</em>
+</li>
+<li>Removed: <code>aggregateStacksPolygonsOLD()</code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="added-0-1-1">Added<a class="anchor" aria-label="anchor" href="#added-0-1-1"></a></h3>
+<ul><li>Added: <code>.gstop()</code> for GiottoClass specific errors</li>
+<li>Added: <code><a href="../reference/plot-generic.html">plot()</a></code> method for <code>dimObj</code>
+</li>
+<li>Added: <code><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol()</a></code> and <code><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow()</a></code> methods for <code>dimObj</code>
+</li>
+<li>Added: <code>dimObj</code> additional info now accessible using <code>$</code> and <code>$&lt;-</code>
+</li>
+<li>Added: <code>spatEnrObj</code> cols now accessible using <code>$</code> and <code>$&lt;-</code>
+</li>
+<li>Added: <code><a href="../reference/evaluate_input.html">evaluate_input()</a></code> as exported wrapper for <code>evaluate</code> functions</li>
+<li>Added: <code><a href="../reference/as.polygons.html">as.polygons()</a></code> <code>data.frame</code> method for correctly formatted data.tables (replaces internal <code>dt_to_spatvector_polygon()</code>)</li>
+<li>Added: <code><a href="../reference/as.polygons.html">as.polygons()</a></code> <code>data.frame</code> method for correctly formatted data.tables (replaces internal <code>dt_to_spatvector_points()</code>)</li>
+<li>Added: autocompletes for <code>$</code> with <code>spatLocsObj</code>, <code>spatEnrObj</code>, <code>dimObj</code>, <code>cellMetaObj</code>, <code>featMetaObj</code>, <code>giottoPolygon</code>, <code>giottoPoints</code>
+</li>
+<li>Added: <code>toplevel_params</code> param to <code><a href="../reference/subsetGiottoLocs.html">subsetGiottoLocs()</a></code>
+</li>
+<li>Added: <code>spin</code>, <code>spatShift</code>, <code>rescale</code> methods for <code>data.frame</code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-0-1-1">Changes<a class="anchor" aria-label="anchor" href="#changes-0-1-1"></a></h3>
+<ul><li>Fixed: Provenance now not accidentally created as a list in <code><a href="../reference/addSpatialCentroidLocations.html">addSpatialCentroidLocations()</a></code>
+</li>
+<li>Changed: <code>giottoPolygon</code> <code><a href="../reference/plot-generic.html">plot()</a></code> now automatically switches to centroid plotting with more than 1e4 polys</li>
+<li>Changed: Package internal functions now have <code>.</code> prefix</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.0" id="giottoclass-010-20231129">GiottoClass 0.1.0 (2023/11/29)<a class="anchor" aria-label="anchor" href="#giottoclass-010-20231129"></a></h2>
+<div class="section level3">
+<h3 id="breaking-changes-0-1-0">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-1-0"></a></h3>
+<ul><li>Giotto subsetting rework</li>
+</ul></div>
+<div class="section level3">
+<h3 id="added-0-1-0">Added<a class="anchor" aria-label="anchor" href="#added-0-1-0"></a></h3>
+<ul><li>Added: <code>terraVectData</code> as virtual parent class for <code>giottoPolygon</code> and <code>giottoPoints</code> classes</li>
+<li>Added: <code>$</code> and <code>$&lt;-</code> methods for <code>terraVectData</code>
+</li>
+<li>Added: <code>ext&lt;-()</code> method for <code>giottoPolygon</code>, <code>giottoPoints</code>
+</li>
+<li>Added: <code><a href="../reference/crop.html">crop()</a></code> method for <code>giottoLargeImage</code>, <code>giottoPoints</code>
+</li>
+<li>Added: <code>[</code> subsetting for <code>giottoPoints</code> and <code>giottoPolygon</code> with numerical, logical, and character (by ID)</li>
+<li>Added: <code><a href="../reference/r_spatial_conversions.html">as.sf()</a></code> and <code><a href="../reference/r_spatial_conversions.html">as.stars()</a></code> converters for <code>giottoPoints</code> and <code>giottoPolygon</code>
+</li>
+<li>Added: <code><a href="../reference/setGiotto.html">setGiotto()</a></code> generic</li>
+<li>Added: <code>gap</code> param to <code><a href="../reference/tessellate.html">tessellate()</a></code> which introduces a variable gap between the polygons tessellated</li>
+<li>Added: <code><a href="../reference/generate_grid.html">triGrid()</a></code>
+</li>
+<li>Added: <code><a href="../reference/generate_grid.html">orthoGrid()</a></code>
+</li>
+<li>Added: DelayedMatrixStats to suggests</li>
+<li>Added: <code><a href="../reference/calculateOverlap.html">calculateOverlap()</a></code> and <code><a href="../reference/overlapToMatrix.html">overlapToMatrix()</a></code> as generic functions for feature and image overlap aggregations</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-0-1-0">Changes<a class="anchor" aria-label="anchor" href="#changes-0-1-0"></a></h3>
+<ul><li>Improved: performance of gefToGiotto()</li>
+<li>Updated: <code><a href="../reference/spatIDs-generic.html">spatIDs()</a></code> and <code><a href="../reference/spatIDs-generic.html">featIDs()</a></code> methods for <code>giottoPolygon</code> and <code>giottoPoints</code> to allow returning non-unique IDs</li>
+<li>Added: check for <code><a href="../reference/plot-generic.html">plot()</a></code> when <code>giottoPolygon</code> or <code>giottoPoints</code> objects contain no geometries</li>
+<li>Added: warning for <code><a href="../reference/crop.html">crop()</a></code> when <code>giottoLargeImage</code>, <code>giottoPolygon</code>, <code>giottoPoints</code> objects are being cropped with an extent that does not include any information</li>
+<li>Changed: Conversion of <code><a href="../reference/createGiottoPoints.html">createGiottoPoints()</a></code> to a generic function</li>
+<li>Deprecate: <code>radius</code> param in favor of <code>shape_size</code> for <code><a href="../reference/tessellate.html">tessellate()</a></code>
+</li>
+<li>Fixed: python <code><a href="../reference/dot-install_github_link_pip.html">.install_github_link_pip()</a></code> param</li>
+<li>Fixed: python <code>create_AnnData()</code> added to <code>globals.R</code>
+</li>
+</ul></div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
