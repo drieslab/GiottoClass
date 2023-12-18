@@ -73,6 +73,9 @@ reference:
   - readSpatEnrichData
   - readDimReducData
   - readNearestNetData
+- subtitle: evaluate
+  desc: Evaluate and format data for usage with Giotto
+  - evaluate_input
 - subtitle: Create
   desc: Create Giotto-native objects
 - contents:
@@ -344,6 +347,8 @@ reference:
 - title: As
   desc: As coercion functions
 - contents:
+  - as.points
+  - as.polygons
   - as.data.table
   - r_spatial_conversions
 - title: Python
@@ -365,6 +370,7 @@ reference:
   - convertGiottoLargeImageToMG
   - estimateImageBg
   - distGiottoImage
+  - plot_auto_largeImage_resample
   - add_img_array_alpha
   - changeImageBg
   - writeGiottoLargeImage
