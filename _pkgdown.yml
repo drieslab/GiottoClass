@@ -296,14 +296,14 @@ reference:
 - subtitle: Manipulation
   desc: Spatial manipulation and terra-based functions
 - contents:
-  - ext-generic
-  - flip-generic
-  - crop-generic
+  - ext
+  - flip
+  - crop
   - transpose-generic
-  - spin-generic
+  - spin
   - spatShift
-  - wrap-generic
-  - rescale-generic
+  - wrap
+  - rescale
   - rescalePolygons
 - subtitle: Querying
   desc: Spatial querying
@@ -323,7 +323,7 @@ reference:
   - row-plus-colnames-generic
   - plot-generic
   - dims-generic
-  - copy-generic
+  - copy
 - subtitle: Hierarchical
   desc: Hierarchical tagging generics for Giotto exported classes
 - contents:
