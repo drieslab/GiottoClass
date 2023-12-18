@@ -25,12 +25,6 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/S3toS4spatNetObj.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/abb_mat.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/abb_spatlocs.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/activeFeatType-generic.html</loc>
   </url>
   <url>
@@ -85,9 +79,6 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/aggregateStacksPolygons.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/aggregateStacksPolygonsOLD.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/anndataToGiotto.html</loc>
   </url>
   <url>
@@ -107,6 +98,12 @@
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/as.data.table.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/as.points.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/as.polygons.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/calculateMetaTable.html</loc>
@@ -133,15 +130,6 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/calculateSpatCellMetadataProportions.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/calculate_centroids_polygons.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/calculate_distance_and_weight.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/calculate_overlap_raster.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/cellMetaObj-class.html</loc>
   </url>
   <url>
@@ -160,34 +148,7 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/checkPythonPackage.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/check_cell_meta_obj.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/check_dim_obj.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/check_expr_obj.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/check_feat_meta_obj.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/check_giotto_python_modules.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/check_py_for_scanpy.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/check_spat_grid_obj.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/check_spat_locs_obj.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/check_spat_net_obj.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/check_spatial_location_data.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/circleVertices.html</loc>
@@ -220,18 +181,6 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/combineToMultiPolygon.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/combine_matrices.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/combine_polygons.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/combine_spatlocs.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/combine_stack_spatVectors.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/compatible_spatial_network.html</loc>
   </url>
   <url>
@@ -247,7 +196,7 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/convert_to_reduced_spatial_network.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/copy-generic.html</loc>
+    <loc>https://drieslab.github.io/GiottoClass/reference/copy.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/cor_flex.html</loc>
@@ -349,24 +298,6 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/create_cluster_matrix.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/create_delaunayNetwork2D.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/create_delaunayNetwork3D.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/create_delaunayNetwork_RTriangle.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/create_delaunayNetwork_deldir.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/create_delaunayNetwork_geometry.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/create_delaunayNetwork_geometry_3D.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/create_dim_obj.html</loc>
   </url>
   <url>
@@ -388,9 +319,6 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/create_nn_net_obj.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/create_segm_polygons.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/create_spat_enr_obj.html</loc>
   </url>
   <url>
@@ -403,19 +331,7 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/create_spat_net_obj.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/create_spatialGrid_default_2D.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/create_spatialGrid_default_3D.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/create_spatvector_object_from_dfr.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/create_terra_spatRaster.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/crop-generic.html</loc>
+    <loc>https://drieslab.github.io/GiottoClass/reference/crop.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/cropGiottoLargeImage.html</loc>
@@ -436,22 +352,208 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/distGiottoImage.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/do_gpoly.html</loc>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-abbrev_mat.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/dt_to_spatVector_points.html</loc>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-abbrev_spatlocs.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/dt_to_spatVector_polygon.html</loc>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-calculate_centroids_polygons.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-calculate_distance_and_weight.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-calculate_overlap_raster.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-check_cell_meta_obj.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-check_dim_obj.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-check_expr_obj.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-check_feat_meta_obj.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-check_giotto_python_modules.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-check_spat_grid_obj.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-check_spat_locs_obj.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-check_spat_net_obj.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-check_spatial_location_data.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-combine_stack_spatvectors.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-create_delaunaynetwork_2d.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-create_delaunaynetwork_3d.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-create_delaunaynetwork_RTriangle.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-create_delaunaynetwork_deldir.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-create_delaunaynetwork_geometry.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-create_delaunaynetwork_geometry_3d.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-create_segm_polygons.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-create_spatialgrid_default_2d.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-create_spatialgrid_default_3d.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-create_spatvector_object_from_dfr.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-create_terra_spatraster.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-do_gpoly.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-dt_to_spatVector_points.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-dt_to_spatvector_polygon.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-filter_network.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-find_grid_2d.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-find_grid_3d.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-find_grid_x.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-find_grid_y.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-find_grid_z.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-fix_multipart_geoms.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-giotto_alloc_dt.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-giotto_environment_path.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-giotto_environment_path_executable.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-identify_background_range_polygons.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-install_giotto_environment.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-install_giotto_environment_specific.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-install_github_link_pip.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-install_py_pkg_reticulate.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-merge_spatial_enrich_info.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-merge_spatial_locs_feat_info.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-overlap_points_per_polygon.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-overlap_points_per_polygon_wrapped.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-overlap_points_single_polygon.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-plot_giottoimage_mg.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-plot_giottolargeimage.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-print_leaf.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-prov_match.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-py_install_prompt.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-read_cell_metadata.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-rescale_polygons.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-rotate_spatial_locations.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-scale_spatial_locations.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-shift_spatial_locations.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-spatraster_sample_values.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-spatvector_to_dt.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-spline_poly.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-subset_giotto.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-terra_writeraster_datatype.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/estimateImageBg.html</loc>
   </url>
   <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/evaluate_input.html</loc>
+  </url>
+  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/exprObj-class.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/ext-generic.html</loc>
+    <loc>https://drieslab.github.io/GiottoClass/reference/ext.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/extract-methods.html</loc>
@@ -469,31 +571,7 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/featureNetwork-class.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/filter_network.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/find_grid_2D.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/find_grid_3D.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/find_grid_x.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/find_grid_y.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/find_grid_z.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/find_terra_writeRaster_dataType.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/fix_multipart_geoms.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/flip-generic.html</loc>
+    <loc>https://drieslab.github.io/GiottoClass/reference/flip.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/gefToGiotto.html</loc>
@@ -529,9 +607,6 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/getPolygonInfo.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/getRainbowColors.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/getSpatialEnrichment.html</loc>
   </url>
   <url>
@@ -548,9 +623,6 @@
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/get_adj_rescale_img.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/get_args.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/get_cell_id.html</loc>
@@ -593,9 +665,6 @@
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/get_polygon_info.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/get_prev_fname.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/get_spatialGrid.html</loc>
@@ -643,13 +712,7 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/giottoToSpatialExperiment.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/giotto_alloc_dt_slots.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/hexVertices.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/identify_background_range_polygons.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/index.html</loc>
@@ -662,18 +725,6 @@
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/installGiottoEnvironment.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/install_giotto_environment.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/install_giotto_environment_specific.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/install_github_link_pip.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/install_py_pkg_reticulate.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/instructions-generic.html</loc>
@@ -766,12 +817,6 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/mean_flex.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/merge_spatial_enrich_info.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/merge_spatial_locs_feat_info.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/miscData-class.html</loc>
   </url>
   <url>
@@ -805,15 +850,6 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/overlapToMatrixMultiPoly.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/overlap_points_per_polygon.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/overlap_points_per_polygon_wrapped.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/overlap_points_single_polygon.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/overlaps-generic.html</loc>
   </url>
   <url>
@@ -829,31 +865,13 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/plot_auto_largeImage_resample.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/plot_giottoImage_MG.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/plot_giottoLargeImage.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/polyStamp.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/polygon_to_raster.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/polygon_to_raster_OLD.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/print_leaf.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/prov-generic.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/prov_match.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/py_install_prompt.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/r_spatial_conversions.html</loc>
@@ -868,6 +886,9 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/rbind2_giotto_polygon_homo.html</loc>
   </url>
   <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/readCellMetadata.html</loc>
+  </url>
+  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/readDimReducData.html</loc>
   </url>
   <url>
@@ -878,6 +899,9 @@
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/readFeatData.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/readFeatMetadata.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/readGiottoInstructions.html</loc>
@@ -898,13 +922,7 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/readSpatNetData.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/read_cell_metadata.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/read_data_params.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/read_feature_metadata.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/reconnectGiottoImage.html</loc>
@@ -922,6 +940,9 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/rectVertices.html</loc>
   </url>
   <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/reexports.html</loc>
+  </url>
+  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/removeCellAnnotation.html</loc>
   </url>
   <url>
@@ -934,22 +955,10 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/replaceGiottoInstructions.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/rescale-generic.html</loc>
+    <loc>https://drieslab.github.io/GiottoClass/reference/rescale.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/rescalePolygons.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/rescale_polygons.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/return_giotto_environment_path.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/return_giotto_environment_path_executable.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/rotate_spatial_locations.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/row-plus-colnames-generic.html</loc>
@@ -962,9 +971,6 @@
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/saveGiotto.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/scale_spatial_locations.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/select_gimage.html</loc>
@@ -1081,9 +1087,6 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/seuratToGiottoV5.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/shift_spatial_locations.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/shift_spatial_network.html</loc>
   </url>
   <url>
@@ -1159,12 +1162,6 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/spatUnit-generic.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/spatVector_to_dt.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/spatVector_to_dt2.html</loc>
-  </url>
-  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/spat_net_to_igraph.html</loc>
   </url>
   <url>
@@ -1177,13 +1174,7 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/spatialNetworkObj-class.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/spatraster_sample_values.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/spin-generic.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/spline_poly.html</loc>
+    <loc>https://drieslab.github.io/GiottoClass/reference/spin.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/standardise_flex.html</loc>
@@ -1208,15 +1199,6 @@
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/subsetGiottoLocsSubcellular.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/subset_cell_metadata.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/subset_feature_metadata.html</loc>
-  </url>
-  <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/subset_giotto.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/t_flex.html</loc>
@@ -1252,7 +1234,7 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/update_giotto_params.html</loc>
   </url>
   <url>
-    <loc>https://drieslab.github.io/GiottoClass/reference/wrap-generic.html</loc>
+    <loc>https://drieslab.github.io/GiottoClass/reference/wrap.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/writeGiottoLargeImage.html</loc>
