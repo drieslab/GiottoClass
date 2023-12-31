@@ -810,6 +810,7 @@ plot_auto_largeImage_resample <- function(gobject,
     res[na_bool] <- 0L # set NA values to 0
   }
 
+  # throw error when there are no values discovered.
   if (nrow(res) == 0) {
     vmsg(.v = verbose, "No values discovered when sampling for image characteristics")
   }
