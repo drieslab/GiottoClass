@@ -752,7 +752,7 @@ plot_auto_largeImage_resample <- function(gobject,
 
 
 
-# TODO deprecate return_array
+
 #' @title Sample values from SpatRaster
 #' @name .spatraster_sample_values
 #' @description
@@ -761,14 +761,12 @@ plot_auto_largeImage_resample <- function(gobject,
 #' @param raster_object terra `SpatRaster` to sample from
 #' @param size rough maximum of pixels allowed when resampling
 #' @param output what output to return as. Defaults to "data.frame"
-#' @param return_array whether to convert to `array`
 #' @param verbose be verbose
 #' @param \dots additional params to pass to `terra::spatSample`
 #' @keywords internal
 .spatraster_sample_values <- function(raster_object,
                                       size = 5000,
                                       output = c('data.frame', 'array', 'magick', 'EBImage'),
-                                      return_array = FALSE,
                                       verbose = NULL,
                                       ...) {
 

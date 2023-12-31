@@ -8,7 +8,6 @@
   raster_object,
   size = 5000,
   output = c("data.frame", "array", "magick", "EBImage"),
-  return_array = FALSE,
   verbose = NULL,
   ...
 )
@@ -19,8 +18,6 @@
 \item{size}{rough maximum of pixels allowed when resampling}
 
 \item{output}{what output to return as. Defaults to "data.frame"}
-
-\item{return_array}{whether to convert to \code{array}}
 
 \item{verbose}{be verbose}
 
