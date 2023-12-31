@@ -808,20 +808,20 @@ plot_auto_largeImage_resample <- function(gobject,
     res <- terra::as.array(res)
     na_bool <- is.na(res)
     res[na_bool] <- 0L # set NA values to 0
-
-    # convert to specified image type if desired.
-    # Note that there is a conversion of image values to range of 0-1
-    if (output %in% c('magick', 'EBImage')) {
-      res <- magick::image_read(res/max(res))
-    }
-    if (output == 'EBImage') {
-      GiottoUtils::package_check("EBImage", repository = "Bioc")
-      res <- magick::as_EBImage(res)
-    }
   }
 
   if (nrow(res) == 0) {
     vmsg(.v = verbose, "No values discovered when sampling for image characteristics")
+  }
+
+  # convert to specified image type if desired.
+  # Note that there is a conversion of image values to range of 0-1
+  if (output %in% c('magick', 'EBImage')) {
+    res <- magick::image_read(res/max(res))
+  }
+  if (output == 'EBImage') {
+    GiottoUtils::package_check("EBImage", repository = "Bioc")
+    res <- magick::as_EBImage(res)
   }
 
   return(res)
