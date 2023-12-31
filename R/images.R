@@ -815,6 +815,7 @@ plot_auto_largeImage_resample <- function(gobject,
       res <- magick::image_read(res/max(res))
     }
     if (output == 'EBImage') {
+      GiottoUtils::package_check("EBImage", repository = "Bioc")
       res <- magick::as_EBImage(res)
     }
   }
