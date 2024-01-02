@@ -36,15 +36,6 @@ jobs:
         with:
           use-public-rspm: true
 
-      - name: Set up dependencies (dev modules)
-        run: |
-          suppressWarnings({
-            install.packages("remotes")
-            remotes::install_github('drieslab/GiottoUtils@dev', build = FALSE)
-            print(packageVersion("GiottoUtils"))
-          })
-        shell: Rscript {0}
-
       - name: Set up dependencies (general)
         uses: r-lib/actions/setup-r-dependencies@v2
         env:
@@ -52,14 +43,7 @@ jobs:
           _R_CHECK_RD_XREFS: false
         with:
           dependencies: '"hard"' # do not use suggested dependencies
-          extra-packages: any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::sp, any::stars, any::raster, any::sf, GiottoUtils=ignore
-
-      - name: Set up dependencies (GiottoData)
-        run: |
-          suppressWarnings({
-            remotes::install_github('drieslab/GiottoData', build = FALSE)
-          })
-        shell: Rscript {0}
+          extra-packages: any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::sp, any::stars, any::raster, any::sf, github::drieslab/GiottoData
 
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2
