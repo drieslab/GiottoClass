@@ -41,6 +41,7 @@ jobs:
           suppressWarnings({
             install.packages("remotes")
             remotes::install_github('drieslab/GiottoUtils@dev', build = FALSE)
+            print(packageVersion("GiottoUtils"))
           })
         shell: Rscript {0}
 
