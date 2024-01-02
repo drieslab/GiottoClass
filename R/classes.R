@@ -1466,7 +1466,7 @@ giottoImage <- setClass(
 #' @slot name name of large Giotto image
 #' @slot raster_object terra raster object
 #' @slot extent tracks the extent of the raster object. Note that most processes should rely on the extent of the raster object instead of this.
-#' @slot overall_extent terra extent object covering the original extent of image
+#' @slot overall_extent numeric. the original extent of image (xmin, xmax, ymin, ymax)
 #' @slot scale_factor image scaling relative to spatial locations
 #' @slot resolution spatial location units covered per pixel
 #' @slot max_intensity approximate maximum value
@@ -1484,13 +1484,14 @@ giottoLargeImage <- setClass(
     name = "ANY",
     raster_object = "ANY",
     extent = "ANY", # REMOVE?
-    overall_extent = "ANY", # REMOVE? New slot px_dims as replacement?
+    overall_extent = "ANY", # Use as finalized overall image placement extent. Do not change.
     scale_factor = "ANY",
     resolution = "ANY",
     max_intensity = "numeric",
     min_intensity = "numeric",
     max_window = "numeric", # NEW
     colors = 'character', # NEW
+    lazy_tfs = "list", # NEW
     is_int = "ANY",
     file_path = "ANY",
     OS_platform = "ANY"
@@ -1506,6 +1507,7 @@ giottoLargeImage <- setClass(
     min_intensity = NA_real_,
     max_window = NA_real_,
     colors = grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1),
+    lazy_tfs = list(),
     is_int = NULL,
     file_path = NULL,
     OS_platform = NULL
@@ -1526,6 +1528,12 @@ giottoLargeImage <- setClass(
 
     attr(x, "max_window") <- .bitdepth(x@max_intensity, return_max = TRUE)
   }
+
+  # 0.1.2 release adds lazy_tfs
+  if (is.null(attr(x, "lazy_tfs"))) {
+    attr(x, "lazy_tfs") <- list()
+  }
+
 
   # 0.1.x release adds giottoImageStack
   # deprecate
