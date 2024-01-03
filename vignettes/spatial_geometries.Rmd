@@ -168,10 +168,12 @@ gpoly <- calculateOverlap(gpoly, gimg, verbose = FALSE, progress = FALSE)
 Overlaps are stored as a `list` under the `giottoPolygon` `overlaps` slot,
 separated by modalities. This list can be retrieved using `overlaps()`.
 In the case of overlapped points geometries, the list items are points `SpatVector`
-objects. The `poly_ID` column tracks which 
+objects. The `poly_ID` column tracks which polygon is overlapping the point
+feature as designated by `feat_ID` and `feat_ID_uniq`. `NA` values mean that
+the feature was not overlapped.
 
-For overlaps intensities, the results are `data.tables` in a nested
-list called `intensities`
+For overlaps intensities, the results are stored as `data.tables` in a nested
+`list` called `intensity` under the main `overlaps` `list`.
 ```{r}
 print(gpoly@overlaps$rna)
 print(gpoly@overlaps$intensity)
