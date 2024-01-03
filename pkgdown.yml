@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   image_tools: image_tools.html
   spatial_geometries: spatial_geometries.html
-last_built: 2024-01-03T14:05Z
+last_built: 2024-01-03T14:34Z
 urls:
   reference: https://drieslab.github.io/GiottoClass/reference
   article: https://drieslab.github.io/GiottoClass/articles
