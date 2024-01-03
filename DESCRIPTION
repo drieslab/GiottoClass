@@ -1,6 +1,6 @@
 Package: GiottoClass
 Title: Giotto Suite object definitions and framework
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(
 	person("Ruben", "Dries", email = "rubendries@gmail.com",
 		 role = c("aut", "cre")),
@@ -34,7 +34,7 @@ Imports:
     data.table (>= 1.12.2),
     dbscan (>= 1.1-3),
     deldir (>= 1.0.6),
-    GiottoUtils (>= 0.1.0.1),
+    GiottoUtils (>= 0.1.2),
     igraph (>= 1.2.4.1),
     magick,
     Matrix (>= 1.6.2),
@@ -54,11 +54,13 @@ Suggests:
     geometry,
     GiottoData,
     HDF5Array (>= 1.18.1),
+    knitr,
     R.utils,
     raster,
     remotes,
     rhdf5,
     rlang,
+    rmarkdown,
     RTriangle (>= 1.6-0.10),
     S4Vectors,
     ScaledMatrix,
@@ -135,3 +137,4 @@ Collate:
     'suite_reexports.R'
     'zzz.R'
 URL: https://drieslab.github.io/GiottoClass/
+VignetteBuilder: knitr

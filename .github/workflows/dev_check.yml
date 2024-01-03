@@ -31,6 +31,9 @@ jobs:
       - name: Checkout repo for workflow access
         uses: actions/checkout@v3
 
+      - name: Setup pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+
       - name: Set up R environment
         uses: r-lib/actions/setup-r@v2
         with:
@@ -43,14 +46,7 @@ jobs:
           _R_CHECK_RD_XREFS: false
         with:
           dependencies: '"hard"' # do not use suggested dependencies
-          extra-packages: any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::remotes, any::sp, any::stars, any::raster, any::sf
-
-      - name: Set up dependencies (GiottoData)
-        run: |
-          suppressWarnings({
-            remotes::install_github('drieslab/GiottoData', build = FALSE)
-          })
-        shell: Rscript {0}
+          extra-packages: any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::sp, any::stars, any::raster, any::sf, any::scattermore, any::exactextractr, github::drieslab/GiottoData
 
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2

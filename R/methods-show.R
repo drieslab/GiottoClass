@@ -632,22 +632,27 @@ setMethod(
   f = "show",
   signature = "giottoLargeImage",
   definition = function(object) {
-    e <- ext(object)
-    img_dim <- dim(object)[c(2, 1, 3)] # x, y, layers
-    x_scalefactor <- diff(e[c(1, 2)]) / img_dim[1]
-    y_scalefactor <- diff(e[c(3, 4)]) / img_dim[2]
+    if (is.null(object@raster_object)) {
+      cat('NULL giottoLargeImage')
+    }
+    else {
+      e <- ext(object)
+      img_dim <- dim(object)[c(2, 1, 3)] # x, y, layers
+      x_scalefactor <- diff(e[c(1, 2)]) / img_dim[1]
+      y_scalefactor <- diff(e[c(3, 4)]) / img_dim[2]
 
-    show_class_and_name(object)
-    cat("Image extent            :", show_ext(object))
-    cat("Original image extent   :", show_ext(object@overall_extent))
-    cat("Scale factor            :", paste(x_scalefactor, y_scalefactor, sep = ", "), "(x, y)\n")
-    cat("Resolution              :", paste(1 / x_scalefactor, 1 / y_scalefactor, sep = ", "), "(x, y)\n")
-    cat("Layers                  :", img_dim[3], "\n")
-    cat("Estimated max intensity :", object@max_intensity, "\n")
-    cat("Estimated min intensity :", object@min_intensity, "\n")
-    if (object@is_int == TRUE) cat("Values                  : integers\n")
-    if (object@is_int == FALSE) cat("Values                  : floating point\n")
-    cat(paste0("File path               : '", object@file_path, "'\n"))
+      show_class_and_name(object)
+      cat("Image extent            :", show_ext(object))
+      cat("Original image extent   :", show_ext(object@overall_extent))
+      cat("Scale factor            :", paste(x_scalefactor, y_scalefactor, sep = ", "), "(x, y)\n")
+      cat("Resolution              :", paste(1 / x_scalefactor, 1 / y_scalefactor, sep = ", "), "(x, y)\n")
+      cat("Layers                  :", img_dim[3], "\n")
+      cat("Estimated max intensity :", object@max_intensity, "\n")
+      cat("Estimated min intensity :", object@min_intensity, "\n")
+      if (object@is_int == TRUE) cat("Values                  : integers\n")
+      if (object@is_int == FALSE) cat("Values                  : floating point\n")
+      cat(paste0("File path               : '", object@file_path, "'\n"))
+    }
   }
 )
 

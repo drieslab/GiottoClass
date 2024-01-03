@@ -295,6 +295,31 @@ setMethod(
 )
 
 
+# * giottoPolygon giottoLargeImage ####
+#' @rdname calculateOverlap
+#' @export
+setMethod(
+  "calculateOverlap", signature(x = "giottoPolygon", y = "giottoLargeImage"),
+  function(
+    x, y,
+    name_overlap = NULL,
+    poly_subset_ids = NULL,
+    return_gpolygon = TRUE,
+    verbose = TRUE,
+    ...
+  ) {
+    calculateOverlap(
+      x = x,
+      y = y@raster_object,
+      name_overlap = objName(y),
+      poly_subset_ids = poly_subset_ids,
+      verbose = verbose,
+      ...
+    )
+  }
+)
+
+
 # * giottoPolygon SpatRaster ####
 #' @rdname calculateOverlap
 #' @export
@@ -307,6 +332,10 @@ setMethod(
       return_gpolygon = TRUE,
       verbose = TRUE,
       ...) {
+    if (is.null(name_overlap)) {
+      .gstop("calculateOverlap: name_overlap must be given")
+    }
+
     res <- calculateOverlap(
       x = x[],
       y = y,
@@ -1189,13 +1218,20 @@ setMethod(
       )
     }
 
-    # pass to SpatVector method
-    overlapToMatrix(
+    argslist <- list(
       x = overlaps_data,
       count_info_column = count_info_column,
       output = output,
       ...
     )
+
+    # this arg not accepted by method
+    if (type == "intensity") {
+      argslist$count_info_column <- NULL
+    }
+
+    # pass to SpatVector method
+    do.call(overlapToMatrix, args = argslist)
   }
 )
 

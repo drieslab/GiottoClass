@@ -14,7 +14,19 @@
 \usage{
 \S4method{plot}{giottoImage,missing}(x, y, ...)
 
-\S4method{plot}{giottoLargeImage,missing}(x, y, ...)
+\S4method{plot}{giottoLargeImage,missing}(
+  x,
+  y,
+  col,
+  max_intensity,
+  mar,
+  asRGB = FALSE,
+  legend = FALSE,
+  axes = TRUE,
+  maxcell = 5e+05,
+  smooth = TRUE,
+  ...
+)
 
 \S4method{plot}{giottoPolygon,missing}(
   x,
@@ -38,6 +50,22 @@
 \item{y}{Not used.}
 
 \item{\dots}{additional parameters to pass}
+
+\item{col}{character. Colors. The default is grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1)}
+
+\item{max_intensity}{(optional) value to treat as maximum intensity in color scale}
+
+\item{mar}{numeric vector of length 4 to set the margins of the plot (to make space for the legend). The default is (3, 5, 1.5, 1)}
+
+\item{asRGB}{(optional) logical. Force RGB plotting if not automatically detected}
+
+\item{legend}{logical or character. If not FALSE a legend is drawn. The character value can be used to indicate where the legend is to be drawn. For example "topright" or "bottomleft"}
+
+\item{axes}{logical. Draw axes?}
+
+\item{maxcell}{positive integer. Maximum number of cells to use for the plot}
+
+\item{smooth}{logical. If TRUE the cell values are smoothed}
 
 \item{point_size}{size of points when plotting giottoPoints}
 

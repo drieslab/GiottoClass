@@ -25,12 +25,18 @@ navbar:
     left:
     - intro
     - reference
+    - articles
     - news
     right: github
   components:
     reference:
       text: Documentation
       href: reference/index.html
+    articles:
+      text: Articles
+      menu:
+      - text: Spatial Geometry Objects
+        href: articles/spatial_geometries.html
     news:
       text: News
       href: news/index.html
@@ -62,16 +68,21 @@ reference:
 - subtitle: Read
   desc: Read data in and create Giotto-native objects
 - contents:
-  - readDimReducData
+  - readCellMetadata
+  - readFeatMetadata
+  - readPolygonData
+  - readFeatData
   - readExprData
   - readExprMatrix
-  - readFeatData
-  - readNearestNetData
-  - readPolygonData
-  - readSpatEnrichData
   - readSpatLocsData
   - readSpatNetData
-  - .read_feature_metadata
+  - readSpatEnrichData
+  - readDimReducData
+  - readNearestNetData
+- subtitle: evaluate
+  desc: Evaluate and format data for usage with Giotto
+- contents:
+  - evaluate_input
 - subtitle: Create
   desc: Create Giotto-native objects
 - contents:
@@ -218,22 +229,13 @@ reference:
 - subtitle: From
   desc: Convert from other frameworks to Giotto
 - contents:
-  - anndataToGiotto
-  - seuratToGiotto
-  - seuratToGiottoV4
-  - seuratToGiottoV5
-  - spatialExperimentToGiotto
+  - matches("ToGiotto")
   - giottoMasterToSuite
-  - gefToGiotto
 - subtitle: To
   desc: Convert Giotto Object to other frameworks
 - contents:
-  - giottoToAnnData
+  - starts_with("giottoTo")
   - createBentoAdata
-  - giottoToSeurat
-  - giottoToSeuratV4
-  - giottoToSeuratV5
-  - giottoToSpatialExperiment
 - title: Aggregate
 - subtitle: Polygon
   desc: Polygon and spatial unit aggregation and combination
@@ -295,14 +297,14 @@ reference:
 - subtitle: Manipulation
   desc: Spatial manipulation and terra-based functions
 - contents:
-  - ext-generic
-  - flip-generic
-  - crop-generic
+  - ext
+  - flip
+  - crop
   - transpose-generic
-  - spin-generic
+  - spin
   - spatShift
-  - wrap-generic
-  - rescale-generic
+  - wrap
+  - rescale
   - rescalePolygons
 - subtitle: Querying
   desc: Spatial querying
@@ -322,7 +324,7 @@ reference:
   - row-plus-colnames-generic
   - plot-generic
   - dims-generic
-  - copy-generic
+  - copy
 - subtitle: Hierarchical
   desc: Hierarchical tagging generics for Giotto exported classes
 - contents:
@@ -343,6 +345,8 @@ reference:
 - title: As
   desc: As coercion functions
 - contents:
+  - as.points
+  - as.polygons
   - as.data.table
   - r_spatial_conversions
 - title: Python
@@ -364,6 +368,7 @@ reference:
   - convertGiottoLargeImageToMG
   - estimateImageBg
   - distGiottoImage
+  - plot_auto_largeImage_resample
   - add_img_array_alpha
   - changeImageBg
   - writeGiottoLargeImage
@@ -376,8 +381,6 @@ reference:
   - objHistory
   - update_giotto_params
   - showProcessingSteps
-  - get_args
-  - get_prev_fname
 - title: Utilities
   desc: Utility functions that are used in other code
 - contents:

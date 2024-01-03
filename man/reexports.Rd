@@ -5,6 +5,7 @@
 \alias{reexports}
 \alias{getDistinctColors}
 \alias{getRainbowColors}
+\alias{getMonochromeColors}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -12,6 +13,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{GiottoUtils}{\code{\link[GiottoUtils]{getDistinctColors}}, \code{\link[GiottoUtils]{getRainbowColors}}}
+  \item{GiottoUtils}{\code{\link[GiottoUtils]{getDistinctColors}}, \code{\link[GiottoUtils]{getMonochromeColors}}, \code{\link[GiottoUtils]{getRainbowColors}}}
 }}
 
