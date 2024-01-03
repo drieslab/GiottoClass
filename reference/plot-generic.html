@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,6 +20,12 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Documentation</a>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/spatial_geometries.html">Spatial Geometry Objects</a>
+  </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">News</a>
@@ -55,7 +61,19 @@
 <span><span class="fu">plot</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for giottoLargeImage,missing</span></span>
-<span><span class="fu">plot</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">plot</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  <span class="va">col</span>,</span>
+<span>  <span class="va">max_intensity</span>,</span>
+<span>  <span class="va">mar</span>,</span>
+<span>  asRGB <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  legend <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  axes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  maxcell <span class="op">=</span> <span class="fl">5e+05</span>,</span>
+<span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for giottoPolygon,missing</span></span>
 <span><span class="fu">plot</span><span class="op">(</span></span>
@@ -91,6 +109,38 @@
 
 <dt>...</dt>
 <dd><p>additional parameters to pass</p></dd>
+
+
+<dt>col</dt>
+<dd><p>character. Colors. The default is grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1)</p></dd>
+
+
+<dt>max_intensity</dt>
+<dd><p>(optional) value to treat as maximum intensity in color scale</p></dd>
+
+
+<dt>mar</dt>
+<dd><p>numeric vector of length 4 to set the margins of the plot (to make space for the legend). The default is (3, 5, 1.5, 1)</p></dd>
+
+
+<dt>asRGB</dt>
+<dd><p>(optional) logical. Force RGB plotting if not automatically detected</p></dd>
+
+
+<dt>legend</dt>
+<dd><p>logical or character. If not FALSE a legend is drawn. The character value can be used to indicate where the legend is to be drawn. For example "topright" or "bottomleft"</p></dd>
+
+
+<dt>axes</dt>
+<dd><p>logical. Draw axes?</p></dd>
+
+
+<dt>maxcell</dt>
+<dd><p>positive integer. Maximum number of cells to use for the plot</p></dd>
+
+
+<dt>smooth</dt>
+<dd><p>logical. If TRUE the cell values are smoothed</p></dd>
 
 
 <dt>point_size</dt>

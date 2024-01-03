@@ -7,6 +7,12 @@
     <loc>https://drieslab.github.io/GiottoClass/LICENSE.html</loc>
   </url>
   <url>
+    <loc>https://drieslab.github.io/GiottoClass/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/articles/spatial_geometries.html</loc>
+  </url>
+  <url>
     <loc>https://drieslab.github.io/GiottoClass/authors.html</loc>
   </url>
   <url>
@@ -356,6 +362,9 @@
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/dot-abbrev_spatlocs.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-bitdepth.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/dot-calculate_centroids_polygons.html</loc>

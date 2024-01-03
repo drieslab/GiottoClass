@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,6 +20,12 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Documentation</a>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/spatial_geometries.html">Spatial Geometry Objects</a>
+  </div>
 </li>
 <li class="active nav-item">
   <a class="nav-link" href="../news/index.html">News</a>
@@ -44,6 +50,25 @@
       
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.2" id="giottoclass-012-20240102">GiottoClass 0.1.2 (2024/01/02)<a class="anchor" aria-label="anchor" href="#giottoclass-012-20240102"></a></h2>
+<div class="section level3">
+<h3 id="added-0-1-2">Added<a class="anchor" aria-label="anchor" href="#added-0-1-2"></a></h3>
+<ul><li>Added: <code>max_window</code> and <code>colors</code> slots to <code>giottoLargeImage</code>. Use <code>GiottoClass:::.update_giotto_image()</code> to update outdated objects.</li>
+<li>Added: <code><a href="../reference/dot-bitdepth.html">.bitdepth()</a></code> internal function to detect image bitdepth from sampled values</li>
+<li>Added: re-export <code><a href="https://drieslab.github.io/Giotto/reference/getMonochromeColors.html" class="external-link">getMonochromeColors()</a></code> from <em>GiottoUtils</em>
+</li>
+<li>Added: <code>giottoPolygon</code>, <code>giottoLargeImage</code> method for <code><a href="../reference/calculateOverlap.html">calculateOverlap()</a></code>
+</li>
+<li>Added: vignette for working with spatial classes</li>
+<li>Added: <code>output</code> param to <code><a href="../reference/dot-spatraster_sample_values.html">.spatraster_sample_values()</a></code>. Can now return as sampled <code>data.frame</code>, <code>array</code>, <code>magick</code>, <code>EBImage</code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-0-1-2">Changes<a class="anchor" aria-label="anchor" href="#changes-0-1-2"></a></h3>
+<ul><li>Fixes: Updates to raster <code><a href="../reference/calculateOverlap.html">calculateOverlap()</a></code> workflows</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.1" id="giottoclass-011-20231216">GiottoClass 0.1.1 (2023/12/16)<a class="anchor" aria-label="anchor" href="#giottoclass-011-20231216"></a></h2>
 <div class="section level3">
