@@ -135,3 +135,4 @@ Collate:
     'suite_reexports.R'
     'zzz.R'
 URL: https://drieslab.github.io/GiottoClass/
+VignetteBuilder: knitr
