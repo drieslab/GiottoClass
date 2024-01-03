@@ -189,5 +189,7 @@ intens_mat <- overlapToMatrix(gpoly, type = "intensity", feat_info = "dapi_z0")
 print(intens_mat[1, 1:3, drop = FALSE])
 ```
 
-
+```{r}
+sessionInfo()
+```
 
