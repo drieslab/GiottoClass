@@ -46,7 +46,7 @@ jobs:
           _R_CHECK_RD_XREFS: false
         with:
           dependencies: '"hard"' # do not use suggested dependencies
-          extra-packages: any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::sp, any::stars, any::raster, any::sf, any::scattermore, any::exactextractr, github::drieslab/GiottoData
+          extra-packages: any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::knitr, any::sp, any::stars, any::raster, any::sf, any::scattermore, any::exactextractr, github::drieslab/GiottoData
 
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2

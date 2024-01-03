@@ -225,6 +225,8 @@ reference:
   - makePseudoVisium
   - polyStamp
   - tessellate
+  - triGrid
+  - orthoGrid
 - title: Interoperability
 - subtitle: From
   desc: Convert from other frameworks to Giotto
