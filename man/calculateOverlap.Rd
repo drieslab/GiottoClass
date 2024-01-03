@@ -4,6 +4,7 @@
 \alias{calculateOverlap}
 \alias{calculateOverlap,giotto,missing-method}
 \alias{calculateOverlap,giottoPolygon,giottoPoints-method}
+\alias{calculateOverlap,giottoPolygon,giottoLargeImage-method}
 \alias{calculateOverlap,giottoPolygon,SpatRaster-method}
 \alias{calculateOverlap,SpatVector,SpatRaster-method}
 \alias{calculateOverlap,SpatVector,SpatVector-method}
@@ -32,6 +33,16 @@
   feat_subset_column = NULL,
   feat_subset_ids = NULL,
   count_info_column = NULL,
+  return_gpolygon = TRUE,
+  verbose = TRUE,
+  ...
+)
+
+\S4method{calculateOverlap}{giottoPolygon,giottoLargeImage}(
+  x,
+  y,
+  name_overlap = NULL,
+  poly_subset_ids = NULL,
   return_gpolygon = TRUE,
   verbose = TRUE,
   ...

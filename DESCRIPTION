@@ -54,11 +54,13 @@ Suggests:
     geometry,
     GiottoData,
     HDF5Array (>= 1.18.1),
+    knitr,
     R.utils,
     raster,
     remotes,
     rhdf5,
     rlang,
+    rmarkdown,
     RTriangle (>= 1.6-0.10),
     S4Vectors,
     ScaledMatrix,
@@ -135,3 +137,4 @@ Collate:
     'suite_reexports.R'
     'zzz.R'
 URL: https://drieslab.github.io/GiottoClass/
+VignetteBuilder: knitr
