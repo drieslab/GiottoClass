@@ -4,16 +4,27 @@
 \alias{.spatraster_sample_values}
 \title{Sample values from SpatRaster}
 \usage{
-.spatraster_sample_values(raster_object, size = 5000, verbose = TRUE)
+.spatraster_sample_values(
+  raster_object,
+  size = 5000,
+  output = c("data.frame", "array", "magick", "EBImage"),
+  verbose = NULL,
+  ...
+)
 }
 \arguments{
-\item{raster_object}{terra SpatRaster to sample from}
+\item{raster_object}{terra \code{SpatRaster} to sample from}
 
 \item{size}{rough maximum of pixels allowed when resampling}
 
+\item{output}{what output to return as. Defaults to "data.frame"}
+
 \item{verbose}{be verbose}
+
+\item{\dots}{additional params to pass to \code{terra::spatSample}}
 }
 \description{
-Sample values from SpatRaster
+Sample numerical values from a \code{SpatRaster}. The output format depends on the
+value of the \code{output} param.
 }
 \keyword{internal}

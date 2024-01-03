@@ -755,25 +755,75 @@ plot_auto_largeImage_resample <- function(gobject,
 
 #' @title Sample values from SpatRaster
 #' @name .spatraster_sample_values
-#' @param raster_object terra SpatRaster to sample from
+#' @description
+#' Sample numerical values from a `SpatRaster`. The output format depends on the
+#' value of the `output` param.
+#' @param raster_object terra `SpatRaster` to sample from
 #' @param size rough maximum of pixels allowed when resampling
+#' @param output what output to return as. Defaults to "data.frame"
 #' @param verbose be verbose
+#' @param \dots additional params to pass to `terra::spatSample`
 #' @keywords internal
-.spatraster_sample_values <- function(raster_object, size = 5000, verbose = TRUE) {
-  res <- stats::na.omit(
-    terra::spatSample(
-      raster_object,
-      size = size,
-      method = "regular",
-      value = TRUE
-    )
+.spatraster_sample_values <- function(raster_object,
+                                      size = 5000,
+                                      output = c('data.frame', 'array', 'magick', 'EBImage'),
+                                      verbose = NULL,
+                                      ...) {
+
+  output <- match.arg(
+    arg = output,
+    choices =  c('data.frame', 'array', 'magick', 'EBImage')
   )
 
-  if (nrow(res) == 0) {
-    if (isTRUE(verbose)) cat("No values discovered when sampling for image characteristics")
+  # account for possible giottoLargeImage input
+  if (inherits(raster_object, 'giottoLargeImage')) {
+    raster_object <- raster_object@raster_object
   }
 
-  res
+  # assemble argslist for terra::spatSample()
+  argslist <- list(
+    x = raster_object,
+    size = size,
+    as.df = TRUE, # default behavior
+    method = 'regular',
+    value = TRUE,
+    ...
+  )
+
+  if (output != 'data.frame') {
+    # if desired output is not data.frame, all other outputs require raster
+    argslist$as.raster <- TRUE
+    argslist$as.df <- FALSE
+  }
+
+  res <- do.call(terra::spatSample, args = argslist)
+
+  # convert and handle NA values
+  if (isTRUE(argslist$as.df)) {
+    res <- stats::na.omit(res) # data.frame remove NAs
+  } else {
+    # all others
+    res <- terra::as.array(res)
+    na_bool <- is.na(res)
+    res[na_bool] <- 0L # set NA values to 0
+  }
+
+  # throw error when there are no values discovered.
+  if (nrow(res) == 0) {
+    vmsg(.v = verbose, "No values discovered when sampling for image characteristics")
+  }
+
+  # convert to specified image type if desired.
+  # Note that there is a conversion of image values to range of 0-1
+  if (output %in% c('magick', 'EBImage')) {
+    res <- magick::image_read(res/max(res))
+  }
+  if (output == 'EBImage') {
+    GiottoUtils::package_check("EBImage", repository = "Bioc")
+    res <- magick::as_EBImage(res)
+  }
+
+  return(res)
 }
 
 
@@ -1294,6 +1344,30 @@ convertGiottoLargeImageToMG <- function(gobject = NULL,
 }
 
 
+
+#' @name .bitdepth
+#' @title Guess likely bitdepth from value(s)
+#' @param x numeric vector. Values representative of the data to be assessed for
+#' bitdepth. This is usually a sampled subset of values from the raster.
+#' @param return_max logical. default is `FALSE`. Whether to return the maximum
+#' possible value for the detected bitdepth instead of the bitdepth itself
+#' @keywords internal
+.bitdepth <- function(x, return_max = FALSE) {
+  res <- ceiling(log(max(x), base = 2L)) # power of 2 needed to represent value(s)
+  res <- 2^ceiling(log(res, base = 2L)) # actual bitdepth
+
+  if (isTRUE(return_max)) {
+    res <- 2^res - 1
+  }
+
+  return(res)
+}
+
+
+
+
+
+
 #' @title .terra_writeraster_datatype
 #' @name .terra_writeraster_datatype
 #' @description find likely compatible datatype for given image characteristics.
@@ -1373,7 +1447,7 @@ convertGiottoLargeImageToMG <- function(gobject = NULL,
     }
   } else if (!is.null(quick_INTS_maxval)) {
     if (isTRUE(verbose)) cat("Selecting compatible datatype for given maximum value \n")
-    bitDepth <- ceiling(log(x = quick_INTS_maxval, base = 2))
+    bitDepth <- .bitdepth(quick_INTS_maxval)
   }
 
   if (bitDepth > 32 && bitDepth <= 128) {

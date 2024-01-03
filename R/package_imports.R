@@ -30,4 +30,5 @@
 #' @import GiottoUtils
 #' @import data.table
 #' @import utils
+#' @importFrom utils .DollarNames
 NULL

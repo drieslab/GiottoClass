@@ -1,4 +1,17 @@
 
+# GiottoClass 0.1.2 (2024/01/02)
+
+## Added
+- Added: `max_window` and `colors` slots to `giottoLargeImage`. Use `GiottoClass:::.update_giotto_image()` to update outdated objects.
+- Added: `.bitdepth()` internal function to detect image bitdepth from sampled values
+- Added: re-export `getMonochromeColors()` from *GiottoUtils*
+- Added: `giottoPolygon`, `giottoLargeImage` method for `calculateOverlap()`
+- Added: vignette for working with spatial classes
+- Added: `output` param to `.spatraster_sample_values()`. Can now return as sampled `data.frame`, `array`, `magick`, `EBImage`
+
+## Changes
+- Fixes: Updates to raster `calculateOverlap()` workflows
+
 
 # GiottoClass 0.1.1 (2023/12/16)
 

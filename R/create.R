@@ -2840,7 +2840,10 @@ createGiottoLargeImage <- function(raster_object,
   ## 6. extent object
   g_imageL@extent <- g_imageL@overall_extent <- as.vector(terra::ext(raster_object))
 
-  ## 7. return image object
+  ## 7. Assign discovered bitdepth max value as max window
+  g_imageL@max_window <- .bitdepth(g_imageL@max_intensity, return_max = TRUE)
+
+  ## 8. return image object
   return(g_imageL)
 }
 

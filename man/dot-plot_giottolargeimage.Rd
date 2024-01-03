@@ -39,7 +39,7 @@
 
 \item{max_intensity}{(optional) value to treat as maximum intensity in color scale}
 
-\item{asRGB}{(optional) boolean. Force RGB plotting if not automatically detected}
+\item{asRGB}{(optional) logical. Force RGB plotting if not automatically detected}
 
 \item{stretch}{character. Option to stretch the values to increase contrast: "lin"
 linear or "hist" (histogram)}

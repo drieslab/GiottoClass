@@ -25,12 +25,18 @@ navbar:
     left:
     - intro
     - reference
+    - articles
     - news
     right: github
   components:
     reference:
       text: Documentation
       href: reference/index.html
+    articles:
+      text: Articles
+      menu:
+      - text: Spatial Geometry Objects
+        href: articles/spatial_geometries.html
     news:
       text: News
       href: news/index.html
