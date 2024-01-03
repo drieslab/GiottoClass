@@ -41,7 +41,7 @@ jobs:
           _R_CHECK_RD_XREFS: false
         with:
           dependencies: '"hard"' # do not use suggested dependencies
-          extra-packages: any::pkgdown, local::.
+          extra-packages: any::pkgdown, any::scattermore, any::exactextractr, local::.
           needs: website
 
       - name: Build site
