@@ -3,7 +3,7 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   spatial_geometries: spatial_geometries.html
-last_built: 2024-01-03T04:43Z
+last_built: 2024-01-03T05:16Z
 urls:
   reference: https://drieslab.github.io/GiottoClass/reference
   article: https://drieslab.github.io/GiottoClass/articles

@@ -396,9 +396,13 @@ this overlapping between polygons and points and polygons and raster
 modalities. This list can be retrieved using <code><a href="../reference/overlaps-generic.html">overlaps()</a></code>. In
 the case of overlapped points geometries, the list items are points
 <code>SpatVector</code> objects. The <code>poly_ID</code> column tracks
-which</p>
-<p>For overlaps intensities, the results are <code>data.tables</code> in
-a nested list called <code>intensities</code></p>
+which polygon is overlapping the point feature as designated by
+<code>feat_ID</code> and <code>feat_ID_uniq</code>. <code>NA</code>
+values mean that the feature was not overlapped.</p>
+<p>For overlaps intensities, the results are stored as
+<code>data.tables</code> in a nested <code>list</code> called
+<code>intensity</code> under the main <code>overlaps</code>
+<code>list</code>.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">gpoly</span><span class="op">@</span><span class="va">overlaps</span><span class="op">$</span><span class="va">rna</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##  class       : SpatVector </span></span>
