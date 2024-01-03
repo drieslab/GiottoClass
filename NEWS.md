@@ -7,9 +7,10 @@
 - Added: re-export `getMonochromeColors()` from *GiottoUtils*
 - Added: `giottoPolygon`, `giottoLargeImage` method for `calculateOverlap()`
 - Added: vignette for working with spatial classes
+- Added: `output` param to `.spatraster_sample_values()`. Can now return as sampled `data.frame`, `array`, `magick`, `EBImage`
 
 ## Changes
-- Fixes: Updates to raster `calculateOverlap()` workflows 
+- Fixes: Updates to raster `calculateOverlap()` workflows
 
 
 # GiottoClass 0.1.1 (2023/12/16)
