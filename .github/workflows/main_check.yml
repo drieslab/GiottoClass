@@ -45,6 +45,9 @@ jobs:
       - name: Checkout repo for workflow access
         uses: actions/checkout@v3
 
+      - name: Setup pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+
       - name: Set up R environment
         uses: r-lib/actions/setup-r@v2
         with:
@@ -60,13 +63,6 @@ jobs:
         with:
           dependencies: '"hard"' # do not use suggested dependencies
           extra-packages: any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::remotes,  any::sp, any::stars, any::raster, any::sf, any::scattermore, any::exactextractr, github::drieslab/GiottoData
-
-      - name: Set up dependencies (GiottoData)
-        run: |
-          suppressWarnings({
-            remotes::install_github('drieslab/GiottoData', build = FALSE)
-          })
-        shell: Rscript {0}
 
       - name: Test python env build
         run: |
@@ -86,34 +82,6 @@ jobs:
         if: always()
         run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
         shell: bash
-
-
-
-  # render-rmarkdown:
-  #   name: Update README.Rmd
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
-  #
-  #     - uses: r-lib/actions/setup-pandoc@v2
-  #
-  #     - uses: r-lib/actions/setup-r@v2
-  #
-  #     - uses: r-lib/actions/setup-renv@v2
-  #
-  #     - name: Install rmarkdown
-  #       run: Rscript -e 'install.packages("rmarkdown")'
-  #
-  #     - name: Render README
-  #       run: Rscript -e 'rmarkdown::render("README.Rmd")'
-  #
-  #     - name: Commit results
-  #       run: |
-  #         git commit README.md -m 'Re-build README.Rmd' || echo "No changes to commit"
-  #         git push origin || echo "No changes to commit"
 
 
 
