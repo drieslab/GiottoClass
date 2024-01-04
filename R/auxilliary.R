@@ -398,7 +398,7 @@ addCellMetadata <- function(gobject,
   # overwrite columns with same name
   new_col_names <- colnames(new_metadata)
   new_col_names <- new_col_names[new_col_names != column_cell_ID]
-  old_col_names <- colnames(cell_metadata[])
+  old_col_names <- colnames(cell_metadata)
   old_col_names <- old_col_names[old_col_names != "cell_ID"]
   same_col_names <- new_col_names[new_col_names %in% old_col_names]
 
