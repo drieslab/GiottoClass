@@ -27,15 +27,6 @@ setMethod(
   }
 )
 
-setMethod(
-  "shear", signature("giottoPoints"),
-  function(
-    x,
-    ...
-  ) {
-
-  }
-)
 
 setMethod(
   "shear", signature("giottoPolygon"),
