@@ -37,6 +37,8 @@ navbar:
       menu:
       - text: Spatial Geometry Objects
         href: articles/spatial_geometries.html
+      - text: Images
+        href: articles/image_tools.html
     news:
       text: News
       href: news/index.html
@@ -320,11 +322,12 @@ reference:
 - title: Object generics
   desc: Standard generics for Giotto exported classes
 - contents:
+  - plot-generic
   - extract-methods
   - rbind-generic
   - show,giotto-method
   - row-plus-colnames-generic
-  - plot-generic
+  - dimnames
   - dims-generic
   - copy
 - subtitle: Hierarchical

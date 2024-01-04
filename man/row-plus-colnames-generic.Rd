@@ -5,12 +5,30 @@
 \alias{colnames}
 \alias{rownames}
 \alias{colnames,exprObj-method}
+\alias{colnames,cellMetaObj-method}
+\alias{colnames,featMetaObj-method}
+\alias{colnames,spatEnrObj-method}
+\alias{colnames,spatLocsObj-method}
+\alias{colnames,dimObj-method}
 \alias{rownames,exprObj-method}
+\alias{rownames,dimObj-method}
 \title{Row and column names}
 \usage{
 \S4method{colnames}{exprObj}(x)
 
+\S4method{colnames}{cellMetaObj}(x)
+
+\S4method{colnames}{featMetaObj}(x)
+
+\S4method{colnames}{spatEnrObj}(x)
+
+\S4method{colnames}{spatLocsObj}(x)
+
+\S4method{colnames}{dimObj}(x)
+
 \S4method{rownames}{exprObj}(x)
+
+\S4method{rownames}{dimObj}(x)
 }
 \arguments{
 \item{x}{object}

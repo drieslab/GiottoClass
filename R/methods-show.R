@@ -492,8 +492,15 @@ setMethod("show", signature = "giottoPolygon", function(object) {
     cat(" centroids   : NULL\n")
   }
 
-  if (!is.null(object@overlaps)) {
-    cat(" overlaps    : calculated")
+  if (!is.null(overlaps(object))) {
+    overlap_names <- names(overlaps(object))
+    if ("intensity" %in% overlap_names) {
+      non_intens_names <- overlap_names != "intensity"
+      intens_names <- names(overlaps(object)[["intensity"]])
+      overlap_names <- c(overlap_names[non_intens_names], intens_names)
+    }
+
+    cat(" overlaps    :", paste(overlap_names, collapse = ", "))
   } else {
     cat(" overlaps    : NULL")
   }

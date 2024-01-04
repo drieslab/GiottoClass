@@ -1,4 +1,12 @@
 
+
+# GiottoClass 0.1.3
+
+## new
+- vignette for image tools
+
+## enhancements
+- more subobjects respond to `colnames`, `rownames`, `dimnames`
 # GiottoClass 0.1.2 (2024/01/02)
 
 ## Added
@@ -9,8 +17,8 @@
 - Added: vignette for working with spatial classes
 - Added: `output` param to `.spatraster_sample_values()`. Can now return as sampled `data.frame`, `array`, `magick`, `EBImage`
 
-## Changes
-- Fixes: Updates to raster `calculateOverlap()` workflows
+## bug fixes
+- param fixes in raster `calculateOverlap()` workflows
 
 
 # GiottoClass 0.1.1 (2023/12/16)
