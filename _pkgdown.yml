@@ -37,6 +37,8 @@ navbar:
       menu:
       - text: Spatial Geometry Objects
         href: articles/spatial_geometries.html
+      - text: Images
+        href: articles/image_tools.html
     news:
       text: News
       href: news/index.html
@@ -225,6 +227,8 @@ reference:
   - makePseudoVisium
   - polyStamp
   - tessellate
+  - triGrid
+  - orthoGrid
 - title: Interoperability
 - subtitle: From
   desc: Convert from other frameworks to Giotto
