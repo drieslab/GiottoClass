@@ -764,11 +764,13 @@ plot_auto_largeImage_resample <- function(gobject,
 #' @param verbose be verbose
 #' @param \dots additional params to pass to `terra::spatSample`
 #' @keywords internal
-.spatraster_sample_values <- function(raster_object,
-                                      size = 5000,
-                                      output = c('data.frame', 'array', 'magick', 'EBImage'),
-                                      verbose = NULL,
-                                      ...) {
+.spatraster_sample_values <- function(
+    raster_object,
+    size = 5000,
+    output = c('data.frame', 'array', 'magick', 'EBImage'),
+    verbose = NULL,
+    ...
+) {
 
   output <- match.arg(
     arg = output,
