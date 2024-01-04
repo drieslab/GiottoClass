@@ -40,8 +40,15 @@ setMethod(
 
 
 
+#' @name .shear_image
+#' @title Shear an image
+#' @description
+#' Accepts an image object, samples to `magick-image` if needed and then
+#' performs an image shear defined by a `shear_params` object
+#' @param x image object (`giottoLargeImage`, `SpatRaster`, `magick-image`)
 #' @param extent current extent (different from that passed through `shear_params`)
 #' This extent will be updated after the transform
+#' @keywords internal
 .shear_image <- function(x, shear_params, extent, maxcell = 5e5, output = c("spatraster", "magick")) {
 
   checkmate::assert_class(shear_params, "shear_params")
@@ -62,7 +69,7 @@ setMethod(
   sgeom <- paste0(shear_params$deg, collapse = "x")
   simg <- magick::image_shear(x, geometry = sgeom)
 
-
+# TODO
 }
 
 
@@ -70,6 +77,7 @@ setMethod(
 
 
 #' @title Shear params
+#' @name .shear_image_params
 #' @description
 #' Assemble params for x and y shear on an image object.
 #' @details The generated params can be appended to the `giottoLargeImage` in
@@ -172,7 +180,3 @@ setMethod(
 
 
 
-# point shear is performed opposite of those performed on the images
-.shear_delayed_points <- function(rev = TRUE) {
-
-}
