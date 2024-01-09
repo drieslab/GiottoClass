@@ -81,11 +81,15 @@ For monochrome colorscales: `getMonochromeColors()`
 ```{r}
 gimg@colors <- getMonochromeColors("green")
 plot(gimg)
-plot(gimg, col = GiottoVisuals::getColors("viridis", n = 256)) # can be used without setting the slot
+viridis_colors <- hcl.colors(256, palette = "viridis")
+plot(gimg, col = viridis_colors) # can be used without setting the slot
 ```
 
+### TODOs:
 
-TODOs:
-- provide accessor for these slots
-- make *ggplot*-based plotting also obey these settings
+- provide accessors for these slots    
+- make *ggplot*-based plotting also obey these settings    
 
+```{r}
+sessionInfo()
+```

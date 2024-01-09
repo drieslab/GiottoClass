@@ -327,11 +327,12 @@ reference:
 - title: Object generics
   desc: Standard generics for Giotto exported classes
 - contents:
+  - plot-generic
   - extract-methods
   - rbind-generic
   - show,giotto-method
   - row-plus-colnames-generic
-  - plot-generic
+  - dimnames
   - dims-generic
   - copy
 - subtitle: Hierarchical
