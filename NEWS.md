@@ -7,6 +7,8 @@
 
 ## enhancements
 - more subobjects respond to `colnames`, `rownames`, `dimnames`
+- `plot()` and `show()` now handles 3D `spatLocsObj`
+
 # GiottoClass 0.1.2 (2024/01/02)
 
 ## Added
