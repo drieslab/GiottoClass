@@ -980,3 +980,117 @@ test_that("Native spatLocsObj can be removed", {
 })
 
 rm(test_sl)
+
+
+
+
+# ADD ####
+
+test_that("addCellMetadata() - DT with IDs", {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+
+  ids <- spatIDs(giotto_object)
+
+  dt_id <- data.table::data.table(
+    "id" = ids,
+    "id_check" = ids,
+    'random' = rnorm(length(ids))
+  )
+  dt_cell_id <- data.table::data.table(
+    "cell_ID" = ids,
+    'random2' = rnorm(length(ids))
+  )
+
+  # scramble ordering
+  dt_id <- dt_id[sample(1:.N)]
+  dt_cell_id <- dt_cell_id[sample(1:.N)]
+
+  am_giotto <- addCellMetadata(
+    giotto_object,
+    new_metadata = dt_id,
+    column_cell_ID = "id",
+    by_column = TRUE
+  )
+
+  # guess cell_ID as ID col to match
+  am_giotto <- addCellMetadata(
+    am_giotto,
+    new_metadata = dt_cell_id,
+    by_column = TRUE
+  )
+
+  res <- pDataDT(am_giotto)
+
+  expect_true(all(c("random", "random2") %in% colnames(res)))
+  expect_identical(res$cell_ID, res$id_check) # values are matched
+  expect_false(identical(res$id_check, dt_id$id_check))
+  expect_numeric(res$random)
+  expect_numeric(res$random2)
+})
+
+test_that("addCellMetadata() - DT without IDs", {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+
+  ids <- spatIDs(giotto_object)
+
+  dt_no_id <- data.table::data.table(
+    'random' = rnorm(length(ids)),
+    "chars" = sample(LETTERS, size = length(ids), replace = TRUE)
+  )
+
+  am_giotto <- addCellMetadata(
+    giotto_object,
+    new_metadata = dt_no_id
+  )
+
+  res <- pDataDT(am_giotto)
+
+  # expect meta is appended as-is
+  expect_true(all(c("random", "chars") %in% colnames(res)))
+  expect_identical(res$random, dt_no_id$random) # values are matched
+  expect_identical(res$chars, dt_no_id$chars) # values are matched
+})
+
+test_that("addCellMetadata() - vector", {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+
+  ids <- spatIDs(giotto_object)
+
+  chars <- sample(LETTERS, size = length(ids), replace = TRUE)
+
+  am_giotto <- addCellMetadata(
+    giotto_object,
+    new_metadata = chars
+  )
+
+  res <- pDataDT(am_giotto)
+
+  # expect meta vector is appended as-is
+  expect_true(all(c("chars") %in% colnames(res)))
+  expect_identical(res$chars, chars) # values are matched
+  expect_vector(res$chars)
+})
+
+test_that("addCellMetadata() - vector", {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+
+  ids <- spatIDs(giotto_object)
+
+  chars <- factor(sample(LETTERS, size = length(ids), replace = TRUE))
+
+  am_giotto <- addCellMetadata(
+    giotto_object,
+    new_metadata = chars
+  )
+
+  res <- pDataDT(am_giotto)
+
+  # expect meta vector is appended as-is
+  expect_true(all(c("chars") %in% colnames(res)))
+  expect_identical(res$chars, chars) # values are matched
+  expect_factor(res$chars)
+})
+
+
+
+
