@@ -1081,7 +1081,7 @@ createMetafeats <- function(gobject,
     misc = list(expr_values_used = expression_values)
   )
 
-  if (return_gobject == TRUE) {
+  if (isTRUE(return_gobject)) {
     ## enrichment scores
     spenr_names <- list_spatial_enrichments_names(gobject = gobject, spat_unit = spat_unit, feat_type = feat_type)
 
