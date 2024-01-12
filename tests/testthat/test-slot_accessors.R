@@ -990,18 +990,20 @@ test_that("addCellMetadata() - DT with IDs", {
   rlang::local_options(lifecycle_verbosity = "quiet")
 
   ids <- spatIDs(giotto_object)
+  # get starting order
+  original_order <- spatIDs(getCellMetadata(giotto_object))
 
   dt_id <- data.table::data.table(
-    "id" = ids,
-    "id_check" = ids,
-    'random' = rnorm(length(ids))
+    "id" = ids, # col to match IDs on (but alt. naming)
+    "id_check" = ids, # use this col to check if ID ordering has changed
+    'random' = rnorm(length(ids)) # dummy data
   )
   dt_cell_id <- data.table::data.table(
-    "cell_ID" = ids,
-    'random2' = rnorm(length(ids))
+    "cell_ID" = ids, # col to match IDs on (default naming)
+    'random2' = rnorm(length(ids)) # dummy data 2
   )
 
-  # scramble ordering
+  # scramble ordering of metadata to add
   dt_id <- dt_id[sample(1:.N)]
   dt_cell_id <- dt_cell_id[sample(1:.N)]
 
@@ -1021,17 +1023,25 @@ test_that("addCellMetadata() - DT with IDs", {
 
   res <- pDataDT(am_giotto)
 
+  # check both sets of metadata were added
   expect_true(all(c("random", "random2") %in% colnames(res)))
-  expect_identical(res$cell_ID, res$id_check) # values are matched
+  # expect that the order of old and new metadata were different
   expect_false(identical(res$id_check, dt_id$id_check))
+  # check that the addition matched ordering of IDs
+  expect_identical(res$cell_ID, res$id_check)
+  # simple checks that added meta cols look right
   expect_numeric(res$random)
   expect_numeric(res$random2)
+  # check that start meta order is the same as end
+  expect_identical(original_order, res$cell_ID)
 })
 
 test_that("addCellMetadata() - DT without IDs", {
   rlang::local_options(lifecycle_verbosity = "quiet")
 
   ids <- spatIDs(giotto_object)
+  # get starting order
+  original_order <- spatIDs(getCellMetadata(giotto_object))
 
   dt_no_id <- data.table::data.table(
     'random' = rnorm(length(ids)),
@@ -1049,12 +1059,16 @@ test_that("addCellMetadata() - DT without IDs", {
   expect_true(all(c("random", "chars") %in% colnames(res)))
   expect_identical(res$random, dt_no_id$random) # values are matched
   expect_identical(res$chars, dt_no_id$chars) # values are matched
+  # check that start meta order is the same as end
+  expect_identical(original_order, res$cell_ID)
 })
 
 test_that("addCellMetadata() - vector", {
   rlang::local_options(lifecycle_verbosity = "quiet")
 
   ids <- spatIDs(giotto_object)
+  # get starting order
+  original_order <- spatIDs(getCellMetadata(giotto_object))
 
   chars <- sample(LETTERS, size = length(ids), replace = TRUE)
 
@@ -1069,28 +1083,157 @@ test_that("addCellMetadata() - vector", {
   expect_true(all(c("chars") %in% colnames(res)))
   expect_identical(res$chars, chars) # values are matched
   expect_vector(res$chars)
+  # check that start meta order is the same as end
+  expect_identical(original_order, res$cell_ID)
 })
 
-test_that("addCellMetadata() - vector", {
+test_that("addCellMetadata() - factor", {
   rlang::local_options(lifecycle_verbosity = "quiet")
 
   ids <- spatIDs(giotto_object)
+  # get starting order
+  original_order <- spatIDs(getCellMetadata(giotto_object))
 
-  chars <- factor(sample(LETTERS, size = length(ids), replace = TRUE))
+  factors <- factor(sample(LETTERS, size = length(ids), replace = TRUE))
 
   am_giotto <- addCellMetadata(
     giotto_object,
-    new_metadata = chars
+    new_metadata = factors
   )
 
   res <- pDataDT(am_giotto)
 
   # expect meta vector is appended as-is
-  expect_true(all(c("chars") %in% colnames(res)))
-  expect_identical(res$chars, chars) # values are matched
-  expect_factor(res$chars)
+  expect_true(all(c("factors") %in% colnames(res)))
+  expect_identical(res$factors, factors) # values are matched
+  expect_factor(res$factors)
+  # check that start meta order is the same as end
+  expect_identical(original_order, res$cell_ID)
 })
 
 
 
+test_that("addFeatMetadata() - DT with IDs", {
+  rlang::local_options(lifecycle_verbosity = "quiet")
 
+  ids <- featIDs(giotto_object)
+  # get starting order
+  original_order <- featIDs(getFeatureMetadata(giotto_object))
+
+  dt_id <- data.table::data.table(
+    "id" = ids, # col to match IDs on (but alt. naming)
+    "id_check" = ids, # use this col to check if ID ordering has changed
+    'random' = rnorm(length(ids)) # dummy data
+  )
+  dt_feat_id <- data.table::data.table(
+    "feat_ID" = ids, # col to match IDs on (default naming)
+    'random2' = rnorm(length(ids)) # dummy data 2
+  )
+
+  # scramble ordering of metadata to add
+  dt_id <- dt_id[sample(1:.N)]
+  dt_feat_id <- dt_feat_id[sample(1:.N)]
+
+  am_giotto <- addFeatMetadata(
+    giotto_object,
+    new_metadata = dt_id,
+    column_feat_ID = "id",
+    by_column = TRUE
+  )
+
+  # guess feat_ID as ID col to match
+  am_giotto <- addFeatMetadata(
+    am_giotto,
+    new_metadata = dt_feat_id,
+    by_column = TRUE
+  )
+
+  res <- fDataDT(am_giotto)
+
+  # check both sets of metadata were added
+  expect_true(all(c("random", "random2") %in% colnames(res)))
+  # expect that the order of old and new metadata were different
+  expect_false(identical(res$id_check, dt_id$id_check))
+  # check that the addition matched ordering of IDs
+  expect_identical(res$feat_ID, res$id_check)
+  # simple checks that added meta cols look right
+  expect_numeric(res$random)
+  expect_numeric(res$random2)
+  # check that start meta order is the same as end
+  expect_identical(original_order, res$feat_ID)
+})
+
+test_that("addFeatMetadata() - DT without IDs", {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+
+  ids <- featIDs(giotto_object)
+  # get starting order
+  original_order <- featIDs(getFeatureMetadata(giotto_object))
+
+  dt_no_id <- data.table::data.table(
+    'random' = rnorm(length(ids)),
+    "chars" = sample(LETTERS, size = length(ids), replace = TRUE)
+  )
+
+  am_giotto <- addFeatMetadata(
+    giotto_object,
+    new_metadata = dt_no_id
+  )
+
+  res <- fDataDT(am_giotto)
+
+  # expect meta is appended as-is
+  expect_true(all(c("random", "chars") %in% colnames(res)))
+  expect_identical(res$random, dt_no_id$random) # values are matched
+  expect_identical(res$chars, dt_no_id$chars) # values are matched
+  # check that start meta order is the same as end
+  expect_identical(original_order, res$feat_ID)
+})
+
+test_that("addFeatMetadata() - vector", {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+
+  ids <- featIDs(giotto_object)
+  # get starting order
+  original_order <- featIDs(getFeatureMetadata(giotto_object))
+
+  chars <- sample(LETTERS, size = length(ids), replace = TRUE)
+
+  am_giotto <- addFeatMetadata(
+    giotto_object,
+    new_metadata = chars
+  )
+
+  res <- fDataDT(am_giotto)
+
+  # expect meta vector is appended as-is
+  expect_true(all(c("chars") %in% colnames(res)))
+  expect_identical(res$chars, chars) # values are matched
+  expect_vector(res$chars)
+  # check that start meta order is the same as end
+  expect_identical(original_order, res$feat_ID)
+})
+
+test_that("addFeatMetadata() - factor", {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+
+  ids <- featIDs(giotto_object)
+  # get starting order
+  original_order <- featIDs(getFeatureMetadata(giotto_object))
+
+  factors <- factor(sample(LETTERS, size = length(ids), replace = TRUE))
+
+  am_giotto <- addFeatMetadata(
+    giotto_object,
+    new_metadata = factors
+  )
+
+  res <- fDataDT(am_giotto)
+
+  # expect meta vector is appended as-is
+  expect_true(all(c("factors") %in% colnames(res)))
+  expect_identical(res$factors, factors) # values are matched
+  expect_factor(res$factors)
+  # check that start meta order is the same as end
+  expect_identical(original_order, res$feat_ID)
+})

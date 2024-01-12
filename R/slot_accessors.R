@@ -288,19 +288,6 @@ set_cell_id <- function(gobject,
         set_defaults = TRUE
       ))
 
-
-      # IDs = lapply(seq(nrow(expr_avail)), function(expr_i) {
-      #   ex_ID = spatIDs(
-      #     get_expression_values(
-      #       gobject = gobject,
-      #       spat_unit = spat_unit,
-      #       feat_type = expr_avail$feat_type[[expr_i]],
-      #       values = expr_avail$name[[expr_i]],
-      #       output = 'exprObj'
-      #     )
-      #   )
-      # })
-      # cell_IDs = unique(unlist(IDs))
     } else if (spat_unit %in% si_avail$spat_info) { # fallback to spat_info
 
       cell_IDs <- spatIDs(get_polygon_info(

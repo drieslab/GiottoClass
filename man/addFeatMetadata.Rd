@@ -9,9 +9,9 @@ addFeatMetadata(
   feat_type = NULL,
   spat_unit = NULL,
   new_metadata,
-  by_column = F,
-  column_feat_ID = NULL,
-  vector_name = NULL
+  vector_name = NULL,
+  by_column = FALSE,
+  column_feat_ID = NULL
 )
 }
 \arguments{
@@ -23,11 +23,11 @@ addFeatMetadata(
 
 \item{new_metadata}{new metadata to use)}
 
+\item{vector_name}{(optional) custom name if you provide a single vector}
+
 \item{by_column}{merge metadata based on \emph{feat_ID} column in \code{\link{fDataDT}}}
 
 \item{column_feat_ID}{column name of new metadata to use if by_column = TRUE}
-
-\item{vector_name}{(optional) custom name if you provide a single vector}
 }
 \value{
 giotto object
