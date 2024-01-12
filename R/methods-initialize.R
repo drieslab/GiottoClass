@@ -8,6 +8,7 @@ NULL
 
 
 # giotto ####
+# See documentation in classes.R
 #' @noRd
 #' @keywords internal
 setMethod("initialize", signature("giotto"), function(.Object, ...) {
@@ -34,8 +35,6 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
 
 
 
-
-  # message('initialize Giotto run\n\n')  # debug
 
 
   ## set instructions ##
@@ -360,6 +359,9 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
   ## Metadata ##
   ## ------------- ##
 
+  # spat_unit cross compatibility for metadata checks use spatIDs() to pull
+  # the relevant set of spatIDs for that spatial unit.
+
   if (!is.null(avail_cm)) {
     .check_cell_metadata(gobject = .Object) # modifies by reference
   }
@@ -372,7 +374,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
   ## Spatial locations ##
   ## ----------------- ##
 
-  if (!is.null(avail_expr) & !is.null(avail_sl)) {
+  if (!is.null(avail_expr) && !is.null(avail_sl)) {
     # 1. ensure spatial locations and expression matrices have the same cell IDs
     # 2. give cell IDs if not provided
     .check_spatial_location_data(gobject = .Object) # modifies by reference
@@ -383,7 +385,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
   ## Spatial network ##
   ## --------------- ##
 
-  if (!is.null(avail_sl) & !is.null(avail_sn)) {
+  if (!is.null(avail_sl) && !is.null(avail_sn)) {
     # 1. ensure vertices have same IDs as seen in spat_unit for gobject
     # 2. ensure spatial locations of same spat_unit exists
     .check_spatial_networks(gobject = .Object)
@@ -394,7 +396,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
   ## Spatial enrichment ##
   ## ------------------ ##
 
-  if (!is.null(avail_sl) & !is.null(avail_se)) {
+  if (!is.null(avail_sl) && !is.null(avail_se)) {
     # 1. ensure IDs in enrichment match gobject for same spat_unit
     # 2. ensure spatial locations exist for same spat_unit
     .check_spatial_enrichment(gobject = .Object)
@@ -405,7 +407,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
   ## Nearest networks ##
   ## ---------------- ##
 
-  if (!is.null(avail_expr) & !is.null(avail_nn)) {
+  if (!is.null(avail_expr) && !is.null(avail_nn)) {
     .check_nearest_networks(gobject = .Object)
   }
 

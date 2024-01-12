@@ -2,12 +2,16 @@
 
 # GiottoClass 0.1.3
 
+## bug fixes
+- fix unexpected sorting in `addCellMetadata()` [#853](https://github.com/drieslab/Giotto/issues/853) by rbutleriii
+
 ## new
 - vignette for image tools
+- `init_gobject` param in `loadGiotto()` to control whether object initialization is performed
 
 ## enhancements
 - more subobjects respond to `colnames`, `rownames`, `dimnames`
-- `plot()` and `show()` now handles 3D `spatLocsObj`
+- `plot()` and `show()` now handle 3D `spatLocsObj`
 
 # GiottoClass 0.1.2 (2024/01/02)
 
