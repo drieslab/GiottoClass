@@ -85,7 +85,7 @@ evaluate_input <- function(type, x, ...) {
                                expression_matrix_class = expression_matrix_class,
                                feat_type = feat_type
     )
-  } else if (expression_matrix_class[1] == "dbMatrix") {
+  } else if (expression_matrix_class[1] == "dbSparseMatrix") {
     mymatrix <- inputmatrix
   } else if (expression_matrix_class[1] == "DelayedArray") {
     mymatrix <- DelayedArray::DelayedArray(inputmatrix)
