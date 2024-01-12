@@ -127,7 +127,7 @@ colMeans_flex <- function(mymatrix) {
     return(Matrix::colMeans(mymatrix)) # replace with sparseMatrixStats
   } else if (inherits(mymatrix, "Matrix")) {
     return(Matrix::colMeans(mymatrix))
-  } else if (inherits(x, "dbMatrix")) {
+  } else if (inherits(mymatrix, "dbMatrix")) {
     return(dbMatrix::colMeans(mymatrix))
   } else {
     temp_matrix <- as.matrix(mymatrix)
