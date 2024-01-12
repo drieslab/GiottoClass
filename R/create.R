@@ -1071,7 +1071,7 @@ createExprObj <- function(expression_data,
                           feat_type = "rna",
                           provenance = NULL,
                           misc = NULL,
-                          expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
+                          expression_matrix_class = c("dgCMatrix", "DelayedArray", "dbSparseMatrix")) {
   exprMat <- .evaluate_expr_matrix(expression_data,
     expression_matrix_class = expression_matrix_class,
     feat_type = feat_type
