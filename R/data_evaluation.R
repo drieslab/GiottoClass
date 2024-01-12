@@ -77,7 +77,7 @@ evaluate_input <- function(type, x, ...) {
                                   sparse = TRUE,
                                   cores = determine_cores(),
                                   feat_type = "rna",
-                                  expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
+                                  expression_matrix_class = c("dgCMatrix", "DelayedArray", "dbMatrix")) {
   if (inherits(inputmatrix, "character")) {
     inputmatrix <- path.expand(inputmatrix)
     mymatrix <- readExprMatrix(inputmatrix,
@@ -85,6 +85,8 @@ evaluate_input <- function(type, x, ...) {
                                expression_matrix_class = expression_matrix_class,
                                feat_type = feat_type
     )
+  } else if (expression_matrix_class[1] == "dbMatrix") {
+    mymatrix <- inputmatrix
   } else if (expression_matrix_class[1] == "DelayedArray") {
     mymatrix <- DelayedArray::DelayedArray(inputmatrix)
   } else if (inherits(inputmatrix, "Matrix")) {

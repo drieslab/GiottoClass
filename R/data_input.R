@@ -19,11 +19,18 @@ readExprMatrix <- function(path,
                            cores = determine_cores(),
                            transpose = FALSE,
                            feat_type = "rna",
-                           expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
+                           expression_matrix_class = c("dgCMatrix", "DelayedArray", "dbMatrix")) {
   # check if path is a character vector and exists
   if (!is.character(path)) stop("path needs to be character vector")
   if (!file.exists(path)) stop("the path: ", path, " does not exist")
-
+  
+  # check if expression_matrix_class is dbMatrix, if so stop and throw error saying not yet supported
+  if (expression_matrix_class == "dbMatrix"){
+     # Note: Implementation of this feature should be done within dbMatrix
+     # See dbMatrix::createDbMatrix() for more info
+     stop("File conversion to dbMatrix is not yet supported") 
+  }
+  
   data.table::setDTthreads(threads = cores)
 
   # read and convert
