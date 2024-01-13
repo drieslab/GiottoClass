@@ -9,10 +9,56 @@ NULL
 #' @return A character vector of row or col names
 NULL
 
+#' @title Dimnames of an object
+#' @name dimnames
+#' @description
+#' Retrieve or set the dimnames of an object
+#' @param x object
+NULL
+
 #' @rdname row-plus-colnames-generic
 #' @export
 setMethod("colnames", signature(x = "exprObj"), function(x) colnames(x[]))
 
 #' @rdname row-plus-colnames-generic
 #' @export
+setMethod("colnames", signature(x = "cellMetaObj"), function(x) colnames(x[]))
+
+#' @rdname row-plus-colnames-generic
+#' @export
+setMethod("colnames", signature(x = "featMetaObj"), function(x) colnames(x[]))
+
+#' @rdname row-plus-colnames-generic
+#' @export
+setMethod("colnames", signature(x = "spatEnrObj"), function(x) colnames(x[]))
+
+#' @rdname row-plus-colnames-generic
+#' @export
+setMethod("colnames", signature(x = "spatLocsObj"), function(x) colnames(x[]))
+
+#' @rdname row-plus-colnames-generic
+#' @export
+setMethod("colnames", signature(x = "dimObj"), function(x) colnames(x[]))
+
+
+
+
+#' @rdname row-plus-colnames-generic
+#' @export
 setMethod("rownames", signature(x = "exprObj"), function(x) rownames(x[]))
+
+#' @rdname row-plus-colnames-generic
+#' @export
+setMethod("rownames", signature(x = "dimObj"), function(x) rownames(x[]))
+
+
+
+
+
+#' @rdname dimnames
+#' @export
+setMethod("dimnames", signature(x = "exprObj"), function(x) dimnames(x[]))
+
+#' @rdname dimnames
+#' @export
+setMethod("dimnames", signature(x = "dimObj"), function(x) dimnames(x[]))

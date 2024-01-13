@@ -13,7 +13,7 @@
   }
 
   final_feats <- unique(unlist(final_feats))
-  final_feats <- sort(final_feats)
+  final_feats <- mixedsort(final_feats)
 
 
 

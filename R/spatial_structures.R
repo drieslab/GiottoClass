@@ -888,9 +888,9 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
 #' @param method package to use to create a Delaunay network
 #' @param spat_loc_name name of spatial locations
 #' @param dimensions which spatial dimensions to use. Use "sdimx" (spatial dimension x), "sdimy", "sdimz" respectively to refer to X (or the 1st), Y (or the 2nd) and Z(or the 3rd) dimension, see details. (default = all)
-#' @param maximum_distance distance cuttof for Delaunay neighbors to consider. If "auto", "upper wisker" value of the distance vector between neighbors is used; see the boxplot{graphics} documentation for more details.(default = "auto")
-#' @param minimum_k minimum number of neigbhours if maximum_distance != NULL
-#' @param options (geometry) String containing extra control options for the underlying Qhull command; see the Qhull documentation (../doc/qhull/html/qdelaun.html) for the available options. (default = 'Pp', do not report precision problems)
+#' @param maximum_distance distance cuttof for Delaunay neighbors to consider. If "auto", "upper whisker" value of the distance vector between neighbors is used; see the boxplot{graphics} documentation for more details.(default = "auto")
+#' @param minimum_k minimum number of neighbours if maximum_distance != NULL
+#' @param options (geometry) String containing extra control options for the underlying Qhull command; see the [Qhull documentation](http://www.qhull.org/html/qdelaun.htm) for the available options. (default = 'Pp', do not report precision problems)
 #' @param Y (RTriangle) If TRUE prohibits the insertion of Steiner points on the mesh boundary.
 #' @param j (RTriangle) If TRUE jettisons vertices that are not part of the final triangulation from the output.
 #' @param S (RTriangle) Specifies the maximum number of added Steiner points.
@@ -1325,9 +1325,13 @@ createSpatialKNNnetwork <- function(gobject,
 
 ## spatial network ####
 
-#' @title createSpatialNetwork
+#' @title Create spatial network
 #' @name createSpatialNetwork
-#' @description Create a spatial network based on cell centroid physical distances.
+#' @description Create a spatial network based on cell centroids. These networks
+#' are often used when determining cell-cell connectivities and spatial relationships.
+#' There are several types of spatial networks and multiple methods to generate
+#' them. Method-specific params are labeled with the name of the method within
+#' parentheses in their descriptions.
 #' @param gobject giotto object
 #' @param name name for spatial network (default = 'spatial_network')
 #' @param spat_unit spatial unit
@@ -1335,29 +1339,41 @@ createSpatialKNNnetwork <- function(gobject,
 #' @param spat_loc_name name of spatial locations to use
 #' @param dimensions which spatial dimensions to use (default = all)
 #' @param method which method to use to create a spatial network. (default = Delaunay)
-#' @param delaunay_method Delaunay method to use
-#' @param maximum_distance_delaunay distance cuttof for nearest neighbors to consider for Delaunay network
-#' @param options (geometry) String containing extra control options for the underlying Qhull command; see the Qhull documentation (../doc/qhull/html/qdelaun.html) for the available options. (default = 'Pp', do not report precision problems)
+#' @param delaunay_method method to use to generate Delaunay network
+#' @param maximum_distance_delaunay distance cutoff for nearest neighbors to
+#' consider for Delaunay network. If "auto", "upper whisker" value of the
+#' distance vector between neighbors is used; see the [grDevices::boxplot.stats]
+#' documentation for more details.(default = "auto")
+#' @param options (geometry) String containing extra control options for the
+#' underlying Qhull command; see the
+#' [Qhull documentation](http://www.qhull.org/html/qdelaun.htm) for the
+#' available options. (default = 'Pp', do not report precision problems)
 #' @param Y (RTriangle) If TRUE prohibits the insertion of Steiner points on the mesh boundary.
 #' @param j (RTriangle) If TRUE jettisons vertices that are not part of the final triangulation from the output.
 #' @param S (RTriangle) Specifies the maximum number of added Steiner points.
 #' @param knn_method method to create kNN network
 #' @param k number of nearest neighbors based on physical distance
-#' @param minimum_k minimum nearest neigbhours if maximum_distance != NULL
-#' @param maximum_distance_knn distance cuttof for nearest neighbors to consider for kNN network
-#' @param verbose verbose
-#' @param return_gobject boolean: return giotto object (default = TRUE)
-#' @param output object type to return spatial network as when return_gobject = FALSE. (default: 'spatialNetworkObj')
+#' @param minimum_k minimum nearest neighbours if maximum_distance != NULL
+#' @param maximum_distance_knn distance cutoff for nearest neighbors to consider
+#' for kNN network
+#' @param verbose be verbose
+#' @param return_gobject logical. return giotto object (default = TRUE)
+#' @param output character. Object type to return spatial network as when
+#' `return_gobject = FALSE`. (default: 'spatialNetworkObj')
 #' @param \dots Additional parameters for the selected function
 #' @return giotto object with updated spatial network slot
-#' @details Creates a spatial network connecting single-cells based on their physical distance to each other.
-#' For Delaunay method, neighbors will be decided by delaunay triangulation and a maximum distance criteria. For kNN method, number of neighbors can be determined by k, or maximum distance from each cell with or without
+#' @details Creates a spatial network connecting single-cells based on their
+#' physical distance to each other.
+#' For Delaunay method, neighbors will be decided by Delaunay triangulation and
+#' a maximum distance criteria. For kNN method, number of neighbors can be
+#' determined by k, or maximum distance from each cell with or without
 #' setting a minimum k for each cell.
 #'
-#' \strong{dimensions: } default = 'all' which takes all possible dimensions.
-#' Alternatively you can provide a character vector that specififies the spatial dimensions to use, e.g. c("sdimx', "sdimy")
-#' or a numerical vector, e.g. 2:3
+#' **dimensions: ** default = 'all' which takes all possible dimensions.
+#' Alternatively you can provide a character vector that specifies the spatial
+#' dimensions to use, e.g. c("sdimx', "sdimy") or a numerical vector, e.g. 2:3
 #'
+#' @md
 #' @export
 createSpatialNetwork <- function(gobject,
                                  name = NULL,

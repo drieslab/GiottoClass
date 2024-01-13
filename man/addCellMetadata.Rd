@@ -21,13 +21,16 @@ addCellMetadata(
 
 \item{feat_type}{feature type}
 
-\item{new_metadata}{new cell metadata to use (data.table, data.frame, ...)}
+\item{new_metadata}{new cell metadata to use (data.table, data.frame, vector, factor, ...)}
 
-\item{vector_name}{(optional) custom name if you provide a single vector}
+\item{vector_name}{(optional) custom name for new metadata column if single
+vector or factor is provided}
 
-\item{by_column}{merge metadata based on \emph{cell_ID} column in \code{\link{pDataDT}} (default = FALSE)}
+\item{by_column}{merge metadata based on \emph{cell_ID} column in
+\code{\link{pDataDT}} (default = FALSE)}
 
-\item{column_cell_ID}{column name of new metadata to use if by_column = TRUE}
+\item{column_cell_ID}{column name of new metadata to use if
+\code{by_column = TRUE}}
 }
 \value{
 giotto object

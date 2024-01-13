@@ -9,6 +9,7 @@ loadGiotto(
   load_params = list(),
   reconnect_giottoImage = TRUE,
   python_path = NULL,
+  init_gobject = TRUE,
   verbose = TRUE
 )
 }
@@ -20,6 +21,9 @@ loadGiotto(
 \item{reconnect_giottoImage}{(default = TRUE) whether to attempt reconnection of magick based image objects}
 
 \item{python_path}{(optional) manually set your python path}
+
+\item{init_gobject}{logical. Whether to initialize the \code{giotto} object after
+loading. (default = TRUE)}
 
 \item{verbose}{be verbose}
 }
