@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,6 +25,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/spatial_geometries.html">Spatial Geometry Objects</a>
+    <a class="dropdown-item" href="../articles/image_tools.html">Images</a>
   </div>
 </li>
 <li class="active nav-item">
@@ -34,6 +35,9 @@
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
       <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://drieslab.github.io/Giotto/">Suite</a>
+</li>
+<li class="nav-item">
   <a class="external-link nav-link" href="https://github.com/drieslab/GiottoClass/" aria-label="github">
     <span class="fab fa fab fa-github fa-lg"></span>
      
@@ -51,6 +55,28 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.3" id="giottoclass-013-20240112">GiottoClass 0.1.3 (2024/01/12)<a class="anchor" aria-label="anchor" href="#giottoclass-013-20240112"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-1-3">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-1-3"></a></h3>
+<ul><li>fix unexpected sorting in <code><a href="../reference/addCellMetadata.html">addCellMetadata()</a></code> and <code><a href="../reference/addFeatMetadata.html">addFeatMetadata()</a></code> <a href="https://github.com/drieslab/Giotto/issues/853" class="external-link">#853</a> by rbutleriii</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-0-1-3">new<a class="anchor" aria-label="anchor" href="#new-0-1-3"></a></h3>
+<ul><li>
+<code>init_gobject</code> param in <code><a href="../reference/loadGiotto.html">loadGiotto()</a></code> to control whether object initialization is also performed after load</li>
+<li>vignette for image tools</li>
+</ul></div>
+<div class="section level3">
+<h3 id="enhancements-0-1-3">enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-1-3"></a></h3>
+<ul><li>ID sorts now use <code><a href="https://rdrr.io/pkg/gtools/man/mixedsort.html" class="external-link">gtools::mixedsort()</a></code> <a href="https://github.com/drieslab/Giotto/issues/853" class="external-link">#853</a> by rbutleriii</li>
+<li>more subobjects respond to <code>colnames</code>, <code>rownames</code>, <code>dimnames</code>
+</li>
+<li>
+<code><a href="../reference/plot-generic.html">plot()</a></code> and <code>show()</code> now handle 3D <code>spatLocsObj</code>
+</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.2" id="giottoclass-012-20240102">GiottoClass 0.1.2 (2024/01/02)<a class="anchor" aria-label="anchor" href="#giottoclass-012-20240102"></a></h2>
 <div class="section level3">
 <h3 id="added-0-1-2">Added<a class="anchor" aria-label="anchor" href="#added-0-1-2"></a></h3>
@@ -65,8 +91,8 @@
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="changes-0-1-2">Changes<a class="anchor" aria-label="anchor" href="#changes-0-1-2"></a></h3>
-<ul><li>Fixes: Updates to raster <code><a href="../reference/calculateOverlap.html">calculateOverlap()</a></code> workflows</li>
+<h3 id="bug-fixes-0-1-2">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-1-2"></a></h3>
+<ul><li>param fixes in raster <code><a href="../reference/calculateOverlap.html">calculateOverlap()</a></code> workflows</li>
 </ul></div>
 </div>
     <div class="section level2">
