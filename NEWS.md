@@ -5,13 +5,9 @@
 ## bug fixes
 - fix unexpected sorting in `addCellMetadata()` and `addFeatMetadata()` [#853](https://github.com/drieslab/Giotto/issues/853) by rbutleriii
 
-## bug fixes
-- fix unexpected sorting in `addCellMetadata()` [#853](https://github.com/drieslab/Giotto/issues/853) by rbutleriii
-
 ## new
-- `init_gobject` param in `loadGiotto()` to control whether object initialization is also performed
+- `init_gobject` param in `loadGiotto()` to control whether object initialization is also performed after load
 - vignette for image tools
-- `init_gobject` param in `loadGiotto()` to control whether object initialization is performed
 
 ## enhancements
 - ID sorts now use `gtools::mixedsort()` [#853](https://github.com/drieslab/Giotto/issues/853) by rbutleriii
