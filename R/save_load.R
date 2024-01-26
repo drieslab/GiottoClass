@@ -168,6 +168,8 @@ saveGiotto <- function(gobject,
 #' @param load_params additional parameters for loading or reading giotto object
 #' @param reconnect_giottoImage (default = TRUE) whether to attempt reconnection of magick based image objects
 #' @param python_path (optional) manually set your python path
+#' @param init_gobject logical. Whether to initialize the `giotto` object after
+#' loading. (default = TRUE)
 #' @param verbose be verbose
 #' @return Giotto object
 #' @details Works together with \code{\link{saveGiotto}} to save and re-load
@@ -181,6 +183,7 @@ loadGiotto <- function(path_to_folder,
                        load_params = list(),
                        reconnect_giottoImage = TRUE,
                        python_path = NULL,
+                       init_gobject = TRUE,
                        verbose = TRUE) {
   # data.table vars
   img_type <- NULL
@@ -192,14 +195,16 @@ loadGiotto <- function(path_to_folder,
   }
 
   ## 1. load giotto object
-  if (verbose) wrap_msg("1. read Giotto object \n")
+  vmsg(.v = verbose, "1. read Giotto object")
 
   gobject_file <- list.files(path_to_folder, pattern = "gobject")
 
   if (identical(gobject_file, character(0))) {
-    if (verbose) wrap_msg("giotto object was not found, skip loading giotto object \n")
+    vmsg(.v = verbose, "giotto object was not found
+         skip loading giotto object")
   } else if (length(gobject_file) > 1) {
-    if (verbose) wrap_msg("more than 1 giotto object was found, skip loading giotto object \n")
+    vmsg(.v = verbose, "more than 1 giotto object was found
+         skip loading giotto object")
   } else {
     if (grepl(".RDS", x = gobject_file)) {
       gobject <- do.call("readRDS", c(file = paste0(path_to_folder, "/", "gobject.RDS"), load_params))
@@ -218,7 +223,7 @@ loadGiotto <- function(path_to_folder,
 
 
   ## 2. read in features
-  if (verbose) wrap_msg("2. read Giotto feature information \n")
+  vmsg(.v = verbose, "2. read Giotto feature information")
   feat_files <- list.files(path = paste0(path_to_folder, "/Features"), pattern = ".shp")
 
   if (length(feat_files) != 0) {
@@ -243,11 +248,20 @@ loadGiotto <- function(path_to_folder,
 
 
   ## 3. read in spatial polygons
-  if (isTRUE(verbose)) wrap_msg("3. read Giotto spatial information \n")
-  spat_paths <- list.files(path = paste0(path_to_folder, "/SpatialInfo"), pattern = "spatVector.shp", full.names = TRUE)
+  vmsg(.v = verbose, "3. read Giotto spatial information")
+
+  spat_paths <- list.files(
+    path = paste0(path_to_folder, "/SpatialInfo"),
+    pattern = "spatVector.shp",
+    full.names = TRUE
+  )
   spat_files <- basename(spat_paths)
 
-  vector_names_paths <- list.files(path = paste0(path_to_folder, "/SpatialInfo"), pattern = "spatVector_names.txt", full.names = TRUE)
+  vector_names_paths <- list.files(
+    path = paste0(path_to_folder, "/SpatialInfo"),
+    pattern = "spatVector_names.txt",
+    full.names = TRUE
+  )
 
   if (length(spat_files) != 0) {
     ## 3.1. shapes
@@ -380,7 +394,8 @@ loadGiotto <- function(path_to_folder,
   }
 
 
-  ## 5. Update python path
+  ## 5. Update python path (do not initialize yet)
+  # ***if python should be used...***
   if (isTRUE(getOption("giotto.use_conda", TRUE))) {
     identified_python_path <- set_giotto_python_path(
       python_path = python_path,
@@ -389,18 +404,24 @@ loadGiotto <- function(path_to_folder,
     gobject <- changeGiottoInstructions(
       gobject = gobject,
       params = c("python_path"),
-      new_values = c(identified_python_path)
+      new_values = c(identified_python_path),
+      init_gobject = FALSE
     )
   } else {
+    # ***if python is not needed...***
     instr <- instructions(gobject)
     instr["python_path"] <- list(NULL)
-    instructions(gobject) <- instr
+    instructions(gobject, initialize = FALSE) <- instr
   }
 
   ## 6. overallocate for data.tables
   # (data.tables when read from disk have a truelength of 0)
   gobject <- .giotto_alloc_dt(gobject)
 
+  ## 7. initialize
+  if (isTRUE(init_gobject)) {
+    gobject <- initialize(gobject)
+  }
 
   return(gobject)
 }

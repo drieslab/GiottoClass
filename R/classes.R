@@ -318,80 +318,6 @@ setClass("spatFeatData",
 ## Giotto class ####
 
 
-## * Check ###
-# Giotto class
-
-
-# #' @title Check Giotto Object
-# #' @name check_giottoObj
-# #' @description check function for S4 giotto object
-# #' @param object giotto object to check
-# #' @keywords internal
-# #' @noRd
-# check_giotto_obj = function(object) {
-#
-#
-#   errors = character()
-#   ch = box_chars()
-#
-#
-#   ## Validate Nesting ##
-#   ## ---------------- ##
-#
-#   slot_depths = giotto_slot_depths()
-#   for(slot_i in seq(nrow(slot_depths))) {
-#
-#     slot_data = slot(object, slot_depths$slot[[slot_i]])
-#     if(!is.null(slot_data)) {
-#       if(depth(slot_data, method = 'min') != slot_depths$depth[[slot_i]]) {
-#         msg = wrap_txt('Invalid nesting discovered for',
-#                        slot_depths$slot[[slot_i]],
-#                        'slot')
-#         errors = c(errors, msg)
-#       }
-#     }
-#   }
-
-
-
-
-# ## Match spatial units and feature types ##
-#
-# # Find existing spat_units in source data
-# uniqueSrcSU = list_expression(object)$spat_unit
-# uniqueSrcSU = unique(uniqueSrcSU, list_spatial_info_names(object))
-#
-# # Find existing feat_types in source data
-# uniqueSrcFT = list_expression(object)$feat_type
-# uniqueSrcFT = unique(uniqueSrcFT, list_feature_info_names(object))
-#
-# # Find existing spat_units and feat_types within other data slots
-# uniqueDatSU = lapply(gDataSlots, function(x) list_giotto_data(gobject = object, slot = x)$spat_unit)
-# uniqueDatFT = lapply(gDataSlots, function(x) list_giotto_data(gobject = object, slot = x)$feat_type)
-
-# # If any spat_units exist, ensure that associated objects have identical cell_IDs
-# if(length(uniqueSU) > 0) {
-#   for(SU in seq_along(uniqueSU)) {
-#
-#     all(lapply(gDataSlots, function(x) {
-#       list_giotto_data(gobject = object,
-#                        slot = x)
-#     }))
-#   }
-# }
-#
-#
-#
-#
-#
-#
-#
-#   if(length(errors) == 0) TRUE else errors
-# }
-
-
-
-
 
 
 
@@ -433,11 +359,6 @@ updateGiottoObject <- function(gobject) {
     gobject@largeImages <- lapply(gobject@largeImages, .update_giotto_image)
   }
 
-  # # 3.3.X release adds mirai slot
-  # if (is.null(attr(gobject, "mirai"))) {
-  #   attr(gobject, "mirai") <- list()
-  # }
-
   return(gobject)
 }
 
@@ -448,10 +369,12 @@ updateGiottoObject <- function(gobject) {
 # ! Any slot modifications should also be reflected in packedGiotto class !
 
 #' @title S4 giotto Class
-#' @description Framework of giotto object to store and work with spatial expression data
+#' @description \pkg{Giotto}'s core object that encapsulates all the components
+#' of a spatial-omic project and facilitates analyses.
 #' @concept giotto object
 #' @slot expression expression information
-#' @slot expression_feat available features (e.g. rna, protein, ...)
+#' @slot expression_feat The different features or modalities such as rna,
+#' protein, metabolites, ... that are provided in the expression slot.
 #' @slot spatial_locs spatial location coordinates for cells/spots/grids
 #' @slot spatial_info information about spatial units (Giotto spatVector)
 #' @slot cell_metadata metadata for cells
@@ -473,13 +396,26 @@ updateGiottoObject <- function(gobject) {
 #' @slot join_info information about joined Giotto objects
 #' @slot multiomics multiomics integration results
 #' @slot h5_file path to h5 file
-# #' @slot mirai unresolved mirai values pool
 #' @details
-#' \[\strong{expression}\] There are several ways to provide expression information:
 #'
-#' \[\strong{expression_feat}\] The different features or modalities such as rna, protein, metabolites, ...
-#' that are provided in the expression slot.
-#'
+#' \[**initialize**\]
+#' The `giotto` class has a robust `initialize()` method that is automatically
+#' called upon setting data into the object, updates of the `giottoInstructions`,
+#' and loading of saved objects. It performs the following steps:
+#' 1. Update the object and subobjects for class definition changes if needed
+#' 2. Ensure a set of `giottoInstructions` are available, otherwise generate defaults
+#' 3. Ensure a giotto python environment is accessible when the options
+#'    giotto.has_conda and giotto.use_conda are TRUE
+#' 4. Check the active spat_unit and feat_type
+#' 5. Ensure spatial/cell ID consistency and initialize the cell_ID and feat_ID
+#'    slots for the active spat_unit and feat_type, as well as cell and feature
+#'    metadata if they do not exist. Values for IDs and metadata are pulled
+#'    from any existing data in spatial_info/feat_info or expression slots,
+#'    with a preference for the latter.
+#' 6. Perform slot-specific and hierarchical checks that ensure dependent pieces
+#'    of information are only added AFTER the data that they depend on and that
+#'    existing information is consistent across slots.
+#' 7. Object validity checking
 #'
 #' @export giotto
 #' @exportClass giotto
