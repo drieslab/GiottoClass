@@ -290,8 +290,9 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
 
   ## create delaunay network
   delaunay_triangle <- geometry::delaunayn(
-    p = spatial_locations[, c(sdimx, sdimy), with = F],
-    options = options, ...
+    p = spatial_locations[, c(sdimx, sdimy), with = FALSE],
+    options = options,
+    ...
   )
 
   ## save delaunay network object
@@ -383,7 +384,6 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
   igraph_obj2 <- igraph::graph.adjacency(adj_obj)
   delaunay_edges_dedup2 <- igraph::get.data.frame(igraph_obj2)
   delaunay_edges_dedup <- data.table::as.data.table(delaunay_edges_dedup2)
-  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
   xbegin_name <- paste0(sdimx, "_begin")

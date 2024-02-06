@@ -27,6 +27,7 @@
 #' @importMethodsFrom terra nrow ncol
 #' @importClassesFrom terra SpatExtent
 #' @importClassesFrom terra SpatVector
+#' @importClassesFrom DelayedArray DelayedArray
 #' @import GiottoUtils
 #' @import data.table
 #' @import utils

@@ -1,3 +1,170 @@
+
+
+
+
+
+setMethod(
+  "createNetwork",
+  signature("allMatrix"),
+  function(
+    x,
+    type = c("sNN", "kNN"),
+    k = 30,
+    minimum_shared = 5,
+    top_shared = 3,
+    node_ids = NULL,
+    include_weight = TRUE,
+    include_distance = TRUE,
+    as.igraph = TRUE,
+    ...
+  )
+  {
+
+    # check params
+    k <- as.integer(k)
+    minimum_shared <- as.integer(minimum_shared)
+    top_shared <- as.integer(top_shared)
+    type <- match.arg(type, choices = c("sNN", "kNN"))
+
+    if (k >= nrow(x)) {
+      k <- (nrow(x) - 1L)
+      vmsg(.v = verbose, "k is higher than total number of cells.
+         Adjusted to (total number of cells - 1)")
+    }
+
+    # get common params
+    alist <- list(
+      x = x,
+      k = k,
+      node_ids = node_ids,
+      include_weight = include_weight,
+      include_distance = include_distance,
+      ...
+    )
+
+    # generate network data.table
+    network_dt <- switch(
+      type,
+      "kNN" = do.call(.net_dt_knn, args = alist),
+      "sNN" = do.call(
+        .net_dt_snn,
+        args = c(
+          alist, list(top_shared = top_shared, minimum_shared = minimum_shared)
+        )
+      )
+    )
+
+
+    # return early if igraph not required
+    if (!as.igraph) return(network_dt)
+
+
+    ## convert to igraph object
+
+    # cols to include in igraph object
+    igraph_cols <- if (is.null(node_ids)) {
+      c("from", "to")
+    } else {
+      c("from_cell_ID", "to_cell_ID")
+    }
+
+    all_index <- network_dt[, unique(unlist(.SD)), .SDcols = igraph_cols]
+    if (include_weight) igraph_cols <- c(igraph_cols, "weight")
+    if (include_distance) igraph_cols <- c(igraph_cols, "distance")
+
+    if (type == "sNN") igraph_cols <- c(igraph_cols, "shared", "rank")
+
+    out <- igraph::graph_from_data_frame(
+      network_dt[, igraph_cols, with = FALSE],
+      directed = TRUE,
+      vertices = all_index
+    )
+
+    return(out)
+  }
+)
+
+
+# x input is a matrix
+.net_dt_knn <- function(
+    x, k, node_ids, include_weight = TRUE, include_distance = TRUE, ...
+) {
+  # NSE vars
+  from <- to <- NULL
+
+  nn_network <- dbscan::kNN(x = x, k = k, sort = TRUE, ...)
+
+  nn_network_dt <- data.table::data.table(
+    from = rep(1:nrow(nn_network$id), k),
+    to = as.vector(nn_network$id)
+  )
+
+  if (!is.null(node_ids)) {
+    # if node_ids are provided, include as extra cols
+    names(node_ids) <- seq_along(node_ids)
+    nn_network_dt[, "from_cell_ID" := node_ids[from]]
+    nn_network_dt[, "to_cell_ID" := node_ids[to]]
+  }
+
+  # optional info
+  if (include_weight) {
+    nn_network_dt[, "weight" := 1 / (1 + as.vector(nn_network$dist))]
+  }
+  if (include_distance) {
+    nn_network_dt[, "distance" := as.vector(nn_network$dist)]
+  }
+
+  return(nn_network_dt)
+}
+
+# x input is a matrix
+.net_dt_snn <- function(
+    x, k, node_ids, include_weight = TRUE, include_distance = TRUE,
+    top_shared = 3, minimum_shared = 5, ...
+) {
+  # NSE vars
+  from <- to <- shared <- NULL
+
+  nn_network <- dbscan::kNN(x = x, k = k, sort = TRUE, ...)
+  snn_network <- dbscan::sNN(x = nn_network, k = k, kt = NULL, ...)
+
+  snn_network_dt <- data.table::data.table(
+    from = rep(1:nrow(snn_network$id), k),
+    to = as.vector(snn_network$id),
+    shared = as.vector(snn_network$shared)
+  )
+  snn_network_dt <- snn_network_dt[stats::complete.cases(snn_network_dt)]
+
+  if (!is.null(node_ids)) {
+    # if node_ids are provided, include as extra cols
+    names(node_ids) <- seq_along(node_ids)
+    snn_network_dt[, "from_cell_ID" := node_ids[from]]
+    snn_network_dt[, "to_cell_ID" := node_ids[to]]
+  }
+
+  # optional info
+  if (include_weight) {
+    snn_network_dt[, "weight" := 1 / (1 + as.vector(snn_network$dist))]
+  }
+  if (include_distance) {
+    snn_network_dt[, "distance" := as.vector(snn_network$dist)]
+  }
+
+
+  # rank snn
+  data.table::setorder(snn_network_dt, from, -shared)
+  snn_network_dt[, rank := 1:.N, by = from]
+
+  # filter snn
+  snn_network_dt <- snn_network_dt[rank <= top_shared | shared >= minimum_shared]
+
+  return(snn_network_dt)
+}
+
+
+
+
+
 #' @title createNearestNetwork
 #' @name createNearestNetwork
 #' @description create a nearest neighbour (NN) network
@@ -49,28 +216,25 @@
 #' }
 #'
 #' @export
-createNearestNetwork <- function(gobject,
-                                 spat_unit = NULL,
-                                 feat_type = NULL,
-                                 type = c("sNN", "kNN"),
-                                 dim_reduction_to_use = "pca",
-                                 dim_reduction_name = NULL,
-                                 dimensions_to_use = 1:10,
-                                 feats_to_use = NULL,
-                                 genes_to_use = NULL,
-                                 expression_values = c("normalized", "scaled", "custom"),
-                                 name = NULL,
-                                 return_gobject = TRUE,
-                                 k = 30,
-                                 minimum_shared = 5,
-                                 top_shared = 3,
-                                 verbose = T,
-                                 ...) {
-  ## deprecated arguments
-  if (!is.null(genes_to_use)) {
-    feats_to_use <- genes_to_use
-    warning("genes_to_use is deprecated, use feats_to_use in the future \n")
-  }
+createNearestNetwork <- function(
+    gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    type = c("sNN", "kNN"),
+    dim_reduction_to_use = "pca",
+    dim_reduction_name = NULL,
+    dimensions_to_use = 1:10,
+    feats_to_use = NULL,
+    expression_values = c("normalized", "scaled", "custom"),
+    name = NULL,
+    return_gobject = TRUE,
+    k = 30,
+    minimum_shared = 5,
+    top_shared = 3,
+    verbose = TRUE,
+    ...
+)
+{
 
   # Set feat_type and spat_unit
   spat_unit <- set_default_spat_unit(
@@ -105,7 +269,11 @@ createNearestNetwork <- function(gobject,
     )
 
     if (!dim_reduction_name %in% dim_red_names) {
-      stop("\n dimension reduction: ", dim_reduction_to_use, " or dimension reduction name: ", dim_reduction_name, " is not available \n")
+      stop(sprintf(
+        "\n dimension reduction: %s or dimension reduction name: %s is not available \n",
+        dim_reduction_to_use,
+        dim_reduction_name
+      ))
     }
 
     # check = gobject@dimension_reduction[['cells']][[spat_unit]][[dim_reduction_to_use]][[dim_reduction_name]]
@@ -160,7 +328,8 @@ createNearestNetwork <- function(gobject,
   ## run nearest-neighbour algorithm ##
   if (k >= nrow(matrix_to_use)) {
     k <- (nrow(matrix_to_use) - 1)
-    if (verbose == TRUE) cat("\n k is higher than total number of cells, adjusted to (total number of cells - 1) \n")
+    vmsg(.v = verbose, "k is higher than total number of cells.
+         Adjusted to (total number of cells - 1)")
   }
 
   nn_network <- dbscan::kNN(x = matrix_to_use, k = k, sort = TRUE, ...)
@@ -206,6 +375,7 @@ createNearestNetwork <- function(gobject,
   if (type == "kNN") {
     nn_network_igraph <- igraph::graph_from_data_frame(nn_network_dt[, .(from_cell_ID, to_cell_ID, weight, distance)], directed = TRUE, vertices = all_index)
   } else if (type == "sNN") {
+    # TODO never returned?
     missing_indices <- all_index[!all_index %in% unique(snn_network_dt$from)]
     nn_network_igraph <- igraph::graph_from_data_frame(snn_network_dt[, .(from_cell_ID, to_cell_ID, weight, distance, shared, rank)], directed = TRUE, vertices = all_index)
   }
@@ -241,8 +411,6 @@ createNearestNetwork <- function(gobject,
       network_name = name,
       nn_network = nnObj
     )
-
-    # gobject@nn_network[[spat_unit]][[type]][[name]][['igraph']] = nn_network_igraph
 
     ## update parameters used ##
     gobject <- update_giotto_params(gobject, description = "_nn_network")

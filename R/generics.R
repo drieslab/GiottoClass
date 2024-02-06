@@ -52,6 +52,8 @@ setGeneric("copy", function(x) standardGeneric("copy"), useAsDefault = data.tabl
 setGeneric("calculateOverlap", function(x, y, ...) standardGeneric("calculateOverlap"))
 setGeneric("overlapToMatrix", function(x, ...) standardGeneric("overlapToMatrix"))
 
+# networks
+setGeneric("createNetwork", function(x, ...) standardGeneric("createNetwork"))
 
 # Giotto subnesting ####
 # All methods and documentations found in methods-nesting.R
