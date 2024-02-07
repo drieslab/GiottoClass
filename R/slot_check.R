@@ -13,7 +13,9 @@
   used_su <- unique(avail_cm$spat_unit)
 
 
-  # check hierarchical
+  # [check hierarchical]
+  # metadata is only allowed to exist when the associated spat_unit exists in
+  # polygon and/or expression data
   missing_su <- !used_su %in% g_su
   if (any(missing_su)) {
     stop(wrap_txt("No expression or polygon information discovered for spat_unit:",

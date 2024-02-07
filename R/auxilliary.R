@@ -323,10 +323,13 @@ removeFeatAnnotation <- function(gobject,
 #' @param gobject giotto object
 #' @param spat_unit spatial unit
 #' @param feat_type feature type
-#' @param new_metadata new cell metadata to use (data.table, data.frame, ...)
-#' @param vector_name (optional) custom name if you provide a single vector
-#' @param by_column merge metadata based on \emph{cell_ID} column in \code{\link{pDataDT}} (default = FALSE)
-#' @param column_cell_ID column name of new metadata to use if by_column = TRUE
+#' @param new_metadata new cell metadata to use (data.table, data.frame, vector, factor, ...)
+#' @param vector_name (optional) custom name for new metadata column if single
+#' vector or factor is provided
+#' @param by_column merge metadata based on \emph{cell_ID} column in
+#' \code{\link{pDataDT}} (default = FALSE)
+#' @param column_cell_ID column name of new metadata to use if
+#' \code{by_column = TRUE}
 #' @return giotto object
 #' @details You can add additional cell metadata in two manners:
 #' \itemize{
@@ -341,7 +344,11 @@ addCellMetadata <- function(gobject,
                             vector_name = NULL,
                             by_column = FALSE,
                             column_cell_ID = NULL) {
-  # Set feat_type and spat_unit
+
+  # NSE variables
+  cell_ID <- NULL
+
+  # 0. set feat_type and spat_unit
   spat_unit <- set_default_spat_unit(
     gobject = gobject,
     spat_unit = spat_unit
@@ -353,36 +360,47 @@ addCellMetadata <- function(gobject,
   )
 
 
-  # check hierarchical slots
+  # 1. check hierarchical slots
+  # Expression information must first exist in the gobject for the corresponding
+  # metdata information to be added.
   avail_ex <- list_expression(
     gobject = gobject,
     spat_unit = spat_unit,
     feat_type = feat_type
   )
   if (is.null(avail_ex)) {
-    stop(wrap_txt(
+    .gstop(
       "No matching expression information discovered for:
-                  spat_unit:", spat_unit,
-      "\nfeature type:", feat_type,
+      spat_unit:", spat_unit, "\nfeature type:", feat_type,
       "\nPlease add expression information first"
-    ))
+    )
   }
 
 
-  cell_metadata <- get_cell_metadata(gobject,
+  # 2. get the cell metadata to add to
+  cell_metadata <- getCellMetadata(
+    gobject,
     spat_unit = spat_unit,
     feat_type = feat_type,
     output = "cellMetaObj",
     copy_obj = TRUE
   )
 
-  ordered_cell_IDs <- get_cell_id(gobject, spat_unit = spat_unit)
+  ordered_cell_IDs <- spatIDs(cell_metadata)
 
-  if (is.vector(new_metadata) | is.factor(new_metadata)) {
+
+  # 3. format input metadata
+  # [vector/factor input]
+  # Values are assumed to be in the same order as the existing metadata info.
+  # Convert vector or factor into a single-column data.table
+  # Colname is the variable name of the vector or factor.
+  # [all other inputs]
+  # Coerce to data.table
+  if (is.vector(new_metadata) || is.factor(new_metadata)) {
     original_name <- deparse(substitute(new_metadata))
     new_metadata <- data.table::as.data.table(new_metadata)
 
-    if (!is.null(vector_name) & is.character(vector_name)) {
+    if (!is.null(vector_name) && is.character(vector_name)) {
       colnames(new_metadata) <- vector_name
     } else {
       colnames(new_metadata) <- original_name
@@ -391,18 +409,21 @@ addCellMetadata <- function(gobject,
     new_metadata <- data.table::as.data.table(new_metadata)
   }
 
+  # If no specific column_cell_ID is provided, assume "cell_ID"
   if (is.null(column_cell_ID)) {
     column_cell_ID <- "cell_ID"
   }
 
-  # overwrite columns with same name
+
+  # 4. combine with existing metadata
+  # get old and new meta colnames that are not the ID col
   new_col_names <- colnames(new_metadata)
   new_col_names <- new_col_names[new_col_names != column_cell_ID]
-  old_col_names <- colnames(cell_metadata[])
+  old_col_names <- colnames(cell_metadata)
   old_col_names <- old_col_names[old_col_names != "cell_ID"]
+
+  # overwrite columns with same name
   same_col_names <- new_col_names[new_col_names %in% old_col_names]
-
-
   if (length(same_col_names) >= 1) {
     wrap_msg(
       "\nThese column names were already used: ", same_col_names, "\n",
@@ -412,23 +433,20 @@ addCellMetadata <- function(gobject,
   }
 
 
-
-  if (by_column == FALSE) {
+  if (!isTRUE(by_column)) {
     cell_metadata[] <- cbind(cell_metadata[], new_metadata)
   } else {
-    if (is.null(column_cell_ID)) stop("You need to provide cell_ID column")
-    cell_metadata[] <- data.table::merge.data.table(cell_metadata[],
+    cell_metadata[] <- data.table::merge.data.table(
+      x = cell_metadata[],
       by.x = "cell_ID",
-      new_metadata,
+      y = new_metadata,
       by.y = column_cell_ID,
       all.x = TRUE
     )
   }
 
-  # data.table variables
-  cell_ID <- NULL
 
-  # reorder
+  # 5. ensure data is in same order and set data
   cell_metadata[] <- cell_metadata[][match(ordered_cell_IDs, cell_ID)]
 
 
@@ -463,13 +481,13 @@ addFeatMetadata <- function(gobject,
                             feat_type = NULL,
                             spat_unit = NULL,
                             new_metadata,
-                            by_column = F,
-                            column_feat_ID = NULL,
-                            vector_name = NULL) {
-  # data.table variables
+                            vector_name = NULL,
+                            by_column = FALSE,
+                            column_feat_ID = NULL) {
+  # NSE variables
   feat_ID <- NULL
 
-  # Set feat_type and spat_unit
+  # 0. set feat_type and spat_unit
   spat_unit <- set_default_spat_unit(
     gobject = gobject,
     spat_unit = spat_unit
@@ -481,35 +499,47 @@ addFeatMetadata <- function(gobject,
   )
 
 
-  # check hierarchical slots
+  # 1. check hierarchical slots
+  # Expression information must first exist in the gobject for the corresponding
+  # metdata information to be added.
   avail_ex <- list_expression(
     gobject = gobject,
     spat_unit = spat_unit,
     feat_type = feat_type
   )
   if (is.null(avail_ex)) {
-    stop(wrap_txt(
+    .gstop(
       "No matching expression information discovered for:
-                  spat_unit:", spat_unit,
-      "\nfeature type:", feat_type,
+      spat_unit:", spat_unit, "\nfeature type:", feat_type,
       "\nPlease add expression information first"
-    ))
+    )
   }
 
 
-  feat_metadata <- get_feature_metadata(gobject,
+  # 2. get the cell metadata to add to
+  feat_metadata <- getFeatureMetadata(
+    gobject,
     spat_unit = spat_unit,
     feat_type = feat_type,
     output = "featMetaObj",
     copy_obj = TRUE
   )
 
-  ordered_feat_IDs <- get_feat_id(gobject, feat_type = feat_type)
+  ordered_feat_IDs <- featIDs(feat_metadata)
 
-  if (is.vector(new_metadata) | is.factor(new_metadata)) {
+
+  # 3. format input metadata
+  # [vector/factor input]
+  # Values are assumed to be in the same order as the existing metadata info.
+  # Convert vector or factor into a single-column data.table
+  # Colname is the variable name of the vector or factor.
+  # [all other inputs]
+  # Coerce to data.table
+  if (is.vector(new_metadata) || is.factor(new_metadata)) {
     original_name <- deparse(substitute(new_metadata))
     new_metadata <- data.table::as.data.table(new_metadata)
-    if (!is.null(vector_name) & is.character(vector_name)) {
+
+    if (!is.null(vector_name) && is.character(vector_name)) {
       colnames(new_metadata) <- vector_name
     } else {
       colnames(new_metadata) <- original_name
@@ -518,17 +548,21 @@ addFeatMetadata <- function(gobject,
     new_metadata <- data.table::as.data.table(new_metadata)
   }
 
+  # If no specific column_cell_ID is provided, assume "cell_ID"
   if (is.null(column_feat_ID)) {
     column_feat_ID <- "feat_ID"
   }
 
-  # overwrite columns with same name
+
+  # 4. combine with existing metadata
+  # get old and new meta colnames that are not the ID col
   new_col_names <- colnames(new_metadata)
   new_col_names <- new_col_names[new_col_names != column_feat_ID]
   old_col_names <- colnames(feat_metadata[])
   old_col_names <- old_col_names[old_col_names != "feat_ID"]
-  same_col_names <- new_col_names[new_col_names %in% old_col_names]
 
+  # overwrite columns with same name
+  same_col_names <- new_col_names[new_col_names %in% old_col_names]
   if (length(same_col_names) >= 1) {
     wrap_msg(
       "\nThese column names were already used: ", same_col_names, "\n",
@@ -538,19 +572,21 @@ addFeatMetadata <- function(gobject,
   }
 
 
-  if (by_column == FALSE) {
+  if (!isTRUE(by_column)) {
     feat_metadata[] <- cbind(feat_metadata[], new_metadata)
   } else {
     if (is.null(column_feat_ID)) stop("You need to provide feat ID column")
-    feat_metadata[] <- data.table::merge.data.table(feat_metadata[],
+    feat_metadata[] <- data.table::merge.data.table(
+      x = feat_metadata[],
       by.x = "feat_ID",
-      new_metadata,
+      y = new_metadata,
       by.y = column_feat_ID,
-      all.x = T
+      all.x = TRUE
     )
   }
 
-  # reorder
+
+  # 5. ensure data is in same order and set data
   feat_metadata[] <- feat_metadata[][match(ordered_feat_IDs, feat_ID)]
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -1064,7 +1100,7 @@ createMetafeats <- function(gobject,
     misc = list(expr_values_used = expression_values)
   )
 
-  if (return_gobject == TRUE) {
+  if (isTRUE(return_gobject)) {
     ## enrichment scores
     spenr_names <- list_spatial_enrichments_names(gobject = gobject, spat_unit = spat_unit, feat_type = feat_type)
 

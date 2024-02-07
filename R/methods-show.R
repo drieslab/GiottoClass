@@ -315,12 +315,16 @@ setMethod(
     if (!is.null(slot(object, "coordinates"))) show(head(slot(object, "coordinates"), 3L))
 
     cat("\nranges:\n")
+
+    col_names <- colnames(object)
+    coord_cols <- col_names[col_names %in% c("sdimx", "sdimy", "sdimz")]
+
     try(
-      expr = print(sapply(slot(object, "coordinates")[, .(sdimx, sdimy)], range)),
+      expr = print(sapply(slot(object, "coordinates")[, c(coord_cols), with = FALSE], range)),
       silent = TRUE
     )
 
-    cat("\n\n")
+    cat("\n")
   }
 )
 
@@ -492,8 +496,15 @@ setMethod("show", signature = "giottoPolygon", function(object) {
     cat(" centroids   : NULL\n")
   }
 
-  if (!is.null(object@overlaps)) {
-    cat(" overlaps    : calculated")
+  if (!is.null(overlaps(object))) {
+    overlap_names <- names(overlaps(object))
+    if ("intensity" %in% overlap_names) {
+      non_intens_names <- overlap_names != "intensity"
+      intens_names <- names(overlaps(object)[["intensity"]])
+      overlap_names <- c(overlap_names[non_intens_names], intens_names)
+    }
+
+    cat(" overlaps    :", paste(overlap_names, collapse = ", "))
   } else {
     cat(" overlaps    : NULL")
   }

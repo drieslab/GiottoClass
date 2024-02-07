@@ -27,7 +27,9 @@ navbar:
     - reference
     - articles
     - news
-    right: github
+    right:
+    - suite
+    - github
   components:
     reference:
       text: Documentation
@@ -37,9 +39,14 @@ navbar:
       menu:
       - text: Spatial Geometry Objects
         href: articles/spatial_geometries.html
+      - text: Images
+        href: articles/image_tools.html
     news:
       text: News
       href: news/index.html
+    suite:
+      text: Suite
+      href: https://drieslab.github.io/Giotto/
     github:
       icon: fab fa-github fa-lg
       href: https://github.com/drieslab/GiottoClass/
@@ -320,11 +327,12 @@ reference:
 - title: Object generics
   desc: Standard generics for Giotto exported classes
 - contents:
+  - plot-generic
   - extract-methods
   - rbind-generic
   - show,giotto-method
   - row-plus-colnames-generic
-  - plot-generic
+  - dimnames
   - dims-generic
   - copy
 - subtitle: Hierarchical

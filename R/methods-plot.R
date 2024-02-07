@@ -119,17 +119,15 @@ setMethod(
 #' @describeIn plot-generic Plot a spatLocsObj
 #' @export
 setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) {
-  l <- list(...)
-  if (is.null(l$asp)) l$asp <- 1
-  if (is.null(l$xlab)) l$xlab <- "x coordinates"
-  if (is.null(l$ylab)) l$ylab <- "y coordinates"
-  if (is.null(l$cex)) l$cex <- 0.5
-  if (nrow(x) > 10000L) {
-    if (is.null(l$pch)) l$pch <- "."
-  }
 
-  do.call("plot", append(l, list(x = x[]$sdimx, y = x[]$sdimy)))
+  if ("sdimz" %in% colnames(x)) {
+    .plot_spatlocs_3d(x, ...)
+  } else {
+    # 2d plotting
+    .plot_spatlocs_2d(x, ...)
+  }
 })
+
 
 #' @describeIn plot-generic Plot a dimObj
 #' @param dims dimensions to plot
@@ -205,6 +203,102 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 
 
 # internals ####
+
+.plot_spatlocs_2d <- function(x, ...) {
+  l <- list(...)
+  if (is.null(l$asp)) l$asp <- 1
+  if (is.null(l$xlab)) l$xlab <- "x coordinates"
+  if (is.null(l$ylab)) l$ylab <- "y coordinates"
+  if (is.null(l$cex)) l$cex <- 0.5
+  if (nrow(x) > 10000L) {
+    if (is.null(l$pch)) l$pch <- "."
+  }
+
+  do.call("plot", append(l, list(x = x[]$sdimx, y = x[]$sdimy)))
+}
+
+.plot_spatlocs_3d <- function(x, ...) {
+  engine <- (getOption("giotto.plotengine3d", "rgl"))
+
+  switch(
+    engine,
+    "rgl" = .plot_spatlocs_3d_rgl(x, ...),
+    "plotly" = .plot_spatlocs_3d_plotly(x, ...)
+  )
+}
+
+.plot_spatlocs_3d_rgl <- function(x, ...) {
+  package_check("rgl", repository = "CRAN")
+
+  l <- list(...)
+  # params changes
+  l$x <- x$sdimx
+  l$y <- x$sdimy
+  l$z <- x$sdimz
+  if (is.null(l$xlab)) l$xlab <- "x coordinates"
+  if (is.null(l$ylab)) l$ylab <- "y coordinates"
+  if (is.null(l$zlab)) l$zlab <- "z coordinates"
+  if (!is.null(l$cex)) {
+    l$size <- l$cex
+  }
+  if (is.null(l$type)) l$type = "p"
+
+  do.call(rgl::plot3d, args = l)
+}
+
+.plot_spatlocs_3d_plotly <- function(x, asp, ...) {
+  package_check("plotly", repository = "CRAN")
+
+  l <- list(...)
+
+  l$data <- x[]
+  l$x <- ~sdimx
+  l$y <- ~sdimy
+  l$z <- ~sdimz
+  l$type <- "scatter3d"
+  l$mode <- "markers"
+  if (!is.null(l$cex)) {
+    l$marker = list(size = l$cex)
+    l$cex <- NULL
+  } else {
+    l$marker = list(size = l$size)
+    l$size <- NULL
+  }
+  if (is.null(l$marker$size)) l$marker$size = 1
+
+  pl <- do.call(plotly::plot_ly, args = l)
+
+  if (missing(asp)) asp <- rep(1L, 3L)
+  else if (length(asp) == 1L) asp <- rep(asp, 3L)
+
+  # layout
+  pl <- pl %>% plotly::layout(
+    scene = list(
+      xaxis = list(title = "x coordinates"),
+      yaxis = list(title = "y coordinates"),
+      zaxis = list(title = "z coordinates"),
+      aspectmode = "manual",
+      aspectratio = list(
+        x = asp[[1]],
+        y = asp[[2]],
+        z = asp[[3]])
+    ),
+    legend = list(
+      x = 100,
+      y = 0.5,
+      font = list(
+        family = "sans-serif",
+        size = 12
+      )
+    )
+  )
+
+  return(pl)
+}
+
+
+
+
 
 #' @title .plot_giottoimage_mg
 #' @name .plot_giottoimage_mg

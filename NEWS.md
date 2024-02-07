@@ -1,4 +1,19 @@
 
+
+# GiottoClass 0.1.3 (2024/01/12)
+
+## bug fixes
+- fix unexpected sorting in `addCellMetadata()` and `addFeatMetadata()` [#853](https://github.com/drieslab/Giotto/issues/853) by rbutleriii
+
+## new
+- `init_gobject` param in `loadGiotto()` to control whether object initialization is also performed after load
+- vignette for image tools
+
+## enhancements
+- ID sorts now use `gtools::mixedsort()` [#853](https://github.com/drieslab/Giotto/issues/853) by rbutleriii
+- more subobjects respond to `colnames`, `rownames`, `dimnames`
+- `plot()` and `show()` now handle 3D `spatLocsObj`
+
 # GiottoClass 0.1.2 (2024/01/02)
 
 ## Added
@@ -9,8 +24,8 @@
 - Added: vignette for working with spatial classes
 - Added: `output` param to `.spatraster_sample_values()`. Can now return as sampled `data.frame`, `array`, `magick`, `EBImage`
 
-## Changes
-- Fixes: Updates to raster `calculateOverlap()` workflows
+## bug fixes
+- param fixes in raster `calculateOverlap()` workflows
 
 
 # GiottoClass 0.1.1 (2023/12/16)

@@ -1135,8 +1135,8 @@ setMethod(
     mat_r_names <- rownames(overlapmatrix)
     mat_c_names <- colnames(overlapmatrix)
     overlapmatrix <- overlapmatrix[
-      match(sort(mat_r_names), mat_r_names),
-      match(sort(mat_c_names), mat_c_names)
+      match(mixedsort(mat_r_names), mat_r_names),
+      match(mixedsort(mat_c_names), mat_c_names)
     ]
 
     overlapExprObj <- create_expr_obj(
@@ -1962,7 +1962,7 @@ aggregateStacksLocations <- function(gobject,
   stack_spatvector <- terra::makeValid(stack_spatvector)
 
   # 3. aggregate individual cells/polys
-  all_poly_ids <- sort(unique(stack_spatvector$poly_ID))
+  all_poly_ids <- mixedsort(unique(stack_spatvector$poly_ID))
 
   # run in for loop if data is very very big
   if (isTRUE(for_loop)) {
