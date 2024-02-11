@@ -97,7 +97,6 @@ convert_to_reduced_spatial_network <- function(full_spatial_network_DT) {
     stop("parameter networkDT can not be NULL \n")
   }
 
-  # number of spatial dimensions TODO: chech with Huipeng!
   # d2_or_d3 = match.arg(d2_or_d3, choices = c(2,3))
 
   if (d2_or_d3 == 3) {

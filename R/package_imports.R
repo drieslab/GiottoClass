@@ -28,6 +28,7 @@
 #' @importClassesFrom terra SpatExtent
 #' @importClassesFrom terra SpatVector
 #' @importClassesFrom DelayedArray DelayedArray
+#' @importClassesFrom Matrix Matrix
 #' @import GiottoUtils
 #' @import data.table
 #' @import utils
