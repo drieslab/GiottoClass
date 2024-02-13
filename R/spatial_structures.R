@@ -3,7 +3,13 @@
 
 #' @title convert_to_full_spatial_network
 #' @name convert_to_full_spatial_network
-#' @description convert to a full spatial network
+#' @description Convert to a full spatial network, ie ensuring that all edges
+#' that may currently only be represented as \eqn{a -> b} also have the reverse
+#' \eqn{b -> a}. The entries are then made unique, after which all interactions
+#' are ranked by distance, where rank increases from smaller to larger distances.
+#' This rank is appended to the `data.table` as a `rank_int` column. Another
+#' `rnk_src_trgt` column is added with the IDs of \eqn{a} and \eqn{b} pasted
+#' together
 #' @param reduced_spatial_network_DT reduced spatial network in data.table format
 #' @keywords internal
 #' @export
@@ -11,20 +17,22 @@ convert_to_full_spatial_network <- function(reduced_spatial_network_DT) {
   # data.table variables
   distance <- rank_int <- NULL
 
-  # find location coordinates
-  coordinates <- grep("sdim", colnames(reduced_spatial_network_DT), value = T)
+  # find location coordinates cols
+  coordinates <- grep("sdim", colnames(reduced_spatial_network_DT), value = TRUE)
 
-  begin_coordinates <- grep("begin", coordinates, value = T)
+  # convert names from sdimx_being and sdimy_begin to source_x and source_y
+  begin_coordinates <- grep("begin", coordinates, value = TRUE)
   new_begin_coordinates <- gsub(x = begin_coordinates, pattern = "_begin", replacement = "")
   new_begin_coordinates <- gsub(x = new_begin_coordinates, pattern = "sdim", replacement = "source_")
 
-  end_coordinates <- grep("end", coordinates, value = T)
+  # convert names from sdimx_end and sdimy_end to target_x and target_y
+  end_coordinates <- grep("end", coordinates, value = TRUE)
   new_end_coordinates <- gsub(x = end_coordinates, pattern = "_end", replacement = "")
   new_end_coordinates <- gsub(x = new_end_coordinates, pattern = "sdim", replacement = "target_")
 
   # create normal source --> target
   part1 <- data.table::copy(reduced_spatial_network_DT)
-  part1 <- part1[, c("from", "to", begin_coordinates, end_coordinates, "distance", "weight"), with = F]
+  part1 <- part1[, c("from", "to", begin_coordinates, end_coordinates, "distance", "weight"), with = FALSE]
   colnames(part1) <- c("source", "target", new_begin_coordinates, new_end_coordinates, "distance", "weight")
 
   # revert order target (now source) --> source (now target)
@@ -35,11 +43,12 @@ convert_to_full_spatial_network <- function(reduced_spatial_network_DT) {
   full_spatial_network_DT <- rbind(part1, part2)
   full_spatial_network_DT <- unique(full_spatial_network_DT)
 
-  # create ranking of interactions
+  # create ranking of interactions by distance per source
+  # the lower the ranking, the shorter the distance
   data.table::setorder(full_spatial_network_DT, source, distance)
   full_spatial_network_DT[, rank_int := 1:.N, by = "source"]
 
-  # create unified column
+  # create unified column for source and target as rnk_src_trgt
   full_spatial_network_DT <- dt_sort_combine_two_columns(full_spatial_network_DT, "source", "target", "rnk_src_trgt")
 
   return(full_spatial_network_DT)
