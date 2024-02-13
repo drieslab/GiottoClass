@@ -336,11 +336,41 @@ setMethod(
 
 
 
+# distances calculation ####
+
+#' @name edge_distances
+#' @title Calculate network edge euclidean distances
+#' @param x matrix of nodes info with coords. Rows should be samples, Cols
+#' should be variables
+#' @param y network data.table with `from` and `to` cols. Usually integer
+#' indices matching the rows of x.
+#' @param x_node_ids if y is indexed by character in from and to cols, then the
+#' node IDs that apply to the coords in x must be supplied as a character vector
+#' @examples
+#' m <- matrix(c(0,0,0, 1,1,1, 3,2,4), byrow = TRUE, nrow = 3)
+#' edges <- data.table(
+#'   from = c(1, 1),
+#'   to = c(2, 3)
+#' )
+#' edge_distances(m, edges)
+#' @export
+edge_distances <- function(x, y, x_node_ids = NULL) {
+  .calc_edge_dist(.edge_coords_array(x, y))
+}
+
+
 
 # Nodes row order is assumed to be the same as the network indices
-#' @name edge_coords_array
+#' @title Numerical array of edge start and end
+#' @name .edge_coords_array
+#' @description
+#' Generate a \eqn{2} x \eqn{j} x \eqn{k} numerical array of edge start and end
+#' coordinates. Rows correspond  to start and end. Cols are for each variable
+#' ie x, y, (z) or whatever other variable is used to measure sample location
+#' in graph space. The third dim is for each sample. This layout makes it easy
+#' to iterate across matrix slices of this array with `[stats::dist()]`.
 #' @param x matrix of nodes info with coords
-#' @param y network data.table
+#' @param y network data.table with `from` and `to` cols
 #' @param x_node_ids if y is indexed by character in from and to cols, then the
 #' node IDs that apply to the coords in x must be supplied as a character vector
 #' @keywords internal
@@ -394,6 +424,7 @@ setMethod(
 
 
 
+# original implementations ####
 
 
 #' @title createNearestNetwork
