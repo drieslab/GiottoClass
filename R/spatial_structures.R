@@ -68,6 +68,22 @@ convert_to_reduced_spatial_network <- function(full_spatial_network_DT) {
   reduced_spatial_network_DT <- full_spatial_network_DT[!duplicated(rnk_src_trgt)]
   reduced_spatial_network_DT[, c("rank_int", "rnk_src_trgt") := NULL] # don't make sense in a reduced network
 
+  # TODO moving forward, coords info start/end may not be included 24.02.12
+  has_coords <- any(grepl(
+    "source_|target_",
+    x = colnames(reduced_spatial_network_DT)
+  ))
+
+  if (!has_coords) {
+    data.table::setnames(
+      reduced_spatial_network_DT,
+      old = c("source", "target"),
+      new = c("from", "to")
+    )
+    return(reduced_spatial_network_DT)
+  }
+
+  # return col names to sdimx/sdimy naming scheme
   # convert to names for a reduced network
   source_coordinates <- grep("source_", colnames(reduced_spatial_network_DT), value = T)
   new_source_coordinates <- gsub(x = source_coordinates, pattern = "source_", replacement = "sdim")
