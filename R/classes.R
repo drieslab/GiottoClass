@@ -30,13 +30,6 @@ setClassUnion("nullOrDatatable", c("NULL", "data.table"))
 #' @noRd
 setClassUnion("gIndex", c("numeric", "logical", "character"))
 
-#' @title Matrix classes
-#' @description combined class definition for matrix representations for use in
-#' dispatching.
-#' @keywords internal
-#' @noRd
-setClassUnion("allMatrix", c("matrix", "Matrix", "DelayedArray"))
-
 
 
 

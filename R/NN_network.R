@@ -128,10 +128,7 @@ NULL
 
 #' @rdname createNetwork
 #' @export
-setMethod(
-  "createNetwork",
-  signature("allMatrix"),
-  function(
+createNetwork <- function(
     x,
     type = c("sNN", "kNN", "delaunay"),
     method = c("dbscan", "geometry", "RTriangle", "deldir"),
@@ -140,74 +137,73 @@ setMethod(
     include_weight = TRUE,
     as.igraph = TRUE,
     ...
-  )
-  {
-
-    # check params
-    type <- match.arg(type, choices = c("sNN", "kNN", "delaunay"))
-    method <- switch(
-      type,
-      "sNN" = match.arg(method, choices = c("dbscan"), several.ok = TRUE),
-      "kNN" = match.arg(method, choices = c("dbscan"), several.ok = TRUE),
-      "delaunay" = match.arg(
-        method, choices = c("geometry", "RTriangle", "deldir"),
-        several.ok = TRUE
-      )
-    )
-
-    # get common params
-    alist <- list(
-      x = x,
-      include_weight = include_weight,
-      ...
-    )
-
-    # generate network data.table
-    network_dt <- switch(
-      sprintf("%s:%s", type, method),
-      "kNN:dbscan" = do.call(.net_dt_knn, args = alist),
-      "sNN:dbscan" = do.call(.net_dt_snn, args = alist),
-      "delaunay:deldir" = do.call(.net_dt_del_deldir,
-                                  args = alist)$delaunay_network_DT,
-      "delaunay:RTriangle" = do.call(.net_dt_del_rtriangle,
-                                     args = alist)$delaunay_network_DT,
-      "delaunay:geometry" = do.call(.net_dt_del_geometry,
-                                    args = alist)$delaunay_network_DT
-    )
-
-    # replace indices with node_ids if desired
-    if (!is.null(node_ids)) {
-      # if node_ids are provided, include as extra cols
-      names(node_ids) <- seq_along(node_ids)
-      network_dt[, "from" := node_ids[from]]
-      network_dt[, "to" := node_ids[to]]
-    }
-
-    ## outputs ##
-
-    # cols to include in output
-    keep_cols <- c("from", "to")
-
-    all_index <- network_dt[, unique(unlist(.SD)), .SDcols = keep_cols]
-    if (include_weight) keep_cols <- c(keep_cols, "weight")
-    if (include_distance) keep_cols <- c(keep_cols, "distance")
-
-    if (type == "sNN") keep_cols <- c(keep_cols, "shared", "rank")
-
-    # return early if igraph not required
-    network_dt_final <- network_dt[, keep_cols, with = FALSE]
-    if (!as.igraph) return(network_dt_final)
-
-    ## convert to igraph object
-    out <- igraph::graph_from_data_frame(
-      network_dt_final,
-      directed = TRUE,
-      vertices = all_index
-    )
-
-    return(out)
-  }
 )
+{
+
+  # check params
+  type <- match.arg(type, choices = c("sNN", "kNN", "delaunay"))
+  method <- switch(
+    type,
+    "sNN" = match.arg(method, choices = c("dbscan"), several.ok = TRUE),
+    "kNN" = match.arg(method, choices = c("dbscan"), several.ok = TRUE),
+    "delaunay" = match.arg(
+      method, choices = c("geometry", "RTriangle", "deldir"),
+      several.ok = TRUE
+    )
+  )
+
+  # get common params
+  alist <- list(
+    x = x,
+    include_weight = include_weight,
+    ...
+  )
+
+  # generate network data.table
+  network_dt <- switch(
+    sprintf("%s:%s", type, method),
+    "kNN:dbscan" = do.call(.net_dt_knn, args = alist),
+    "sNN:dbscan" = do.call(.net_dt_snn, args = alist),
+    "delaunay:deldir" = do.call(.net_dt_del_deldir,
+                                args = alist)$delaunay_network_DT,
+    "delaunay:RTriangle" = do.call(.net_dt_del_rtriangle,
+                                   args = alist)$delaunay_network_DT,
+    "delaunay:geometry" = do.call(.net_dt_del_geometry,
+                                  args = alist)$delaunay_network_DT
+  )
+
+  # replace indices with node_ids if desired
+  if (!is.null(node_ids)) {
+    # if node_ids are provided, include as extra cols
+    names(node_ids) <- seq_along(node_ids)
+    network_dt[, "from" := node_ids[from]]
+    network_dt[, "to" := node_ids[to]]
+  }
+
+  ## outputs ##
+
+  # cols to include in output
+  keep_cols <- c("from", "to")
+
+  all_index <- network_dt[, unique(unlist(.SD)), .SDcols = keep_cols]
+  if (include_weight) keep_cols <- c(keep_cols, "weight")
+  if (include_distance) keep_cols <- c(keep_cols, "distance")
+
+  if (type == "sNN") keep_cols <- c(keep_cols, "shared", "rank")
+
+  # return early if igraph not required
+  network_dt_final <- network_dt[, keep_cols, with = FALSE]
+  if (!as.igraph) return(network_dt_final)
+
+  ## convert to igraph object
+  out <- igraph::graph_from_data_frame(
+    network_dt_final,
+    directed = TRUE,
+    vertices = all_index
+  )
+
+  return(out)
+}
 
 
 # x input is a matrix

@@ -2,10 +2,9 @@
 % Please edit documentation in R/NN_network.R
 \name{createNetwork}
 \alias{createNetwork}
-\alias{createNetwork,allMatrix-method}
 \title{Create a network}
 \usage{
-\S4method{createNetwork}{allMatrix}(
+createNetwork(
   x,
   type = c("sNN", "kNN", "delaunay"),
   method = c("dbscan", "geometry", "RTriangle", "deldir"),
