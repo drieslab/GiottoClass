@@ -1071,7 +1071,7 @@ create_KNNnetwork_dbscan <- function(spatial_locations,
     distance = as.vector(knn_spatial$dist)
   )
   nw_sptial.norm <- igraph::graph_from_data_frame(knn_sptial.norm, directed = FALSE)
-  network_DT <- data.table::as.data.table(knn_sptial.norm)
+  network_DT <- data.table::setDT(knn_sptial.norm)
 
 
   # spatial_network_DT[, `:=`(from, cell_ID_vec[from])]
