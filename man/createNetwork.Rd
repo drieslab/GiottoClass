@@ -9,67 +9,144 @@
   x,
   type = c("sNN", "kNN", "delaunay"),
   method = c("dbscan", "geometry", "RTriangle", "deldir"),
-  max_distance = NULL,
-  minimum_k = 0L,
-  minimum_shared = 5,
-  top_shared = 3,
   node_ids = NULL,
-  include_weight = TRUE,
   include_distance = TRUE,
+  include_weight = TRUE,
   as.igraph = TRUE,
   ...
 )
 }
 \arguments{
-\item{x}{data to treat as nodes. (\code{matrices} or \code{data.frame} inputs accepted)
-\code{matrix} type inputs are assumed to be for creation of nearest neighbors.
-\code{data.frame} input is assumed to be spatial type info, made for creation of
-kNN or delaunay triangulation networks.}
+\item{x}{matrix. Data to treat as nodes. Examples include expression
+information, PCA matrix, spatial locations xy(z) coordinates.}
 
-\item{type}{specific type of network to create, given the input}
+\item{type}{type of network to create. Currently: "sNN", "kNN", or "delaunay".}
 
-\item{method}{method used to create the type of network requested}
+\item{method}{method used to create the type of network requested.
+One of "dbscan" for sNN and kNN or "geometry", "RTriangle", or "deldir"
+for delaunay.}
 
-\item{max_distance}{maximum distance allowed to be connected}
+\item{node_ids}{character. Node ID values to assign. If NULL, integer indices
+will be used as node IDs.}
 
-\item{minimum_shared}{minimum shared neighbors}
+\item{include_distance}{logical. include edge distance attribute in output}
 
-\item{top_shared}{keep at ...}
-
-\item{node_ids}{character. Node ID values to assign. If none are provided,
-only integer indices will be used as node IDs.}
-
-\item{include_weight}{include edge weight attribute in output}
-
-\item{include_distance}{include edge distance attribute in output}
+\item{include_weight}{logical. include edge weight attribute in output}
 
 \item{as.igraph}{logical. Whether to return as \code{igraph}. Otherwise returns
 as \code{data.table}}
 
 \item{...}{additional params to pass. See details section}
-
-\item{weight_fun}{function to calculate weights based on distance if
-\code{include_distance = TRUE}. Default is \eqn{weight = 1 / (1 + distance})}
 }
 \value{
 Either \code{igraph} if \code{as.igraph = TRUE} and \code{data.table} otherwise.
 }
 \description{
-Create networks from node values.
+Create networks from node values. This is a hub function for
+many different methods of finding nearest neighbors. See details for additional
+params important for generating specific types of networks.
 }
 \details{
-This is a hub function for many different methods of finding nearest
-neighbors. The \code{...} param can be used to pass additional params relevant
-to specific methods. Additionally, some params used in only specific
-functions are mentioned below.
+Additional params are described below. Items in parenthesis refer to which
+network types and/or methods the params are specific to.
 \itemize{
-\item \strong{k} number of neighbors to find for sNN and kNN type networks. Default is
+\item [\strong{\code{k}}] numeric. (\emph{sNN, kNN}) number of neighbors to find. Default is 30
+\item [\strong{\code{minimum_shared}}] numeric. (\emph{sNN}) minimum shared neighbors allowed
+per edge
+\item [\strong{\code{top_shared}}] numeric. (\emph{sNN}) keep at least this many edges per node,
+where kept edges are top ranked in terms of number of shared neighbors.
+\item [\strong{\code{filter}}] logical. (\emph{kNN}) whether to filter for only unique
+edges and apply \code{minimum_k} and \code{maximum_distance} filters. Should be set
+\code{TRUE} when generating a spatial kNN network. Default is \code{FALSE.}
+\item [\strong{\code{minimum_k}}] (\emph{delaunay, kNN}) minimum nearest neighbours if
+\code{maximum_distance != NULL}
+\item [\strong{\code{maximum_distance}}] (\emph{delaunay, kNN}) edge maximum euclidean
+distance allowed
+\item [\strong{\code{Y}}] (\emph{RTriangle}) If TRUE prohibits the insertion of Steiner points
+on the mesh boundary. Default is TRUE
+\item [\strong{\code{j}}] (\emph{RTriangle}) If TRUE jettisons vertices that are not part of
+the final triangulation from the output. Default is TRUE
+\item [\strong{\code{S}}] (\emph{RTriangle}) Specifies the maximum number of added Steiner
+points. Default is 0
+\item [\strong{\code{options}}] (\emph{geometry}) default is "Pp". See \link[geometry:delaunayn]{geometry::delaunayn}
+\item [\strong{\code{weight_fun}}] function to calculate weights based on distance if
+\code{include_weight = TRUE}. Default is \eqn{weight = 1 / (1 + distance)} for
+\code{"kNN"} and \code{"sNN"} types and \eqn{weight = 1 / distance} for \code{delaunay}
+type
+networks
 }
 }
 \examples{
-e <- GiottoData::loadSubObjectMini("exprObj")[] # dgCMatrix
-expr_igraph <- createNetwork(t(e), node_ids = colnames(e))
-
+\dontrun{
 pca <- GiottoData::loadSubObjectMini("dimObj")[]
-pca_igraph <- createNetwork(pca, node_ids = rownames(pca))
+sl <- GiottoData::loadSubObjectMini("spatLocsObj")[]
+
+# Delaunay via geometry::delaunayn()
+del_geom <- createNetwork(
+  x = as.matrix(sl[, .(sdimx, sdimy)]),
+  type = "delaunay",
+  method = "geometry",
+  include_weight = TRUE,
+  weight_fun = function(d) 1 / d,
+  as.igraph = FALSE,
+  node_ids = sl$cell_ID
+)
+
+# Delaunay via RTriangle::triangulate()
+del_rt <- createNetwork(
+  x = as.matrix(sl[, .(sdimx, sdimy)]),
+  type = "delaunay",
+  method = "RTriangle",
+  include_weight = TRUE,
+  weight_fun = function(d) 1 / d,
+  as.igraph = FALSE,
+  node_ids = sl$cell_ID
+)
+
+# Delaunay via deldir::deldir()
+del_dd <- createNetwork(
+  x = as.matrix(sl[, .(sdimx, sdimy)]),
+  type = "delaunay",
+  method = "deldir",
+  include_weight = TRUE,
+  weight_fun = function(d) 1 / d,
+  as.igraph = FALSE,
+  node_ids = sl$cell_ID
+)
+
+# kNN spatial network
+kNN_spat <- createNetwork(
+  x = as.matrix(sl[, .(sdimx, sdimy)]),
+  type = "kNN",
+  method = "dbscan",
+  include_weight = TRUE,
+  weight_fun = function(d) 1 / d, # not the default
+  as.igraph = FALSE,
+  node_ids = sl$cell_ID,
+  k = 4L,
+  maximum_distance = NULL,
+  minimum_k = 0L
+)
+
+# kNN NN network
+kNN <- createNetwork(
+  pca[, 1:10],
+  type = "kNN",
+  method = "dbscan",
+  node_ids = rownames(pca),
+  as.igraph = TRUE
+)
+
+# sNN NN network
+sNN <- createNetwork(
+  pca[, 1:10],
+  type = "sNN",
+  method = "dbscan",
+  node_ids = rownames(pca),
+  as.igraph = TRUE
+)
+
+# using defaults for sNN with index IDs to create igraph
+sNN_idx <- createNetwork(pca[, 1:10])
+}
 }

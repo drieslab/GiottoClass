@@ -3,46 +3,130 @@ NULL
 
 
 
-
+# createNetwork ####
 
 #' @name createNetwork
 #' @title Create a network
-#' @description Create networks from node values.
-#' @param x data to treat as nodes. (`matrices` or `data.frame` inputs accepted)
-#' `matrix` type inputs are assumed to be for creation of nearest neighbors.
-#' `data.frame` input is assumed to be spatial type info, made for creation of
-#' kNN or delaunay triangulation networks.
-#' @param type specific type of network to create, given the input
-#' @param method method used to create the type of network requested
-#' @param max_distance maximum distance allowed to be connected
-#' @param node_ids character. Node ID values to assign. If none are provided,
-#' only integer indices will be used as node IDs.
-#' @param include_weight include edge weight attribute in output
-#' @param include_distance include edge distance attribute in output
-#' @param weight_fun function to calculate weights based on distance if
-#' `include_distance = TRUE`. Default is \eqn{weight = 1 / (1 + distance})
+#' @description Create networks from node values. This is a hub function for
+#' many different methods of finding nearest neighbors. See details for additional
+#' params important for generating specific types of networks.
+#' @param x matrix. Data to treat as nodes. Examples include expression
+#' information, PCA matrix, spatial locations xy(z) coordinates.
+#' @param type type of network to create. Currently: "sNN", "kNN", or "delaunay".
+#' @param method method used to create the type of network requested.
+#' One of "dbscan" for sNN and kNN or "geometry", "RTriangle", or "deldir"
+#' for delaunay.
+#' @param node_ids character. Node ID values to assign. If NULL, integer indices
+#' will be used as node IDs.
+#' @param include_weight logical. include edge weight attribute in output
+#' @param include_distance logical. include edge distance attribute in output
 #' @param as.igraph logical. Whether to return as `igraph`. Otherwise returns
 #' as `data.table`
 #' @param ... additional params to pass. See details section
 #' @returns Either `igraph` if `as.igraph = TRUE` and `data.table` otherwise.
 #' @details
-#' This is a hub function for many different methods of finding nearest
-#' neighbors. The `...` param can be used to pass additional params relevant
-#' to specific methods. Additionally, some params used in only specific
-#' functions are mentioned below.
-#' - **k** number of neighbors to find for sNN and kNN type networks. Default is 30
+#' Additional params are described below. Items in parenthesis refer to which
+#' network types and/or methods the params are specific to.
+#' - \[**`k`**\] numeric. (*sNN, kNN*) number of neighbors to find. Default is 30
+#' - \[**`minimum_shared`**\] numeric. (*sNN*) minimum shared neighbors allowed
+#'   per edge
+#' - \[**`top_shared`**\] numeric. (*sNN*) keep at least this many edges per node,
+#'   where kept edges are top ranked in terms of number of shared neighbors.
+#' - \[**`filter`**\] logical. (*kNN*) whether to filter for only unique
+#'   edges and apply `minimum_k` and `maximum_distance` filters. Should be set
+#'   `TRUE` when generating a spatial kNN network. Default is `FALSE.`
+#' - \[**`minimum_k`**\] (*delaunay, kNN*) minimum nearest neighbours if
+#'   `maximum_distance != NULL`
+#' - \[**`maximum_distance`**\] (*delaunay, kNN*) edge maximum euclidean
+#'   distance allowed
+#' - \[**`Y`**\] (*RTriangle*) If TRUE prohibits the insertion of Steiner points
+#'   on the mesh boundary. Default is TRUE
+#' - \[**`j`**\] (*RTriangle*) If TRUE jettisons vertices that are not part of
+#'   the final triangulation from the output. Default is TRUE
+#' - \[**`S`**\] (*RTriangle*) Specifies the maximum number of added Steiner
+#'   points. Default is 0
+#' - \[**`options`**\] (*geometry*) default is "Pp". See [geometry::delaunayn]
+#' - \[**`weight_fun`**\] function to calculate weights based on distance if
+#'   `include_weight = TRUE`. Default is \eqn{weight = 1 / (1 + distance)} for
+#'   `"kNN"` and `"sNN"` types and \eqn{weight = 1 / distance} for `delaunay`
+#'   type
+#' networks
+#' @examples
+#' \dontrun{
+#' pca <- GiottoData::loadSubObjectMini("dimObj")[]
+#' sl <- GiottoData::loadSubObjectMini("spatLocsObj")[]
 #'
+#' # Delaunay via geometry::delaunayn()
+#' del_geom <- createNetwork(
+#'   x = as.matrix(sl[, .(sdimx, sdimy)]),
+#'   type = "delaunay",
+#'   method = "geometry",
+#'   include_weight = TRUE,
+#'   weight_fun = function(d) 1 / d,
+#'   as.igraph = FALSE,
+#'   node_ids = sl$cell_ID
+#' )
+#'
+#' # Delaunay via RTriangle::triangulate()
+#' del_rt <- createNetwork(
+#'   x = as.matrix(sl[, .(sdimx, sdimy)]),
+#'   type = "delaunay",
+#'   method = "RTriangle",
+#'   include_weight = TRUE,
+#'   weight_fun = function(d) 1 / d,
+#'   as.igraph = FALSE,
+#'   node_ids = sl$cell_ID
+#' )
+#'
+#' # Delaunay via deldir::deldir()
+#' del_dd <- createNetwork(
+#'   x = as.matrix(sl[, .(sdimx, sdimy)]),
+#'   type = "delaunay",
+#'   method = "deldir",
+#'   include_weight = TRUE,
+#'   weight_fun = function(d) 1 / d,
+#'   as.igraph = FALSE,
+#'   node_ids = sl$cell_ID
+#' )
+#'
+#' # kNN spatial network
+#' kNN_spat <- createNetwork(
+#'   x = as.matrix(sl[, .(sdimx, sdimy)]),
+#'   type = "kNN",
+#'   method = "dbscan",
+#'   include_weight = TRUE,
+#'   weight_fun = function(d) 1 / d, # not the default
+#'   as.igraph = FALSE,
+#'   node_ids = sl$cell_ID,
+#'   k = 4L,
+#'   maximum_distance = NULL,
+#'   minimum_k = 0L
+#' )
+#'
+#' # kNN NN network
+#' kNN <- createNetwork(
+#'   pca[, 1:10],
+#'   type = "kNN",
+#'   method = "dbscan",
+#'   node_ids = rownames(pca),
+#'   as.igraph = TRUE
+#' )
+#'
+#' # sNN NN network
+#' sNN <- createNetwork(
+#'   pca[, 1:10],
+#'   type = "sNN",
+#'   method = "dbscan",
+#'   node_ids = rownames(pca),
+#'   as.igraph = TRUE
+#' )
+#'
+#' # using defaults for sNN with index IDs to create igraph
+#' sNN_idx <- createNetwork(pca[, 1:10])
+#' }
 NULL
 
 #' @rdname createNetwork
-#' @param minimum_shared minimum shared neighbors
-#' @param top_shared keep at ...
-#' @examples
-#' e <- GiottoData::loadSubObjectMini("exprObj")[] # dgCMatrix
-#' expr_igraph <- createNetwork(t(e), node_ids = colnames(e))
-#'
-#' pca <- GiottoData::loadSubObjectMini("dimObj")[]
-#' pca_igraph <- createNetwork(pca, node_ids = rownames(pca))
 #' @export
 setMethod(
   "createNetwork",
@@ -50,24 +134,16 @@ setMethod(
   function(
     x,
     type = c("sNN", "kNN", "delaunay"),
-    method = c("dbscan", "geometry", "RTriangle", "deldir"), # TODO
-    max_distance = NULL, # TODO
-    minimum_k = 0L, # TODO
-    minimum_shared = 5,
-    top_shared = 3,
+    method = c("dbscan", "geometry", "RTriangle", "deldir"),
     node_ids = NULL,
     include_distance = TRUE,
     include_weight = TRUE,
-    weight_fun = function(d) 1 / (1 + d),
     as.igraph = TRUE,
     ...
   )
   {
 
     # check params
-    k <- as.integer(k)
-    minimum_shared <- as.integer(minimum_shared)
-    top_shared <- as.integer(top_shared)
     type <- match.arg(type, choices = c("sNN", "kNN", "delaunay"))
     method <- switch(
       type,
@@ -79,31 +155,18 @@ setMethod(
       )
     )
 
-    if (k >= nrow(x)) {
-      k <- (nrow(x) - 1L)
-      vmsg(.v = verbose, "k is higher than total number of cells.
-         Adjusted to (total number of cells - 1)")
-    }
-
     # get common params
     alist <- list(
       x = x,
       include_weight = include_weight,
-      include_distance = include_distance,
       ...
     )
 
     # generate network data.table
     network_dt <- switch(
       sprintf("%s:%s", type, method),
-      "kNN:dbscan" = do.call(.net_dt_knn, args = c(alist, k = k)),
-      "sNN:dbscan" = do.call(
-        .net_dt_snn,
-        args = c(
-          alist,
-          list(k = k, top_shared = top_shared, minimum_shared = minimum_shared)
-        )
-      ),
+      "kNN:dbscan" = do.call(.net_dt_knn, args = alist),
+      "sNN:dbscan" = do.call(.net_dt_snn, args = alist),
       "delaunay:deldir" = do.call(.net_dt_del_deldir,
                                   args = alist)$delaunay_network_DT,
       "delaunay:RTriangle" = do.call(.net_dt_del_rtriangle,
@@ -149,10 +212,22 @@ setMethod(
 
 # x input is a matrix
 .net_dt_knn <- function(
-    x, k = 30, include_weight = TRUE, include_distance = TRUE, ...
+    x, k = 30L, include_weight = TRUE, include_distance = TRUE, filter = FALSE,
+    maximum_distance = NULL, minimum_k = 0L, weight_fun = function(d) 1 / (1 + d),
+    ...
 ) {
   # NSE vars
   from <- to <- NULL
+
+  k <- as.integer(k)
+
+  if (k >= nrow(x)) {
+    k <- (nrow(x) - 1L)
+    vmsg(.v = verbose, "k is higher than total number of cells.
+         Adjusted to (total number of cells - 1)")
+  }
+  # distances must be calculated when a limit is set
+  if (!is.null(maximum_distance)) include_distance <- TRUE
 
   nn_network <- dbscan::kNN(x = x, k = k, sort = TRUE, ...)
 
@@ -163,10 +238,29 @@ setMethod(
 
   # optional info
   if (include_distance || include_weight) {
-    nn_network_dt[, "distance" := as.vector(nn_network$dist)]
+    if (!is.null(maximum_distance)) {
+      # maximum_distance flag treated as a flag to use this function for
+      # spatial network purposes.
+      #
+      # Use the input matrix coords instead of those exported from dbscan
+      # needed for filtering
+      nn_network_dt[, "distance" := edge_distances(x, .SD),
+                    .SDcols = c("from", "to")]
+    } else {
+      nn_network_dt[, "distance" := as.vector(nn_network$dist)]
+    }
   }
   if (include_weight) {
-    nn_network_dt[, "weight" := 1 / (1 + distance)]
+    nn_network_dt[, "weight" := weight_fun(distance)]
+  }
+
+  # filtering by distance and min k is done when maximum_distance is not NULL
+  if (filter) {
+    nn_network_dt <- .filter_network(
+      networkDT = nn_network_dt,
+      maximum_distance = maximum_distance,
+      minimum_k = minimum_k
+    )
   }
 
   return(nn_network_dt)
@@ -174,12 +268,22 @@ setMethod(
 
 # x input is a matrix
 .net_dt_snn <- function(
-    x, k = 30, include_weight = TRUE, include_distance = TRUE,
-    top_shared = 3, minimum_shared = 5, weight_fun = function(d) 1 / (1 + d),
+    x, k = 30L, include_weight = TRUE, include_distance = TRUE,
+    top_shared = 3L, minimum_shared = 5L, weight_fun = function(d) 1 / (1 + d),
     ...
 ) {
   # NSE vars
   from <- to <- shared <- NULL
+
+  k <- as.integer(k)
+  top_shared <- as.integer(top_shared)
+  minimum_shared <- as.integer(minimum_shared)
+
+  if (k >= nrow(x)) {
+    k <- (nrow(x) - 1L)
+    vmsg(.v = verbose, "k is higher than total number of cells.
+         Adjusted to (total number of cells - 1)")
+  }
 
   nn_network <- dbscan::kNN(x = x, k = k, sort = TRUE, ...)
   snn_network <- dbscan::sNN(x = nn_network, k = k, kt = NULL, ...)
@@ -200,19 +304,23 @@ setMethod(
   }
 
 
-  # rank snn
+  # rank snn. LOWER ranking means MORE shared per source
   data.table::setorder(snn_network_dt, from, -shared)
   snn_network_dt[, rank := 1:.N, by = from]
 
   # filter snn
+  # keep at at least `top_shared` - 1 interactions where the ones selected should
+  # have more connections than the cutoff. Also keep any interactions with more
+  # shared than `minimum_shared`
   snn_network_dt <- snn_network_dt[rank <= top_shared | shared >= minimum_shared]
 
   return(snn_network_dt)
 }
 
 .net_dt_del_geometry <- function(
-    x, include_weight = TRUE, include_distance = TRUE, options = "Pp",
-    weight_fun = function(d) 1 / (1 + d), ...
+    x, include_weight = TRUE, options = "Pp", maximum_distance = "auto",
+    minimum_k = 0L, weight_fun = function(d) 1 / d,
+    ...
 ) {
   package_check("geometry", repository = "CRAN:geometry")
 
@@ -240,14 +348,20 @@ setMethod(
   delaunay_network_dt[, to := as.integer(to)]
   data.table::setorder(delaunay_network_dt, from, to)
 
+  # needed for filtering
+  delaunay_network_dt[, "distance" := edge_distances(x, .SD),
+                      .SDcols = c("from", "to")]
+
   # optional cols
-  if (include_distance || include_weight) {
-    delaunay_network_dt[, "distance" := .calc_edge_dist(.edge_coords_array(x, .SD)),
-                        .SDcols = c("from", "to")]
-  }
   if (include_weight) {
     delaunay_network_dt[, "weight" := weight_fun(distance)]
   }
+
+  delaunay_network_dt <- .filter_network(
+    networkDT = delaunay_network_dt,
+    maximum_distance = maximum_distance,
+    minimum_k = minimum_k
+  )
 
   out_object <- list(
     "geometry_obj" = geometry_obj,
@@ -257,9 +371,8 @@ setMethod(
 }
 
 .net_dt_del_rtriangle <- function(
-    x, include_weight = TRUE, include_distance = TRUE,
-    Y = TRUE, j = TRUE, S = 0,
-    weight_fun = function(d) 1 / (1 + d),
+    x, include_weight = TRUE, maximum_distance = "auto", minimum_k = 0L,
+    Y = TRUE, j = TRUE, S = 0, weight_fun = function(d) 1 / d,
     ...
 ) {
   # NSE vars
@@ -280,14 +393,20 @@ setMethod(
 
   data.table::setorder(delaunay_network_dt, from, to)
 
+  # needed for filtering
+  delaunay_network_dt[, "distance" := edge_distances(x, .SD),
+                      .SDcols = c("from", "to")]
+
   # optional cols
-  if (include_distance || include_weight) {
-    delaunay_network_dt[, "distance" := .calc_edge_dist(.edge_coords_array(x, .SD)),
-                        .SDcols = c("from", "to")]
-  }
   if (include_weight) {
     delaunay_network_dt[, "weight" := weight_fun(distance)]
   }
+
+  delaunay_network_dt <- .filter_network(
+    networkDT = delaunay_network_dt,
+    maximum_distance = maximum_distance,
+    minimum_k = minimum_k
+  )
 
   out_object <- list(
     "RTriangle_obj" = rtriangle_obj,
@@ -297,8 +416,8 @@ setMethod(
 }
 
 .net_dt_del_deldir <- function(
-    x, include_weight = TRUE, include_distance = TRUE,
-    weight_fun = function(d) 1 / (1 + d),
+    x, include_weight = TRUE, maximum_distance = "auto", minimum_k = 0L,
+    weight_fun = function(d) 1 / d,
     ...
 ) {
   # NSE variables
@@ -318,14 +437,19 @@ setMethod(
 
   data.table::setorder(delaunay_network_dt, from, to)
 
+  delaunay_network_dt[, "distance" := edge_distances(x, .SD),
+                      .SDcols = c("from", "to")]
+
   # optional cols
-  if (include_distance || include_weight) {
-    delaunay_network_dt[, "distance" := .calc_edge_dist(.edge_coords_array(x, .SD)),
-                        .SDcols = c("from", "to")]
-  }
   if (include_weight) {
     delaunay_network_dt[, "weight" := weight_fun(distance)]
   }
+
+  delaunay_network_dt <- .filter_network(
+    networkDT = delaunay_network_dt,
+    maximum_distance = maximum_distance,
+    minimum_k = minimum_k
+  )
 
   out_object <- list(
     "deldir_obj" = deldir_obj,

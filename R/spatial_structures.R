@@ -205,7 +205,7 @@ get_distance <- function(networkDT,
   temp_fullnetwork <- convert_to_full_spatial_network(networkDT)
 
   ## filter based on distance or minimum number of neighbors
-  if (maximum_distance == "auto") {
+  if (isTRUE(maximum_distance == "auto")) {
     temp_fullnetwork <- temp_fullnetwork[distance <= grDevices::boxplot.stats(temp_fullnetwork$distance)$stats[5] | rank_int <= minimum_k]
   } else if (!is.null(maximum_distance)) {
     temp_fullnetwork <- temp_fullnetwork[distance <= maximum_distance | rank_int <= minimum_k]
