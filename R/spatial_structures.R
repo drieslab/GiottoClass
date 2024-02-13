@@ -4,13 +4,13 @@
 #' @title convert_to_full_spatial_network
 #' @name convert_to_full_spatial_network
 #' @description Convert to a full spatial network, ie ensuring that all edges
-#' that may currently only be represented as \eqn{a -> b} also have the reverse
-#' \eqn{b -> a}. The entries are then made unique, after which all interactions
-#' are ranked by distance, where rank increases from smaller to larger distances.
-#' This rank is appended to the `data.table` as a `rank_int` column. Another
-#' `rnk_src_trgt` column is added with the IDs of \eqn{a} and \eqn{b} pasted
-#' together
-#' @param reduced_spatial_network_DT reduced spatial network in data.table format
+#' that may currently only be represented as \eqn{a} -> \eqn{b} also have the
+#' reverse \eqn{b} -> \eqn{a}. The entries are then made unique, after which all
+#' interactions are ranked by distance, where rank increases from smaller to
+#' larger distances. This rank is appended to the `data.table` as a `rank_int`
+#' column. Another `rnk_src_trgt` column is added with the IDs of \eqn{a} and
+#' \eqn{b} pasted together
+#' @param reduced_spatial_network_DT reduced spatial network in `data.table` format
 #' @keywords internal
 #' @export
 convert_to_full_spatial_network <- function(reduced_spatial_network_DT) {
