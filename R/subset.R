@@ -942,7 +942,7 @@
 
 
 
-  # browser()
+
   #   # mirai
   #   mirai_res = get_mirai_list(gobject)
   #   if (length(mirai_res > 0)) {
