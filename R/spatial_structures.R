@@ -56,7 +56,9 @@ convert_to_full_spatial_network <- function(reduced_spatial_network_DT) {
 
 #' @title convert_to_reduced_spatial_network
 #' @name convert_to_reduced_spatial_network
-#' @description convert to a reduced spatial network
+#' @description Convert to a reduced spatial network. Specifically, removes
+#' the duplicated connections so that only \eqn{a} -> \eqn{b} interactions
+#' remain.
 #' @param full_spatial_network_DT full spatial network in data.table format
 #' @keywords internal
 #' @export
