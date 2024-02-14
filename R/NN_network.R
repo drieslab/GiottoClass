@@ -212,7 +212,7 @@ createNetwork <- function(
 .net_dt_knn <- function(
     x, k = 30L, include_weight = TRUE, include_distance = TRUE, filter = FALSE,
     maximum_distance = NULL, minimum_k = 0L, weight_fun = function(d) 1 / (1 + d),
-    verbose, ...
+    verbose = NULL, ...
 ) {
   # NSE vars
   from <- to <- distance <- NULL
@@ -268,7 +268,7 @@ createNetwork <- function(
 .net_dt_snn <- function(
     x, k = 30L, include_weight = TRUE, include_distance = TRUE,
     top_shared = 3L, minimum_shared = 5L, weight_fun = function(d) 1 / (1 + d),
-    verbose, ...
+    verbose = NULL, ...
 ) {
   # NSE vars
   from <- to <- shared <- distance <- NULL
