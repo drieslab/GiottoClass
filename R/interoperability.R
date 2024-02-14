@@ -1640,7 +1640,7 @@ giottoToSeuratV5 <- function(gobject,
                                            hires =  max(img),
                                            lowres = min(img))
 
-      senv <- rlang::ns_env("SeuratObject")
+      senv <- rlang::ns_env("Seurat")
 
       newV1 <- do.call(
         new,
