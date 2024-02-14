@@ -1640,11 +1640,23 @@ giottoToSeuratV5 <- function(gobject,
                                            hires =  max(img),
                                            lowres = min(img))
 
+      senv <- rlang::ns_env("SeuratObject")
 
-      newV1 <- new(Class = "VisiumV1",
-                   image = img,
-                   scale.factors = scalefactors,
-                   coordinates = coord)
+      newV1 <- do.call(
+        new,
+        args = list(
+          Class = "VisiumV1",
+          image = img,
+          scale.factors = scalefactors,
+          coordinates = coord
+        ),
+        envir = senv
+      )
+
+      # newV1 <- new(Class = "VisiumV1",
+      #              image = img,
+      #              scale.factors = scalefactors,
+      #              coordinates = coord)
 
       sobj@images[[gobject@largeImages[[i]]@name]] <- newV1
 
