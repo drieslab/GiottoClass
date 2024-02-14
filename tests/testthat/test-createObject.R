@@ -142,8 +142,8 @@ test_that("Eval with missing info throws error", {
 test_that("Eval with minimum info works", {
   ig_new <- expect_no_error(.evaluate_nearest_networks(nnDT_min))
   expect_s3_class(ig_new, "igraph")
-  expect_true(all(c("distance", "weight") %in% igraph::list.edge.attributes(ig_new)))
-  expect_true("name" %in% igraph::list.vertex.attributes(ig_new))
+  expect_true(all(c("distance", "weight") %in% igraph::edge_attr_names(ig_new)))
+  expect_true("name" %in% igraph::vertex_attr_names(ig_new))
 })
 
 
@@ -172,9 +172,9 @@ test_that("Eval of minimal igraph adds weight attr", {
   ig_min <- igraph::delete_edge_attr(ig, "weight")
   ig_min <- .evaluate_nearest_networks(ig_min)
   expect_s3_class(ig_min, "igraph")
-  expect_true(all(c("distance", "weight") %in% igraph::list.edge.attributes(ig_min)))
-  expect_true("name" %in% igraph::list.vertex.attributes(ig_min))
-  expect_true("weight" %in% igraph::list.edge.attributes(ig_min))
+  expect_true(all(c("distance", "weight") %in% igraph::edge_attr_names(ig_min)))
+  expect_true("name" %in% igraph::vertex_attr_names(ig_min))
+  expect_true("weight" %in% igraph::edge_attr_names(ig_min))
 })
 
 
