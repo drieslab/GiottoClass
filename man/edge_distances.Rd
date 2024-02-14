@@ -21,7 +21,7 @@ Calculate network edge euclidean distances
 }
 \examples{
 m <- matrix(c(0,0,0, 1,1,1, 3,2,4), byrow = TRUE, nrow = 3)
-edges <- data.table(
+edges <- data.table::data.table(
   from = c(1, 1),
   to = c(2, 3)
 )
