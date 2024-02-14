@@ -12,6 +12,7 @@ createNetwork(
   include_distance = TRUE,
   include_weight = TRUE,
   as.igraph = TRUE,
+  verbose = NULL,
   ...
 )
 }
@@ -34,6 +35,8 @@ will be used as node IDs.}
 
 \item{as.igraph}{logical. Whether to return as \code{igraph}. Otherwise returns
 as \code{data.table}}
+
+\item{verbose}{be verbose. Default = NULL (uses giotto verbosity option)}
 
 \item{...}{additional params to pass. See details section}
 }

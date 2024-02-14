@@ -1811,7 +1811,7 @@ seuratToGiottoV4 <- function(sobject,
       }
       DT <- data.table()
 
-      edges <- igraph::ends(sobjIgraph, es = E(sobjIgraph), names = TRUE)
+      edges <- igraph::ends(sobjIgraph, es = igraph::E(sobjIgraph), names = TRUE)
       DT$from <- edges[, 1]
       DT$to <- edges[, 2]
       ed_attr <- igraph::edge.attributes(sobjIgraph)
@@ -2122,7 +2122,7 @@ seuratToGiottoV5 <- function(sobject,
         }
         DT <- data.table()
 
-        edges <- igraph::ends(sobjIgraph, es = E(sobjIgraph), names = TRUE)
+        edges <- igraph::ends(sobjIgraph, es = igraph::E(sobjIgraph), names = TRUE)
         DT$from <- edges[, 1]
         DT$to <- edges[, 2]
         ed_attr <- igraph::edge.attributes(sobjIgraph)

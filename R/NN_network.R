@@ -22,6 +22,7 @@ NULL
 #' @param include_distance logical. include edge distance attribute in output
 #' @param as.igraph logical. Whether to return as `igraph`. Otherwise returns
 #' as `data.table`
+#' @param verbose be verbose. Default = NULL (uses giotto verbosity option)
 #' @param ... additional params to pass. See details section
 #' @returns Either `igraph` if `as.igraph = TRUE` and `data.table` otherwise.
 #' @details
@@ -136,6 +137,7 @@ createNetwork <- function(
     include_distance = TRUE,
     include_weight = TRUE,
     as.igraph = TRUE,
+    verbose = NULL,
     ...
 )
 {
@@ -210,10 +212,10 @@ createNetwork <- function(
 .net_dt_knn <- function(
     x, k = 30L, include_weight = TRUE, include_distance = TRUE, filter = FALSE,
     maximum_distance = NULL, minimum_k = 0L, weight_fun = function(d) 1 / (1 + d),
-    ...
+    verbose, ...
 ) {
   # NSE vars
-  from <- to <- NULL
+  from <- to <- distance <- NULL
 
   k <- as.integer(k)
 
@@ -266,10 +268,10 @@ createNetwork <- function(
 .net_dt_snn <- function(
     x, k = 30L, include_weight = TRUE, include_distance = TRUE,
     top_shared = 3L, minimum_shared = 5L, weight_fun = function(d) 1 / (1 + d),
-    ...
+    verbose, ...
 ) {
   # NSE vars
-  from <- to <- shared <- NULL
+  from <- to <- shared <- distance <- NULL
 
   k <- as.integer(k)
   top_shared <- as.integer(top_shared)
@@ -321,7 +323,7 @@ createNetwork <- function(
   package_check("geometry", repository = "CRAN:geometry")
 
   # data.table variables
-  from <- to <- NULL
+  from <- to <- distance <- NULL
 
   delaunay_simplex_mat <- geometry::delaunayn(
     p = x, options = options, ...
@@ -372,7 +374,7 @@ createNetwork <- function(
     ...
 ) {
   # NSE vars
-  from <- to <- NULL
+  from <- to <- distance <- NULL
 
   package_check("RTriangle", repository = "CRAN:RTriangle")
 
@@ -417,7 +419,7 @@ createNetwork <- function(
     ...
 ) {
   # NSE variables
-  from <- to <- NULL
+  from <- to <- distance <- NULL
 
   if (ncol(x) > 2L) {
     .gstop("\'deldir\' delaunay method only applies to 2D data.
@@ -495,6 +497,9 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
 #' node IDs that apply to the coords in x must be supplied as a character vector
 #' @keywords internal
 .edge_coords_array <- function(x, y, x_node_ids = NULL) {
+
+  # NSE vars
+  from <- to <- NULL
 
   checkmate::assert_matrix(x)
   checkmate::assert_data_table(y)
