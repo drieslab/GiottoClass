@@ -1381,7 +1381,7 @@ giottoToSeuratV5 <- function(gobject,
 
   # verify if optional package is installed
   package_check(pkg_name = "Seurat", repository = "CRAN")
-  requireNamespace("Seurat")
+  loadNamespace("Seurat")
 
   # check whether any raw data exist -- required for Seurat
   avail_expr <- list_expression(gobject = gobject, spat_unit = spat_unit)
@@ -1640,23 +1640,10 @@ giottoToSeuratV5 <- function(gobject,
                                            hires =  max(img),
                                            lowres = min(img))
 
-      senv <- rlang::ns_env("Seurat")
-
-      newV1 <- do.call(
-        new,
-        args = list(
-          Class = "VisiumV1",
-          image = img,
-          scale.factors = scalefactors,
-          coordinates = coord
-        ),
-        envir = senv
-      )
-
-      # newV1 <- new(Class = "VisiumV1",
-      #              image = img,
-      #              scale.factors = scalefactors,
-      #              coordinates = coord)
+      newV1 <- new(Class = "VisiumV1",
+                   image = img,
+                   scale.factors = scalefactors,
+                   coordinates = coord)
 
       sobj@images[[gobject@largeImages[[i]]@name]] <- newV1
 
