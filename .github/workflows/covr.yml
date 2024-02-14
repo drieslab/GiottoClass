@@ -35,7 +35,7 @@ jobs:
           _R_CHECK_RD_XREFS: false
         with:
           dependencies: '"hard"' # do not use suggested dependencies
-          extra-packages: any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::remotes, any::covr,  any::sp, any::stars, any::raster, any::sf
+          extra-packages: any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::remotes, any::covr,  any::sp, any::stars, any::raster, any::sf,  any::RTriangle, any::geometry
           needs: coverage
 
       - name: Set up dependencies (GiottoData)

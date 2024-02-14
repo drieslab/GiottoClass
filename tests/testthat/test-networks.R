@@ -56,6 +56,8 @@ options("giotto.use_conda" = TRUE)
 # functions
 
 test_that("delaunay [geometry] produces expected results", {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+
   # gobject
   g2 <- createSpatialNetwork(g, delaunay_method = "delaunayn_geometry")
   del_geom <- getSpatialNetwork(g2)[]
@@ -77,6 +79,8 @@ test_that("delaunay [geometry] produces expected results", {
 })
 
 test_that("delaunay [RTriangle] produces expected results", {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+
   # gobject
   g2 <- createSpatialNetwork(g, delaunay_method = "RTriangle")
   del_rt <- getSpatialNetwork(g2)[]
@@ -98,6 +102,8 @@ test_that("delaunay [RTriangle] produces expected results", {
 })
 
 test_that("delaunay [deldir] produces expected results", {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+
   # gobject
   g2 <- createSpatialNetwork(g, delaunay_method = "deldir")
   del_dd <- getSpatialNetwork(g2)[]
@@ -125,6 +131,8 @@ test_that("delaunay [deldir] produces expected results", {
 })
 
 test_that("knn <spatial> [dbscan] produces expected results", {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+
   # gobject
   g2 <- createSpatialNetwork(
     g,
@@ -160,6 +168,8 @@ test_that("knn <spatial> [dbscan] produces expected results", {
 })
 
 test_that("kNN <NN> [dbscan] produces expected results", {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+
   # gobject
   g2 <- createNearestNetwork(g, type = "kNN", dimensions_to_use = 1:10)
   kNN_g <- suppressMessages(getNearestNetwork(g2)[])
@@ -177,6 +187,8 @@ test_that("kNN <NN> [dbscan] produces expected results", {
 })
 
 test_that("sNN <NN> [dbscan] produces expected results", {
+  rlang::local_options(lifecycle_verbosity = "quiet")
+
   # gobject
   g2 <- createNearestNetwork(g, type = "sNN", dimensions_to_use = 1:10)
   sNN_g <- suppressMessages(getNearestNetwork(g2)[])
