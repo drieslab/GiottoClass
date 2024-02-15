@@ -1381,7 +1381,7 @@ giottoToSeuratV5 <- function(gobject,
 
   # verify if optional package is installed
   package_check(pkg_name = "Seurat", repository = "CRAN")
-  requireNamespace("Seurat")
+  loadNamespace("Seurat")
 
   # check whether any raw data exist -- required for Seurat
   avail_expr <- list_expression(gobject = gobject, spat_unit = spat_unit)
@@ -1497,7 +1497,7 @@ giottoToSeuratV5 <- function(gobject,
     for (i in seq(sobj@assays)) {
       sobj@assays[[i]]@meta.data <- meta_genes
     }
-   
+
 
     # dim reduction
     # note: Seurat requires assay name specification for each dim reduc
@@ -1619,10 +1619,10 @@ giottoToSeuratV5 <- function(gobject,
       }
     }
   }
-  
+
   all_x <- NULL
   all_y <- NULL
-  
+
   if(length(gobject@largeImages) > 0){
     for (i in seq_along(gobject@largeImages)){
       # spatVec <- terra::as.points(gobject@largeImages[[i]]@raster_object)
@@ -1634,25 +1634,24 @@ giottoToSeuratV5 <- function(gobject,
       img <- terra::as.array(gobject@largeImages[[i]]@raster_object)
       img[, , 1:3] <- img[, , 1:3] / 255
       coord <- data.frame(imagerow = imagerow, imagecol = imagecol)
-      
+
       scalefactors <- Seurat::scalefactors(spot = gobject@largeImages[[i]]@scale_factor,
                                            fiducial = gobject@largeImages[[i]]@resolution,
                                            hires =  max(img),
                                            lowres = min(img))
-      
-      
+
       newV1 <- new(Class = "VisiumV1",
                    image = img,
                    scale.factors = scalefactors,
                    coordinates = coord)
-      
+
       sobj@images[[gobject@largeImages[[i]]@name]] <- newV1
-      
-      
+
+
     }
-    
+
   }
-  
+
 
 
   return(sobj)
@@ -1784,25 +1783,25 @@ seuratToGiottoV4 <- function(sobject,
       }
     }
   }
-  
+
   #Networks
-  
+
   #spatial_network
-  
+
   if (!is.null(sp_network)) {
     for (i in seq(sp_network)) {
       if (verbose) message("Copying spatial networks")
       stempgraph <- Seurat::as.Graph(sobject@graphs[[sp_network[i]]])
       m <- as.matrix(stempgraph)
       sobjIgraph <- igraph::graph.adjacency(m, weighted = TRUE)
-      
+
       if (verbose) message("Calculating distances")
       for (j in seq_along(sobject@graphs[[sp_network[i]]]@x)){
         dist_matrix <- sobject@graphs[[sp_network[i]]]@x[[j]]
         sobjIgraph <- igraph::set_edge_attr(graph = sobjIgraph, name = "distance",
                                             value = dist_matrix, index = j)
       }
-      e_attr <- igraph::list.edge.attributes(sobjIgraph)
+      e_attr <- igraph::edge_attr_names(sobjIgraph)
       if ("weight" %in% e_attr) {
         igDT <- data.table::setDT(igraph::as_data_frame(sobjIgraph))
         igDT[, weight := 1 / (1 + distance)]
@@ -1810,8 +1809,8 @@ seuratToGiottoV4 <- function(sobject,
         sobjIgraph <- igraph::graph_from_data_frame(igDT)
       }
       DT <- data.table()
-      
-      edges <- igraph::ends(sobjIgraph, es = E(sobjIgraph), names = TRUE)
+
+      edges <- igraph::ends(sobjIgraph, es = igraph::E(sobjIgraph), names = TRUE)
       DT$from <- edges[, 1]
       DT$to <- edges[, 2]
       ed_attr <- igraph::edge.attributes(sobjIgraph)
@@ -1833,28 +1832,28 @@ seuratToGiottoV4 <- function(sobject,
       stempgraph <- Seurat::as.Graph(sobject@graphs[[nn_network[i]]])
       m <- as.matrix(stempgraph)
       sobjIgraph <- igraph::graph.adjacency(m, weighted = TRUE)
-      
+
       if (verbose) message("Calculating distances")
       for (j in seq_along(sobject@graphs[[nn_network[i]]]@x)){
         dist_matrix <- sobject@graphs[[nn_network[i]]]@x[[j]]
-        
+
         sobjIgraph <- igraph::set_edge_attr(graph = sobjIgraph, name = "distance",
                                             value = dist_matrix, index = j)
       }
-      e_attr <- igraph::list.edge.attributes(sobjIgraph)
+      e_attr <- igraph::edge_attr_names(sobjIgraph)
       if ("weight" %in% e_attr) {
         igDT <- data.table::setDT(igraph::as_data_frame(sobjIgraph))
         igDT[, weight := 1 / (1 + distance)]
         data.table::setcolorder(igDT, neworder = c("from", "to", "weight", "distance"))
         sobjIgraph <- igraph::graph_from_data_frame(igDT)
       }
-      
+
       if (verbose) message("Copying nearest neighbour networks")
       nnNetObj <- GiottoClass::createNearestNetObj(name = names(sobject@graphs)[i],
                                                    network = sobjIgraph)
       return(nnNetObj)
     })
-    
+
     for (i in seq_along(nnNetObj_list)) {
       gobject <- GiottoClass::set_NearestNetwork(gobject = gobject,
                                                  nn_network = nnNetObj_list[[i]])
@@ -2063,7 +2062,7 @@ seuratToGiottoV5 <- function(sobject,
         r <- as.matrix(sobject@images[[i]]@image[, , 1])
         g <- as.matrix(sobject@images[[i]]@image[, , 2])
         b <- as.matrix(sobject@images[[i]]@image[, , 3])
-        
+
         r <- round(r * 255)
         g <- round(g * 255)
         b <- round(b * 255)
@@ -2095,25 +2094,25 @@ seuratToGiottoV5 <- function(sobject,
     gobject <- set_expression_values(gobject = gobject, values = exprObj, set_defaults = FALSE)
     # gobject@expression$cell$rna$normalized = normexp
   }
-  
+
   #Networks
-  
+
   #spatial_network
-  
+
   if (!is.null(sp_network)) {
       for (i in seq(sp_network)) {
         if (verbose) message("Copying spatial networks")
         stempgraph <- Seurat::as.Graph(sobject@graphs[[sp_network[i]]])
         m <- as.matrix(stempgraph)
         sobjIgraph <- igraph::graph.adjacency(m, weighted = TRUE)
-        
+
         if (verbose) message("Calculating distances")
         for (j in seq_along(sobject@graphs[[sp_network[i]]]@x)){
           dist_matrix <- sobject@graphs[[sp_network[i]]]@x[[j]]
           sobjIgraph <- igraph::set_edge_attr(graph = sobjIgraph, name = "distance",
                                               value = dist_matrix, index = j)
         }
-        e_attr <- igraph::list.edge.attributes(sobjIgraph)
+        e_attr <- igraph::edge_attr_names(sobjIgraph)
         if ("weight" %in% e_attr) {
           igDT <- data.table::setDT(igraph::as_data_frame(sobjIgraph))
           igDT[, weight := 1 / (1 + distance)]
@@ -2121,8 +2120,8 @@ seuratToGiottoV5 <- function(sobject,
           sobjIgraph <- igraph::graph_from_data_frame(igDT)
         }
         DT <- data.table()
-        
-        edges <- igraph::ends(sobjIgraph, es = E(sobjIgraph), names = TRUE)
+
+        edges <- igraph::ends(sobjIgraph, es = igraph::E(sobjIgraph), names = TRUE)
         DT$from <- edges[, 1]
         DT$to <- edges[, 2]
         ed_attr <- igraph::edge.attributes(sobjIgraph)
@@ -2145,15 +2144,15 @@ seuratToGiottoV5 <- function(sobject,
     stempgraph <- Seurat::as.Graph(sobject@graphs[[nn_network[i]]])
     m <- as.matrix(stempgraph)
     sobjIgraph <- igraph::graph.adjacency(m, weighted = TRUE)
-      
+
       if (verbose) message("Calculating distances")
         for (j in seq_along(sobject@graphs[[nn_network[i]]]@x)){
         dist_matrix <- sobject@graphs[[nn_network[i]]]@x[[j]]
-      
+
             sobjIgraph <- igraph::set_edge_attr(graph = sobjIgraph, name = "distance",
                                                 value = dist_matrix, index = j)
         }
-      e_attr <- igraph::list.edge.attributes(sobjIgraph)
+      e_attr <- igraph::edge_attr_names(sobjIgraph)
       if ("weight" %in% e_attr) {
         igDT <- data.table::setDT(igraph::as_data_frame(sobjIgraph))
         igDT[, weight := 1 / (1 + distance)]
@@ -2166,7 +2165,7 @@ seuratToGiottoV5 <- function(sobject,
                                                    network = sobjIgraph)
       return(nnNetObj)
     })
- 
+
   for (i in seq_along(nnNetObj_list)) {
     gobject <- GiottoClass::set_NearestNetwork(gobject = gobject,
                                           nn_network = nnNetObj_list[[i]])

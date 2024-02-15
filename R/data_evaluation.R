@@ -511,8 +511,8 @@ evaluate_input <- function(type, x, ...) {
     nn_network[] <- .evaluate_nearest_networks(nn_network = nn_network[])
     return(nn_network)
   } else if (inherits(nn_network, "igraph")) {
-    v_attr <- igraph::list.vertex.attributes(nn_network)
-    e_attr <- igraph::list.edge.attributes(nn_network)
+    v_attr <- igraph::vertex_attr_names(nn_network)
+    e_attr <- igraph::edge_attr_names(nn_network)
 
     if (!"name" %in% v_attr) {
       .gstop(

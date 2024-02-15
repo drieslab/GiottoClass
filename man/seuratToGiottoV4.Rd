@@ -8,7 +8,10 @@ seuratToGiottoV4(
   sobject,
   spatial_assay = "Spatial",
   dim_reduction = c("pca", "umap"),
-  subcellular_assay = "Vizgen"
+  subcellular_assay = "Vizgen",
+  sp_network = NULL,
+  nn_network = NULL,
+  verbose = TRUE
 )
 }
 \arguments{

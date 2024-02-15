@@ -79,10 +79,10 @@ Suggests:
 Remotes: drieslab/GiottoUtils
 Config/testthat/edition: 3
 Collate: 
-    'NN_network.R'
     'package_imports.R'
     'classes.R'
     'generics.R'
+    'NN_network.R'
     'aggregate.R'
     'auxilliary.R'
     'combine_metadata.R'
@@ -137,7 +137,6 @@ Collate:
     'stitch_coordinates.R'
     'subset.R'
     'suite_reexports.R'
-    'visiumImage.R'
     'zzz.R'
 URL: https://drieslab.github.io/GiottoClass/
 VignetteBuilder: knitr
