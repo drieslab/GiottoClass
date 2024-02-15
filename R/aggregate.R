@@ -123,7 +123,7 @@ polygon_to_raster <- function(polygon, field = NULL) {
 #' # note that z0 and z1 nrows match that from the table of global z values.
 #' # With points overlaps, all points are returned, but non-overlapped points
 #' # only have an `NA` value for the `poly_ID` column. Overlapped points will
-#' have the `poly_ID` of their overlapping polygon.
+#' # have the `poly_ID` of their overlapping polygon.
 NULL
 
 # * gobject ####
