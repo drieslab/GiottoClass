@@ -58,16 +58,72 @@ polygon_to_raster <- function(polygon, field = NULL) {
 
 #' @title Calculate features overlapped by polygons
 #' @name calculateOverlap
+#' @description
+#' Calculate subcellular points/feature info or image values overlapped by polygon
+#' annotations. This provides a summary of the spatial data overlapped by the
+#' polygon which can be further processed to become an expression matrix.
 #' @param x Object with spatial annotations: `giottoPolygon`, or `SpatVector`
 #' polygons. Can also be a `giotto` object
 #' @param y Object with features to overlap: `giottoPoints`, `giottoLargeImage`,
 #' `SpatVector` points or `SpatRaster`
-#' @param poly_subset_ids (optional) character vector of poly_IDs to use
-#' @param feat_subset_column feature info column to subset features with
-#' @param feat_subset_ids ids within feature info column to use for subsetting
-#' @param count_info_column column with count information (optional)
+#' @param poly_subset_ids character vector. (optional) Specific poly_IDs to use
+#' @param feat_subset_column character. (optional) feature info attribute to subset
+#' feature points on when performing overlap calculation.
+#' @param feat_subset_ids (optional) values matched against in `feat_subset_column`
+#' in order to subset feature points when performing overlap calculation.
+#' @param count_info_column character. (optional) column with count information.
+#' Useful in cases when more than one detection is reported per point.
 #' @param verbose be verbose
-#' @param \dots additional params to pass to methods
+#' @param \dots additional params to pass to methods.
+#' @details `feat_subset_column`, `feat_subset_ids`, and `count_info_column` are
+#' specific to overlaps on feature points info, and should not be provided
+#' when overlapping image data. These three params can also be passed to the
+#' `giotto` method through the `...` param when working with overlaps on feature
+#' points info.
+#' @returns Usually an object of the same class as `x`, with the overlaps
+#' information appended. `return_*` logical params usually allow return of
+#' a lower-level representation of the results instead. Only the
+#' `SpatVector,SpatRaster` method is different in that it returns a `data.table`.
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' gpoly <- getPolygonInfo(g, polygon_name = "aggregate",
+#'                         return_giottoPolygon = TRUE)
+#' gpoints <- getFeatureInfo(g, return_giottoPoints = TRUE)
+#' gimg <- getGiottoImage(g, image_type = "largeImage")
+#'
+#' gpoly@overlaps <- NULL
+#' overlaps(gpoly) # Should now be NULL
+#'
+#' # detections from 2 z-layers are provided
+#' table(gpoints$global_z)
+#'
+#' # calculate all transcripts overlapped
+#' out_all <- calculateOverlap(gpoly, gpoints)
+#' overlaps_all <- overlaps(out_all)
+#' overlaps_all$rna
+#'
+#' # calculate z1 only
+#' out_z1 <- calculateOverlap(gpoly, gpoints,
+#'                            feat_subset_column = "global_z",
+#'                            feat_subset_ids = c(1))
+#' overlaps_z1 <- overlaps(out_z1)
+#' overlaps_z1$rna
+#'
+#' # overlap image to get sum intensities per cell
+#' out_img <- calculateOverlap(gpoly, gimg)
+#' overlaps_img <- overlaps(out_img)
+#' overlaps_img$intensity
+#'
+#' # giotto method
+#' # calculate z0 overlaps and return as gobject
+#' out_g <- calculateOverlap(g, feat_subset_column = "global_z",
+#'                           feat_subset_ids = 0)
+#' overlaps(getPolygonInfo(out_g, return_giottoPolygon = TRUE))
+#'
+#' # note that z0 and z1 nrows match that from the table of global z values.
+#' # With points overlaps, all points are returned, but non-overlapped points
+#' # only have an `NA` value for the `poly_ID` column. Overlapped points will
+#' have the `poly_ID` of their overlapping polygon.
 NULL
 
 # * gobject ####
@@ -86,16 +142,12 @@ setMethod(
            feat_info = NULL,
            image_names = NULL,
            poly_subset_ids = NULL,
-           feat_subset_column = NULL,
-           feat_subset_ids = NULL,
-           count_info_column = NULL,
            return_gobject = TRUE,
            verbose = TRUE,
            ...) {
     # 0. guards #
     # --------- #
 
-    if (!is.null(count_info_column)) checkmate::assert_character(count_info_column)
     if (!is.null(feat_info)) checkmate::assert_character(feat_info)
     if (!is.null(image_names)) checkmate::assert_character(image_names)
     if (!is.null(feat_info) && !is.null(image_names)) {
@@ -204,12 +256,9 @@ setMethod(
 
     overlap_args_list <- list(
       x = A,
-      y = B,
+      y = B, # points or c(images)
       name_overlap = name_overlap,
       poly_subset_ids = poly_subset_ids,
-      feat_subset_column = feat_subset_column,
-      feat_subset_ids = feat_subset_ids,
-      count_info_column = count_info_column,
       verbose = verbose,
       return_gpolygon = isTRUE(return_gobject),
       ...
@@ -244,16 +293,6 @@ setMethod(
 #' @param return_gpolygon default = TRUE. Whether to return the entire
 #' giottoPolygon provided to `x`, but with the overlaps information appended or
 #' as a bare terra `SpatVector`
-#' @examples
-#' \dontrun{
-#' x <- GiottoData::loadSubObjectMini("giottoPolygon")
-#' y <- GiottoData::loadSubObjectMini("giottoPoints")
-#' x@overlaps <- NULL
-#' overlaps(x) # Should now be NULL
-#'
-#' a <- calculateOverlap(x, y)
-#' overlaps(a)
-#' }
 #' @export
 setMethod(
   "calculateOverlap", signature(x = "giottoPolygon", y = "giottoPoints"),
