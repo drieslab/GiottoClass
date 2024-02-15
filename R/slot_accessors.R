@@ -66,7 +66,7 @@ giotto_slot_depths <- function() {
       # 'parameters',
       # 'instructions',
       # 'offset_file',
-      # 'OS_platform',
+      # 'versions',
       # 'join_info'
       # 'multiomics'
     ),

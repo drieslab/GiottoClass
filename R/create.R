@@ -111,7 +111,7 @@ createGiottoObject <- function(expression,
     expression_feat = expression_feat,
     offset_file = offset_file,
     instructions = instructions,
-    OS_platform = .Platform[["OS.type"]],
+    versions = .versions_info(),
     h5_file = h5_file
   )
 
@@ -640,7 +640,7 @@ createGiottoObjectSubcellular <- function(gpolygons = NULL,
     parameters = NULL,
     offset_file = NULL,
     instructions = instructions,
-    OS_platform = .Platform[["OS.type"]]
+    versions = .versions_info()
   )
 
 
