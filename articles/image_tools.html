@@ -133,8 +133,8 @@ values of the original image that are needed generate a downscaled
 representation. This is implemented in <em>terra</em> as
 <code>spatSample()</code>.</p>
 <p>When plotting, <em>Giotto</em> optimizes the speed of this sampling
-by striking a balance between <code><a href="https://rdrr.io/pkg/terra/man/crop.html" class="external-link">terra::crop()</a></code> and
-<code><a href="https://rdrr.io/pkg/terra/man/sample.html" class="external-link">terra::spatSample()</a></code> to try to prevent sampling from
+by striking a balance between <code><a href="https://rspatial.github.io/terra/reference/crop.html" class="external-link">terra::crop()</a></code> and
+<code><a href="https://rspatial.github.io/terra/reference/sample.html" class="external-link">terra::spatSample()</a></code> to try to prevent sampling from
 unnecessary regions, but also avoid large crop operations on the
 fullsize image, which can be very costly. This is done through
 <code><a href="../reference/plot_auto_largeImage_resample.html">plot_auto_largeImage_resample()</a></code></p>
@@ -176,9 +176,9 @@ represents the available information.</p>
 <p>The colormap to use for an image can also be edited. The default for
 a greyscale image is a monochrome black to white. Other color scales can
 be supplied. For monochrome colorscales:
-<code><a href="https://drieslab.github.io/Giotto/reference/getMonochromeColors.html" class="external-link">getMonochromeColors()</a></code></p>
+<code><a href="https://drieslab.github.io/GiottoUtils/reference/getMonochromeColors.html" class="external-link">getMonochromeColors()</a></code></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gimg</span><span class="op">@</span><span class="va">colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://drieslab.github.io/Giotto/reference/getMonochromeColors.html" class="external-link">getMonochromeColors</a></span><span class="op">(</span><span class="st">"green"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">gimg</span><span class="op">@</span><span class="va">colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://drieslab.github.io/GiottoUtils/reference/getMonochromeColors.html" class="external-link">getMonochromeColors</a></span><span class="op">(</span><span class="st">"green"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot-generic.html">plot</a></span><span class="op">(</span><span class="va">gimg</span><span class="op">)</span></span></code></pre></div>
 <p><img src="image_tools_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -223,12 +223,12 @@ be supplied. For monochrome colorscales:
 <span><span class="co">##  [5] gtools_3.9.5       Rcpp_1.0.12        stringr_1.5.1      jquerylib_0.1.4   </span></span>
 <span><span class="co">##  [9] systemfonts_1.0.5  textshaping_0.3.7  yaml_2.3.8         fastmap_1.1.1     </span></span>
 <span><span class="co">## [13] lattice_0.21-9     R6_2.5.1           knitr_1.45         desc_1.4.3        </span></span>
-<span><span class="co">## [17] bslib_0.6.1        GiottoUtils_0.1.3  rlang_1.1.3        cachem_1.0.8      </span></span>
-<span><span class="co">## [21] stringi_1.8.3      terra_1.7-65       xfun_0.41          fs_1.6.3          </span></span>
+<span><span class="co">## [17] bslib_0.6.1        GiottoUtils_0.1.5  rlang_1.1.3        cachem_1.0.8      </span></span>
+<span><span class="co">## [21] stringi_1.8.3      terra_1.7-71       xfun_0.42          fs_1.6.3          </span></span>
 <span><span class="co">## [25] sass_0.4.8         memoise_2.0.1      cli_3.6.2          pkgdown_2.0.7     </span></span>
 <span><span class="co">## [29] magrittr_2.0.3     digest_0.6.34      grid_4.3.2         lifecycle_1.0.4   </span></span>
-<span><span class="co">## [33] vctrs_0.6.5        evaluate_0.23      glue_1.7.0         data.table_1.14.10</span></span>
-<span><span class="co">## [37] codetools_0.2-19   ragg_1.2.7         GiottoData_0.2.6.2 rmarkdown_2.25    </span></span>
+<span><span class="co">## [33] vctrs_0.6.5        evaluate_0.23      glue_1.7.0         data.table_1.15.0 </span></span>
+<span><span class="co">## [37] codetools_0.2-19   ragg_1.2.7         GiottoData_0.2.7.0 rmarkdown_2.25    </span></span>
 <span><span class="co">## [41] purrr_1.0.2        tools_4.3.2        htmltools_0.5.7</span></span></code></pre>
 </div>
 </div>
