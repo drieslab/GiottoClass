@@ -106,6 +106,9 @@ saveGiotto <- function(gobject,
       # overlap information
       if (!is.null(gobject@spatial_info[[spatinfo]]@overlaps)) {
         for (feature in names(gobject@spatial_info[[spatinfo]]@overlaps)) {
+          if (feature == "intensity") next # intensities are stored as data.table
+          # They are already saveable with the rest of the gobject. Skip.
+
           # write names of spatvector
           spatvecnames <- names(gobject@spatial_info[[spatinfo]]@overlaps[[feature]])
           filename_names <- paste0(spatinfo_dir, "/", feature, "_", spatinfo, "_spatInfo_spatVectorOverlaps_names.txt")
