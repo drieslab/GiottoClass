@@ -1,4 +1,9 @@
 
+# GiottoClass 0.1.4
+
+## bug fixes
+- fix image intensities overlap saving.
+
 
 # GiottoClass 0.1.3 (2024/01/12)
 
