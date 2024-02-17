@@ -596,26 +596,28 @@ createGiottoObject <- function(expression,
 #' - Starting from polygons (spatial units e.g. cell) represented by a mask or dataframe file and raw intensity images (e.g. protein stains)
 #' @concept giotto
 #' @export
-createGiottoObjectSubcellular <- function(gpolygons = NULL,
-                                          polygon_mask_list_params = NULL,
-                                          polygon_dfr_list_params = NULL,
-                                          gpoints = NULL,
-                                          cell_metadata = NULL,
-                                          feat_metadata = NULL,
-                                          spatial_network = NULL,
-                                          spatial_network_name = NULL,
-                                          spatial_grid = NULL,
-                                          spatial_grid_name = NULL,
-                                          spatial_enrichment = NULL,
-                                          spatial_enrichment_name = NULL,
-                                          dimension_reduction = NULL,
-                                          nn_network = NULL,
-                                          images = NULL,
-                                          largeImages = NULL,
-                                          largeImages_list_params = NULL,
-                                          instructions = NULL,
-                                          cores = NA,
-                                          verbose = FALSE) {
+createGiottoObjectSubcellular <- function(
+    gpolygons = NULL,
+    polygon_mask_list_params = NULL,
+    polygon_dfr_list_params = NULL,
+    gpoints = NULL,
+    cell_metadata = NULL,
+    feat_metadata = NULL,
+    spatial_network = NULL,
+    spatial_network_name = NULL,
+    spatial_grid = NULL,
+    spatial_grid_name = NULL,
+    spatial_enrichment = NULL,
+    spatial_enrichment_name = NULL,
+    dimension_reduction = NULL,
+    nn_network = NULL,
+    images = NULL,
+    largeImages = NULL,
+    largeImages_list_params = NULL,
+    instructions = NULL,
+    cores = NA,
+    verbose = FALSE
+) {
   # data.table vars
   poly_ID <- cell_ID <- feat_ID <- x <- y <- NULL
 
