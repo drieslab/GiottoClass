@@ -508,7 +508,7 @@ giotto <- setClass(
     parameters = list(),
     instructions = NULL,
     offset_file = NULL,
-    versions = list(),
+    versions = .versions_info(),
     join_info = NULL,
     multiomics = NULL,
     h5_file = NULL
