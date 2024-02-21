@@ -119,7 +119,8 @@ evaluate_input <- function(type, x, ...) {
   } else {
     .gstop(
       "expression input needs to be a path to matrix-like data or an",
-      "object of class 'Matrix', 'data.table', 'data.frame' or 'matrix'"
+      "object of class 'Matrix', 'data.table', 'data.frame', 'matrix'",
+      "'DelayedMatrix' or 'dbSparseMatrix'."
     )
   }
 
