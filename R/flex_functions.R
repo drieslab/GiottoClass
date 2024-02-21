@@ -76,7 +76,7 @@ rowMeans_flex <- function(mymatrix) {
   } else if (inherits(mymatrix, "Matrix")) {
     return(Matrix::rowMeans(mymatrix))
   } else if (inherits(mymatrix, "dbMatrix")) {
-    return(dbMatrix::rowMeans(x, ...))
+    return(dbMatrix::rowMeans(mymatrix))
   } else {
     temp_matrix <- as.matrix(mymatrix)
     temp_res <- matrixStats::rowMeans2(temp_matrix)
