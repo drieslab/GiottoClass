@@ -24,12 +24,8 @@ jobs:
 
     steps:
 
-      - name: Remove vignettes dir
-        run: rm -rf 'vignettes/'
-        shell: bash
-
       - name: Checkout repo for workflow access
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup pandoc
         uses: r-lib/actions/setup-pandoc@v2
