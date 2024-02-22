@@ -142,6 +142,9 @@ createNetwork <- function(
 )
 {
 
+  # NSE vars
+  from <- to <- NULL
+
   # check params
   type <- match.arg(type, choices = c("sNN", "kNN", "delaunay"))
   method <- switch(
