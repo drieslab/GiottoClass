@@ -318,7 +318,21 @@ setClass("spatFeatData",
 ## Giotto class ####
 
 
+.versions_info <- function() {
+  list(
+    os_platform = get_os(),
+    gclass = packageVersion("GiottoClass")
+  )
+}
 
+.gversion <- function(gobject) {
+  gobject@versions$gclass
+}
+
+`.gversion<-` <- function(gobject, value) {
+  gobject@versions$gclass <- value
+  return(gobject)
+}
 
 
 #' @title Update giotto object
@@ -342,6 +356,7 @@ updateGiottoObject <- function(gobject) {
     stop(wrap_txt("This function is intended for updating giotto objects"))
   }
 
+  # [Giotto versions (pre-modularization)] ---------------------------------- #
   # 3.2.0 release adds multiomics slot
   if (is.null(attr(gobject, "multiomics"))) {
     attr(gobject, "multiomics") <- NA
@@ -354,10 +369,36 @@ updateGiottoObject <- function(gobject) {
     gobject@h5_file <- NULL
   }
 
+  # [Switch to GiottoClass versioning] -------------------------------------- #
   # GiottoClass 0.1.2 adds max_window and colors slots to giottoLargeImage
   if (!is.null(gobject@largeImages)) {
     gobject@largeImages <- lapply(gobject@largeImages, .update_giotto_image)
   }
+
+  # GiottoClass 0.1.4 supercedes @OS_platform with @versions slot
+  if (!is.null(attr(gobject, "OS_platform"))) {
+    attr(gobject, "OS_platform") <- NULL
+  }
+  if (is.null(attr(gobject, "versions"))) {
+    attr(gobject, "versions") <- .versions_info()
+    gobject@versions$gclass <- 0 # untracked
+  }
+
+  if (.gversion(gobject) > packageVersion("GiottoClass")) {
+    warning(
+      call. = FALSE,
+      sprintf("This giotto object was created in a newer version of GiottoClass (v%s)",
+              as.character(.gversion(gobject)))
+    )
+  }
+
+  # [version-based updates] ------------------------------------------------- #
+
+
+  # ------------------------------------------------------------------------- #
+
+  # finally, set updated version number
+  .gversion(gobject) <- packageVersion("GiottoClass")
 
   return(gobject)
 }
@@ -392,7 +433,7 @@ updateGiottoObject <- function(gobject) {
 #' @slot parameters slot to save parameters that have been used
 #' @slot instructions slot for global function instructions
 #' @slot offset_file offset file used to stitch together image fields
-#' @slot OS_platform Operating System to run Giotto analysis on
+#' @slot versions giotto object metadata and versioning info
 #' @slot join_info information about joined Giotto objects
 #' @slot multiomics multiomics integration results
 #' @slot h5_file path to h5 file
@@ -441,7 +482,7 @@ giotto <- setClass(
     parameters = "ANY",
     instructions = "ANY",
     offset_file = "ANY",
-    OS_platform = "ANY",
+    versions = "list",
     join_info = "ANY",
     multiomics = "ANY",
     h5_file = "ANY"
@@ -467,7 +508,7 @@ giotto <- setClass(
     parameters = list(),
     instructions = NULL,
     offset_file = NULL,
-    OS_platform = NULL,
+    versions = .versions_info(),
     join_info = NULL,
     multiomics = NULL,
     h5_file = NULL
@@ -519,7 +560,7 @@ setClass(
     parameters = "ANY",
     instructions = "ANY",
     offset_file = "ANY",
-    OS_platform = "ANY",
+    versions = "ANY",
     join_info = "ANY",
     multiomics = "ANY",
     h5_file = "ANY"
@@ -544,7 +585,7 @@ setClass(
     parameters = NULL,
     instructions = NULL,
     offset_file = NULL,
-    OS_platform = NULL,
+    versions = NULL,
     join_info = NULL,
     multiomics = NULL,
     h5_file = NULL

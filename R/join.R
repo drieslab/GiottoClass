@@ -652,7 +652,7 @@ joinGiottoObjects <- function(gobject_list,
   comb_gobject <- new("giotto",
     expression_feat = first_features,
     instructions = first_instructions,
-    OS_platform = .Platform[["OS.type"]],
+    versions = .versions_info(),
     join_info = NULL
   )
 
