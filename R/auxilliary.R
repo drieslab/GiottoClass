@@ -524,7 +524,6 @@ addCellMetadata <- function(gobject,
 #' # dummy matrix
 #' m <- readRDS(system.file("extdata/toy_matrix.RDS", package = "GiottoClass"))
 #' g <- createGiottoObject(m)
-#' g <- setExpression(g, e)
 #'
 #' fDataDT(g)
 #'
