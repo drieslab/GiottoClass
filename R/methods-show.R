@@ -165,12 +165,13 @@ setMethod(
         zero.print = ".",
         col.names = FALSE,
         note.dropping.colnames = FALSE,
-        suppRows = TRUE,
-        suppCols = TRUE,
+        suppRows = NULL,
+        suppCols = NULL,
         width = 40,
         maxp = 80
       ))
-      print_cap <- print_cap[-which(print_cap == " ..............................")]
+
+      print_cap <- print_cap[-which(print_cap == " ..............................")] %none% print_cap
       writeLines(gsub(pattern = "in show(.*?))'", replacement = "", x = print_cap))
       cat("\n First four colnames:")
       cat("\n", wrap_txt(head(colnames(slot(object, "exprMat")), 4), strWidth = 40), "\n")
