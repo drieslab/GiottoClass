@@ -316,7 +316,6 @@ removeFeatAnnotation <- function(gobject,
 
 
 
-
 #' @title Add cell metadata
 #' @name addCellMetadata
 #' @description Adds cell metadata to the giotto object
@@ -331,11 +330,41 @@ removeFeatAnnotation <- function(gobject,
 #' @param column_cell_ID column name of new metadata to use if
 #' \code{by_column = TRUE}
 #' @return giotto object
-#' @details You can add additional cell metadata in two manners:
+#' @details You can add additional cell metadata in several manners:
 #' \itemize{
-#'   \item{1. Provide a data.table or data.frame with cell annotations in the same order as the \emph{cell_ID} column in pDataDT(gobject) }
-#'   \item{2. Provide a data.table or data.frame with cell annotations and specify which column contains the cell IDs, these cell IDs need to match with the \emph{cell_ID} column in pDataDT(gobject)}
+#'   \item{1. Provide a data.frame-like object, vector, or factor with cell annotations in the same order as the \emph{cell_ID} column in pDataDT(gobject). This is a bit risky and not the most recommended.}
+#'   \item{2. Provide a data.frame-like object with cell annotations and specify which column contains the cell IDs, these cell IDs need to match with the \emph{cell_ID} column in pDataDT(gobject)}
+#'   \item{3. Provide a vector or factor that is named with the cell IDs they correspond to. These names will be matched against the \emph{cell_ID} column in pDataDT(gobject).}
 #' }
+#' @examples
+#' # dummy matrix
+#' m <- readRDS(system.file("extdata/toy_matrix.RDS", package = "GiottoClass"))
+#' g <- createGiottoObject(m)
+#'
+#' pDataDT(g)
+#'
+#' # appending a character vector, merge on vector names
+#' v <- seq(10)
+#' names(v) <- sample(LETTERS[seq(10)])
+#' force(v)
+#'
+#' g <- addCellMetadata(g, new_metadata = v, by_column = TRUE)
+#' pDataDT(g)
+#'
+#' # appending a data.frame, merge on specified column "ID"
+#' df <- data.frame(
+#'   IDS = rev(LETTERS[seq(10)]), # reversed
+#'   l = letters[seq(10)],
+#'   x = c(rep(TRUE, 5), rep(FALSE, 5))
+#' )
+#' force(df)
+#'
+#' g <- addCellMetadata(
+#'   g, new_metadata = df,
+#'   by_column = TRUE,
+#'   column_cell_ID = "IDS"
+#' )
+#' pDataDT(g)
 #' @export
 addCellMetadata <- function(gobject,
                             spat_unit = NULL,
@@ -386,6 +415,7 @@ addCellMetadata <- function(gobject,
     copy_obj = TRUE
   )
 
+  # record initial order
   ordered_cell_IDs <- spatIDs(cell_metadata)
 
 
@@ -398,14 +428,23 @@ addCellMetadata <- function(gobject,
   # Coerce to data.table
   if (is.vector(new_metadata) || is.factor(new_metadata)) {
     original_name <- deparse(substitute(new_metadata))
-    new_metadata <- data.table::as.data.table(new_metadata)
+    new_metadata <- data.table::as.data.table(new_metadata, keep.rownames = TRUE)
+    if ("rn" %in% colnames(new_metadata) && ncol(new_metadata) > 1L) {
+      # should only be TRUE when an "rn" col for rownames was added based on
+      # the vector or factor's names
+      data.table::setnames(new_metadata, old = "rn", new = "cell_ID")
+    }
 
+    # add column name for new meta info.
+    # if a cell_ID col was added via rownames, it should be in the first position.
+    # ncol(new_metadata) should be the col index of the new information.
     if (!is.null(vector_name) && is.character(vector_name)) {
-      colnames(new_metadata) <- vector_name
+      colnames(new_metadata)[ncol(new_metadata)] <- vector_name
     } else {
-      colnames(new_metadata) <- original_name
+      colnames(new_metadata)[ncol(new_metadata)] <- original_name
     }
   } else {
+    # [DF or DT-like input]
     new_metadata <- data.table::as.data.table(new_metadata)
   }
 
@@ -436,6 +475,9 @@ addCellMetadata <- function(gobject,
   if (!isTRUE(by_column)) {
     cell_metadata[] <- cbind(cell_metadata[], new_metadata)
   } else {
+    if (!column_cell_ID %in% colnames(new_metadata)) {
+      stop("'by_column' is TRUE and 'column_cell_ID' not found in new_metadata")
+    }
     cell_metadata[] <- data.table::merge.data.table(
       x = cell_metadata[],
       by.x = "cell_ID",
@@ -446,7 +488,7 @@ addCellMetadata <- function(gobject,
   }
 
 
-  # 5. ensure data is in same order and set data
+  # 5. ensure data is in same order as start and set data
   cell_metadata[] <- cell_metadata[][match(ordered_cell_IDs, cell_ID)]
 
 
@@ -472,10 +514,42 @@ addCellMetadata <- function(gobject,
 #' @param by_column merge metadata based on \emph{feat_ID} column in \code{\link{fDataDT}}
 #' @param column_feat_ID column name of new metadata to use if by_column = TRUE
 #' @return giotto object
-#' @details You can add additional feature metadata in two manners: \cr
-#' 1. Provide a data.table or data.frame with feature annotations in the same order as the \emph{feat_ID} column in fDataDT(gobject) \cr
-#' 2. Provide a data.table or data.frame with feature annotations and specify which column contains the feature IDs,
-#' these feature IDs need to match with the \emph{feat_ID} column in fDataDT(gobject)
+#' @details You can add additional feature metadata in several manners:
+#' \itemize{
+#'   \item{1. Provide a data.table or data.frame with feature annotations in the same order as the \emph{feat_ID} column in fDataDT(gobject) This is a bit risky and not the most recommended.}
+#'   \item{2. Provide a data.table or data.frame with feature annotations and specify which column contains the feature IDs, these feature IDs need to match with the \emph{feat_ID} column in fDataDT(gobject)}
+#'   \item{3. Provide a vector or factor that is named with the feature IDs they correspond to. These names will be matched against the \emph{feat_ID} column in fDataDT(gobject).}
+#' }
+#' @examples
+#' # dummy matrix
+#' m <- readRDS(system.file("extdata/toy_matrix.RDS", package = "GiottoClass"))
+#' g <- createGiottoObject(m)
+#' g <- setExpression(g, e)
+#'
+#' fDataDT(g)
+#'
+#' # appending a character vector, merge on vector names
+#' v <- seq(10)
+#' names(v) <- sample(letters[seq(10)])
+#' force(v)
+#'
+#' g <- addFeatMetadata(g, new_metadata = v, by_column = TRUE)
+#' fDataDT(g)
+#'
+#' # appending a data.frame, merge on specified column "ID"
+#' df <- data.frame(
+#'   IDS = rev(letters[seq(10)]), # reversed
+#'   l = LETTERS[seq(10)],
+#'   x = c(rep(TRUE, 5), rep(FALSE, 5))
+#' )
+#' force(df)
+#'
+#' g <- addFeatMetadata(
+#'   g, new_metadata = df,
+#'   by_column = TRUE,
+#'   column_feat_ID = "IDS"
+#' )
+#' fDataDT(g)
 #' @export
 addFeatMetadata <- function(gobject,
                             feat_type = NULL,
@@ -537,18 +611,27 @@ addFeatMetadata <- function(gobject,
   # Coerce to data.table
   if (is.vector(new_metadata) || is.factor(new_metadata)) {
     original_name <- deparse(substitute(new_metadata))
-    new_metadata <- data.table::as.data.table(new_metadata)
+    new_metadata <- data.table::as.data.table(new_metadata, keep.rownames = TRUE)
+    if ("rn" %in% colnames(new_metadata) && ncol(new_metadata) > 1L) {
+      # should only be TRUE when an "rn" col for rownames was added based on
+      # the vector or factor's names
+      data.table::setnames(new_metadata, old = "rn", new = "feat_ID")
+    }
 
+    # add column name for new meta info.
+    # if a cell_ID col was added via rownames, it should be in the first position.
+    # ncol(new_metadata) should be the col index of the new information.
     if (!is.null(vector_name) && is.character(vector_name)) {
-      colnames(new_metadata) <- vector_name
+      colnames(new_metadata)[ncol(new_metadata)] <- vector_name
     } else {
-      colnames(new_metadata) <- original_name
+      colnames(new_metadata)[ncol(new_metadata)] <- original_name
     }
   } else {
+    # [DF or DT-like input]
     new_metadata <- data.table::as.data.table(new_metadata)
   }
 
-  # If no specific column_cell_ID is provided, assume "cell_ID"
+  # If no specific column_feat_ID is provided, assume "feat_ID"
   if (is.null(column_feat_ID)) {
     column_feat_ID <- "feat_ID"
   }
@@ -575,7 +658,9 @@ addFeatMetadata <- function(gobject,
   if (!isTRUE(by_column)) {
     feat_metadata[] <- cbind(feat_metadata[], new_metadata)
   } else {
-    if (is.null(column_feat_ID)) stop("You need to provide feat ID column")
+    if (!column_feat_ID %in% colnames(new_metadata)) {
+      stop("'by_column' is TRUE and 'column_feat_ID' not found in new_metadata")
+    }
     feat_metadata[] <- data.table::merge.data.table(
       x = feat_metadata[],
       by.x = "feat_ID",
