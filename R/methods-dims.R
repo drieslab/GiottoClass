@@ -101,3 +101,11 @@ setMethod("dim", signature("enrData"), function(x) dim(x@enrichDT))
 #' @rdname dims-generic
 #' @export
 setMethod("dim", signature("giottoLargeImage"), function(x) dim(x@raster_object))
+
+#' @rdname dims-generic
+#' @export
+setMethod("dim", signature("giottoPolygon"), function(x) dim(x[]))
+
+#' @rdname dims-generic
+#' @export
+setMethod("dim", signature("giottoPoints"), function(x) dim(x[]))

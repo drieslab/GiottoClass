@@ -25,10 +25,16 @@ setMethod(
     homo <- identical(poly_names[[1L]], poly_names[[2L]])
     if (!isTRUE(homo)) {
       new_name <- paste0(mixedsort(poly_names), collapse = "-")
-      return(rbind2_giotto_polygon_hetero(x = x, y = y, new_name = new_name, add_list_ID = add_list_ID))
+      out <- rbind2_giotto_polygon_hetero(
+        x = x, y = y,
+        new_name = new_name,
+        add_list_ID = add_list_ID
+      )
     } else {
-      return(rbind2_giotto_polygon_homo(x = x, y = y))
+      out <- rbind2_giotto_polygon_homo(x = x, y = y)
     }
+
+    return(out)
   }
 )
 
