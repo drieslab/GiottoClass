@@ -1,4 +1,21 @@
 
+# GiottoClass 0.2.0
+
+## breaking changes
+- `giotto` slot `versions` supercedes `OS_platform`. Used for tracking GiottoClass version.
+
+## bug fixes
+- fix `giotto` object saving when image intensities overlaps data are present.
+- fix `exprObj` `show()` for small matrices
+- fix `giotto` `calculateOverlap()` method when working with image intensities data.
+
+## new
+- `createNetwork()` hub function for creation of Giotto NN and spatial networks directly from matrices. Mainly for developers and advanced users.
+- `edge_distances()` for calculating euclidean distances from numeric m x n `matrix` (nodes) and a `data.table` with *from* and *to* cols that define node connections.
+
+## enhancements
+- `addCellMetadata()` and `addFeatMetadata()` now support merging on the names of provided vector and factor data with metadata *cell_ID*/*feat_ID*.
+
 
 # GiottoClass 0.1.3 (2024/01/12)
 

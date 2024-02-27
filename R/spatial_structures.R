@@ -3,28 +3,36 @@
 
 #' @title convert_to_full_spatial_network
 #' @name convert_to_full_spatial_network
-#' @description convert to a full spatial network
-#' @param reduced_spatial_network_DT reduced spatial network in data.table format
+#' @description Convert to a full spatial network, ie ensuring that all edges
+#' that may currently only be represented as \eqn{a} -> \eqn{b} also have the
+#' reverse \eqn{b} -> \eqn{a}. The entries are then made unique, after which all
+#' interactions are ranked by distance, where rank increases from smaller to
+#' larger distances. This rank is appended to the `data.table` as a `rank_int`
+#' column. Another `rnk_src_trgt` column is added with the IDs of \eqn{a} and
+#' \eqn{b} pasted together
+#' @param reduced_spatial_network_DT reduced spatial network in `data.table` format
 #' @keywords internal
 #' @export
 convert_to_full_spatial_network <- function(reduced_spatial_network_DT) {
   # data.table variables
   distance <- rank_int <- NULL
 
-  # find location coordinates
-  coordinates <- grep("sdim", colnames(reduced_spatial_network_DT), value = T)
+  # find location coordinates cols
+  coordinates <- grep("sdim", colnames(reduced_spatial_network_DT), value = TRUE)
 
-  begin_coordinates <- grep("begin", coordinates, value = T)
+  # convert names from sdimx_being and sdimy_begin to source_x and source_y
+  begin_coordinates <- grep("begin", coordinates, value = TRUE)
   new_begin_coordinates <- gsub(x = begin_coordinates, pattern = "_begin", replacement = "")
   new_begin_coordinates <- gsub(x = new_begin_coordinates, pattern = "sdim", replacement = "source_")
 
-  end_coordinates <- grep("end", coordinates, value = T)
+  # convert names from sdimx_end and sdimy_end to target_x and target_y
+  end_coordinates <- grep("end", coordinates, value = TRUE)
   new_end_coordinates <- gsub(x = end_coordinates, pattern = "_end", replacement = "")
   new_end_coordinates <- gsub(x = new_end_coordinates, pattern = "sdim", replacement = "target_")
 
   # create normal source --> target
   part1 <- data.table::copy(reduced_spatial_network_DT)
-  part1 <- part1[, c("from", "to", begin_coordinates, end_coordinates, "distance", "weight"), with = F]
+  part1 <- part1[, c("from", "to", begin_coordinates, end_coordinates, "distance", "weight"), with = FALSE]
   colnames(part1) <- c("source", "target", new_begin_coordinates, new_end_coordinates, "distance", "weight")
 
   # revert order target (now source) --> source (now target)
@@ -35,11 +43,12 @@ convert_to_full_spatial_network <- function(reduced_spatial_network_DT) {
   full_spatial_network_DT <- rbind(part1, part2)
   full_spatial_network_DT <- unique(full_spatial_network_DT)
 
-  # create ranking of interactions
+  # create ranking of interactions by distance per source
+  # the lower the ranking, the shorter the distance
   data.table::setorder(full_spatial_network_DT, source, distance)
   full_spatial_network_DT[, rank_int := 1:.N, by = "source"]
 
-  # create unified column
+  # create unified column for source and target as rnk_src_trgt
   full_spatial_network_DT <- dt_sort_combine_two_columns(full_spatial_network_DT, "source", "target", "rnk_src_trgt")
 
   return(full_spatial_network_DT)
@@ -47,7 +56,9 @@ convert_to_full_spatial_network <- function(reduced_spatial_network_DT) {
 
 #' @title convert_to_reduced_spatial_network
 #' @name convert_to_reduced_spatial_network
-#' @description convert to a reduced spatial network
+#' @description Convert to a reduced spatial network. Specifically, removes
+#' the duplicated connections so that only \eqn{a} -> \eqn{b} interactions
+#' remain.
 #' @param full_spatial_network_DT full spatial network in data.table format
 #' @keywords internal
 #' @export
@@ -59,6 +70,22 @@ convert_to_reduced_spatial_network <- function(full_spatial_network_DT) {
   reduced_spatial_network_DT <- full_spatial_network_DT[!duplicated(rnk_src_trgt)]
   reduced_spatial_network_DT[, c("rank_int", "rnk_src_trgt") := NULL] # don't make sense in a reduced network
 
+  # TODO moving forward, coords info start/end may not be included 24.02.12
+  has_coords <- any(grepl(
+    "source_|target_",
+    x = colnames(reduced_spatial_network_DT)
+  ))
+
+  if (!has_coords) {
+    data.table::setnames(
+      reduced_spatial_network_DT,
+      old = c("source", "target"),
+      new = c("from", "to")
+    )
+    return(reduced_spatial_network_DT)
+  }
+
+  # return col names to sdimx/sdimy naming scheme
   # convert to names for a reduced network
   source_coordinates <- grep("source_", colnames(reduced_spatial_network_DT), value = T)
   new_source_coordinates <- gsub(x = source_coordinates, pattern = "source_", replacement = "sdim")
@@ -97,7 +124,6 @@ convert_to_reduced_spatial_network <- function(full_spatial_network_DT) {
     stop("parameter networkDT can not be NULL \n")
   }
 
-  # number of spatial dimensions TODO: chech with Huipeng!
   # d2_or_d3 = match.arg(d2_or_d3, choices = c(2,3))
 
   if (d2_or_d3 == 3) {
@@ -179,7 +205,7 @@ get_distance <- function(networkDT,
   temp_fullnetwork <- convert_to_full_spatial_network(networkDT)
 
   ## filter based on distance or minimum number of neighbors
-  if (maximum_distance == "auto") {
+  if (isTRUE(maximum_distance == "auto")) {
     temp_fullnetwork <- temp_fullnetwork[distance <= grDevices::boxplot.stats(temp_fullnetwork$distance)$stats[5] | rank_int <= minimum_k]
   } else if (!is.null(maximum_distance)) {
     temp_fullnetwork <- temp_fullnetwork[distance <= maximum_distance | rank_int <= minimum_k]
@@ -290,8 +316,9 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
 
   ## create delaunay network
   delaunay_triangle <- geometry::delaunayn(
-    p = spatial_locations[, c(sdimx, sdimy), with = F],
-    options = options, ...
+    p = spatial_locations[, c(sdimx, sdimy), with = FALSE],
+    options = options,
+    ...
   )
 
   ## save delaunay network object
@@ -383,7 +410,6 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
   igraph_obj2 <- igraph::graph.adjacency(adj_obj)
   delaunay_edges_dedup2 <- igraph::get.data.frame(igraph_obj2)
   delaunay_edges_dedup <- data.table::as.data.table(delaunay_edges_dedup2)
-  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
   xbegin_name <- paste0(sdimx, "_begin")
@@ -1072,7 +1098,7 @@ create_KNNnetwork_dbscan <- function(spatial_locations,
     distance = as.vector(knn_spatial$dist)
   )
   nw_sptial.norm <- igraph::graph_from_data_frame(knn_sptial.norm, directed = FALSE)
-  network_DT <- data.table::as.data.table(knn_sptial.norm)
+  network_DT <- data.table::setDT(knn_sptial.norm)
 
 
   # spatial_network_DT[, `:=`(from, cell_ID_vec[from])]

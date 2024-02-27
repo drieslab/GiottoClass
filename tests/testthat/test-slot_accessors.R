@@ -8,7 +8,7 @@ suppressWarnings({
   giotto_object <- giotto()
 })
 
-library(checkmate)
+
 
 
 # GETTERS ####
@@ -1079,10 +1079,32 @@ test_that("addCellMetadata() - vector", {
 
   res <- pDataDT(am_giotto)
 
-  # expect meta vector is appended as-is
+  # expect meta vector is appended as-is when no names provided
   expect_true(all(c("chars") %in% colnames(res)))
   expect_identical(res$chars, chars) # values are matched
   expect_vector(res$chars)
+  # check that start meta order is the same as end
+  expect_identical(original_order, res$cell_ID)
+
+
+  chars2 <- chars
+  names(chars2) <- ids
+  chars2 <- sample(chars2) # scramble values
+
+  am_giotto <- addCellMetadata(
+    am_giotto,
+    new_metadata = chars2,
+    by_column = TRUE
+  )
+
+  res <- pDataDT(am_giotto)
+
+  # expect meta vector has been added via merge
+  expect_true(all(c("chars", "chars2") %in% colnames(res)))
+  # values are appended with merge so that they are the same even after factor2
+  # was scrambled.
+  expect_identical(res$chars, res$chars2)
+  expect_vector(res$chars2) # values retain type
   # check that start meta order is the same as end
   expect_identical(original_order, res$cell_ID)
 })
@@ -1107,6 +1129,28 @@ test_that("addCellMetadata() - factor", {
   expect_true(all(c("factors") %in% colnames(res)))
   expect_identical(res$factors, factors) # values are matched
   expect_factor(res$factors)
+  # check that start meta order is the same as end
+  expect_identical(original_order, res$cell_ID)
+
+
+  factors2 <- factors
+  names(factors2) <- ids
+  factors2 <- sample(factors2) # scramble values
+
+  am_giotto <- addCellMetadata(
+    am_giotto,
+    new_metadata = factors2,
+    by_column = TRUE
+  )
+
+  res <- pDataDT(am_giotto)
+
+  # expect meta vector has been added via merge
+  expect_true(all(c("factors", "factors2") %in% colnames(res)))
+  # values are appended with merge so that they are the same even after factor2
+  # was scrambled.
+  expect_identical(res$factors, res$factors2)
+  expect_factor(res$factors2) # values retain type
   # check that start meta order is the same as end
   expect_identical(original_order, res$cell_ID)
 })
@@ -1212,6 +1256,28 @@ test_that("addFeatMetadata() - vector", {
   expect_vector(res$chars)
   # check that start meta order is the same as end
   expect_identical(original_order, res$feat_ID)
+
+
+  chars2 <- chars
+  names(chars2) <- ids
+  chars2 <- sample(chars2) # scramble values
+
+  am_giotto <- addFeatMetadata(
+    am_giotto,
+    new_metadata = chars2,
+    by_column = TRUE
+  )
+
+  res <- fDataDT(am_giotto)
+
+  # expect meta vector has been added via merge
+  expect_true(all(c("chars", "chars2") %in% colnames(res)))
+  # values are appended with merge so that they are the same even after factor2
+  # was scrambled.
+  expect_identical(res$chars, res$chars2)
+  expect_vector(res$chars2) # values retain type
+  # check that start meta order is the same as end
+  expect_identical(original_order, res$feat_ID)
 })
 
 test_that("addFeatMetadata() - factor", {
@@ -1232,8 +1298,30 @@ test_that("addFeatMetadata() - factor", {
 
   # expect meta vector is appended as-is
   expect_true(all(c("factors") %in% colnames(res)))
-  expect_identical(res$factors, factors) # values are matched
-  expect_factor(res$factors)
+  expect_identical(res$factors, factors) # values are appended with no change
+  expect_factor(res$factors) # values retain type
+  # check that start meta order is the same as end
+  expect_identical(original_order, res$feat_ID)
+
+
+  factors2 <- factors
+  names(factors2) <- ids
+  factors2 <- sample(factors2) # scramble values
+
+  am_giotto <- addFeatMetadata(
+    am_giotto,
+    new_metadata = factors2,
+    by_column = TRUE
+  )
+
+  res <- fDataDT(am_giotto)
+
+  # expect meta vector has been added via merge
+  expect_true(all(c("factors", "factors2") %in% colnames(res)))
+  # values are appended with merge so that they are the same even after factor2
+  # was scrambled.
+  expect_identical(res$factors, res$factors2)
+  expect_factor(res$factors2) # values retain type
   # check that start meta order is the same as end
   expect_identical(original_order, res$feat_ID)
 })

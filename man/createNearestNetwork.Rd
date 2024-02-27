@@ -13,14 +13,13 @@ createNearestNetwork(
   dim_reduction_name = NULL,
   dimensions_to_use = 1:10,
   feats_to_use = NULL,
-  genes_to_use = NULL,
   expression_values = c("normalized", "scaled", "custom"),
   name = NULL,
   return_gobject = TRUE,
   k = 30,
   minimum_shared = 5,
   top_shared = 3,
-  verbose = T,
+  verbose = TRUE,
   ...
 )
 }
@@ -40,8 +39,6 @@ createNearestNetwork(
 \item{dimensions_to_use}{number of dimensions to use as input}
 
 \item{feats_to_use}{if dim_reduction_to_use = NULL, which genes to use}
-
-\item{genes_to_use}{deprecated, use feats_to_use}
 
 \item{expression_values}{expression values to use}
 

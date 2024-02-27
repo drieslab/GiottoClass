@@ -7,3 +7,4 @@ inst/doc
 .vscode/*
 .Rprofile
 docs
+codecov.yml
