@@ -1,10 +1,12 @@
 
-# GiottoClass 0.2.0
+
+# GiottoClass 0.2.1 (2024/02/28)
 
 ## breaking changes
 - `giotto` slot `versions` supercedes `OS_platform`. Used for tracking GiottoClass version.
 
 ## bug fixes
+- fix `subsetGiotto` unused `on` argument
 - fix `giotto` object saving when image intensities overlaps data are present.
 - fix `exprObj` `show()` for small matrices
 - fix `giotto` `calculateOverlap()` method when working with image intensities data.

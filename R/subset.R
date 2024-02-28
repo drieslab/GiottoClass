@@ -63,7 +63,7 @@
     avail_cex[, subset_cells := TRUE]
     avail_fex[, subset_feats := TRUE]
     avail_ex <- merge(avail_cex, avail_fex,
-      on = c("spat_unit", "feat_type", "name"),
+      by = c("spat_unit", "feat_type", "name"),
       all = TRUE
     )
   }
