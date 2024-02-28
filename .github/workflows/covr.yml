@@ -30,7 +30,7 @@ jobs:
       - name: Set up dependencies (GiottoData)
         run: |
           suppressWarnings({
-            install.package("remotes")
+            install.packages("remotes")
             remotes::install_github("drieslab/GiottoData", build = FALSE)
           })
         shell: Rscript {0}
