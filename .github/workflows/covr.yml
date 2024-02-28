@@ -27,6 +27,14 @@ jobs:
         with:
           use-public-rspm: true
 
+      - name: Set up dependencies (GiottoData)
+        run: |
+          suppressWarnings({
+            install.package("remotes")
+            remotes::install_github("drieslab/GiottoData", build = FALSE)
+          })
+        shell: Rscript {0}
+
       - name: Set up dependencies (general)
         uses: r-lib/actions/setup-r-dependencies@v2
         env:
@@ -34,7 +42,7 @@ jobs:
           _R_CHECK_RD_XREFS: false
         with:
           dependencies: '"hard"' # do not use suggested dependencies
-          extra-packages: github::drieslab/GiottoData, any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::sp, any::stars, any::raster, any::sf, any::RTriangle, any::geometry, any::remotes, any::covr
+          extra-packages: any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::sp, any::stars, any::raster, any::sf, any::RTriangle, any::geometry, any::covr
           needs: coverage
 
       - name: Generate coverage report
