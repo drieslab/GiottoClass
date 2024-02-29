@@ -672,13 +672,13 @@ createGiottoObjectSubcellular <- function(
       remove_background_polygon = TRUE,
       background_algo = c("range"),
       fill_holes = TRUE,
+      ID_fmt = "cell_",
       poly_IDs = NULL,
       flip_vertical = TRUE,
       shift_vertical_step = TRUE,
       flip_horizontal = TRUE,
       shift_horizontal_step = TRUE,
-      calc_centroids = FALSE,
-      fix_multipart = TRUE
+      calc_centroids = FALSE
     )
   }
 
@@ -1961,11 +1961,12 @@ setMethod(
 #' @param background_algo algorithm to remove background polygon
 #' @param fill_holes fill holes within created polygons
 #' @param poly_IDs unique names for each polygon in the mask file
+#' @param ID_fmt character. Only applied if `poly_IDs = NULL`. Naming scheme for
+#' poly_IDs. Default = "cell_". See details.
 #' @param flip_vertical flip mask figure in a vertical manner
 #' @param shift_vertical_step shift vertical (boolean or numerical)
 #' @param flip_horizontal flip mask figure in a horizontal manner
 #' @param shift_horizontal_step shift horizontal (boolean or numerical)
-#' @param fix_multipart try to split polygons with multiple parts (default: TRUE)
 #' @param remove_unvalid_polygons remove unvalid polygons (default: TRUE)
 #' @export
 setMethod(
@@ -1977,11 +1978,11 @@ setMethod(
            background_algo = c("range"),
            fill_holes = TRUE,
            poly_IDs = NULL,
+           ID_fmt = "cell_",
            flip_vertical = TRUE,
            shift_vertical_step = TRUE,
            flip_horizontal = TRUE,
            shift_horizontal_step = TRUE,
-           fix_multipart = TRUE,
            remove_unvalid_polygons = TRUE,
            calc_centroids = FALSE,
            verbose = TRUE) {
@@ -1995,11 +1996,11 @@ setMethod(
       background_algo = background_algo,
       fill_holes = fill_holes,
       poly_IDs = poly_IDs,
+      ID_fmt = ID_fmt,
       flip_vertical = flip_vertical,
       shift_vertical_step = shift_vertical_step,
       flip_horizontal = flip_horizontal,
       shift_horizontal_step = shift_horizontal_step,
-      fix_multipart = fix_multipart,
       remove_unvalid_polygons = remove_unvalid_polygons,
       calc_centroids = calc_centroids
     )
@@ -2063,38 +2064,69 @@ setMethod(
 #' @title Create giotto polygons from mask file
 #' @rdname createGiottoPolygon
 #' @param maskfile path to mask file
-#' @param mask_method how the mask file defines individual segmentation annotations
-#' @param name name for polygons
+#' @param mask_method how the mask file defines individual segmentation annotations.
+#' see details.
+#' @param name character. Name to assign created `giottoPolygon`
 #' @param remove_background_polygon try to remove background polygon (default: FALSE)
 #' @param background_algo algorithm to remove background polygon
 #' @param fill_holes fill holes within created polygons
-#' @param poly_IDs unique names for each polygon in the mask file
+#' @param poly_IDs character vector. Default = NULL. Custom unique names for
+#' each polygon in the mask file.
+#' @param ID_fmt character. Only applied if `poly_IDs = NULL`. Naming scheme for
+#' poly_IDs. Default = "cell_". See details.
 #' @param flip_vertical flip mask figure in a vertical manner
 #' @param shift_vertical_step shift vertical (boolean or numerical)
 #' @param flip_horizontal flip mask figure in a horizontal manner
 #' @param shift_horizontal_step shift horizontal (boolean or numerical)
 #' @param calc_centroids calculate centroids for polygons
-#' @param fix_multipart try to split polygons with multiple parts (default: TRUE)
 #' @param remove_unvalid_polygons remove unvalid polygons (default: TRUE)
-#' @return a giotto polygon object
+#' @param verbose verbosity
 #' @concept mask polygon
+#' @details
+#' *mask_method*
+#' One of "single", "multiple", or "guess".
+#' - "single" assumes that the provided mask image is binary, with only polygon
+#' vs background being distinct values. With this kind of image, the expected
+#' generated polygons is a single multipart polygon. "single" takes this
+#' multipart polygon and breaks it apart into individual singlepart polygons.
+#' An initial simple `numeric` index as the 'nth' polygon found in the mask image
+#' will be applied as an ID (see *ID_fmt* section).
+#' - "multiple" assumes that the provided mask image has distinct intensity
+#' values to specify the IDs of individual polygons. An initial `numeric` ID is
+#' applied as the intensity value of the pixels that made up the annotation for
+#' that polygon in the mask image (see *ID_fmt* section).
+#' - "guess" examines the values in the image to pick the most likely appropriate
+#' method out of "single" or "multiple".
+#' *ID_fmt*
+#' Defaults to applying the input as a prefix (using `paste0()`) to the numerical
+#' ID values detected by  `mask_method`. (ie `ID_fmt = "cell_"` produces
+#' `cell_1`, `cell_2`, `cell_3`, ...)
+#' If a "%" character is detected in the input then the input will be treated as
+#' a `sprintf()` `fmt` param input instead. (ie `ID_fmt = "cell_%03d"` produces
+#' `cell_001`, `cell_002`, `cell_003`, ...)
+#' @return a giotto polygon object
 #' @export
-createGiottoPolygonsFromMask <- function(maskfile,
-                                         mask_method = c("guess", "single", "multiple"),
-                                         name = "cell",
-                                         remove_background_polygon = FALSE,
-                                         background_algo = c("range"),
-                                         fill_holes = TRUE,
-                                         poly_IDs = NULL,
-                                         flip_vertical = TRUE,
-                                         shift_vertical_step = TRUE,
-                                         flip_horizontal = TRUE,
-                                         shift_horizontal_step = TRUE,
-                                         calc_centroids = FALSE,
-                                         fix_multipart = TRUE,
-                                         remove_unvalid_polygons = TRUE) {
+createGiottoPolygonsFromMask <- function(
+    maskfile,
+    mask_method = c("guess", "single", "multiple"),
+    name = "cell",
+    remove_background_polygon = FALSE,
+    background_algo = c("range"),
+    fill_holes = TRUE,
+    poly_IDs = NULL,
+    ID_fmt = "cell_",
+    flip_vertical = TRUE,
+    shift_vertical_step = TRUE,
+    flip_horizontal = TRUE,
+    shift_horizontal_step = TRUE,
+    calc_centroids = FALSE,
+    remove_unvalid_polygons = TRUE,
+    verbose = FALSE
+) {
   # data.table vars
   x <- y <- geom <- part <- NULL
+
+  remove_unvalid_polygons <- as.logical(remove_unvalid_polygons)
 
   # select background algo
   background_algo <- match.arg(background_algo, choices = "range")
@@ -2120,6 +2152,9 @@ createGiottoPolygonsFromMask <- function(maskfile,
 
   # create polygons from mask
   rast_dimensions <- dim(terra_rast)
+  # value = TRUE here means that the intensity value of the mask image
+  # (which usually encodes the intended polygon ID) is added to the resulting
+  # SpatVector as the only attribute.
   terra_polygon <- terra::as.polygons(x = terra_rast, value = TRUE)
 
   # fill holes
@@ -2127,8 +2162,10 @@ createGiottoPolygonsFromMask <- function(maskfile,
     terra_polygon <- terra::fillHoles(terra_polygon)
   }
 
-  # remove unvalid polygons
-  if (isTRUE(remove_unvalid_polygons)) {
+  # handle unvalid polygons ##
+  # The unvalid polys formed from as.polygons are usually very misshapen and
+  # artefacted. It is impossible to fix them using `terra::makeValid()`
+  if (remove_unvalid_polygons) {
     valid_index <- terra::is.valid(terra_polygon)
     terra_polygon <- terra_polygon[valid_index]
   }
@@ -2147,30 +2184,41 @@ createGiottoPolygonsFromMask <- function(maskfile,
     spatVecDT[, x := -x]
   }
 
-  # guess mask method
+  ## guess mask method ##
   if (mask_method == "guess") {
     uniq_geoms <- length(unique(spatVecDT$geom))
     uniq_parts <- length(unique(spatVecDT$part))
     mask_method <- ifelse(uniq_geoms > uniq_parts, "multiple", "single")
   }
+  vmsg(.v = verbose, sprintf("parsing mask using mask_method: %s", mask_method))
 
-  if (mask_method == "multiple") {
-    if (is.null(poly_IDs)) {
-      spatVecDT[, geom := paste0(name, geom)]
+
+  ## define polys and apply auto IDs ##
+  naming_fun <- ifelse(grepl("%", ID_fmt), sprintf, paste0)
+  # If poly_IDs are NOT provided, then terra_polygon IDs created here will be
+  # `character` and the finalized ID values.
+  # If not, the IDs are still temporary and `numeric`, pending the `poly_IDs`
+  # param being applied downstream.
+  terra_polygon <- switch(mask_method,
+    "multiple" = {
+      if (is.null(poly_IDs)) {
+        spatVecDT[, geom := naming_fun(ID_fmt, geom)]
+      }
+      g_polygon <- createGiottoPolygonsFromDfr(segmdfr = spatVecDT[, .(x, y, geom)])
+      g_polygon@spatVector
+    },
+    "single" = {
+      if (is.null(poly_IDs)) {
+        spatVecDT[, part := naming_fun(ID_fmt, part)]
+      }
+      g_polygon <- createGiottoPolygonsFromDfr(segmdfr = spatVecDT[, .(x, y, part)])
+      g_polygon@spatVector
     }
-    g_polygon <- createGiottoPolygonsFromDfr(segmdfr = spatVecDT[, .(x, y, geom)])
-    terra_polygon <- g_polygon@spatVector
-  } else if (mask_method == "single") {
-    if (is.null(poly_IDs)) {
-      spatVecDT[, part := paste0(name, part)]
-    }
-    g_polygon <- createGiottoPolygonsFromDfr(segmdfr = spatVecDT[, .(x, y, part)])
-    terra_polygon <- g_polygon@spatVector
-  }
+  )
 
 
 
-  ## shift values ##
+  ## apply spatial shifts ##
   if (identical(shift_vertical_step, TRUE)) {
     shift_vertical_step <- rast_dimensions[1] # nrows of raster
   } else if (is.numeric(shift_vertical_step)) {
@@ -2193,29 +2241,35 @@ createGiottoPolygonsFromMask <- function(maskfile,
   )
 
 
-  # remove background polygon
+  ## remove background polygon ##
   if (isTRUE(remove_background_polygon)) {
     if (background_algo == "range") {
       backgr_poly_id <- .identify_background_range_polygons(terra_polygon)
-      # print(backgr_poly_id) uneccessary to print?
+      vmsg(.v = verbose, sprintf("removed background poly.\n ID was: %s",
+                                 backgr_poly_id))
     }
 
-    terra_polygon <- terra::subset(x = terra_polygon, terra_polygon[["poly_ID"]] != backgr_poly_id)
+    terra_polygon <- terra::subset(
+      x = terra_polygon,
+      terra_polygon[["poly_ID"]] != backgr_poly_id
+    )
   }
 
 
-  # provide own cell_ID name
+  ## apply custom poly_IDs ##
   if (!is.null(poly_IDs)) {
+    # first sort the polys by ID to ensure that custom poly_IDs are applied in a
+    # meaningful manner
+    terra_polygon <- terra_polygon[order(terra_polygon$poly_ID)]
+
     if (isTRUE(remove_unvalid_polygons)) {
       poly_IDs <- poly_IDs[valid_index]
     }
 
     if (length(poly_IDs) != nrow(terra::values(terra_polygon))) {
-      stop("length cell_IDs does not equal number of found polyongs \n")
+      stop("length cell_IDs does not equal number of found polygons \n")
     }
     terra_polygon$poly_ID <- as.character(poly_IDs)
-  } else {
-    terra_polygon$poly_ID <- paste0(name, "_", 1:nrow(terra::values(terra_polygon)))
   }
 
 

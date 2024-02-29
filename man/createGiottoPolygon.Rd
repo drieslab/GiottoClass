@@ -21,11 +21,11 @@
   background_algo = c("range"),
   fill_holes = TRUE,
   poly_IDs = NULL,
+  ID_fmt = "cell_",
   flip_vertical = TRUE,
   shift_vertical_step = TRUE,
   flip_horizontal = TRUE,
   shift_horizontal_step = TRUE,
-  fix_multipart = TRUE,
   remove_unvalid_polygons = TRUE,
   calc_centroids = FALSE,
   verbose = TRUE
@@ -50,13 +50,14 @@ createGiottoPolygonsFromMask(
   background_algo = c("range"),
   fill_holes = TRUE,
   poly_IDs = NULL,
+  ID_fmt = "cell_",
   flip_vertical = TRUE,
   shift_vertical_step = TRUE,
   flip_horizontal = TRUE,
   shift_horizontal_step = TRUE,
   calc_centroids = FALSE,
-  fix_multipart = TRUE,
-  remove_unvalid_polygons = TRUE
+  remove_unvalid_polygons = TRUE,
+  verbose = FALSE
 )
 
 createGiottoPolygonsFromDfr(
@@ -85,7 +86,8 @@ data.frame with vertex 'x', 'y', and 'poly_ID' information.}
 
 \item{verbose}{be verbose}
 
-\item{mask_method}{how the mask file defines individual segmentation annotations}
+\item{mask_method}{how the mask file defines individual segmentation annotations.
+see details.}
 
 \item{remove_background_polygon}{try to remove background polygon (default: FALSE)}
 
@@ -93,7 +95,11 @@ data.frame with vertex 'x', 'y', and 'poly_ID' information.}
 
 \item{fill_holes}{fill holes within created polygons}
 
-\item{poly_IDs}{unique names for each polygon in the mask file}
+\item{poly_IDs}{character vector. Default = NULL. Custom unique names for
+each polygon in the mask file.}
+
+\item{ID_fmt}{character. Only applied if \code{poly_IDs = NULL}. Naming scheme for
+poly_IDs. Default = "cell_". See details.}
 
 \item{flip_vertical}{flip mask figure in a vertical manner}
 
@@ -102,8 +108,6 @@ data.frame with vertex 'x', 'y', and 'poly_ID' information.}
 \item{flip_horizontal}{flip mask figure in a horizontal manner}
 
 \item{shift_horizontal_step}{shift horizontal (boolean or numerical)}
-
-\item{fix_multipart}{try to split polygons with multiple parts (default: TRUE)}
 
 \item{remove_unvalid_polygons}{remove unvalid polygons (default: TRUE)}
 
@@ -135,6 +139,30 @@ polygon ID and additional columns are set as attributes, a spatial file
 such as wkt, .shp, or .GeoJSON, or a mask file (e.g. segmentation results)
 }
 \details{
+\emph{mask_method}
+One of "single", "multiple", or "guess".
+\itemize{
+\item "single" assumes that the provided mask image is binary, with only polygon
+vs background being distinct values. With this kind of image, the expected
+generated polygons is a single multipart polygon. "single" takes this
+multipart polygon and breaks it apart into individual singlepart polygons.
+An initial simple \code{numeric} index as the 'nth' polygon found in the mask image
+will be applied as an ID (see \emph{ID_fmt} section).
+\item "multiple" assumes that the provided mask image has distinct intensity
+values to specify the IDs of individual polygons. An initial \code{numeric} ID is
+applied as the intensity value of the pixels that made up the annotation for
+that polygon in the mask image (see \emph{ID_fmt} section).
+\item "guess" examines the values in the image to pick the most likely appropriate
+method out of "single" or "multiple".
+\emph{ID_fmt}
+Defaults to applying the input as a prefix (using \code{paste0()}) to the numerical
+ID values detected by  \code{mask_method}. (ie \code{ID_fmt = "cell_"} produces
+\code{cell_1}, \code{cell_2}, \code{cell_3}, ...)
+If a "\%" character is detected in the input then the input will be treated as
+a \code{sprintf()} \code{fmt} param input instead. (ie \code{ID_fmt = "cell_\%03d"} produces
+\code{cell_001}, \code{cell_002}, \code{cell_003}, ...)
+}
+
 When determining which column within the tabular data is intended to
 provide polygon information, Giotto first checks the column names for 'x', 'y',
 and 'poly_ID'. If any of these are discovered, they are directly selected. If

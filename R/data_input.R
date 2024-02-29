@@ -1710,11 +1710,11 @@ readPolygonData <- function(data_list,
       background_algo = c("range"),
       fill_holes = TRUE,
       poly_IDs = NULL,
+      ID_fmt = "cell_",
       flip_vertical = TRUE,
       shift_vertical_step = TRUE,
       flip_horizontal = TRUE,
-      shift_horizontal_step = TRUE,
-      fix_multipart = TRUE
+      shift_horizontal_step = TRUE
     )
   }
 
