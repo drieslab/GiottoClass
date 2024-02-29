@@ -5,6 +5,7 @@
 ## bug fixes
 - fix `createGiottoPolygonsFromMask()` IDs being applied out of sync to mask values
 - remove unused `fix_multipart` param in `createGiottoPolygonsFromMask()`
+- fix `giottoPolygon` ID cacheing after `rbind()`
 
 ## enhancements
 - `createGiottoPolygonsFromMask()` now has `ID_fmt` param for finer control of automatic poly_ID generation
