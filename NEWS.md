@@ -1,5 +1,18 @@
 
 
+# GiottoClass 0.2.2 (2024/03/01)
+
+## bug fixes
+- fix `createGiottoPolygonsFromMask()` IDs being applied out of sync to mask values
+- fix `createGiottoPolygon()` `character` method dispatch for `raster` inputs
+- remove unused `fix_multipart` param in `createGiottoPolygonsFromMask()`
+- fix `giottoPolygon` ID caching after `rbind()`
+
+## enhancements
+- `createGiottoPolygonsFromMask()` now has `ID_fmt` param for finer control of automatic `poly_ID` generation
+- `.flip_spatvect()` internal for flipping `SpatVector` across arbitrary x and y vals
+
+
 # GiottoClass 0.2.1 (2024/02/28)
 
 ## breaking changes

@@ -81,6 +81,8 @@ rbind2_giotto_polygon_homo <- function(x, y) {
   } else {
     slot(x, "overlaps") <- rbind(slot(x, "overlaps"), slot(y, "overlaps"))
   }
+
+  slot(x, "unique_ID_cache") <- unique(c(spatIDs(x), spatIDs(y)))
   x
 }
 
@@ -159,7 +161,8 @@ rbind2_giotto_polygon_hetero <- function(x, y, new_name, add_list_ID = TRUE) {
     name = new_name,
     spatVector = new_sv,
     spatVectorCentroids = new_svc,
-    overlaps = new_ovlp
+    overlaps = new_ovlp,
+    unique_IDs = unique(c(spatIDs(x), spatIDs(y)))
   )
   new_poly
 }
