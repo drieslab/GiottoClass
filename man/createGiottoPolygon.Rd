@@ -4,8 +4,8 @@
 \alias{createGiottoPolygon}
 \alias{createGiottoPolygon,SpatVector-method}
 \alias{createGiottoPolygon,SpatRaster-method}
-\alias{createGiottoPolygon,data.frame-method}
 \alias{createGiottoPolygon,character-method}
+\alias{createGiottoPolygon,data.frame-method}
 \alias{createGiottoPolygonsFromMask}
 \alias{createGiottoPolygonsFromDfr}
 \alias{createGiottoPolygonsFromGeoJSON}
@@ -31,6 +31,8 @@
   verbose = TRUE
 )
 
+\S4method{createGiottoPolygon}{character}(x, ...)
+
 \S4method{createGiottoPolygon}{data.frame}(
   x,
   name = "cell",
@@ -39,8 +41,6 @@
   copy_dt = TRUE,
   verbose = TRUE
 )
-
-\S4method{createGiottoPolygon}{character}(x, ...)
 
 createGiottoPolygonsFromMask(
   maskfile,
@@ -111,14 +111,14 @@ poly_IDs. Default = "cell_". See \emph{ID_fmt} section.}
 
 \item{remove_unvalid_polygons}{remove unvalid polygons (default: TRUE)}
 
+\item{\dots}{additional params to pass. For character method, params pass to
+SpatRaster or SpatVector methods, depending on whether x was a filepath to
+a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.}
+
 \item{skip_eval_dfr}{(default FALSE) skip evaluation of provided dataframe}
 
 \item{copy_dt}{(default TRUE) if segmdfr is provided as dt, this determines
 whether a copy is made}
-
-\item{\dots}{additional params to pass. For character method, params pass to
-SpatRaster or SpatVector methods, depending on whether x was a filepath to
-a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.}
 
 \item{maskfile}{path to mask file}
 
@@ -177,16 +177,6 @@ a \code{sprintf()} \code{fmt} param input instead. (ie: \code{ID_fmt = "cell_\%0
 }
 
 \examples{
-# ------- create from data.frame-like ------- #
-shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
-gpoly <- createGiottoPolygon(shp, name = "test")
-plot(gpoly)
-gpoly_dt <- data.table::as.data.table(gpoly, geom = "XY")
-out <- createGiottoPolygon(gpoly_dt[, .(geom, part, x, y, hole, poly_ID)],
-                           name = "test")
-plot(out)
-
-
 # \%\%\%\%\%\%\%\%\% `createGiottoPolygon()` examples \%\%\%\%\%\%\%\%\% #
 # ------- create from a mask image ------- #
 m <- system.file("extdata/toy_mask_multi.tif", package = "GiottoClass")
@@ -205,6 +195,19 @@ shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
 # vector inputs do not have params for flipping and shifting
 gp2 <- createGiottoPolygon(shp, name = "test")
 plot(gp2, col = grDevices::hcl.colors(7))
+
+
+# ------- create from data.frame-like ------- #
+shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
+gpoly <- createGiottoPolygon(shp, name = "test")
+plot(gpoly)
+gpoly_dt <- data.table::as.data.table(gpoly, geom = "XY")
+needed_cols_dt <- gpoly_dt[, .(geom, part, x, y, hole, poly_ID)]
+force(needed_cols_dt)
+
+out <- createGiottoPolygon(needed_cols_dt,
+                           name = "test")
+plot(out)
 
 
 # \%\%\%\%\%\%\%\%\% `createGiottoPolygonsFromMask()` examples \%\%\%\%\%\%\%\%\% #

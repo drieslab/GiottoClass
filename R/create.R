@@ -1995,37 +1995,6 @@ setMethod(
   }
 )
 
-#' @rdname createGiottoPolygon
-#' @examples
-#' # ------- create from data.frame-like ------- #
-#' shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
-#' gpoly <- createGiottoPolygon(shp, name = "test")
-#' plot(gpoly)
-#' gpoly_dt <- data.table::as.data.table(gpoly, geom = "XY")
-#' out <- createGiottoPolygon(gpoly_dt[, .(geom, part, x, y, hole, poly_ID)],
-#'                            name = "test")
-#' plot(out)
-#'
-#'
-#' @export
-setMethod(
-  "createGiottoPolygon", signature("data.frame"),
-  function(x,
-           name = "cell",
-           calc_centroids = FALSE,
-           skip_eval_dfr = FALSE,
-           copy_dt = TRUE,
-           verbose = TRUE) {
-    createGiottoPolygonsFromDfr(
-      segmdfr = x,
-      name = name,
-      calc_centroids = calc_centroids,
-      skip_eval_dfr = skip_eval_dfr,
-      copy_dt = copy_dt,
-      verbose = verbose
-    )
-  }
-)
 
 #' @rdname createGiottoPolygon
 #' @param \dots additional params to pass. For character method, params pass to
@@ -2078,6 +2047,41 @@ setMethod(
   }
 )
 
+
+#' @rdname createGiottoPolygon
+#' @examples
+#' # ------- create from data.frame-like ------- #
+#' shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
+#' gpoly <- createGiottoPolygon(shp, name = "test")
+#' plot(gpoly)
+#' gpoly_dt <- data.table::as.data.table(gpoly, geom = "XY")
+#' needed_cols_dt <- gpoly_dt[, .(geom, part, x, y, hole, poly_ID)]
+#' force(needed_cols_dt)
+#'
+#' out <- createGiottoPolygon(needed_cols_dt,
+#'                            name = "test")
+#' plot(out)
+#'
+#'
+#' @export
+setMethod(
+  "createGiottoPolygon", signature("data.frame"),
+  function(x,
+           name = "cell",
+           calc_centroids = FALSE,
+           skip_eval_dfr = FALSE,
+           copy_dt = TRUE,
+           verbose = TRUE) {
+    createGiottoPolygonsFromDfr(
+      segmdfr = x,
+      name = name,
+      calc_centroids = calc_centroids,
+      skip_eval_dfr = skip_eval_dfr,
+      copy_dt = copy_dt,
+      verbose = verbose
+    )
+  }
+)
 
 
 #' @rdname createGiottoPolygon
