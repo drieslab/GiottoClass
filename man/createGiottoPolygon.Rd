@@ -176,5 +176,62 @@ a \code{sprintf()} \code{fmt} param input instead. (ie: \code{ID_fmt = "cell_\%0
 \code{cell_001}, \code{cell_002}, \code{cell_003}, ...)
 }
 
+\examples{
+# ------- create from data.frame-like ------- #
+shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
+gpoly <- createGiottoPolygon(shp, name = "test")
+plot(gpoly)
+gpoly_dt <- data.table::as.data.table(gpoly, geom = "XY")
+out <- createGiottoPolygon(gpoly_dt[, .(geom, part, x, y, hole, poly_ID)],
+                           name = "test")
+plot(out)
+
+
+# \%\%\%\%\%\%\%\%\% `createGiottoPolygon()` examples \%\%\%\%\%\%\%\%\% #
+# ------- create from a mask image ------- #
+m <- system.file("extdata/toy_mask_multi.tif", package = "GiottoClass")
+plot(terra::rast(m), col = grDevices::hcl.colors(7))
+gp <- createGiottoPolygon(
+  m,
+  flip_vertical = FALSE, flip_horizontal = FALSE,
+  shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
+  ID_fmt = "id_test_\%03d",
+  name = "test"
+)
+plot(gp, col = grDevices::hcl.colors(7))
+
+# ------- create from an shp file ------- #
+shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
+# vector inputs do not have params for flipping and shifting
+gp2 <- createGiottoPolygon(shp, name = "test")
+plot(gp2, col = grDevices::hcl.colors(7))
+
+
+# \%\%\%\%\%\%\%\%\% `createGiottoPolygonsFromMask()` examples \%\%\%\%\%\%\%\%\% #
+mask_multi <- system.file("extdata/toy_mask_multi.tif",
+                          package = "GiottoClass")
+mask_single <- system.file("extdata/toy_mask_single.tif",
+                           package = "GiottoClass")
+plot(terra::rast(mask_multi), col = grDevices::hcl.colors(7))
+plot(terra::rast(mask_single))
+
+gpoly1 = createGiottoPolygonsFromMask(
+  mask_multi,
+  flip_vertical = FALSE, flip_horizontal = FALSE,
+  shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
+  ID_fmt = "id_test_\%03d",
+  name = "multi_test"
+)
+plot(gpoly1, col = grDevices::hcl.colors(7))
+
+gpoly2 = createGiottoPolygonsFromMask(
+  mask_single,
+  flip_vertical = FALSE, flip_horizontal = FALSE,
+  shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
+  ID_fmt = "id_test_\%03d",
+  name = "single_test"
+)
+plot(gpoly2, col = grDevices::hcl.colors(5))
+}
 \concept{mask polygon}
 \concept{polygon}

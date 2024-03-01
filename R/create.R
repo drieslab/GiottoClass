@@ -1996,6 +1996,17 @@ setMethod(
 )
 
 #' @rdname createGiottoPolygon
+#' @examples
+#' # ------- create from data.frame-like ------- #
+#' shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
+#' gpoly <- createGiottoPolygon(shp, name = "test")
+#' plot(gpoly)
+#' gpoly_dt <- data.table::as.data.table(gpoly, geom = "XY")
+#' out <- createGiottoPolygon(gpoly_dt[, .(geom, part, x, y, hole, poly_ID)],
+#'                            name = "test")
+#' plot(out)
+#'
+#'
 #' @export
 setMethod(
   "createGiottoPolygon", signature("data.frame"),
@@ -2020,6 +2031,27 @@ setMethod(
 #' @param \dots additional params to pass. For character method, params pass to
 #' SpatRaster or SpatVector methods, depending on whether x was a filepath to
 #' a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.
+#' @examples
+#' # %%%%%%%%% `createGiottoPolygon()` examples %%%%%%%%% #
+#' # ------- create from a mask image ------- #
+#' m <- system.file("extdata/toy_mask_multi.tif", package = "GiottoClass")
+#' plot(terra::rast(m), col = grDevices::hcl.colors(7))
+#' gp <- createGiottoPolygon(
+#'   m,
+#'   flip_vertical = FALSE, flip_horizontal = FALSE,
+#'   shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
+#'   ID_fmt = "id_test_%03d",
+#'   name = "test"
+#' )
+#' plot(gp, col = grDevices::hcl.colors(7))
+#'
+#' # ------- create from an shp file ------- #
+#' shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
+#' # vector inputs do not have params for flipping and shifting
+#' gp2 <- createGiottoPolygon(shp, name = "test")
+#' plot(gp2, col = grDevices::hcl.colors(7))
+#'
+#'
 #' @export
 setMethod(
   "createGiottoPolygon", signature("character"),
@@ -2090,6 +2122,32 @@ setMethod(
 #' a `sprintf()` `fmt` param input instead. (ie: `ID_fmt = "cell_%03d"` produces
 #' `cell_001`, `cell_002`, `cell_003`, ...)
 #' @return a giotto polygon object
+#' @examples
+#' # %%%%%%%%% `createGiottoPolygonsFromMask()` examples %%%%%%%%% #
+#' mask_multi <- system.file("extdata/toy_mask_multi.tif",
+#'                           package = "GiottoClass")
+#' mask_single <- system.file("extdata/toy_mask_single.tif",
+#'                            package = "GiottoClass")
+#' plot(terra::rast(mask_multi), col = grDevices::hcl.colors(7))
+#' plot(terra::rast(mask_single))
+#'
+#' gpoly1 = createGiottoPolygonsFromMask(
+#'   mask_multi,
+#'   flip_vertical = FALSE, flip_horizontal = FALSE,
+#'   shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
+#'   ID_fmt = "id_test_%03d",
+#'   name = "multi_test"
+#' )
+#' plot(gpoly1, col = grDevices::hcl.colors(7))
+#'
+#' gpoly2 = createGiottoPolygonsFromMask(
+#'   mask_single,
+#'   flip_vertical = FALSE, flip_horizontal = FALSE,
+#'   shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
+#'   ID_fmt = "id_test_%03d",
+#'   name = "single_test"
+#' )
+#' plot(gpoly2, col = grDevices::hcl.colors(5))
 #' @export
 createGiottoPolygonsFromMask <- function(
     maskfile,
@@ -2141,6 +2199,7 @@ createGiottoPolygonsFromMask <- function(
   # (which usually encodes the intended polygon ID) is added to the resulting
   # SpatVector as the only attribute.
   terra_polygon <- terra::as.polygons(x = terra_rast, value = TRUE)
+  val_col <- names(terra_polygon) # the only col should be from the values
 
   # fill holes
   if (isTRUE(fill_holes)) {
@@ -2155,19 +2214,18 @@ createGiottoPolygonsFromMask <- function(
     terra_polygon <- terra_polygon[valid_index]
   }
 
-
-  spatVecDT <- .spatvector_to_dt(terra_polygon)
-
   ## flip across axes ##
   if (isTRUE(flip_vertical)) {
-    # terra_polygon = terra::flip(terra_polygon, direction = 'vertical')
-    spatVecDT[, y := -y]
+    terra_polygon <- .flip_spatvect(terra_polygon)
+  }
+  if (isTRUE(flip_horizontal)) {
+    terra_polygon <- .flip_spatvect(terra_polygon)
   }
 
-  if (isTRUE(flip_horizontal)) {
-    # terra_polygon = terra::flip(terra_polygon, direction = 'horizontal')
-    spatVecDT[, x := -x]
-  }
+  # convert to DT format since we want to be able to compare number of geoms
+  # vs polys to determine correct mask method.
+  # TODO only test a subset of polys here?
+  spatVecDT <- .spatvector_to_dt(terra_polygon)
 
   ## guess mask method ##
   if (mask_method == "guess") {
@@ -2182,21 +2240,36 @@ createGiottoPolygonsFromMask <- function(
   naming_fun <- ifelse(grepl("%", ID_fmt), sprintf, paste0)
   # If poly_IDs are NOT provided, then terra_polygon IDs created here will be
   # `character` and the finalized ID values.
-  # If not, the IDs are still temporary and `numeric`, pending the `poly_IDs`
-  # param being applied downstream.
+  # If poly_IDs ARE provided, the IDs are still temporary and MUST remain
+  # `numeric`, pending the `poly_IDs` param being applied downstream.
   terra_polygon <- switch(mask_method,
     "multiple" = {
+      names(terra_polygon) <- "poly_ID"
       if (is.null(poly_IDs)) {
-        spatVecDT[, geom := naming_fun(ID_fmt, geom)]
+        # spatVecDT[, geom := naming_fun(ID_fmt, geom)]
+        # spatVecDT[, (val_col) := naming_fun(ID_fmt, get(val_col))]
+        # g_polygon <- createGiottoPolygonsFromDfr(
+        #   segmdfr = spatVecDT[, .(x, y, get(val_col))]
+        # )
+        # g_polygon@spatVector
+        terra_polygon$poly_ID <- naming_fun(ID_fmt, terra_polygon$poly_ID)
       }
-      g_polygon <- createGiottoPolygonsFromDfr(segmdfr = spatVecDT[, .(x, y, geom)])
-      g_polygon@spatVector
+      terra_polygon
     },
     "single" = {
+      # TODO ordering may be performed based on centroids xy instead of
+      # converting the full polygon and then ordering on parts
+      # May improve the speed
       if (is.null(poly_IDs)) {
         spatVecDT[, part := naming_fun(ID_fmt, part)]
       }
-      g_polygon <- createGiottoPolygonsFromDfr(segmdfr = spatVecDT[, .(x, y, part)])
+      g_polygon <- createGiottoPolygonsFromDfr(
+        segmdfr = spatVecDT[, .(x, y, part)]
+      )
+      if (!is.null(poly_IDs)) {
+        g_polygon@spatVector$poly_ID <- as.numeric(g_polygon@spatVector$poly_ID)
+      }
+
       g_polygon@spatVector
     }
   )
