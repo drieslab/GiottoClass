@@ -25,7 +25,7 @@ showGiottoExpression <- function(gobject, nrows = 4, ncols = 4) {
     } else {
         # 3.1 set up object printouts
         objPrints <- list()
-        for (obj_i in seq_len(nrow(available_data))) {
+        for (obj_i in seq(nrow(available_data))) {
             # get object
             dataObj <- get_expression_values(
                 gobject = gobject,
@@ -102,7 +102,7 @@ showGiottoCellMetadata <- function(gobject,
     } else {
         # 3.1 set up object printouts
         objPrints <- objRows <- list()
-        for (obj_i in seq_len(nrow(available_data))) {
+        for (obj_i in seq(nrow(available_data))) {
             # get object
             dataObj <- get_cell_metadata(
                 gobject = gobject,
@@ -174,7 +174,7 @@ showGiottoFeatMetadata <- function(gobject,
     } else {
         # 3.1 set up object printouts
         objPrints <- objRows <- list()
-        for (obj_i in seq_len(nrow(available_data))) {
+        for (obj_i in seq(nrow(available_data))) {
             # get object
             dataObj <- get_feature_metadata(
                 gobject = gobject,
@@ -247,7 +247,7 @@ showGiottoSpatLocs <- function(gobject,
     } else {
         # 3.1 set up object printouts
         objPrints <- objRows <- list()
-        for (obj_i in seq_len(nrow(available_data))) {
+        for (obj_i in seq(nrow(available_data))) {
             # get object
             dataObj <- get_spatial_locations(
                 gobject = gobject,
@@ -278,7 +278,7 @@ showGiottoSpatLocs <- function(gobject,
             available_data$spat_unit <- paste0('Spatial unit "', available_data$spat_unit, '"')
             available_data$name <- paste0('S4 spatLocsObj "', available_data$name, '" coordinates:')
         }
-        for (obj_i in seq_len(nrow(available_data))) {
+        for (obj_i in seq(nrow(available_data))) {
             available_data$name[[obj_i]] <- paste0(
                 available_data$name[[obj_i]],
                 ch$s, "(", objRows[[obj_i]], " rows)"
@@ -389,7 +389,7 @@ showGiottoDimRed <- function(gobject,
     } else {
         # 3.1 Set up object printouts
         objPrints <- objRows <- objCols <- list()
-        for (obj_i in seq_len(nrow(available_data))) {
+        for (obj_i in seq(nrow(available_data))) {
             # Get object
             dataObj <- get_dimReduction(
                 gobject = gobject,
@@ -433,7 +433,7 @@ showGiottoDimRed <- function(gobject,
             available_data$dim_type <- paste0('Dim reduction type "', available_data$dim_type, '"')
             available_data$name <- paste0('S4 dimObj "', available_data$name, '" coordinates:')
         }
-        for (obj_i in seq_len(nrow(available_data))) {
+        for (obj_i in seq(nrow(available_data))) {
             available_data$name[[obj_i]] <- paste0(
                 available_data$name[[obj_i]],
                 ch$s, "(", objRows[[obj_i]], " rows ", objCols[[obj_i]], " cols)"
@@ -496,7 +496,7 @@ showGiottoNearestNetworks <- function(gobject,
     } else {
         # 3.1 Set up object printouts
         objPrints <- objRows <- list()
-        for (obj_i in seq_len(nrow(available_data))) {
+        for (obj_i in seq(nrow(available_data))) {
             # Get object
             dataObj <- get_NearestNetwork(
                 gobject = gobject,
@@ -543,7 +543,7 @@ showGiottoNearestNetworks <- function(gobject,
             available_data$nn_type <- paste0('NN network type "', available_data$nn_type, '"')
             available_data$name <- paste0('S4 nnNetObj "', available_data$name, '"')
         }
-        for (obj_i in seq_len(nrow(available_data))) {
+        for (obj_i in seq(nrow(available_data))) {
             available_data$name[[obj_i]] <- paste0(
                 available_data$name[[obj_i]],
                 ch$s, "(", objRows[[obj_i]], " rows)"
@@ -634,7 +634,7 @@ showGiottoSpatNetworks <- function(gobject,
     } else {
         # 3.1 Set up object printouts
         objPrints <- objRows <- list()
-        for (obj_i in seq_len(nrow(available_data))) {
+        for (obj_i in seq(nrow(available_data))) {
             # Get object
             dataObj <- get_spatialNetwork(
                 gobject = gobject,
@@ -667,7 +667,7 @@ showGiottoSpatNetworks <- function(gobject,
             available_data$spat_unit <- paste0('Spatial unit "', available_data$spat_unit, '"')
             available_data$name <- paste0('S4 spatialNetworkObj "', available_data$name, '"')
         }
-        for (obj_i in seq_len(nrow(available_data))) {
+        for (obj_i in seq(nrow(available_data))) {
             available_data$name[[obj_i]] <- paste0(
                 available_data$name[[obj_i]],
                 ch$s, "(", objRows[[obj_i]], " rows)"
@@ -721,7 +721,7 @@ showGiottoSpatGrids <- function(gobject,
     } else {
         # 3.1 Set up object printouts
         objPrints <- objRows <- list()
-        for (obj_i in seq_len(nrow(available_data))) {
+        for (obj_i in seq(nrow(available_data))) {
             # Get object
             dataObj <- get_spatialGrid(
                 gobject = gobject,
@@ -754,7 +754,7 @@ showGiottoSpatGrids <- function(gobject,
             warning("Only networks from the deprecated nesting will be shown")
         }
         available_data$name <- paste0('S4 spatialGridObj "', available_data$name, '"')
-        for (obj_i in seq_len(nrow(available_data))) {
+        for (obj_i in seq(nrow(available_data))) {
             available_data$name[[obj_i]] <- paste0(
                 available_data$name[[obj_i]],
                 ch$s, "(", objRows[[obj_i]], " rows)"

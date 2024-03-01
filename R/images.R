@@ -270,7 +270,7 @@ addGiottoImageMG <- function(gobject,
 
 
     # 2. Add image with for loop
-    for (image_i in seq_along(images)) {
+    for (image_i in 1:length(images)) {
         im <- images[[image_i]]
 
         if (inherits(im, "giottoImage")) {
@@ -1016,7 +1016,7 @@ stitchGiottoLargeImage <- function(largeImage_list = NULL,
         if (!is.null(gobject_list)) {
             # For loop to grab giottoLargeImages
             largeImage_list <- list()
-            for (gobj_i in seq_along(gobject_list)) {
+            for (gobj_i in 1:length(gobject_list)) {
                 largeImage_list[[gobj_i]] <- get_giottoLargeImage(
                     gobject = gobject_list[[gobj_i]],
                     name = largeImage_nameList[[gobj_i]]
@@ -1034,7 +1034,7 @@ stitchGiottoLargeImage <- function(largeImage_list = NULL,
 
     # For loop to extract raster_objects
     raster_list <- list()
-    for (img_i in seq_along(largeImage_list)) {
+    for (img_i in 1:length(largeImage_list)) {
         raster_list[[img_i]] <- largeImage_list[[img_i]]@raster_object
     }
 
@@ -1050,7 +1050,7 @@ stitchGiottoLargeImage <- function(largeImage_list = NULL,
         }
 
         # Shift the image extents as specified by POV_positions
-        for (rast_i in seq_along(raster_list)) {
+        for (rast_i in 1:length(raster_list)) {
             raster_list[[rast_i]] <- terra::shift(
                 x = raster_list[[rast_i]],
                 dx = FOV_positions[rast_i, FOV_xcol],
@@ -1063,7 +1063,7 @@ stitchGiottoLargeImage <- function(largeImage_list = NULL,
     # # Round final extent values (merge and mosaic may only work with integer extents)
     if (round_positions == TRUE) {
         if (verbose == TRUE) cat("round_positions == TRUE \n Image spatial positions will be rounded to integers. \n")
-        for (rast_i in seq_along(raster_list)) {
+        for (rast_i in 1:length(raster_list)) {
             terra::ext(raster_list[[rast_i]]) <- round(terra::ext(raster_list[[rast_i]]))
         }
     }
@@ -1071,7 +1071,7 @@ stitchGiottoLargeImage <- function(largeImage_list = NULL,
     if (dryRun == TRUE) {
         # Collect SpatExtents then convert to polygons
         imgBounds_list <- list()
-        for (rast_i in seq_along(raster_list)) {
+        for (rast_i in 1:length(raster_list)) {
             img_ext <- terra::ext(raster_list[[rast_i]])
             img_bound_poly <- terra::as.polygons(img_ext)
             img_bound_poly$FOV <- rast_i
@@ -1774,7 +1774,7 @@ addGiottoLargeImage <- function(gobject = NULL,
 
 
     # 2. Add image with for loop
-    for (image_i in seq_along(largeImages)) {
+    for (image_i in 1:length(largeImages)) {
         im <- largeImages[[image_i]]
 
         if (inherits(im, "giottoLargeImage")) {
@@ -2164,7 +2164,7 @@ select_gimage <- function(gobject,
             if (is.null(gimage)) warning("image_name: ", image_name, " does not exists")
         } else {
             gimage <- list()
-            for (gim in seq_along(image_name)) {
+            for (gim in 1:length(image_name)) {
                 gimage[[gim]] <- gobject@images[[gim]]
                 if (is.null(gimage[[gim]])) warning("image_name: ", gim, " does not exists")
             }
@@ -2183,7 +2183,7 @@ select_gimage <- function(gobject,
             )
         } else {
             gimage <- list()
-            for (gim in seq_along(largeImage_name)) {
+            for (gim in 1:length(largeImage_name)) {
                 gimage[[gim]] <- plot_auto_largeImage_resample(
                     gobject = gobject,
                     largeImage_name = largeImage_name[[gim]],
@@ -2296,7 +2296,7 @@ reconnectGiottoImage <- function(gobject,
 
             # get file paths from image objects
             img_path[[image_type]] <- lapply(
-                X = seq_along(img_list[[image_type]]),
+                X = 1:length(img_list[[image_type]]),
                 function(x) {
                     img_list[[image_type]][[x]]@file_path
                 }
@@ -2306,7 +2306,7 @@ reconnectGiottoImage <- function(gobject,
             # additionally, set path to NULL if file.exists() == FALSE
             if (verbose == TRUE) cat(image_type, "(s) discovered...\n", sep = "")
 
-            for (image_i in seq_along(img_path[[image_type]])) {
+            for (image_i in 1:length(img_path[[image_type]])) {
                 if (!is.null(img_path[[image_type]][[image_i]])) {
                     if (verbose == TRUE) cat("-->", name_list[[image_type]][[image_i]], ": filepath found")
                     if (!file.exists(img_path[[image_type]][[image_i]])) {
@@ -2360,7 +2360,7 @@ reconnectGiottoImage <- function(gobject,
 
             # update file_path
             img_list[[image_type]] <- lapply(
-                X = seq_along(img_list[[image_type]]),
+                X = 1:length(img_list[[image_type]]),
                 function(x) {
                     img_list[[image_type]][[x]]@file_path <- img_path[[image_type]][[x]]
                 }
@@ -2399,7 +2399,7 @@ reconnectGiottoImage <- function(gobject,
 
         # Load pointers
         img_list[[image_type]] <- lapply(
-            X = seq_along(img_list[[image_type]]),
+            X = 1:length(img_list[[image_type]]),
             function(x) {
                 reconnect_image_object(
                     image_object = img_list[[image_type]][[x]],
@@ -2413,7 +2413,7 @@ reconnectGiottoImage <- function(gobject,
         # 4. Update gobject:--------------------------------------------------------------------#
 
         # Set the image objects into the gobject
-        for (image_ii in seq_along(img_list[[image_type]])) {
+        for (image_ii in 1:length(img_list[[image_type]])) {
             gobject <- set_giottoImage(
                 gobject = gobject,
                 image = img_list[[image_type]][[image_ii]],

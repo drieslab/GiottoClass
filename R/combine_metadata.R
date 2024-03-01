@@ -691,7 +691,7 @@ calculateSpatCellMetadataProportions <- function(gobject,
     cell_ID <- used <- NULL
 
     reslist <- list()
-    for (i in seq_along(unique(spatial_info$cell_ID))) {
+    for (i in 1:length(unique(spatial_info$cell_ID))) {
         cell_i <- unique(spatial_info$cell_ID)[i]
 
         temp <- sp::point.in.polygon(

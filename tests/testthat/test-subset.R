@@ -33,7 +33,7 @@ test_that("subsetGiotto can subset all spat_units", {
     avail_sl <- list_spatial_locations(g)
 
     # expression
-    for (ex_i in seq_len(nrow(avail_ex))) {
+    for (ex_i in seq(nrow(avail_ex))) {
         ex <- getExpression(
             gobject = sub_g,
             spat_unit = avail_ex[ex_i]$spat_unit,
@@ -46,7 +46,7 @@ test_that("subsetGiotto can subset all spat_units", {
     }
 
     # cell meta
-    for (cm_i in seq_len(nrow(avail_cm))) {
+    for (cm_i in seq(nrow(avail_cm))) {
         cm <- getCellMetadata(
             gobject = sub_g,
             spat_unit = avail_cm[cm_i]$spat_unit,
@@ -57,7 +57,7 @@ test_that("subsetGiotto can subset all spat_units", {
     }
 
     # spatlocs
-    for (sl_i in seq_len(nrow(avail_sl))) {
+    for (sl_i in seq(nrow(avail_sl))) {
         sl <- getSpatialLocations(
             gobject = sub_g,
             spat_unit = avail_sl[sl_i]$spat_unit,
@@ -85,7 +85,7 @@ test_that("subsetGiotto can subset feat_type", {
     avail_fm <- list_feat_metadata(g)
 
     # expression
-    for (ex_i in seq_len(nrow(avail_ex))) {
+    for (ex_i in seq(nrow(avail_ex))) {
         ex <- getExpression(
             gobject = sub_g,
             spat_unit = avail_ex[ex_i]$spat_unit,
@@ -98,7 +98,7 @@ test_that("subsetGiotto can subset feat_type", {
     }
 
     # spatlocs
-    for (fm_i in seq_len(nrow(avail_fm))) {
+    for (fm_i in seq(nrow(avail_fm))) {
         fm <- getFeatureMetadata(
             gobject = sub_g,
             spat_unit = avail_fm[fm_i]$spat_unit,
@@ -141,7 +141,7 @@ test_that("subsetGiottoLocs works on one spat_unit", {
     avail_ex <- list_expression(g, spat_unit = spat_unit)
     avail_enr <- list_spatial_enrichments(g, spat_unit = spat_unit)
 
-    for (sl_i in seq_len(nrow(avail_sl))) {
+    for (sl_i in seq(nrow(avail_sl))) {
         sl <- getSpatialLocations(
             gobject = g_sub_locs,
             spat_unit = spat_unit,
@@ -154,7 +154,7 @@ test_that("subsetGiottoLocs works on one spat_unit", {
 
     subset_ids <- sl$cell_ID
 
-    for (ex_i in seq_len(nrow(avail_ex))) {
+    for (ex_i in seq(nrow(avail_ex))) {
         ex <- getExpression(
             gobject = g_sub_locs,
             spat_unit = spat_unit,
@@ -166,7 +166,7 @@ test_that("subsetGiottoLocs works on one spat_unit", {
         expect_true(setequal(subset_ids, spatIDs(ex)))
     }
 
-    for (enr_i in seq_len(nrow(avail_enr))) {
+    for (enr_i in seq(nrow(avail_enr))) {
         enr <- getSpatialEnrichment(
             gobject = g_sub_locs,
             spat_unit = spat_unit,

@@ -320,7 +320,7 @@ triGrid <- function(extent, ccd, id_prefix = "ID_") {
         data.table::data.table(sdimx = x_seq, sdimy = y_seq[i])
     }))
 
-    centers$cell_ID <- paste0(id_prefix, seq_len(nrow(centers)))
+    centers$cell_ID <- paste0(id_prefix, seq(nrow(centers)))
     return(centers)
 }
 
@@ -333,7 +333,7 @@ orthoGrid <- function(extent, ccd, id_prefix = "ID_") {
     x_seq <- seq(e[["xmin"]] + (0.5 * ccd), e[["xmax"]] - (0.5 * ccd), by = ccd)
     y_seq <- seq(e[["ymin"]] + (0.5 * ccd), e[["ymax"]] - (0.5 * ccd), by = ccd)
     centers <- expand.grid(sdimx = x_seq, sdimy = y_seq)
-    centers$cell_ID <- paste0(id_prefix, seq_len(nrow(centers)))
+    centers$cell_ID <- paste0(id_prefix, seq(nrow(centers)))
     setDT(centers)
     return(centers)
 }
@@ -386,7 +386,7 @@ makePseudoVisium <- function(extent = NULL,
     y_seq <- seq(e[["ymin"]] + radius, e[["ymax"]] - radius, by = 2 * radius + gap)
 
     # Stagger center point of circles to match visium staggered grid
-    centers <- data.table::rbindlist(lapply(seq_along(y_seq), function(i) {
+    centers <- data.table::rbindlist(lapply(1:length(y_seq), function(i) {
         x_start <- if (i %% 2 == 0) e[["xmin"]] + radius + (2 * radius + gap) / 2 else e[["xmin"]] + radius
         x_seq <- seq(x_start, e[["xmax"]] - radius, by = 2 * radius + gap)
         data.table::data.table(sdimx = x_seq, sdimy = y_seq[i])

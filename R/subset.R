@@ -70,7 +70,7 @@
 
 
     # for each selected expr, perform up to 2 subsets #
-    lapply(seq_len(nrow(avail_ex)), function(ex_i) {
+    lapply(seq(nrow(avail_ex)), function(ex_i) {
         ex <- getExpression(
             gobject = gobject,
             spat_unit = avail_ex[ex_i]$spat_unit,
@@ -138,7 +138,7 @@
     }
 
     # for each selected spatlocs, perform subset
-    lapply(seq_len(nrow(avail_locs)), function(sl_i) {
+    lapply(seq(nrow(avail_locs)), function(sl_i) {
         spatObj <- get_spatial_locations(
             gobject = gobject,
             spat_unit = avail_locs[sl_i]$spat_unit,
@@ -191,7 +191,7 @@
     }
 
     # for each selected cellmeta, perform subset
-    lapply(seq_len(nrow(avail_cm)), function(cm_i) {
+    lapply(seq(nrow(avail_cm)), function(cm_i) {
         cm <- get_cell_metadata(
             gobject = gobject,
             spat_unit = avail_cm[cm_i]$spat_unit,
@@ -239,7 +239,7 @@
     }
 
     # for each selected featmeta, perform subset
-    lapply(seq_len(nrow(avail_fm)), function(fm_i) {
+    lapply(seq(nrow(avail_fm)), function(fm_i) {
         fm <- get_feature_metadata(
             gobject = gobject,
             spat_unit = avail_fm[fm_i]$spat_unit,
@@ -285,7 +285,7 @@
     }
 
     # for each selected spatnet, perform subset
-    lapply(seq_len(nrow(avail_sn)), function(sn_i) {
+    lapply(seq(nrow(avail_sn)), function(sn_i) {
         sn <- get_spatialNetwork(
             gobject = gobject,
             spat_unit = avail_sn[sn_i]$spat_unit,
@@ -357,7 +357,7 @@
     # and feature dim reducs (fdr), as in the two types of info are always
     # entirely different objects. Subset operation only needs to be performed
     # once per object, so there should be no limitations on mirai usage.
-    lapply(seq_len(nrow(avail_cdr)), function(cdr_i) {
+    lapply(seq(nrow(avail_cdr)), function(cdr_i) {
         cdr <- get_dimReduction(
             gobject = gobject,
             spat_unit = avail_cdr[cdr_i]$spat_unit,
@@ -380,7 +380,7 @@
         return(NULL) # ignore this
     })
 
-    lapply(seq_len(nrow(avail_fdr)), function(fdr_i) {
+    lapply(seq(nrow(avail_fdr)), function(fdr_i) {
         fdr <- get_dimReduction(
             gobject = gobject,
             spat_unit = avail_fdr[fdr_i]$spat_unit,
@@ -433,7 +433,7 @@
     }
 
     # for each selected nearest net, perform subset
-    lapply(seq_len(nrow(avail_nn)), function(nn_i) {
+    lapply(seq(nrow(avail_nn)), function(nn_i) {
         nnObj <- get_NearestNetwork(
             gobject = gobject,
             spat_unit = avail_nn[nn_i]$spat_unit,
@@ -480,7 +480,7 @@
     }
 
     # for each selected spatial enrichment, perform subset
-    lapply(seq_len(nrow(avail_enr)), function(enr_i) {
+    lapply(seq(nrow(avail_enr)), function(enr_i) {
         spatEnrObj <- get_spatial_enrichment(
             gobject = gobject,
             spat_unit = avail_enr[enr_i]$spat_unit,
@@ -1931,7 +1931,7 @@ subsetGiottoLocsSubcellular <- function(gobject,
 #     spat_unit = spat_unit
 #   )
 #
-#   prov_ex = lapply(seq_len(nrow(avail_ex)), function(ex_i) {
+#   prov_ex = lapply(seq(nrow(avail_ex)), function(ex_i) {
 #     ex = getExpression(
 #       gobject = gobject,
 #       spat_unit = avail_ex[ex_i]$spat_unit,
@@ -1942,7 +1942,7 @@ subsetGiottoLocsSubcellular <- function(gobject,
 #
 #     c(spatUnit(ex), prov(ex))
 #   })
-#   prov_sl = lapply(seq_len(nrow(avail_sl)), function(sl_i) {
+#   prov_sl = lapply(seq(nrow(avail_sl)), function(sl_i) {
 #     sl = getSpatialLocations(
 #       gobject = gobject,
 #       spat_unit = avail_sl[sl_i]$spat_unit,

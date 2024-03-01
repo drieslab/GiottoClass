@@ -1224,7 +1224,7 @@ createMetafeats <- function(gobject,
     # metadata
     avail_cm <- list_cell_metadata(gobject)
     if (!is.null(avail_cm)) {
-        for (cm_i in seq_len(nrow(avail_cm))) {
+        for (cm_i in seq(nrow(avail_cm))) {
             cm <- get_cell_metadata(
                 gobject = gobject,
                 spat_unit = avail_cm[cm_i, spat_unit],
@@ -1246,7 +1246,7 @@ createMetafeats <- function(gobject,
 
     avail_fm <- list_feat_metadata(gobject)
     if (!is.null(avail_fm)) {
-        for (fm_i in seq_len(nrow(avail_fm))) {
+        for (fm_i in seq(nrow(avail_fm))) {
             fm <- get_feature_metadata(
                 gobject = gobject,
                 spat_unit = avail_fm[fm_i, spat_unit],
@@ -1269,7 +1269,7 @@ createMetafeats <- function(gobject,
     # spatlocs
     avail_sl <- list_spatial_locations(gobject)
     if (!is.null(avail_sl)) {
-        for (sl_i in seq_len(nrow(avail_sl))) {
+        for (sl_i in seq(nrow(avail_sl))) {
             sl <- get_spatial_locations(
                 gobject = gobject,
                 spat_unit = avail_sl[sl_i, spat_unit],
@@ -1292,7 +1292,7 @@ createMetafeats <- function(gobject,
     # spatial enrichment
     avail_se <- list_spatial_enrichments(gobject)
     if (!is.null(avail_se)) {
-        for (se_i in seq_len(nrow(avail_se))) {
+        for (se_i in seq(nrow(avail_se))) {
             se <- get_spatial_enrichment(
                 gobject = gobject,
                 spat_unit = avail_se[se_i, spat_unit],
@@ -1316,7 +1316,7 @@ createMetafeats <- function(gobject,
     # spatial network
     avail_sn <- list_spatial_networks(gobject)
     if (!is.null(avail_sn)) {
-        for (sn_i in seq_len(nrow(avail_sn))) {
+        for (sn_i in seq(nrow(avail_sn))) {
             sn <- get_spatialNetwork(
                 gobject = gobject,
                 spat_unit = avail_sn[sn_i, spat_unit],
@@ -1341,7 +1341,7 @@ createMetafeats <- function(gobject,
     # spatial grid
     avail_sg <- list_spatial_grids(gobject)
     if (!is.null(avail_sg)) {
-        for (sg_i in seq_len(nrow(avail_sg))) {
+        for (sg_i in seq(nrow(avail_sg))) {
             sg <- get_spatialGrid(
                 gobject = gobject,
                 spat_unit = avail_sg[sg_i, spat_unit],

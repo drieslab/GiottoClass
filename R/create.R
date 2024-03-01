@@ -422,7 +422,7 @@ createGiottoObject <- function(expression,
         if (is.null(spatial_grid_name) | length(spatial_grid) != length(spatial_grid_name)) {
             stop("\n each spatial grid must be given a unique name \n")
         } else {
-            for (grid_i in seq_along(spatial_grid)) {
+            for (grid_i in 1:length(spatial_grid)) {
                 gridname <- spatial_grid_name[[grid_i]]
                 grid <- spatial_grid[[grid_i]]
 
@@ -528,10 +528,10 @@ createGiottoObject <- function(expression,
     # prefer to make giottoImage creation separate from this function
     if (!is.null(images)) {
         if (is.null(names(images))) {
-            names(images) <- paste0("image.", seq_along(images))
+            names(images) <- paste0("image.", 1:length(images))
         }
 
-        for (image_i in seq_along(images)) {
+        for (image_i in 1:length(images)) {
             im <- images[[image_i]]
             im_name <- names(images)[[image_i]]
 
@@ -826,7 +826,7 @@ createGiottoObjectSubcellular <- function(
         if (is.null(spatial_network_name) | length(spatial_network) != length(spatial_network_name)) {
             stop("\n each spatial network must be given a unique name \n")
         } else {
-            for (network_i in seq_along(spatial_network)) {
+            for (network_i in 1:length(spatial_network)) {
                 networkname <- spatial_network_name[[network_i]]
                 network <- spatial_network[[network_i]]
 
@@ -866,7 +866,7 @@ createGiottoObjectSubcellular <- function(
         if (is.null(spatial_grid_name) | length(spatial_grid) != length(spatial_grid_name)) {
             stop("\n each spatial grid must be given a unique name \n")
         } else {
-            for (grid_i in seq_along(spatial_grid)) {
+            for (grid_i in 1:length(spatial_grid)) {
                 gridname <- spatial_grid_name[[grid_i]]
                 grid <- spatial_grid[[grid_i]]
 
@@ -906,7 +906,7 @@ createGiottoObjectSubcellular <- function(
         if (is.null(spatial_enrichment_name) | length(spatial_enrichment) != length(spatial_enrichment_name)) {
             stop("\n each spatial enrichment data.table or data.frame must be given a unique name \n")
         } else {
-            for (spat_enrich_i in seq_along(spatial_enrichment)) {
+            for (spat_enrich_i in 1:length(spatial_enrichment)) {
                 spatenrichname <- spatial_enrichment_name[[spat_enrich_i]]
                 spatenrich <- spatial_enrichment[[spat_enrich_i]]
 
@@ -922,7 +922,7 @@ createGiottoObjectSubcellular <- function(
 
     ## dimension reduction
     if (!is.null(dimension_reduction)) {
-        for (dim_i in seq_along(dimension_reduction)) {
+        for (dim_i in 1:length(dimension_reduction)) {
             dim_red <- dimension_reduction[[dim_i]]
 
             if (all(c("type", "name", "reduction_method", "coordinates", "misc") %in% names(dim_red))) {
@@ -946,7 +946,7 @@ createGiottoObjectSubcellular <- function(
 
     # NN network
     if (!is.null(nn_network)) {
-        for (nn_i in seq_along(nn_network)) {
+        for (nn_i in 1:length(nn_network)) {
             nn_netw <- nn_network[[nn_i]]
 
             if (all(c("type", "name", "igraph") %in% names(nn_netw))) {
@@ -970,10 +970,10 @@ createGiottoObjectSubcellular <- function(
     # expect a list of giotto object images
     if (!is.null(images)) {
         if (is.null(names(images))) {
-            names(images) <- paste0("image.", seq_along(images))
+            names(images) <- paste0("image.", 1:length(images))
         }
 
-        for (image_i in seq_along(images)) {
+        for (image_i in 1:length(images)) {
             im <- images[[image_i]]
             im_name <- names(images)[[image_i]]
 
@@ -993,11 +993,11 @@ createGiottoObjectSubcellular <- function(
 
 
         if (is.null(names(largeImages))) {
-            names(largeImages) <- paste0("largeImage.", seq_along(largeImages))
+            names(largeImages) <- paste0("largeImage.", 1:length(largeImages))
         }
 
 
-        for (largeImage_i in seq_along(largeImages)) {
+        for (largeImage_i in 1:length(largeImages)) {
             im <- largeImages[[largeImage_i]]
             im_name <- names(largeImages)[[largeImage_i]]
 

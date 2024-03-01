@@ -1886,7 +1886,7 @@ addGiottoPolygons <- function(gobject,
 
 
     # add each giottoPoint object to the giotto object
-    for (gp_i in seq_along(gpolygons)) {
+    for (gp_i in 1:length(gpolygons)) {
         gp <- gpolygons[[gp_i]]
 
         # check if giottoPoint object
@@ -2062,7 +2062,7 @@ addGiottoPoints <- function(gobject,
 
 
     # add each giottoPoint object to the giotto object
-    for (gp_i in seq_along(gpoints)) {
+    for (gp_i in 1:length(gpoints)) {
         gp <- gpoints[[gp_i]]
 
         # check if giottoPoint object

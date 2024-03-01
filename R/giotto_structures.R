@@ -596,7 +596,7 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
 
     ## 3. keep minimum and filter
     if (verbose == TRUE) cat("Filter output for distance and minimum neighbours \n")
-    knn_sptial.norm[, rank := seq_len(.N), by = "from"]
+    knn_sptial.norm[, rank := 1:.N, by = "from"]
 
     if (minimum_k != 0) {
         filter_bool <- knn_sptial.norm$rank <= minimum_k
