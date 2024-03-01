@@ -2028,23 +2028,21 @@ setMethod(
 
     # try success means it should be mask file
     # try failure means it should be vector file
-    try_rast <- try(
+    try_rast <- tryCatch(
       {
         terra::rast(x)
       },
-      silent = TRUE
+      error = function(e) return(invisible(NULL)),
+      warning = function(w) {NULL}
     )
 
     # mask workflow
     if (inherits(try_rast, "SpatRaster")) {
-      return(createGiottoPolygon(x, ...))
+      return(createGiottoPolygon(try_rast, ...))
     }
 
     # file workflow
-    return(createGiottoPolygon(
-      x = terra::vect(x),
-      ...
-    ))
+    return(createGiottoPolygon(x = terra::vect(x), ...))
   }
 )
 
