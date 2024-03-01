@@ -13,6 +13,6 @@ NULL
 #' @describeIn copy Copy \emph{data.table}-based spatial locations object.
 #' @export
 setMethod("copy", signature(x = "coordDataDT"), function(x) {
-  x@coordinates <- data.table::copy(x@coordinates)
-  x
+    x@coordinates <- data.table::copy(x@coordinates)
+    x
 })

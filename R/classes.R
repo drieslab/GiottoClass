@@ -40,8 +40,8 @@ setClassUnion("gIndex", c("numeric", "logical", "character"))
 #' @keywords internal
 #' @noRd
 setClass(
-  "giottoSubobject",
-  contains = "VIRTUAL"
+    "giottoSubobject",
+    contains = "VIRTUAL"
 )
 
 # ** gdtData Class ####
@@ -51,8 +51,8 @@ setClass(
 #' @keywords internal
 #' @noRd
 setClass(
-  "gdtData",
-  contains = "VIRTUAL"
+    "gdtData",
+    contains = "VIRTUAL"
 )
 
 
@@ -60,9 +60,9 @@ setClass(
 #' @keywords internal
 #' @noRd
 setClass("nameData",
-  contains = "VIRTUAL",
-  slots = list(name = "character"),
-  prototype = prototype(name = NA_character_)
+    contains = "VIRTUAL",
+    slots = list(name = "character"),
+    prototype = prototype(name = NA_character_)
 )
 
 # ** exprData Class ####
@@ -70,9 +70,9 @@ setClass("nameData",
 #' @keywords internal
 #' @noRd
 setClass("exprData",
-  contains = "VIRTUAL",
-  slots = list(exprMat = "ANY"),
-  prototype = prototype(exprMat = NULL)
+    contains = "VIRTUAL",
+    slots = list(exprMat = "ANY"),
+    prototype = prototype(exprMat = NULL)
 )
 
 
@@ -87,9 +87,9 @@ setClass("exprData",
 #' @keywords internal
 #' @noRd
 setClass("coordDataDT",
-  contains = c("VIRTUAL", "gdtData"),
-  slots = list(coordinates = "data.table"),
-  prototype = prototype(coordinates = data.table::data.table())
+    contains = c("VIRTUAL", "gdtData"),
+    slots = list(coordinates = "data.table"),
+    prototype = prototype(coordinates = data.table::data.table())
 )
 
 
@@ -110,15 +110,15 @@ setClass("coordDataDT",
 #' @keywords internal
 #' @noRd
 setClass("metaData",
-  contains = c("VIRTUAL", "gdtData"),
-  slots = list(
-    metaDT = "data.table",
-    col_desc = "character"
-  ),
-  prototype = methods::prototype(
-    metaDT = data.table::data.table(),
-    col_desc = NA_character_
-  )
+    contains = c("VIRTUAL", "gdtData"),
+    slots = list(
+        metaDT = "data.table",
+        col_desc = "character"
+    ),
+    prototype = methods::prototype(
+        metaDT = data.table::data.table(),
+        col_desc = NA_character_
+    )
 )
 
 
@@ -130,15 +130,15 @@ setClass("metaData",
 #' @keywords internal
 #' @noRd
 setClass("enrData",
-  contains = c("VIRTUAL", "gdtData"),
-  slots = list(
-    method = "character",
-    enrichDT = "nullOrDatatable"
-  ),
-  prototype = methods::prototype(
-    method = NA_character_,
-    enrichDT = NULL
-  )
+    contains = c("VIRTUAL", "gdtData"),
+    slots = list(
+        method = "character",
+        enrichDT = "nullOrDatatable"
+    ),
+    prototype = methods::prototype(
+        method = NA_character_,
+        enrichDT = NULL
+    )
 )
 
 
@@ -149,15 +149,15 @@ setClass("enrData",
 #' @keywords internal
 #' @noRd
 setClass("nnData",
-  contains = "VIRTUAL",
-  slots = list(
-    nn_type = "character",
-    igraph = "ANY"
-  ),
-  prototype = methods::prototype(
-    nn_type = NA_character_,
-    igraph = NULL
-  )
+    contains = "VIRTUAL",
+    slots = list(
+        nn_type = "character",
+        igraph = "ANY"
+    ),
+    prototype = methods::prototype(
+        nn_type = NA_character_,
+        igraph = NULL
+    )
 )
 
 
@@ -165,23 +165,23 @@ setClass("nnData",
 #' @keywords internal
 #' @noRd
 setClass("spatNetData",
-  contains = "VIRTUAL",
-  slots = list(
-    method = "character",
-    parameters = "ANY",
-    outputObj = "ANY",
-    networkDT = "nullOrDatatable",
-    networkDT_before_filter = "nullOrDatatable",
-    cellShapeObj = "ANY"
-  ),
-  prototype = methods::prototype(
-    method = NA_character_,
-    parameters = NULL,
-    outputObj = NULL,
-    networkDT = NULL,
-    networkDT_before_filter = NULL,
-    cellShapeObj = NULL
-  )
+    contains = "VIRTUAL",
+    slots = list(
+        method = "character",
+        parameters = "ANY",
+        outputObj = "ANY",
+        networkDT = "nullOrDatatable",
+        networkDT_before_filter = "nullOrDatatable",
+        cellShapeObj = "ANY"
+    ),
+    prototype = methods::prototype(
+        method = NA_character_,
+        parameters = NULL,
+        outputObj = NULL,
+        networkDT = NULL,
+        networkDT_before_filter = NULL,
+        cellShapeObj = NULL
+    )
 )
 
 
@@ -191,17 +191,17 @@ setClass("spatNetData",
 #' @keywords internal
 #' @noRd
 setClass("spatGridData",
-  contains = "VIRTUAL",
-  slots = list(
-    method = "character",
-    parameters = "ANY",
-    gridDT = "nullOrDatatable"
-  ),
-  prototype = prototype(
-    method = NA_character_,
-    parameters = NULL,
-    gridDT = NULL
-  )
+    contains = "VIRTUAL",
+    slots = list(
+        method = "character",
+        parameters = "ANY",
+        gridDT = "nullOrDatatable"
+    ),
+    prototype = prototype(
+        method = NA_character_,
+        parameters = NULL,
+        gridDT = NULL
+    )
 )
 
 
@@ -220,9 +220,9 @@ setClass("spatGridData",
 #' @keywords internal
 #' @noRd
 setClass("provData",
-  contains = "VIRTUAL",
-  slots = list(provenance = "ANY"),
-  prototype = prototype(provenance = NULL)
+    contains = "VIRTUAL",
+    slots = list(provenance = "ANY"),
+    prototype = prototype(provenance = NULL)
 )
 
 
@@ -238,9 +238,9 @@ setClass("provData",
 #' @keywords internal
 #' @noRd
 setClass("spatData",
-  contains = c("provData", "VIRTUAL"),
-  slots = list(spat_unit = "character"), # not allowed to be NULL
-  prototype = prototype(spat_unit = NA_character_)
+    contains = c("provData", "VIRTUAL"),
+    slots = list(spat_unit = "character"), # not allowed to be NULL
+    prototype = prototype(spat_unit = NA_character_)
 )
 
 
@@ -258,9 +258,9 @@ setClass("spatData",
 #' @keywords internal
 #' @noRd
 setClass("featData",
-  contains = "VIRTUAL",
-  slots = list(feat_type = "character"), # not allowed to be NULL
-  prototype = prototype(feat_type = NA_character_)
+    contains = "VIRTUAL",
+    slots = list(feat_type = "character"), # not allowed to be NULL
+    prototype = prototype(feat_type = NA_character_)
 )
 
 
@@ -273,9 +273,9 @@ setClass("featData",
 #' use the misc slot to hold additional information specific to each method.
 #' Information may be stored within as S3 structures.
 setClass("miscData",
-  contains = "VIRTUAL",
-  slots = list(misc = "ANY"),
-  prototype = prototype(misc = NULL)
+    contains = "VIRTUAL",
+    slots = list(misc = "ANY"),
+    prototype = prototype(misc = NULL)
 )
 
 
@@ -285,10 +285,10 @@ setClass("miscData",
 #' Classes that inherit from this class will contain a spatVector slot meant to
 #' hold and work with terra SpatVector objects
 terraVectData <- setClass(
-  "terraVectData",
-  contains = "VIRTUAL",
-  slots = list(spatVector = "ANY"),
-  prototype = prototype(spatVector = NULL)
+    "terraVectData",
+    contains = "VIRTUAL",
+    slots = list(spatVector = "ANY"),
+    prototype = prototype(spatVector = NULL)
 )
 
 
@@ -302,7 +302,7 @@ terraVectData <- setClass(
 #' @keywords internal
 #' @noRd
 setClass("spatFeatData",
-  contains = c("spatData", "featData", "VIRTUAL")
+    contains = c("spatData", "featData", "VIRTUAL")
 )
 
 
@@ -319,19 +319,19 @@ setClass("spatFeatData",
 
 
 .versions_info <- function() {
-  list(
-    os_platform = get_os(),
-    gclass = packageVersion("GiottoClass")
-  )
+    list(
+        os_platform = get_os(),
+        gclass = packageVersion("GiottoClass")
+    )
 }
 
 .gversion <- function(gobject) {
-  gobject@versions$gclass
+    gobject@versions$gclass
 }
 
 `.gversion<-` <- function(gobject, value) {
-  gobject@versions$gclass <- value
-  return(gobject)
+    gobject@versions$gclass <- value
+    return(gobject)
 }
 
 
@@ -352,55 +352,57 @@ setClass("spatFeatData",
 #' }
 #' @export
 updateGiottoObject <- function(gobject) {
-  if (!inherits(gobject, "giotto")) {
-    stop(wrap_txt("This function is intended for updating giotto objects"))
-  }
+    if (!inherits(gobject, "giotto")) {
+        stop(wrap_txt("This function is intended for updating giotto objects"))
+    }
 
-  # [Giotto versions (pre-modularization)] ---------------------------------- #
-  # 3.2.0 release adds multiomics slot
-  if (is.null(attr(gobject, "multiomics"))) {
-    attr(gobject, "multiomics") <- NA
-    gobject@multiomics <- NULL
-  }
+    # [Giotto versions (pre-modularization)] ---------------------------------- #
+    # 3.2.0 release adds multiomics slot
+    if (is.null(attr(gobject, "multiomics"))) {
+        attr(gobject, "multiomics") <- NA
+        gobject@multiomics <- NULL
+    }
 
-  # 3.3.1 release adds h5_file slot
-  if (is.null(attr(gobject, "h5_file"))) {
-    attr(gobject, "h5_file") <- NA
-    gobject@h5_file <- NULL
-  }
+    # 3.3.1 release adds h5_file slot
+    if (is.null(attr(gobject, "h5_file"))) {
+        attr(gobject, "h5_file") <- NA
+        gobject@h5_file <- NULL
+    }
 
-  # [Switch to GiottoClass versioning] -------------------------------------- #
-  # GiottoClass 0.1.2 adds max_window and colors slots to giottoLargeImage
-  if (!is.null(gobject@largeImages)) {
-    gobject@largeImages <- lapply(gobject@largeImages, .update_giotto_image)
-  }
+    # [Switch to GiottoClass versioning] -------------------------------------- #
+    # GiottoClass 0.1.2 adds max_window and colors slots to giottoLargeImage
+    if (!is.null(gobject@largeImages)) {
+        gobject@largeImages <- lapply(gobject@largeImages, .update_giotto_image)
+    }
 
-  # GiottoClass 0.1.4 supercedes @OS_platform with @versions slot
-  if (!is.null(attr(gobject, "OS_platform"))) {
-    attr(gobject, "OS_platform") <- NULL
-  }
-  if (is.null(attr(gobject, "versions"))) {
-    attr(gobject, "versions") <- .versions_info()
-    gobject@versions$gclass <- 0 # untracked
-  }
+    # GiottoClass 0.1.4 supercedes @OS_platform with @versions slot
+    if (!is.null(attr(gobject, "OS_platform"))) {
+        attr(gobject, "OS_platform") <- NULL
+    }
+    if (is.null(attr(gobject, "versions"))) {
+        attr(gobject, "versions") <- .versions_info()
+        gobject@versions$gclass <- 0 # untracked
+    }
 
-  if (.gversion(gobject) > packageVersion("GiottoClass")) {
-    warning(
-      call. = FALSE,
-      sprintf("This giotto object was created in a newer version of GiottoClass (v%s)",
-              as.character(.gversion(gobject)))
-    )
-  }
+    if (.gversion(gobject) > packageVersion("GiottoClass")) {
+        warning(
+            call. = FALSE,
+            sprintf(
+                "This giotto object was created in a newer version of GiottoClass (v%s)",
+                as.character(.gversion(gobject))
+            )
+        )
+    }
 
-  # [version-based updates] ------------------------------------------------- #
+    # [version-based updates] ------------------------------------------------- #
 
 
-  # ------------------------------------------------------------------------- #
+    # ------------------------------------------------------------------------- #
 
-  # finally, set updated version number
-  .gversion(gobject) <- packageVersion("GiottoClass")
+    # finally, set updated version number
+    .gversion(gobject) <- packageVersion("GiottoClass")
 
-  return(gobject)
+    return(gobject)
 }
 
 
@@ -461,61 +463,61 @@ updateGiottoObject <- function(gobject) {
 #' @export giotto
 #' @exportClass giotto
 giotto <- setClass(
-  "giotto",
-  slots = c(
-    expression = "nullOrList",
-    expression_feat = "ANY",
-    spatial_locs = "ANY",
-    spatial_info = "ANY",
-    cell_metadata = "ANY",
-    feat_metadata = "ANY",
-    feat_info = "ANY",
-    cell_ID = "ANY",
-    feat_ID = "ANY",
-    spatial_network = "ANY",
-    spatial_grid = "ANY",
-    spatial_enrichment = "ANY",
-    dimension_reduction = "ANY",
-    nn_network = "ANY",
-    images = "ANY",
-    largeImages = "ANY",
-    parameters = "ANY",
-    instructions = "ANY",
-    offset_file = "ANY",
-    versions = "list",
-    join_info = "ANY",
-    multiomics = "ANY",
-    h5_file = "ANY"
-    # mirai = 'list'
-  ),
-  prototype = list(
-    expression = NULL,
-    expression_feat = NULL,
-    spatial_locs = NULL,
-    spatial_info = NULL,
-    cell_metadata = NULL,
-    feat_metadata = NULL,
-    feat_info = NULL,
-    cell_ID = NULL,
-    feat_ID = NULL,
-    spatial_network = NULL,
-    spatial_grid = NULL,
-    spatial_enrichment = NULL,
-    dimension_reduction = NULL,
-    nn_network = NULL,
-    images = NULL,
-    largeImages = NULL,
-    parameters = list(),
-    instructions = NULL,
-    offset_file = NULL,
-    versions = .versions_info(),
-    join_info = NULL,
-    multiomics = NULL,
-    h5_file = NULL
-    # mirai = list()
-  )
+    "giotto",
+    slots = c(
+        expression = "nullOrList",
+        expression_feat = "ANY",
+        spatial_locs = "ANY",
+        spatial_info = "ANY",
+        cell_metadata = "ANY",
+        feat_metadata = "ANY",
+        feat_info = "ANY",
+        cell_ID = "ANY",
+        feat_ID = "ANY",
+        spatial_network = "ANY",
+        spatial_grid = "ANY",
+        spatial_enrichment = "ANY",
+        dimension_reduction = "ANY",
+        nn_network = "ANY",
+        images = "ANY",
+        largeImages = "ANY",
+        parameters = "ANY",
+        instructions = "ANY",
+        offset_file = "ANY",
+        versions = "list",
+        join_info = "ANY",
+        multiomics = "ANY",
+        h5_file = "ANY"
+        # mirai = 'list'
+    ),
+    prototype = list(
+        expression = NULL,
+        expression_feat = NULL,
+        spatial_locs = NULL,
+        spatial_info = NULL,
+        cell_metadata = NULL,
+        feat_metadata = NULL,
+        feat_info = NULL,
+        cell_ID = NULL,
+        feat_ID = NULL,
+        spatial_network = NULL,
+        spatial_grid = NULL,
+        spatial_enrichment = NULL,
+        dimension_reduction = NULL,
+        nn_network = NULL,
+        images = NULL,
+        largeImages = NULL,
+        parameters = list(),
+        instructions = NULL,
+        offset_file = NULL,
+        versions = .versions_info(),
+        join_info = NULL,
+        multiomics = NULL,
+        h5_file = NULL
+        # mirai = list()
+    )
 
-  # validity = check_giotto_obj
+    # validity = check_giotto_obj
 )
 
 
@@ -539,57 +541,57 @@ giotto <- setClass(
 # not intended to be used until after unwrapped to giotto class
 # does not inherit giotto to avoid any method inheritance
 setClass(
-  "packedGiotto",
-  slots = c(
-    packed_spatial_info = "ANY",
-    packed_feat_info = "ANY",
-    expression = "nullOrList",
-    expression_feat = "ANY",
-    spatial_locs = "ANY",
-    cell_metadata = "ANY",
-    feat_metadata = "ANY",
-    cell_ID = "ANY",
-    feat_ID = "ANY",
-    spatial_network = "ANY",
-    spatial_grid = "ANY",
-    spatial_enrichment = "ANY",
-    dimension_reduction = "ANY",
-    nn_network = "ANY",
-    images = "ANY",
-    largeImages = "ANY",
-    parameters = "ANY",
-    instructions = "ANY",
-    offset_file = "ANY",
-    versions = "ANY",
-    join_info = "ANY",
-    multiomics = "ANY",
-    h5_file = "ANY"
-  ),
-  prototype = list(
-    packed_spatial_info = NULL,
-    packed_feat_info = NULL,
-    expression = NULL,
-    expression_feat = NULL,
-    spatial_locs = NULL,
-    cell_metadata = NULL,
-    feat_metadata = NULL,
-    cell_ID = NULL,
-    feat_ID = NULL,
-    spatial_network = NULL,
-    spatial_grid = NULL,
-    spatial_enrichment = NULL,
-    dimension_reduction = NULL,
-    nn_network = NULL,
-    images = NULL,
-    largeImages = NULL,
-    parameters = NULL,
-    instructions = NULL,
-    offset_file = NULL,
-    versions = NULL,
-    join_info = NULL,
-    multiomics = NULL,
-    h5_file = NULL
-  )
+    "packedGiotto",
+    slots = c(
+        packed_spatial_info = "ANY",
+        packed_feat_info = "ANY",
+        expression = "nullOrList",
+        expression_feat = "ANY",
+        spatial_locs = "ANY",
+        cell_metadata = "ANY",
+        feat_metadata = "ANY",
+        cell_ID = "ANY",
+        feat_ID = "ANY",
+        spatial_network = "ANY",
+        spatial_grid = "ANY",
+        spatial_enrichment = "ANY",
+        dimension_reduction = "ANY",
+        nn_network = "ANY",
+        images = "ANY",
+        largeImages = "ANY",
+        parameters = "ANY",
+        instructions = "ANY",
+        offset_file = "ANY",
+        versions = "ANY",
+        join_info = "ANY",
+        multiomics = "ANY",
+        h5_file = "ANY"
+    ),
+    prototype = list(
+        packed_spatial_info = NULL,
+        packed_feat_info = NULL,
+        expression = NULL,
+        expression_feat = NULL,
+        spatial_locs = NULL,
+        cell_metadata = NULL,
+        feat_metadata = NULL,
+        cell_ID = NULL,
+        feat_ID = NULL,
+        spatial_network = NULL,
+        spatial_grid = NULL,
+        spatial_enrichment = NULL,
+        dimension_reduction = NULL,
+        nn_network = NULL,
+        images = NULL,
+        largeImages = NULL,
+        parameters = NULL,
+        instructions = NULL,
+        offset_file = NULL,
+        versions = NULL,
+        join_info = NULL,
+        multiomics = NULL,
+        h5_file = NULL
+    )
 )
 
 
@@ -611,22 +613,22 @@ setClass(
 #' @param object S4 exprObj to check
 #' @keywords internal
 .check_expr_obj <- function(object) {
-  errors <- character()
+    errors <- character()
 
-  # Check for expr info
-  if (is.null(slot(object, "exprMat"))) {
-    obj_info <- paste0(
-      "exprObj ",
-      'spat_unit "', slot(object, "spat_unit"), '", ',
-      'feat_type "', slot(object, "feat_type"), '", ',
-      'name "', slot(object, "name"), '": \n'
-    )
+    # Check for expr info
+    if (is.null(slot(object, "exprMat"))) {
+        obj_info <- paste0(
+            "exprObj ",
+            'spat_unit "', slot(object, "spat_unit"), '", ',
+            'feat_type "', slot(object, "feat_type"), '", ',
+            'name "', slot(object, "name"), '": \n'
+        )
 
-    msg <- paste0(obj_info, "No expression information found.\n")
-    errors <- c(errors, msg)
-  }
+        msg <- paste0(obj_info, "No expression information found.\n")
+        errors <- c(errors, msg)
+    }
 
-  if (length(errors) == 0) TRUE else errors
+    if (length(errors) == 0) TRUE else errors
 }
 
 
@@ -644,8 +646,8 @@ setClass(
 #' @slot misc misc
 #' @exportClass exprObj
 exprObj <- setClass("exprObj",
-  contains = c("nameData", "exprData", "spatFeatData", "miscData", "giottoSubobject"),
-  validity = .check_expr_obj
+    contains = c("nameData", "exprData", "spatFeatData", "miscData", "giottoSubobject"),
+    validity = .check_expr_obj
 )
 
 
@@ -670,23 +672,23 @@ exprObj <- setClass("exprObj",
 #' @param object S4 cellMetaObj to check
 #' @keywords internal
 .check_cell_meta_obj <- function(object) {
-  errors <- character()
+    errors <- character()
 
-  if (!"cell_ID" %in% colnames(object@metaDT)) {
-    msg <- 'No "cell_ID" column found.'
-    errors <- c(errors, msg)
-  } else {
-    if (!is.character(object@metaDT[["cell_ID"]])) {
-      msg <- '"cell_ID" column must be of class character.'
-      errors <- c(errors, msg)
-    }
+    if (!"cell_ID" %in% colnames(object@metaDT)) {
+        msg <- 'No "cell_ID" column found.'
+        errors <- c(errors, msg)
+    } else {
+        if (!is.character(object@metaDT[["cell_ID"]])) {
+            msg <- '"cell_ID" column must be of class character.'
+            errors <- c(errors, msg)
+        }
 
-    if (colnames(object@metaDT)[[1]] != "cell_ID") {
-      msg <- '"cell_ID" column should be the first column.'
-      errors <- c(errors, msg)
+        if (colnames(object@metaDT)[[1]] != "cell_ID") {
+            msg <- '"cell_ID" column should be the first column.'
+            errors <- c(errors, msg)
+        }
     }
-  }
-  if (length(errors) == 0) TRUE else errors
+    if (length(errors) == 0) TRUE else errors
 }
 
 # * Definition ####
@@ -699,8 +701,8 @@ exprObj <- setClass("exprObj",
 #' @slot provenance origin data of aggregated expression information (if applicable)
 #' @exportClass cellMetaObj
 cellMetaObj <- setClass("cellMetaObj",
-  contains = c("metaData", "spatFeatData", "giottoSubobject"),
-  validity = .check_cell_meta_obj
+    contains = c("metaData", "spatFeatData", "giottoSubobject"),
+    validity = .check_cell_meta_obj
 )
 
 
@@ -715,23 +717,23 @@ cellMetaObj <- setClass("cellMetaObj",
 #' @param object S4 featMetaObj to check
 #' @keywords internal
 .check_feat_meta_obj <- function(object) {
-  errors <- character()
+    errors <- character()
 
-  if (!"feat_ID" %in% colnames(object@metaDT)) {
-    msg <- 'No "feat_ID" column found.'
-    errors <- c(errors, msg)
-  } else {
-    if (!is.character(object@metaDT[["feat_ID"]])) {
-      msg <- '"feat_ID" column must be of class character.'
-      errors <- c(errors, msg)
-    }
+    if (!"feat_ID" %in% colnames(object@metaDT)) {
+        msg <- 'No "feat_ID" column found.'
+        errors <- c(errors, msg)
+    } else {
+        if (!is.character(object@metaDT[["feat_ID"]])) {
+            msg <- '"feat_ID" column must be of class character.'
+            errors <- c(errors, msg)
+        }
 
-    if (colnames(object@metaDT)[[1]] != "feat_ID") {
-      msg <- '"feat_ID" column should be the first column.'
-      errors <- c(errors, msg)
+        if (colnames(object@metaDT)[[1]] != "feat_ID") {
+            msg <- '"feat_ID" column should be the first column.'
+            errors <- c(errors, msg)
+        }
     }
-  }
-  if (length(errors) == 0) TRUE else errors
+    if (length(errors) == 0) TRUE else errors
 }
 
 # * Definition ####
@@ -744,8 +746,8 @@ cellMetaObj <- setClass("cellMetaObj",
 #' @slot provenance origin data of aggregated expression information (if applicable)
 #' @exportClass featMetaObj
 featMetaObj <- setClass("featMetaObj",
-  contains = c("metaData", "spatFeatData", "giottoSubobject"),
-  validity = .check_feat_meta_obj
+    contains = c("metaData", "spatFeatData", "giottoSubobject"),
+    validity = .check_feat_meta_obj
 )
 
 
@@ -766,32 +768,32 @@ featMetaObj <- setClass("featMetaObj",
 #' @param object S4 dimObj to check
 #' @keywords internal
 .check_dim_obj <- function(object) {
-  errors <- character()
-  length_reduction_method <- length(object@reduction_method)
-  if (length_reduction_method > 1) {
-    msg <- paste0("reduction_method is length ", length_reduction_method, ". Should be 1")
-    errors <- c(errors, msg)
-  }
+    errors <- character()
+    length_reduction_method <- length(object@reduction_method)
+    if (length_reduction_method > 1) {
+        msg <- paste0("reduction_method is length ", length_reduction_method, ". Should be 1")
+        errors <- c(errors, msg)
+    }
 
-  if (length_reduction_method == 0) {
-    msg <- "A reduction_method must be given"
-    errors <- c(errors, msg)
-  }
+    if (length_reduction_method == 0) {
+        msg <- "A reduction_method must be given"
+        errors <- c(errors, msg)
+    }
 
-  lastCols <- tail(colnames(object@coordinates), 2)
-  col_dims <- all(grepl(pattern = "Dim.", x = lastCols))
-  if (!isTRUE(col_dims)) {
-    msg <- 'Dim reduction coordinates should be provided with dimensions ("Dim.#") as columns and samples as rows\n'
-    errors <- c(errors, msg)
-  }
+    lastCols <- tail(colnames(object@coordinates), 2)
+    col_dims <- all(grepl(pattern = "Dim.", x = lastCols))
+    if (!isTRUE(col_dims)) {
+        msg <- 'Dim reduction coordinates should be provided with dimensions ("Dim.#") as columns and samples as rows\n'
+        errors <- c(errors, msg)
+    }
 
-  # This check applied using .check_dimension_reduction()
-  # if(!inherits(rownames(object@coordinates, 'character'))) {
-  #   msg = 'Dim reduction coordinate rownames must be character'
-  #   errors = c(errors, msg)
-  # }
+    # This check applied using .check_dimension_reduction()
+    # if(!inherits(rownames(object@coordinates, 'character'))) {
+    #   msg = 'Dim reduction coordinate rownames must be character'
+    #   errors = c(errors, msg)
+    # }
 
-  if (length(errors) == 0) TRUE else errors
+    if (length(errors) == 0) TRUE else errors
 }
 
 
@@ -811,20 +813,20 @@ featMetaObj <- setClass("featMetaObj",
 #' @slot misc method-specific additional outputs
 #' @exportClass dimObj
 dimObj <- setClass("dimObj",
-  contains = c("nameData", "spatFeatData", "giottoSubobject"),
-  slots = c(
-    reduction = "character",
-    reduction_method = "character",
-    coordinates = "ANY",
-    misc = "ANY"
-  ),
-  prototype = list(
-    reduction = NA_character_,
-    reduction_method = NA_character_,
-    coordinates = NULL,
-    misc = NULL
-  ),
-  validity = .check_dim_obj
+    contains = c("nameData", "spatFeatData", "giottoSubobject"),
+    slots = c(
+        reduction = "character",
+        reduction_method = "character",
+        coordinates = "ANY",
+        misc = "ANY"
+    ),
+    prototype = list(
+        reduction = NA_character_,
+        reduction_method = NA_character_,
+        coordinates = NULL,
+        misc = NULL
+    ),
+    validity = .check_dim_obj
 )
 
 
@@ -841,17 +843,17 @@ dimObj <- setClass("dimObj",
 #' @param object S3 dimObj
 #' @keywords internal
 S3toS4dimObj <- function(object) {
-  if (!isS4(object)) {
-    object <- new("dimObj",
-      name = object$name,
-      feat_type = object$feat_type,
-      spat_unit = object$spat_unit,
-      reduction_method = object$reduction_method,
-      coordinates = object$coordinates,
-      misc = object$misc
-    )
-  }
-  object
+    if (!isS4(object)) {
+        object <- new("dimObj",
+            name = object$name,
+            feat_type = object$feat_type,
+            spat_unit = object$spat_unit,
+            reduction_method = object$reduction_method,
+            coordinates = object$coordinates,
+            misc = object$misc
+        )
+    }
+    object
 }
 
 
@@ -874,7 +876,7 @@ S3toS4dimObj <- function(object) {
 #' @slot misc misc
 #' @exportClass nnNetObj
 nnNetObj <- setClass("nnNetObj",
-  contains = c("nameData", "nnData", "spatFeatData", "miscData", "giottoSubobject")
+    contains = c("nameData", "nnData", "spatFeatData", "miscData", "giottoSubobject")
 )
 
 
@@ -908,25 +910,25 @@ nnNetObj <- setClass("nnNetObj",
 #' @param object S4 spatLocsObj to check
 #' @keywords internal
 .check_spat_locs_obj <- function(object) {
-  errors <- character()
+    errors <- character()
 
-  if (!"sdimx" %in% colnames(slot(object, "coordinates"))) {
-    msg <- 'Column "sdimx" for x spatial location was not found'
-    errors <- c(errors, msg)
-  }
+    if (!"sdimx" %in% colnames(slot(object, "coordinates"))) {
+        msg <- 'Column "sdimx" for x spatial location was not found'
+        errors <- c(errors, msg)
+    }
 
-  if (!"sdimy" %in% colnames(slot(object, "coordinates"))) {
-    msg <- 'Column "sdimy" for y spatial location was not found'
-    errors <- c(errors, msg)
-  }
+    if (!"sdimy" %in% colnames(slot(object, "coordinates"))) {
+        msg <- 'Column "sdimy" for y spatial location was not found'
+        errors <- c(errors, msg)
+    }
 
-  # Allow .check_spatial_location_data() to compensate for missing cell_ID
-  if (!"cell_ID" %in% colnames(slot(object, "coordinates"))) {
-    msg <- 'Column "cell_ID" for cell ID was not found'
-    errors <- c(errors, msg)
-  }
+    # Allow .check_spatial_location_data() to compensate for missing cell_ID
+    if (!"cell_ID" %in% colnames(slot(object, "coordinates"))) {
+        msg <- 'Column "cell_ID" for cell ID was not found'
+        errors <- c(errors, msg)
+    }
 
-  if (length(errors) == 0) TRUE else errors
+    if (length(errors) == 0) TRUE else errors
 }
 
 
@@ -941,8 +943,8 @@ nnNetObj <- setClass("nnNetObj",
 #' @slot provenance origin of aggregated information (if applicable)
 #' @exportClass spatLocsObj
 spatLocsObj <- setClass("spatLocsObj",
-  contains = c("nameData", "coordDataDT", "spatData", "miscData", "giottoSubobject"),
-  validity = .check_spat_locs_obj
+    contains = c("nameData", "coordDataDT", "spatData", "miscData", "giottoSubobject"),
+    validity = .check_spat_locs_obj
 )
 
 
@@ -969,25 +971,25 @@ spatLocsObj <- setClass("spatLocsObj",
 #' @param object S4 spatialNetworkObj to check
 #' @keywords internal
 .check_spat_net_obj <- function(object) {
-  errors <- character()
-  method_slot <- slot(object, "method")
-  length_method <- length(method_slot)
-  if (length_method > 1) {
-    msg <- paste0("method is length ", length_method, ". Should be 1")
-    errors <- c(errors, msg)
-  }
+    errors <- character()
+    method_slot <- slot(object, "method")
+    length_method <- length(method_slot)
+    if (length_method > 1) {
+        msg <- paste0("method is length ", length_method, ". Should be 1")
+        errors <- c(errors, msg)
+    }
 
-  # if(is.null(method_slot)) {
-  #   msg = 'A spatial network generation method must be given'
-  #   errors = c(errors, msg)
-  # }
+    # if(is.null(method_slot)) {
+    #   msg = 'A spatial network generation method must be given'
+    #   errors = c(errors, msg)
+    # }
 
-  if (is.null(object@networkDT) && is.null(object@networkDT_before_filter)) {
-    msg <- "No data in either networkDT or networkDT_before_filter slots.\nThis object contains no network information.\n"
-    errors <- c(errors, msg)
-  }
+    if (is.null(object@networkDT) && is.null(object@networkDT_before_filter)) {
+        msg <- "No data in either networkDT or networkDT_before_filter slots.\nThis object contains no network information.\n"
+        errors <- c(errors, msg)
+    }
 
-  if (length(errors) == 0) TRUE else errors
+    if (length(errors) == 0) TRUE else errors
 }
 
 
@@ -1012,10 +1014,10 @@ spatLocsObj <- setClass("spatLocsObj",
 #' slot (filtered).
 #' @export
 setClass("spatialNetworkObj",
-  contains = c("nameData", "spatNetData", "spatData", "miscData", "giottoSubobject"),
-  slots = c(crossSectionObjects = "ANY"),
-  prototype = list(crossSectionObjects = NULL),
-  validity = .check_spat_net_obj
+    contains = c("nameData", "spatNetData", "spatData", "miscData", "giottoSubobject"),
+    slots = c(crossSectionObjects = "ANY"),
+    prototype = list(crossSectionObjects = NULL),
+    validity = .check_spat_net_obj
 )
 
 
@@ -1035,22 +1037,22 @@ setClass("spatialNetworkObj",
 #' @param spat_unit spatial unit metadata to append
 #' @keywords internal
 S3toS4spatNetObj <- function(object,
-                             spat_unit = NULL) {
-  if (!isS4(object)) {
-    object <- new("spatialNetworkObj",
-      name = object$name,
-      method = object$method,
-      parameters = object$parameters,
-      outputObj = object$outputObj,
-      networkDT = object$networkDT,
-      networkDT_before_filter = object$networkDT_before_filter,
-      cellShapeObj = object$cellShapeObj,
-      crossSectionObjects = object$crossSectionObjects,
-      spat_unit = spat_unit,
-      misc = object$misc
-    )
-  }
-  object
+    spat_unit = NULL) {
+    if (!isS4(object)) {
+        object <- new("spatialNetworkObj",
+            name = object$name,
+            method = object$method,
+            parameters = object$parameters,
+            outputObj = object$outputObj,
+            networkDT = object$networkDT,
+            networkDT_before_filter = object$networkDT_before_filter,
+            cellShapeObj = object$cellShapeObj,
+            crossSectionObjects = object$crossSectionObjects,
+            spat_unit = spat_unit,
+            misc = object$misc
+        )
+    }
+    object
 }
 
 
@@ -1077,25 +1079,25 @@ S3toS4spatNetObj <- function(object,
 #' @param object S4 spatialGridObj to check
 #' @keywords internal
 .check_spat_grid_obj <- function(object) {
-  errors <- character()
-  method_slot <- slot(object, "method")
-  length_method <- length(method_slot)
-  if (length_method > 1) {
-    msg <- paste0("method is length ", length_method, ". Should be 1")
-    errors <- c(errors, msg)
-  }
+    errors <- character()
+    method_slot <- slot(object, "method")
+    length_method <- length(method_slot)
+    if (length_method > 1) {
+        msg <- paste0("method is length ", length_method, ". Should be 1")
+        errors <- c(errors, msg)
+    }
 
-  # if(is.null(method_slot)) {
-  #   msg = 'A grid generation method must be given'
-  #   errors = c(errors, msg)
-  # }
+    # if(is.null(method_slot)) {
+    #   msg = 'A grid generation method must be given'
+    #   errors = c(errors, msg)
+    # }
 
-  if (is.null(object@gridDT)) {
-    msg <- "No data in gridDT slot.\nThis object contains no spatial grid information\n"
-    errors <- c(errors, msg)
-  }
+    if (is.null(object@gridDT)) {
+        msg <- "No data in gridDT slot.\nThis object contains no spatial grid information\n"
+        errors <- c(errors, msg)
+    }
 
-  if (length(errors) == 0) TRUE else errors
+    if (length(errors) == 0) TRUE else errors
 }
 
 
@@ -1121,8 +1123,8 @@ S3toS4spatNetObj <- function(object,
 #' Grids can be annotated with both spatial and feature information
 #' @export
 setClass("spatialGridObj",
-  contains = c("nameData", "spatGridData", "spatFeatData", "miscData", "giottoSubobject"),
-  validity = .check_spat_grid_obj
+    contains = c("nameData", "spatGridData", "spatFeatData", "miscData", "giottoSubobject"),
+    validity = .check_spat_grid_obj
 )
 
 
@@ -1142,16 +1144,16 @@ setClass("spatialGridObj",
 #' @param object S3 spatialGridObj
 #' @keywords internal
 S3toS4spatialGridObj <- function(object) {
-  if (!isS4(object)) {
-    object <- new("spatialGridObj",
-      name = object$name,
-      method = object$method,
-      parameters = object$parameters,
-      gridDT = object$gridDT,
-      misc = object$misc
-    )
-  }
-  object
+    if (!isS4(object)) {
+        object <- new("spatialGridObj",
+            name = object$name,
+            method = object$method,
+            parameters = object$parameters,
+            gridDT = object$gridDT,
+            misc = object$misc
+        )
+    }
+    object
 }
 
 
@@ -1172,7 +1174,7 @@ S3toS4spatialGridObj <- function(object) {
 #' @slot misc misc
 #' @export
 setClass("spatEnrObj",
-  contains = c("nameData", "enrData", "spatFeatData", "miscData", "giottoSubobject")
+    contains = c("nameData", "enrData", "spatFeatData", "miscData", "giottoSubobject")
 )
 
 
@@ -1198,18 +1200,18 @@ setClass("spatEnrObj",
 #'
 #' @export
 giottoPolygon <- setClass(
-  Class = "giottoPolygon",
-  contains = c("nameData", "terraVectData", "giottoSubobject"),
-  slots = c(
-    spatVectorCentroids = "ANY",
-    overlaps = "ANY",
-    unique_ID_cache = "character"
-  ),
-  prototype = list(
-    spatVectorCentroids = NULL,
-    overlaps = NULL,
-    unique_ID_cache = NA_character_
-  )
+    Class = "giottoPolygon",
+    contains = c("nameData", "terraVectData", "giottoSubobject"),
+    slots = c(
+        spatVectorCentroids = "ANY",
+        overlaps = "ANY",
+        unique_ID_cache = "character"
+    ),
+    prototype = list(
+        spatVectorCentroids = NULL,
+        overlaps = NULL,
+        unique_ID_cache = NA_character_
+    )
 )
 
 
@@ -1220,16 +1222,16 @@ giottoPolygon <- setClass(
 #' @param gpoly giotto polygon object
 #' @export
 updateGiottoPolygonObject <- function(gpoly) {
-  if (!inherits(gpoly, "giottoPolygon")) {
-    stop("This function is only for giottoPoints")
-  }
+    if (!inherits(gpoly, "giottoPolygon")) {
+        stop("This function is only for giottoPoints")
+    }
 
-  # 3.2.X adds cacheing of IDs
-  if (is.null(attr(gpoly, "unique_ID_cache"))) {
-    attr(gpoly, "unique_ID_cache") <- unique(as.list(gpoly@spatVector)$poly_ID)
-  }
+    # 3.2.X adds cacheing of IDs
+    if (is.null(attr(gpoly, "unique_ID_cache"))) {
+        attr(gpoly, "unique_ID_cache") <- unique(as.list(gpoly@spatVector)$poly_ID)
+    }
 
-  gpoly
+    gpoly
 }
 
 
@@ -1239,19 +1241,19 @@ updateGiottoPolygonObject <- function(gpoly) {
 
 # for use with wrap() generic
 setClass("packedGiottoPolygon",
-  contains = c("nameData", "giottoSubobject"),
-  slots = c(
-    packed_spatVector = "ANY",
-    packed_spatVectorCentroids = "ANY",
-    packed_overlaps = "ANY",
-    unique_ID_cache = "character"
-  ),
-  prototype = list(
-    packed_spatVector = NULL,
-    packed_spatVectorCentroids = NULL,
-    packed_overlaps = NULL,
-    unique_ID_cache = NA_character_
-  )
+    contains = c("nameData", "giottoSubobject"),
+    slots = c(
+        packed_spatVector = "ANY",
+        packed_spatVectorCentroids = "ANY",
+        packed_overlaps = "ANY",
+        unique_ID_cache = "character"
+    ),
+    prototype = list(
+        packed_spatVector = NULL,
+        packed_spatVectorCentroids = NULL,
+        packed_overlaps = NULL,
+        unique_ID_cache = NA_character_
+    )
 )
 
 
@@ -1276,16 +1278,16 @@ setClass("packedGiottoPolygon",
 #'
 #' @export
 giottoPoints <- setClass(
-  Class = "giottoPoints",
-  contains = c("featData", "terraVectData", "giottoSubobject"),
-  slots = c(
-    networks = "ANY",
-    unique_ID_cache = "character"
-  ),
-  prototype = list(
-    networks = NULL,
-    unique_ID_cache = NA_character_
-  )
+    Class = "giottoPoints",
+    contains = c("featData", "terraVectData", "giottoSubobject"),
+    slots = c(
+        networks = "ANY",
+        unique_ID_cache = "character"
+    ),
+    prototype = list(
+        networks = NULL,
+        unique_ID_cache = NA_character_
+    )
 )
 
 
@@ -1296,16 +1298,16 @@ giottoPoints <- setClass(
 #' @param gpoints giotto points object
 #' @export
 updateGiottoPointsObject <- function(gpoints) {
-  if (!inherits(gpoints, "giottoPoints")) {
-    stop("This function is only for giottoPoints")
-  }
+    if (!inherits(gpoints, "giottoPoints")) {
+        stop("This function is only for giottoPoints")
+    }
 
-  # 3.2.X adds cacheing of IDs
-  if (is.null(attr(gpoints, "unique_ID_cache"))) {
-    attr(gpoints, "unique_ID_cache") <- unique(as.list(gpoints@spatVector)$feat_ID)
-  }
+    # 3.2.X adds cacheing of IDs
+    if (is.null(attr(gpoints, "unique_ID_cache"))) {
+        attr(gpoints, "unique_ID_cache") <- unique(as.list(gpoints@spatVector)$feat_ID)
+    }
 
-  gpoints
+    gpoints
 }
 
 
@@ -1320,19 +1322,19 @@ updateGiottoPointsObject <- function(gpoints) {
 
 # for use with wrap() generic
 setClass(
-  "packedGiottoPoints",
-  slots = c(
-    feat_type = "character",
-    packed_spatVector = "ANY",
-    networks = "ANY",
-    unique_ID_cache = "character"
-  ),
-  prototype = list(
-    feat_type = NA_character_,
-    packed_spatVector = NULL,
-    networks = NULL,
-    unique_ID_cache = NA_character_
-  )
+    "packedGiottoPoints",
+    slots = c(
+        feat_type = "character",
+        packed_spatVector = "ANY",
+        networks = "ANY",
+        unique_ID_cache = "character"
+    ),
+    prototype = list(
+        feat_type = NA_character_,
+        packed_spatVector = NULL,
+        networks = NULL,
+        unique_ID_cache = NA_character_
+    )
 )
 
 
@@ -1361,18 +1363,18 @@ setClass(
 #'
 #' @export
 featureNetwork <- setClass(
-  Class = "featureNetwork",
-  contains = c("nameData", "giottoSubobject"),
-  slots = c(
-    network_datatable = "ANY",
-    network_lookup_id = "ANY",
-    full = "ANY"
-  ),
-  prototype = list(
-    network_datatable = NULL,
-    network_lookup_id = NULL,
-    full = NULL
-  )
+    Class = "featureNetwork",
+    contains = c("nameData", "giottoSubobject"),
+    slots = c(
+        network_datatable = "ANY",
+        network_lookup_id = "ANY",
+        full = "ANY"
+    ),
+    prototype = list(
+        network_datatable = NULL,
+        network_lookup_id = NULL,
+        full = NULL
+    )
 )
 
 
@@ -1403,27 +1405,27 @@ featureNetwork <- setClass(
 #'
 #' @export
 giottoImage <- setClass(
-  Class = "giottoImage",
-  slots = c(
-    name = "ANY",
-    mg_object = "ANY",
-    minmax = "ANY",
-    boundaries = "ANY",
-    scale_factor = "ANY",
-    resolution = "ANY",
-    file_path = "ANY",
-    OS_platform = "ANY"
-  ),
-  prototype = list(
-    name = NULL,
-    mg_object = NULL,
-    minmax = NULL,
-    boundaries = NULL,
-    scale_factor = NULL,
-    resolution = NULL,
-    file_path = NULL,
-    OS_platform = NULL
-  )
+    Class = "giottoImage",
+    slots = c(
+        name = "ANY",
+        mg_object = "ANY",
+        minmax = "ANY",
+        boundaries = "ANY",
+        scale_factor = "ANY",
+        resolution = "ANY",
+        file_path = "ANY",
+        OS_platform = "ANY"
+    ),
+    prototype = list(
+        name = NULL,
+        mg_object = NULL,
+        minmax = NULL,
+        boundaries = NULL,
+        scale_factor = NULL,
+        resolution = NULL,
+        file_path = NULL,
+        OS_platform = NULL
+    )
 )
 
 
@@ -1456,58 +1458,58 @@ giottoImage <- setClass(
 #' @export giottoLargeImage
 #' @exportClass giottoLargeImage
 giottoLargeImage <- setClass(
-  Class = "giottoLargeImage",
-  slots = c(
-    name = "ANY",
-    raster_object = "ANY",
-    extent = "ANY", # REMOVE?
-    overall_extent = "ANY", # REMOVE? New slot px_dims as replacement?
-    scale_factor = "ANY",
-    resolution = "ANY",
-    max_intensity = "numeric",
-    min_intensity = "numeric",
-    max_window = "numeric", # NEW
-    colors = 'character', # NEW
-    is_int = "ANY",
-    file_path = "ANY",
-    OS_platform = "ANY"
-  ),
-  prototype = list(
-    name = NULL,
-    raster_object = NULL,
-    extent = NULL,
-    overall_extent = NULL,
-    scale_factor = NULL,
-    resolution = NULL,
-    max_intensity = NA_real_,
-    min_intensity = NA_real_,
-    max_window = NA_real_,
-    colors = grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1),
-    is_int = NULL,
-    file_path = NULL,
-    OS_platform = NULL
-  )
+    Class = "giottoLargeImage",
+    slots = c(
+        name = "ANY",
+        raster_object = "ANY",
+        extent = "ANY", # REMOVE?
+        overall_extent = "ANY", # REMOVE? New slot px_dims as replacement?
+        scale_factor = "ANY",
+        resolution = "ANY",
+        max_intensity = "numeric",
+        min_intensity = "numeric",
+        max_window = "numeric", # NEW
+        colors = "character", # NEW
+        is_int = "ANY",
+        file_path = "ANY",
+        OS_platform = "ANY"
+    ),
+    prototype = list(
+        name = NULL,
+        raster_object = NULL,
+        extent = NULL,
+        overall_extent = NULL,
+        scale_factor = NULL,
+        resolution = NULL,
+        max_intensity = NA_real_,
+        min_intensity = NA_real_,
+        max_window = NA_real_,
+        colors = grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1),
+        is_int = NULL,
+        file_path = NULL,
+        OS_platform = NULL
+    )
 )
 
 # function for updating image objects if structure definitions have changed
-.update_giotto_image = function(x) {
-  # 0.1.2 release adds colors & max_window slots
-  if (is.null(attr(x, "colors"))) {
-    attr(x, "colors") <- grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1)
-  }
-  if (is.null(attr(x, "max_window"))) {
-    # get a max intensity value
-    if (!is.null(x@max_intensity)) {
-      x@max_intensity <- .spatraster_intensity_range(x@raster_object)[["max"]]
+.update_giotto_image <- function(x) {
+    # 0.1.2 release adds colors & max_window slots
+    if (is.null(attr(x, "colors"))) {
+        attr(x, "colors") <- grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1)
+    }
+    if (is.null(attr(x, "max_window"))) {
+        # get a max intensity value
+        if (!is.null(x@max_intensity)) {
+            x@max_intensity <- .spatraster_intensity_range(x@raster_object)[["max"]]
+        }
+
+        attr(x, "max_window") <- .bitdepth(x@max_intensity, return_max = TRUE)
     }
 
-    attr(x, "max_window") <- .bitdepth(x@max_intensity, return_max = TRUE)
-  }
+    # 0.1.x release adds giottoImageStack
+    # deprecate
 
-  # 0.1.x release adds giottoImageStack
-  # deprecate
-
-  return(x)
+    return(x)
 }
 
 
@@ -1526,8 +1528,3 @@ giottoLargeImage <- setClass(
 #     weight = 'numeric'
 #   )
 # )
-
-
-
-
-
