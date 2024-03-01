@@ -164,7 +164,7 @@ setMethod(
         )
       }
     } else {
-      # flip about y0
+      # flip about x0
       # poly
       dx_p <- x0 - x_min_p
       gpoly@spatVector <- terra::shift(
@@ -189,6 +189,42 @@ setMethod(
 
 
 
+
+.flip_spatvect <- function(
+    x, direction = "vertical", x0 = 0, y0 = 0
+  ) {
+  checkmate::assert_class(x, "SpatVector")
+  if (!is.null(x0)) {
+    checkmate::assert_numeric(x0)
+  }
+  if (!is.null(y0)) {
+    checkmate::assert_numeric(y0)
+  }
+
+  # 1. perform flip
+  e <- terra::ext(x)
+  x <- terra::flip(x, direction = direction)
+
+  x <- switch(direction,
+    "vertical" = {
+      if (!is.null(y0)) { # flip about y0 if not NULL
+        ymin <- as.numeric(e$ymin)
+        dy <- y0 - ymin
+        terra::shift(x, dy = 2 * dy)
+      }
+    },
+    "horizontal" = {
+      if (!is.null(x0)) { # flip about x0 if not NULL
+        xmin <- as.numeric(e$xmin)
+        dx <- x0 - xmin
+        terra::shift(x, dx = 2 * dx)
+      }
+    }
+  )
+
+  # 3. return
+  return(x)
+}
 
 
 
