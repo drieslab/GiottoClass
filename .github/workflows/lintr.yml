@@ -56,7 +56,7 @@ jobs:
               lintr::lint_package(
                   ".",
                   linters = lintr::linters_with_defaults(
-                      indentation_linter = indentation_linter(indent = 4L)
+                      indentation_linter = lintr::indentation_linter(indent = 4L)
                   )
               ),
               "lintr-results.sarif"
