@@ -1004,8 +1004,8 @@ test_that("addCellMetadata() - DT with IDs", {
     )
 
     # scramble ordering of metadata to add
-    dt_id <- dt_id[sample(1:.N)]
-    dt_cell_id <- dt_cell_id[sample(1:.N)]
+    dt_id <- dt_id[sample(seq_len(.N))]
+    dt_cell_id <- dt_cell_id[sample(seq_len(.N))]
 
     am_giotto <- addCellMetadata(
         giotto_object,
@@ -1175,8 +1175,8 @@ test_that("addFeatMetadata() - DT with IDs", {
     )
 
     # scramble ordering of metadata to add
-    dt_id <- dt_id[sample(1:.N)]
-    dt_feat_id <- dt_feat_id[sample(1:.N)]
+    dt_id <- dt_id[sample(seq_len(.N))]
+    dt_feat_id <- dt_feat_id[sample(seq_len(.N))]
 
     am_giotto <- addFeatMetadata(
         giotto_object,

@@ -243,7 +243,7 @@ changeGiottoInstructions <- function(gobject,
     instrs[params] <- new_values
 
     ## make sure that classes remain consistent
-    new_instrs <- lapply(1:length(instrs), function(x) {
+    new_instrs <- lapply(seq_along(instrs), function(x) {
         if (names(instrs[x]) %in% c("dpi", "height", "width")) {
             instrs[[x]] <- as.numeric(instrs[[x]])
         } else if (names(instrs[x]) %in% c("show_plot", "return_plot", "save_plot", "is_docker")) {

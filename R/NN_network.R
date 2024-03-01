@@ -307,7 +307,7 @@ createNetwork <- function(
 
     # rank snn. LOWER ranking means MORE shared per source
     data.table::setorder(snn_network_dt, from, -shared)
-    snn_network_dt[, rank := 1:.N, by = from]
+    snn_network_dt[, rank := seq_len(.N), by = from]
 
     # filter snn
     # keep at at least `top_shared` - 1 interactions where the ones selected should
@@ -524,7 +524,7 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
         dim = c(nrow(y), ncol(x), 2),
         dimnames = list(
             c(),
-            paste0("dim_", seq(ncol(x))),
+            paste0("dim_", seq_len(ncol(x))),
             c("start", "end")
         )
     )
@@ -747,7 +747,7 @@ createNearestNetwork <- function(
 
         # rank snn
         data.table::setorder(snn_network_dt, from, -shared)
-        snn_network_dt[, rank := 1:.N, by = from]
+        snn_network_dt[, rank := seq_len(.N), by = from]
 
         # filter snn
         snn_network_dt <- snn_network_dt[rank <= top_shared | shared >= minimum_shared]
@@ -905,7 +905,7 @@ nnDT_to_kNN <- function(nnDT) {
         stop("\n k is not the same for all cells \n")
     }
 
-    nnDT[, rank := 1:.N, by = from]
+    nnDT[, rank := seq_len(.N), by = from]
 
     # distance matrix
     dist_prep <- data.table::dcast.data.table(nnDT, formula = from ~ rank, value.var = "distance")

@@ -46,7 +46,7 @@ convert_to_full_spatial_network <- function(reduced_spatial_network_DT) {
     # create ranking of interactions by distance per source
     # the lower the ranking, the shorter the distance
     data.table::setorder(full_spatial_network_DT, source, distance)
-    full_spatial_network_DT[, rank_int := 1:.N, by = "source"]
+    full_spatial_network_DT[, rank_int := seq_len(.N), by = "source"]
 
     # create unified column for source and target as rnk_src_trgt
     full_spatial_network_DT <- dt_sort_combine_two_columns(full_spatial_network_DT, "source", "target", "rnk_src_trgt")
@@ -1792,18 +1792,18 @@ createSpatialWeightMatrix <- function(gobject,
 
 
     ## first label the grid itself ##
-    spatgrid[, gr_name := paste0("gr_", 1:.N)]
+    spatgrid[, gr_name := paste0("gr_", seq_len(.N))]
 
     # x-axis
     x_labels <- sort(unique(spatgrid$x_start))
-    x_gr_names <- paste0("gr_x_", 1:length(x_labels))
+    x_gr_names <- paste0("gr_x_", seq_along(x_labels))
     names(x_gr_names) <- x_labels
     x_gr_names_vector <- x_gr_names[as.character(spatgrid$x_start)]
     spatgrid[, gr_x_name := x_gr_names_vector]
 
     # y-axis
     y_labels <- sort(unique(spatgrid$y_start))
-    y_gr_names <- paste0("gr_y_", 1:length(y_labels))
+    y_gr_names <- paste0("gr_y_", seq_along(y_labels))
     names(y_gr_names) <- y_labels
     y_gr_names_vector <- y_gr_names[as.character(spatgrid$y_start)]
     spatgrid[, gr_y_name := y_gr_names_vector]
@@ -1891,25 +1891,25 @@ createSpatialWeightMatrix <- function(gobject,
 
 
     ## first label the grid itself ##
-    spatgrid[, gr_name := paste0("gr_", 1:.N)]
+    spatgrid[, gr_name := paste0("gr_", seq_len(.N))]
 
     # x-axis
     x_labels <- sort(unique(spatgrid$x_start))
-    x_gr_names <- paste0("gr_x_", 1:length(x_labels))
+    x_gr_names <- paste0("gr_x_", seq_along(x_labels))
     names(x_gr_names) <- x_labels
     x_gr_names_vector <- x_gr_names[as.character(spatgrid$x_start)]
     spatgrid[, gr_x_name := x_gr_names_vector]
 
     # y-axis
     y_labels <- sort(unique(spatgrid$y_start))
-    y_gr_names <- paste0("gr_y_", 1:length(y_labels))
+    y_gr_names <- paste0("gr_y_", seq_along(y_labels))
     names(y_gr_names) <- y_labels
     y_gr_names_vector <- y_gr_names[as.character(spatgrid$y_start)]
     spatgrid[, gr_y_name := y_gr_names_vector]
 
     # z-axis
     z_labels <- sort(unique(spatgrid$z_start))
-    z_gr_names <- paste0("gr_z_", 1:length(z_labels))
+    z_gr_names <- paste0("gr_z_", seq_along(z_labels))
     names(z_gr_names) <- z_labels
     z_gr_names_vector <- z_gr_names[as.character(spatgrid$z_start)]
     spatgrid[, gr_z_name := z_gr_names_vector]
@@ -2134,14 +2134,14 @@ annotate_spatlocs_with_spatgrid_2D <- function(spatloc,
 
     x_vector <- spatlocs$sdimx
     x_breaks <- sort(unique(spatgrid$x_end))
-    x_breaks_labels <- paste0("gr_x_", 1:length(x_breaks))
+    x_breaks_labels <- paste0("gr_x_", seq_along(x_breaks))
     minimum_x <- min(spatgrid$x_start)
     my_x_gr <- cut(x = x_vector, breaks = c(minimum_x, x_breaks), include.lowest = T, right = T, labels = x_breaks_labels)
     spatlocs[, gr_x_loc := as.character(my_x_gr)]
 
     y_vector <- spatlocs$sdimy
     y_breaks <- sort(unique(spatgrid$y_end))
-    y_breaks_labels <- paste0("gr_y_", 1:length(y_breaks))
+    y_breaks_labels <- paste0("gr_y_", seq_along(y_breaks))
     minimum_y <- min(spatgrid$y_start)
     my_y_gr <- cut(x = y_vector, breaks = c(minimum_y, y_breaks), include.lowest = T, right = T, labels = y_breaks_labels)
     spatlocs[, gr_y_loc := as.character(my_y_gr)]
@@ -2176,21 +2176,21 @@ annotate_spatlocs_with_spatgrid_3D <- function(spatloc,
 
     x_vector <- spatlocs$sdimx
     x_breaks <- sort(unique(spatgrid$x_end))
-    x_breaks_labels <- paste0("gr_x_", 1:length(x_breaks))
+    x_breaks_labels <- paste0("gr_x_", seq_along(x_breaks))
     minimum_x <- min(spatgrid$x_start)
     my_x_gr <- cut(x = x_vector, breaks = c(minimum_x, x_breaks), include.lowest = T, right = T, labels = x_breaks_labels)
     spatlocs[, gr_x_loc := as.character(my_x_gr)]
 
     y_vector <- spatlocs$sdimy
     y_breaks <- sort(unique(spatgrid$y_end))
-    y_breaks_labels <- paste0("gr_y_", 1:length(y_breaks))
+    y_breaks_labels <- paste0("gr_y_", seq_along(y_breaks))
     minimum_y <- min(spatgrid$y_start)
     my_y_gr <- cut(x = y_vector, breaks = c(minimum_y, y_breaks), include.lowest = T, right = T, labels = y_breaks_labels)
     spatlocs[, gr_y_loc := as.character(my_y_gr)]
 
     z_vector <- spatlocs$sdimz
     z_breaks <- sort(unique(spatgrid$z_end))
-    z_breaks_labels <- paste0("gr_z_", 1:length(z_breaks))
+    z_breaks_labels <- paste0("gr_z_", seq_along(z_breaks))
     minimum_z <- min(spatgrid$z_start)
     my_z_gr <- cut(x = z_vector, breaks = c(minimum_z, z_breaks), include.lowest = T, right = T, labels = z_breaks_labels)
     spatlocs[, gr_z_loc := as.character(my_z_gr)]

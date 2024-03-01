@@ -31,7 +31,7 @@
         search_IDs <- c(head(IDs, 10L), tail(IDs, 10L))
 
         su_cm <- avail_cm[spat_unit == su_i, ]
-        lapply(seq(nrow(su_cm)), function(obj_i) {
+        lapply(seq_len(nrow(su_cm)), function(obj_i) {
             # get metadata
             meta <- get_cell_metadata(
                 gobject = gobject,
@@ -142,7 +142,7 @@
 
     for (ft_i in used_ft) {
         ft_fm <- avail_fm[feat_type == ft_i, ]
-        lapply(seq(nrow(ft_fm)), function(obj_i) {
+        lapply(seq_len(nrow(ft_fm)), function(obj_i) {
             su_i <- ft_fm$spat_unit[[obj_i]]
 
             # get metadata
@@ -351,7 +351,7 @@
             IDs <- spatIDs(gobject, spat_unit = su_i)
 
             su_sn <- avail_sn[spat_unit == su_i, ]
-            lapply(seq(nrow(su_sn)), function(obj_i) {
+            lapply(seq_len(nrow(su_sn)), function(obj_i) {
                 sn_obj <- get_spatialNetwork(
                     gobject = gobject,
                     spat_unit = su_i,
@@ -404,7 +404,7 @@
             IDs <- spatIDs(gobject, spat_unit = su_i)
 
             su_se <- avail_se[spat_unit == su_i, ]
-            lapply(seq(nrow(su_se)), function(obj_i) {
+            lapply(seq_len(nrow(su_se)), function(obj_i) {
                 se_obj <- get_spatial_enrichment(
                     gobject = gobject,
                     spat_unit = su_i,
@@ -465,7 +465,7 @@
             IDs <- spatIDs(gobject, spat_unit = su_i)
 
             su_dr <- avail_dr[spat_unit == su_i, ]
-            lapply(seq(nrow(su_dr)), function(obj_i) {
+            lapply(seq_len(nrow(su_dr)), function(obj_i) {
                 dr_obj <- get_dimReduction(
                     gobject = gobject,
                     spat_unit = su_i,
@@ -565,7 +565,7 @@
             IDs <- spatIDs(gobject, spat_unit = su_i)
 
             su_nn <- avail_nn[spat_unit == su_i, ]
-            lapply(seq(nrow(su_nn)), function(obj_i) {
+            lapply(seq_len(nrow(su_nn)), function(obj_i) {
                 nn_obj <- get_NearestNetwork(
                     gobject = gobject,
                     spat_unit = su_i,
@@ -624,7 +624,7 @@
 
             # get spatlocs
             su_sloc <- avail_slocs[spat_unit == su_i]
-            lapply(seq(nrow(su_sloc)), function(obj_i) {
+            lapply(seq_len(nrow(su_sloc)), function(obj_i) {
                 spatlocs <- get_spatial_locations(
                     gobject = gobject,
                     spat_unit = su_i,

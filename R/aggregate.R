@@ -769,7 +769,7 @@ calculateOverlapPolygonImages <- function(gobject,
 
     image_list <- list()
 
-    for (i in 1:length(image_names)) {
+    for (i in seq_along(image_names)) {
         img_name <- image_names[i]
 
         if (!img_name %in% potential_large_image_names) {
@@ -1054,7 +1054,7 @@ calculateOverlapParallel <- function(gobject,
 
     # first intersect in parallel on wrapped terra objects
     result1 <- lapply_flex(
-        X = 1:length(spatvec_wrap_list),
+        X = seq_along(spatvec_wrap_list),
         FUN = function(x) {
             test <- .overlap_points_per_polygon_wrapped(
                 spatvec_wrapped = spatvec_wrap_list[[x]],
@@ -1065,7 +1065,7 @@ calculateOverlapParallel <- function(gobject,
     )
 
     # unwrap overlap results
-    final_result <- lapply(X = 1:length(result1), FUN = function(x) {
+    final_result <- lapply(X = seq_along(result1), FUN = function(x) {
         terra::vect(result1[x][[1]])
     })
 
@@ -1442,7 +1442,7 @@ overlapToMatrixMultiPoly <- function(gobject,
     result_list <- list()
     cell_ids_list <- list()
 
-    for (poly_info_i in 1:length(poly_info)) {
+    for (poly_info_i in seq_along(poly_info)) {
         poly_info_set <- poly_info[[poly_info_i]]
 
         expr_names <- list_expression_names(
@@ -1469,10 +1469,10 @@ overlapToMatrixMultiPoly <- function(gobject,
         )
 
         featnames <- dimnames(testmat)[[1]]
-        names(featnames) <- 1:length(featnames)
+        names(featnames) <- seq_along(featnames)
 
         colnames <- dimnames(testmat)[[2]]
-        names(colnames) <- 1:length(colnames)
+        names(colnames) <- seq_along(colnames)
 
         testmat_DT <- data.table::as.data.table(Matrix::summary(testmat))
         testmat_DT[, i := featnames[i]]
@@ -1668,7 +1668,7 @@ overlapImagesToMatrix <- function(gobject,
 
     # loop through all matrices
     # create a triplet data.table (i, j, x)
-    for (mat_i in 1:length(mat_list)) {
+    for (mat_i in seq_along(mat_list)) {
         mat <- mat_list[[mat_i]]
 
         if (!inherits(mat, c("matrix", "dgCMatrix"))) {
@@ -1702,12 +1702,12 @@ overlapImagesToMatrix <- function(gobject,
 
     # feature list
     all_features <- unique(unlist(feats_list))
-    featnames <- 1:length(all_features)
+    featnames <- seq_along(all_features)
     names(featnames) <- all_features
 
     # sample list
     all_samples <- unique(unlist(samples_list))
-    samplenames <- 1:length(all_samples)
+    samplenames <- seq_along(all_samples)
     names(samplenames) <- all_samples
 
     # convert i and j to numericals for dgCmatrix
@@ -1935,7 +1935,7 @@ aggregateStacksLocations <- function(gobject,
 #   # aggregate spatvectors
 #   polygon_list <- list()
 #
-#   for (i in 1:length(spat_units)) {
+#   for (i in seq_along(spat_units)) {
 #     spat_unit <- spat_units[i]
 #     vecDT <- gobject@spatial_info[[spat_unit]]@spatVector
 #     vecDT <- .spatvector_to_dt(vecDT)
@@ -1973,7 +1973,7 @@ aggregateStacksLocations <- function(gobject,
     for_loop_group_size = 100) {
     # 1. combine all spatVectors across all stacks
     stack_list <- list()
-    for (spat_i in 1:length(spat_units)) {
+    for (spat_i in seq_along(spat_units)) {
         spat <- spat_units[[spat_i]]
         stackspatvector <- get_polygon_info(
             gobject = gobject,
@@ -2006,7 +2006,7 @@ aggregateStacksLocations <- function(gobject,
         poly_list <- list()
         poly_id_groups <- split(all_poly_ids, ceiling(seq_along(all_poly_ids) / for_loop_group_size))
 
-        for (group_i in 1:length(poly_id_groups)) {
+        for (group_i in seq_along(poly_id_groups)) {
             selected_poly_ids <- poly_id_groups[[group_i]]
             selected_poly <- stack_spatvector[stack_spatvector$poly_ID %in% selected_poly_ids]
             selected_poly_aggr <- terra::aggregate(selected_poly, by = "poly_ID", dissolve = TRUE)
@@ -2088,7 +2088,7 @@ aggregateStacksPolygonOverlaps <- function(gobject,
     # aggregate spatvectors
     polygon_list <- list()
 
-    for (i in 1:length(spat_units)) {
+    for (i in seq_along(spat_units)) {
         spat_unit <- spat_units[i]
         vecDT <- gobject@spatial_info[[spat_unit]]@overlaps[[feat_type]]
 

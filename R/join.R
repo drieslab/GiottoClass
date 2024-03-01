@@ -7,7 +7,7 @@
 .join_expression_matrices <- function(matrix_list) {
     # find all features
     final_feats <- list()
-    for (matr_i in 1:length(matrix_list)) {
+    for (matr_i in seq_along(matrix_list)) {
         rowfeats <- rownames(matrix_list[[matr_i]])
         final_feats[[matr_i]] <- rowfeats
     }
@@ -19,7 +19,7 @@
 
     # extend matrices with missing ids
     final_mats <- list()
-    for (matr_i in 1:length(matrix_list)) {
+    for (matr_i in seq_along(matrix_list)) {
         matr <- matrix_list[[matr_i]]
 
         missing_feats <- final_feats[!final_feats %in% rownames(matr)]
@@ -712,7 +712,7 @@ joinGiottoObjects <- function(gobject_list,
         #                                     S4_feat_metadata,
         #                                     set_defaults = FALSE)
     } else {
-        for (exprObj_i in seq(nrow(avail_expr))) {
+        for (exprObj_i in seq_len(nrow(avail_expr))) {
             expr_list <- lapply(updated_object_list, function(gobj) {
                 get_expression_values(
                     gobject = gobj,
@@ -756,7 +756,7 @@ joinGiottoObjects <- function(gobject_list,
 
     available_locs <- list_spatial_locations(first_obj)
 
-    for (slObj_i in seq(nrow(available_locs))) {
+    for (slObj_i in seq_len(nrow(available_locs))) {
         sl_list <- lapply(updated_object_list, function(gobj) {
             get_spatial_locations(
                 gobject = gobj,
@@ -823,7 +823,7 @@ joinGiottoObjects <- function(gobject_list,
     avail_featmeta <- list_feat_metadata(gobject = first_obj)
     if (!is.null(avail_featmeta)) {
         if (isTRUE(verbose)) message("   feature metadata \n")
-        for (fmObj_i in seq(nrow(avail_featmeta))) {
+        for (fmObj_i in seq_len(nrow(avail_featmeta))) {
             fm_list <- lapply(updated_object_list, function(gobj) {
                 get_feature_metadata(
                     gobject = gobj,

@@ -1245,7 +1245,7 @@ giottoToSeuratV4 <- function(gobject,
         if (!is.null(avail_dr)) {
             if (nrow(avail_dr) > 0) {
                 dr_use <- avail_dr[, name]
-                for (i in seq(nrow(avail_dr))) {
+                for (i in seq_len(nrow(avail_dr))) {
                     dr_name <- avail_dr[i, name]
                     dr_type <- avail_dr[i, dim_type]
                     dr_obj <- get_dimReduction(
@@ -1282,7 +1282,7 @@ giottoToSeuratV4 <- function(gobject,
         avail_nn <- list_nearest_networks(gobject = gobject, spat_unit = spat_unit, feat_type = assay_use)
         if (!is.null(avail_nn)) {
             if (nrow(avail_nn) > 0) {
-                for (i in seq(nrow(avail_nn))) {
+                for (i in seq_len(nrow(avail_nn))) {
                     nn_name <- avail_nn[i, name]
                     nn_type <- avail_nn[i, nn_type]
                     nn_use <- get_NearestNetwork(
@@ -1505,7 +1505,7 @@ giottoToSeuratV5 <- function(gobject,
         if (!is.null(avail_dr)) {
             if (nrow(avail_dr) > 0) {
                 dr_use <- avail_dr[, name]
-                for (i in seq(nrow(avail_dr))) {
+                for (i in seq_len(nrow(avail_dr))) {
                     dr_name <- avail_dr[i, name]
                     dr_type <- avail_dr[i, dim_type]
                     dr_obj <- get_dimReduction(
@@ -1545,7 +1545,7 @@ giottoToSeuratV5 <- function(gobject,
         avail_nn <- list_nearest_networks(gobject = gobject, spat_unit = spat_unit, feat_type = assay_use)
         if (!is.null(avail_nn)) {
             if (nrow(avail_nn) > 0) {
-                for (i in seq(nrow(avail_nn))) {
+                for (i in seq_len(nrow(avail_nn))) {
                     nn_name <- avail_nn[i, name]
                     nn_type <- avail_nn[i, nn_type]
                     nn_use <- get_NearestNetwork(
@@ -2276,7 +2276,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
 
         # Copying remaining expression matrices if they exist
         if (nrow(giottoExpr[spat_unit == spatialUnits[su]]) > 0) {
-            for (i in seq(nrow(giottoExpr))) {
+            for (i in seq_len(nrow(giottoExpr))) {
                 if (verbose) message("Copying expression matrix: '", giottoExpr[i]$name, "' for spatial unit: '", spatialUnits[su], "'")
                 # SPE does not have specific slots for different units, instead joining multiple unit names to identify them
                 SummarizedExperiment::assay(
@@ -2332,7 +2332,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
         giottoReductions <- list_dim_reductions(gobject = giottoObj, spat_unit = spatialUnits[su])
         if (!is.null(giottoReductions)) {
             if (verbose) message("Copying reduced dimensions for spatial unit: '", spatialUnits[su], "'")
-            for (i in seq(nrow(giottoReductions))) {
+            for (i in seq_len(nrow(giottoReductions))) {
                 SingleCellExperiment::reducedDim(spe, giottoReductions[i]$name) <- get_dimReduction(
                     gobject = giottoObj,
                     reduction = "cells",
@@ -2352,7 +2352,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
         giottoNearestNetworks <- list_nearest_networks(gobject = giottoObj, spat_unit = spatialUnits[su])
         if (!is.null(giottoNearestNetworks)) {
             if (verbose) message("Copying nearest networks for spatial unit: '", spatialUnits[su], "'")
-            for (i in seq(nrow(giottoNearestNetworks))) {
+            for (i in seq_len(nrow(giottoNearestNetworks))) {
                 nn_network <- get_NearestNetwork(
                     gobject = giottoObj,
                     spat_unit = spatialUnits[su],
@@ -2379,7 +2379,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
         giottoSpatialNetworks <- list_spatial_networks(gobject = giottoObj, spat_unit = spatialUnits[su])
         if (!is.null(giottoSpatialNetworks)) {
             if (verbose) message("Copying spatial networks for spatial unit: '", spatialUnits[su], "'")
-            for (i in seq(nrow(giottoSpatialNetworks))) {
+            for (i in seq_len(nrow(giottoSpatialNetworks))) {
                 sp_network <- get_spatialNetwork(
                     gobject = giottoObj,
                     spat_unit = spatialUnits[su],
@@ -2404,7 +2404,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
         # SpatialImages
         giottoImages <- list_images(gobject = giottoObj)
         if (!is.null(giottoImages)) {
-            for (i in seq(nrow(giottoImages))) {
+            for (i in seq_len(nrow(giottoImages))) {
                 img <- get_giottoImage(
                     gobject = giottoObj,
                     image_type = giottoImages[i]$img_type,
@@ -2552,7 +2552,7 @@ spatialExperimentToGiotto <- function(spe,
     # Spatial Images
     spatialImages <- SpatialExperiment::imgData(spe)
     if (nrow(spatialImages) > 0) {
-        for (i in seq(nrow(spatialImages))) {
+        for (i in seq_len(nrow(spatialImages))) {
             if (verbose) message("Copying spatial images")
             spImg <- SpatialExperiment::getImg(
                 spe,
