@@ -87,7 +87,7 @@ data.frame with vertex 'x', 'y', and 'poly_ID' information.}
 \item{verbose}{be verbose}
 
 \item{mask_method}{how the mask file defines individual segmentation annotations.
-see details.}
+See \emph{mask_method} section}
 
 \item{remove_background_polygon}{try to remove background polygon (default: FALSE)}
 
@@ -99,7 +99,7 @@ see details.}
 each polygon in the mask file.}
 
 \item{ID_fmt}{character. Only applied if \code{poly_IDs = NULL}. Naming scheme for
-poly_IDs. Default = "cell_". See details.}
+poly_IDs. Default = "cell_". See \emph{ID_fmt} section.}
 
 \item{flip_vertical}{flip mask figure in a vertical manner}
 
@@ -136,34 +136,10 @@ Create a \code{giottoPolygon} object that is used to represent
 spatial annotations and polygons. Inputs can be from a structured data.frame
 object where three of the columns should correspond to x/y vertices and the
 polygon ID and additional columns are set as attributes, a spatial file
-such as wkt, .shp, or .GeoJSON, or a mask file (e.g. segmentation results)
+such as wkt, .shp, or .GeoJSON, or a mask file (e.g. segmentation results).
 }
 \details{
-\emph{mask_method}
-One of "single", "multiple", or "guess".
-\itemize{
-\item "single" assumes that the provided mask image is binary, with only polygon
-vs background being distinct values. With this kind of image, the expected
-generated polygons is a single multipart polygon. "single" takes this
-multipart polygon and breaks it apart into individual singlepart polygons.
-An initial simple \code{numeric} index as the 'nth' polygon found in the mask image
-will be applied as an ID (see \emph{ID_fmt} section).
-\item "multiple" assumes that the provided mask image has distinct intensity
-values to specify the IDs of individual polygons. An initial \code{numeric} ID is
-applied as the intensity value of the pixels that made up the annotation for
-that polygon in the mask image (see \emph{ID_fmt} section).
-\item "guess" examines the values in the image to pick the most likely appropriate
-method out of "single" or "multiple".
-\emph{ID_fmt}
-Defaults to applying the input as a prefix (using \code{paste0()}) to the numerical
-ID values detected by  \code{mask_method}. (ie \code{ID_fmt = "cell_"} produces
-\code{cell_1}, \code{cell_2}, \code{cell_3}, ...)
-If a "\%" character is detected in the input then the input will be treated as
-a \code{sprintf()} \code{fmt} param input instead. (ie \code{ID_fmt = "cell_\%03d"} produces
-\code{cell_001}, \code{cell_002}, \code{cell_003}, ...)
-}
-
-When determining which column within the tabular data is intended to
+When determining which column within tabular data is intended to
 provide polygon information, Giotto first checks the column names for 'x', 'y',
 and 'poly_ID'. If any of these are discovered, they are directly selected. If
 this is not discovered then Giotto checks the data type of the columns and selects
@@ -171,5 +147,34 @@ the first \code{'character'} type column to be 'poly_ID' and the first two \code
 columns as 'x' and 'y' respectively. If this is also unsuccessful then poly_ID
 defaults to the 3rd column. 'x' and 'y' then default to the 1st and 2nd columns.
 }
+\section{mask_method}{
+
+One of "single", "multiple", or "guess".
+\itemize{
+\item{\emph{"single"} assumes that the provided mask image is binary, with only
+polygon vs background being distinct values. With this kind of image, the
+expected generated polygons is a single multipart polygon. "single" takes
+this multipart polygon and breaks it apart into individual singlepart
+polygons. An initial simple \code{numeric} index as the 'nth' polygon found in
+the mask image will be applied as an ID (see \emph{ID_fmt} section).}
+\item{\emph{"multiple"} assumes that the provided mask image has distinct
+intensity values to specify the IDs of individual polygons. An initial
+\code{numeric} ID is applied as the intensity value of the pixels that made up
+the annotation for that polygon in the mask image (see \emph{ID_fmt} section).}
+\item{\emph{"guess"} examines the values in the image to pick the most likely
+appropriate method out of "single" or "multiple".}
+}
+}
+
+\section{ID_fmt}{
+
+Defaults to applying the input as a prefix (using \code{paste0()}) to the
+numerical ID values detected by  \code{mask_method}. (ie: \code{ID_fmt = "cell_"}
+produces \code{cell_1}, \code{cell_2}, \code{cell_3}, ...)\cr
+If a "\%" character is detected in the input then the input will be treated as
+a \code{sprintf()} \code{fmt} param input instead. (ie: \code{ID_fmt = "cell_\%03d"} produces
+\code{cell_001}, \code{cell_002}, \code{cell_003}, ...)
+}
+
 \concept{mask polygon}
 \concept{polygon}

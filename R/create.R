@@ -1917,7 +1917,7 @@ create_giotto_points_object <- function(feat_type = "rna",
 #' spatial annotations and polygons. Inputs can be from a structured data.frame
 #' object where three of the columns should correspond to x/y vertices and the
 #' polygon ID and additional columns are set as attributes, a spatial file
-#' such as wkt, .shp, or .GeoJSON, or a mask file (e.g. segmentation results)
+#' such as wkt, .shp, or .GeoJSON, or a mask file (e.g. segmentation results).
 #' @param x input. Filepath to a .GeoJSON or a mask image file. Can also be a
 #' data.frame with vertex 'x', 'y', and 'poly_ID' information.
 #' @param name name for polygons
@@ -1956,18 +1956,6 @@ setMethod(
 )
 
 #' @rdname createGiottoPolygon
-#' @param mask_method how the mask file defines individual segmentation annotations
-#' @param remove_background_polygon try to remove background polygon (default: FALSE)
-#' @param background_algo algorithm to remove background polygon
-#' @param fill_holes fill holes within created polygons
-#' @param poly_IDs unique names for each polygon in the mask file
-#' @param ID_fmt character. Only applied if `poly_IDs = NULL`. Naming scheme for
-#' poly_IDs. Default = "cell_". See details.
-#' @param flip_vertical flip mask figure in a vertical manner
-#' @param shift_vertical_step shift vertical (boolean or numerical)
-#' @param flip_horizontal flip mask figure in a horizontal manner
-#' @param shift_horizontal_step shift horizontal (boolean or numerical)
-#' @param remove_unvalid_polygons remove unvalid polygons (default: TRUE)
 #' @export
 setMethod(
   "createGiottoPolygon", signature("SpatRaster"),
@@ -2061,11 +2049,11 @@ setMethod(
 )
 
 
-#' @title Create giotto polygons from mask file
+
 #' @rdname createGiottoPolygon
 #' @param maskfile path to mask file
 #' @param mask_method how the mask file defines individual segmentation annotations.
-#' see details.
+#' See *mask_method* section
 #' @param name character. Name to assign created `giottoPolygon`
 #' @param remove_background_polygon try to remove background polygon (default: FALSE)
 #' @param background_algo algorithm to remove background polygon
@@ -2073,36 +2061,35 @@ setMethod(
 #' @param poly_IDs character vector. Default = NULL. Custom unique names for
 #' each polygon in the mask file.
 #' @param ID_fmt character. Only applied if `poly_IDs = NULL`. Naming scheme for
-#' poly_IDs. Default = "cell_". See details.
+#' poly_IDs. Default = "cell_". See *ID_fmt* section.
 #' @param flip_vertical flip mask figure in a vertical manner
 #' @param shift_vertical_step shift vertical (boolean or numerical)
 #' @param flip_horizontal flip mask figure in a horizontal manner
 #' @param shift_horizontal_step shift horizontal (boolean or numerical)
-#' @param calc_centroids calculate centroids for polygons
 #' @param remove_unvalid_polygons remove unvalid polygons (default: TRUE)
-#' @param verbose verbosity
 #' @concept mask polygon
-#' @details
-#' *mask_method*
+#' @section mask_method:
 #' One of "single", "multiple", or "guess".
-#' - "single" assumes that the provided mask image is binary, with only polygon
-#' vs background being distinct values. With this kind of image, the expected
-#' generated polygons is a single multipart polygon. "single" takes this
-#' multipart polygon and breaks it apart into individual singlepart polygons.
-#' An initial simple `numeric` index as the 'nth' polygon found in the mask image
-#' will be applied as an ID (see *ID_fmt* section).
-#' - "multiple" assumes that the provided mask image has distinct intensity
-#' values to specify the IDs of individual polygons. An initial `numeric` ID is
-#' applied as the intensity value of the pixels that made up the annotation for
-#' that polygon in the mask image (see *ID_fmt* section).
-#' - "guess" examines the values in the image to pick the most likely appropriate
-#' method out of "single" or "multiple".
-#' *ID_fmt*
-#' Defaults to applying the input as a prefix (using `paste0()`) to the numerical
-#' ID values detected by  `mask_method`. (ie `ID_fmt = "cell_"` produces
-#' `cell_1`, `cell_2`, `cell_3`, ...)
+#' \itemize{
+#'   \item{*"single"* assumes that the provided mask image is binary, with only
+#'   polygon vs background being distinct values. With this kind of image, the
+#'   expected generated polygons is a single multipart polygon. "single" takes
+#'   this multipart polygon and breaks it apart into individual singlepart
+#'   polygons. An initial simple `numeric` index as the 'nth' polygon found in
+#'   the mask image will be applied as an ID (see *ID_fmt* section).}
+#'   \item{*"multiple"* assumes that the provided mask image has distinct
+#'   intensity values to specify the IDs of individual polygons. An initial
+#'   `numeric` ID is applied as the intensity value of the pixels that made up
+#'   the annotation for that polygon in the mask image (see *ID_fmt* section).}
+#'   \item{*"guess"* examines the values in the image to pick the most likely
+#'   appropriate method out of "single" or "multiple".}
+#' }
+#' @section ID_fmt:
+#' Defaults to applying the input as a prefix (using `paste0()`) to the
+#' numerical ID values detected by  `mask_method`. (ie: `ID_fmt = "cell_"`
+#' produces `cell_1`, `cell_2`, `cell_3`, ...)\cr
 #' If a "%" character is detected in the input then the input will be treated as
-#' a `sprintf()` `fmt` param input instead. (ie `ID_fmt = "cell_%03d"` produces
+#' a `sprintf()` `fmt` param input instead. (ie: `ID_fmt = "cell_%03d"` produces
 #' `cell_001`, `cell_002`, `cell_003`, ...)
 #' @return a giotto polygon object
 #' @export
@@ -2308,7 +2295,7 @@ createGiottoPolygonsFromMask <- function(
 #' @param copy_dt (default TRUE) if segmdfr is provided as dt, this determines
 #' whether a copy is made
 #' @param verbose be verbose
-#' @details When determining which column within the tabular data is intended to
+#' @details When determining which column within tabular data is intended to
 #' provide polygon information, Giotto first checks the column names for 'x', 'y',
 #' and 'poly_ID'. If any of these are discovered, they are directly selected. If
 #' this is not discovered then Giotto checks the data type of the columns and selects
