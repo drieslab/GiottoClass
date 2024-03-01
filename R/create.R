@@ -1918,12 +1918,68 @@ create_giotto_points_object <- function(feat_type = "rna",
 #' object where three of the columns should correspond to x/y vertices and the
 #' polygon ID and additional columns are set as attributes, a spatial file
 #' such as wkt, .shp, or .GeoJSON, or a mask file (e.g. segmentation results).
+#' \cr
+#' The character method is for file reading and will dispatch to specific
+#' methods based on what kind of data the file was.
 #' @param x input. Filepath to a .GeoJSON or a mask image file. Can also be a
 #' data.frame with vertex 'x', 'y', and 'poly_ID' information.
 #' @param name name for polygons
 #' @param calc_centroids calculate centroids for polygons
 #' @param verbose be verbose
 NULL
+
+
+#' @rdname createGiottoPolygon
+#' @param \dots additional params to pass. For character method, params pass to
+#' SpatRaster or SpatVector methods, depending on whether x was a filepath to
+#' a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.
+#' @examples
+#' # %%%%%%%%% `createGiottoPolygon()` examples %%%%%%%%% #
+#' # ------- create from a mask image ------- #
+#' m <- system.file("extdata/toy_mask_multi.tif", package = "GiottoClass")
+#' plot(terra::rast(m), col = grDevices::hcl.colors(7))
+#' gp <- createGiottoPolygon(
+#'   m,
+#'   flip_vertical = FALSE, flip_horizontal = FALSE,
+#'   shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
+#'   ID_fmt = "id_test_%03d",
+#'   name = "test"
+#' )
+#' plot(gp, col = grDevices::hcl.colors(7))
+#'
+#' # ------- create from an shp file ------- #
+#' shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
+#' # vector inputs do not have params for flipping and shifting
+#' gp2 <- createGiottoPolygon(shp, name = "test")
+#' plot(gp2, col = grDevices::hcl.colors(7))
+#'
+#'
+#' @export
+setMethod(
+  "createGiottoPolygon", signature("character"),
+  function(x, ...) {
+    checkmate::assert_file_exists(x)
+
+    # try success means it should be mask file
+    # try failure means it should be vector file
+    try_rast <- tryCatch(
+      {
+        terra::rast(x)
+      },
+      error = function(e) return(invisible(NULL)),
+      warning = function(w) {NULL}
+    )
+
+    # mask workflow
+    if (inherits(try_rast, "SpatRaster")) {
+      return(createGiottoPolygon(try_rast, ...))
+    }
+
+    # file workflow
+    return(createGiottoPolygon(x = terra::vect(x), ...))
+  }
+)
+
 
 #' @rdname createGiottoPolygon
 #' @export
@@ -1992,58 +2048,6 @@ setMethod(
       remove_unvalid_polygons = remove_unvalid_polygons,
       calc_centroids = calc_centroids
     )
-  }
-)
-
-
-#' @rdname createGiottoPolygon
-#' @param \dots additional params to pass. For character method, params pass to
-#' SpatRaster or SpatVector methods, depending on whether x was a filepath to
-#' a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.
-#' @examples
-#' # %%%%%%%%% `createGiottoPolygon()` examples %%%%%%%%% #
-#' # ------- create from a mask image ------- #
-#' m <- system.file("extdata/toy_mask_multi.tif", package = "GiottoClass")
-#' plot(terra::rast(m), col = grDevices::hcl.colors(7))
-#' gp <- createGiottoPolygon(
-#'   m,
-#'   flip_vertical = FALSE, flip_horizontal = FALSE,
-#'   shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
-#'   ID_fmt = "id_test_%03d",
-#'   name = "test"
-#' )
-#' plot(gp, col = grDevices::hcl.colors(7))
-#'
-#' # ------- create from an shp file ------- #
-#' shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
-#' # vector inputs do not have params for flipping and shifting
-#' gp2 <- createGiottoPolygon(shp, name = "test")
-#' plot(gp2, col = grDevices::hcl.colors(7))
-#'
-#'
-#' @export
-setMethod(
-  "createGiottoPolygon", signature("character"),
-  function(x, ...) {
-    checkmate::assert_file_exists(x)
-
-    # try success means it should be mask file
-    # try failure means it should be vector file
-    try_rast <- tryCatch(
-      {
-        terra::rast(x)
-      },
-      error = function(e) return(invisible(NULL)),
-      warning = function(w) {NULL}
-    )
-
-    # mask workflow
-    if (inherits(try_rast, "SpatRaster")) {
-      return(createGiottoPolygon(try_rast, ...))
-    }
-
-    # file workflow
-    return(createGiottoPolygon(x = terra::vect(x), ...))
   }
 )
 

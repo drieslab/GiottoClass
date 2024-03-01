@@ -2,15 +2,17 @@
 % Please edit documentation in R/create.R
 \name{createGiottoPolygon}
 \alias{createGiottoPolygon}
+\alias{createGiottoPolygon,character-method}
 \alias{createGiottoPolygon,SpatVector-method}
 \alias{createGiottoPolygon,SpatRaster-method}
-\alias{createGiottoPolygon,character-method}
 \alias{createGiottoPolygon,data.frame-method}
 \alias{createGiottoPolygonsFromMask}
 \alias{createGiottoPolygonsFromDfr}
 \alias{createGiottoPolygonsFromGeoJSON}
 \title{Create giotto polygons object}
 \usage{
+\S4method{createGiottoPolygon}{character}(x, ...)
+
 \S4method{createGiottoPolygon}{SpatVector}(x, name = "cell", calc_centroids = FALSE, verbose = TRUE)
 
 \S4method{createGiottoPolygon}{SpatRaster}(
@@ -30,8 +32,6 @@
   calc_centroids = FALSE,
   verbose = TRUE
 )
-
-\S4method{createGiottoPolygon}{character}(x, ...)
 
 \S4method{createGiottoPolygon}{data.frame}(
   x,
@@ -80,6 +80,10 @@ createGiottoPolygonsFromGeoJSON(
 \item{x}{input. Filepath to a .GeoJSON or a mask image file. Can also be a
 data.frame with vertex 'x', 'y', and 'poly_ID' information.}
 
+\item{\dots}{additional params to pass. For character method, params pass to
+SpatRaster or SpatVector methods, depending on whether x was a filepath to
+a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.}
+
 \item{name}{name for the \code{giottoPolygon} object created}
 
 \item{calc_centroids}{(default FALSE) calculate centroids for polygons}
@@ -111,10 +115,6 @@ poly_IDs. Default = "cell_". See \emph{ID_fmt} section.}
 
 \item{remove_unvalid_polygons}{remove unvalid polygons (default: TRUE)}
 
-\item{\dots}{additional params to pass. For character method, params pass to
-SpatRaster or SpatVector methods, depending on whether x was a filepath to
-a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.}
-
 \item{skip_eval_dfr}{(default FALSE) skip evaluation of provided dataframe}
 
 \item{copy_dt}{(default TRUE) if segmdfr is provided as dt, this determines
@@ -137,6 +137,9 @@ spatial annotations and polygons. Inputs can be from a structured data.frame
 object where three of the columns should correspond to x/y vertices and the
 polygon ID and additional columns are set as attributes, a spatial file
 such as wkt, .shp, or .GeoJSON, or a mask file (e.g. segmentation results).
+\cr
+The character method is for file reading and will dispatch to specific
+methods based on what kind of data the file was.
 }
 \details{
 When determining which column within tabular data is intended to
