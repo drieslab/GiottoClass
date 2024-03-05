@@ -1118,6 +1118,25 @@ stitchGiottoLargeImage <- function(largeImage_list = NULL,
 }
 
 
+# returns extent to use for x
+.evaluate_extent <- function(x, extent, xmin, xmax, ymin, ymax) {
+  if (!missing(extent)) {
+    if (checkmate::test_numeric(extent, len = 4L)) return(extent)
+    if (inherits(extent, "SpatExtent")) return(extent)
+
+    stop("extent inputs must be either of class SpatExtent or numerical in the order of xmin, xmax, ymin, ymax")
+  }
+
+  e <- terra::ext(x)
+
+  if (!missing(xmin)) e$xmin <- xmin
+  if (!missing(xmax)) e$xmax <- xmax
+  if (!missing(ymin)) e$ymin <- ymin
+  if (!missing(ymax)) e$ymax <- ymax
+
+  return(e)
+}
+
 
 #' @title Crop a giotto largeImage object
 #' @name cropGiottoLargeImage

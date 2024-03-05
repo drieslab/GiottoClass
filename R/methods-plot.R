@@ -383,6 +383,9 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
     col = grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1),
     asp = 1,
     ...) {
+
+    a <- c(get_args_list(), list(...))
+
     # Get giottoLargeImage and check and perform crop if needed
     giottoLargeImage <- cropGiottoLargeImage(
         gobject = gobject,
@@ -395,11 +398,17 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
         ymin_crop = ymin_crop
     )
 
-    raster_object <- giottoLargeImage@raster_object
+    a <- a[!c(names(a) %in% c(
+      "gobject", "largeImage_name", "giottoLargeImage", "crop_extent",
+      "xmax_crop", "xmin_crop", "ymax_crop", "ymin_crop", "asRGB",
+      "max_intensity"
+    ))]
+    a$x <- giottoLargeImage@raster_object
+
 
     # Determine likely image bitdepth
     if (is.null(max_intensity)) {
-        bitDepth <- ceiling(log(x = giottoLargeImage@max_intensity, base = 2))
+        bitDepth <- ceiling(log(x = a$x@max_intensity, base = 2))
         # Assign discovered bitdepth as max_intensity
         max_intensity <- 2^bitDepth - 1
 
@@ -411,33 +420,22 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 
     # plot
     if (isTRUE(asRGB) ||
-        terra::has.RGB(raster_object) ||
-        terra::nlyr(raster_object) >= 3) {
-        terra::plotRGB(raster_object,
-            axes = axes,
-            r = 1, g = 2, b = 3,
-            scale = max_intensity,
-            stretch = stretch,
-            smooth = smooth,
-            mar = mar,
-            maxcell = maxcell,
-            asp = asp,
-            ...
-        )
+        terra::has.RGB(a$x) ||
+        terra::nlyr(a$x) >= 3) {
+
+      a$scale <- max_intensity
+      a$r <- 1; a$g <- 2; a$b <- 3
+      a$legend <- NULL
+      a$col <- NULL
+
+      do.call(terra::plotRGB, args = a)
+
     } else {
-        if (is.null(stretch)) stretch <- "lin"
-        terra::plot(raster_object,
-            col = col,
-            axes = axes,
-            range = c(0, max_intensity),
-            stretch = stretch,
-            smooth = smooth,
-            mar = mar,
-            maxcell = maxcell,
-            legend = legend,
-            asp = asp,
-            ...
-        )
+        if (is.null(a$stretch)) a$stretch <- "lin"
+        if (!"range" %in% names(a)) a$range <- c(0, max_intensity)
+
+        do.call(terra::plot, args = a)
+
     }
 }
 
