@@ -15,6 +15,84 @@ NULL
 ## spatShift ####
 
 
+#' @rdname spatShift
+#' @param spat_unit character vector. spatial units to affect
+#' @param feat_type character vector. feature types to affect
+#' @export
+setMethod(
+  "spatShift", signature = "giotto",
+  function(x, dx = 0, dy = 0, spat_unit = ":all:", feat_type = ":all:") {
+    a <- list(dx = dx, dy = dy)
+
+    checkmate::assert_character(spat_unit)
+    checkmate::assert_character(feat_type)
+    all_su <- spat_unit == ":all:"
+    all_ft <- feat_type == ":all:"
+
+    # polygons ---------------------------------------------------------- #
+    poly <- get_polygon_info_list(
+      gobject = x, return_giottoPolygon = TRUE
+    )
+    if (!all_su) {
+      poly <- poly[spatUnit(poly) %in% spat_unit]
+    }
+    if (!is.null(poly)) {
+      for (p in poly) {
+        p <- do.call(spatShift, args = c(list(x = p), a))
+        x <- setPolygonInfo(x, p, verbose = FALSE, initialize = FALSE)
+      }
+    }
+
+    # spatlocs --------------------------------------------------------- #
+    sls <- get_spatial_locations_list(
+      gobject = x,
+      spat_unit = ":all:",
+      output = "spatLocsObj",
+      copy_obj = FALSE
+    )
+    if (!all_su) {
+      sls[spatUnit(sls) %in% spat_unit]
+    }
+    if (!is.null(sls)) {
+      for(sl in sls) {
+        sl <- do.call(spatShift, args = c(list(x = sl), a))
+        x <- setSpatialLocations(x, sl, verbose = FALSE, initialize = FALSE)
+      }
+
+      # TODO remove this after spatial info is removed from spatialNetwork objs
+      sn_list <- get_spatial_network_list(
+        gobject = x,
+        spat_unit = ":all:",
+        output = "spatialNetworkObj",
+        copy_obj = FALSE
+      )
+      if (length(sn_list) > 0) {
+        warning(wrap_txt(
+          "spatial locations have been modified.
+          Relevant spatial networks may need to be regenerated"
+        ), call. = FALSE)
+      }
+    }
+
+
+    # points ----------------------------------------------------------- #
+    pts <- get_feature_info_list(
+      gobject = x, return_giottoPoints = TRUE
+    )
+    if (!all_ft) {
+      pts <- pts[featType(pts) %in% feat_type]
+    }
+    if (!is.null(pts)) {
+      for(pt in pts) {
+        pt <- do.call(spatShift, args = c(list(x = pt), a))
+        x <- setFeatureInfo(x, pt, verbose = FALSE, initialize = FALSE)
+      }
+    }
+    return(initialize(x)) # init not necessarily needed
+  }
+)
+
+
 #' @describeIn spatShift Shift the locations of a spatLocsObj
 #' @export
 setMethod(

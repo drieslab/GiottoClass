@@ -8,6 +8,72 @@
 NULL
 
 
+
+#' @rdname transpose-generic
+#' @export
+setMethod(
+  "t", signature("giotto"),
+  function(x) {
+    # spat_unit and feat_type params are not allowed since t() has no ... param
+
+    # polygons --------------------------------------------------------- #
+    poly <- get_polygon_info_list(
+      gobject = x, return_giottoPolygon = TRUE
+    )
+    if (!is.null(poly)) {
+      for (p in poly) {
+        p <- do.call(t, args = list(x = p))
+        x <- setPolygonInfo(x, p, verbose = FALSE, initialize = FALSE)
+      }
+    }
+
+    # spatlocs --------------------------------------------------------- #
+    sls <- get_spatial_locations_list(
+      gobject = x,
+      spat_unit = ":all:",
+      output = "spatLocsObj",
+      copy_obj = FALSE
+    )
+    if (!is.null(sls)) {
+      for(sl in sls) {
+        sl <- do.call(t, args = list(x = sl))
+        x <- setSpatialLocations(x, sl, verbose = FALSE, initialize = FALSE)
+      }
+
+      # TODO remove this after spatial info is removed from spatialNetwork objs
+      sn_list <- get_spatial_network_list(
+        gobject = x,
+        spat_unit = ":all:",
+        output = "spatialNetworkObj",
+        copy_obj = FALSE
+      )
+      if (length(sn_list) > 0) {
+        warning(wrap_txt(
+          "spatial locations have been modified.
+          Relevant spatial networks may need to be regenerated"
+        ), call. = FALSE)
+      }
+    }
+
+
+
+    # points ----------------------------------------------------------- #
+    pts <- get_feature_info_list(
+      gobject = x, return_giottoPoints = TRUE
+    )
+    if (!is.null(pts)) {
+      for(pt in pts) {
+        pt <- do.call(t, args = list(x = pt))
+        x <- setFeatureInfo(x, pt, verbose = FALSE, initialize = FALSE)
+      }
+    }
+
+
+    return(initialize(x)) # init not necessarily needed
+  }
+)
+
+
 #' @rdname transpose-generic
 #' @export
 setMethod("t", signature("spatLocsObj"), function(x) {

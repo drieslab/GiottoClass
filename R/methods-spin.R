@@ -9,7 +9,95 @@
 #' @param y0 numeric. y-coordinate of the center of rotation. Defaults to center y val if not given.
 NULL
 
-#' @describeIn spin Spin a giottoPolygon object
+
+#' @rdname spin
+#' @param spat_unit character vector. spatial units to affect
+#' @param feat_type character vector. feature types to affect
+#' (giottoPoints only).
+#' @export
+setMethod(
+  "spin", signature(x = "giotto"),
+  function(x, angle, x0 = NULL, y0 = NULL, spat_unit = ":all:", feat_type = ":all:") {
+    a <- list(angle = angle, x0 = x0, y0 = y0)
+
+    checkmate::assert_character(spat_unit)
+    checkmate::assert_character(feat_type)
+    all_su <- spat_unit == ":all:"
+    all_ft <- feat_type == ":all:"
+
+    # no need to set default spat_unit and feat_type. NULL is acceptable input
+
+    # polygons --------------------------------------------------------- #
+    poly <- get_polygon_info_list(
+      gobject = x, return_giottoPolygon = TRUE
+    )
+    if (!all_su) {
+      poly <- poly[spatUnit(poly) %in% spat_unit]
+    }
+    if (!is.null(poly)) {
+      for (p in poly) {
+        p <- do.call(spin, args = c(list(x = p), a))
+        x <- setPolygonInfo(x, p, verbose = FALSE, initialize = FALSE)
+      }
+    }
+
+    # spatlocs --------------------------------------------------------- #
+    sls <- get_spatial_locations_list(
+      gobject = x,
+      spat_unit = ":all:",
+      output = "spatLocsObj",
+      copy_obj = FALSE
+    )
+    if (!all_su) {
+      sls[spatUnit(sls) %in% spat_unit]
+    }
+    if (!is.null(sls)) {
+      for(sl in sls) {
+        sl <- do.call(spin, args = c(list(x = sl), a))
+        x <- setSpatialLocations(x, sl, verbose = FALSE, initialize = FALSE)
+      }
+
+      # TODO remove this after spatial info is removed from spatialNetwork objs
+      sn_list <- get_spatial_network_list(
+        gobject = x,
+        spat_unit = ":all:",
+        output = "spatialNetworkObj",
+        copy_obj = FALSE
+      )
+      if (length(sn_list) > 0) {
+        warning(wrap_txt(
+          "spatial locations have been modified.
+          Relevant spatial networks may need to be regenerated"
+        ), call. = FALSE)
+      }
+    }
+
+
+
+    # points ----------------------------------------------------------- #
+    pts <- get_feature_info_list(
+      gobject = x, return_giottoPoints = TRUE
+    )
+    if (!all_ft) {
+      pts <- pts[featType(pts) %in% feat_type]
+    }
+    if (!is.null(pts)) {
+      for(pt in pts) {
+        pt <- do.call(spin, args = c(list(x = pt), a))
+        x <- setFeatureInfo(x, pt, verbose = FALSE, initialize = FALSE)
+      }
+    }
+
+
+    return(initialize(x)) # init not necessarily needed
+  }
+)
+
+
+
+
+
+#' @rdname spin
 #' @export
 setMethod(
     "spin", signature(x = "giottoPolygon"),
@@ -20,7 +108,7 @@ setMethod(
     }
 )
 
-#' @describeIn spin Spin a giottoPoints object
+#' @rdname spin
 #' @export
 setMethod(
     "spin", signature(x = "giottoPoints"),
@@ -36,7 +124,7 @@ setMethod(
     }
 )
 
-#' @describeIn spin Spin a spatLocsObj
+#' @rdname spin
 #' @param z0 spatLocsObj specific. Numeric. z-coordinate of the center of rotation.
 #' Depending on if z data is present, defaults to either 0 or center z val if not given.
 #' @param xy_angle spatLocsObj specific. xy plane rotation in degrees.
@@ -59,6 +147,7 @@ setMethod(
 )
 
 
+# TODO can this one be made internal?
 #' @rdname spin
 #' @param geom character. Named vector of colnames of x, y, (z) coordinate columns.
 #' Default is `c("sdimx", "sdimy", "sdimz")`
