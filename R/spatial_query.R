@@ -23,11 +23,12 @@
 #' @return giottoPolygon
 # #' @seealso [spatQueryGiottoSpatLocs()]
 #' @export
-spatQueryGiottoPolygons <- function(gobject,
-    filters,
-    name = "query_polys",
-    feat_type = NULL,
-    clip = TRUE) {
+spatQueryGiottoPolygons <- function(
+        gobject,
+        filters,
+        name = "query_polys",
+        feat_type = NULL,
+        clip = TRUE) {
     assert_giotto(gobject)
     if (!is.null(name)) checkmate::assert_character(name)
     checkmate::assert_list(filters, types = "character")

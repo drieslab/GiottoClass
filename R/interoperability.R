@@ -179,15 +179,16 @@ check_py_for_scanpy <- function() {
 #'    exception of the python path, which may be customized.
 #'    See \code{\link{changeGiottoInstructions}} to modify instructions after creation.
 #' @export
-anndataToGiotto <- function(anndata_path = NULL,
-    n_key_added = NULL,
-    spatial_n_key_added = NULL,
-    deluanay_spat_net = TRUE,
-    spat_unit = NULL,
-    feat_type = NULL,
-    h5_file = NULL,
-    python_path = NULL,
-    env_name = "giotto_env") {
+anndataToGiotto <- function(
+        anndata_path = NULL,
+        n_key_added = NULL,
+        spatial_n_key_added = NULL,
+        deluanay_spat_net = TRUE,
+        spat_unit = NULL,
+        feat_type = NULL,
+        h5_file = NULL,
+        python_path = NULL,
+        env_name = "giotto_env") {
     # Preliminary file checks and guard clauses
     if (is.null(anndata_path)) {
         stop("Please provide a path to an AnnData .h5ad file for conversion.\n")
@@ -553,12 +554,13 @@ anndataToGiotto <- function(anndata_path = NULL,
 #' The save_directory will be created if it does not already exist.
 #' The default save_directory is the working directory.
 #' @export
-giottoToAnnData <- function(gobject = NULL,
-    spat_unit = NULL,
-    feat_type = NULL,
-    python_path = NULL,
-    env_name = "giotto_env",
-    save_directory = NULL) {
+giottoToAnnData <- function(
+        gobject = NULL,
+        spat_unit = NULL,
+        feat_type = NULL,
+        python_path = NULL,
+        env_name = "giotto_env",
+        save_directory = NULL) {
     # Check gobject
     invalid_obj <- !("giotto" %in% class(gobject))
     if (is.null(gobject) || invalid_obj) {
@@ -736,14 +738,15 @@ giottoToAnnData <- function(gobject = NULL,
     # Dimension Reductions
 
     # error hanldling wrapper to get_dimReduction
-    try_get_dimReduction <- function(gobject,
-    spat_unit,
-    feat_type,
-    reduction,
-    reduction_method,
-    name,
-    output,
-    set_defaults) {
+    try_get_dimReduction <- function(
+        gobject,
+        spat_unit,
+        feat_type,
+        reduction,
+        reduction_method,
+        name,
+        output,
+        set_defaults) {
         tryCatch(
             {
                 dim_red <- get_dimReduction(
@@ -889,13 +892,14 @@ giottoToAnnData <- function(gobject = NULL,
     # Nearest Neighbor Network
 
     # error hanldling wrapper to get_NearestNetwork
-    try_get_NN <- function(gobject,
-    spat_unit,
-    feat_type,
-    nn_network_to_use,
-    network_name,
-    output,
-    set_defaults) {
+    try_get_NN <- function(
+        gobject,
+        spat_unit,
+        feat_type,
+        nn_network_to_use,
+        network_name,
+        output,
+        set_defaults) {
         tryCatch(
             {
                 nearest_net <- get_NearestNetwork(
@@ -973,12 +977,13 @@ giottoToAnnData <- function(gobject = NULL,
     # Reset indexing variable
     adata_pos <- 1
 
-    try_get_SN <- function(gobject,
-    spat_unit,
-    name,
-    output,
-    set_defaults,
-    verbose) {
+    try_get_SN <- function(
+        gobject,
+        spat_unit,
+        name,
+        output,
+        set_defaults,
+        verbose) {
         tryCatch(
             {
                 spatial_net <- get_spatialNetwork(
@@ -1094,10 +1099,11 @@ giottoToAnnData <- function(gobject = NULL,
 #' @param ... additional params to pass to \code{\link{get_spatial_locations}}
 #' @return Seurat object
 #' @export
-giottoToSeurat <- function(gobject,
-    spat_unit = NULL,
-    obj_use = NULL,
-    ...) {
+giottoToSeurat <- function(
+        gobject,
+        spat_unit = NULL,
+        obj_use = NULL,
+        ...) {
     stop(wrap_txt(
         "Deprecated. Please use either giottoToSeuratV4() or giottoToSeuratV5()"
     ))
@@ -1117,9 +1123,10 @@ giottoToSeurat <- function(gobject,
 #' @return Seurat object
 #' @keywords seurat interoperability
 #' @export
-giottoToSeuratV4 <- function(gobject,
-    spat_unit = NULL,
-    ...) {
+giottoToSeuratV4 <- function(
+        gobject,
+        spat_unit = NULL,
+        ...) {
     # data.table vars
     feat_type <- name <- dim_type <- nn_type <- NULL
     # set default spat_unit and feat_type to be extracted as a Seurat assay
@@ -1367,9 +1374,10 @@ giottoToSeuratV4 <- function(gobject,
 #' @return Seurat object
 #' @keywords seurat interoperability
 #' @export
-giottoToSeuratV5 <- function(gobject,
-    spat_unit = NULL,
-    ...) {
+giottoToSeuratV5 <- function(
+        gobject,
+        spat_unit = NULL,
+        ...) {
     # data.table vars
     feat_type <- name <- dim_type <- nn_type <- NULL
 
@@ -1671,10 +1679,11 @@ giottoToSeuratV5 <- function(gobject,
 #' @param subcellular_assay Specify name of the subcellular assay in input object.
 #' Default is \code{"Vizgen"}.
 #' @export
-seuratToGiotto <- function(sobject,
-    spatial_assay = "Spatial",
-    dim_reduction = c("pca", "umap"),
-    subcellular_assay = "Vizgen") {
+seuratToGiotto <- function(
+        sobject,
+        spatial_assay = "Spatial",
+        dim_reduction = c("pca", "umap"),
+        subcellular_assay = "Vizgen") {
     stop(wrap_txt(
         "Deprecated. Please use either seuratToGiottoV4() or seuratToGiottoV5()"
     ))
@@ -1694,13 +1703,14 @@ seuratToGiotto <- function(sobject,
 #' @return A Giotto object converted from Seurat object with all computations stored in it.
 #' @keywords seurat interoperability
 #' @export
-seuratToGiottoV4 <- function(sobject,
-    spatial_assay = "Spatial",
-    dim_reduction = c("pca", "umap"),
-    subcellular_assay = "Vizgen",
-    sp_network = NULL,
-    nn_network = NULL,
-    verbose = TRUE) {
+seuratToGiottoV4 <- function(
+        sobject,
+        spatial_assay = "Spatial",
+        dim_reduction = c("pca", "umap"),
+        subcellular_assay = "Vizgen",
+        sp_network = NULL,
+        nn_network = NULL,
+        verbose = TRUE) {
     package_check("Seurat")
     if (is.null(Seurat::GetAssayData(object = sobject, slot = "counts", assay = spatial_assay))) {
         wrap_msg("No raw expression values are provided in spatial_assay")
@@ -1904,13 +1914,14 @@ seuratToGiottoV4 <- function(sobject,
 #' @return A Giotto object converted from Seurat object with all computations stored in it.
 #' @keywords seurat interoperability
 #' @export
-seuratToGiottoV5 <- function(sobject,
-    spatial_assay = "Spatial",
-    dim_reduction = c("pca", "umap"),
-    subcellular_assay = "Vizgen",
-    sp_network = NULL,
-    nn_network = NULL,
-    verbose = TRUE) {
+seuratToGiottoV5 <- function(
+        sobject,
+        spatial_assay = "Spatial",
+        dim_reduction = c("pca", "umap"),
+        subcellular_assay = "Vizgen",
+        sp_network = NULL,
+        nn_network = NULL,
+        verbose = TRUE) {
     package_check("Seurat")
 
     if (is.null(Seurat::GetAssayData(object = sobject, slot = "counts", assay = spatial_assay))) {
@@ -2469,11 +2480,12 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
 #' spatialExperimentToGiotto(spe)
 #' }
 #' @export
-spatialExperimentToGiotto <- function(spe,
-    python_path,
-    nn_network = NULL,
-    sp_network = NULL,
-    verbose = TRUE) {
+spatialExperimentToGiotto <- function(
+        spe,
+        python_path,
+        nn_network = NULL,
+        sp_network = NULL,
+        verbose = TRUE) {
     # Create giotto instructions and set python path
     instrs <- createGiottoInstructions(python_path = python_path)
 
@@ -2682,8 +2694,9 @@ if (requireNamespace("SpatialExperiment", quietly = TRUE)) {
 #' @return A Giotto object compatible with suite version
 #' @export
 #'
-giottoMasterToSuite <- function(gobject,
-    expression_feat = "rna") {
+giottoMasterToSuite <- function(
+        gobject,
+        expression_feat = "rna") {
     master_object <- gobject
 
     spatial_locs <- cell_metadata <- feat_metadata <- instructions <- NULL

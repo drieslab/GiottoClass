@@ -21,20 +21,21 @@
 #' @return named vector with giotto instructions
 #' @seealso More online information can be found here \url{https://rubd.github.io/Giotto_site/articles/instructions_and_plotting.html}
 #' @export
-createGiottoInstructions <- function(python_path = NULL,
-    show_plot = NULL,
-    return_plot = NULL,
-    save_plot = NULL,
-    save_dir = NULL,
-    plot_format = NULL,
-    dpi = NULL,
-    units = NULL,
-    height = NULL,
-    width = NULL,
-    is_docker = FALSE,
-    plot_count = 0,
-    fiji_path = NULL,
-    no_python_warn = FALSE) {
+createGiottoInstructions <- function(
+        python_path = NULL,
+        show_plot = NULL,
+        return_plot = NULL,
+        save_plot = NULL,
+        save_dir = NULL,
+        plot_format = NULL,
+        dpi = NULL,
+        units = NULL,
+        height = NULL,
+        width = NULL,
+        is_docker = FALSE,
+        plot_count = 0,
+        fiji_path = NULL,
+        no_python_warn = FALSE) {
     # python path to use
     # try used here to allow instructions to be made in the absence of a compatible
     # python env
@@ -135,17 +136,18 @@ createGiottoInstructions <- function(python_path = NULL,
 
 
 #' @keywords internal
-create_giotto_instructions <- function(python_path = NULL,
-    show_plot = NULL,
-    return_plot = NULL,
-    save_plot = NULL,
-    save_dir = NULL,
-    plot_format = NULL,
-    dpi = NULL,
-    units = NULL,
-    height = NULL,
-    width = NULL,
-    is_docker = NULL) {
+create_giotto_instructions <- function(
+        python_path = NULL,
+        show_plot = NULL,
+        return_plot = NULL,
+        save_plot = NULL,
+        save_dir = NULL,
+        plot_format = NULL,
+        dpi = NULL,
+        units = NULL,
+        height = NULL,
+        width = NULL,
+        is_docker = NULL) {
     instructions_list <- list(
         python_path = python_path,
         show_plot = show_plot,
@@ -173,9 +175,10 @@ create_giotto_instructions <- function(python_path = NULL,
 #' exist
 #' @return specific parameter
 #' @export
-readGiottoInstructions <- function(giotto_instructions,
-    param = NULL,
-    default) {
+readGiottoInstructions <- function(
+        giotto_instructions,
+        param = NULL,
+        default) {
     # get instructions if provided the giotto object
     if (inherits(giotto_instructions, "giotto")) {
         giotto_instructions <- giotto_instructions@instructions
@@ -220,11 +223,12 @@ showGiottoInstructions <- function(gobject) {
 #' @param init_gobject (boolean, default = TRUE) initialize gobject if returning
 #' @return giotto object with one or more changed instructions
 #' @export
-changeGiottoInstructions <- function(gobject,
-    params = NULL,
-    new_values = NULL,
-    return_gobject = TRUE,
-    init_gobject = TRUE) {
+changeGiottoInstructions <- function(
+        gobject,
+        params = NULL,
+        new_values = NULL,
+        return_gobject = TRUE,
+        init_gobject = TRUE) {
     instrs <- gobject@instructions
 
     if (is.null(params) | is.null(new_values)) {
@@ -279,9 +283,10 @@ changeGiottoInstructions <- function(gobject,
 #' @param init_gobject (boolean, default = TRUE) initialize gobject when returning
 #' @return giotto object with replaces instructions
 #' @export
-replaceGiottoInstructions <- function(gobject,
-    instructions = NULL,
-    init_gobject = TRUE) {
+replaceGiottoInstructions <- function(
+        gobject,
+        instructions = NULL,
+        init_gobject = TRUE) {
     instrs_needed <- names(create_giotto_instructions())
 
     # validate new instructions

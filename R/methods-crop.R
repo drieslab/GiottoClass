@@ -47,8 +47,7 @@ setMethod("crop", signature("giottoLargeImage"), function(x, y, ...) {
 #' @param xmin,xmax,ymin,ymax only used if DT = TRUE. Set extent bounds
 #' independently
 #' @export
-setMethod("crop", signature("giottoPoints"), function(
-        x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL, ...) {
+setMethod("crop", signature("giottoPoints"), function(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL, ...) {
     checkmate::assert_logical(DT)
     if (DT) {
         # converting to DT, subsetting, then regeneration of SpatVector with vect()
@@ -92,8 +91,7 @@ setMethod("crop", signature("giottoPoints"), function(
 #' @param xmin,xmax,ymin,ymax only used if DT = TRUE. Set extent bounds
 #' independently
 #' @export
-setMethod("crop", signature("giottoPolygon"), function(
-        x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL, ...) {
+setMethod("crop", signature("giottoPolygon"), function(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL, ...) {
     # A. spatVector cropping
     checkmate::assert_logical(DT)
     if (DT) {

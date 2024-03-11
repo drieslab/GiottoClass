@@ -47,7 +47,7 @@ NULL
 #' @rdname spatUnit-generic
 #' @export
 setMethod("spatUnit", signature("list"), function(x) {
-  vapply(x, spatUnit, FUN.VALUE = character(1L))
+    vapply(x, spatUnit, FUN.VALUE = character(1L))
 })
 
 #' @describeIn spatUnit-generic Get spatial unit information
@@ -86,7 +86,7 @@ setMethod("spatUnit<-", signature("giottoPolygon"), function(x, value) {
 #' @rdname featType-generic
 #' @export
 setMethod("featType", signature("list"), function(x) {
-  vapply(x, featType, FUN.VALUE = character(1L))
+    vapply(x, featType, FUN.VALUE = character(1L))
 })
 
 #' @describeIn featType-generic Get feature type information
@@ -200,8 +200,9 @@ setMethod("prov<-", signature = "provData", function(x, value) {
 #' }
 #' @keywords internal
 assign_objnames_2_list <- function(obj_list, force_replace = FALSE) {
-
-    if (is.null(obj_list)) return(obj_list)
+    if (is.null(obj_list)) {
+        return(obj_list)
+    }
     # find list items with no names
     list_names <- names(obj_list)
     if (is.null(list_names)) {

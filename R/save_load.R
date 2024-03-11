@@ -17,15 +17,16 @@
 #' Giotto objects. Additional method_params need to be provided as a list and will
 #' go to \code{\link[base]{saveRDS}} or \code{\link[qs]{qsave}}
 #' @export
-saveGiotto <- function(gobject,
-    foldername = "saveGiottoDir",
-    dir = getwd(),
-    method = c("RDS", "qs"),
-    method_params = list(),
-    overwrite = FALSE,
-    image_filetype = "PNG",
-    verbose = TRUE,
-    ...) {
+saveGiotto <- function(
+        gobject,
+        foldername = "saveGiottoDir",
+        dir = getwd(),
+        method = c("RDS", "qs"),
+        method_params = list(),
+        overwrite = FALSE,
+        image_filetype = "PNG",
+        verbose = TRUE,
+        ...) {
     ## set directory path and folder
     final_dir <- paste0(path.expand(dir), "/", foldername)
 
@@ -182,12 +183,13 @@ saveGiotto <- function(gobject,
 #' You can set the python path, alternatively it will look for an existing
 #' Giotto python environment.
 #' @export
-loadGiotto <- function(path_to_folder,
-    load_params = list(),
-    reconnect_giottoImage = TRUE,
-    python_path = NULL,
-    init_gobject = TRUE,
-    verbose = TRUE) {
+loadGiotto <- function(
+        path_to_folder,
+        load_params = list(),
+        reconnect_giottoImage = TRUE,
+        python_path = NULL,
+        init_gobject = TRUE,
+        verbose = TRUE) {
     # data.table vars
     img_type <- NULL
 

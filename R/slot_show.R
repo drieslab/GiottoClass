@@ -86,8 +86,9 @@ showGiottoExpression <- function(gobject, nrows = 4, ncols = 4) {
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoCellMetadata <- function(gobject,
-    nrows = 4) {
+showGiottoCellMetadata <- function(
+        gobject,
+        nrows = 4) {
     # import print styling
     ch <- box_chars()
     ct <- color_tag()
@@ -158,8 +159,9 @@ showGiottoCellMetadata <- function(gobject,
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoFeatMetadata <- function(gobject,
-    nrows = 4) {
+showGiottoFeatMetadata <- function(
+        gobject,
+        nrows = 4) {
     # import print styling
     ch <- box_chars()
     ct <- color_tag()
@@ -231,8 +233,9 @@ showGiottoFeatMetadata <- function(gobject,
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoSpatLocs <- function(gobject,
-    nrows = 4) {
+showGiottoSpatLocs <- function(
+        gobject,
+        nrows = 4) {
     # import print styling
     ch <- box_chars()
     ct <- color_tag()
@@ -330,8 +333,9 @@ showGiottoSpatLocs <- function(gobject,
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoSpatEnrichments <- function(gobject,
-    nrows = 4) {
+showGiottoSpatEnrichments <- function(
+        gobject,
+        nrows = 4) {
     # define for data.table [] subsetting
     spat_unit <- NULL
     feat_type <- NULL
@@ -369,9 +373,10 @@ showGiottoSpatEnrichments <- function(gobject,
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoDimRed <- function(gobject,
-    nrows = 3,
-    ncols = 2) {
+showGiottoDimRed <- function(
+        gobject,
+        nrows = 3,
+        ncols = 2) {
     # Define for data.table
     data_type <- NULL
 
@@ -480,8 +485,9 @@ showGiottoDimRed <- function(gobject,
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoNearestNetworks <- function(gobject,
-    nrows = 3) {
+showGiottoNearestNetworks <- function(
+        gobject,
+        nrows = 3) {
     # import print styling
     ch <- box_chars()
     ct <- color_tag()
@@ -618,8 +624,9 @@ showGiottoFeatInfo <- function(gobject) {
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoSpatNetworks <- function(gobject,
-    nrows = 4) {
+showGiottoSpatNetworks <- function(
+        gobject,
+        nrows = 4) {
     # import print styling
     ch <- box_chars()
     ct <- color_tag()
@@ -706,8 +713,9 @@ showNetworks <- function(...) {
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoSpatGrids <- function(gobject,
-    nrows = 4) {
+showGiottoSpatGrids <- function(
+        gobject,
+        nrows = 4) {
     # import boxchars
     ch <- box_chars()
 
@@ -822,10 +830,11 @@ showGiottoImageNames <- function(gobject) {
 #' @keywords internal
 #' @details Much inspiration taken from https://rdrr.io/cran/fs/src/R/tree.R
 #' @keywords internal
-.print_leaf <- function(level_index,
-    availableDT,
-    inherit_last = TRUE,
-    indent) {
+.print_leaf <- function(
+        level_index,
+        availableDT,
+        inherit_last = TRUE,
+        indent) {
     ch <- box_chars()
 
     leafs <- unique(unlist(availableDT[, level_index, with = FALSE])) # Read unique items for this level into 'leafs'

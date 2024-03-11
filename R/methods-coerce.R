@@ -50,8 +50,7 @@ NULL
 #' @rdname as.data.table
 #' @method as.data.table SpatVector
 #' @export
-as.data.table.SpatVector <- function(
-        x, keep.rownames = FALSE, geom = NULL, include_values = TRUE, ...) {
+as.data.table.SpatVector <- function(x, keep.rownames = FALSE, geom = NULL, include_values = TRUE, ...) {
     # if looking for polygon XY...
     if (terra::is.polygons(x)) {
         if (!is.null(geom)) {
@@ -96,8 +95,7 @@ as.data.table.giottoPoints <- function(x, ...) {
 #' @export
 setMethod(
     "as.polygons", signature("data.frame"),
-    function(
-        x, include_values = TRUE, specific_values = NULL, sort_geom = FALSE) {
+    function(x, include_values = TRUE, specific_values = NULL, sort_geom = FALSE) {
         .dt_to_spatvector_polygon(
             dt = data.table::setDT(x),
             include_values = include_values,
@@ -116,8 +114,7 @@ setMethod(
 #' @export
 setMethod(
     "as.points", signature("data.frame"),
-    function(
-        x, include_values = TRUE, specific_values = NULL) {
+    function(x, include_values = TRUE, specific_values = NULL) {
         .dt_to_spatvector_points(
             dt = data.table::setDT(x),
             include_values = include_values,
@@ -430,8 +427,9 @@ setMethod(
 #' @name .spatvector_to_dt
 #' @description  convert spatVector to data.table
 #' @keywords internal
-.spatvector_to_dt <- function(spatvector,
-    include_values = TRUE) {
+.spatvector_to_dt <- function(
+        spatvector,
+        include_values = TRUE) {
     # NSE var
     geom <- NULL
 
@@ -459,10 +457,11 @@ setMethod(
 #' @param sort_geom `logical`. Whether to sort key the data.table input by
 #' 'geom', 'part', and 'hole' columns.
 #' @keywords internal
-.dt_to_spatvector_polygon <- function(dt,
-    include_values = TRUE,
-    specific_values = NULL,
-    sort_geom = FALSE) {
+.dt_to_spatvector_polygon <- function(
+        dt,
+        include_values = TRUE,
+        specific_values = NULL,
+        sort_geom = FALSE) {
     # DT vars
     geom <- NULL
 
@@ -520,9 +519,10 @@ setMethod(
 #' @param specific_values specific values to include as attributes if
 #' include_values == TRUE
 #' @keywords internal
-.dt_to_spatvector_points <- function(dt,
-    include_values = TRUE,
-    specific_values = NULL) {
+.dt_to_spatvector_points <- function(
+        dt,
+        include_values = TRUE,
+        specific_values = NULL) {
     all_colnames <- colnames(dt)
     geom_values <- c("geom", "part", "x", "y", "hole")
     other_values <- all_colnames[!all_colnames %in% geom_values]

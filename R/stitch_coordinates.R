@@ -20,15 +20,16 @@
 #' }
 #'
 #' @export
-stitchFieldCoordinates <- function(location_file,
-    offset_file,
-    cumulate_offset_x = F,
-    cumulate_offset_y = F,
-    field_col = "Field of View",
-    X_coord_col = "X",
-    Y_coord_col = "Y",
-    reverse_final_x = F,
-    reverse_final_y = T) {
+stitchFieldCoordinates <- function(
+        location_file,
+        offset_file,
+        cumulate_offset_x = F,
+        cumulate_offset_y = F,
+        field_col = "Field of View",
+        X_coord_col = "X",
+        Y_coord_col = "Y",
+        reverse_final_x = F,
+        reverse_final_y = T) {
     # data.table variables
     x_offset_final <- x_offset <- y_offset_final <- y_offset <- field <- NULL
 
@@ -86,9 +87,10 @@ stitchFieldCoordinates <- function(location_file,
 #' @param Xtilespan numerical value specifying the width of each tile
 #' @param Ytilespan numerical value specifying the height of each tile
 #' @export
-stitchTileCoordinates <- function(location_file,
-    Xtilespan,
-    Ytilespan) {
+stitchTileCoordinates <- function(
+        location_file,
+        Xtilespan,
+        Ytilespan) {
     # data.table variables
     Xcoord <- X.X <- XtileIndex <- Ycoord <- Y.Y <- YtileIndex <- NULL
 

@@ -20,82 +20,81 @@ NULL
 #' @param feat_type character vector. feature types to affect
 #' @export
 setMethod(
-  "rescale", signature("giotto"), function(
-    x, fx = 1, fy = fx, x0, y0, spat_unit = ":all:", feat_type = ":all:"
-  ) {
-    a <- list(fx = fx, fy = fy)
-    if (!missing(x0)) a$x0 <- x0
-    if (!missing(y0)) a$y0 <- y0
+    "rescale", signature("giotto"), function(
+        x, fx = 1, fy = fx, x0, y0, spat_unit = ":all:", feat_type = ":all:") {
+        a <- list(fx = fx, fy = fy)
+        if (!missing(x0)) a$x0 <- x0
+        if (!missing(y0)) a$y0 <- y0
 
-    checkmate::assert_character(spat_unit)
-    checkmate::assert_character(feat_type)
-    all_su <- spat_unit == ":all:"
-    all_ft <- feat_type == ":all:"
+        checkmate::assert_character(spat_unit)
+        checkmate::assert_character(feat_type)
+        all_su <- spat_unit == ":all:"
+        all_ft <- feat_type == ":all:"
 
-    # no need to set default spat_unit and feat_type. NULL is acceptable input
+        # no need to set default spat_unit and feat_type. NULL is acceptable input
 
-    # polygons --------------------------------------------------------- #
-    poly <- get_polygon_info_list(
-      gobject = x, return_giottoPolygon = TRUE
-    )
-    if (!all_su) {
-      poly <- poly[spatUnit(poly) %in% spat_unit]
-    }
-    if (!is.null(poly)) {
-      for (p in poly) {
-        p <- do.call(rescale, args = c(list(x = p), a))
-        x <- setPolygonInfo(x, p, verbose = FALSE, initialize = FALSE)
-      }
-    }
+        # polygons --------------------------------------------------------- #
+        poly <- get_polygon_info_list(
+            gobject = x, return_giottoPolygon = TRUE
+        )
+        if (!all_su) {
+            poly <- poly[spatUnit(poly) %in% spat_unit]
+        }
+        if (!is.null(poly)) {
+            for (p in poly) {
+                p <- do.call(rescale, args = c(list(x = p), a))
+                x <- setPolygonInfo(x, p, verbose = FALSE, initialize = FALSE)
+            }
+        }
 
-    # spatlocs --------------------------------------------------------- #
-    sls <- get_spatial_locations_list(
-      gobject = x,
-      spat_unit = ":all:",
-      output = "spatLocsObj",
-      copy_obj = FALSE
-    )
-    if (!all_su) {
-      sls[spatUnit(sls) %in% spat_unit]
-    }
-    if (!is.null(sls)) {
-      for(sl in sls) {
-        sl <- do.call(rescale, args = c(list(x = sl), a))
-        x <- setSpatialLocations(x, sl, verbose = FALSE, initialize = FALSE)
-      }
+        # spatlocs --------------------------------------------------------- #
+        sls <- get_spatial_locations_list(
+            gobject = x,
+            spat_unit = ":all:",
+            output = "spatLocsObj",
+            copy_obj = FALSE
+        )
+        if (!all_su) {
+            sls[spatUnit(sls) %in% spat_unit]
+        }
+        if (!is.null(sls)) {
+            for (sl in sls) {
+                sl <- do.call(rescale, args = c(list(x = sl), a))
+                x <- setSpatialLocations(x, sl, verbose = FALSE, initialize = FALSE)
+            }
 
-      # TODO remove this after spatial info is removed from spatialNetwork objs
-      sn_list <- get_spatial_network_list(
-        gobject = x,
-        spat_unit = ":all:",
-        output = "spatialNetworkObj",
-        copy_obj = FALSE
-      )
-      if (length(sn_list) > 0) {
-        warning(wrap_txt(
-          "spatial locations have been modified.
+            # TODO remove this after spatial info is removed from spatialNetwork objs
+            sn_list <- get_spatial_network_list(
+                gobject = x,
+                spat_unit = ":all:",
+                output = "spatialNetworkObj",
+                copy_obj = FALSE
+            )
+            if (length(sn_list) > 0) {
+                warning(wrap_txt(
+                    "spatial locations have been modified.
           Relevant spatial networks may need to be regenerated"
-        ), call. = FALSE)
-      }
-    }
+                ), call. = FALSE)
+            }
+        }
 
 
 
-    # points ----------------------------------------------------------- #
-    pts <- get_feature_info_list(
-      gobject = x, return_giottoPoints = TRUE
-    )
-    if (!all_ft) {
-      pts <- pts[featType(pts) %in% feat_type]
+        # points ----------------------------------------------------------- #
+        pts <- get_feature_info_list(
+            gobject = x, return_giottoPoints = TRUE
+        )
+        if (!all_ft) {
+            pts <- pts[featType(pts) %in% feat_type]
+        }
+        if (!is.null(pts)) {
+            for (pt in pts) {
+                pt <- do.call(rescale, args = c(list(x = pt), a))
+                x <- setFeatureInfo(x, pt, verbose = FALSE, initialize = FALSE)
+            }
+        }
+        return(initialize(x)) # init not necessarily needed
     }
-    if (!is.null(pts)) {
-      for(pt in pts) {
-        pt <- do.call(rescale, args = c(list(x = pt), a))
-        x <- setFeatureInfo(x, pt, verbose = FALSE, initialize = FALSE)
-      }
-    }
-    return(initialize(x)) # init not necessarily needed
-  }
 )
 
 
@@ -118,8 +117,9 @@ setMethod(
 #' Default is `c("sdimx", "sdimy", "sdimz")`
 setMethod(
     "rescale", signature("data.frame"),
-    function(x, fx = 1, fy = fx, fz = fx, x0, y0, z0,
-    geom = c("sdimx", "sdimy", "sdimz")) {
+    function(
+        x, fx = 1, fy = fx, fz = fx, x0, y0, z0,
+        geom = c("sdimx", "sdimy", "sdimz")) {
         x <- data.table::as.data.table(x)
 
         # find center
@@ -145,26 +145,24 @@ setMethod(
 #' @rdname rescale
 #' @export
 setMethod("rescale", signature("giottoPolygon"), function(
-    x, fx = 1, fy = fx, x0, y0
-  ) {
-  a <- list(fx = fx, fy = fy)
-  if (!missing(x0)) a$x0 <- x0
-  if (!missing(y0)) a$y0 <- y0
+        x, fx = 1, fy = fx, x0, y0) {
+    a <- list(fx = fx, fy = fy)
+    if (!missing(x0)) a$x0 <- x0
+    if (!missing(y0)) a$y0 <- y0
 
-  .do_gpoly(x, what = terra::rescale, args = a)
+    .do_gpoly(x, what = terra::rescale, args = a)
 })
 
 #' @rdname rescale
 #' @export
 setMethod("rescale", signature("giottoPoints"), function(
-    x, fx = 1, fy = fx, x0, y0
-  ) {
-  a <- list(x = x[], fx = fx, fy = fy)
-  if (!missing(x0)) a$x0 <- x0
-  if (!missing(y0)) a$y0 <- y0
+        x, fx = 1, fy = fx, x0, y0) {
+    a <- list(x = x[], fx = fx, fy = fy)
+    if (!missing(x0)) a$x0 <- x0
+    if (!missing(y0)) a$y0 <- y0
 
-  x[] <- do.call("rescale", args = a)
-  return(x)
+    x[] <- do.call("rescale", args = a)
+    return(x)
 })
 
 
@@ -196,10 +194,11 @@ setMethod("rescale", signature("giottoPoints"), function(
 #' x, y, and z (if available) dimensions or as a vector of named values for 'x',
 #' 'y', (and 'z').
 #' @keywords internal
-.scale_spatial_locations <- function(spatlocs,
-    scale_factor = c(1, 1, 1),
-    scenter = c(0, 0, 0),
-    geom = c("sdimx", "sdimy", "sdimz")) {
+.scale_spatial_locations <- function(
+        spatlocs,
+        scale_factor = c(1, 1, 1),
+        scenter = c(0, 0, 0),
+        geom = c("sdimx", "sdimy", "sdimz")) {
     checkmate::assert_data_table(spatlocs)
 
     xyz <- c("x", "y", "z")
@@ -250,9 +249,10 @@ setMethod("rescale", signature("giottoPoints"), function(
 #' @name .rescale_polygons
 #' @description  rescale individual polygons by a factor x and y
 #' @keywords internal
-.rescale_polygons <- function(spatVector,
-    spatVectorCentroids,
-    fx = 0.5, fy = 0.5) {
+.rescale_polygons <- function(
+        spatVector,
+        spatVectorCentroids,
+        fx = 0.5, fy = 0.5) {
     # DT vars
     poly_ID <- NULL
 
@@ -291,13 +291,14 @@ setMethod("rescale", signature("giottoPoints"), function(
 #' @return giotto object
 #' @concept polygon scaling
 #' @export
-rescalePolygons <- function(gobject,
-    poly_info = "cell",
-    name = "rescaled_cell",
-    fx = 0.5,
-    fy = 0.5,
-    calculate_centroids = TRUE,
-    return_gobject = TRUE) {
+rescalePolygons <- function(
+        gobject,
+        poly_info = "cell",
+        name = "rescaled_cell",
+        fx = 0.5,
+        fy = 0.5,
+        calculate_centroids = TRUE,
+        return_gobject = TRUE) {
     # 1. get polygon information
     original <- get_polygon_info(
         gobject = gobject,

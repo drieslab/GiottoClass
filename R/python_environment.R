@@ -133,14 +133,15 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 #' @title .install_giotto_environment_specific
 #' @description installation of giotto environment
 #' @keywords internal
-.install_giotto_environment_specific <- function(packages_to_install = c(
-        "pandas", "networkx", "python-igraph",
-        "leidenalg", "python-louvain", "python.app",
-        "scikit-learn"
-    ),
-    python_version = "3.10.2",
-    mini_install_path = NULL,
-    verbose = TRUE) {
+.install_giotto_environment_specific <- function(
+        packages_to_install = c(
+            "pandas", "networkx", "python-igraph",
+            "leidenalg", "python-louvain", "python.app",
+            "scikit-learn"
+        ),
+        python_version = "3.10.2",
+        mini_install_path = NULL,
+        verbose = TRUE) {
     ## install Giotto environment
     if (verbose) message("\n |---- install giotto environment ----| \n")
     conda_path <- mini_install_path
@@ -237,15 +238,16 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 #' @title .install_giotto_environment
 #' @description installation options of giotto environment
 #' @keywords internal
-.install_giotto_environment <- function(force_environment = FALSE,
-    packages_to_install = c(
-        "pandas", "networkx", "python-igraph",
-        "leidenalg", "python-louvain", "python.app",
-        "scikit-learn"
-    ),
-    python_version = "3.10.2",
-    mini_install_path = NULL,
-    verbose = TRUE) {
+.install_giotto_environment <- function(
+        force_environment = FALSE,
+        packages_to_install = c(
+            "pandas", "networkx", "python-igraph",
+            "leidenalg", "python-louvain", "python.app",
+            "scikit-learn"
+        ),
+        python_version = "3.10.2",
+        mini_install_path = NULL,
+        verbose = TRUE) {
     # first see if Giotto is already installed
     giotto_installed <- checkGiottoEnvironment(
         mini_install_path = mini_install_path,
@@ -347,20 +349,21 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 #' # and a giotto environment with all necessary python modules
 #' installGiottoEnvironment()
 #' }
-installGiottoEnvironment <- function(packages_to_install = c(
-        "pandas==1.5.1",
-        "networkx==2.8.8",
-        "python-igraph==0.10.2",
-        "leidenalg==0.9.0",
-        "python-louvain==0.16",
-        "python.app==1.4",
-        "scikit-learn==1.1.3"
-    ),
-    python_version = "3.10.2",
-    mini_install_path = NULL,
-    force_miniconda = FALSE,
-    force_environment = FALSE,
-    verbose = TRUE) {
+installGiottoEnvironment <- function(
+        packages_to_install = c(
+            "pandas==1.5.1",
+            "networkx==2.8.8",
+            "python-igraph==0.10.2",
+            "leidenalg==0.9.0",
+            "python-louvain==0.16",
+            "python.app==1.4",
+            "scikit-learn==1.1.3"
+        ),
+        python_version = "3.10.2",
+        mini_install_path = NULL,
+        force_miniconda = FALSE,
+        force_environment = FALSE,
+        verbose = TRUE) {
     ## 1. check and install miniconda locally if necessary
     conda_path <- NULL
     if (is.null(mini_install_path)) {
@@ -475,8 +478,9 @@ removeGiottoEnvironment <- function(mini_path = NULL, verbose = TRUE) {
 #' @return path to python executable
 #' @keywords internal
 #' @export
-set_giotto_python_path <- function(python_path = NULL,
-    verbose = TRUE) {
+set_giotto_python_path <- function(
+        python_path = NULL,
+        verbose = TRUE) {
     if (isFALSE(getOption("giotto.use_conda", TRUE))) {
         return(invisible(NULL)) # exit early
     }
@@ -548,8 +552,9 @@ set_giotto_python_path <- function(python_path = NULL,
 #' @param env environment into which package will be installed
 #' @description prompts user to install a package
 #' @keywords internal
-.py_install_prompt <- function(package = NULL,
-    env = NULL) {
+.py_install_prompt <- function(
+        package = NULL,
+        env = NULL) {
     if (is.null(package) | is.null(env)) {
         stop(GiottoUtils::wrap_txt("Incorrect Usage.\n", errWidth = TRUE))
     }
@@ -580,8 +585,9 @@ set_giotto_python_path <- function(python_path = NULL,
 #' @description
 #' Installs `link` to python `env`
 #' @keywords internal
-.install_github_link_pip <- function(link = NULL,
-    env = NULL) {
+.install_github_link_pip <- function(
+        link = NULL,
+        env = NULL) {
     # Guard
     if (is.null(link) | is.null(env)) stop(GiottoUtils::wrap_txt("Incorrect Usage.", errWidth = TRUE))
 
@@ -620,8 +626,9 @@ set_giotto_python_path <- function(python_path = NULL,
 #' Installation is done via `py_install` from the
 #' `reticulate` package.
 #' @keywords internal
-.install_py_pkg_reticulate <- function(package = NULL,
-    env = NULL) {
+.install_py_pkg_reticulate <- function(
+        package = NULL,
+        env = NULL) {
     resp <- .py_install_prompt(
         package = package,
         env = env
@@ -669,9 +676,10 @@ set_giotto_python_path <- function(python_path = NULL,
 #' one parameter, or the other.
 #'
 #' @keywords export
-checkPythonPackage <- function(package_name = NULL,
-    github_package_url = NULL,
-    env_to_use = "giotto_env") {
+checkPythonPackage <- function(
+        package_name = NULL,
+        github_package_url = NULL,
+        env_to_use = "giotto_env") {
     # Guard clauses
     if (is.null(package_name) & is.null(github_package_url)) {
         null_input_err_msg <- "A python package name must be provided, e.g. `scanpy==1.9.0`"

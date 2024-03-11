@@ -9,9 +9,10 @@
 #' @return names and locations of data within giotto object slot
 #' @keywords internal
 #' @export
-list_giotto_data <- function(gobject = NULL,
-    slot = NULL,
-    ...) {
+list_giotto_data <- function(
+        gobject = NULL,
+        slot = NULL,
+        ...) {
     if (slot == "expression") {
         return(list_expression(gobject = gobject, ...))
     }
@@ -60,9 +61,10 @@ list_giotto_data <- function(gobject = NULL,
 #' @inheritParams data_access_params
 #' @return names and locations of available matrices as data.table. col order matters.
 #' @export
-list_expression <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL) {
+list_expression <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL) {
     availableExpr <- data.table()
     for (spatial_unit in names(gobject@expression)) {
         for (feature_type in names(gobject@expression[[spatial_unit]])) {
@@ -101,9 +103,10 @@ list_expression <- function(gobject,
 #' @inheritParams data_access_params
 #' @return vector with names of available matrices
 #' @export
-list_expression_names <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL) {
+list_expression_names <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
     if (is.null(feat_type)) stop("feat_type must be given\n")
 
@@ -144,10 +147,11 @@ list_feat_id_names <- function(gobject) {
 #' @inheritParams data_access_params
 #' @return names and locations of available cell metadata as data.table
 #' @export
-list_cell_metadata <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    return_uniques = FALSE) {
+list_cell_metadata <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        return_uniques = FALSE) {
     availableCMet <- data.table()
     uniques <- list()
     for (spatial_unit in names(gobject@cell_metadata)) {
@@ -190,10 +194,11 @@ list_cell_metadata <- function(gobject,
 #' @inheritParams data_access_params
 #' @return names and locations of available feature metadata as data.table
 #' @export
-list_feat_metadata <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    return_uniques = FALSE) {
+list_feat_metadata <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        return_uniques = FALSE) {
     availableFMet <- data.table()
     uniques <- list()
     for (spatial_unit in names(gobject@feat_metadata)) {
@@ -236,9 +241,10 @@ list_feat_metadata <- function(gobject,
 #' @inheritParams data_access_params
 #' @return names and locations of available data.table as data.table
 #' @export
-list_spatial_locations <- function(gobject,
-    spat_unit = NULL,
-    return_uniques = FALSE) {
+list_spatial_locations <- function(
+        gobject,
+        spat_unit = NULL,
+        return_uniques = FALSE) {
     availableSpatLocs <- data.table()
     uniques <- list()
     for (spatial_unit in names(gobject@spatial_locs)) {
@@ -282,8 +288,9 @@ list_spatial_locations <- function(gobject,
 #' @inheritParams data_access_params
 #' @return vector with names of available spatial locations
 #' @export
-list_spatial_locations_names <- function(gobject,
-    spat_unit = NULL) {
+list_spatial_locations_names <- function(
+        gobject,
+        spat_unit = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
 
     spatlocs_names <- names(gobject@spatial_locs[[spat_unit]])
@@ -299,9 +306,10 @@ list_spatial_locations_names <- function(gobject,
 #' @inheritParams data_access_params
 #' @return names and locations of available data as data.table
 #' @export
-list_spatial_enrichments <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL) {
+list_spatial_enrichments <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL) {
     availableSpatEnr <- data.table()
 
     for (spatial_unit in names(gobject@spatial_enrichment)) {
@@ -342,9 +350,10 @@ list_spatial_enrichments <- function(gobject,
 #' @inheritParams data_access_params
 #' @return vector of names for available spatial enrichments
 #' @export
-list_spatial_enrichments_names <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL) {
+list_spatial_enrichments_names <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
     if (is.null(feat_type)) stop("feat_type must be given\n")
 
@@ -365,11 +374,12 @@ list_spatial_enrichments_names <- function(gobject,
 #' @param dim_type dimensional reduction method (e.g. "pca", "umap")
 #' @return names and locations of dimension reduction as a data.table
 #' @export
-list_dim_reductions <- function(gobject,
-    data_type = NULL,
-    spat_unit = NULL,
-    feat_type = NULL,
-    dim_type = NULL) {
+list_dim_reductions <- function(
+        gobject,
+        data_type = NULL,
+        spat_unit = NULL,
+        feat_type = NULL,
+        dim_type = NULL) {
     availableDimRed <- data.table()
     for (dataType in names(slot(gobject, "dimension_reduction"))) {
         for (spatUnit in names(slot(gobject, "dimension_reduction")[[dataType]])) {
@@ -421,11 +431,12 @@ list_dim_reductions <- function(gobject,
 #' @return names of dimension reduction object
 #' @details function that can be used to find which names have been used
 #' @export
-list_dim_reductions_names <- function(gobject,
-    data_type = "cells",
-    spat_unit = NULL,
-    feat_type = NULL,
-    dim_type = NULL) {
+list_dim_reductions_names <- function(
+        gobject,
+        data_type = "cells",
+        spat_unit = NULL,
+        feat_type = NULL,
+        dim_type = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
     if (is.null(feat_type)) stop("feat_type must be given\n")
     if (is.null(dim_type)) stop("dim_type must be given\n")
@@ -444,11 +455,12 @@ list_dim_reductions_names <- function(gobject,
 #' @param nn_type nearest neighbor method (e.g. "sNN", "kNN")
 #' @return names and locations of nearest neighbor networks as a data.table
 #' @export
-list_nearest_networks <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    nn_type = NULL,
-    return_uniques = FALSE) {
+list_nearest_networks <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        nn_type = NULL,
+        return_uniques = FALSE) {
     # TODO remove uniques
 
     availableNN <- data.table()
@@ -506,10 +518,11 @@ list_nearest_networks <- function(gobject,
 #' @return names of nearest neighbor network object
 #' @details function that can be used to find which names have been used
 #' @export
-list_nearest_networks_names <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    nn_type = NULL) {
+list_nearest_networks_names <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        nn_type = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
     if (is.null(feat_type)) stop("feat_type must be given\n")
     if (is.null(nn_type)) stop("nn_type must be given\n")
@@ -603,9 +616,10 @@ list_feature_info_names <- function(gobject) {
 #' @inheritParams data_access_params
 #' @return data.table of names and locations of available spatial networks, col order matters or list of unique nestings
 #' @export
-list_spatial_networks <- function(gobject,
-    spat_unit = NULL,
-    return_uniques = FALSE) {
+list_spatial_networks <- function(
+        gobject,
+        spat_unit = NULL,
+        return_uniques = FALSE) {
     availableSpatNetworks <- data.table()
     uniques <- list()
     for (spatial_unit in names(gobject@spatial_network)) {
@@ -647,8 +661,9 @@ list_spatial_networks <- function(gobject,
 #' @inheritParams data_access_params
 #' @return vector with names of available feature information
 #' @export
-list_spatial_networks_names <- function(gobject,
-    spat_unit = NULL) {
+list_spatial_networks_names <- function(
+        gobject,
+        spat_unit = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
 
     spat_network_names <- names(gobject@spatial_network[[spat_unit]])
@@ -665,10 +680,11 @@ list_spatial_networks_names <- function(gobject,
 #' @inheritParams data_access_params
 #' @return data.table of names and locations of available spatial grids. col order matters
 #' @export
-list_spatial_grids <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    return_uniques = FALSE) {
+list_spatial_grids <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        return_uniques = FALSE) {
     availableSpatGrids <- data.table()
     uniques <- list()
     for (spatial_unit in names(gobject@spatial_grid)) {
@@ -719,10 +735,11 @@ list_spatial_grids <- function(gobject,
 #' @param return_uniques return unique nesting names (ignores if final object exists/is correct class)
 #' @return vector with names of available spatial grids names
 #' @export
-list_spatial_grids_names <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    return_uniques = FALSE) {
+list_spatial_grids_names <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        return_uniques = FALSE) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
     if (is.null(feat_type)) stop("feat_type must be given\n")
 
@@ -739,8 +756,9 @@ list_spatial_grids_names <- function(gobject,
 #' @param img_type "image" or "largeImage"
 #' @return data.table of giotto image names attached to the giotto object
 #' @export
-list_images <- function(gobject,
-    img_type = NULL) {
+list_images <- function(
+        gobject,
+        img_type = NULL) {
     availableImages <- data.table()
 
     g_image_names <- names(slot(gobject, "images"))
@@ -793,8 +811,9 @@ list_images <- function(gobject,
 #' @param img_type "image" or "largeImage"
 #' @return vector with names of available image names
 #' @export
-list_images_names <- function(gobject,
-    img_type) {
+list_images_names <- function(
+        gobject,
+        img_type) {
     if (!img_type %in% c("image", "largeImage")) stop('img_type must be either "image" or "largeImage\n"')
 
     if (img_type == "image") img_names <- names(gobject@images)

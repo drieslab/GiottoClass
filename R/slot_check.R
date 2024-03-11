@@ -2,8 +2,9 @@
 
 #' @keywords internal
 #' @noRd
-.check_cell_metadata <- function(gobject,
-    verbose = TRUE) {
+.check_cell_metadata <- function(
+        gobject,
+        verbose = TRUE) {
     # data.table vars
     cell_ID <- spat_unit <- NULL
 
@@ -117,8 +118,9 @@
 
 #' @keywords internal
 #' @noRd
-.check_feat_metadata <- function(gobject,
-    verbose = TRUE) {
+.check_feat_metadata <- function(
+        gobject,
+        verbose = TRUE) {
     # data.table vars
     feat_ID <- spat_unit <- feat_type <- NULL
 

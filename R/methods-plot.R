@@ -35,8 +35,9 @@ setMethod("plot", signature(x = "giottoImage", y = "missing"), function(x, y, ..
 setMethod(
     "plot",
     signature(x = "giottoLargeImage", y = "missing"),
-    function(x, y, col, max_intensity, mar, asRGB = FALSE, legend = FALSE, axes = TRUE,
-    maxcell = 5e5, smooth = TRUE, ...) {
+    function(
+        x, y, col, max_intensity, mar, asRGB = FALSE, legend = FALSE, axes = TRUE,
+        maxcell = 5e5, smooth = TRUE, ...) {
         arglist <- list(
             giottoLargeImage = x,
             asRGB = asRGB,
@@ -83,12 +84,11 @@ setMethod(
 #' @export
 setMethod(
     "plot", signature(x = "giottoPolygon", y = "missing"),
-    function(
-        x,
-        point_size = 0.6,
-        type = c("poly", "centroid"),
-        max_poly = getOption("giotto.plot_max_poly", 1e4),
-        ...) {
+    function(x,
+    point_size = 0.6,
+    type = c("poly", "centroid"),
+    max_poly = getOption("giotto.plot_max_poly", 1e4),
+    ...) {
         if (length(x@unique_ID_cache) == 0) {
             stop(wrap_txt("No geometries to plot"), call. = FALSE)
         }
@@ -141,8 +141,7 @@ setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) 
 #' @export
 setMethod(
     "plot", signature(x = "dimObj", y = "missing"),
-    function(
-        x, dims = c(1, 2), ...) {
+    function(x, dims = c(1, 2), ...) {
         plot_vals <- x[][, dims]
 
         l <- list(...)
@@ -315,9 +314,10 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @param giottoImage giottoImage object
 #' @return plot
 #' @keywords internal
-.plot_giottoimage_mg <- function(gobject = NULL,
-    image_name = NULL,
-    giottoImage = NULL) {
+.plot_giottoimage_mg <- function(
+        gobject = NULL,
+        image_name = NULL,
+        giottoImage = NULL) {
     if (!is.null(giottoImage)) {
         graphics::plot(giottoImage@mg_object)
     } else {
@@ -364,26 +364,26 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' depending on image type
 #' @return plot
 #' @keywords internal
-.plot_giottolargeimage <- function(gobject = NULL,
-    largeImage_name = NULL,
-    giottoLargeImage = NULL,
-    crop_extent = NULL,
-    xmax_crop = NULL,
-    xmin_crop = NULL,
-    ymax_crop = NULL,
-    ymin_crop = NULL,
-    max_intensity = NULL,
-    asRGB = FALSE,
-    stretch = NULL,
-    axes = TRUE,
-    smooth = TRUE,
-    mar = c(3, 5, 1.5, 1),
-    legend = FALSE,
-    maxcell = 5e5,
-    col = grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1),
-    asp = 1,
-    ...) {
-
+.plot_giottolargeimage <- function(
+        gobject = NULL,
+        largeImage_name = NULL,
+        giottoLargeImage = NULL,
+        crop_extent = NULL,
+        xmax_crop = NULL,
+        xmin_crop = NULL,
+        ymax_crop = NULL,
+        ymin_crop = NULL,
+        max_intensity = NULL,
+        asRGB = FALSE,
+        stretch = NULL,
+        axes = TRUE,
+        smooth = TRUE,
+        mar = c(3, 5, 1.5, 1),
+        legend = FALSE,
+        maxcell = 5e5,
+        col = grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1),
+        asp = 1,
+        ...) {
     a <- c(get_args_list(), list(...))
 
     # Get giottoLargeImage and check and perform crop if needed
@@ -399,9 +399,9 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
     )
 
     a <- a[!c(names(a) %in% c(
-      "gobject", "largeImage_name", "giottoLargeImage", "crop_extent",
-      "xmax_crop", "xmin_crop", "ymax_crop", "ymin_crop", "asRGB",
-      "max_intensity"
+        "gobject", "largeImage_name", "giottoLargeImage", "crop_extent",
+        "xmax_crop", "xmin_crop", "ymax_crop", "ymin_crop", "asRGB",
+        "max_intensity"
     ))]
     a$x <- giottoLargeImage@raster_object
 
@@ -422,20 +422,19 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
     if (isTRUE(asRGB) ||
         terra::has.RGB(a$x) ||
         terra::nlyr(a$x) >= 3) {
+        a$scale <- max_intensity
+        a$r <- 1
+        a$g <- 2
+        a$b <- 3
+        a$legend <- NULL
+        a$col <- NULL
 
-      a$scale <- max_intensity
-      a$r <- 1; a$g <- 2; a$b <- 3
-      a$legend <- NULL
-      a$col <- NULL
-
-      do.call(terra::plotRGB, args = a)
-
+        do.call(terra::plotRGB, args = a)
     } else {
         if (is.null(a$stretch)) a$stretch <- "lin"
         if (!"range" %in% names(a)) a$range <- c(0, max_intensity)
 
         do.call(terra::plot, args = a)
-
     }
 }
 
@@ -455,12 +454,13 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @param ... additional params to pass to plot functions
 #' @keywords internal
 #' @noRd
-.plot_giotto_points <- function(x,
-    point_size = 0,
-    feats = NULL,
-    raster = TRUE,
-    raster_size = 600L,
-    ...) {
+.plot_giotto_points <- function(
+        x,
+        point_size = 0,
+        feats = NULL,
+        raster = TRUE,
+        raster_size = 600L,
+        ...) {
     args_list <- list(feats, asp = 1L, ...)
 
     # point size
@@ -679,8 +679,9 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @param ... additional params to pass to plot function
 #' @keywords internal
 #' @noRd
-.plot_giotto_polygon <- function(x, point_size = 0.6,
-    type = c("poly", "centroid"), ...) {
+.plot_giotto_polygon <- function(
+        x, point_size = 0.6,
+        type = c("poly", "centroid"), ...) {
     type <- match.arg(type, choices = c("poly", "centroid"))
     if (type == "poly") {
         terra::plot(x = x@spatVector, ...)

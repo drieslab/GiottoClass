@@ -20,76 +20,77 @@ NULL
 #' @param feat_type character vector. feature types to affect
 #' @export
 setMethod(
-  "spatShift", signature = "giotto",
-  function(x, dx = 0, dy = 0, spat_unit = ":all:", feat_type = ":all:") {
-    a <- list(dx = dx, dy = dy)
+    "spatShift",
+    signature = "giotto",
+    function(x, dx = 0, dy = 0, spat_unit = ":all:", feat_type = ":all:") {
+        a <- list(dx = dx, dy = dy)
 
-    checkmate::assert_character(spat_unit)
-    checkmate::assert_character(feat_type)
-    all_su <- spat_unit == ":all:"
-    all_ft <- feat_type == ":all:"
+        checkmate::assert_character(spat_unit)
+        checkmate::assert_character(feat_type)
+        all_su <- spat_unit == ":all:"
+        all_ft <- feat_type == ":all:"
 
-    # polygons ---------------------------------------------------------- #
-    poly <- get_polygon_info_list(
-      gobject = x, return_giottoPolygon = TRUE
-    )
-    if (!all_su) {
-      poly <- poly[spatUnit(poly) %in% spat_unit]
-    }
-    if (!is.null(poly)) {
-      for (p in poly) {
-        p <- do.call(spatShift, args = c(list(x = p), a))
-        x <- setPolygonInfo(x, p, verbose = FALSE, initialize = FALSE)
-      }
-    }
+        # polygons ---------------------------------------------------------- #
+        poly <- get_polygon_info_list(
+            gobject = x, return_giottoPolygon = TRUE
+        )
+        if (!all_su) {
+            poly <- poly[spatUnit(poly) %in% spat_unit]
+        }
+        if (!is.null(poly)) {
+            for (p in poly) {
+                p <- do.call(spatShift, args = c(list(x = p), a))
+                x <- setPolygonInfo(x, p, verbose = FALSE, initialize = FALSE)
+            }
+        }
 
-    # spatlocs --------------------------------------------------------- #
-    sls <- get_spatial_locations_list(
-      gobject = x,
-      spat_unit = ":all:",
-      output = "spatLocsObj",
-      copy_obj = FALSE
-    )
-    if (!all_su) {
-      sls[spatUnit(sls) %in% spat_unit]
-    }
-    if (!is.null(sls)) {
-      for(sl in sls) {
-        sl <- do.call(spatShift, args = c(list(x = sl), a))
-        x <- setSpatialLocations(x, sl, verbose = FALSE, initialize = FALSE)
-      }
+        # spatlocs --------------------------------------------------------- #
+        sls <- get_spatial_locations_list(
+            gobject = x,
+            spat_unit = ":all:",
+            output = "spatLocsObj",
+            copy_obj = FALSE
+        )
+        if (!all_su) {
+            sls[spatUnit(sls) %in% spat_unit]
+        }
+        if (!is.null(sls)) {
+            for (sl in sls) {
+                sl <- do.call(spatShift, args = c(list(x = sl), a))
+                x <- setSpatialLocations(x, sl, verbose = FALSE, initialize = FALSE)
+            }
 
-      # TODO remove this after spatial info is removed from spatialNetwork objs
-      sn_list <- get_spatial_network_list(
-        gobject = x,
-        spat_unit = ":all:",
-        output = "spatialNetworkObj",
-        copy_obj = FALSE
-      )
-      if (length(sn_list) > 0) {
-        warning(wrap_txt(
-          "spatial locations have been modified.
+            # TODO remove this after spatial info is removed from spatialNetwork objs
+            sn_list <- get_spatial_network_list(
+                gobject = x,
+                spat_unit = ":all:",
+                output = "spatialNetworkObj",
+                copy_obj = FALSE
+            )
+            if (length(sn_list) > 0) {
+                warning(wrap_txt(
+                    "spatial locations have been modified.
           Relevant spatial networks may need to be regenerated"
-        ), call. = FALSE)
-      }
-    }
+                ), call. = FALSE)
+            }
+        }
 
 
-    # points ----------------------------------------------------------- #
-    pts <- get_feature_info_list(
-      gobject = x, return_giottoPoints = TRUE
-    )
-    if (!all_ft) {
-      pts <- pts[featType(pts) %in% feat_type]
+        # points ----------------------------------------------------------- #
+        pts <- get_feature_info_list(
+            gobject = x, return_giottoPoints = TRUE
+        )
+        if (!all_ft) {
+            pts <- pts[featType(pts) %in% feat_type]
+        }
+        if (!is.null(pts)) {
+            for (pt in pts) {
+                pt <- do.call(spatShift, args = c(list(x = pt), a))
+                x <- setFeatureInfo(x, pt, verbose = FALSE, initialize = FALSE)
+            }
+        }
+        return(initialize(x)) # init not necessarily needed
     }
-    if (!is.null(pts)) {
-      for(pt in pts) {
-        pt <- do.call(spatShift, args = c(list(x = pt), a))
-        x <- setFeatureInfo(x, pt, verbose = FALSE, initialize = FALSE)
-      }
-    }
-    return(initialize(x)) # init not necessarily needed
-  }
 )
 
 
@@ -114,9 +115,8 @@ setMethod(
 #' @export
 setMethod(
     "spatShift", signature("data.frame"),
-    function(
-        x, dx = 0, dy = 0, dz = 0, copy_obj = TRUE,
-        geom = c("sdimx", "sdimy", "sdimz"), ...) {
+    function(x, dx = 0, dy = 0, dz = 0, copy_obj = TRUE,
+    geom = c("sdimx", "sdimy", "sdimz"), ...) {
         x <- data.table::as.data.table(x)
         x <- .shift_spatial_locations(
             spatlocs = x,
@@ -132,8 +132,9 @@ setMethod(
 
 #' @describeIn spatShift Shift the locations of a spatialNetworkObj
 #' @export
-setMethod("spatShift", signature("spatialNetworkObj"), function(x, dx = 0, dy = 0, dz = 0,
-    copy_obj = TRUE, ...) {
+setMethod("spatShift", signature("spatialNetworkObj"), function(
+        x, dx = 0, dy = 0, dz = 0,
+        copy_obj = TRUE, ...) {
     x@networkDT <- shift_spatial_network(
         spatnet = x@networkDT,
         dx = dx, dy = dy, dz = dz, ...
@@ -182,12 +183,13 @@ setMethod("spatShift", signature("giottoLargeImage"), function(x, dx = 0, dy = 0
 #' @param dz value to shift coordinates in the positive z direction
 #' @param copy_obj copy/duplicate object (default = TRUE)
 #' @keywords internal
-.shift_spatial_locations <- function(spatlocs,
-    dx = 0,
-    dy = 0,
-    dz = 0,
-    geom = c("sdimx", "sdimy", "sdimz"),
-    copy_obj = TRUE) {
+.shift_spatial_locations <- function(
+        spatlocs,
+        dx = 0,
+        dy = 0,
+        dz = 0,
+        geom = c("sdimx", "sdimy", "sdimz"),
+        copy_obj = TRUE) {
     if (copy_obj) spatlocs <- data.table::copy(spatlocs)
 
     xyz <- c("x", "y", "z")
@@ -254,11 +256,12 @@ shift_spatial_network <- function(spatnet, dx = 0, dy = 0, dz = 0, copy_obj = TR
 #' @param ... additional params to pass
 #' @keywords internal
 #' @noRd
-shift_large_image <- function(image,
-    dx = 0,
-    dy = 0,
-    copy_obj = FALSE,
-    ...) {
+shift_large_image <- function(
+        image,
+        dx = 0,
+        dy = 0,
+        copy_obj = FALSE,
+        ...) {
     if (copy_obj) image@raster_object <- terra::deepcopy(image@raster_object)
 
     if (!all(dx == 0, dy == 0)) {
@@ -270,11 +273,12 @@ shift_large_image <- function(image,
 #' @rdname spatShift
 #' @keywords internal
 #' @noRd
-shift_gpoints <- function(gpoints,
-    dx = 0,
-    dy = 0,
-    copy_obj = FALSE,
-    ...) {
+shift_gpoints <- function(
+        gpoints,
+        dx = 0,
+        dy = 0,
+        copy_obj = FALSE,
+        ...) {
     if (copy_obj) gpoints@spatVector <- terra::deepcopy(gpoints@spatVector)
 
     if (!all(dx == 0, dy == 0)) {
@@ -286,11 +290,12 @@ shift_gpoints <- function(gpoints,
 #' @rdname spatShift
 #' @keywords internal
 #' @noRd
-shift_gpoly <- function(gpoly,
-    dx = 0,
-    dy = 0,
-    copy_obj = FALSE,
-    ...) {
+shift_gpoly <- function(
+        gpoly,
+        dx = 0,
+        dy = 0,
+        copy_obj = FALSE,
+        ...) {
     if (copy_obj) gpoly@spatVector <- terra::deepcopy(gpoly@spatVector)
 
     if (!all(dx == 0, dy == 0)) {

@@ -1036,8 +1036,9 @@ setClass("spatialNetworkObj",
 #' @param object S3 spatNetworkObj
 #' @param spat_unit spatial unit metadata to append
 #' @keywords internal
-S3toS4spatNetObj <- function(object,
-    spat_unit = NULL) {
+S3toS4spatNetObj <- function(
+        object,
+        spat_unit = NULL) {
     if (!isS4(object)) {
         object <- new("spatialNetworkObj",
             name = object$name,

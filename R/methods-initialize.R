@@ -718,8 +718,9 @@ init_cell_and_feat_IDs <- function(gobject) {
 #' @param provenance provenance information (optional)
 #' and feature type in the giotto object.
 #' @keywords internal
-init_cell_metadata <- function(gobject,
-    provenance = NULL) {
+init_cell_metadata <- function(
+        gobject,
+        provenance = NULL) {
     # data.table vars
     spat_unit <- feat_type <- NULL
 
@@ -780,8 +781,9 @@ init_cell_metadata <- function(gobject,
 #' @param gobject giotto object
 #' @param provenance provenance information (optional)
 #' @keywords internal
-init_feat_metadata <- function(gobject,
-    provenance = NULL) {
+init_feat_metadata <- function(
+        gobject,
+        provenance = NULL) {
     # data.table vars
     spat_unit <- feat_type <- NULL
 
