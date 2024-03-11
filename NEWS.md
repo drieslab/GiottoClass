@@ -1,5 +1,17 @@
 
 
+# GiottoClass 0.2.3
+
+## bug fixes
+- fix `plot()` method param passing for `giottoLargeImage`. Ensure access to terra params
+
+## enhancements
+- `giotto` now responds to spatial manipulation generics: `t()`, `flip()`, `rescale()`, `spatShift()`, `spin()`
+- `spatUnit()` and `featType()` are now vectorized
+- new `.evalute_extent()` internal that for fine extent modifications
+- internal `get_spatial_locations_list()` and `get_spatial_network_list()` accessors now accept ":all:" token to get all available, ignoring spat_unit
+
+
 # GiottoClass 0.2.2 (2024/03/01)
 
 ## bug fixes
