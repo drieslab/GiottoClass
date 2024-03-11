@@ -44,6 +44,12 @@ setMethod("ext", signature("giottoLargeImage"), function(x, ...) {
 
 #' @rdname ext
 #' @export
+setMethod("ext", signature("giottoImage"), function(x, ...) {
+    terra::ext((x@boundaries + x@minmax)[c(2, 1, 4, 3)])
+})
+
+#' @rdname ext
+#' @export
 setMethod("ext<-", signature(x = "giottoPoints", value = "SpatExtent"), function(x, value) {
     old_ext <- .ext_to_num_vec(ext(x))
     new_ext <- .ext_to_num_vec(value)
