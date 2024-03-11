@@ -85,67 +85,67 @@ sl <- GiottoData::loadSubObjectMini("spatLocsObj")[]
 
 # Delaunay via geometry::delaunayn()
 del_geom <- createNetwork(
-  x = as.matrix(sl[, .(sdimx, sdimy)]),
-  type = "delaunay",
-  method = "geometry",
-  include_weight = TRUE,
-  weight_fun = function(d) 1 / d,
-  as.igraph = FALSE,
-  node_ids = sl$cell_ID
+    x = as.matrix(sl[, .(sdimx, sdimy)]),
+    type = "delaunay",
+    method = "geometry",
+    include_weight = TRUE,
+    weight_fun = function(d) 1 / d,
+    as.igraph = FALSE,
+    node_ids = sl$cell_ID
 )
 
 # Delaunay via RTriangle::triangulate()
 del_rt <- createNetwork(
-  x = as.matrix(sl[, .(sdimx, sdimy)]),
-  type = "delaunay",
-  method = "RTriangle",
-  include_weight = TRUE,
-  weight_fun = function(d) 1 / d,
-  as.igraph = FALSE,
-  node_ids = sl$cell_ID
+    x = as.matrix(sl[, .(sdimx, sdimy)]),
+    type = "delaunay",
+    method = "RTriangle",
+    include_weight = TRUE,
+    weight_fun = function(d) 1 / d,
+    as.igraph = FALSE,
+    node_ids = sl$cell_ID
 )
 
 # Delaunay via deldir::deldir()
 del_dd <- createNetwork(
-  x = as.matrix(sl[, .(sdimx, sdimy)]),
-  type = "delaunay",
-  method = "deldir",
-  include_weight = TRUE,
-  weight_fun = function(d) 1 / d,
-  as.igraph = FALSE,
-  node_ids = sl$cell_ID
+    x = as.matrix(sl[, .(sdimx, sdimy)]),
+    type = "delaunay",
+    method = "deldir",
+    include_weight = TRUE,
+    weight_fun = function(d) 1 / d,
+    as.igraph = FALSE,
+    node_ids = sl$cell_ID
 )
 
 # kNN spatial network
 kNN_spat <- createNetwork(
-  x = as.matrix(sl[, .(sdimx, sdimy)]),
-  type = "kNN",
-  method = "dbscan",
-  include_weight = TRUE,
-  weight_fun = function(d) 1 / d, # not the default
-  as.igraph = FALSE,
-  node_ids = sl$cell_ID,
-  k = 4L,
-  maximum_distance = NULL,
-  minimum_k = 0L
+    x = as.matrix(sl[, .(sdimx, sdimy)]),
+    type = "kNN",
+    method = "dbscan",
+    include_weight = TRUE,
+    weight_fun = function(d) 1 / d, # not the default
+    as.igraph = FALSE,
+    node_ids = sl$cell_ID,
+    k = 4L,
+    maximum_distance = NULL,
+    minimum_k = 0L
 )
 
 # kNN NN network
 kNN <- createNetwork(
-  pca[, 1:10],
-  type = "kNN",
-  method = "dbscan",
-  node_ids = rownames(pca),
-  as.igraph = TRUE
+    pca[, 1:10],
+    type = "kNN",
+    method = "dbscan",
+    node_ids = rownames(pca),
+    as.igraph = TRUE
 )
 
 # sNN NN network
 sNN <- createNetwork(
-  pca[, 1:10],
-  type = "sNN",
-  method = "dbscan",
-  node_ids = rownames(pca),
-  as.igraph = TRUE
+    pca[, 1:10],
+    type = "sNN",
+    method = "dbscan",
+    node_ids = rownames(pca),
+    as.igraph = TRUE
 )
 
 # using defaults for sNN with index IDs to create igraph
