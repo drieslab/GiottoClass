@@ -2153,18 +2153,24 @@ get_spatial_locations_list <- function(gobject,
         )
     }
 
-    data_list <- slot(gobject, "spatial_locs")[[spat_unit]]
+    if (spat_unit == ":all:") {
+      data_list <- unlist(
+        gobject@spatial_locs, recursive = TRUE, use.names = FALSE
+      )
+    } else {
+      data_list <- slot(gobject, "spatial_locs")[[spat_unit]]
+    }
+
 
     if (isTRUE(copy_obj)) {
         data_list <- lapply(data_list, copy)
     }
 
-    if (output == "spatLocsObj") {
-        return(data_list)
-    }
-    if (output == "data.table") {
-        return(lapply(data_list, `[`))
-    }
+
+    switch(output,
+        "spatLocsObj" = return(data_list),
+        "data.table" = return(lapply(data_list, `[`))
+    )
 }
 
 
@@ -2968,7 +2974,7 @@ get_nearest_network_list <- function(gobject,
     feat_type = NULL,
     output = c("nnNetObj", "igraph", "data.table"),
     set_defaults = TRUE) {
-    assert_giotto(gobject)
+    checkmate::assert_class(gobject, classes = "giotto")
 
     output <- match.arg(output, choices = c("nnNetObj", "igraph", "data.table"))
 
@@ -3403,28 +3409,31 @@ get_spatial_network_list <- function(gobject,
         )
     }
 
-    data_list <- slot(gobject, "spatial_network")[[spat_unit]]
+    if (spat_unit == ":all:") {
+        data_list <- unlist(
+            gobject@spatial_network, recursive = TRUE, use.names = FALSE
+        )
+    } else {
+        data_list <- slot(gobject, "spatial_network")[[spat_unit]]
 
-    data_list <- unlist(data_list, recursive = TRUE, use.names = FALSE)
-    data_list <- assign_objnames_2_list(data_list)
+        data_list <- unlist(data_list, recursive = TRUE, use.names = FALSE)
+        data_list <- assign_objnames_2_list(data_list)
+    }
+    if (is.null(data_list)) return(NULL)
 
     # copy object
     if (isTRUE(copy_obj)) data_list <- lapply(data_list, copy)
 
 
     # return object list
-    if (output == "spatialNetworkObj") {
-        return(data_list)
-    }
-    if (output == "networkDT") {
-        return(lapply(data_list, `[`))
-    }
-    if (output == "networkDT_before_filter") {
-        return(lapply(data_list, slot, "networkDT_before_filter"))
-    }
-    if (output == "outputObj") {
-        return(lapply(data_list, slot, "outputObj"))
-    }
+    switch(output,
+        "spatialNetworkObj" = return(data_list),
+        "networkDT" = return(lapply(data_list, `[`)),
+        "networkDT_before_filter" = {
+          return(lapply(data_list, slot, "networkDT_before_filter"))
+        },
+        "outputObj" = return(lapply(data_list, slot, "outputObj"))
+    )
 }
 
 
