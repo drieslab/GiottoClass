@@ -4,12 +4,15 @@
 \alias{spatUnit-generic}
 \alias{spatUnit}
 \alias{spatUnit<-}
+\alias{spatUnit,list-method}
 \alias{spatUnit,spatData-method}
 \alias{spatUnit,giottoPolygon-method}
 \alias{spatUnit<-,spatData-method}
 \alias{spatUnit<-,giottoPolygon-method}
 \title{Spatial unit information}
 \usage{
+\S4method{spatUnit}{list}(x)
+
 \S4method{spatUnit}{spatData}(x)
 
 \S4method{spatUnit}{giottoPolygon}(x)

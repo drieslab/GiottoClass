@@ -60,17 +60,17 @@ names(clust_to_use) <- feats_to_use
 clust_to_use
 
 g <- createMetafeats(
-  gobject = g,
-  feat_clusters = clust_to_use,
-  name = "new_metagene"
+    gobject = g,
+    feat_clusters = clust_to_use,
+    name = "new_metagene"
 )
 
 GiottoVisuals::spatCellPlot(
-  gobject = g,
-  spat_enr_names = "new_metagene",
-  cell_annotation_values = c("1", "2"),
-  point_size = 3.5,
-  cow_n_col = 2
+    gobject = g,
+    spat_enr_names = "new_metagene",
+    cell_annotation_values = c("1", "2"),
+    point_size = 3.5,
+    cow_n_col = 2
 )
 }
 }

@@ -185,11 +185,11 @@ a \code{sprintf()} \code{fmt} param input instead. (ie: \code{ID_fmt = "cell_\%0
 m <- system.file("extdata/toy_mask_multi.tif", package = "GiottoClass")
 plot(terra::rast(m), col = grDevices::hcl.colors(7))
 gp <- createGiottoPolygon(
-  m,
-  flip_vertical = FALSE, flip_horizontal = FALSE,
-  shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
-  ID_fmt = "id_test_\%03d",
-  name = "test"
+    m,
+    flip_vertical = FALSE, flip_horizontal = FALSE,
+    shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
+    ID_fmt = "id_test_\%03d",
+    name = "test"
 )
 plot(gp, col = grDevices::hcl.colors(7))
 
@@ -198,7 +198,6 @@ shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
 # vector inputs do not have params for flipping and shifting
 gp2 <- createGiottoPolygon(shp, name = "test")
 plot(gp2, col = grDevices::hcl.colors(7))
-
 
 # ------- create from data.frame-like ------- #
 shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
@@ -209,33 +208,35 @@ needed_cols_dt <- gpoly_dt[, .(geom, part, x, y, hole, poly_ID)]
 force(needed_cols_dt)
 
 out <- createGiottoPolygon(needed_cols_dt,
-                           name = "test")
+    name = "test"
+)
 plot(out)
-
 
 # \%\%\%\%\%\%\%\%\% `createGiottoPolygonsFromMask()` examples \%\%\%\%\%\%\%\%\% #
 mask_multi <- system.file("extdata/toy_mask_multi.tif",
-                          package = "GiottoClass")
+    package = "GiottoClass"
+)
 mask_single <- system.file("extdata/toy_mask_single.tif",
-                           package = "GiottoClass")
+    package = "GiottoClass"
+)
 plot(terra::rast(mask_multi), col = grDevices::hcl.colors(7))
 plot(terra::rast(mask_single))
 
-gpoly1 = createGiottoPolygonsFromMask(
-  mask_multi,
-  flip_vertical = FALSE, flip_horizontal = FALSE,
-  shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
-  ID_fmt = "id_test_\%03d",
-  name = "multi_test"
+gpoly1 <- createGiottoPolygonsFromMask(
+    mask_multi,
+    flip_vertical = FALSE, flip_horizontal = FALSE,
+    shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
+    ID_fmt = "id_test_\%03d",
+    name = "multi_test"
 )
 plot(gpoly1, col = grDevices::hcl.colors(7))
 
-gpoly2 = createGiottoPolygonsFromMask(
-  mask_single,
-  flip_vertical = FALSE, flip_horizontal = FALSE,
-  shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
-  ID_fmt = "id_test_\%03d",
-  name = "single_test"
+gpoly2 <- createGiottoPolygonsFromMask(
+    mask_single,
+    flip_vertical = FALSE, flip_horizontal = FALSE,
+    shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
+    ID_fmt = "id_test_\%03d",
+    name = "single_test"
 )
 plot(gpoly2, col = grDevices::hcl.colors(5))
 }

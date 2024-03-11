@@ -60,16 +60,17 @@ fDataDT(g)
 
 # appending a data.frame, merge on specified column "ID"
 df <- data.frame(
-  IDS = rev(letters[seq(10)]), # reversed
-  l = LETTERS[seq(10)],
-  x = c(rep(TRUE, 5), rep(FALSE, 5))
+    IDS = rev(letters[seq(10)]), # reversed
+    l = LETTERS[seq(10)],
+    x = c(rep(TRUE, 5), rep(FALSE, 5))
 )
 force(df)
 
 g <- addFeatMetadata(
-  g, new_metadata = df,
-  by_column = TRUE,
-  column_feat_ID = "IDS"
+    g,
+    new_metadata = df,
+    by_column = TRUE,
+    column_feat_ID = "IDS"
 )
 fDataDT(g)
 }

@@ -63,16 +63,17 @@ pDataDT(g)
 
 # appending a data.frame, merge on specified column "ID"
 df <- data.frame(
-  IDS = rev(LETTERS[seq(10)]), # reversed
-  l = letters[seq(10)],
-  x = c(rep(TRUE, 5), rep(FALSE, 5))
+    IDS = rev(LETTERS[seq(10)]), # reversed
+    l = letters[seq(10)],
+    x = c(rep(TRUE, 5), rep(FALSE, 5))
 )
 force(df)
 
 g <- addCellMetadata(
-  g, new_metadata = df,
-  by_column = TRUE,
-  column_cell_ID = "IDS"
+    g,
+    new_metadata = df,
+    by_column = TRUE,
+    column_cell_ID = "IDS"
 )
 pDataDT(g)
 }

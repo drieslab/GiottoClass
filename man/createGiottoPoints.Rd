@@ -52,22 +52,22 @@ point).
 \examples{
 # data.frame input
 x <- data.frame(
-  ID = letters[1:6],
-  x = 1:6,
-  y = 6:1
+    ID = letters[1:6],
+    x = 1:6,
+    y = 6:1
 )
 gpoints <- createGiottoPoints(x)
 plot(gpoints,
-  raster = FALSE, # don't plot with rasterization or it will be hard to see
-  cex = 0.5
+    raster = FALSE, # don't plot with rasterization or it will be hard to see
+    cex = 0.5
 )
 
 # with a split_keyword
 # Use this when values to read in contain multiple sets of information that
 # should be put into separate objects.
 gp_list <- createGiottoPoints(x,
-  feat_type = c("feat_a", "feat_b"),
-  split_keyword = list(c("b", "c"))
+    feat_type = c("feat_a", "feat_b"),
+    split_keyword = list(c("b", "c"))
 )
 gp_list
 
