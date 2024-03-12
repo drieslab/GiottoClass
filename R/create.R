@@ -1764,6 +1764,11 @@ create_featureNetwork_object <- function(
 #' matched against the feature IDs information.
 #' @param unique_IDs (optional) character vector of unique IDs present within
 #' the spatVector data. Provided for cacheing purposes
+#' @details
+#' Using the manual option where you can select the names of the x, y, and feat_ID
+#' columns is not compatible with a data.frame that already has the names x, y, and/or 
+#' feat_ID. 
+#' 
 #' @examples
 #' # data.frame input
 #' x <- data.frame(
