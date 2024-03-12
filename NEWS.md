@@ -1,8 +1,9 @@
 
 
-# GiottoClass 0.2.3
+# GiottoClass 0.2.3 (2024/03/12)
 
 ## bug fixes
+- fix `saveGiotto` with `overwrite = TRUE` [#870](https://github.com/drieslab/Giotto/issues/870) by rbutlerii
 - fix `plot()` method param passing for `giottoLargeImage`. Ensure access to terra params
 
 ## enhancements
