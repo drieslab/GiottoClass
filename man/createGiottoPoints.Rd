@@ -83,7 +83,7 @@ gp_list <- createGiottoPoints(x,
     feat_type = c("feat_a", "feat_b"),
     split_keyword = list(c("b", "c"))
 )
-gp_list
+force(gp_list)
 
 # subsetting
 gpoints[c(1, 3)] # numerical

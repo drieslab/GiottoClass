@@ -1752,9 +1752,6 @@ create_featureNetwork_object <- function(
 #' described) and `feat_ID_uniq` (a unique integer identifier for each specific
 #' point).
 #' @param x spatVector or data.frame-like object with points coordinate information (x, y, feat_ID)
-#' @param x_colname column name for x-coordinates
-#' @param y_colname column name for y-coordinates
-#' @param feat_ID_colname column name for feature ids
 #' @param feat_type character. feature type. Provide more than one value if
 #' using the `split_keyword` param. For each set of keywords to split by, an
 #' additional feat_type should be provided in the same order.
@@ -1789,7 +1786,7 @@ create_featureNetwork_object <- function(
 #'     feat_type = c("feat_a", "feat_b"),
 #'     split_keyword = list(c("b", "c"))
 #' )
-#' gp_list
+#' force(gp_list)
 #'
 #' # subsetting
 #' gpoints[c(1, 3)] # numerical
@@ -1854,6 +1851,9 @@ setMethod(
 )
 
 #' @rdname createGiottoPoints
+#' @param x_colname column name for x-coordinates
+#' @param y_colname column name for y-coordinates
+#' @param feat_ID_colname column name for feature ids
 #' @export
 setMethod(
     "createGiottoPoints", signature("data.frame"),
