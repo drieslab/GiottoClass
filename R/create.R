@@ -1766,9 +1766,9 @@ create_featureNetwork_object <- function(
 #' the spatVector data. Provided for cacheing purposes
 #' @details
 #' Using the manual option where you can select the names of the x, y, and feat_ID
-#' columns is not compatible with a data.frame that already has the names x, y, and/or 
-#' feat_ID. 
-#' 
+#' columns is not compatible with a data.frame that already has the names x, y, and/or
+#' feat_ID.
+#'
 #' @examples
 #' # data.frame input
 #' x <- data.frame(
@@ -1857,15 +1857,14 @@ setMethod(
 #' @export
 setMethod(
     "createGiottoPoints", signature("data.frame"),
-    function(
-        x,
-        x_colname = NULL,
-        y_colname = NULL,
-        feat_ID_colname = NULL,
-        feat_type = "rna",
-        verbose = TRUE,
-        split_keyword = NULL,
-        unique_IDs = NULL) {
+    function(x,
+    x_colname = NULL,
+    y_colname = NULL,
+    feat_ID_colname = NULL,
+    feat_type = "rna",
+    verbose = TRUE,
+    split_keyword = NULL,
+    unique_IDs = NULL) {
         checkmate::assert_character(feat_type)
         if (!is.null(split_keyword)) checkmate::assert_list(split_keyword)
 

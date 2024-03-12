@@ -459,84 +459,77 @@ smoothGiottoPolygons <- function(
 #' @param verbose be verbose
 #' @keywords internal
 .create_spatvector_object_from_dfr <- function(
-    x,
-    x_colname = NULL,
-    y_colname = NULL,
-    feat_ID_colname = NULL,
-    verbose = TRUE) {
+        x,
+        x_colname = NULL,
+        y_colname = NULL,
+        feat_ID_colname = NULL,
+        verbose = TRUE) {
     x <- data.table::as.data.table(x)
 
     # MANUAL OPTION
     # user has defined 3 columns to be used as x-coordinates, y-coordinates and feature ids
-    
+
     # check if user selected a name for one of the columns
-    if(!is.null(c(x_colname, y_colname, feat_ID_colname))) {
-      
-      # stop if one or more column names are missing
-      if(list(NULL) %in% list(x_colname, y_colname, feat_ID_colname)) {
-        stop("For manual selection of x, y, and feat_ID columns all column name need to be specified.\n")
-      } else {
-        
-        if(!all(c(x_colname, y_colname, feat_ID_colname) %in% colnames(tx))) {
-          stop("Not all column names were found in the data.frame or data.table.\n")
+    if (!is.null(c(x_colname, y_colname, feat_ID_colname))) {
+        # stop if one or more column names are missing
+        if (list(NULL) %in% list(x_colname, y_colname, feat_ID_colname)) {
+            stop("For manual selection of x, y, and feat_ID columns all column name need to be specified.\n")
+        } else {
+            if (!all(c(x_colname, y_colname, feat_ID_colname) %in% colnames(tx))) {
+                stop("Not all column names were found in the data.frame or data.table.\n")
+            }
+
+            feat_ID_col <- which(colnames(x) == feat_ID_colname)
+            x_col <- which(colnames(x) == x_colname)
+            y_col <- which(colnames(x) == y_colname)
         }
-        
-        feat_ID_col = which(colnames(x) == feat_ID_colname)
-        x_col = which(colnames(x) == x_colname)
-        y_col = which(colnames(x) == y_colname)
-        
-      }
-      
     } else {
-      
-      
-      # AUTOMATIC OPTION
-      
-      # data.frame like object needs to have 2 coordinate columns and
-      # at least one other column as the feat_ID
-      if (ncol(x) < 3) stop("At minimum, columns for xy coordinates and feature ID are needed.\n")
-      col_classes <- sapply(x, class)
-      ## find feat_ID as either first character col or named column
-      ## if not detected, select 3rd column
-      if ("feat_ID" %in% colnames(x)) {
-        feat_ID_col <- which(colnames(x) == "feat_ID")
-      } else {
-        feat_ID_col <- which(col_classes == "character")
-        if (length(feat_ID_col) < 1) {
-          feat_ID_col <- 3
-        } # case if no char found: default to 3rd
-        else {
-          feat_ID_col <- feat_ID_col[[1]]
-        } # case if char is found
-      }
-      
-      
-      
-      ## find first two numeric cols as x and y respectively or named column
-      ## if not detected select 1st and 2nd cols for x and y respectively
-      if (all(c("x", "y") %in% colnames(x))) {
-        x_col <- which(colnames(x) == "x")
-        y_col <- which(colnames(x) == "y")
-      } else {
-        x_col <- which(col_classes == "numeric")
-        if (length(x_col) < 2) {
-          x_col <- 1
-        } # case if no/too few num found: default to 1st
-        else {
-          x_col <- x_col[[1]]
-        } # case if num found
-        y_col <- which(col_classes == "numeric")
-        if (length(y_col) < 2) {
-          y_col <- 2
-        } # case if no/too few num found: default to 2nd
-        else {
-          y_col <- y_col[[2]]
-        } # case if num found
-      }
-      
+        # AUTOMATIC OPTION
+
+        # data.frame like object needs to have 2 coordinate columns and
+        # at least one other column as the feat_ID
+        if (ncol(x) < 3) stop("At minimum, columns for xy coordinates and feature ID are needed.\n")
+        col_classes <- sapply(x, class)
+        ## find feat_ID as either first character col or named column
+        ## if not detected, select 3rd column
+        if ("feat_ID" %in% colnames(x)) {
+            feat_ID_col <- which(colnames(x) == "feat_ID")
+        } else {
+            feat_ID_col <- which(col_classes == "character")
+            if (length(feat_ID_col) < 1) {
+                feat_ID_col <- 3
+            } # case if no char found: default to 3rd
+            else {
+                feat_ID_col <- feat_ID_col[[1]]
+            } # case if char is found
+        }
+
+
+
+        ## find first two numeric cols as x and y respectively or named column
+        ## if not detected select 1st and 2nd cols for x and y respectively
+        if (all(c("x", "y") %in% colnames(x))) {
+            x_col <- which(colnames(x) == "x")
+            y_col <- which(colnames(x) == "y")
+        } else {
+            x_col <- which(col_classes == "numeric")
+            if (length(x_col) < 2) {
+                x_col <- 1
+            } # case if no/too few num found: default to 1st
+            else {
+                x_col <- x_col[[1]]
+            } # case if num found
+            y_col <- which(col_classes == "numeric")
+            if (length(y_col) < 2) {
+                y_col <- 2
+            } # case if no/too few num found: default to 2nd
+            else {
+                y_col <- y_col[[2]]
+            } # case if num found
+        }
     }
-    
-    
+
+
     ## message and force data type
     if (isTRUE(verbose)) message(paste0('  Selecting col "', colnames(x[, feat_ID_col, with = FALSE]), '" as feat_ID column'))
     colnames(x)[feat_ID_col] <- "feat_ID"
@@ -544,7 +537,7 @@ smoothGiottoPolygons <- function(
         x$feat_ID <- as.character(x$feat_ID) # ensure char
     }
 
-    
+
     if (isTRUE(verbose)) message(paste0('  Selecting cols "', colnames(x[, x_col, with = FALSE]), '" and "', colnames(x[, y_col, with = FALSE]), '" as x and y respectively'))
     colnames(x)[x_col] <- "x"
     colnames(x)[y_col] <- "y"

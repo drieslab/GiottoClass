@@ -19,15 +19,16 @@
 #' Giotto objects. Additional method_params need to be provided as a list and will
 #' go to \code{\link[base]{saveRDS}} or \code{\link[qs]{qsave}}
 #' @export
-saveGiotto <- function(gobject,
-    foldername = "saveGiottoDir",
-    dir = getwd(),
-    method = c("RDS", "qs"),
-    method_params = list(),
-    overwrite = FALSE,
-    image_filetype = "PNG",
-    verbose = TRUE,
-    ...) {
+saveGiotto <- function(
+        gobject,
+        foldername = "saveGiottoDir",
+        dir = getwd(),
+        method = c("RDS", "qs"),
+        method_params = list(),
+        overwrite = FALSE,
+        image_filetype = "PNG",
+        verbose = TRUE,
+        ...) {
     # check params
     checkmate::assert_character(foldername)
     checkmate::assert_character(dir)
@@ -44,7 +45,7 @@ saveGiotto <- function(gobject,
     if (dir.exists(final_dir)) {
         if (!overwrite) {
             stop(wrap_txt(
-              "Folder already exist and overwrite = FALSE
+                "Folder already exist and overwrite = FALSE
               abort saving"
             ))
         } else {
@@ -119,8 +120,8 @@ saveGiotto <- function(gobject,
                 # write spatvector
                 filename <- paste0(spatinfo_dir, "/", spatinfo, "_spatInfo_spatVector.shp")
                 terra::writeVector(
-                  gobject@spatial_info[[spatinfo]]@spatVector,
-                  filename = filename
+                    gobject@spatial_info[[spatinfo]]@spatVector,
+                    filename = filename
                 )
             }
 
@@ -134,9 +135,9 @@ saveGiotto <- function(gobject,
                 # write spatvector
                 filename <- paste0(spatinfo_dir, "/", spatinfo, "_spatInfo_spatVectorCentroids.shp")
                 terra::writeVector(
-                  gobject@spatial_info[[spatinfo]]@spatVectorCentroids,
-                                   filename = filename
-                  )
+                    gobject@spatial_info[[spatinfo]]@spatVectorCentroids,
+                    filename = filename
+                )
             }
 
             # overlap information
@@ -153,8 +154,8 @@ saveGiotto <- function(gobject,
                     # write spatvector
                     filename <- paste0(spatinfo_dir, "/", feature, "_", spatinfo, "_spatInfo_spatVectorOverlaps.shp")
                     terra::writeVector(
-                      gobject@spatial_info[[spatinfo]]@overlaps[[feature]],
-                                       filename = filename
+                        gobject@spatial_info[[spatinfo]]@overlaps[[feature]],
+                        filename = filename
                     )
                 }
             }
@@ -242,13 +243,12 @@ saveGiotto <- function(gobject,
 #' You can set the python path, alternatively it will look for an existing
 #' Giotto python environment.
 #' @export
-loadGiotto <- function(
-        path_to_folder,
-        load_params = list(),
-        reconnect_giottoImage = TRUE,
-        python_path = NULL,
-        init_gobject = TRUE,
-        verbose = TRUE) {
+loadGiotto <- function(path_to_folder,
+    load_params = list(),
+    reconnect_giottoImage = TRUE,
+    python_path = NULL,
+    init_gobject = TRUE,
+    verbose = TRUE) {
     # data.table vars
     img_type <- NULL
 
