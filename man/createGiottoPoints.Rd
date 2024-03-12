@@ -16,6 +16,9 @@
 
 \S4method{createGiottoPoints}{data.frame}(
   x,
+  x_colname = NULL,
+  y_colname = NULL,
+  feat_ID_colname = NULL,
   feat_type = "rna",
   verbose = TRUE,
   split_keyword = NULL,
@@ -37,6 +40,12 @@ matched against the feature IDs information.}
 
 \item{unique_IDs}{(optional) character vector of unique IDs present within
 the spatVector data. Provided for cacheing purposes}
+
+\item{x_colname}{column name for x-coordinates}
+
+\item{y_colname}{column name for y-coordinates}
+
+\item{feat_ID_colname}{column name for feature ids}
 }
 \value{
 giottoPoints
@@ -48,6 +57,11 @@ subcellular point-type features. The main values are contained within the
 associated set of attributes for at least \code{feat_ID} (name of the feature being
 described) and \code{feat_ID_uniq} (a unique integer identifier for each specific
 point).
+}
+\details{
+Using the manual option where you can select the names of the x, y, and feat_ID
+columns is not compatible with a data.frame that already has the names x, y, and/or
+feat_ID.
 }
 \examples{
 # data.frame input
