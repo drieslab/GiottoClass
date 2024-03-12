@@ -1752,6 +1752,9 @@ create_featureNetwork_object <- function(
 #' described) and `feat_ID_uniq` (a unique integer identifier for each specific
 #' point).
 #' @param x spatVector or data.frame-like object with points coordinate information (x, y, feat_ID)
+#' @param x_colname column name for x-coordinates
+#' @param y_colname column name for y-coordinates
+#' @param feat_ID_colname column name for feature ids
 #' @param feat_type character. feature type. Provide more than one value if
 #' using the `split_keyword` param. For each set of keywords to split by, an
 #' additional feat_type should be provided in the same order.
@@ -1761,6 +1764,11 @@ create_featureNetwork_object <- function(
 #' matched against the feature IDs information.
 #' @param unique_IDs (optional) character vector of unique IDs present within
 #' the spatVector data. Provided for cacheing purposes
+#' @details
+#' Using the manual option where you can select the names of the x, y, and feat_ID
+#' columns is not compatible with a data.frame that already has the names x, y, and/or 
+#' feat_ID. 
+#' 
 #' @examples
 #' # data.frame input
 #' x <- data.frame(
@@ -1851,6 +1859,9 @@ setMethod(
     "createGiottoPoints", signature("data.frame"),
     function(
         x,
+        x_colname = NULL,
+        y_colname = NULL,
+        feat_ID_colname = NULL,
         feat_type = "rna",
         verbose = TRUE,
         split_keyword = NULL,
@@ -1861,6 +1872,9 @@ setMethod(
         # format and convert to SpatVector
         spatvec <- .create_spatvector_object_from_dfr(
             x = x,
+            x_colname = x_colname,
+            y_colname = y_colname,
+            feat_ID_colname = feat_ID_colname,
             verbose = verbose
         )
 
