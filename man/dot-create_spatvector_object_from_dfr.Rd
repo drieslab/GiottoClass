@@ -4,10 +4,22 @@
 \alias{.create_spatvector_object_from_dfr}
 \title{Create terra spatvector object from a data.frame}
 \usage{
-.create_spatvector_object_from_dfr(x, verbose = TRUE)
+.create_spatvector_object_from_dfr(
+  x,
+  x_colname = NULL,
+  y_colname = NULL,
+  feat_ID_colname = NULL,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{x}{data.frame object}
+
+\item{x_colname}{column name for x-coordinates}
+
+\item{y_colname}{column name for y-coordinates}
+
+\item{feat_ID_colname}{column name for feature ids}
 
 \item{verbose}{be verbose}
 }

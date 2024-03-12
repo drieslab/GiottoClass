@@ -51,7 +51,16 @@ jobs:
           needs: lint
 
       - name: Run lintr
-        run: lintr::sarif_output(lintr::lint_dir("."), "lintr-results.sarif")
+        run: |
+          lintr::sarif_output(
+              lintr::lint_package(
+                  ".",
+                  linters = lintr::linters_with_defaults(
+                      indentation_linter = lintr::indentation_linter(indent = 4L)
+                  )
+              ),
+              "lintr-results.sarif"
+          )
         shell: Rscript {0}
         continue-on-error: true
 

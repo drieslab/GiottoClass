@@ -124,8 +124,10 @@ points info.
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
-gpoly <- getPolygonInfo(g, polygon_name = "aggregate",
-                        return_giottoPolygon = TRUE)
+gpoly <- getPolygonInfo(g,
+    polygon_name = "aggregate",
+    return_giottoPolygon = TRUE
+)
 gpoints <- getFeatureInfo(g, return_giottoPoints = TRUE)
 gimg <- getGiottoImage(g, image_type = "largeImage")
 
@@ -142,8 +144,9 @@ overlaps_all$rna
 
 # calculate z1 only
 out_z1 <- calculateOverlap(gpoly, gpoints,
-                           feat_subset_column = "global_z",
-                           feat_subset_ids = c(1))
+    feat_subset_column = "global_z",
+    feat_subset_ids = c(1)
+)
 overlaps_z1 <- overlaps(out_z1)
 overlaps_z1$rna
 
@@ -154,8 +157,10 @@ overlaps_img$intensity
 
 # giotto method
 # calculate z0 overlaps and return as gobject
-out_g <- calculateOverlap(g, feat_subset_column = "global_z",
-                          feat_subset_ids = 0)
+out_g <- calculateOverlap(g,
+    feat_subset_column = "global_z",
+    feat_subset_ids = 0
+)
 overlaps(getPolygonInfo(out_g, return_giottoPolygon = TRUE))
 
 # note that z0 and z1 nrows match that from the table of global z values.
