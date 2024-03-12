@@ -13,7 +13,7 @@ test_that("gobject can be saved and loaded - qs", {
 test_that("gobject an be ovewritten and loaded - qs", {
 
   saveGiotto(g2, dir = test, method = "qs", overwrite = TRUE, verbose = FALSE)
-  loadGiotto(file.path(test, "saveGiottoDir"))
+  g3 <- loadGiotto(file.path(test, "saveGiottoDir"))
 
   expect_true(methods::validObject(g3))
 

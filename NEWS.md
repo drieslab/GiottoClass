@@ -7,6 +7,7 @@
 - fix `plot()` method param passing for `giottoLargeImage`. Ensure access to terra params
 
 ## enhancements
+- `createGiottoPoints` `data.frame` method can now select which columns to use with `x_colname`, `y_colname`, `feat_ID_colname` params
 - `giotto` now responds to spatial manipulation generics: `t()`, `flip()`, `rescale()`, `spatShift()`, `spin()`
 - `spatUnit()` and `featType()` are now vectorized
 - new `.evalute_extent()` internal that for fine extent modifications
