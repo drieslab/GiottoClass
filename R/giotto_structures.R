@@ -475,7 +475,7 @@ smoothGiottoPolygons <- function(
         if (list(NULL) %in% list(x_colname, y_colname, feat_ID_colname)) {
             stop("For manual selection of x, y, and feat_ID columns all column name need to be specified.\n")
         } else {
-            if (!all(c(x_colname, y_colname, feat_ID_colname) %in% colnames(tx))) {
+            if (!all(c(x_colname, y_colname, feat_ID_colname) %in% colnames(x))) {
                 stop("Not all column names were found in the data.frame or data.table.\n")
             }
 
