@@ -75,10 +75,12 @@
 polygons to plot before automatically switching to centroids plotting.
 Default is 1e4. This value is settable using options("giotto.plot_max_poly")}
 
-\item{feats}{specific features to plot within giottoPoints object (defaults to NULL, meaning all available features)}
+\item{feats}{specific features to plot within giottoPoints object
+(defaults to NULL, meaning all available features)}
 
 \item{raster}{default = TRUE, whether to plot points as rasterized plot with
-size based on \code{raster_size} param. See details.}
+size based on \code{raster_size} param. See details. When \code{FALSE}, plots via
+\code{\link[terra:plot]{terra::plot()}}}
 
 \item{raster_size}{Default is 600. Only used when \code{raster} is TRUE}
 
@@ -91,7 +93,10 @@ S4 generic for previewing Giotto's image and subcellular objects.
 \emph{[giottoPoints raster plotting]}
 Fast plotting of points information by rasterizing the information using
 \code{\link[terra:rasterize]{terra::rasterize()}}. For \pkg{terra} \code{SpatVectors}, this is faster than
-\pkg{scattermore} plotting. Allows the following additional params when
+\pkg{scattermore} plotting. When plotting as a raster, \code{col} colors map on
+whole image level, as opposed to mapping to individual points, as it does
+when \code{raster = FALSE}
+Allows the following additional params when
 plotting with no specific \code{feats} input:
 \itemize{
 \item{\strong{force_size} }{logical. \code{raster_size} param caps at 1:1 with the
@@ -128,17 +133,32 @@ through \code{...}
 ######### giottoPoints plotting #########
 gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
 
+# ----- rasterized plotting ----- #
+# plot points binary
 plot(gpoints)
+# plotting all features maps colors on an image level
+plot(gpoints, col = grDevices::hcl.colors(n = 256)) # only 2 colors are used
+plot(gpoints, col = "green", background = "purple")
 
-# non-rasterized plotting (slower, but higher quality)
-plot(gpoints, raster = FALSE)
-
-# plot points density
+# plot points density (by count)
 plot(gpoints, dens = TRUE, raster_size = 300)
 
 # force_size = TRUE to ignore default constraints on too big or too small
 # (see details)
 plot(gpoints, dens = TRUE, raster_size = 80, force_size = TRUE)
+
+plot specific feature(s)
+plot(gpoints, feats = featIDs(gpoints)[1:4])
+
+# ----- vector plotting ----- #
+# non-rasterized plotting (slower, but higher quality)
+plot(gpoints, raster = FALSE)
+
+# vector plotting maps colors to transcripts
+plot(gpoints, raster = FALSE, col = grDevices::rainbow(nrow(gpoints)))
+
+# plot specific feature(s)
+plot(gpoints, feats = featIDs(gpoints)[1:4], raster = FALSE)
 
 
 }
