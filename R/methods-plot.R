@@ -105,15 +105,20 @@ setMethod(
 
 #' @describeIn plot-generic \emph{terra}-based giottoPoint object. ... param passes to \code{\link[terra]{plot}}
 #' @param point_size size of points when plotting giottoPoints
-#' @param feats specific features to plot within giottoPoints object (defaults to NULL, meaning all available features)
+#' @param feats specific features to plot within giottoPoints object
+#' (defaults to NULL, meaning all available features)
 #' @param raster default = TRUE, whether to plot points as rasterized plot with
-#' size based on \code{raster_size} param. See details.
+#' size based on \code{raster_size} param. See details. When `FALSE`, plots via
+#' [terra::plot()]
 #' @param raster_size Default is 600. Only used when \code{raster} is TRUE
 #' @details
 #' *\[giottoPoints raster plotting\]*
 #' Fast plotting of points information by rasterizing the information using
 #' [terra::rasterize()]. For \pkg{terra} `SpatVectors`, this is faster than
-#' \pkg{scattermore} plotting. Allows the following additional params when
+#' \pkg{scattermore} plotting. When plotting as a raster, `col` colors map on
+#' whole image level, as opposed to mapping to individual points, as it does
+#' when `raster = FALSE`
+#' Allows the following additional params when
 #' plotting with no specific `feats` input:
 #' \itemize{
 #'   \item{**force_size** }{logical. `raster_size` param caps at 1:1 with the
@@ -132,17 +137,32 @@ setMethod(
 #' ######### giottoPoints plotting #########
 #' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
 #'
+#' # ----- rasterized plotting ----- #
+#' # plot points binary
 #' plot(gpoints)
+#' # plotting all features maps colors on an image level
+#' plot(gpoints, col = grDevices::hcl.colors(n = 256)) # only 2 colors are used
+#' plot(gpoints, col = "green", background = "purple")
 #'
-#' # non-rasterized plotting (slower, but higher quality)
-#' plot(gpoints, raster = FALSE)
-#'
-#' # plot points density
+#' # plot points density (by count)
 #' plot(gpoints, dens = TRUE, raster_size = 300)
 #'
 #' # force_size = TRUE to ignore default constraints on too big or too small
 #' # (see details)
 #' plot(gpoints, dens = TRUE, raster_size = 80, force_size = TRUE)
+#'
+#' plot specific feature(s)
+#' plot(gpoints, feats = featIDs(gpoints)[1:4])
+#'
+#' # ----- vector plotting ----- #
+#' # non-rasterized plotting (slower, but higher quality)
+#' plot(gpoints, raster = FALSE)
+#'
+#' # vector plotting maps colors to transcripts
+#' plot(gpoints, raster = FALSE, col = grDevices::rainbow(nrow(gpoints)))
+#'
+#' # plot specific feature(s)
+#' plot(gpoints, feats = featIDs(gpoints)[1:4], raster = FALSE)
 #'
 #'
 #' @export
@@ -738,12 +758,12 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 
     if (is.null(feats)) {
         args_list$x <- data
-        args_list$col <- "white"
+        args_list$col <- args_list$col %null% "white"
         do.call(terra::plot, args_list)
     } else {
         args_list$x <- terra::subset(data, terra::values(data)$feat_ID %in% feats)
         if (length(feats) == 1L) {
-            args_list$col <- "white"
+            args_list$col <- args_list$col %null% "white"
         }
         if (length(feats) > 1L) {
             args_list$y <- "feat_ID"
