@@ -142,7 +142,7 @@ plot(gimg, max_intensity = 100)
 
 ######### giottoPolygon plotting #########
 gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
-plot(gpoly),
+plot(gpoly)
 plot(gpoly, type = "centroid")
 
 

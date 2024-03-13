@@ -95,7 +95,7 @@ setMethod(
 #' @examples
 #' ######### giottoPolygon plotting #########
 #' gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
-#' plot(gpoly),
+#' plot(gpoly)
 #' plot(gpoly, type = "centroid")
 #'
 #'
