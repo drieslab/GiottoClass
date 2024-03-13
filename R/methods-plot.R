@@ -107,8 +107,44 @@ setMethod(
 #' @param point_size size of points when plotting giottoPoints
 #' @param feats specific features to plot within giottoPoints object (defaults to NULL, meaning all available features)
 #' @param raster default = TRUE, whether to plot points as rasterized plot with
-#' size based on \code{size} param
+#' size based on \code{raster_size} param. See details.
 #' @param raster_size Default is 600. Only used when \code{raster} is TRUE
+#' @details
+#' *\[giottoPoints raster plotting\]*
+#' Fast plotting of points information by rasterizing the information using
+#' [terra::rasterize()]. For \pkg{terra} `SpatVectors`, this is faster than
+#' \pkg{scattermore} plotting. Allows the following additional params when
+#' plotting with no specific `feats` input:
+#' \itemize{
+#'   \item{**force_size** }{logical. `raster_size` param caps at 1:1 with the
+#'   spatial extent, but also with a minimum resulting px dim of 100. To ignore
+#'   these constraints, set `force_size = FALSE`}
+#'   \item{**dens** }{logical. Show point density using `count` statistic per
+#'   rasterized cell. (Default = FALSE). This param affects `col` param is
+#'   defaults. When TRUE, `col` is `grDevices::hcl.colors(256)`. When `FALSE`,
+#'   "black" and "white" are used.}
+#'   \item{**background** }{(optional) background color. Usually not used when a
+#'   `col` color mapping is sufficient.}
+#' }
+#' Note that `col` param and other [base::plot()] graphical params are available
+#' through `...`
+#' @examples
+#' ######### giottoPoints plotting #########
+#' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
+#'
+#' plot(gpoints)
+#'
+#' # non-rasterized plotting (slower, but higher quality)
+#' plot(gpoints, raster = FALSE)
+#'
+#' # plot points density
+#' plot(gpoints, dens = TRUE, raster_size = 300)
+#'
+#' # force_size = TRUE to ignore default constraints on too big or too small
+#' # (see details)
+#' plot(gpoints, dens = TRUE, raster_size = 80, force_size = TRUE)
+#'
+#'
 #' @export
 setMethod(
     "plot", signature(x = "giottoPoints", y = "missing"),
@@ -528,10 +564,7 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 
 
     if (length(feats) == 0L) {
-        .plot_giotto_points_all(
-            dataDT = dataDT,
-            args_list = args_list
-        )
+        do.call(.plot_giotto_points_all, args = c(list(x = data), args_list))
     } else if (length(feats) == 1L) {
         .plot_giotto_points_one(
             dataDT = dataDT,
@@ -548,20 +581,72 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 }
 
 
+#' @description
+#' Quick plotting of SpatVector points information via terra::rasterize(). For
+#' terra `SpatVectors`, this is faster than scattermore plotting.
+#' @param x input `SpatVector` or `giottoPoints`
+#' @param size numeric. Rasterization major axis pixel length. Automatically
+#' caps at the original extent size AKA full res, but with a minimum px dim
+#' of 100. To ignore these constraints, use `force_size = TRUE`
+#' @param force_size logical. Whether to ignore constrains on `size` param
+#' @param col character vector. Colors to map. Default is
+#' `grDevices::hcl.colors(256)` for `dens = TRUE`, and black and white when
+#' `dens = FALSE`
+#' @param background (optional) background color. Usually not used when a `col`
+#' color mapping is sufficient.
+#' @param dens logical. Show point density using `count` statistic per
+#' rasterized cell. (Default = FALSE)
+#' @param ... additonal params to pass to terra::plot()
+#' @keywords internal
+#' @noRd
+.plot_giotto_points_all <- function(
+    x, size = 600, force_size = FALSE, dens = FALSE, col = NULL, background, ...
+) {
+  pargs <- list(...)
+  rargs <- list()
+  e <- ext(x)
+  e_r <- range(e)
 
-.plot_giotto_points_all <- function(dataDT, args_list) {
-    par(mar = c(2.7, 3.5, 2, 2))
+  # decide rasterization resolution
+  # Select res that results in a major axis with length equal to size param,
+  # up to a maximum resolution of 1 (1:1 with extent dims),
+  # but with a min dim px of 100 (to help with cases where extent is small)
+  res <- max(e_r / size[1L])
+  if (!isTRUE(force_size)) {
+    res <- max(res, 1)
+    res <- min(res, c(e_r / 100))
+  }
 
-    args_list$x <- dataDT$x
-    args_list$y <- dataDT$y
-    args_list$col <- "white"
+  # rasterization
+  r <- terra::rast(e, res = res)
+  if (isTRUE(dens)) rargs$fun <- "count"
+  rargs$y <- r
+  rargs$x <- x[]
+  r2 <- do.call(terra::rasterize, args = rargs)
 
-    plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
-    u <- par("usr") # coordinates of the plot area
-    rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
-    par(new = TRUE)
+  # plotting
+  pargs$x <- r2
+  if (is.null(col)) {
+    if (isTRUE(dens)) {
+      pal <- grDevices::hcl.colors(n = 256)
+    } else {
+      pal <- c("black", "white")
+    }
+    pargs$col <- pal[2L:length(pal)]
+    pargs$background <- pal[1L]
+    # replace background col if specifically provided
+    if (!missing(background)) pargs$background <- background
+  } else {
+    if (missing(background)) {
+      pargs$col <- col[2L:length(col)]
+      pargs$background <- col[1L]
+    } else {
+      pargs$col <- col
+      pargs$background <- background
+    }
+  }
 
-    do.call(scattermore::scattermoreplot, args_list)
+  do.call(terra::plot, args = pargs)
 }
 
 

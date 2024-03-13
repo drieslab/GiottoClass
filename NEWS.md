@@ -1,5 +1,12 @@
 
 
+# GiottoClass 0.2.4
+
+## enhancements
+- use faster `terra::rasterize()` and `terra::plot()` instead of `scattermore::scattermoreplot()` for `giottoPoints` `plot()` method
+- `plot()` `giottoPoints` method now plots density when `dens = TRUE`
+
+
 # GiottoClass 0.2.3 (2024/03/12)
 
 ## bug fixes

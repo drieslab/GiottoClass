@@ -78,7 +78,7 @@ Default is 1e4. This value is settable using options("giotto.plot_max_poly")}
 \item{feats}{specific features to plot within giottoPoints object (defaults to NULL, meaning all available features)}
 
 \item{raster}{default = TRUE, whether to plot points as rasterized plot with
-size based on \code{size} param}
+size based on \code{raster_size} param. See details.}
 
 \item{raster_size}{Default is 600. Only used when \code{raster} is TRUE}
 
@@ -86,6 +86,26 @@ size based on \code{size} param}
 }
 \description{
 S4 generic for previewing Giotto's image and subcellular objects.
+}
+\details{
+\emph{[giottoPoints raster plotting]}
+Fast plotting of points information by rasterizing the information using
+\code{\link[terra:rasterize]{terra::rasterize()}}. For \pkg{terra} \code{SpatVectors}, this is faster than
+\pkg{scattermore} plotting. Allows the following additional params when
+plotting with no specific \code{feats} input:
+\itemize{
+\item{\strong{force_size} }{logical. \code{raster_size} param caps at 1:1 with the
+spatial extent, but also with a minimum resulting px dim of 100. To ignore
+these constraints, set \code{force_size = FALSE}}
+\item{\strong{dens} }{logical. Show point density using \code{count} statistic per
+rasterized cell. (Default = FALSE). This param affects \code{col} param is
+defaults. When TRUE, \code{col} is \code{grDevices::hcl.colors(256)}. When \code{FALSE},
+"black" and "white" are used.}
+\item{\strong{background} }{(optional) background color. Usually not used when a
+\code{col} color mapping is sufficient.}
+}
+Note that \code{col} param and other \code{\link[base:plot]{base::plot()}} graphical params are available
+through \code{...}
 }
 \section{Functions}{
 \itemize{
@@ -104,4 +124,22 @@ S4 generic for previewing Giotto's image and subcellular objects.
 \item \code{plot(x = spatialNetworkObj, y = missing)}: Plot a spatialNetworkObj
 
 }}
+\examples{
+######### giottoPoints plotting #########
+gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
+
+plot(gpoints)
+
+# non-rasterized plotting (slower, but higher quality)
+plot(gpoints, raster = FALSE)
+
+# plot points density
+plot(gpoints, dens = TRUE, raster_size = 300)
+
+# force_size = TRUE to ignore default constraints on too big or too small
+# (see details)
+plot(gpoints, dens = TRUE, raster_size = 80, force_size = TRUE)
+
+
+}
 \concept{plot}
