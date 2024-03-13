@@ -31,6 +31,17 @@ setMethod("plot", signature(x = "giottoImage", y = "missing"), function(x, y, ..
 #' @param axes logical. Draw axes?
 #' @param maxcell positive integer. Maximum number of cells to use for the plot
 #' @param smooth logical. If TRUE the cell values are smoothed
+#' @examples
+#' ######### giottoLargeImage plotting #########
+#' \dontrun{
+#' gimg <- GiottoData::loadSubObjectMini("giottoLargeImage")
+#' gimg <- GiottoClass:::.update_giotto_image(gimg) # only needed if out of date
+#' plot(gimg)
+#' plot(gimg, col = grDevices::hcl.colors(256))
+#' plot(gimg, max_intensity = 100)
+#' }
+#'
+#'
 #' @export
 setMethod(
     "plot",
@@ -81,6 +92,13 @@ setMethod(
 #' @param max_poly numeric. If `type` is not specified, maximum number of
 #' polygons to plot before automatically switching to centroids plotting.
 #' Default is 1e4. This value is settable using options("giotto.plot_max_poly")
+#' @examples
+#' ######### giottoPolygon plotting #########
+#' gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
+#' plot(gpoly),
+#' plot(gpoly, type = "centroid")
+#'
+#'
 #' @export
 setMethod(
     "plot", signature(x = "giottoPolygon", y = "missing"),
@@ -181,6 +199,12 @@ setMethod(
 
 
 #' @describeIn plot-generic Plot a spatLocsObj
+#' @examples
+#' ######### spatLocsObj plotting #########
+#' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
+#' plot(sl)
+#'
+#'
 #' @export
 setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) {
     if ("sdimz" %in% colnames(x)) {
@@ -194,6 +218,13 @@ setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) 
 
 #' @describeIn plot-generic Plot a dimObj
 #' @param dims dimensions to plot
+#' @examples
+#' ######### dimObj plotting #########
+#' d <- GiottoData::loadSubObjectMini("dimObj")
+#' plot(d)
+#' plot(d, dims = c(3, 5))
+#'
+#'
 #' @export
 setMethod(
     "plot", signature(x = "dimObj", y = "missing"),
