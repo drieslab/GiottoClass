@@ -163,7 +163,7 @@ plot(gpoints, dens = TRUE, raster_size = 300)
 # (see details)
 plot(gpoints, dens = TRUE, raster_size = 80, force_size = TRUE)
 
-plot specific feature(s)
+# plot specific feature(s)
 plot(gpoints, feats = featIDs(gpoints)[1:4])
 
 # ----- vector plotting ----- #
