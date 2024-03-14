@@ -17,8 +17,8 @@ giottoToSeuratV4(gobject, spat_unit = NULL, ...)
 Seurat object
 }
 \description{
-Converts Giotto object into a Seurat object. This functions extracts
-specific sets of data belonging to specified spatial unit.
+Converts Giotto object into a Seurat object. This functions
+extracts specific sets of data belonging to specified spatial unit.
 The default values are 'cell' and 'rna' respectively.
 }
 \keyword{interoperability}

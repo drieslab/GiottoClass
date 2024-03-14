@@ -18,11 +18,14 @@ createCellMetaObj(
 
 \item{spat_unit}{spatial unit of aggregated expression (e.g. 'cell')}
 
-\item{feat_type}{feature type of aggregated expression (e.g. 'rna', 'protein')}
+\item{feat_type}{feature type of aggregated
+expression (e.g. 'rna', 'protein')}
 
-\item{provenance}{origin data of aggregated expression information (if applicable)}
+\item{provenance}{origin data of aggregated expression
+information (if applicable)}
 
-\item{col_desc}{(optional) character vector describing columns of the metadata}
+\item{col_desc}{(optional) character vector describing columns of the
+metadata}
 
 \item{verbose}{be verbose}
 }

@@ -27,7 +27,8 @@ removeCellAnnotation(
 giotto object
 }
 \description{
-Removes cell annotation from a Giotto object for a specific feature modality (default = 'rna')
+Removes cell annotation from a Giotto object for a specific
+feature modality (default = 'rna')
 }
 \details{
 if \code{return_gobject = FALSE}, it will return the cell metadata

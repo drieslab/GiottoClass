@@ -27,7 +27,8 @@ createExprObj(
 
 \item{misc}{misc}
 
-\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'DelayedArray')}
+\item{expression_matrix_class}{class of expression matrix to
+use (e.g. 'dgCMatrix', 'DelayedArray')}
 }
 \description{
 Create an S4 exprObj

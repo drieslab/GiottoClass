@@ -12,6 +12,9 @@ polygon_to_raster(polygon, field = NULL)
 \item{field}{character. Name of attribute of polygon that should be used
 when rasterizing to assign values. Passing NULL uses the first attribute.}
 }
+\value{
+list
+}
 \description{
 convert polygon to raster
 }

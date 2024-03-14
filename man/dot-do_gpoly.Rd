@@ -16,7 +16,7 @@
 \description{
 giottoPolygon objects carry 3 pieces of spatial information.
 The polygons, their centroids, and the polygon overlapped features. All of
-these need to be updated when spatial manipulations are applied. This function
-simplifies performing functions on all SpatVector-based slots.
+these need to be updated when spatial manipulations are applied. This
+function simplifies performing functions on all SpatVector-based slots.
 }
 \keyword{internal}

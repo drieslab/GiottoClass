@@ -6,6 +6,9 @@
 \usage{
 .overlap_points_per_polygon(spatvec, pointvec, poly_ID_names, verbose = TRUE)
 }
+\value{
+spatVector
+}
 \description{
 Loop to overlap each single polygon
 }

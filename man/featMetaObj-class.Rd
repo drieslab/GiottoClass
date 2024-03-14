@@ -19,6 +19,7 @@ Framework to store feature metadata
 
 \item{\code{feat_type}}{feature type of aggregated expression (e.g. 'rna', 'protein')}
 
-\item{\code{provenance}}{origin data of aggregated expression information (if applicable)}
+\item{\code{provenance}}{origin data of aggregated expression
+information (if applicable)}
 }}
 

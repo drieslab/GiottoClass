@@ -22,7 +22,8 @@ giotto subcellular object
 \details{
 Function in beta. Converts .gef object to Giotto object.
 
-There are six possible choices for bin_size: bin1, bin10, bin20, bin50, bin100, bin200.
+There are six possible choices for bin_size:
+bin1, bin10, bin20, bin50, bin100, bin200.
 
 See SAW pipeline for additional information about the gef file.
 }

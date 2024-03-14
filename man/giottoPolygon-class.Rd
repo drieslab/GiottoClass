@@ -22,7 +22,8 @@ holds polygon data
 
 \item{\code{overlaps}}{information about overlapping points and polygons}
 
-\item{\code{unique_ID_cache}}{cached unique spatial IDs that should match the spatVector slot}
+\item{\code{unique_ID_cache}}{cached unique spatial IDs that should match the
+spatVector slot}
 }}
 
 \concept{giotto polygon class}

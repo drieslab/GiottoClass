@@ -27,7 +27,8 @@ readExprData(
 
 \item{provenance}{(optional) provenance information}
 
-\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'DelayedArray')}
+\item{expression_matrix_class}{class of expression matrix to
+use (e.g. 'dgCMatrix', 'DelayedArray')}
 }
 \description{
 Read a nested list of expression data inputs in order to
@@ -41,8 +42,10 @@ mylistB = list(A = list('a' = matrix(1:5), 'b' = matrix(1:5)),
 B = list('c' = matrix(1:5),'d' = matrix(1:5)))
 depth(mylistB)
 
-mylistC = list('RNA' = list('RAW' = list('cell' = matrix(1:5), 'nucleus' = matrix(6:10)),
-'NORM' = list('cell' = matrix(11:15),'nucleus' = matrix(20:25))),
+mylistC = list('RNA' = list('RAW' = list('cell' = matrix(1:5),
+'nucleus' = matrix(6:10)),
+'NORM' = list('cell' = matrix(11:15),
+'nucleus' = matrix(20:25))),
 'PROT' = list('RAW' = list('cell' = matrix(16:20))))
 depth(mylistC)
 

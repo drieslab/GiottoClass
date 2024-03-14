@@ -8,7 +8,8 @@
 Framework to store spatial network information
 }
 \details{
-The generic access operators work with the data within the \code{networkDT}
+The generic access operators work with the data within
+the \code{networkDT}
 slot (filtered).
 }
 \section{Slots}{
@@ -18,13 +19,15 @@ slot (filtered).
 
 \item{\code{method}}{method used to generate spatial network}
 
-\item{\code{parameters}}{additional method-specific parameters used during spatial network generation}
+\item{\code{parameters}}{additional method-specific parameters used during spatial
+network generation}
 
 \item{\code{outputObj}}{network geometry object}
 
 \item{\code{networkDT}}{data.table of network connections, distances, and weightings}
 
-\item{\code{networkDT_before_filter}}{unfiltered data.table  of network connections, distances, and weightings}
+\item{\code{networkDT_before_filter}}{unfiltered data.table  of network connections,
+distances, and weightings}
 
 \item{\code{cellShapeObj}}{network cell shape information}
 

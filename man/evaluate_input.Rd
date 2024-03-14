@@ -14,9 +14,10 @@ evaluate_input(type, x, ...)
 \item{\dots}{additional params to pass}
 }
 \description{
-Experimental. Evaluate raw inputs into formats that are directly compatible with
-Giotto's functionality. Note that this function only formats the data.
+Experimental. Evaluate raw inputs into formats that are directly compatible
+with Giotto's functionality. Note that this function only formats the data.
 The output from this function still needs to be put into a Giotto
 subobject.\cr
-This is a wrapper function for the individual GiottoClass evaluation functions.
+This is a wrapper function for the individual GiottoClass evaluation
+functions.
 }

@@ -27,7 +27,8 @@ removeFeatAnnotation(
 giotto object
 }
 \description{
-Removes feature annotation from a Giotto object for a specific feature modality
+Removes feature annotation from a Giotto object for a
+specific feature modality
 }
 \details{
 if \code{return_gobject = FALSE}, it will return the gene metadata

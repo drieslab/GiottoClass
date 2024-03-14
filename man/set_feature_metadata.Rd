@@ -18,8 +18,9 @@ set_feature_metadata(
 \arguments{
 \item{gobject}{giotto object}
 
-\item{metadata}{featMetaObj or data.table containing feature metadata. Setting NULL will remove
-the object. Passing 'initialize' will reset the object.}
+\item{metadata}{featMetaObj or data.table containing feature metadata.
+Setting NULL will remove the object. Passing 'initialize' will reset the
+object.}
 
 \item{spat_unit}{spatial unit (e.g. "cell")}
 

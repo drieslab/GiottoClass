@@ -11,8 +11,8 @@
 \item{x}{a Giotto S4 class subobject}
 }
 \description{
-S4 generic for Giotto's S4 subobjects to return with full copies of
-certain subobjects that usually return referenced information.
+S4 generic for Giotto's S4 subobjects to return with full
+copies of certain subobjects that usually return referenced information.
 }
 \section{Methods (by class)}{
 \itemize{

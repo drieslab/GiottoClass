@@ -15,8 +15,8 @@ distGiottoImage(
 \arguments{
 \item{gobject}{giotto object}
 
-\item{image_type}{image object type (only supports largeImage and is set as
-default)}
+\item{image_type}{image object
+type (only supports largeImage and is set as default)}
 
 \item{image_name}{name of image object to use}
 
@@ -25,9 +25,9 @@ default)}
 \item{method}{plot type to show image intensity distribution}
 }
 \description{
-Plot distribution of intensity values using either a density plot
-or a histogram. Useful for finding image artefact outliers and determining
-reasonable scaling cutoffs.
+Plot distribution of intensity values using either a density
+plot or a histogram. Useful for finding image artefact outliers and
+determining reasonable scaling cutoffs.
 }
 \details{
 Plot is generated from a downsampling of the original image

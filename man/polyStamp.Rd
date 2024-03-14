@@ -17,8 +17,8 @@ polyStamp(
 \item{stamp_dt}{data.table with x and y vertices for a polygon to be stamped.
 Column names are expected to be 'x' and 'y' respectively}
 
-\item{spatlocs}{spatial locations with x and y coordinates where polygons should
-be stamped. Column names are 'cell_ID', 'sdimx' and 'sdimy' by default}
+\item{spatlocs}{spatial locations with x and y coordinates where polygons
+should be stamped. Column names are 'cell_ID', 'sdimx' and 'sdimy' by default}
 
 \item{id_col}{column in spatlocs to use as IDs (default is 'cell_ID')}
 
@@ -32,8 +32,8 @@ be stamped. Column names are 'cell_ID', 'sdimx' and 'sdimy' by default}
 returns a data.table of polygon vertices
 }
 \description{
-Takes a given stamp polygon and places it at each spatial location
-provided.
+Takes a given stamp polygon and places it at each spatial
+location provided.
 }
 \examples{
 

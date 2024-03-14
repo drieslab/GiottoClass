@@ -7,7 +7,8 @@
 readGiottoInstructions(giotto_instructions, param = NULL, default)
 }
 \arguments{
-\item{giotto_instructions}{giotto object or result from createGiottoInstructions()}
+\item{giotto_instructions}{giotto object or result from
+createGiottoInstructions()}
 
 \item{param}{parameter to retrieve}
 

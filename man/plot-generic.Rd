@@ -85,7 +85,8 @@ size based on \code{size} param}
 \item{dims}{dimensions to plot}
 }
 \description{
-S4 generic for previewing Giotto's image and subcellular objects.
+S4 generic for previewing Giotto's image and subcellular
+objects.
 }
 \section{Functions}{
 \itemize{

@@ -20,7 +20,8 @@ createSpatLocsObj(
 
 \item{spat_unit}{spatial unit of aggregated expression (e.g. 'cell')}
 
-\item{provenance}{origin data of aggregated expression information (if applicable)}
+\item{provenance}{origin data of aggregated expression
+information (if applicable)}
 
 \item{misc}{misc}
 

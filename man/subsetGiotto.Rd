@@ -51,9 +51,9 @@ subsets to these feat_types}
 giotto object
 }
 \description{
-Subsets Giotto object including previous analyses. For subsetting
-the subcellular information only without editing the aggregate information,
-use \link{subsetGiottoLocsSubcellular}
+Subsets Giotto object including previous analyses. For
+subsetting the subcellular information only without editing the aggregate
+information, use \link{subsetGiottoLocsSubcellular}
 }
 \details{
 Subsets a Giotto object for a specific spatial unit and feature type

@@ -27,7 +27,8 @@
 \arguments{
 \item{gobject}{giotto object}
 
-\item{initialize}{(boolean, default = TRUE) whether to initialize the giotto object}
+\item{initialize}{(boolean, default = TRUE) whether to initialize the giotto
+object}
 
 \item{value}{value to set}
 

@@ -30,7 +30,11 @@ overlapToMatrixMultiPoly(
 giotto object or count matrix
 }
 \description{
-create a count matrix based on overlap results from \code{\link{calculateOverlapRaster}}, \code{\link{calculateOverlapSerial}}, or \code{\link{calculateOverlapParallel}}
-and aggregate information from multiple polygon layers (e.g. z-stacks) together
+create a count matrix based on overlap results
+from \code{\link{calculateOverlapRaster}},
+\code{\link{calculateOverlapSerial}},
+or \code{\link{calculateOverlapParallel}}
+and aggregate information from multiple polygon
+layers (e.g. z-stacks) together
 }
 \concept{overlap}

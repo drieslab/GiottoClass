@@ -23,7 +23,8 @@
 )
 }
 \arguments{
-\item{x}{spatVector or data.frame-like object with points coordinate information (x, y, feat_ID)}
+\item{x}{spatVector or data.frame-like object with points coordinate
+information (x, y, feat_ID)}
 
 \item{feat_type}{character. feature type. Provide more than one value if
 using the \code{split_keyword} param. For each set of keywords to split by, an
@@ -45,9 +46,9 @@ giottoPoints
 Create a \code{giottoPoints} object that is used to represent
 subcellular point-type features. The main values are contained within the
 \code{spatVector} slot, which should contain spatial point data and also an
-associated set of attributes for at least \code{feat_ID} (name of the feature being
-described) and \code{feat_ID_uniq} (a unique integer identifier for each specific
-point).
+associated set of attributes for at
+least \code{feat_ID} (name of the feature being described)
+and \code{feat_ID_uniq} (a unique integer identifier for each specific point).
 }
 \examples{
 # data.frame input

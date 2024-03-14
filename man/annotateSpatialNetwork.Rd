@@ -24,7 +24,8 @@ annotateSpatialNetwork(
 
 \item{cluster_column}{name of column to use for clusters}
 
-\item{create_full_network}{convert from reduced to full network representation}
+\item{create_full_network}{convert from reduced to full network
+representation}
 }
 \value{
 annotated network in data.table format

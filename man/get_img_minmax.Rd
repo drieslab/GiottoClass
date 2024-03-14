@@ -9,7 +9,9 @@ get_img_minmax(mg_img, negative_y = TRUE)
 \arguments{
 \item{mg_img}{magick object}
 
-\item{negative_y}{Map image to negative y spatial values if TRUE during automatic alignment. Meaning that origin is in upper left instead of lower left.}
+\item{negative_y}{Map image to negative y spatial values if TRUE during
+automatic alignment. Meaning that origin is in upper left instead of lower
+left.}
 }
 \description{
 get_img_minmax

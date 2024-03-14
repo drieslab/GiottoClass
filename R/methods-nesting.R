@@ -184,8 +184,8 @@ setMethod("prov<-", signature = "provData", function(x, value) {
 #' @name assign_objnames_2_list
 #' @title Assign object names to list names
 #' @param obj_list list including giotto S4 objects
-#' @param force_replace boolean, default = FALSE. Whether to replace the names of objects
-#' for which the name already has a name for
+#' @param force_replace boolean, default = FALSE. Whether to replace the 
+#' names of objects for which the name already has a name for
 #' @examples
 #' \dontrun{
 #' e <- new("exprObj")

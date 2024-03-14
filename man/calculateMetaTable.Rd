@@ -30,8 +30,10 @@ calculateMetaTable(
 \item{selected_genes}{subset of genes to use (deprecated)}
 }
 \value{
-data.table with average expression values for each gene per (combined) annotation
+data.table with average expression values for each gene
+per (combined) annotation
 }
 \description{
-calculates the average gene expression for one or more (combined) annotation columns.
+calculates the average gene expression for one or
+more (combined) annotation columns.
 }

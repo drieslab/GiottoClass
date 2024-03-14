@@ -33,11 +33,13 @@ createMetafeats(
 giotto object
 }
 \description{
-This function creates an average metafeat/metagene/module for clusters.
+This function creates an average metafeat/metagene/module
+for clusters.
 }
 \details{
 An example for the 'gene_clusters' could be like this:
-cluster_vector = c(1, 1, 2, 2); names(cluster_vector) = c('geneA', 'geneB', 'geneC', 'geneD')
+cluster_vector = c(1, 1, 2, 2)
+names(cluster_vector) = c('geneA', 'geneB', 'geneC', 'geneD')
 }
 \examples{
 \dontrun{
@@ -48,10 +50,12 @@ activeSpatUnit(g) <- "aggregate"
 
 # create the metafeats
 # We do this by making an annotation vector which is a numerical vector
-# of cluster assignments where each number is named by the feature it describes.
+# of cluster assignments where each number is named by the feature it 
+# describes.
 #
-# Here we create an example annotation vector by arbitrarily using the first 6
-# features and putting 3 in cluster 1 and the other 3 in cluster 2.
+# Here we create an example annotation vector by arbitrarily using the 
+# first 6 features and putting 3 in cluster 1 and the other 3 in cluster 2.
+
 feats_to_use <- featIDs(g)[1:6]
 clust_to_use <- c(1, 1, 1, 2, 2, 2)
 names(clust_to_use) <- feats_to_use

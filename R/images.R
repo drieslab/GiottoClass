@@ -19,7 +19,8 @@ convert_mgImage_to_array_DT <- function(mg_object) {
     num_res <- as.numeric(mg_object[[1]])
     num_res_m <- data.table::as.data.table(reshape2::melt(num_res))
     colnames(num_res_m) <- c("x", "y", "c", "color")
-    array_dt <- data.table::dcast.data.table(num_res_m, value.var = "color", formula = "x+y~c")
+    array_dt <- data.table::dcast.data.table(
+        num_res_m, value.var = "color", formula = "x+y~c")
     colnames(array_dt) <- c("x", "y", "c.1", "c.2", "c.3")
     array_dt[, RGB := grDevices::rgb(c.1, c.2, c.3)]
 
@@ -29,7 +30,8 @@ convert_mgImage_to_array_DT <- function(mg_object) {
 
 #' @title estimateImageBg
 #' @name estimateImageBg
-#' @description helps to estimate which color is the background color of your plot
+#' @description helps to estimate which color is the background color of your 
+#' plot
 #' @param mg_object magick image or Giotto image object
 #' @param top_color_range top possible background colors to return
 #' @return vector of pixel color frequencies and an associated barplot
@@ -40,8 +42,9 @@ estimateImageBg <- function(mg_object, top_color_range = 1:50) {
     }
 
     arrayDT <- convert_mgImage_to_array_DT(mg_object = mg_object)
-    sort_table <- sort(table(arrayDT$RGB), decreasing = T)
-    graphics::barplot(sort_table[top_color_range], col = names(sort_table[top_color_range]))
+    sort_table <- sort(table(arrayDT$RGB), decreasing = TRUE)
+    graphics::barplot(sort_table[top_color_range], 
+                    col = names(sort_table[top_color_range]))
 
     cat("Most abundant pixel colors: \n")
     print(sort_table[top_color_range])
@@ -50,20 +53,21 @@ estimateImageBg <- function(mg_object, top_color_range = 1:50) {
 
 #' @title changeImageBg
 #' @name changeImageBg
-#' @description Function to change the background color of a magick image plot to another color
+#' @description Function to change the background color of a magick image 
+#' plot to another color
 #' @param mg_object magick image or giotto image object
 #' @param bg_color estimated current background color
-#' @param perc_range range around estimated background color to include (percentage)
+#' @param perc_range range around estimated background color to 
+#' include (percentage)
 #' @param new_color new background color
 #' @param new_name change name of Giotto image
 #' @return magick image or giotto image object with updated background color
 #' @export
-changeImageBg <- function(
-        mg_object,
-        bg_color,
-        perc_range = 10,
-        new_color = "#FFFFFF",
-        new_name = NULL) {
+changeImageBg <- function(mg_object,
+    bg_color,
+    perc_range = 10,
+    new_color = "#FFFFFF",
+    new_name = NULL) {
     if (inherits(mg_object, "giottoImage")) {
         is_g_image <- TRUE
         g_image <- mg_object
@@ -73,7 +77,8 @@ changeImageBg <- function(
     }
 
     if (!inherits(mg_object, "magick-image")) {
-        stop("mg_object needs to be a giottImage or a 'magick-image' object from the magick package")
+        stop("mg_object needs to be a giottImage or a 'magick-image' object 
+            from the magick package")
     }
 
     # new background color
@@ -113,9 +118,9 @@ changeImageBg <- function(
     c1 <- c2 <- c3 <- NULL
 
     # replace old background with new background
-    arrayDT[, "c1" := ifelse(c_ind == T, c1_new, c.1)]
-    arrayDT[, "c2" := ifelse(c_ind == T, c2_new, c.2)]
-    arrayDT[, "c3" := ifelse(c_ind == T, c3_new, c.3)]
+    arrayDT[, "c1" := ifelse(c_ind == TRUE, c1_new, c.1)]
+    arrayDT[, "c2" := ifelse(c_ind == TRUE, c2_new, c.2)]
+    arrayDT[, "c3" := ifelse(c_ind == TRUE, c3_new, c.3)]
 
 
     # data.table variables
@@ -127,7 +132,8 @@ changeImageBg <- function(
     # convert array_dt to array and then to magick image object
     original_width <- magick::image_info(mg_object)[2]
     original_heigth <- magick::image_info(mg_object)[3]
-    myarray <- array(as.vector(as.matrix(arrayDT[, .(c1, c2, c3)])), dim = c(original_width, original_heigth, 3))
+    myarray <- array(as.vector(as.matrix(arrayDT[, .(c1, c2, c3)])), 
+                    dim = c(original_width, original_heigth, 3))
     new_mg_object <- magick::image_read(myarray)
 
     # return magick or giotto image object
@@ -149,12 +155,13 @@ changeImageBg <- function(
 #' @name get_img_minmax
 #' @title get_img_minmax
 #' @param mg_img magick object
-#' @param negative_y Map image to negative y spatial values if TRUE during automatic alignment. Meaning that origin is in upper left instead of lower left.
+#' @param negative_y Map image to negative y spatial values if TRUE during 
+#' automatic alignment. Meaning that origin is in upper left instead of lower 
+#' left.
 #' @keywords internal
 #' @export
-get_img_minmax <- function(
-        mg_img,
-        negative_y = TRUE) {
+get_img_minmax <- function(mg_img,
+    negative_y = TRUE) {
     # Get magick object dimensions. xmin and ymax assumed to be 0.
     info <- magick::image_info(mg_img)
     img_xmax <- info$width # width
@@ -182,10 +189,9 @@ get_img_minmax <- function(
 #' @title get_adj_rescale_img
 #' @keywords internal
 #' @export
-get_adj_rescale_img <- function(
-        img_minmax,
-        spatial_locs,
-        scale_factor = 1) {
+get_adj_rescale_img <- function(img_minmax,
+    spatial_locs,
+    scale_factor = 1) {
     # Expand scale_factor if needed
     if (length(scale_factor) == 1) {
         scale_factor <- c(x = scale_factor, y = scale_factor)
@@ -225,28 +231,35 @@ get_adj_rescale_img <- function(
 #' @name addGiottoImageMG
 #' @description Adds giotto image objects to your giotto object
 #' @param gobject giotto object
-#' @param images list of giotto image objects, see \code{\link{createGiottoImage}}
+#' @param images list of giotto image objects, 
+#' see \code{\link{createGiottoImage}}
 #' @param spat_unit spatial unit
-#' @param spat_loc_name provide spatial location slot in Giotto to align images. Defaults to first one
-#' @param scale_factor provide scale of image pixel dimensions relative to spatial coordinates.
-#' @param negative_y Map image to negative y spatial values if TRUE during automatic alignment. Meaning that origin is in upper left instead of lower left.
+#' @param spat_loc_name provide spatial location slot in Giotto to align 
+#' images. Defaults to first one
+#' @param scale_factor provide scale of image pixel dimensions relative to 
+#' spatial coordinates.
+#' @param negative_y Map image to negative y spatial values if TRUE during 
+#' automatic alignment. Meaning that origin is in upper left instead of lower 
+#' left.
 #' @return an updated Giotto object with access to the list of images
 #' @export
-addGiottoImageMG <- function(
-        gobject,
-        images,
-        spat_unit = NULL,
-        spat_loc_name = NULL,
-        scale_factor = NULL,
-        negative_y = TRUE) {
+addGiottoImageMG <- function(gobject,
+    images,
+    spat_unit = NULL,
+    spat_loc_name = NULL,
+    scale_factor = NULL,
+    negative_y = TRUE) {
     # 0. check params
-    if (is.null(gobject)) stop("The giotto object that will be updated needs to be provided")
+    if (is.null(gobject)) 
+        stop("The giotto object that will be updated needs to be provided")
 
-    if (is.null(images)) stop("The giotto image(s) that will be added needs to be provided")
+    if (is.null(images)) 
+        stop("The giotto image(s) that will be added needs to be provided")
 
     if (is.null(spat_loc_name)) {
         if (!is.null(slot(gobject, "spatial_locs"))) {
-            spat_loc_name <- list_spatial_locations(gobject = gobject, spat_unit = spat_unit)[1, ]
+            spat_loc_name <- list_spatial_locations(
+                gobject = gobject, spat_unit = spat_unit)[1, ]
         } else {
             spat_loc_name <- NULL
             cat("No spatial locations have been found \n")
@@ -255,13 +268,18 @@ addGiottoImageMG <- function(
 
     ext_scale_factor <- FALSE
     if (!is.null(scale_factor)) {
-        if (!is.numeric(scale_factor)) stop("Given scale_factor(s) must be numeric")
+        if (!is.numeric(scale_factor)) 
+            stop("Given scale_factor(s) must be numeric")
 
-        if ((length(scale_factor) == length(images)) || length(scale_factor) == 1) {
-            # cat('scale_factor(s) external to giottoImage have been given and will be used')
+        if ((length(scale_factor) == length(images)) || 
+            length(scale_factor) == 1) {
+            # cat('scale_factor(s) external to giottoImage have been given and 
+            # will be used')
             ext_scale_factor <- TRUE
         } else {
-            stop("if scale_factor is given, it must be a numeric with either a single value or as many values as there are images are provided")
+            stop("if scale_factor is given, it must be a numeric with either 
+                a single value or as many values as there are images are 
+                provided")
         }
     }
 
@@ -283,12 +301,16 @@ addGiottoImageMG <- function(
             all_im_names <- names(gobject@images)
 
             if (im_name %in% all_im_names) {
-                cat("\n ", im_name, " has already been used, will be overwritten \n")
+                cat("\n ", im_name, " has already been used, will be 
+                    overwritten \n")
             }
 
-            # 3. Update boundaries if not already done during createGiottoImage() due to lack of spatlocs and gobject
-            if (sum(im@boundaries == c(0, 0, 0, 0)) == 4 && sum(im@minmax == c(10, 0, 10, 0)) == 4) {
-                if (!is.null(spat_loc_name)) { # A check for the first available spatloc was already done
+            # 3. Update boundaries if not already done during 
+            # createGiottoImage() due to lack of spatlocs and gobject
+            if (sum(im@boundaries == c(0, 0, 0, 0)) == 4 && 
+                sum(im@minmax == c(10, 0, 10, 0)) == 4) {
+                if (!is.null(spat_loc_name)) { # A check for the first 
+                    # available spatloc was already done
                     spatlocs <- get_spatial_locations(
                         gobject = gobject,
                         spat_unit = spat_unit,
@@ -338,10 +360,13 @@ addGiottoImageMG <- function(
 
                     # Inherit external scaling factors if given
                     if (ext_scale_factor == TRUE) {
-                        im@scale_factor[[spat_loc_name]] <- scale_factor[[image_i]]
-                        im@resolution[[spat_loc_name]] <- 1 / (scale_factor[[image_i]])
+                        im@scale_factor[[spat_loc_name]] <- 
+                            scale_factor[[image_i]]
+                        im@resolution[[spat_loc_name]] <- 
+                            1 / (scale_factor[[image_i]])
                     }
-                    ## Externally given scale_factors will only be written in/used if boundary adj values are not pre-existing
+                    ## Externally given scale_factors will only be written 
+                    ## in/used if boundary adj values are not pre-existing
                 }
             }
 
@@ -365,9 +390,10 @@ addGiottoImageMG <- function(
 
 #' @title updateGiottoImageMG
 #' @name updateGiottoImageMG
-#' @description Updates the boundaries of a giotto \code{image} object attached to
-#'   a \code{giotto} object if both \code{gobject} and \code{image_name} params
-#'   are given. Alternatively can directly accept and return as \code{image}
+#' @description Updates the boundaries of a giotto \code{image} object attached 
+#' to a \code{giotto} object if both \code{gobject} and \code{image_name} 
+#' params are given. Alternatively can directly accept and return 
+#' as \code{image}
 #' @inheritParams updateGiottoImage
 #' @param gobject \code{giotto} object containing giotto \code{image} object
 #' @param giottoImage \code{image} object to directly update
@@ -375,43 +401,50 @@ addGiottoImageMG <- function(
 #' @param xmax_set set image xmax boundary. Applied before adjustments
 #' @param ymin_set set image ymin boundary. Applied before adjustments
 #' @param ymax_set set image ymax boundary. Applied before adjustments
-#' @param return_gobject return a \code{giotto} object if \code{TRUE}, a giotto
-#'   \code{image} object if \code{FALSE}
-#' @return a \code{giotto} object or an updated giotto \code{image} object if
-#'   \code{return_gobject = FALSe}
+#' @param return_gobject return a \code{giotto} object if \code{TRUE}, a 
+#' giotto \code{image} object if \code{FALSE}
+#' @return a \code{giotto} object or an updated giotto \code{image} object 
+#' if \code{return_gobject = FALSe}
 #' @export
-updateGiottoImageMG <- function(
-        gobject = NULL,
-        image_name = NULL,
-        giottoImage = NULL,
-        xmax_adj = 0,
-        xmin_adj = 0,
-        ymax_adj = 0,
-        ymin_adj = 0,
-        x_shift = 0,
-        y_shift = 0,
-        scale_factor = NULL,
-        scale_x = 1,
-        scale_y = 1,
-        order = c("first_adj", "first_scale"),
-        xmin_set = NULL,
-        xmax_set = NULL,
-        ymin_set = NULL,
-        ymax_set = NULL,
-        return_gobject = TRUE,
-        verbose = TRUE) {
+updateGiottoImageMG <- function(gobject = NULL,
+    image_name = NULL,
+    giottoImage = NULL,
+    xmax_adj = 0,
+    xmin_adj = 0,
+    ymax_adj = 0,
+    ymin_adj = 0,
+    x_shift = 0,
+    y_shift = 0,
+    scale_factor = NULL,
+    scale_x = 1,
+    scale_y = 1,
+    order = c("first_adj", "first_scale"),
+    xmin_set = NULL,
+    xmax_set = NULL,
+    ymin_set = NULL,
+    ymax_set = NULL,
+    return_gobject = TRUE,
+    verbose = TRUE) {
     # 0. Check params
     # Check input image
     if (is.null(gobject)) {
-        if (is.null(giottoImage)) stop("Image to be updated must be given as gobject AND image_name OR giottoImage argument(s) \n")
-        if (verbose == TRUE) cat("gobject argument not given \n return_gobject set to FALSE \n")
+        if (is.null(giottoImage)) 
+            stop("Image to be updated must be given as gobject AND image_name 
+                OR giottoImage argument(s) \n")
+        if (verbose == TRUE) 
+            cat("gobject argument not given \n return_gobject set to FALSE \n")
         return_gobject <- FALSE
     }
-    if (is.null(giottoImage) && is.null(image_name)) stop("The name of the giotto image that will be updated needs to be provided \n")
+    if (is.null(giottoImage) && is.null(image_name)) 
+        stop("The name of the giotto image that will be updated needs to be 
+            provided \n")
 
     if (!is.null(giottoImage)) {
-        if (!inherits(giottoImage, "giottoImage")) stop("giottoImage argument only accepts giottoImage objects \n")
-        if (verbose == TRUE && !is.null(gobject)) cat("giottoImage argument is given and will take priority \n return_gobject set to FALSE \n")
+        if (!inherits(giottoImage, "giottoImage")) 
+            stop("giottoImage argument only accepts giottoImage objects \n")
+        if (verbose == TRUE && !is.null(gobject)) 
+            cat("giottoImage argument is given and will take priority \n 
+                return_gobject set to FALSE \n")
         return_gobject <- FALSE
     }
 
@@ -425,10 +458,13 @@ updateGiottoImageMG <- function(
         "ymax_sloc" = ymax_set,
         "ymin_sloc" = ymin_set
     )
-    if (length(spatAnchor) < 4 && length(spatAnchor) > 0) stop("If set arguments are being used, all four must be given \n")
+    if (length(spatAnchor) < 4 && length(spatAnchor) > 0) 
+        stop("If set arguments are being used, all four must be given \n")
     if (!is.null(spatAnchor)) {
-        if (xmax_set < xmin_set) stop("xmax_set must be greater than xmin_set \n")
-        if (ymax_set < ymin_set) stop("ymax_set must be greater than ymin_set \n")
+        if (xmax_set < xmin_set) 
+            stop("xmax_set must be greater than xmin_set \n")
+        if (ymax_set < ymin_set) 
+            stop("ymax_set must be greater than ymin_set \n")
     }
 
     # Find order of adjust and scaling
@@ -443,7 +479,8 @@ updateGiottoImageMG <- function(
                 name = image_name
             )
         } else {
-            stop("either a giottoImage or both the gobject and name of the giottoImage must be given. \n")
+            stop("either a giottoImage or both the gobject and name of the 
+                giottoImage must be given. \n")
         }
     }
 
@@ -525,9 +562,8 @@ updateGiottoImageMG <- function(
 #' @return reconnected giottoImage
 #' @keywords internal
 #' @export
-reconnect_giottoImage_MG <- function(
-        giottoImage,
-        image_path) {
+reconnect_giottoImage_MG <- function(giottoImage,
+    image_path) {
     # load in new magick object
     mg_object <- magick::image_read(image_path)
 
@@ -545,7 +581,8 @@ reconnect_giottoImage_MG <- function(
 
 #' @title Load image as a terra spatRaster object
 #' @name .create_terra_spatraster
-#' @param image_path existing full filepath to image to be loaded as a terra spatRaster
+#' @param image_path existing full filepath to image to be loaded as a terra 
+#' spatRaster
 #' @keywords internal
 .create_terra_spatraster <- function(image_path) {
     raster_object <- try(suppressWarnings(terra::rast(x = image_path)))
@@ -562,63 +599,66 @@ reconnect_giottoImage_MG <- function(
 
 #' @title Optimized largeImage resampling
 #' @name plot_auto_largeImage_resample
-#' @description Downsample \code{largeImage} for plotting. Uses \code{\link[terra]{spatSample}}
-#' to load only a portion of the original image, speeding up plotting and lowering memory
-#' footprint.
+#' @description Downsample \code{largeImage} for plotting. 
+#' Uses \code{\link[terra]{spatSample}} to load only a portion of the original 
+#' image, speeding up plotting and lowering memory footprint.
 #'
-#' Default behavior of \code{spatSample} is to crop if only a smaller ROI is needed for plotting
-#' followed by the sampling process in order to reduce wasted sampling by focusing the
-#' sample space. For very large ROIs, this crop can be time intensive and require
-#' writing to disk.
+#' Default behavior of \code{spatSample} is to crop if only a smaller ROI is 
+#' needed for plotting followed by the sampling process in order to reduce 
+#' wasted sampling by focusing the sample space. For very large ROIs, this 
+#' crop can be time intensive and require writing to disk.
 #'
-#' This function examines the ROI dimensions as defined through the limits of the spatial
-#' locations to be plotted, and decides between the following two methods in order to
-#' avoid this issue:
+#' This function examines the ROI dimensions as defined through the limits of 
+#' the spatial locations to be plotted, and decides between the following two 
+#' methods in order to avoid this issue:
 #' \itemize{
-#'   \item{\strong{Method A.} First crop original image and then sample n values where
-#'   n = 500,000 to generate final image}
-#'   \item{\strong{Method B.} First oversample n values and then crop, where n = 500,000
-#'   scaled by a value >1. Scaling factor increases the smaller the ROI is and
-#'   is defined by: original dimensions/crop dimensions where the larger ratio between
-#'   x and y dims is chosen. Scale factor is capped by \code{max_resample_scale}}
+#'     \item{\strong{Method A.} First crop original image and then sample n 
+#'     values where n = 500,000 to generate final image}
+#'     \item{\strong{Method B.} First oversample n values and then crop, where 
+#'     n = 500,000 scaled by a value >1. Scaling factor increases the smaller 
+#'     the ROI is and is defined by: original dimensions/crop dimensions where 
+#'     the larger ratio between x and y dims is chosen. Scale factor is capped 
+#'     by \code{max_resample_scale}}
 #' }
-#' Control points for this function are set by \code{max_crop} which decides the max
-#' ROI area after which switchover to method B happens in order to avoid laborious crops
-#' and \code{max_resample_scale} which determines the maximum scale factor for number
-#' of values to sample. Both values can be adjusted depending on system resources.
-#' Additionally, \code{flex_resample} determines if this switching behavior happens.
+#' Control points for this function are set by \code{max_crop} which decides 
+#' the max ROI area after which switchover to method B happens in order to 
+#' avoid laborious crops and \code{max_resample_scale} which determines the 
+#' maximum scale factor for number of values to sample. Both values can be 
+#' adjusted depending on system resources. Additionally, \code{flex_resample} 
+#' determines if this switching behavior happens.
 #' When set to \code{FALSE}, only method A is used.
 #' @param gobject \code{gobject} containing \code{largeImage} object
-#' @param giottoLargeImage \code{largeImage} object to resample if not provided through
-#' \code{gobject} and \code{largeImage_name}
+#' @param giottoLargeImage \code{largeImage} object to resample if not provided 
+#' through \code{gobject} and \code{largeImage_name}
 #' @param largeImage_name name of \code{largeImage} in \code{gobject}
 #' @param spat_unit spatial unit
 #' @param spat_loc_name name of spatial locations to plot
 #' @param polygon_feat_type name of polygon/spatial_info to plot
-#' @param include_image_in_border logical. expand the extent sampled to also show image in
-#' border regions not included in spatlocs. This prevents images in plots from
-#' being sharply cut off around the furthest spatial locations. (default is \code{TRUE})
-#' @param flex_resample logical. Whether to allow automatic selection of sampling
-#' workflow as defined in details sections. (default is \code{TRUE})
-#' @param max_crop maximum crop size allowed for \strong{method A} before switching to
-#' \strong{method B} (see description)
+#' @param include_image_in_border logical. expand the extent sampled to also 
+#' show image in border regions not included in spatlocs. This prevents images 
+#' in plots from being sharply cut off around the furthest spatial 
+#' locations. (default is \code{TRUE})
+#' @param flex_resample logical. Whether to allow automatic selection of 
+#' sampling workflow as defined in details sections. (default is \code{TRUE})
+#' @param max_crop maximum crop size allowed for \strong{method A} before 
+#' switching to \strong{method B} (see description)
 #' @param max_resample_scale maximum cells allowed to resample to compensate for
 #' decreased resolution when cropping after sampling
 #' @return a \code{giottoLargeImage} cropped and resampled properly for plotting
 #' @seealso \code{\link[terra]{spatSample}}
 #' @export
-plot_auto_largeImage_resample <- function(
-        gobject,
-        giottoLargeImage = NULL,
-        largeImage_name = NULL,
-        spat_unit = NULL,
-        spat_loc_name = NULL,
-        polygon_feat_type = NULL,
-        include_image_in_border = TRUE,
-        flex_resample = TRUE,
-        max_crop = 1e+08,
-        max_resample_scale = 100) {
-    # If no giottoLargeImage, select specified giottoLargeImage. If none specified, select first one.
+plot_auto_largeImage_resample <- function(gobject,
+    giottoLargeImage = NULL,
+    largeImage_name = NULL,
+    spat_unit = NULL,
+    spat_loc_name = NULL,
+    polygon_feat_type = NULL,
+    include_image_in_border = TRUE,
+    flex_resample = TRUE,
+    max_crop = 1e+08,
+    max_resample_scale = 100) {
+    # If no giottoLargeImage, select specified giottoLargeImage. If none 
+    # specified, select first one.
     if (is.null(giottoLargeImage)) {
         giottoLargeImage <- get_giottoLargeImage(
             gobject = gobject,
@@ -641,7 +681,8 @@ plot_auto_largeImage_resample <- function(
         copy_obj = TRUE
     )
 
-    # If no spatial locations are available, rely on first existing polygon extent
+    # If no spatial locations are available, rely on first existing polygon 
+    # extent
     if (is.null(cell_locations)) {
         sub_obj <- get_polygon_info(
             gobject = gobject,
@@ -651,7 +692,8 @@ plot_auto_largeImage_resample <- function(
 
         # Find centroids then if there are more than 100, sample 30%
         sub_obj <- .calculate_centroids_polygons(sub_obj)
-        sampleSize <- ifelse(nrow(sub_obj) > 100, ceiling(0.3 * nrow(sub_obj)), nrow(sub_obj))
+        sampleSize <- ifelse(nrow(sub_obj) > 100, 
+                            ceiling(0.3 * nrow(sub_obj)), nrow(sub_obj))
 
         centroid_sample_DT <- slot(sub_obj, "spatVectorCentroids") %>%
             sample(., size = sampleSize) %>%
@@ -664,11 +706,14 @@ plot_auto_largeImage_resample <- function(
         )
 
         # sub_ext = terra::ext(sub_obj)[1:4]
-        # cell_locations = data.table::data.table(sdimx = c(sub_ext[['xmin']], sub_ext[['xmax']]),
-        #                                         sdimy = c(sub_ext[['ymin']], sub_ext[['ymax']]))
+        # cell_locations = data.table::data.table(
+        # sdimx = c(sub_ext[['xmin']], sub_ext[['xmax']]),
+        # sdimy = c(sub_ext[['ymin']], sub_ext[['ymax']]))
     }
 
-    if (is.null(cell_locations)) stop("No spatial locations or polygons discovered.\n Cannot determine largeImage resample extent\n")
+    if (is.null(cell_locations)) 
+        stop("No spatial locations or polygons discovered.\n Cannot determine 
+            largeImage resample extent\n")
 
     # Get image extent minmax
     im_minmax <- terra::ext(giottoLargeImage@raster_object)[1:4]
@@ -710,7 +755,8 @@ plot_auto_largeImage_resample <- function(
     # zoom and resample giottoLargeImage
     crop_xdim <- abs(xmax_crop - xmin_crop)
     crop_ydim <- abs(ymax_crop - ymin_crop)
-    crop_area_px <- crop_xdim * giottoLargeImage@scale_factor[["x"]] * giottoLargeImage@scale_factor[["y"]] * crop_ydim
+    crop_area_px <- crop_xdim * giottoLargeImage@scale_factor[["x"]] * 
+        giottoLargeImage@scale_factor[["y"]] * crop_ydim
     im_xdim <- abs(im_minmax[2] - im_minmax[1])
     im_ydim <- abs(im_minmax[2] - im_minmax[1])
     crop_relative_scale <- max(im_xdim / crop_xdim, im_ydim / crop_ydim)
@@ -718,7 +764,8 @@ plot_auto_largeImage_resample <- function(
     if (!isTRUE(flex_resample) | crop_area_px <= max_crop) {
         # METHOD A: Crop if needed then resample to final image
         if (!isTRUE(flex_resample) & crop_area_px > max_crop) {
-            warning("Plotting large regions with flex_resample == FALSE will be costly in time and drive space.")
+            warning("Plotting large regions with flex_resample == FALSE will 
+                    be costly in time and drive space.")
         }
         # For ROIs with area smaller than max_crop OR if flex_resample is FALSE
         crop_image <- terra::crop(
@@ -734,14 +781,16 @@ plot_auto_largeImage_resample <- function(
         # METHOD B: Resample then crop to final image
         # Sample n values where n = default val scaled by a value >1
         if (crop_relative_scale <= max_resample_scale) {
-            # Scale factor is fullsize image dim/crop dim. Larger of the two ratios is chosen
+            # Scale factor is fullsize image dim/crop dim. Larger of the two 
+            # ratios is chosen
             resample_image <- terra::spatSample(giottoLargeImage@raster_object,
                 size = round(500000 * crop_relative_scale),
                 method = "regular",
                 as.raster = TRUE
             )
         } else {
-            # For scale factors that are too large, scaling is capped by max_resample_scale
+            # For scale factors that are too large, scaling is capped by 
+            # max_resample_scale
             resample_image <- terra::spatSample(giottoLargeImage@raster_object,
                 size = 500000 * max_resample_scale,
                 method = "regular",
@@ -771,12 +820,11 @@ plot_auto_largeImage_resample <- function(
 #' @param verbose be verbose
 #' @param \dots additional params to pass to `terra::spatSample`
 #' @keywords internal
-.spatraster_sample_values <- function(
-        raster_object,
-        size = 5000,
-        output = c("data.frame", "array", "magick", "EBImage"),
-        verbose = NULL,
-        ...) {
+.spatraster_sample_values <- function(raster_object,
+    size = 5000,
+    output = c("data.frame", "array", "magick", "EBImage"),
+    verbose = NULL,
+    ...) {
     output <- match.arg(
         arg = output,
         choices = c("data.frame", "array", "magick", "EBImage")
@@ -817,7 +865,8 @@ plot_auto_largeImage_resample <- function(
 
     # throw error when there are no values discovered.
     if (nrow(res) == 0) {
-        vmsg(.v = verbose, "No values discovered when sampling for image characteristics")
+        vmsg(.v = verbose, 
+            "No values discovered when sampling for image characteristics")
     }
 
     # convert to specified image type if desired.
@@ -841,11 +890,13 @@ plot_auto_largeImage_resample <- function(
 #' @keywords internal
 #' @noRd
 #' @return named numeric vector of min then max detected values
-.spatraster_intensity_range <- function(raster_object,
-    sample_values = .spatraster_sample_values(raster_object)) {
+.spatraster_intensity_range <- function(
+        raster_object,
+        sample_values = .spatraster_sample_values(raster_object)) {
     # get intensity range
     srMinmax <- suppressWarnings(terra::minmax(raster_object))
-    if (sum(is.infinite(srMinmax)) == 0) { # pull minmax values from terra spatRaster obj if img was small enough for them to be calculated
+    if (sum(is.infinite(srMinmax)) == 0) { # pull minmax values from terra 
+        #spatRaster obj if img was small enough for them to be calculated
         res <- c(srMinmax[1], srMinmax[2])
     } else { # pull minmax values from sampled subset if img was too large
         intensityRange <- range(sample_values)
@@ -864,8 +915,9 @@ plot_auto_largeImage_resample <- function(
 #' @keywords internal
 #' @noRd
 #' @return logical
-.spatraster_is_int <- function(raster_object,
-    sample_values = .spatraster_sample_values(raster_object)) {
+.spatraster_is_int <- function(
+        raster_object,
+        sample_values = .spatraster_sample_values(raster_object)) {
     # find out if image is int or floating point
     identical(sample_values, round(sample_values))
 }
@@ -879,15 +931,14 @@ plot_auto_largeImage_resample <- function(
 #' @name density_giottoLargeImage
 #' @param gobject giotto object
 #' @param image_type image object type (only supports largeImage and is set as
-#'   default)
+#' default)
 #' @param giottoLargeImage giotto large image object
 #' @param method method of plotting image distribution
 #' @keywords internal
-.dist_giottolargeimage <- function(
-        gobject = NULL,
-        image_name = NULL,
-        giottoLargeImage = NULL,
-        method = "dens") {
+.dist_giottolargeimage <- function(gobject = NULL,
+    image_name = NULL,
+    giottoLargeImage = NULL,
+    method = "dens") {
     # get image object
     if (!is.null(gobject) & !is.null(image_name)) {
         img_obj <- getGiottoImage(
@@ -911,79 +962,97 @@ plot_auto_largeImage_resample <- function(
 
 
 
-#' @title Stitch multiple giottoLargeImage objects into a single giottoLargeImage object
+#' @title Stitch multiple giottoLargeImage objects into a single 
+#' giottoLargeImage object
 #' @name stitchGiottoLargeImage
-#' @description Function to stitch together multiple field of view (FOV) images into a
-#'   single final image. Images are loaded into Giotto as \code{giottoLargeImage} and
-#'   stitched based on a set of FOV positions into a single final \code{giottoLargeImage}.
+#' @description Function to stitch together multiple field of view (FOV) images 
+#' into a single final image. Images are loaded into Giotto 
+#' as \code{giottoLargeImage} and stitched based on a set of FOV positions 
+#' into a single final \code{giottoLargeImage}.
 #' @details This function is time consuming. Setting a save location through the
-#'   \code{filename} parameter is also highly recommended as file size will likely be large.
-#'   This function creates a single stitched image from multiple FOV tiles and saves that
-#'   image to disk as it works. When finished, the pointer to that new image is loaded in
-#'   as a \code{giottoLargeImage} object. \cr
-#'   \strong{Note:} Dry runs are on by default and \code{dryRun} param must be set to FALSE
-#'   to proceed with the final stitching operation.
+#' \code{filename} parameter is also highly recommended as file size will 
+#' likely be large. This function creates a single stitched image from multiple 
+#' FOV tiles and saves that image to disk as it works. When finished, the 
+#' pointer to that new image is loaded in as a \code{giottoLargeImage} 
+#' object. \cr \strong{Note:} Dry runs are on by default and \code{dryRun} 
+#' param must be set to FALSE to proceed with the final stitching operation.
 #' @section Dry runs are default:
-#'     To ensure that disk space and time is not wasted, this function defaults to previewing
-#'     the stitching operation.
+#'     To ensure that disk space and time is not wasted, this function defaults 
+#'     to previewing the stitching operation.
 #' @section FOV positions:
-#'     The final image is stitched together from multiple FOV tiles. The \code{FOV_positions}
-#'     parameter accepts a table of x and y values for where each FOV tile should be placed
-#'     when performing the stitch. Which columns are the x and y values are determined by
-#'     the \code{FOV_xcol} and \code{FOV_ycol} params respectively. FOV tiles are at full resolution
-#'     with a starting position where either the lower left or upper left of the image touch the origin
-#'     depending on the value of \code{FOV_inverty} param. The FOV image is then translated according
-#'     to the x and y shift values.
+#'     The final image is stitched together from multiple FOV tiles. 
+#'     The \code{FOV_positions} parameter accepts a table of x and y values for 
+#'     where each FOV tile should be placed when performing the stitch. Which 
+#'     columns are the x and y values are determined by the \code{FOV_xcol} 
+#'     and \code{FOV_ycol} params respectively. FOV tiles are at full resolution
+#'     with a starting position where either the lower left or upper left of 
+#'     the image touch the origin depending on the value of \code{FOV_inverty} 
+#'     param. The FOV image is then translated according to the x and y shift 
+#'     values.
 #' @section FOV invert y:
-#'     Many imaging systems may treat the origin according to image convention where (0,0) is at the
-#'     upper left of an image. This is at odds with coordinate convention and what Giotto uses internally
-#'     where the coordinate (0,0) is at the lower left. The \code{FOV_inverty} defaults to FALSE, but if
-#'     set to TRUE, then FOV tile images will start with the upper left touching (0,0) and all y values
-#'     given through \code{FOV_positions} and \code{FOV_ycol} will be treated as negative y shift values.
+#'     Many imaging systems may treat the origin according to image convention 
+#'     where (0,0) is at the upper left of an image. This is at odds with 
+#'     coordinate convention and what Giotto uses internally where the 
+#'     coordinate (0,0) is at the lower left. The \code{FOV_inverty} defaults 
+#'     to FALSE, but if set to TRUE, then FOV tile images will start with the 
+#'     upper left touching (0,0) and all y values given 
+#'     through \code{FOV_positions} and \code{FOV_ycol} will be treated as 
+#'     negative y shift values.
 #' @section dataType:
-#'     There are multiple datatypes defining the range of intensity values that images can be saved
-#'     with. Setting a value with the \code{dataType} para is optional and Giotto attempts
-#'     to determine compatible data type to save the image as automatically.
+#'     There are multiple datatypes defining the range of intensity values that 
+#'     images can be saved with. Setting a value with the \code{dataType} para 
+#'     is optional and Giotto attempts to determine compatible data type to 
+#'     save the image as automatically.
 #' @param largeImage_list list of \code{giottoLargeImage} objects
-#' @param gobject_list list of \code{gobjects} containing \code{giottoLargeImages}
-#' @param largeImage_nameList list of names of \code{giottoLargeImages} within \code{gobjects}
-#' @param FOV_positions dataframe of FOV positions. Values (if any) are directly added to current image mapping
+#' @param gobject_list list of \code{gobjects} 
+#' containing \code{giottoLargeImages}
+#' @param largeImage_nameList list of names of \code{giottoLargeImages} 
+#' within \code{gobjects}
+#' @param FOV_positions dataframe of FOV positions. Values (if any) are 
+#' directly added to current image mapping
 #' @param FOV_xcol column name for FOV position x values
 #' @param FOV_ycol column name for FOV position y values
 #' @param FOV_inverty make FOV y position values negative
-#' @param method method of stitching images (\strong{mosaic}: average overlapping area values,
-#'   \strong{merge}:values get priority by order of images given)
-#' @param round_positions boolean. Round image positions. May be necessary to run.
-#' @param filename file name to write the stitched image to. Defaults to \code{"save_dir/stitch.tif"}
-#'   if \code{save_dir} param is found in the first \code{gobject}'s Giotto instructions
-#' @param dataType (optional) values for \code{dataType} are "INT1U", "INT2U", "INT2S", "INT4U",
-#'   "INT4S", "FLT4S", "FLT8S". The first three letters indicate whether the \code{dataType} is
-#'   integer (whole numbers) of a real number (decimal numbers), the fourth character indicates
-#'   the number of bytes used (allowing for large numbers and/or more precision), and the "S" or "U"
-#'   indicate whether the values are signed (both negative and positive) or unsigned (positive values only).
-#' @param fileType (optional) image format (e.g. .tif) If not given, defaults to format given in the filename
-#' @param dryRun boolean. Plot placeholder bounding rectangles where FOV images will be stitched without
-#'   actually proceeding with the full image stitching and saving process.
-#' @param overwrite boolean. Overwrite if filename to save image as already exists. Defaults to TRUE
+#' @param method method of stitching images (\strong{mosaic}: average 
+#' overlapping area values, \strong{merge}:values get priority by order of 
+#' images given)
+#' @param round_positions boolean. Round image positions. May be necessary 
+#' to run.
+#' @param filename file name to write the stitched image to. Defaults 
+#' to \code{"save_dir/stitch.tif"} if \code{save_dir} param is found in the 
+#' first \code{gobject}'s Giotto instructions
+#' @param dataType (optional) values for \code{dataType} are "INT1U", "INT2U", 
+#' "INT2S", "INT4U", "INT4S", "FLT4S", "FLT8S". The first three letters 
+#' indicate whether the \code{dataType} is integer (whole numbers) of a real 
+#' number (decimal numbers), the fourth character indicates the number of 
+#' bytes used (allowing for large numbers and/or more precision), and the "S" 
+#' or "U" indicate whether the values are signed (both negative and positive) 
+#' or unsigned (positive values only).
+#' @param fileType (optional) image format (e.g. .tif) If not given, defaults 
+#' to format given in the filename
+#' @param dryRun boolean. Plot placeholder bounding rectangles where FOV images 
+#' will be stitched without actually proceeding with the full image stitching 
+#' and saving process.
+#' @param overwrite boolean. Overwrite if filename to save image as already 
+#' exists. Defaults to TRUE
 #' @param verbose boolean. Be verbose
 #' @return \code{largeGiottoImage} object with pointer to stitched image
 #' @export
-stitchGiottoLargeImage <- function(
-        largeImage_list = NULL,
-        gobject_list = NULL,
-        largeImage_nameList = NULL,
-        FOV_positions = NULL,
-        FOV_xcol = NULL,
-        FOV_ycol = NULL,
-        FOV_inverty = FALSE,
-        method = c("mosaic", "merge"),
-        round_positions = FALSE,
-        filename = NULL,
-        dataType = NULL,
-        fileType = NULL,
-        dryRun = TRUE,
-        overwrite = FALSE,
-        verbose = TRUE) {
+stitchGiottoLargeImage <- function(largeImage_list = NULL,
+    gobject_list = NULL,
+    largeImage_nameList = NULL,
+    FOV_positions = NULL,
+    FOV_xcol = NULL,
+    FOV_ycol = NULL,
+    FOV_inverty = FALSE,
+    method = c("mosaic", "merge"),
+    round_positions = FALSE,
+    filename = NULL,
+    dataType = NULL,
+    fileType = NULL,
+    dryRun = TRUE,
+    overwrite = FALSE,
+    verbose = TRUE) {
     ## 0. Check params
     if (!is.null(gobject_list)) {
         # Set default largeImage_nameList
@@ -998,7 +1067,8 @@ stitchGiottoLargeImage <- function(
     # Check for filename, set default if not found
     if (is.null(filename)) {
         if (!is.null(gobject_list)) {
-            save_dir <- readGiottoInstructions(gobject_list[[1]], param = "save_dir")
+            save_dir <- readGiottoInstructions(gobject_list[[1]], 
+                                            param = "save_dir")
         } else {
             save_dir <- path.expand("~")
         }
@@ -1008,14 +1078,21 @@ stitchGiottoLargeImage <- function(
     # check filename
     if (file.exists(filename)) {
         if (verbose == TRUE) {
-            if (overwrite == TRUE) cat("File at", filename, "exists.\n (overwrite == TRUE) Image will be overwritten")
-            if (overwrite == FALSE) cat("File at", filename, "exists.\n (overwrite == FALSE) Image will not be overwritten")
+            if (overwrite == TRUE) 
+                cat("File at", filename, 
+                    "exists.\n (overwrite == TRUE) Image will be overwritten")
+            if (overwrite == FALSE) 
+                cat("File at", filename, 
+                    "exists.\n (overwrite == FALSE) Image will not be 
+                    overwritten")
         }
     }
 
     # Match dataType input if given
-    dataTypeChoices <- c("INT1U", "INT2U", "INT2S", "INT4U", "INT4S", "FLT4S", "FLT8S")
-    if (!is.null(dataType)) dataType <- match.arg(dataType, choices = dataTypeChoices)
+    dataTypeChoices <- c("INT1U", "INT2U", "INT2S", "INT4U", "INT4S", 
+                        "FLT4S", "FLT8S")
+    if (!is.null(dataType)) dataType <- match.arg(
+        dataType, choices = dataTypeChoices)
     # Determine compatible dataType from first  giottoLargeImage
 
 
@@ -1031,13 +1108,16 @@ stitchGiottoLargeImage <- function(
                 )
             }
         } else {
-            stop("giottoLargeImages must be given either as the giottoLargeImage itself or as a giotto object and the giottoLargeImage name")
+            stop("giottoLargeImages must be given either as the 
+                giottoLargeImage itself or as a giotto object and the 
+                giottoLargeImage name")
         }
     }
 
     # Determine datatype from first giottoLargeImage
     if (is.null(dataType)) {
-        dataType <- .terra_writeraster_datatype(giottoLargeImage = largeImage_list[[1]])
+        dataType <- .terra_writeraster_datatype(
+            giottoLargeImage = largeImage_list[[1]])
     }
 
     # For loop to extract raster_objects
@@ -1050,7 +1130,8 @@ stitchGiottoLargeImage <- function(
     if (!is.null(FOV_positions)) {
         # Check if there is an FOV position for every raster object
         if (nrow(FOV_positions) != length(raster_list)) {
-            stop("If FOV_positions are given then there must be one set of values for every image being stitched")
+            stop("If FOV_positions are given then there must be one set of 
+                values for every image being stitched")
         }
 
         if (FOV_inverty == TRUE) {
@@ -1068,11 +1149,15 @@ stitchGiottoLargeImage <- function(
     }
 
     ## 3. Perform stitch
-    # # Round final extent values (merge and mosaic may only work with integer extents)
+    # # Round final extent values (merge and mosaic may only work with 
+    # integer extents)
     if (round_positions == TRUE) {
-        if (verbose == TRUE) cat("round_positions == TRUE \n Image spatial positions will be rounded to integers. \n")
+        if (verbose == TRUE) 
+            cat("round_positions == TRUE \n Image spatial positions will be 
+                rounded to integers. \n")
         for (rast_i in 1:length(raster_list)) {
-            terra::ext(raster_list[[rast_i]]) <- round(terra::ext(raster_list[[rast_i]]))
+            terra::ext(raster_list[[rast_i]]) <- round(
+                terra::ext(raster_list[[rast_i]]))
         }
     }
 
@@ -1136,7 +1221,8 @@ stitchGiottoLargeImage <- function(
             return(extent)
         }
 
-        stop("extent inputs must be either of class SpatExtent or numerical in the order of xmin, xmax, ymin, ymax")
+        stop("extent inputs must be either of class SpatExtent or numerical 
+            in the order of xmin, xmax, ymin, ymax")
     }
 
     e <- terra::ext(x)
@@ -1152,32 +1238,35 @@ stitchGiottoLargeImage <- function(
 
 #' @title Crop a giotto largeImage object
 #' @name cropGiottoLargeImage
-#' @description Crop a giottoLargeImage based on crop_extent argument or given values
+#' @description Crop a giottoLargeImage based on crop_extent argument or 
+#' given values
 #' @param gobject gobject holding the giottoLargeImage
 #' @param largeImage_name name of giottoLargeImage within gobject
 #' @param giottoLargeImage alternative input param using giottoLargeImage object
-#'   instead of through \code{gobject} and \code{largeImage_name} params
+#' instead of through \code{gobject} and \code{largeImage_name} params
 #' @param crop_name arbitrary name for cropped giottoLargeImage
 #' @param crop_extent terra extent object used to crop the giottoLargeImage
 #' @param xmax_crop,xmin_crop,ymax_crop,ymin_crop crop min/max x and y bounds
 #' @return a giottoLargeImage object
 #' @export
-cropGiottoLargeImage <- function(
-        gobject = NULL,
-        largeImage_name = NULL,
-        giottoLargeImage = NULL,
-        crop_name = "image",
-        crop_extent = NULL,
-        xmax_crop = NULL,
-        xmin_crop = NULL,
-        ymax_crop = NULL,
-        ymin_crop = NULL) {
+cropGiottoLargeImage <- function(gobject = NULL,
+    largeImage_name = NULL,
+    giottoLargeImage = NULL,
+    crop_name = "image",
+    crop_extent = NULL,
+    xmax_crop = NULL,
+    xmin_crop = NULL,
+    ymax_crop = NULL,
+    ymin_crop = NULL) {
     ## 0. Check inputs
     if (!is.null(crop_extent)) {
-        if (!inherits(crop_extent, "SpatExtent")) stop("crop_extent argument only accepts terra extent objects. \n")
+        if (!inherits(crop_extent, "SpatExtent")) 
+            stop("crop_extent argument only accepts terra extent objects. \n")
     }
     if (!is.null(giottoLargeImage)) {
-        if (!inherits(giottoLargeImage, "giottoLargeImage")) stop("giottoLargeImage argument only accepts giottoLargeImage objects. \n")
+        if (!inherits(giottoLargeImage, "giottoLargeImage")) 
+            stop("giottoLargeImage argument only accepts giottoLargeImage 
+                objects. \n")
     }
 
     ## 1. get giottoLargeImage if necessary
@@ -1188,7 +1277,8 @@ cropGiottoLargeImage <- function(
                 name = largeImage_name
             )
         } else {
-            stop("either a giottoLargeImage or both the gobject and name of the giottoLargeImage must be given. \n")
+            stop("either a giottoLargeImage or both the gobject and name of 
+                the giottoLargeImage must be given. \n")
         }
     }
 
@@ -1217,8 +1307,10 @@ cropGiottoLargeImage <- function(
     giottoLargeImage@name <- crop_name
     giottoLargeImage@raster_object <- raster_object
     giottoLargeImage@extent <- as.vector(terra::ext(raster_object))
-    # The only things updated are the raster object itself, the name, and the extent tracking slot.
-    # The overall_extent slot must NOT be updated since it records the original extent
+    # The only things updated are the raster object itself, the name, 
+    # and the extent tracking slot.
+    # The overall_extent slot must NOT be updated since it records the 
+    # original extent
 
     return(giottoLargeImage)
 }
@@ -1228,14 +1320,17 @@ cropGiottoLargeImage <- function(
 
 #' @title convertGiottoLargeImageToMG
 #' @name convertGiottoLargeImageToMG
-#' @description convert a giottoLargeImage by downsampling into a normal magick based giottoImage
+#' @description convert a giottoLargeImage by downsampling into a normal 
+#' magick based giottoImage
 #' @param gobject gobject containing giottoLargeImage
 #' @param largeImage_name name of giottoLargeImage
 #' @param giottoLargeImage alternative input param using giottoLargeImage object
-#'   instead of through \code{gobject} and \code{largeImage_name} params
-#' @param mg_name name to assign converted magick image based giottoImage. Defaults to name of giottoLargeImage
+#' instead of through \code{gobject} and \code{largeImage_name} params
+#' @param mg_name name to assign converted magick image based giottoImage. 
+#' Defaults to name of giottoLargeImage
 #' @param spat_unit spatial unit
-#' @param spat_loc_name gobject spatial location name to map giottoImage to (optional)
+#' @param spat_loc_name gobject spatial location name to map giottoImage 
+#' to (optional)
 #' @param crop_extent extent object to focus on specific region of image
 #' @param xmax_crop assign crop boundary
 #' @param xmin_crop assign crop boundary
@@ -1246,28 +1341,30 @@ cropGiottoLargeImage <- function(
 #' @param return_gobject return as giotto object
 #' @param verbose be verbose
 #' @return a giotto object if \code{return_gobject = TRUE} or an updated giotto
-#'   image object if \code{return_gobject = FALSE}
+#' image object if \code{return_gobject = FALSE}
 #' @export
-convertGiottoLargeImageToMG <- function(
-        gobject = NULL,
-        largeImage_name = NULL,
-        giottoLargeImage = NULL,
-        mg_name = NULL,
-        spat_unit = NULL,
-        spat_loc_name = NULL,
-        crop_extent = NULL,
-        xmax_crop = NULL,
-        xmin_crop = NULL,
-        ymax_crop = NULL,
-        ymin_crop = NULL,
-        resample_size = 500000,
-        max_intensity = NULL,
-        return_gobject = TRUE,
-        verbose = TRUE) {
+convertGiottoLargeImageToMG <- function(gobject = NULL,
+    largeImage_name = NULL,
+    giottoLargeImage = NULL,
+    mg_name = NULL,
+    spat_unit = NULL,
+    spat_loc_name = NULL,
+    crop_extent = NULL,
+    xmax_crop = NULL,
+    xmin_crop = NULL,
+    ymax_crop = NULL,
+    ymin_crop = NULL,
+    resample_size = 500000,
+    max_intensity = NULL,
+    return_gobject = TRUE,
+    verbose = TRUE) {
     # Check params
     if (is.null(gobject)) {
-        if (return_gobject == TRUE) stop("gobject must be given if return_gobject == TRUE \n")
-        if (!is.null(spat_loc_name)) stop("if spatial location name is given then gobject containing it must also be given \n")
+        if (return_gobject == TRUE) 
+            stop("gobject must be given if return_gobject == TRUE \n")
+        if (!is.null(spat_loc_name)) 
+            stop("if spatial location name is given then gobject containing 
+                it must also be given \n")
     }
 
     # Set spat_unit
@@ -1292,7 +1389,8 @@ convertGiottoLargeImageToMG <- function(
 
     # Resample and then convert to Array
     rastSample <- terra::spatSample(raster_object,
-        size = resample_size, # Defines the rough maximum of pixels allowed when resampling
+        size = resample_size, # Defines the rough maximum of pixels allowed 
+        # when resampling
         method = "regular",
         as.raster = TRUE
     )
@@ -1353,7 +1451,8 @@ convertGiottoLargeImageToMG <- function(
         )
     }
 
-    names(g_image@minmax) <- c("xmax_sloc", "xmin_sloc", "ymax_sloc", "ymin_sloc")
+    names(g_image@minmax) <- c("xmax_sloc", "xmin_sloc", 
+                            "ymax_sloc", "ymin_sloc")
 
     # Set scalefactor
     im_dims <- magick::image_info(g_image@mg_object)
@@ -1366,7 +1465,9 @@ convertGiottoLargeImageToMG <- function(
 
     if (return_gobject == TRUE) {
         if (verbose == TRUE) {
-            if (mg_name %in% names(gobject@images)) cat("\n ", mg_name, " has already been used, will be overwritten \n")
+            if (mg_name %in% names(gobject@images)) 
+                cat("\n ", mg_name, " has already been used, will be 
+                    overwritten \n")
         }
         gobject@images[[mg_name]] <- g_image
         return(gobject)
@@ -1385,7 +1486,8 @@ convertGiottoLargeImageToMG <- function(
 #' possible value for the detected bitdepth instead of the bitdepth itself
 #' @keywords internal
 .bitdepth <- function(x, return_max = FALSE) {
-    res <- ceiling(log(max(x), base = 2L)) # power of 2 needed to represent value(s)
+    res <- ceiling(log(max(x), base = 2L)) # power of 2 needed to represent 
+    # value(s)
     res <- 2^ceiling(log(res, base = 2L)) # actual bitdepth
 
     if (isTRUE(return_max)) {
@@ -1403,38 +1505,41 @@ convertGiottoLargeImageToMG <- function(
 #' @title .terra_writeraster_datatype
 #' @name .terra_writeraster_datatype
 #' @description find likely compatible datatype for given image characteristics.
-#'   Values given in arguments take priority over those found from giottoLargeImage
-#'   metadata
+#' Values given in arguments take priority over those found from 
+#' giottoLargeImage metadata
 #' @param giottoLargeImage giottoLargeImage object to determine max_intensity,
-#'   min_intensity, is_int settings from
-#' @param quick_INTU_maxval Treat as maximum intensity to find compatible unsigned
-#'   integer settings
-#' @param max_intensity,min_intensity value given as image maximum/minimum intensity
+#' min_intensity, is_int settings from
+#' @param quick_INTU_maxval Treat as maximum intensity to find compatible 
+#' unsigned integer settings
+#' @param max_intensity,min_intensity value given as image maximum/minimum 
+#' intensity
 #' @param is_int if image is integer (TRUE) or floating point (FALSE)
 #' @param signed if image is signed (TRUE) or unsigned (TRUE)
 #' @param bitDepth image bitDepth
 #' @param verbose be verbose
 #' @keywords internal
 #' @return datatype for terra writeRaster function
-.terra_writeraster_datatype <- function(
-        giottoLargeImage = NULL,
-        quick_INTS_maxval = NULL,
-        max_intensity = NULL,
-        min_intensity = NULL,
-        is_int = NULL,
-        signed = NULL,
-        bitDepth = NULL,
-        verbose = TRUE) {
+.terra_writeraster_datatype <- function(giottoLargeImage = NULL,
+    quick_INTS_maxval = NULL,
+    max_intensity = NULL,
+    min_intensity = NULL,
+    is_int = NULL,
+    signed = NULL,
+    bitDepth = NULL,
+    verbose = TRUE) {
     # 1. Get any missing metadata from giottoLargeImage object if given
     if (!is.null(giottoLargeImage)) {
-        if (is.null(max_intensity)) max_intensity <- giottoLargeImage@max_intensity
-        if (is.null(min_intensity)) min_intensity <- giottoLargeImage@min_intensity
+        if (is.null(max_intensity)) 
+            max_intensity <- giottoLargeImage@max_intensity
+        if (is.null(min_intensity)) 
+            min_intensity <- giottoLargeImage@min_intensity
         if (is.null(is_int)) is_int <- giottoLargeImage@is_int
     }
 
 
     if (is.null(quick_INTS_maxval)) {
-        if (length(c(max_intensity, min_intensity)) < 2) stop("Not enough metadata is given")
+        if (length(c(max_intensity, min_intensity)) < 2) 
+            stop("Not enough metadata is given")
 
         # Determine if negative values are present
 
@@ -1452,20 +1557,25 @@ convertGiottoLargeImageToMG <- function(
         bitDepth = c(8, 16, 16, 32, 32, 32, 64),
         signed = c(FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE),
         integer = c(TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE),
-        dataTypeChoices = c("INT1U", "INT2U", "INT2S", "INT4U", "INT4S", "FLT4S", "FLT8S"),
+        dataTypeChoices = c("INT1U", "INT2U", "INT2S", "INT4U", "INT4S", 
+                            "FLT4S", "FLT8S"),
         dataTypeVerbose = c(
-            "8bit unsigned integer", "16bit unsigned integer", "16bit signed integer",
-            "32bit unsigned integer", "32bit signed integer", "32bit signed floating point",
+            "8bit unsigned integer", "16bit unsigned integer", 
+            "16bit signed integer",
+            "32bit unsigned integer", "32bit signed integer", 
+            "32bit signed floating point",
             "64bit signed floating point"
         )
     )
 
 
     ## Find Compatible Bitdepth
-    # If quick_INTS_maxval argument is set, will be treated as the highest needed (unsigned preferred) bitdepth datatype
+    # If quick_INTS_maxval argument is set, will be treated as the highest 
+    # needed (unsigned preferred) bitdepth datatype
     if (is.null(quick_INTS_maxval)) {
         if (max_intensity > 0) {
-            max_intensity <- max_intensity + 1 # Accounts for 0 occupying 1 of the available values.
+            max_intensity <- max_intensity + 1 # Accounts for 0 occupying 1 
+            # of the available values.
 
             if (signed == FALSE) {
                 bitDepth <- ceiling(log(x = max_intensity, base = 2))
@@ -1476,10 +1586,12 @@ convertGiottoLargeImageToMG <- function(
                 bitDepth <- max(bitDepthMinMax) + 1
             }
         } else {
-            stop("There are no positive image intensities. \n Manual datatype assignment needed \n")
+            stop("There are no positive image intensities. \n Manual datatype 
+                assignment needed \n")
         }
     } else if (!is.null(quick_INTS_maxval)) {
-        if (isTRUE(verbose)) cat("Selecting compatible datatype for given maximum value \n")
+        if (isTRUE(verbose)) 
+            cat("Selecting compatible datatype for given maximum value \n")
         bitDepth <- .bitdepth(quick_INTS_maxval)
     }
 
@@ -1516,9 +1628,13 @@ convertGiottoLargeImageToMG <- function(
             dataType <- "FLT4S"
         } else if (bitDepth == 64) {
             dataType <- "FLT8S"
-            # These are very large numbers. Can't actually tell the difference from FLT4S (less than 2^128) to FLT8S unless you add roughly 10^25 to it.
-            # This necessary minimum change would be 10^22, but the log used when determining bitDepth further increases the needed difference.
-            # Manual assignment of dataType could be more reliable than automatic assignment for these very large values.
+            # These are very large numbers. Can't actually tell the difference 
+            # from FLT4S (less than 2^128) to FLT8S unless you add roughly 
+            # 10^25 to it.
+            # This necessary minimum change would be 10^22, but the log used 
+            # when determining bitDepth further increases the needed difference.
+            # Manual assignment of dataType could be more reliable than 
+            # automatic assignment for these very large values.
         }
     }
     return(dataType)
@@ -1528,58 +1644,69 @@ convertGiottoLargeImageToMG <- function(
 
 #' @title writeGiottoLargeImage
 #' @name writeGiottoLargeImage
-#' @description Write full resolution image to file. Filetype extension should be
-#'   included in \code{filename} argument. Be careful if write time and disk space
-#'   needed if image is very large.
+#' @description Write full resolution image to file. Filetype extension should 
+#' be included in \code{filename} argument. Be careful if write time and disk 
+#' space needed if image is very large.
 #' @param giottoLargeImage giottoLargeImage object
 #' @param gobject giotto object
 #' @param largeImage_name name of giottoLargeImage
 #' @param filename file name and path to write the image to
-#' @param dataType (optional) values for \code{dataType} are "INT1U", "INT2U", "INT2S",
-#'   "INT4U", "INT4S", "FLT4S", "FLT8S". The first three letters indicate whether
-#'   the dataType is integer (whole numbers) of a real number (decimal numbers),
-#'   the fourth character indicates the number of bytes used (allowing for large
-#'   numbers and/or more precision), and the "S" or "U" indicate whether the values
-#'   are signed (both negative and positive) or unsigned (positive values only).
-#' @param max_intensity (optional) image max intensity value from which \code{dataType}
-#'   can be automatically determined
+#' @param dataType (optional) values for \code{dataType} are "INT1U", "INT2U", 
+#' "INT2S", "INT4U", "INT4S", "FLT4S", "FLT8S". The first three letters 
+#' indicate whether the dataType is integer (whole numbers) of a real 
+#' number (decimal numbers), the fourth character indicates the number of 
+#' bytes used (allowing for large numbers and/or more precision), and the 
+#' "S" or "U" indicate whether the values are 
+#' signed (both negative and positive) or unsigned (positive values only).
+#' @param max_intensity (optional) image max intensity value from 
+#' which \code{dataType} can be automatically determined
 #' @param overwrite Overwrite if \code{filename} is already existing
 #' @param verbose be verbose
 #' @export
-writeGiottoLargeImage <- function(
-        giottoLargeImage = NULL,
-        gobject = NULL,
-        largeImage_name = NULL,
-        filename = NULL,
-        dataType = NULL,
-        max_intensity = NULL,
-        overwrite = FALSE,
-        verbose = TRUE) {
+writeGiottoLargeImage <- function(giottoLargeImage = NULL,
+    gobject = NULL,
+    largeImage_name = NULL,
+    filename = NULL,
+    dataType = NULL,
+    max_intensity = NULL,
+    overwrite = FALSE,
+    verbose = TRUE) {
     # 0. Check params
     if (!is.null(giottoLargeImage)) {
-        if (!inherits(giottoLargeImage, "giottoLargeImage")) stop("giottoLargeImage argument only accepts giottoLargeImage objects. \n")
+        if (!inherits(giottoLargeImage, "giottoLargeImage")) 
+            stop("giottoLargeImage argument only accepts giottoLargeImage 
+                objects. \n")
     }
     if (!is.null(max_intensity)) {
-        if (!is.numeric(max_intensity)) stop("max_intensity must be a numeric \n")
+        if (!is.numeric(max_intensity)) 
+            stop("max_intensity must be a numeric \n")
     }
     if (!is.null(filename)) {
-        if (!is.character(filename)) stop("filename must be given as character \n")
+        if (!is.character(filename)) 
+            stop("filename must be given as character \n")
         # check filename
         if (file.exists(filename)) {
             if (verbose == TRUE) {
-                if (overwrite == TRUE) cat("File at", filename, "exists.\n (overwrite == TRUE) Image will be overwritten")
-                if (overwrite == FALSE) cat("File at", filename, "exists.\n (overwrite == FALSE) Image will not be overwritten")
+                if (overwrite == TRUE) 
+                    cat("File at", filename, "exists.\n (overwrite == TRUE) 
+                        Image will be overwritten")
+                if (overwrite == FALSE) 
+                    cat("File at", filename, "exists.\n (overwrite == FALSE) 
+                        Image will not be overwritten")
             }
         }
     }
 
-    if (is.null(filename)) stop("Please enter a filename to save the image as. \n")
+    if (is.null(filename)) 
+        stop("Please enter a filename to save the image as. \n")
 
     filename <- path.expand(filename)
 
     # Match dataType input if given
-    dataTypeChoices <- c("INT1U", "INT2U", "INT2S", "INT4U", "INT4S", "FLT4S", "FLT8S")
-    if (!is.null(dataType)) dataType <- match.arg(dataType, choices = dataTypeChoices)
+    dataTypeChoices <- c("INT1U", "INT2U", "INT2S", "INT4U", "INT4S", 
+                        "FLT4S", "FLT8S")
+    if (!is.null(dataType)) dataType <- match.arg(
+        dataType, choices = dataTypeChoices)
 
 
     ## 1. get giottoLargeImage if necessary
@@ -1590,7 +1717,8 @@ writeGiottoLargeImage <- function(
                 name = largeImage_name
             )
         } else {
-            stop("either a giottoLargeImage or both the gobject and name of the giottoLargeImage must be given. \n")
+            stop("either a giottoLargeImage or both the gobject and name of 
+                the giottoLargeImage must be given. \n")
         }
     }
 
@@ -1619,49 +1747,60 @@ writeGiottoLargeImage <- function(
 
 #' @title updateGiottoLargeImage
 #' @name updateGiottoLargeImage
-#' @description Updates the boundaries of a giotto \code{largeImage} object attached to
-#'   a \code{giotto} object if both \code{gobject} and \code{largeImage_name} params
-#'   are given. Alternatively can directly accept and return as \code{largeImage}
+#' @description Updates the boundaries of a giotto \code{largeImage} object 
+#' attached to a \code{giotto} object if both \code{gobject} 
+#' and \code{largeImage_name} params are given. Alternatively can directly 
+#' accept and return as \code{largeImage}
 #' @inheritParams updateGiottoImage
-#' @param gobject \code{giotto} object containing giotto \code{largeImage} object
+#' @param gobject \code{giotto} object containing giotto \code{largeImage} 
+#' object
 #' @param giottoLargeImage \code{largeImage} object to directly update
 #' @param return_gobject return a \code{giotto} object if \code{TRUE}, a giotto
-#'   \code{largeImage} object if \code{FALSE}
-#' @return a \code{giotto} object or an updated giotto \code{largeImage} object if
-#'   \code{return_gobject = FALSE}
+#' \code{largeImage} object if \code{FALSE}
+#' @return a \code{giotto} object or an updated giotto \code{largeImage} object 
+#' if \code{return_gobject = FALSE}
 #' @export
-updateGiottoLargeImage <- function(
-        gobject = NULL,
-        largeImage_name = NULL,
-        giottoLargeImage = NULL,
-        xmax_adj = 0,
-        xmin_adj = 0,
-        ymax_adj = 0,
-        ymin_adj = 0,
-        x_shift = 0,
-        y_shift = 0,
-        scale_factor = NULL,
-        scale_x = 1,
-        scale_y = 1,
-        order = c("first_adj", "first_scale"), # TODO make this a list of operations to perform, include rotation
-        xmin_set = NULL,
-        xmax_set = NULL,
-        ymin_set = NULL,
-        ymax_set = NULL,
-        return_gobject = TRUE,
-        verbose = TRUE) {
+updateGiottoLargeImage <- function(gobject = NULL,
+    largeImage_name = NULL,
+    giottoLargeImage = NULL,
+    xmax_adj = 0,
+    xmin_adj = 0,
+    ymax_adj = 0,
+    ymin_adj = 0,
+    x_shift = 0,
+    y_shift = 0,
+    scale_factor = NULL,
+    scale_x = 1,
+    scale_y = 1,
+    order = c("first_adj", "first_scale"), # TODO make this a list of 
+    # operations to perform, include rotation
+    xmin_set = NULL,
+    xmax_set = NULL,
+    ymin_set = NULL,
+    ymax_set = NULL,
+    return_gobject = TRUE,
+    verbose = TRUE) {
     # 0. Check params
     # Check input image
     if (is.null(gobject)) {
-        if (is.null(giottoLargeImage)) stop("Image to be updated must be given as gobject AND largeImage_name OR giottoLargeImage argument(s) \n")
-        if (verbose == TRUE) cat("gobject argument not given \n return_gobject set to FALSE \n")
+        if (is.null(giottoLargeImage)) 
+            stop("Image to be updated must be given as gobject AND 
+                largeImage_name OR giottoLargeImage argument(s) \n")
+        if (verbose == TRUE) 
+            cat("gobject argument not given \n return_gobject set to FALSE \n")
         return_gobject <- FALSE
     }
-    if (is.null(giottoLargeImage) && is.null(largeImage_name)) stop("The name of the giottoLargeImage that will be updated needs to be provided \n")
+    if (is.null(giottoLargeImage) && is.null(largeImage_name)) 
+        stop("The name of the giottoLargeImage that will be updated needs to 
+            be provided \n")
 
     if (!is.null(giottoLargeImage)) {
-        if (!inherits(giottoLargeImage, "giottoLargeImage")) stop("giottoLargeImage argument only accpts giottoLargeImage objects \n")
-        if (verbose == TRUE && !is.null(gobject)) cat("giottoLargeImage argument is given and will take priority \n return_gobject set to FALSE \n")
+        if (!inherits(giottoLargeImage, "giottoLargeImage")) 
+            stop("giottoLargeImage argument only accpts giottoLargeImage 
+                objects \n")
+        if (verbose == TRUE && !is.null(gobject)) 
+            cat("giottoLargeImage argument is given and will take priority 
+                \n return_gobject set to FALSE \n")
         return_gobject <- FALSE
     }
 
@@ -1675,10 +1814,13 @@ updateGiottoLargeImage <- function(
         ymin_set,
         ymax_set
     )
-    if (length(spatAnchor) < 4 && length(spatAnchor) > 0) stop("If set arguments are being used, all four must be given \n")
+    if (length(spatAnchor) < 4 && length(spatAnchor) > 0) 
+        stop("If set arguments are being used, all four must be given \n")
     if (!is.null(spatAnchor)) {
-        if (xmax_set < xmin_set) stop("xmax_set must be greater than xmin_set \n")
-        if (ymax_set < ymin_set) stop("ymax_set must be greater than ymin_set \n")
+        if (xmax_set < xmin_set) 
+            stop("xmax_set must be greater than xmin_set \n")
+        if (ymax_set < ymin_set) 
+            stop("ymax_set must be greater than ymin_set \n")
     }
 
     # Find order of adjust and scaling
@@ -1692,14 +1834,16 @@ updateGiottoLargeImage <- function(
                 name = largeImage_name
             )
         } else {
-            stop("either a giottoLargeImage or both the gobject and name of the giottoLargeImage must be given. \n")
+            stop("either a giottoLargeImage or both the gobject and name of 
+                the giottoLargeImage must be given. \n")
         }
     }
 
 
     # 2. Find minmax spatial anchor values if set values not supplied
     if (is.null(spatAnchor)) {
-        spatAnchor <- terra::ext(x = g_imageL@raster_object)[1:4] # (xmin, xmax, ymin, ymax)
+        spatAnchor <- terra::ext(x = g_imageL@raster_object)[1:4] 
+        # (xmin, xmax, ymin, ymax)
         names(spatAnchor) <- NULL
     }
 
@@ -1736,10 +1880,11 @@ updateGiottoLargeImage <- function(
             g_imageL@raster_object <- terra::deepcopy(g_imageL@raster_object)
         } else {
             # g_imageL@raster_object = terra::copy(g_imageL@raster_object)
-            if (isTRUE(verbose)) warning("\n If largeImage was created from a terra raster
-                                object, manipulations to the giotto image may be
-                                reflected in the raster object as well. Update
-                                terra to >= 1.15-12 to avoid this issue. \n")
+            if (isTRUE(verbose)) 
+                warning("\n If largeImage was created from a terra raster
+                        object, manipulations to the giotto image may be
+                        reflected in the raster object as well. Update
+                        terra to >= 1.15-12 to avoid this issue. \n")
         }
     }
     terra::ext(g_imageL@raster_object) <- c(
@@ -1772,33 +1917,44 @@ updateGiottoLargeImage <- function(
 #' @description Adds giotto image objects to your giotto object
 #' @param gobject giotto object
 #' @param largeImages list of giottoLargeImage objects
-#' @param spat_loc_name provide spatial location slot in Giotto to align images. (optional)
-#' @param scale_factor provide scale of image pixel dimensions relative to spatial coordinates.
-#' @param negative_y map image to negative y spatial values if TRUE during automatic alignment. Meaning that origin is in upper left instead of lower left.
+#' @param spat_loc_name provide spatial location slot in Giotto to align 
+#' images. (optional)
+#' @param scale_factor provide scale of image pixel dimensions relative to 
+#' spatial coordinates.
+#' @param negative_y map image to negative y spatial values if TRUE during 
+#' automatic alignment. Meaning that origin is in upper left instead of lower 
+#' left.
 #' @param verbose be verbose
 #' @return an updated Giotto object with access to the list of images
 #' @export
-addGiottoLargeImage <- function(
-        gobject = NULL,
-        largeImages = NULL,
-        spat_loc_name = NULL,
-        scale_factor = NULL,
-        negative_y = TRUE,
-        verbose = TRUE) {
+addGiottoLargeImage <- function(gobject = NULL,
+    largeImages = NULL,
+    spat_loc_name = NULL,
+    scale_factor = NULL,
+    negative_y = TRUE,
+    verbose = TRUE) {
     # 0. check params
-    if (is.null(gobject)) stop("The giotto object that will be updated needs to be provided")
+    if (is.null(gobject)) 
+        stop("The giotto object that will be updated needs to be provided")
 
-    if (is.null(largeImages)) stop("The giotto large image(s) that will be added needs to be provided")
+    if (is.null(largeImages)) 
+        stop("The giotto large image(s) that will be added needs to be 
+            provided")
 
     ext_scale_factor <- FALSE
     if (!is.null(scale_factor)) {
-        if (!is.numeric(scale_factor)) stop("Given scale_factor(s) must be numeric")
+        if (!is.numeric(scale_factor)) 
+            stop("Given scale_factor(s) must be numeric")
 
-        if ((length(scale_factor) == length(largeImages)) || length(scale_factor) == 1) {
-            # cat('scale_factor(s) external to giottoImage have been given and will be used')
+        if ((length(scale_factor) == length(largeImages)) || 
+            length(scale_factor) == 1) {
+            # cat('scale_factor(s) external to giottoImage have been given and 
+            # will be used')
             ext_scale_factor <- TRUE
         } else {
-            stop("if scale_factor is given, it must be a numeric with either a single value or as many values as there are largeImages are provided")
+            stop("if scale_factor is given, it must be a numeric with either 
+                a single value or as many values as there are largeImages are 
+                provided")
         }
     }
 
@@ -1820,7 +1976,8 @@ addGiottoLargeImage <- function(
             all_im_names <- names(gobject@largeImages)
 
             if (im_name %in% all_im_names) {
-                cat("\n ", im_name, " has already been used, will be overwritten \n")
+                cat("\n ", im_name, 
+                    " has already been used, will be overwritten \n")
             }
 
             # Deep copy the raster_object
@@ -1828,17 +1985,21 @@ addGiottoLargeImage <- function(
                 im@raster_object <- terra::deepcopy(im@raster_object)
             } else {
                 # im@raster_object = terra::copy(im@raster_object)
-                if (isTRUE(verbose)) warning("\n If largeImage was created from a terra raster
-                                object, manipulations to the giotto image may be
-                                reflected in the raster object as well. Update
-                                terra to >= 1.15-12 to avoid this issue. \n")
+                if (isTRUE(verbose)) 
+                    warning("\n If largeImage was created from a terra raster
+                            object, manipulations to the giotto image may be
+                            reflected in the raster object as well. Update
+                            terra to >= 1.15-12 to avoid this issue. \n")
             }
 
-            # # 3. Update boundaries if not already done during createGiottoImage() due to lack of spatlocs and gobject
-            # if(sum(im@boundaries == c(0,0,0,0)) == 4 && sum(im@minmax == c(10,0,10,0)) == 4) {
-            #   if(!is.null(spat_loc_name)) { # A check for the first available spatloc was already done
+            # # 3. Update boundaries if not already done during 
+            # createGiottoImage() due to lack of spatlocs and gobject
+            # if(sum(im@boundaries == c(0,0,0,0)) == 4 && 
+            # sum(im@minmax == c(10,0,10,0)) == 4) {
+            #   if(!is.null(spat_loc_name)) { # A check for the first 
+            # # available spatloc was already done
             #     spatlocs = get_spatial_locations(gobject = gobject,
-            #                                      spat_loc_name = spat_loc_name)
+            #                                     spat_loc_name = spat_loc_name)
             #
             #     #Find spatial minmax values
             #     xmin_sloc = min(spatlocs$sdimx)
@@ -1852,11 +2013,11 @@ addGiottoLargeImage <- function(
             #     if(ext_scale_factor == TRUE) {
             #       adj_values = get_adj_rescale_img(img_minmax = img_minmax,
             #                                        spatial_locs = spatlocs,
-            #                                        scale_factor = scale_factor[[image_i]])
+            #                           scale_factor = scale_factor[[image_i]])
             #     } else if (ext_scale_factor == FALSE) {
             #       adj_values = get_adj_rescale_img(img_minmax = img_minmax,
             #                                        spatial_locs = spatlocs,
-            #                                        scale_factor = im@scale_factor[[spat_loc_name]])
+            #                   scale_factor = im@scale_factor[[spat_loc_name]])
             #     }
             #
             #     #Add minmax values to giottoImage@minmax
@@ -1866,17 +2027,19 @@ addGiottoLargeImage <- function(
             #                   'ymin_sloc' = ymin_sloc)
             #
             #     #Add adjustment values to giottoImage@boundaries
-            #     im@boundaries = c('xmax_adj' = as.numeric(adj_values[['xmax_adj_orig']]),
-            #                       'xmin_adj' = as.numeric(adj_values[['xmin_adj_orig']]),
-            #                       'ymax_adj' = as.numeric(adj_values[['ymax_adj_orig']]),
-            #                       'ymin_adj' = as.numeric(adj_values[['ymin_adj_orig']]))
+            #     im@boundaries = c(
+            # 'xmax_adj' = as.numeric(adj_values[['xmax_adj_orig']]),
+            # 'xmin_adj' = as.numeric(adj_values[['xmin_adj_orig']]),
+            # 'ymax_adj' = as.numeric(adj_values[['ymax_adj_orig']]),
+            # 'ymin_adj' = as.numeric(adj_values[['ymin_adj_orig']]))
             #
             #     # Inherit external scaling factors if given
             #     if(ext_scale_factor == TRUE) {
             #       im@scale_factor[[spat_loc_name]] = scale_factor[[image_i]]
             #       im@resolution[[spat_loc_name]] = 1/(scale_factor[[image_i]])
             #     }
-            #     ## Externally given scale_factors will only be written in/used if boundary adj values are not pre-existing
+            #     ## Externally given scale_factors will only be written 
+            #     ## in/used if boundary adj values are not pre-existing
             #   }
             #
             # }
@@ -1901,9 +2064,8 @@ addGiottoLargeImage <- function(
 #' @return reconnected giottoLargeImage
 #' @keywords internal
 #' @export
-reconnect_giottoLargeImage <- function(
-        giottoLargeImage,
-        image_path) {
+reconnect_giottoLargeImage <- function(giottoLargeImage,
+    image_path) {
     # load in new terra raster objects
     raster_object <- .create_terra_spatraster(image_path = image_path)
 
@@ -1924,24 +2086,26 @@ reconnect_giottoLargeImage <- function(
 #' @title Plot a giotto image object
 #' @name plotGiottoImage
 #' @description Display a giotto image in the viewer panel. Image object to plot
-#'   can be specified by providing the giotto object containing the image (\code{gobject}),
-#'   the image object name (\code{image_name}), and the image object type (\code{image_type}).
-#'   Alternatively, image objects can be directly plotted through their respective
-#'   associated params.
+#' can be specified by providing the giotto object containing the 
+#' image (\code{gobject}), the image object name (\code{image_name}), and the 
+#' image object type (\code{image_type}). Alternatively, image objects can be 
+#' directly plotted through their respective associated params.
 #' @param gobject gobject containing giotto image object
 #' @param image_name name of giotto image object
 #' @param image_type type of giotto image object to plot
 #' @param giottoImage giottoImage object to plot directly
 #' @param giottoLargeImage giottoLargeImage object to plot directly
-#' @param largeImage_crop_params_list (optional) named list of params for focusing
-#' on a specified region of a giottoLargeImage.
+#' @param largeImage_crop_params_list (optional) named list of params for 
+#' focusing on a specified region of a giottoLargeImage.
 #' @param largeImage_max_intensity (optional) assign override value to treat as
 #' maximum intensity in color scale when plotting giottoLargeImage
-#' @param ... additional params to pass to image object specific plotting functions
+#' @param ... additional params to pass to image object specific plotting 
+#' functions
 #' @section largeImage-specific additional params:
 #'   \code{largeImage_crop_params_list} accepts a named list of the following
-#'     possible params to define a region of interest (ROI) to plot through either
-#'     a terra extent object OR x and y min and max bounds given as numerics:
+#'     possible params to define a region of interest (ROI) to plot through 
+#'     either a terra extent object OR x and y min and max bounds given as 
+#'     numerics:
 #'   \itemize{
 #'     \item{\code{crop_extent} -- terra extent object to define crop ROI}
 #'     \item{\code{xmax_crop} -- x max of ROI}
@@ -1955,17 +2119,18 @@ reconnect_giottoLargeImage <- function(
 #'     color scaling is desired.
 #' @family basic image functions
 #' @export
-plotGiottoImage <- function(
-        gobject = NULL,
-        image_name = NULL,
-        image_type = NULL,
-        giottoImage = NULL,
-        giottoLargeImage = NULL,
-        largeImage_crop_params_list = NULL,
-        largeImage_max_intensity = NULL,
-        ...) {
+plotGiottoImage <- function(gobject = NULL,
+    image_name = NULL,
+    image_type = NULL,
+    giottoImage = NULL,
+    giottoLargeImage = NULL,
+    largeImage_crop_params_list = NULL,
+    largeImage_max_intensity = NULL,
+    ...) {
     # Check params
-    if (!is.null(giottoImage) && !is.null(giottoLargeImage)) stop("Only one of a giottoImage or a giottoLargeImage can be plotted at the same time. \n")
+    if (!is.null(giottoImage) && !is.null(giottoLargeImage)) 
+        stop("Only one of a giottoImage or a giottoLargeImage can be plotted 
+            at the same time. \n")
 
     # Get image object
     if (!is.null(gobject)) {
@@ -2014,20 +2179,24 @@ plotGiottoImage <- function(
 #' @param gobject gobject to add images objects to
 #' @param images list of giottoImages to add
 #' @param largeImages list of giottoLargeImages to add
-#' @param spat_loc_name provide spatial location slot in Giotto to align giottoImages. Defaults to first one
-#' @param scale_factor provide scale of image pixel dimensions relative to spatial coordinates.
-#' @param negative_y Map image to negative y spatial values if TRUE during automatic alignment. Meaning that origin is in upper left instead of lower left.
+#' @param spat_loc_name provide spatial location slot in Giotto to align 
+#' giottoImages. Defaults to first one
+#' @param scale_factor provide scale of image pixel dimensions relative to 
+#' spatial coordinates.
+#' @param negative_y Map image to negative y spatial values if TRUE during 
+#' automatic alignment. Meaning that origin is in upper left instead of lower 
+#' left.
 #' @return an updated Giotto object with access to the list of images
 #' @family basic image functions
 #' @export
-addGiottoImage <- function(
-        gobject = NULL,
-        images = NULL,
-        largeImages = NULL,
-        spat_loc_name = NULL,
-        scale_factor = NULL,
-        negative_y = TRUE) {
-    if (!is.null(images) && !is.null(largeImages)) stop("Can only add one type of image to giotto object at a time")
+addGiottoImage <- function(gobject = NULL,
+    images = NULL,
+    largeImages = NULL,
+    spat_loc_name = NULL,
+    scale_factor = NULL,
+    negative_y = TRUE) {
+    if (!is.null(images) && !is.null(largeImages)) 
+        stop("Can only add one type of image to giotto object at a time")
     if (!is.null(images)) {
         addGiottoImageMG(
             gobject = gobject,
@@ -2051,54 +2220,60 @@ addGiottoImage <- function(
 
 #' @title updateGiottoImage
 #' @name updateGiottoImage
-#' @description Updates the spatial positioning and sizing of a giotto \code{image} or
-#'   \code{largeImage} attached to a giotto object.
+#' @description Updates the spatial positioning and sizing of a 
+#' giotto \code{image} or \code{largeImage} attached to a giotto object.
 #' @details This function works for all image objects associated with Giotto.
 #' @param gobject gobject containing desired image object
 #' @param image_name name of giotto \code{image} object
 #' @param largeImage_name name of giotto \code{largeImage} object
-#' @param xmax_adj,xmin_adj,ymax_adj,ymin_adj adjust image boundaries by increasing
-#'   maximum and decreasing minimum bounds respectively of xy bounds
+#' @param xmax_adj,xmin_adj,ymax_adj,ymin_adj adjust image boundaries by 
+#' increasing maximum and decreasing minimum bounds respectively of xy bounds
 #' @param x_shift,y_shift shift entire image along xy axes
-#' @param scale_factor set \code{scale_x} and \code{scale_y} params at the same time
-#' @param scale_x,scale_y independently scale x or y axis image mapping from coordinate origin
-#' @param order order of operations between fine adjustments (adjustment and shift
-#'   parameters) and scaling
+#' @param scale_factor set \code{scale_x} and \code{scale_y} params at the 
+#' same time
+#' @param scale_x,scale_y independently scale x or y axis image mapping from 
+#' coordinate origin
+#' @param order order of operations between fine 
+#' adjustments (adjustment and shift parameters) and scaling
 #' @param xmin_set,xmax_set,ymin_set,ymax_set directly set xy image boundaries.
 #'   Overrides minmax values as spatial anchor.
-#' @param return_gobject return a giotto object if \code{TRUE}, a giotto image object
-#'   if \code{FALSE}
+#' @param return_gobject return a giotto object if \code{TRUE}, a giotto image 
+#' object if \code{FALSE}
 #' @param verbose be verbose
-#' @return a giotto object or an updated giotto image object if return_gobject = F
+#' @return a giotto object or an updated giotto image object if 
+#' return_gobject = FALSE
 #' @family basic image functions
 #' @export
-updateGiottoImage <- function(
-        gobject = NULL,
-        image_name = NULL,
-        largeImage_name = NULL,
-        xmax_adj = 0,
-        xmin_adj = 0,
-        ymax_adj = 0,
-        ymin_adj = 0,
-        x_shift = 0,
-        y_shift = 0,
-        scale_factor = NULL,
-        scale_x = 1,
-        scale_y = 1,
-        order = c("first_adj", "first_scale"),
-        xmax_set = NULL,
-        xmin_set = NULL,
-        ymax_set = NULL,
-        ymin_set = NULL,
-        return_gobject = TRUE,
-        verbose = TRUE) {
+updateGiottoImage <- function(gobject = NULL,
+    image_name = NULL,
+    largeImage_name = NULL,
+    xmax_adj = 0,
+    xmin_adj = 0,
+    ymax_adj = 0,
+    ymin_adj = 0,
+    x_shift = 0,
+    y_shift = 0,
+    scale_factor = NULL,
+    scale_x = 1,
+    scale_y = 1,
+    order = c("first_adj", "first_scale"),
+    xmax_set = NULL,
+    xmin_set = NULL,
+    ymax_set = NULL,
+    ymin_set = NULL,
+    return_gobject = TRUE,
+    verbose = TRUE) {
     # 0. Check params
-    if (is.null(gobject)) stop("The giotto object that will be updated needs to be provided \n")
-    if (is.null(image_name) && is.null(largeImage_name)) stop("The name of the giotto image that will be updated needs to be provided \n")
+    if (is.null(gobject)) 
+        stop("The giotto object that will be updated needs to be provided \n")
+    if (is.null(image_name) && is.null(largeImage_name)) 
+        stop("The name of the giotto image that will be updated needs to be 
+            provided \n")
 
     order <- match.arg(order, choices = c("first_adj", "first_scale"))
 
-    if (!is.null(image_name) && !is.null(largeImage_name)) stop("Adjust only giottoImage OR giottoLargeImage at any one time. \n")
+    if (!is.null(image_name) && !is.null(largeImage_name)) 
+        stop("Adjust only giottoImage OR giottoLargeImage at any one time. \n")
 
 
     # 2. Select adjustment function
@@ -2152,20 +2327,19 @@ updateGiottoImage <- function(
 
 #' @title reconnect_image_object
 #' @name reconnect_image_object
-#' @description Reconnect giotto image object with dead image pointer using a filepath
-#'   to the original image source
-#' @details This is a simple wrapper function for image object-specific reconnection
-#'   functions and does not include other functionality to find the specific image
-#'   objects in the giotto object.
+#' @description Reconnect giotto image object with dead image pointer using 
+#' a filepath to the original image source
+#' @details This is a simple wrapper function for image object-specific 
+#' reconnection functions and does not include other functionality to find the 
+#' specific image objects in the giotto object.
 #' @param image_object giotto image object
 #' @param image_type type of giotto image object
 #' @param image_path path to image source to reconnect image object with
 #' @return reconnected image_object
 #' @keywords internal
-reconnect_image_object <- function(
-        image_object,
-        image_type,
-        image_path) {
+reconnect_image_object <- function(image_object,
+    image_type,
+    image_path) {
     if (image_type == "image") {
         image_object <- reconnect_giottoImage_MG(
             giottoImage = image_object,
@@ -2190,26 +2364,27 @@ reconnect_image_object <- function(
 #' @description selects and (possibly resamples) giotto images for plotting
 #' @keywords internal
 #' @export
-select_gimage <- function(
-        gobject,
-        gimage = NULL,
-        image_name = NULL,
-        largeImage_name = NULL,
-        spat_unit = NULL,
-        spat_loc_name = NULL,
-        feat_type = NULL,
-        polygon_feat_type = NULL) {
+select_gimage <- function(gobject,
+    gimage = NULL,
+    image_name = NULL,
+    largeImage_name = NULL,
+    spat_unit = NULL,
+    spat_loc_name = NULL,
+    feat_type = NULL,
+    polygon_feat_type = NULL) {
     if (!is.null(gimage)) {
         gimage <- gimage
     } else if (!is.null(image_name)) {
         if (length(image_name) == 1) {
             gimage <- gobject@images[[image_name]]
-            if (is.null(gimage)) warning("image_name: ", image_name, " does not exists")
+            if (is.null(gimage)) 
+                warning("image_name: ", image_name, " does not exists")
         } else {
             gimage <- list()
             for (gim in 1:length(image_name)) {
                 gimage[[gim]] <- gobject@images[[gim]]
-                if (is.null(gimage[[gim]])) warning("image_name: ", gim, " does not exists")
+                if (is.null(gimage[[gim]])) 
+                    warning("image_name: ", gim, " does not exists")
             }
         }
     } else if (!is.null(largeImage_name)) {
@@ -2238,11 +2413,13 @@ select_gimage <- function(
             }
         }
     } else {
-        # Default to first image available in images if no input given to image_name or largeImage_name args
+        # Default to first image available in images if no input given to 
+        # image_name or largeImage_name args
         image_name <- names(gobject@images)[1]
         gimage <- gobject@images[[image_name]]
 
-        if (is.null(gimage)) warning("image_name: ", image_name, " does not exist \n")
+        if (is.null(gimage)) 
+            warning("image_name: ", image_name, " does not exist \n")
     }
 
     return(gimage)
@@ -2255,46 +2432,52 @@ select_gimage <- function(
 #' @title Reconnect images with dead pointers
 #' @name reconnectGiottoImage
 #' @description reconnect a gobject's dead image pointers using filepaths to
-#'   the original source image files
-#' @details Inputs can either be given as both image name (\code{image_name}/\code{largeImage_name})
-#'   and filepath (\code{image_path}/\code{largeImage_path}) args or as only a
-#'   a named list through a filepath argument alone.
-#'   If \code{auto_reconnect = TRUE} then no additional params need to be supplied.
-#'   As long as giotto image objects were directly created using filepaths, those
-#'   filepaths are stored within the image objects and will be referenced during
-#'   reconnection. Issues will only arise if giotto image objects were created directly
-#'   from the underlying image handling package objects (\emph{magick} or \emph{raster objects}) or
-#'   if image files have been moved since the the giotto image object was generated.
-#'   In such cases, use manual reconnection by setting \code{auto_reconnect = FALSE}.
+#' the original source image files
+#' @details Inputs can either be given as both image 
+#' name (\code{image_name}/\code{largeImage_name}) and 
+#' filepath (\code{image_path}/\code{largeImage_path}) args or as only a named 
+#' list through a filepath argument alone. If \code{auto_reconnect = TRUE} then 
+#' no additional params need to be supplied. As long as giotto image objects 
+#' were directly created using filepaths, those filepaths are stored within 
+#' the image objects and will be referenced during reconnection. Issues will 
+#' only arise if giotto image objects were created directly from the underlying 
+#' image handling package objects (\emph{magick} or \emph{raster objects}) or
+#' if image files have been moved since the the giotto image object was 
+#' generated. In such cases, use manual reconnection by 
+#' setting \code{auto_reconnect = FALSE}.
 #' @param gobject giotto object
 #' @param auto_reconnect automatically reconnect images if TRUE. manual if FALSE
 #' @param reconnect_type type of image to reconnect when auto_reconnect = TRUE
 #' @param image_name names of images to reconnect
 #' @param largeImage_name name of large images to reconnect
 #' @param image_path named list of paths to images to reconnect to giottoImages
-#' @param largeImage_path named list of paths to images to reconnect to giottoLargeImages
+#' @param largeImage_path named list of paths to images to reconnect to
+#' giottoLargeImages
 #' @param verbose be verbose
 #' @return a giotto object with updated image pointer
 #' @family basic image functions
 #' @export
-reconnectGiottoImage <- function(
-        gobject,
-        auto_reconnect = TRUE,
-        reconnect_type = c("all", "image", "largeImage"),
-        image_name = NULL,
-        largeImage_name = NULL,
-        image_path = NULL,
-        largeImage_path = NULL,
-        verbose = TRUE) {
+reconnectGiottoImage <- function(gobject,
+    auto_reconnect = TRUE,
+    reconnect_type = c("all", "image", "largeImage"),
+    image_name = NULL,
+    largeImage_name = NULL,
+    image_path = NULL,
+    largeImage_path = NULL,
+    verbose = TRUE) {
     # Adding image_types:
     # Manual workflow needs to be updated when adding more image types
 
-    if (is.null(gobject)) stop("Giotto object containing the giottoImages or giottoLargeImages to reconnect must be given \n")
-    reconnect_type <- match.arg(reconnect_type, choices = c("all", "image", "largeImage"))
+    if (is.null(gobject)) 
+        stop("Giotto object containing the giottoImages or giottoLargeImages 
+            to reconnect must be given \n")
+    reconnect_type <- match.arg(reconnect_type, 
+                                choices = c("all", "image", "largeImage"))
 
-    # 1. Find names and locations of image objects in gobject: ----------------------------#
+    # 1. Find names and locations of image objects in gobject: ----------------#
     if (reconnect_type %in% c("image", "largeImage")) {
-        availableImgs <- list_images(gobject = gobject, img_type = reconnect_type)
+        availableImgs <- list_images(gobject = gobject, 
+                                    img_type = reconnect_type)
     } else if (reconnect_type == "all") {
         availableImgs <- list_images(gobject = gobject)
     } else {
@@ -2302,17 +2485,20 @@ reconnectGiottoImage <- function(
     }
 
 
-    # 2. Get reconnection info: -----------------------------------------------------------#
+    # 2. Get reconnection info: -----------------------------------------------#
 
     # Initialize lists
     name_list <- list()
     img_list <- list()
     img_path <- list()
 
-    ## image_type_list | vector of image types present within images to be reconnected (vector)
-    ## name_list | determines which available images to reconnect, categorized by image_type | (list)
+    ## image_type_list | vector of image types present within images to be 
+    ## reconnected (vector)
+    ## name_list | determines which available images to reconnect, 
+    ## categorized by image_type | (list)
     ## img_list | list of image objects, categorized by image_type | (list)
-    ## img_path | filepaths to reconnect images with, categorized by image_type | (list)
+    ## img_path | filepaths to reconnect images with, categorized by image_type 
+    ## | (list)
 
     #### Auto Workflow
     if (auto_reconnect == TRUE) {
@@ -2348,16 +2534,21 @@ reconnectGiottoImage <- function(
 
             # print discovered images and paths
             # additionally, set path to NULL if file.exists() == FALSE
-            if (verbose == TRUE) cat(image_type, "(s) discovered...\n", sep = "")
+            if (verbose == TRUE) 
+                cat(image_type, "(s) discovered...\n", sep = "")
 
             for (image_i in 1:length(img_path[[image_type]])) {
                 if (!is.null(img_path[[image_type]][[image_i]])) {
-                    if (verbose == TRUE) cat("-->", name_list[[image_type]][[image_i]], ": filepath found")
+                    if (verbose == TRUE) 
+                        cat("-->", name_list[[image_type]][[image_i]], 
+                            ": filepath found")
                     if (!file.exists(img_path[[image_type]][[image_i]])) {
                         if (verbose == TRUE) cat("but file is missing\n")
                         img_path[[image_type]][[image_i]] <- NULL
                     } else if (verbose == TRUE) cat("\n")
-                } else if (verbose == TRUE) cat("-->", name_list[[image_type]][[image_i]], ": filepath NOT found\n")
+                } else if (verbose == TRUE) 
+                    cat("-->", name_list[[image_type]][[image_i]], 
+                        ": filepath NOT found\n")
             }
             if (verbose == TRUE) cat("\n")
         } # image_type end loop
@@ -2370,7 +2561,8 @@ reconnectGiottoImage <- function(
 
         # Check params
         # filepath list(s) must be given as input
-        if (is.null(image_path) & is.null(largeImage_path)) stop("Image filepaths must be given for manual reconnection \n")
+        if (is.null(image_path) & is.null(largeImage_path)) 
+            stop("Image filepaths must be given for manual reconnection \n")
 
         # Assemble reconnection info lists - UPDATE THIS WHEN ADDING IMAGE TYPES
         image_type_list <- c()
@@ -2389,10 +2581,24 @@ reconnectGiottoImage <- function(
         # Run for each image_type given...
         for (image_type in image_type_list) {
             # Check params
-            if (is.null(name_list[[image_type]])) name_list[[image_type]] <- names(img_path[[image_type]])
-            if (is.null(name_list[[image_type]])) stop("Names of ", image_type, "s to be reconnected must be given as named list in ", image_type, "_path arg or together with ", image_type, "_path as a separate vector in ", image_type, "_name arg. \n")
-            if (length(unique(name_list[[image_type]])) != length(img_path[[image_type]])) stop("If ", image_type, "s to be reconnected are selected through ", image_type, "_name arg then names must be unique and length and order must be the same as in ", image_type, "_path arg. \n")
-            if (!all(name_list[[image_type]] %in% list_images_names(gobject = gobject, img_type = image_type))) stop("Names given to ", image_type, "_name argument must match those in the gobject \n")
+            if (is.null(name_list[[image_type]]))
+                name_list[[image_type]] <- names(img_path[[image_type]])
+            if (is.null(name_list[[image_type]])) 
+                stop("Names of ", image_type, 
+                    "s to be reconnected must be given as named list in ", 
+                    image_type, "_path arg or together with ", 
+                    image_type, "_path as a separate vector in ", 
+                    image_type, "_name arg. \n")
+            if (length(unique(name_list[[image_type]])) != length(
+                img_path[[image_type]])) 
+                stop("If ", image_type, 
+                    "s to be reconnected are selected through ", image_type, 
+                    "_name arg then names must be unique and length and order 
+                    must be the same as in ", image_type, "_path arg. \n")
+            if (!all(name_list[[image_type]] %in% list_images_names(
+                gobject = gobject, img_type = image_type))) 
+                stop("Names given to ", image_type, 
+                    "_name argument must match those in the gobject \n")
 
             # get image objects
             img_list[[image_type]] <- lapply(
@@ -2406,38 +2612,47 @@ reconnectGiottoImage <- function(
             img_list[[image_type]] <- lapply(
                 X = 1:length(img_list[[image_type]]),
                 function(x) {
-                    img_list[[image_type]][[x]]@file_path <- img_path[[image_type]][[x]]
+                    img_list[[image_type]][[x]]@file_path <- 
+                        img_path[[image_type]][[x]]
                 }
             )
         }
     } # Manual workflow-specific end
 
-    # 3. Load new image pointer: -----------------------------------------------------------#
+    # 3. Load new image pointer: ---------------------------------------------#
 
     image_path_NULL <- list()
 
     for (image_type in image_type_list) {
         # check for NULLs in image paths
-        image_path_NULL[[image_type]] <- unlist(lapply(X = img_path[[image_type]], is.null))
+        image_path_NULL[[image_type]] <- unlist(
+            lapply(X = img_path[[image_type]], is.null))
 
         # Remove NULL path entries from name, path, and image object lists
         if (any(image_path_NULL[[image_type]])) {
             # End loop early if there are no imagepaths
-            if (sum(image_path_NULL[[image_type]]) == length(img_path[[image_type]])) {
-                if (verbose == TRUE) cat(image_type, ": no filepaths found. Skipping. \n")
+            if (sum(image_path_NULL[[image_type]]) == length(
+                img_path[[image_type]])) {
+                if (verbose == TRUE) 
+                    cat(image_type, ": no filepaths found. Skipping. \n")
                 next
             }
 
             if (verbose == TRUE) {
-                cat("\n Skipping ", image_type, "s with missing filepaths: \n", sep = "")
+                cat("\n Skipping ", image_type, 
+                    "s with missing filepaths: \n", sep = "")
                 for (image_NULL_i in 1:sum(image_path_NULL[[image_type]])) {
-                    cat(name_list[[image_type]][[which(image_path_NULL[[image_type]])[[image_NULL_i]]]], "\n")
+                    cat(name_list[[image_type]][[which(
+                        image_path_NULL[[image_type]])[[image_NULL_i]]]], "\n")
                 }
             }
 
-            img_path[[image_type]] <- img_path[[image_type]][!(image_path_NULL[[image_type]])]
-            name_list[[image_type]] <- name_list[[image_type]][!(image_path_NULL[[image_type]])]
-            img_list[[image_type]] <- img_list[[image_type]][!(image_path_NULL[[image_type]])]
+            img_path[[image_type]] <- img_path[[image_type
+                                            ]][!(image_path_NULL[[image_type]])]
+            name_list[[image_type]] <- name_list[[image_type
+                                            ]][!(image_path_NULL[[image_type]])]
+            img_list[[image_type]] <- img_list[[image_type
+                                            ]][!(image_path_NULL[[image_type]])]
         }
 
 
@@ -2454,7 +2669,7 @@ reconnectGiottoImage <- function(
         )
 
 
-        # 4. Update gobject:--------------------------------------------------------------------#
+        # 4. Update gobject:---------------------------------------------------#
 
         # Set the image objects into the gobject
         for (image_ii in 1:length(img_list[[image_type]])) {
@@ -2476,9 +2691,9 @@ reconnectGiottoImage <- function(
 
 #' @title Plot distribution of image intensity values
 #' @name distGiottoImage
-#' @description Plot distribution of intensity values using either a density plot
-#'   or a histogram. Useful for finding image artefact outliers and determining
-#'   reasonable scaling cutoffs.
+#' @description Plot distribution of intensity values using either a density 
+#' plot or a histogram. Useful for finding image artefact outliers and 
+#' determining reasonable scaling cutoffs.
 #' @section Plotting method \code{'dens'}:
 #'   Density plot of intensity values for image objects. \strong{N} total values
 #'   examined. \strong{Bandwidth} refers to the curve smoothing value applied.
@@ -2486,22 +2701,24 @@ reconnectGiottoImage <- function(
 #'   Histogram of intensity values for image objects.
 #' @details Plot is generated from a downsampling of the original image
 #' @param gobject giotto object
-#' @param image_type image object type (only supports largeImage and is set as
-#'   default)
+#' @param image_type image object 
+#' type (only supports largeImage and is set as default)
 #' @param image_name name of image object to use
 #' @param giottoLargeImage giotto large image object
 #' @param method plot type to show image intensity distribution
 #' @export
-distGiottoImage <- function(
-        gobject = NULL,
-        image_type = "largeImage",
-        image_name = NULL,
-        giottoLargeImage = NULL,
-        method = c("dens", "hist")) {
+distGiottoImage <- function(gobject = NULL,
+    image_type = "largeImage",
+    image_name = NULL,
+    giottoLargeImage = NULL,
+    method = c("dens", "hist")) {
     # check params
-    if (image_type != "largeImage") stop("Only largeImage objects currently supported \n")
-    if ((is.null(image_type) | is.null(image_name) | is.null(gobject)) & (is.null(giottoLargeImage))) {
-        stop("Image must be given through gobject, image_type, and image_name params or as the image object itself \n")
+    if (image_type != "largeImage") 
+        stop("Only largeImage objects currently supported \n")
+    if ((is.null(image_type) | is.null(image_name) | 
+        is.null(gobject)) & (is.null(giottoLargeImage))) {
+        stop("Image must be given through gobject, image_type, and image_name 
+            params or as the image object itself \n")
     }
     method <- match.arg(arg = method, choices = c("dens", "hist"))
 
@@ -2523,12 +2740,11 @@ distGiottoImage <- function(
 #' @details Add 4th alpha channel to 3 channel RGB image arrays
 #' @param x image array to use
 #' @param alpha global alpha value to use. Numeric. Scales from 0 to 1, with 0
-#'   being fully transparent and 1 being fully visible
+#' being fully transparent and 1 being fully visible
 #' @return image array with 4th channel for transparency
 #' @export
-add_img_array_alpha <- function(
-        x,
-        alpha) {
+add_img_array_alpha <- function(x,
+    alpha) {
     img_dims <- dim(x)
     x_alpha <- array(data = alpha, dim = c(img_dims[1], img_dims[2], 4))
     x_alpha[, , 1:3] <- x

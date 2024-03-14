@@ -16,13 +16,16 @@ NULL
 
 #' @describeIn dims-generic Find rows of giottoPoints object
 #' @export
-setMethod("nrow", signature("giottoPoints"), function(x) terra::nrow(x@spatVector))
+setMethod("nrow", signature("giottoPoints"), 
+        function(x) terra::nrow(x@spatVector))
 
 #' @describeIn dims-generic Find rows of giottoPolygon object
 #' @export
-setMethod("nrow", signature("giottoPolygon"), function(x) terra::nrow(x@spatVector))
+setMethod("nrow", signature("giottoPolygon"), 
+        function(x) terra::nrow(x@spatVector))
 
-#' @describeIn dims-generic Find rows of giotto S4s with data.table based \code{coordinates} slots
+#' @describeIn dims-generic Find rows of giotto S4s with data.table 
+#' based \code{coordinates} slots
 #' @export
 setMethod("nrow", signature("spatLocsObj"), function(x) nrow(x@coordinates))
 
@@ -30,17 +33,20 @@ setMethod("nrow", signature("spatLocsObj"), function(x) nrow(x@coordinates))
 # TODO
 # setMethod('dims', signature('coordDataMT'), function(x) nrow(x@coordinates))
 
-#' @describeIn dims-generic Find rows of giotto S4s with data.table based \code{coordinates} slots
+#' @describeIn dims-generic Find rows of giotto S4s with data.table 
+#' based \code{coordinates} slots
 #' @export
 setMethod("nrow", signature("exprData"), function(x) nrow(x@exprMat))
 
-#' @describeIn dims-generic Find rows of giotto S4s with data.table based \code{coordinates} slots
+#' @describeIn dims-generic Find rows of giotto S4s with data.table 
+#' based \code{coordinates} slots
 #' @export
 setMethod("nrow", signature("metaData"), function(x) nrow(x@metaDT))
 
 #' @describeIn dims-generic Find rows of spatialNetworkObj
 #' @export
-setMethod("nrow", signature("spatialNetworkObj"), function(x) nrow(x@networkDT))
+setMethod("nrow", signature("spatialNetworkObj"), 
+        function(x) nrow(x@networkDT))
 
 #' @rdname dims-generic
 #' @export
@@ -64,11 +70,13 @@ setMethod("nrow", signature("dimObj"), function(x) nrow(x@coordinates))
 # })
 
 
-#' @describeIn dims-generic Find cols of giotto S4s with Matrix based \code{exprMat} slots
+#' @describeIn dims-generic Find cols of giotto S4s with Matrix 
+#' based \code{exprMat} slots
 #' @export
 setMethod("ncol", signature("exprData"), function(x) ncol(x@exprMat))
 
-#' @describeIn dims-generic Find cols of giotto S4s with data.table based \code{metaDT} slots
+#' @describeIn dims-generic Find cols of giotto S4s with data.table 
+#' based \code{metaDT} slots
 #' @export
 setMethod("ncol", signature("metaData"), function(x) ncol(x@metaDT))
 
@@ -86,11 +94,13 @@ setMethod("ncol", signature("dimObj"), function(x) ncol(x@coordinates))
 
 ## dim() generic ####
 
-#' @describeIn dims-generic Find dimensions of giotto S4s with Matrix based \code{exprMat} slots
+#' @describeIn dims-generic Find dimensions of giotto S4s with Matrix 
+#' based \code{exprMat} slots
 #' @export
 setMethod("dim", signature("exprData"), function(x) dim(x@exprMat))
 
-#' @describeIn dims-generic Find dimensions of giotto S4s with data.table based \code{metaDT} slots
+#' @describeIn dims-generic Find dimensions of giotto S4s with data.table 
+#' based \code{metaDT} slots
 #' @export
 setMethod("dim", signature("metaData"), function(x) dim(x@metaDT))
 
@@ -100,7 +110,8 @@ setMethod("dim", signature("enrData"), function(x) dim(x@enrichDT))
 
 #' @rdname dims-generic
 #' @export
-setMethod("dim", signature("giottoLargeImage"), function(x) dim(x@raster_object))
+setMethod("dim", signature("giottoLargeImage"), 
+        function(x) dim(x@raster_object))
 
 #' @rdname dims-generic
 #' @export

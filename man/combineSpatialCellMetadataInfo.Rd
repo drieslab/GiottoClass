@@ -17,7 +17,8 @@ combineSpatialCellMetadataInfo(gobject, spat_unit = NULL, feat_type = NULL)
 list of data.table(s)
 }
 \description{
-Combine cell metadata with spatial cell information (e.g. polygon)
+Combine cell metadata with spatial cell
+information (e.g. polygon)
 }
 \details{
 The returned data.table has the following columns: \cr

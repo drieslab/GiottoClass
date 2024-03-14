@@ -33,16 +33,16 @@ this slot
 }
 \details{
 Data for each spatial unit is expected to agree on a single set of cell_IDs
-that are shared across any feature types. These cell_IDs are stored within the
-giotto object's \code{cell_ID} slot. \cr
+that are shared across any feature types. These cell_IDs are stored within
+the giotto object's \code{cell_ID} slot. \cr
 
 Pass \code{NULL} to \code{cell_IDs} param in order to delete the entry. \cr
 Pass \code{'initialize'} to \code{cell_IDs} param in order to initialize the
 specified entry. \cr
 
-\strong{NOTE:} The main purpose of the setter is to initialize, as cell_ID values
-are AUTOMATICALLY updated every time \code{initialize()} is called on the
-giotto object.
+\strong{NOTE:} The main purpose of the setter is to initialize, as cell_ID
+values are AUTOMATICALLY updated every time \code{initialize()} is called
+on the giotto object.
 }
 \seealso{
 get_cell_id

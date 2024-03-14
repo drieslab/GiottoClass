@@ -20,7 +20,8 @@ calculateOverlapRaster(
 \arguments{
 \item{gobject}{giotto object}
 
-\item{name_overlap}{name for the overlap results (default to feat_info parameter)}
+\item{name_overlap}{name for the overlap
+results (default to feat_info parameter)}
 
 \item{spatial_info}{character. name polygon information}
 

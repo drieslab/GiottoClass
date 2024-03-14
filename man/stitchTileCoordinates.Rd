@@ -14,5 +14,6 @@ stitchTileCoordinates(location_file, Xtilespan, Ytilespan)
 \item{Ytilespan}{numerical value specifying the height of each tile}
 }
 \description{
-Helper function to stitch tile coordinates together to form one complete picture
+Helper function to stitch tile coordinates together to form
+one complete picture
 }

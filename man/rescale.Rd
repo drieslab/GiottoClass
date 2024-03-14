@@ -35,9 +35,11 @@
 
 \item{fy}{numeric > 0. The vertical scaling factor}
 
-\item{x0}{numeric. x-coordinate of the center of rescaling. If missing, the center of the extent of x is used}
+\item{x0}{numeric. x-coordinate of the center of rescaling. If missing,
+the center of the extent of x is used}
 
-\item{y0}{numeric. y-coordinate of the center of rescaling. If missing, the center of the extent of x is used}
+\item{y0}{numeric. y-coordinate of the center of rescaling. If missing,
+the center of the extent of x is used}
 
 \item{spat_unit}{character vector. spatial units to affect}
 
@@ -45,13 +47,13 @@
 
 \item{fz}{numeric > 0. The z scaling factor (only for supported objects)}
 
-\item{z0}{numeric. z-coordinate of the center of rescaling. If missing, the center of the extent of x is used
-(only for supported objects)}
+\item{z0}{numeric. z-coordinate of the center of rescaling. If missing,
+the center of the extent of x is used (only for supported objects)}
 
-\item{geom}{character. Named vector of colnames of x, y, (z) coordinate columns.
-Default is \code{c("sdimx", "sdimy", "sdimz")}}
+\item{geom}{character. Named vector of colnames of x, y, (z) coordinate
+columns. Default is \code{c("sdimx", "sdimy", "sdimz")}}
 }
 \description{
-Rescale an object spatially. Z dimension scaling is supported for
-some types of subobjects.
+Rescale an object spatially. Z dimension scaling is supported
+for some types of subobjects.
 }

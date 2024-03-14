@@ -20,11 +20,15 @@ addGiottoImage(
 
 \item{largeImages}{list of giottoLargeImages to add}
 
-\item{spat_loc_name}{provide spatial location slot in Giotto to align giottoImages. Defaults to first one}
+\item{spat_loc_name}{provide spatial location slot in Giotto to align
+giottoImages. Defaults to first one}
 
-\item{scale_factor}{provide scale of image pixel dimensions relative to spatial coordinates.}
+\item{scale_factor}{provide scale of image pixel dimensions relative to
+spatial coordinates.}
 
-\item{negative_y}{Map image to negative y spatial values if TRUE during automatic alignment. Meaning that origin is in upper left instead of lower left.}
+\item{negative_y}{Map image to negative y spatial values if TRUE during
+automatic alignment. Meaning that origin is in upper left instead of lower
+left.}
 }
 \value{
 an updated Giotto object with access to the list of images

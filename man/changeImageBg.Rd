@@ -17,7 +17,8 @@ changeImageBg(
 
 \item{bg_color}{estimated current background color}
 
-\item{perc_range}{range around estimated background color to include (percentage)}
+\item{perc_range}{range around estimated background color to
+include (percentage)}
 
 \item{new_color}{new background color}
 
@@ -27,5 +28,6 @@ changeImageBg(
 magick image or giotto image object with updated background color
 }
 \description{
-Function to change the background color of a magick image plot to another color
+Function to change the background color of a magick image
+plot to another color
 }

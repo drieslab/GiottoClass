@@ -19,7 +19,8 @@ get_polygon_info(
 
 \item{polygon_overlap}{include polygon overlap information}
 
-\item{return_giottoPolygon}{(Defaults to FALSE) Return as giottoPolygon S4 object}
+\item{return_giottoPolygon}{(Defaults to FALSE) Return as giottoPolygon S4
+object}
 
 \item{verbose}{be verbose}
 }

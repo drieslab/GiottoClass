@@ -45,7 +45,8 @@ giotto object
 aggregate expression matrices from different z-stacks
 }
 \details{
-Combines both \code{\link{aggregateStacksExpression}} and \code{\link{aggregateStacksLocations}}
+Combines both \code{\link{aggregateStacksExpression}}
+and \code{\link{aggregateStacksLocations}}
 }
 \seealso{
 Other aggregate stacks: 

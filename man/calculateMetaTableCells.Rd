@@ -30,5 +30,6 @@ calculateMetaTableCells(
 data.table with average metadata values per (combined) annotation
 }
 \description{
-calculates the average metadata values for one or more (combined) annotation columns.
+calculates the average metadata values for one or
+more (combined) annotation columns.
 }

@@ -11,7 +11,8 @@
 
 \item{availableDT}{availability matrix given as data.table}
 
-\item{inherit_last}{(boolean) determine behavior from previous level for last level (intended for values print)
+\item{inherit_last}{(boolean) determine behavior from previous level for
+last level (intended for values print)
 Only TRUE behavior defined. #TODO}
 
 \item{indent}{ident characters to print for this level (top level is '')}

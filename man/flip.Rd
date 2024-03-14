@@ -36,7 +36,8 @@
 \arguments{
 \item{x}{object}
 
-\item{direction}{character. Direction to flip. Should be either partial match to 'vertical' or 'horizontal'}
+\item{direction}{character. Direction to flip. Should be either partial
+match to 'vertical' or 'horizontal'}
 
 \item{x0}{x value to flip horizontally over (ignored for vertical). Pass NULL
 to flip over the extent}

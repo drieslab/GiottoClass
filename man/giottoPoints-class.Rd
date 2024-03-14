@@ -20,7 +20,8 @@ Contains vector-type feature data
 
 \item{\code{networks}}{feature networks}
 
-\item{\code{unique_ID_cache}}{cached unique feature IDs that should match the spatVector slot}
+\item{\code{unique_ID_cache}}{cached unique feature IDs that should match the
+spatVector slot}
 }}
 
 \concept{giotto points class}

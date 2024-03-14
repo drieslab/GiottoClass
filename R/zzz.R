@@ -10,7 +10,8 @@
     #
     # if(inherits(utils_try, 'try-error')) {
     #   if (utils::menu(c("Yes", "No"),
-    #                   title = "GiottoUtils is required. Proceed with installation?") == "1") {
+    #                   title = "GiottoUtils is required. Proceed with 
+    #                   installation?") == "1") {
     #     devtools::install_github('drieslab/GiottoUtils')
     #
     #   } else {

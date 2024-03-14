@@ -9,13 +9,12 @@
 #' @description show cell metadata
 #' @inheritParams data_access_params
 #' @param ... additional params to pass
-#' @return data.table with cell metadata
+#' @returns data.table with cell metadata
 #' @export
-pDataDT <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        ...) {
+pDataDT <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    ...) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -58,13 +57,12 @@ pDataDT <- function(
 #' @description show feature metadata
 #' @inheritParams data_access_params
 #' @param ... additional params to pass
-#' @return data.table with feature metadata
+#' @returns data.table with feature metadata
 #' @export
-fDataDT <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        ...) {
+fDataDT <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    ...) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -114,22 +112,23 @@ fDataDT <- function(
 #' @param annotation_vector named annotation vector (names = cluster ids)
 #' @param cluster_column cluster column to convert to annotation names
 #' @param name new name for annotation column
-#' @return giotto object
 #' @details You need to specifify which (cluster) column you want to annotate
 #' and you need to provide an annotation vector like this:
 #' \itemize{
 #'   \item{1. identify the cell type of each cluster}
-#'   \item{2. create a vector of these cell types, e.g. cell_types =  c('T-cell', 'B-cell', 'Stromal')}
-#'   \item{3. provide original cluster names to previous vector, e.g. names(cell_types) = c(2, 1, 3)}
+#'   \item{2. create a vector of these cell types, e.g. 
+#'   cell_types =  c('T-cell', 'B-cell', 'Stromal')}
+#'   \item{3. provide original cluster names to previous vector, 
+#'   e.g. names(cell_types) = c(2, 1, 3)}
 #' }
+#' @returns giotto object
 #' @export
-annotateGiotto <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        annotation_vector = NULL,
-        cluster_column = NULL,
-        name = "cell_types") {
+annotateGiotto <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    annotation_vector = NULL,
+    cluster_column = NULL,
+    name = "cell_types") {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -145,7 +144,8 @@ annotateGiotto <- function(
     temp_cluster_name <- NULL
 
     if (is.null(annotation_vector) | is.null(cluster_column)) {
-        stop("\n You need to provide both a named annotation vector and the corresponding cluster column  \n")
+        stop("\n You need to provide both a named annotation vector and 
+            the corresponding cluster column  \n")
     }
 
     cell_metadata <- get_cell_metadata(
@@ -169,9 +169,12 @@ annotateGiotto <- function(
 
     if (length(missing_annotations) > 0) {
         cat(
-            "Not all clusters have an accompanying annotation in the annotation_vector: \n",
-            "These names are missing: ", as.character(missing_annotations), "\n",
-            "These annotations have no match: ", as.character(no_matching_annotations), "\n"
+            "Not all clusters have an accompanying annotation in the 
+            annotation_vector: \n",
+            "These names are missing: ", as.character(missing_annotations), 
+            "\n",
+            "These annotations have no match: ", 
+            as.character(no_matching_annotations), "\n"
         )
         stop("Annotation interrupted \n")
     }
@@ -180,24 +183,27 @@ annotateGiotto <- function(
     # 3. remove previous annotation name if it's the same
     # but only if new name is not the same as cluster to be used
     if (name %in% colnames(cell_metadata[])) {
-        wrap_msg('annotation name "', name, '" was already used and will be overwritten',
+        wrap_msg('annotation name "', name, 
+                '" was already used and will be overwritten',
             sep = ""
         )
 
-        cell_metadata[][, temp_cluster_name := annotation_vector[[as.character(get(cluster_column))]], by = 1:nrow(cell_metadata[])]
+        cell_metadata[][, temp_cluster_name := annotation_vector[[
+            as.character(get(cluster_column))]], by = 1:nrow(cell_metadata[])]
         cell_metadata[][, (name) := NULL]
     } else {
-        cell_metadata[][, temp_cluster_name := annotation_vector[[as.character(get(cluster_column))]], by = 1:nrow(cell_metadata[])]
+        cell_metadata[][, temp_cluster_name := annotation_vector[[
+            as.character(get(cluster_column))]], by = 1:nrow(cell_metadata[])]
     }
 
     data.table::setnames(cell_metadata[], old = "temp_cluster_name", new = name)
-    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
     gobject <- set_cell_metadata(
         gobject = gobject,
         metadata = cell_metadata,
         verbose = FALSE
     )
-    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
     return(gobject)
 }
@@ -206,21 +212,21 @@ annotateGiotto <- function(
 
 #' @title Remove cell annotation
 #' @name removeCellAnnotation
-#' @description Removes cell annotation from a Giotto object for a specific feature modality (default = 'rna')
+#' @description Removes cell annotation from a Giotto object for a specific 
+#' feature modality (default = 'rna')
 #' @param gobject giotto object
 #' @param spat_unit spatial unit
 #' @param feat_type feature type
 #' @param columns names of columns to remove
 #' @param return_gobject boolean: return giotto object (default = TRUE)
-#' @return giotto object
 #' @details if \code{return_gobject = FALSE}, it will return the cell metadata
+#' @returns giotto object
 #' @export
-removeCellAnnotation <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        columns = NULL,
-        return_gobject = TRUE) {
+removeCellAnnotation <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    columns = NULL,
+    return_gobject = TRUE) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -234,7 +240,8 @@ removeCellAnnotation <- function(
 
 
     if (is.null(columns)) {
-        stop("\t You need to provide a vector of metadata column names to remove \t")
+        stop("\t You need to provide a vector of metadata column names to 
+            remove \t")
     }
 
 
@@ -263,21 +270,21 @@ removeCellAnnotation <- function(
 
 #' @title Remove feature annotation
 #' @name removeFeatAnnotation
-#' @description Removes feature annotation from a Giotto object for a specific feature modality
+#' @description Removes feature annotation from a Giotto object for a 
+#' specific feature modality
 #' @param gobject giotto object
 #' @param spat_unit spatial unit
 #' @param feat_type feature type
 #' @param columns names of columns to remove
 #' @param return_gobject boolean: return giotto object (default = TRUE)
-#' @return giotto object
 #' @details if \code{return_gobject = FALSE}, it will return the gene metadata
+#' @returns giotto object
 #' @export
-removeFeatAnnotation <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        columns = NULL,
-        return_gobject = TRUE) {
+removeFeatAnnotation <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    columns = NULL,
+    return_gobject = TRUE) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -291,7 +298,8 @@ removeFeatAnnotation <- function(
 
 
     if (is.null(columns)) {
-        stop("\t You need to provide a vector of metadata column names to remove \t")
+        stop("\t You need to provide a vector of metadata column names 
+            to remove \t")
     }
 
     # get feat metadata
@@ -327,20 +335,28 @@ removeFeatAnnotation <- function(
 #' @param gobject giotto object
 #' @param spat_unit spatial unit
 #' @param feat_type feature type
-#' @param new_metadata new cell metadata to use (data.table, data.frame, vector, factor, ...)
+#' @param new_metadata new cell metadata to 
+#' use (data.table, data.frame, vector, factor, ...)
 #' @param vector_name (optional) custom name for new metadata column if single
 #' vector or factor is provided
 #' @param by_column merge metadata based on \emph{cell_ID} column in
 #' \code{\link{pDataDT}} (default = FALSE)
 #' @param column_cell_ID column name of new metadata to use if
 #' \code{by_column = TRUE}
-#' @return giotto object
 #' @details You can add additional cell metadata in several manners:
 #' \itemize{
-#'   \item{1. Provide a data.frame-like object, vector, or factor with cell annotations in the same order as the \emph{cell_ID} column in pDataDT(gobject). This is a bit risky and not the most recommended.}
-#'   \item{2. Provide a data.frame-like object with cell annotations and specify which column contains the cell IDs, these cell IDs need to match with the \emph{cell_ID} column in pDataDT(gobject)}
-#'   \item{3. Provide a vector or factor that is named with the cell IDs they correspond to. These names will be matched against the \emph{cell_ID} column in pDataDT(gobject).}
+#'   \item{1. Provide a data.frame-like object, vector, or factor with cell 
+#'   annotations in the same order as the \emph{cell_ID} column in 
+#'   pDataDT(gobject). This is a bit risky and not the most recommended.}
+#'   \item{2. Provide a data.frame-like object with cell annotations and 
+#'   specify which column contains the cell IDs, these cell IDs need to match 
+#'   with the \emph{cell_ID} column in pDataDT(gobject)}
+#'   \item{3. Provide a vector or factor that is named with the cell IDs they 
+#'   correspond to. These names will be matched against the \emph{cell_ID} 
+#'   column in pDataDT(gobject).}
 #' }
+#' 
+#' @returns giotto object
 #' @examples
 #' # dummy matrix
 #' m <- readRDS(system.file("extdata/toy_matrix.RDS", package = "GiottoClass"))
@@ -372,14 +388,13 @@ removeFeatAnnotation <- function(
 #' )
 #' pDataDT(g)
 #' @export
-addCellMetadata <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        new_metadata,
-        vector_name = NULL,
-        by_column = FALSE,
-        column_cell_ID = NULL) {
+addCellMetadata <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    new_metadata,
+    vector_name = NULL,
+    by_column = FALSE,
+    column_cell_ID = NULL) {
     # NSE variables
     cell_ID <- NULL
 
@@ -396,8 +411,8 @@ addCellMetadata <- function(
 
 
     # 1. check hierarchical slots
-    # Expression information must first exist in the gobject for the corresponding
-    # metdata information to be added.
+    # Expression information must first exist in the gobject for the 
+    # corresponding metadata information to be added.
     avail_ex <- list_expression(
         gobject = gobject,
         spat_unit = spat_unit,
@@ -434,15 +449,17 @@ addCellMetadata <- function(
     # Coerce to data.table
     if (is.vector(new_metadata) || is.factor(new_metadata)) {
         original_name <- deparse(substitute(new_metadata))
-        new_metadata <- data.table::as.data.table(new_metadata, keep.rownames = TRUE)
+        new_metadata <- data.table::as.data.table(
+            new_metadata, keep.rownames = TRUE)
         if ("rn" %in% colnames(new_metadata) && ncol(new_metadata) > 1L) {
-            # should only be TRUE when an "rn" col for rownames was added based on
-            # the vector or factor's names
+            # should only be TRUE when an "rn" col for rownames was added based
+            # on the vector or factor's names
             data.table::setnames(new_metadata, old = "rn", new = "cell_ID")
         }
 
         # add column name for new meta info.
-        # if a cell_ID col was added via rownames, it should be in the first position.
+        # if a cell_ID col was added via rownames, it should be in the first 
+        # position.
         # ncol(new_metadata) should be the col index of the new information.
         if (!is.null(vector_name) && is.character(vector_name)) {
             colnames(new_metadata)[ncol(new_metadata)] <- vector_name
@@ -482,7 +499,8 @@ addCellMetadata <- function(
         cell_metadata[] <- cbind(cell_metadata[], new_metadata)
     } else {
         if (!column_cell_ID %in% colnames(new_metadata)) {
-            stop("'by_column' is TRUE and 'column_cell_ID' not found in new_metadata")
+            stop("'by_column' is TRUE and 'column_cell_ID' not found 
+                in new_metadata")
         }
         cell_metadata[] <- data.table::merge.data.table(
             x = cell_metadata[],
@@ -517,15 +535,22 @@ addCellMetadata <- function(
 #' @param feat_type feature type
 #' @param new_metadata new metadata to use)
 #' @param vector_name (optional) custom name if you provide a single vector
-#' @param by_column merge metadata based on \emph{feat_ID} column in \code{\link{fDataDT}}
+#' @param by_column merge metadata based on \emph{feat_ID} column 
+#' in \code{\link{fDataDT}}
 #' @param column_feat_ID column name of new metadata to use if by_column = TRUE
-#' @return giotto object
 #' @details You can add additional feature metadata in several manners:
 #' \itemize{
-#'   \item{1. Provide a data.table or data.frame with feature annotations in the same order as the \emph{feat_ID} column in fDataDT(gobject) This is a bit risky and not the most recommended.}
-#'   \item{2. Provide a data.table or data.frame with feature annotations and specify which column contains the feature IDs, these feature IDs need to match with the \emph{feat_ID} column in fDataDT(gobject)}
-#'   \item{3. Provide a vector or factor that is named with the feature IDs they correspond to. These names will be matched against the \emph{feat_ID} column in fDataDT(gobject).}
+#'   \item{1. Provide a data.table or data.frame with feature annotations in 
+#'   the same order as the \emph{feat_ID} column in fDataDT(gobject) This is 
+#'   a bit risky and not the most recommended.}
+#'   \item{2. Provide a data.table or data.frame with feature annotations and 
+#'   specify which column contains the feature IDs, these feature IDs need to 
+#'   match with the \emph{feat_ID} column in fDataDT(gobject)}
+#'   \item{3. Provide a vector or factor that is named with the feature IDs 
+#'   they correspond to. These names will be matched against 
+#'   the \emph{feat_ID} column in fDataDT(gobject).}
 #' }
+#' @returns giotto object
 #' @examples
 #' # dummy matrix
 #' m <- readRDS(system.file("extdata/toy_matrix.RDS", package = "GiottoClass"))
@@ -557,14 +582,13 @@ addCellMetadata <- function(
 #' )
 #' fDataDT(g)
 #' @export
-addFeatMetadata <- function(
-        gobject,
-        feat_type = NULL,
-        spat_unit = NULL,
-        new_metadata,
-        vector_name = NULL,
-        by_column = FALSE,
-        column_feat_ID = NULL) {
+addFeatMetadata <- function(gobject,
+    feat_type = NULL,
+    spat_unit = NULL,
+    new_metadata,
+    vector_name = NULL,
+    by_column = FALSE,
+    column_feat_ID = NULL) {
     # NSE variables
     feat_ID <- NULL
 
@@ -581,8 +605,8 @@ addFeatMetadata <- function(
 
 
     # 1. check hierarchical slots
-    # Expression information must first exist in the gobject for the corresponding
-    # metdata information to be added.
+    # Expression information must first exist in the gobject for the 
+    # corresponding metadata information to be added.
     avail_ex <- list_expression(
         gobject = gobject,
         spat_unit = spat_unit,
@@ -618,15 +642,17 @@ addFeatMetadata <- function(
     # Coerce to data.table
     if (is.vector(new_metadata) || is.factor(new_metadata)) {
         original_name <- deparse(substitute(new_metadata))
-        new_metadata <- data.table::as.data.table(new_metadata, keep.rownames = TRUE)
+        new_metadata <- data.table::as.data.table(
+            new_metadata, keep.rownames = TRUE)
         if ("rn" %in% colnames(new_metadata) && ncol(new_metadata) > 1L) {
-            # should only be TRUE when an "rn" col for rownames was added based on
-            # the vector or factor's names
+            # should only be TRUE when an "rn" col for rownames was added based
+            # on the vector or factor's names
             data.table::setnames(new_metadata, old = "rn", new = "feat_ID")
         }
 
         # add column name for new meta info.
-        # if a cell_ID col was added via rownames, it should be in the first position.
+        # if a cell_ID col was added via rownames, it should be in the first 
+        # position.
         # ncol(new_metadata) should be the col index of the new information.
         if (!is.null(vector_name) && is.character(vector_name)) {
             colnames(new_metadata)[ncol(new_metadata)] <- vector_name
@@ -666,7 +692,8 @@ addFeatMetadata <- function(
         feat_metadata[] <- cbind(feat_metadata[], new_metadata)
     } else {
         if (!column_feat_ID %in% colnames(new_metadata)) {
-            stop("'by_column' is TRUE and 'column_feat_ID' not found in new_metadata")
+            stop("'by_column' is TRUE and 'column_feat_ID' not found in 
+                new_metadata")
         }
         feat_metadata[] <- data.table::merge.data.table(
             x = feat_metadata[],
@@ -699,21 +726,21 @@ addFeatMetadata <- function(
 
 
 #' @title create_average_DT
-#' @description calculates average gene expression for a cell metadata factor (e.g. cluster)
+#' @description calculates average gene expression for a cell metadata 
+#' factor (e.g. cluster)
 #' @param gobject giotto object
 #' @param spat_unit spatial unit
 #' @param feat_type feature type
 #' @param meta_data_name name of metadata column to use
 #' @param expression_values which expression values to use
-#' @return data.table with average gene epression values for each factor
 #' @keywords internal
+#' @returns data.table with average gene expression values for each factor
 #' @export
-create_average_DT <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        meta_data_name,
-        expression_values = c("normalized", "scaled", "custom")) {
+create_average_DT <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    meta_data_name,
+    expression_values = c("normalized", "scaled", "custom")) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -726,7 +753,8 @@ create_average_DT <- function(
     )
 
     # expression values to be used
-    values <- match.arg(expression_values, unique(c("normalized", "scaled", "custom", expression_values)))
+    values <- match.arg(expression_values, 
+                unique(c("normalized", "scaled", "custom", expression_values)))
     expr_data <- get_expression_values(
         gobject = gobject,
         spat_unit = spat_unit,
@@ -761,23 +789,23 @@ create_average_DT <- function(
 }
 
 #' @title create_average_detection_DT
-#' @description calculates average gene detection for a cell metadata factor (e.g. cluster)
+#' @description calculates average gene detection for a cell metadata 
+#' factor (e.g. cluster)
 #' @param gobject giotto object
 #' @param spat_unit spatial unit
 #' @param feat_type feature type
 #' @param meta_data_name name of metadata column to use
 #' @param expression_values which expression values to use
 #' @param detection_threshold detection threshold to consider a gene detected
-#' @return data.table with average gene epression values for each factor
 #' @keywords internal
+#' @returns data.table with average gene epression values for each factor
 #' @export
-create_average_detection_DT <- function(
-        gobject,
-        feat_type = NULL,
-        spat_unit = NULL,
-        meta_data_name,
-        expression_values = c("normalized", "scaled", "custom"),
-        detection_threshold = 0) {
+create_average_detection_DT <- function(gobject,
+    feat_type = NULL,
+    spat_unit = NULL,
+    meta_data_name,
+    expression_values = c("normalized", "scaled", "custom"),
+    detection_threshold = 0) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -790,7 +818,8 @@ create_average_detection_DT <- function(
     )
 
     # expression values to be used
-    values <- match.arg(expression_values, unique(c("normalized", "scaled", "custom", expression_values)))
+    values <- match.arg(expression_values, 
+                unique(c("normalized", "scaled", "custom", expression_values)))
     expr_data <- get_expression_values(
         gobject = gobject,
         spat_unit = spat_unit,
@@ -844,15 +873,15 @@ create_average_detection_DT <- function(
 #' @param feat_subset subset of features to use
 #' @param gene_subset deprecated do not use.
 #' @keywords internal
+#' @returns matrix
 #' @export
-create_cluster_matrix <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        expression_values = c("normalized", "scaled", "custom"),
-        cluster_column,
-        feat_subset = NULL,
-        gene_subset = NULL) {
+create_cluster_matrix <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    expression_values = c("normalized", "scaled", "custom"),
+    cluster_column,
+    feat_subset = NULL,
+    gene_subset = NULL) {
     # data.table variables
     feats <- NULL
 
@@ -872,7 +901,8 @@ create_cluster_matrix <- function(
         feat_type = feat_type
     )
 
-    values <- match.arg(expression_values, unique(c("normalized", "scaled", "custom", expression_values)))
+    values <- match.arg(expression_values, 
+                unique(c("normalized", "scaled", "custom", expression_values)))
 
     # average expression per cluster
     aggr_sc_clusters <- create_average_DT(
@@ -899,8 +929,10 @@ create_cluster_matrix <- function(
 
     # create subset if required
     if (!is.null(feat_subset)) {
-        feat_subset_detected <- feat_subset[feat_subset %in% rownames(testmatrix)]
-        testmatrix <- testmatrix[rownames(testmatrix) %in% feat_subset_detected, ]
+        feat_subset_detected <- feat_subset[
+            feat_subset %in% rownames(testmatrix)]
+        testmatrix <- testmatrix[
+            rownames(testmatrix) %in% feat_subset_detected, ]
     }
 
     return(testmatrix)
@@ -920,7 +952,8 @@ create_cluster_matrix <- function(
 
 #' @title calculateMetaTable
 #' @name calculateMetaTable
-#' @description calculates the average gene expression for one or more (combined) annotation columns.
+#' @description calculates the average gene expression for one or 
+#' more (combined) annotation columns.
 #' @param gobject giotto object
 #' @param spat_unit spatial unit
 #' @param feat_type feature type
@@ -928,17 +961,18 @@ create_cluster_matrix <- function(
 #' @param metadata_cols annotation columns found in \code{pDataDT(gobject)}
 #' @param selected_feats subset of features to use
 #' @param selected_genes subset of genes to use (deprecated)
-#' @return data.table with average expression values for each gene per (combined) annotation
+#' @returns data.table with average expression values for each gene 
+#' per (combined) annotation
 #' @export
-calculateMetaTable <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        expression_values = c("normalized", "scaled", "custom"),
-        metadata_cols = NULL,
-        selected_feats = NULL,
-        selected_genes = NULL) {
-    if (is.null(metadata_cols)) stop("\n You need to select one or more valid column names from pDataDT() \n")
+calculateMetaTable <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    expression_values = c("normalized", "scaled", "custom"),
+    metadata_cols = NULL,
+    selected_feats = NULL,
+    selected_genes = NULL) {
+    if (is.null(metadata_cols)) stop("\n You need to select one or more 
+                                    valid column names from pDataDT() \n")
 
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
@@ -954,30 +988,36 @@ calculateMetaTable <- function(
     ## deprecated arguments
     if (!is.null(selected_genes)) {
         selected_feats <- selected_genes
-        warning("selected_genes is deprecated, use selected_feats in the future \n")
+        warning("selected_genes is deprecated, use selected_feats in the 
+                future \n")
     }
 
     # data.table variables
     uniq_ID <- NULL
 
     ## get metadata and create unique groups
-    metadata <- data.table::copy(pDataDT(gobject, feat_type = feat_type, spat_unit = spat_unit))
+    metadata <- data.table::copy(pDataDT(
+        gobject, feat_type = feat_type, spat_unit = spat_unit))
     if (length(metadata_cols) > 1) {
-        metadata[, uniq_ID := paste(.SD, collapse = "-"), by = 1:nrow(metadata), .SDcols = metadata_cols]
+        metadata[, uniq_ID := paste(.SD, collapse = "-"), 
+                by = 1:nrow(metadata), .SDcols = metadata_cols]
     } else {
         metadata[, uniq_ID := get(metadata_cols)]
     }
 
     ## possible groups
-    possible_groups <- unique(metadata[, metadata_cols, with = F])
+    possible_groups <- unique(metadata[, metadata_cols, with = FALSE])
     if (length(metadata_cols) > 1) {
-        possible_groups[, uniq_ID := paste(.SD, collapse = "-"), by = 1:nrow(possible_groups), .SDcols = metadata_cols]
+        possible_groups[, uniq_ID := paste(.SD, collapse = "-"), 
+                    by = 1:nrow(possible_groups), .SDcols = metadata_cols]
     } else {
         possible_groups[, uniq_ID := get(metadata_cols)]
     }
 
     ## get expression data
-    values <- match.arg(expression_values, unique(c("normalized", "scaled", "custom", expression_values)))
+    values <- match.arg(expression_values, 
+                        unique(c("normalized", "scaled", "custom", 
+                                expression_values)))
     expr_values <- get_expression_values(
         gobject = gobject,
         spat_unit = spat_unit,
@@ -995,7 +1035,8 @@ calculateMetaTable <- function(
     for (row in 1:nrow(possible_groups)) {
         uniq_identifiier <- possible_groups[row][["uniq_ID"]]
         selected_cell_IDs <- metadata[uniq_ID == uniq_identifiier][["cell_ID"]]
-        sub_expr_values <- expr_values[, colnames(expr_values) %in% selected_cell_IDs]
+        sub_expr_values <- expr_values[, 
+                                colnames(expr_values) %in% selected_cell_IDs]
 
         if (is.vector(sub_expr_values) == FALSE) {
             subvec <- rowMeans_flex(sub_expr_values)
@@ -1006,7 +1047,8 @@ calculateMetaTable <- function(
     }
     finaldt <- data.table::as.data.table(do.call("rbind", result_list))
     possible_groups_res <- cbind(possible_groups, finaldt)
-    possible_groups_res_melt <- data.table::melt.data.table(possible_groups_res, id.vars = c(metadata_cols, "uniq_ID"))
+    possible_groups_res_melt <- data.table::melt.data.table(
+        possible_groups_res, id.vars = c(metadata_cols, "uniq_ID"))
 
     return(possible_groups_res_melt)
 }
@@ -1014,22 +1056,22 @@ calculateMetaTable <- function(
 
 #' @title calculateMetaTableCells
 #' @name calculateMetaTableCells
-#' @description calculates the average metadata values for one or more (combined) annotation columns.
+#' @description calculates the average metadata values for one or 
+#' more (combined) annotation columns.
 #' @param gobject giotto object
 #' @param spat_unit spatial unit
 #' @param feat_type feature type
 #' @param value_cols metadata or enrichment value columns to use
 #' @param metadata_cols annotation columns found in \code{pDataDT(gobject)}
 #' @param spat_enr_names which spatial enrichment results to include
-#' @return data.table with average metadata values per (combined) annotation
+#' @returns data.table with average metadata values per (combined) annotation
 #' @export
-calculateMetaTableCells <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        value_cols = NULL,
-        metadata_cols = NULL,
-        spat_enr_names = NULL) {
+calculateMetaTableCells <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    value_cols = NULL,
+    metadata_cols = NULL,
+    spat_enr_names = NULL) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -1041,8 +1083,10 @@ calculateMetaTableCells <- function(
         feat_type = feat_type
     )
 
-    if (is.null(metadata_cols)) stop("\n You need to select one or more valid column names from pDataDT() \n")
-    if (is.null(value_cols)) stop("\n You need to select one or more valid value column names from pDataDT() \n")
+    if (is.null(metadata_cols)) stop("\n You need to select one or more 
+                                  valid column names from pDataDT() \n")
+    if (is.null(value_cols)) stop("\n You need to select one or more valid 
+                                  value column names from pDataDT() \n")
 
     cell_metadata <- combineMetadata(
         gobject = gobject,
@@ -1061,7 +1105,8 @@ calculateMetaTableCells <- function(
     value_cols <- value_cols[value_cols %in% cell_metadata_cols]
 
     if (!all(metadata_cols %in% cell_metadata_cols)) {
-        missing_metadata_cols <- metadata_cols[!metadata_cols %in% cell_metadata_cols]
+        missing_metadata_cols <- metadata_cols[!metadata_cols %in% 
+                                                cell_metadata_cols]
         cat("These metadata columns were not found: ", missing_metadata_cols)
     }
     metadata_cols <- metadata_cols[metadata_cols %in% cell_metadata_cols]
@@ -1070,7 +1115,8 @@ calculateMetaTableCells <- function(
         stop("\n missing sufficient metadata or value columns \n")
     }
 
-    workdt <- cell_metadata[, lapply(.SD, mean), by = metadata_cols, .SDcols = value_cols]
+    workdt <- cell_metadata[, lapply(.SD, mean), 
+                            by = metadata_cols, .SDcols = value_cols]
     workdtmelt <- data.table::melt.data.table(workdt, measure.vars = value_cols)
 
     return(workdtmelt)
@@ -1083,7 +1129,8 @@ calculateMetaTableCells <- function(
 
 #' @title createMetafeats
 #' @name createMetafeats
-#' @description This function creates an average metafeat/metagene/module for clusters.
+#' @description This function creates an average metafeat/metagene/module 
+#' for clusters.
 #' @param gobject Giotto object
 #' @param spat_unit spatial unit
 #' @param feat_type feature type
@@ -1091,9 +1138,10 @@ calculateMetaTableCells <- function(
 #' @param feat_clusters numerical vector with features as names
 #' @param name name of the metagene results
 #' @param return_gobject return giotto object
-#' @return giotto object
 #' @details An example for the 'gene_clusters' could be like this:
-#' cluster_vector = c(1, 1, 2, 2); names(cluster_vector) = c('geneA', 'geneB', 'geneC', 'geneD')
+#' cluster_vector = c(1, 1, 2, 2) 
+#' names(cluster_vector) = c('geneA', 'geneB', 'geneC', 'geneD')
+#' @returns giotto object
 #' @examples
 #' \dontrun{
 #' # load a dataset
@@ -1103,10 +1151,12 @@ calculateMetaTableCells <- function(
 #'
 #' # create the metafeats
 #' # We do this by making an annotation vector which is a numerical vector
-#' # of cluster assignments where each number is named by the feature it describes.
+#' # of cluster assignments where each number is named by the feature it 
+#' # describes.
 #' #
-#' # Here we create an example annotation vector by arbitrarily using the first 6
-#' # features and putting 3 in cluster 1 and the other 3 in cluster 2.
+#' # Here we create an example annotation vector by arbitrarily using the 
+#' # first 6 features and putting 3 in cluster 1 and the other 3 in cluster 2.
+#' 
 #' feats_to_use <- featIDs(g)[1:6]
 #' clust_to_use <- c(1, 1, 1, 2, 2, 2)
 #' names(clust_to_use) <- feats_to_use
@@ -1130,14 +1180,13 @@ calculateMetaTableCells <- function(
 #' }
 #' @seealso [GiottoVisuals::spatCellPlot()]
 #' @export
-createMetafeats <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        expression_values = c("normalized", "scaled", "custom"),
-        feat_clusters,
-        name = "metafeat",
-        return_gobject = TRUE) {
+createMetafeats <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    expression_values = c("normalized", "scaled", "custom"),
+    feat_clusters,
+    name = "metafeat",
+    return_gobject = TRUE) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -1150,7 +1199,9 @@ createMetafeats <- function(
     )
 
     # expression values to be used
-    values <- match.arg(expression_values, unique(c("normalized", "scaled", "custom", expression_values)))
+    values <- match.arg(expression_values, 
+                        unique(c("normalized", "scaled", "custom", 
+                                expression_values)))
     expr_values <- get_expression_values(
         gobject = gobject,
         spat_unit = spat_unit,
@@ -1200,18 +1251,22 @@ createMetafeats <- function(
 
     if (isTRUE(return_gobject)) {
         ## enrichment scores
-        spenr_names <- list_spatial_enrichments_names(gobject = gobject, spat_unit = spat_unit, feat_type = feat_type)
+        spenr_names <- list_spatial_enrichments_names(gobject = gobject, 
+                                                    spat_unit = spat_unit, 
+                                                    feat_type = feat_type)
 
         if (name %in% spenr_names) {
             cat("\n ", name, " has already been used, will be overwritten \n")
         }
 
-        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        gobject <- set_spatial_enrichment(gobject = gobject, spatenrichment = enrObj)
-        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+        gobject <- set_spatial_enrichment(gobject = gobject, 
+                                            spatenrichment = enrObj)
+        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
         ## update parameters used ##
-        gobject <- update_giotto_params(gobject, description = "_create_metafeat")
+        gobject <- update_giotto_params(gobject, 
+                                        description = "_create_metafeat")
         return(gobject)
     } else {
         return(enrObj)
@@ -1230,6 +1285,7 @@ createMetafeats <- function(
 #' the objects back in the giotto object
 #' @param gobject giotto object
 #' @keywords internal
+#' @returns giotto object
 .giotto_alloc_dt <- function(gobject) {
     # data.table vars
     spat_unit <- feat_type <- name <- NULL
@@ -1337,7 +1393,8 @@ createMetafeats <- function(
                 output = "spatialNetworkObj"
             )
             if (!is.null(slot(sn, "networkDT_before_filter"))) {
-                slot(sn, "networkDT_before_filter") <- data.table::setalloccol(slot(sn, "networkDT_before_filter"))
+                slot(sn, "networkDT_before_filter") <- data.table::setalloccol(
+                    slot(sn, "networkDT_before_filter"))
             }
             if (!is.null(sn[])) {
                 sn[] <- data.table::setalloccol(sn[])

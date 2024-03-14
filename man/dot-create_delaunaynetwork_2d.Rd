@@ -18,7 +18,7 @@
   Y = TRUE,
   j = TRUE,
   S = 0,
-  verbose = T,
+  verbose = TRUE,
   return_gobject = TRUE,
   output = c("spatialNetworkObj", "data.table"),
   ...

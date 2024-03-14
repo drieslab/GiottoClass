@@ -20,7 +20,8 @@ create_spat_grid_obj(
 
 \item{method}{method used to generate spatial grid}
 
-\item{parameters}{additional method-specific parameters used during spatial grid generation}
+\item{parameters}{additional method-specific parameters used during
+spatial grid generation}
 
 \item{gridDT}{data.table holding the spatial grid information}
 

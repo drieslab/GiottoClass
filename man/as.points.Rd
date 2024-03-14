@@ -8,7 +8,8 @@
 \S4method{as.points}{data.frame}(x, include_values = TRUE, specific_values = NULL)
 }
 \arguments{
-\item{x}{SpatRaster, SpatVector, SpatExtent, or correctly formatted data.frame}
+\item{x}{SpatRaster, SpatVector, SpatExtent, or correctly formatted
+data.frame}
 
 \item{include_values}{\code{logical}. Whether to include additional columns other
 than the geometry information as \code{SpatVector} attributes. Default is TRUE.}

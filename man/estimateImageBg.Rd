@@ -15,5 +15,6 @@ estimateImageBg(mg_object, top_color_range = 1:50)
 vector of pixel color frequencies and an associated barplot
 }
 \description{
-helps to estimate which color is the background color of your plot
+helps to estimate which color is the background color of your
+plot
 }

@@ -9,9 +9,11 @@ showGiottoExpression(gobject, nrows = 4, ncols = 4)
 \arguments{
 \item{gobject}{giotto object}
 
-\item{nrows}{number of rows to print for each matrix (ignored for sparse matrices)}
+\item{nrows}{number of rows to print for each
+matrix (ignored for sparse matrices)}
 
-\item{ncols}{number of columns to print for each matrix (ignored for sparse matrices)}
+\item{ncols}{number of columns to print for each
+matrix (ignored for sparse matrices)}
 }
 \value{
 prints the name and small subset of available matrices
