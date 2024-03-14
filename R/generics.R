@@ -31,6 +31,11 @@ setGeneric("createGiottoPoints", function(x, ...) standardGeneric("createGiottoP
 setGeneric("createGiottoPolygon", function(x, ...) standardGeneric("createGiottoPolygon"))
 
 
+# Object reconnection ####
+# Some objects may operate base on on-disk files.
+setGeneric("reconnect", function(x, ...) standardGeneric("reconnect"))
+
+
 # Object Characteristics ####
 
 ## nrow() S4 generic ####

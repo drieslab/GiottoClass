@@ -118,6 +118,7 @@ Collate:
     'methods-overlaps.R'
     'methods-plot.R'
     'methods-rbind.R'
+    'methods-reconnect.R'
     'methods-rescale.R'
     'methods-setGiotto.R'
     'methods-show.R'

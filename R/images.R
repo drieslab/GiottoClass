@@ -528,6 +528,9 @@ updateGiottoImageMG <- function(
 reconnect_giottoImage_MG <- function(
         giottoImage,
         image_path) {
+
+    deprecate_soft("0.2.4", "reconnect_giottoImage_MG()", "reconnect()")
+
     # load in new magick object
     mg_object <- magick::image_read(image_path)
 
@@ -1904,6 +1907,9 @@ addGiottoLargeImage <- function(
 reconnect_giottoLargeImage <- function(
         giottoLargeImage,
         image_path) {
+
+    deprecate_soft("0.2.4", "reconnect_giottoLargeImage()", "reconnect()")
+
     # load in new terra raster objects
     raster_object <- .create_terra_spatraster(image_path = image_path)
 
