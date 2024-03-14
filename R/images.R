@@ -2172,18 +2172,13 @@ reconnect_image_object <- function(
         image_object,
         image_type,
         image_path) {
-    if (image_type == "image") {
-        image_object <- reconnect_giottoImage_MG(
-            giottoImage = image_object,
-            image_path = image_path
-        )
-    }
-    if (image_type == "largeImage") {
-        image_object <- reconnect_giottoLargeImage(
-            giottoLargeImage = image_object,
-            image_path = image_path
-        )
-    }
+
+    deprecate_soft("0.2.4", "reconnect_image_object()", "reconnect()")
+
+    image_object <- reconnect(
+        x = image_object,
+        path = image_path
+    )
 
     return(image_object)
 }
@@ -2451,10 +2446,9 @@ reconnectGiottoImage <- function(
         img_list[[image_type]] <- lapply(
             X = 1:length(img_list[[image_type]]),
             function(x) {
-                reconnect_image_object(
-                    image_object = img_list[[image_type]][[x]],
-                    image_type = image_type,
-                    image_path = img_path[[image_type]][[x]]
+                reconnect(
+                    x = img_list[[image_type]][[x]],
+                    path = img_path[[image_type]][[x]]
                 )
             }
         )
