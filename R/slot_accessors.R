@@ -5426,14 +5426,3 @@ setGiottoImage <- function(
 
 
 
-# set_mirai = function(gobject, x) {
-#   checkmate::assert_class(x, 'mirai')
-#   mirai_length <- length(gobject@mirai)
-#   gobject@mirai[mirai_length + 1] <- x
-#   gobject
-# }
-#
-#
-# get_mirai_list = function(gobject) {
-#   gobject@mirai
-# }
