@@ -29,8 +29,9 @@ saveGiotto(
 
 \item{overwrite}{Overwrite existing folders}
 
-\item{image_filetype}{the image filetype to use,
-see \code{\link[terra]{writeRaster}}}
+\item{image_filetype}{the image filetype to use, see
+\code{\link[terra]{writeRaster}}. Default is "PNG". For TIFF outputs, try
+"COG"}
 
 \item{verbose}{be verbose}
 

@@ -5,6 +5,9 @@
 \alias{featMetaObj-class}
 \alias{featMetaObj}
 \title{S4 featMetaObj}
+\value{
+featMetaObj
+}
 \description{
 Framework to store feature metadata
 }

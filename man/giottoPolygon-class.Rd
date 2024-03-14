@@ -5,6 +5,9 @@
 \alias{giottoPolygon-class}
 \alias{giottoPolygon}
 \title{S4 giotto polygon Class}
+\value{
+giottoPolygon
+}
 \description{
 Giotto class to store and operate on polygon-like data
 }

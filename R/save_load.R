@@ -9,8 +9,9 @@
 #' @param method method to save main object
 #' @param method_params additional method parameters for RDS or qs
 #' @param overwrite Overwrite existing folders
-#' @param image_filetype the image filetype to use, 
-#' see \code{\link[terra]{writeRaster}}
+#' @param image_filetype the image filetype to use, see
+#' \code{\link[terra]{writeRaster}}. Default is "PNG". For TIFF outputs, try
+#' "COG"
 #' @param verbose be verbose
 #' @param ... additional parameters for \code{\link[terra]{writeRaster}}
 #' @return Creates a directory with Giotto object information
@@ -18,37 +19,52 @@
 #' Giotto objects. Additional method_params need to be provided as a list 
 #' and will go to \code{\link[base]{saveRDS}} or \code{\link[qs]{qsave}}
 #' @export
-saveGiotto <- function(gobject,
-    foldername = "saveGiottoDir",
-    dir = getwd(),
-    method = c("RDS", "qs"),
-    method_params = list(),
-    overwrite = FALSE,
-    image_filetype = "PNG",
-    verbose = TRUE,
-    ...) {
+saveGiotto <- function(
+        gobject,
+        foldername = "saveGiottoDir",
+        dir = getwd(),
+        method = c("RDS", "qs"),
+        method_params = list(),
+        overwrite = FALSE,
+        image_filetype = "PNG",
+        verbose = TRUE,
+        ...) {
+    # check params
+    checkmate::assert_character(foldername)
+    checkmate::assert_character(dir)
+    checkmate::assert_list(method_params)
+    checkmate::assert_character(image_filetype)
+    overwrite <- as.logical(overwrite)
+    method <- match.arg(arg = method, choices = c("RDS", "qs"))
+
+
     ## set directory path and folder
     final_dir <- paste0(path.expand(dir), "/", foldername)
 
+    overwriting <- FALSE
     if (dir.exists(final_dir)) {
-        if (overwrite == FALSE) {
-            stop("Folder already exist and overwrite = FALSE, abort saving \n")
+        if (!overwrite) {
+            stop(wrap_txt(
+                "Folder already exist and overwrite = FALSE abort saving"
+            ))
         } else {
-            wrap_msg("Folder already exist and overwrite = TRUE, overwrite 
-                    folder \n")
-            unlink(x = final_dir, recursive = TRUE)
-            dir.create(final_dir)
+            wrap_msg("Folder already exist and overwrite = TRUE,
+                    overwrite folder")
+            overwriting <- TRUE
+            use_dir <- file.path(dir, ".giotto_scratch")
+            dir.create(use_dir, recursive = TRUE)
         }
     } else {
         dir.create(final_dir, recursive = TRUE)
+        use_dir <- final_dir
     }
 
     ## save spatVector objects related to feature information
-    if (verbose) wrap_msg("1. Start writing feature information \n")
+    vmsg(.v = verbose, "1. Start writing feature information")
     feat_info_names <- list_feature_info_names(gobject)
 
     if (!is.null(feat_info_names)) {
-        feat_dir <- paste0(final_dir, "/", "Features")
+        feat_dir <- paste0(use_dir, "/", "Features")
         dir.create(feat_dir)
         for (feat in feat_info_names) {
             if (verbose) wrap_msg("For feature: ", feat, "\n")
@@ -57,16 +73,24 @@ saveGiotto <- function(gobject,
             if (!is.null(gobject@feat_info[[feat]]@spatVector)) {
                 # write names of spatvector
                 spatvecnames <- names(gobject@feat_info[[feat]]@spatVector)
-                filename_names <- paste0(feat_dir, "/", feat, 
-                                        "_feature_spatVector_names.txt")
-                write.table(x = spatvecnames, file = filename_names, 
-                            col.names = FALSE, row.names = FALSE)
+                filename_names <- paste0(
+                    feat_dir, "/", feat, "_feature_spatVector_names.txt"
+                )
+                write.table(
+                    x = spatvecnames,
+                    file = filename_names,
+                    col.names = FALSE,
+                    row.names = FALSE
+                )
 
                 # write spatvector
-                filename <- paste0(feat_dir, "/", feat, 
-                                "_feature_spatVector.shp")
-                terra::writeVector(gobject@feat_info[[feat]]@spatVector, 
-                                filename = filename)
+                filename <- paste0(
+                    feat_dir, "/", feat, "_feature_spatVector.shp"
+                )
+                terra::writeVector(
+                    x = gobject@feat_info[[feat]]@spatVector,
+                    filename = filename
+                )
             }
 
             # network
@@ -80,10 +104,10 @@ saveGiotto <- function(gobject,
     spat_info_names <- list_spatial_info_names(gobject)
 
     if (!is.null(spat_info_names)) {
-        spatinfo_dir <- paste0(final_dir, "/", "SpatialInfo")
+        spatinfo_dir <- paste0(use_dir, "/", "SpatialInfo")
         dir.create(spatinfo_dir)
         for (spatinfo in spat_info_names) {
-            if (verbose) wrap_msg("For spatial information: ", spatinfo, "\n")
+            vmsg(.v = verbose, "For spatial information: ", spatinfo)
 
             # original spatVectors
             if (!is.null(gobject@spatial_info[[spatinfo]]@spatVector)) {
@@ -98,8 +122,10 @@ saveGiotto <- function(gobject,
                 # write spatvector
                 filename <- paste0(spatinfo_dir, "/", spatinfo, 
                                 "_spatInfo_spatVector.shp")
-                terra::writeVector(gobject@spatial_info[[spatinfo]]@spatVector, 
-                                filename = filename)
+                terra::writeVector(
+                    gobject@spatial_info[[spatinfo]]@spatVector,
+                    filename = filename
+                )
             }
 
             # spatVectorCentroids
@@ -117,8 +143,9 @@ saveGiotto <- function(gobject,
                 filename <- paste0(spatinfo_dir, "/", spatinfo, 
                                 "_spatInfo_spatVectorCentroids.shp")
                 terra::writeVector(
-                    gobject@spatial_info[[spatinfo]]@spatVectorCentroids, 
-                    filename = filename)
+                    gobject@spatial_info[[spatinfo]]@spatVectorCentroids,
+                    filename = filename
+                )
             }
 
             # overlap information
@@ -140,10 +167,12 @@ saveGiotto <- function(gobject,
 
                     # write spatvector
                     filename <- paste0(spatinfo_dir, "/", feature, "_", 
-                                spatinfo, "_spatInfo_spatVectorOverlaps.shp")
+                                    spatinfo, 
+                                    "_spatInfo_spatVectorOverlaps.shp")
                     terra::writeVector(
-                        gobject@spatial_info[[spatinfo]]@overlaps[[feature]], 
-                        filename = filename)
+                        gobject@spatial_info[[spatinfo]]@overlaps[[feature]],
+                        filename = filename
+                    )
                 }
             }
         }
@@ -152,14 +181,14 @@ saveGiotto <- function(gobject,
 
 
     ## save images
-    if (verbose) wrap_msg("3. Start writing image information \n")
+    vmsg(.v = verbose, "3. Start writing image information")
     image_names <- list_images_names(gobject, img_type = "largeImage")
 
     if (!is.null(image_names)) {
-        image_dir <- paste0(final_dir, "/", "Images")
+        image_dir <- paste0(use_dir, "/", "Images")
         dir.create(image_dir)
         for (image in image_names) {
-            if (verbose) wrap_msg("For image information: ", image, "\n")
+            vmsg(.v = verbose, "For image information: ", image)
 
             if (!is.null(gobject@largeImages[[image]]@raster_object)) {
                 # save extent info just in case
@@ -172,7 +201,8 @@ saveGiotto <- function(gobject,
                     x = gobject@largeImages[[image]]@raster_object,
                     filename = filename,
                     filetype = image_filetype,
-                    NAflag = NA
+                    NAflag = NA,
+                    overwrite = TRUE
                 ) # test
             }
         }
@@ -180,18 +210,34 @@ saveGiotto <- function(gobject,
 
 
     ## save whole Giotto object
-    method <- match.arg(arg = method, choices = c("RDS", "qs"))
+    
+    switch(method,
+        "RDS" = do.call(
+            "saveRDS",
+            args = c(
+                object = gobject,
+                file = paste0(use_dir, "/", "gobject.RDS"),
+                method_params
+            )
+        ),
+        "qs" = {
+            package_check(pkg_name = "qs", repository = "CRAN")
+            qsave_fun <- get("qsave", asNamespace("qs"))
+            do.call(
+                qsave_fun,
+                args = c(
+                    x = gobject,
+                    file = paste0(use_dir, "/", "gobject.qs"),
+                    method_params
+                )
+            )
+        }
+    )
 
-    if (method == "RDS") {
-        do.call("saveRDS", 
-                c(object = gobject, 
-                file = paste0(final_dir, "/", "gobject.RDS"), method_params))
-    } else if (method == "qs") {
-        package_check(pkg_name = "qs", repository = "CRAN")
-        qsave_fun <- get("qsave", asNamespace("qs"))
-        do.call(qsave_fun, 
-                c(x = gobject, file = paste0(final_dir, "/", "gobject.qs"), 
-                method_params))
+    # effect overwrite
+    if (overwrite && overwriting) {
+        unlink(x = final_dir, recursive = TRUE)
+        file.rename(from = use_dir, to = final_dir)
     }
 }
 
@@ -453,7 +499,7 @@ loadGiotto <- function(path_to_folder,
 
 
     ## 4. images
-    if (verbose) wrap_msg("\n4. read Giotto image information \n")
+    vmsg(.v = verbose, "\n4. read Giotto image information")
     image_files <- list.files(path = paste0(path_to_folder, "/Images"))
     if (length(image_files) != 0) {
         image_names <- unique(gsub(image_files, pattern = "_spatRaster.*", 
@@ -465,6 +511,7 @@ loadGiotto <- function(path_to_folder,
                             "_spatRaster")
             spatRaster <- terra::rast(x = new_path)
             gobject@largeImages[[image_name]]@raster_object <- spatRaster
+            gobject@largeImages[[image_name]]@file_path <- new_path
         }
     }
 

@@ -9,6 +9,9 @@ updateGiottoPolygonObject(gpoly)
 \arguments{
 \item{gpoly}{giotto polygon object}
 }
+\value{
+GiottoPolygonObject
+}
 \description{
 Update giotto polygon object
 }

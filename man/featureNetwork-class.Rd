@@ -5,6 +5,9 @@
 \alias{featureNetwork-class}
 \alias{featureNetwork}
 \title{S4 giotto feature network Class}
+\value{
+featureNetwork
+}
 \description{
 Giotto class to store and operate on feature network
 }

@@ -364,7 +364,8 @@ createGiottoObject <- function(expression,
             )
 
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-            gobject <- set_spatial_locations(gobject, spatlocs = dummySpatLocObj)
+            gobject <- set_spatial_locations(gobject, 
+                                            spatlocs = dummySpatLocObj)
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
     }
@@ -911,8 +912,10 @@ createGiottoObjectSubcellular <- function(
                         spatial_network_Obj <- create_spat_net_obj(
                             name = networkname,
                             networkDT = network,
-                            spat_unit = names(slot(gobject, "spatial_info"))[[1]],
-                            provenance = names(slot(gobject, "spatial_info"))[[1]]
+                            spat_unit = names(slot(gobject, "spatial_info")
+                                            )[[1]],
+                            provenance = names(slot(gobject, "spatial_info")
+                                            )[[1]]
                         ) # assumed
 
                         ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -1872,6 +1875,11 @@ create_featureNetwork_object <- function(name = "feat_network",
 #' matched against the feature IDs information.
 #' @param unique_IDs (optional) character vector of unique IDs present within
 #' the spatVector data. Provided for cacheing purposes
+#' @details
+#' Using the manual option where you can select the names of the x, y, and 
+#' feat_ID columns is not compatible with a data.frame that already has the 
+#' names x, y, and/or feat_ID.
+#'
 #' @examples
 #' # data.frame input
 #' x <- data.frame(
@@ -1892,7 +1900,7 @@ create_featureNetwork_object <- function(name = "feat_network",
 #'     feat_type = c("feat_a", "feat_b"),
 #'     split_keyword = list(c("b", "c"))
 #' )
-#' gp_list
+#' force(gp_list)
 #'
 #' # subsetting
 #' gpoints[c(1, 3)] # numerical
@@ -1956,10 +1964,16 @@ setMethod(
 )
 
 #' @rdname createGiottoPoints
+#' @param x_colname column name for x-coordinates
+#' @param y_colname column name for y-coordinates
+#' @param feat_ID_colname column name for feature ids
 #' @export
 setMethod(
     "createGiottoPoints", signature("data.frame"),
     function(x,
+    x_colname = NULL,
+    y_colname = NULL,
+    feat_ID_colname = NULL,
     feat_type = "rna",
     verbose = TRUE,
     split_keyword = NULL,
@@ -1970,6 +1984,9 @@ setMethod(
         # format and convert to SpatVector
         spatvec <- .create_spatvector_object_from_dfr(
             x = x,
+            x_colname = x_colname,
+            y_colname = y_colname,
+            feat_ID_colname = feat_ID_colname,
             verbose = verbose
         )
 
@@ -2063,7 +2080,6 @@ NULL
 #' SpatRaster or SpatVector methods, depending on whether x was a filepath to
 #' a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.
 #' @examples
-#' # %%%%%%%%% `createGiottoPolygon()` examples %%%%%%%%% #
 #' # ------- create from a mask image ------- #
 #' m <- system.file("extdata/toy_mask_multi.tif", package = "GiottoClass")
 #' plot(terra::rast(m), col = grDevices::hcl.colors(7))
@@ -2264,7 +2280,6 @@ setMethod(
 #' `cell_001`, `cell_002`, `cell_003`, ...)
 #' @return a giotto polygon object
 #' @examples
-#' # %%%%%%%%% `createGiottoPolygonsFromMask()` examples %%%%%%%%% #
 #' mask_multi <- system.file("extdata/toy_mask_multi.tif",
 #'     package = "GiottoClass"
 #' )
@@ -2964,7 +2979,7 @@ createGiottoImage <- function(gobject = NULL,
 #' @param flip_vertical flip raster in a vertical manner
 #' @param flip_horizontal flip raster in a horizontal manner
 #' @param xmax_bound,xmin_bound,ymax_bound,ymin_bound assign min and max x and y
-#'   values for image spatial placement
+#' values for image spatial placement
 #' @param scale_factor scaling of image dimensions relative to spatial 
 #' coordinates
 #' @param verbose be verbose

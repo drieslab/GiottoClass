@@ -11,6 +11,9 @@ S3toS4spatNetObj(object, spat_unit = NULL)
 
 \item{spat_unit}{spatial unit metadata to append}
 }
+\value{
+S4 spatNetObj
+}
 \description{
 convert S3 spatialNetworkObj to S4
 }

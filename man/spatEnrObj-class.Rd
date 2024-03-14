@@ -4,6 +4,9 @@
 \name{spatEnrObj-class}
 \alias{spatEnrObj-class}
 \title{S4 spatEnrObj Class}
+\value{
+spatEnrObj
+}
 \description{
 Framework to store spatial enrichment results
 }

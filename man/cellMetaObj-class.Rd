@@ -5,6 +5,9 @@
 \alias{cellMetaObj-class}
 \alias{cellMetaObj}
 \title{S4 cellMetaObj}
+\value{
+cellMetaObj
+}
 \description{
 Framework to store cell metadata
 }

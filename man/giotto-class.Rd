@@ -5,6 +5,9 @@
 \alias{giotto-class}
 \alias{giotto}
 \title{S4 giotto Class}
+\value{
+giotto object
+}
 \description{
 \pkg{Giotto}'s core object that encapsulates all the components
 of a spatial-omic project and facilitates analyses.

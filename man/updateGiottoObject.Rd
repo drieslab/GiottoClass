@@ -9,6 +9,9 @@ updateGiottoObject(gobject)
 \arguments{
 \item{gobject}{giotto object to update}
 }
+\value{
+giotto object
+}
 \description{
 Updates the giotto object for changes in structure for backwards
 compatibility with earlier versions

@@ -5,6 +5,9 @@
 \alias{giottoImage-class}
 \alias{giottoImage}
 \title{S4 giottoImage Class}
+\value{
+giottoImage
+}
 \description{
 Framework of giotto object to store and work with spatial
 expression data

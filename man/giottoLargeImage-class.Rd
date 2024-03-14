@@ -5,6 +5,9 @@
 \alias{giottoLargeImage-class}
 \alias{giottoLargeImage}
 \title{S4 giottoLargeImage Class}
+\value{
+giottoLargeImage
+}
 \description{
 class to handle images too large to load in normally through
 magick

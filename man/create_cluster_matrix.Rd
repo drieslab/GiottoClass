@@ -29,6 +29,9 @@ create_cluster_matrix(
 
 \item{gene_subset}{deprecated do not use.}
 }
+\value{
+matrix
+}
 \description{
 creates aggregated matrix for a given clustering column
 }

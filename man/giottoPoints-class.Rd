@@ -5,6 +5,9 @@
 \alias{giottoPoints-class}
 \alias{giottoPoints}
 \title{S4 giotto points Class}
+\value{
+giottoPoints
+}
 \description{
 Giotto class to store and operate on points data
 }

@@ -1,11 +1,20 @@
 
 
-# GiottoClass 0.2.3
+# GiottoClass 0.2.4
+
+## enhancements
+- use faster `terra::rasterize()` and `terra::plot()` instead of `scattermore::scattermoreplot()` for `giottoPoints` `plot()` method
+- `plot()` `giottoPoints` method now plots density when `dens = TRUE`
+
+
+# GiottoClass 0.2.3 (2024/03/12)
 
 ## bug fixes
+- fix `saveGiotto` with `overwrite = TRUE` [#870](https://github.com/drieslab/Giotto/issues/870) by rbutlerii
 - fix `plot()` method param passing for `giottoLargeImage`. Ensure access to terra params
 
 ## enhancements
+- `createGiottoPoints` `data.frame` method can now select which columns to use with `x_colname`, `y_colname`, `feat_ID_colname` params
 - `giotto` now responds to spatial manipulation generics: `t()`, `flip()`, `rescale()`, `spatShift()`, `spin()`
 - `spatUnit()` and `featType()` are now vectorized
 - new `.evalute_extent()` internal that for fine extent modifications

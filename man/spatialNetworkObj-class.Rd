@@ -4,6 +4,9 @@
 \name{spatialNetworkObj-class}
 \alias{spatialNetworkObj-class}
 \title{S4 spatialNetworkObj Class}
+\value{
+spatialNetworkObj
+}
 \description{
 Framework to store spatial network information
 }

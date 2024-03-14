@@ -4,6 +4,9 @@
 \name{spatialGridObj-class}
 \alias{spatialGridObj-class}
 \title{S4 spatialGridObj Class}
+\value{
+spatialGridObj
+}
 \description{
 Framework to store spatial grid
 }

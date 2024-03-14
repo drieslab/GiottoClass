@@ -183,7 +183,6 @@ a \code{sprintf()} \code{fmt} param input instead. (ie: \code{ID_fmt = "cell_\%0
 }
 
 \examples{
-# \%\%\%\%\%\%\%\%\% `createGiottoPolygon()` examples \%\%\%\%\%\%\%\%\% #
 # ------- create from a mask image ------- #
 m <- system.file("extdata/toy_mask_multi.tif", package = "GiottoClass")
 plot(terra::rast(m), col = grDevices::hcl.colors(7))
@@ -215,7 +214,6 @@ out <- createGiottoPolygon(needed_cols_dt,
 )
 plot(out)
 
-# \%\%\%\%\%\%\%\%\% `createGiottoPolygonsFromMask()` examples \%\%\%\%\%\%\%\%\% #
 mask_multi <- system.file("extdata/toy_mask_multi.tif",
     package = "GiottoClass"
 )
