@@ -76,8 +76,10 @@ g <- GiottoData::loadGiottoMini("vizgen")
 
 # expression
 spatValues(g, spat_unit = "aggregate", feats = c("Mlc1", "Gfap"))
-spatValues(g, spat_unit = "aggregate", feats = c("Mlc1", "Gfap"),
-           expression_values = "normalized")
+spatValues(g,
+    spat_unit = "aggregate", feats = c("Mlc1", "Gfap"),
+    expression_values = "normalized"
+)
 
 # spatial enrichment
 spatValues(g, spat_unit = "aggregate", feats = c("1", "3"))
@@ -87,6 +89,5 @@ spatValues(g, spat_unit = "aggregate", feats = c("agg_n", "valid"))
 
 # cell meta
 spatValues(g, spat_unit = "aggregate", feats = c("nr_feats"))
-
 
 }

@@ -41,7 +41,6 @@ setMethod("plot", signature(x = "giottoImage", y = "missing"), function(x, y, ..
 #' plot(gimg, max_intensity = 100)
 #' }
 #'
-#'
 #' @export
 setMethod(
     "plot",
@@ -97,7 +96,6 @@ setMethod(
 #' gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
 #' plot(gpoly)
 #' plot(gpoly, type = "centroid")
-#'
 #'
 #' @export
 setMethod(
@@ -182,7 +180,6 @@ setMethod(
 #' # plot specific feature(s)
 #' plot(gpoints, feats = featIDs(gpoints)[1:4], raster = FALSE)
 #'
-#'
 #' @export
 setMethod(
     "plot", signature(x = "giottoPoints", y = "missing"),
@@ -204,7 +201,6 @@ setMethod(
 #' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
 #' plot(sl)
 #'
-#'
 #' @export
 setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) {
     if ("sdimz" %in% colnames(x)) {
@@ -223,7 +219,6 @@ setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) 
 #' d <- GiottoData::loadSubObjectMini("dimObj")
 #' plot(d)
 #' plot(d, dims = c(3, 5))
-#'
 #'
 #' @export
 setMethod(
@@ -651,53 +646,52 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @keywords internal
 #' @noRd
 .plot_giotto_points_all <- function(
-    x, size = 600, force_size = FALSE, dens = FALSE, col = NULL, background, ...
-) {
-  pargs <- list(...)
-  rargs <- list()
-  e <- ext(x)
-  e_r <- range(e)
+        x, size = 600, force_size = FALSE, dens = FALSE, col = NULL, background, ...) {
+    pargs <- list(...)
+    rargs <- list()
+    e <- ext(x)
+    e_r <- range(e)
 
-  # decide rasterization resolution
-  # Select res that results in a major axis with length equal to size param,
-  # up to a maximum resolution of 1 (1:1 with extent dims),
-  # but with a min dim px of 100 (to help with cases where extent is small)
-  res <- max(e_r / size[1L])
-  if (!isTRUE(force_size)) {
-    res <- max(res, 1)
-    res <- min(res, c(e_r / 100))
-  }
-
-  # rasterization
-  r <- terra::rast(e, res = res)
-  if (isTRUE(dens)) rargs$fun <- "count"
-  rargs$y <- r
-  rargs$x <- x[]
-  r2 <- do.call(terra::rasterize, args = rargs)
-
-  # plotting
-  pargs$x <- r2
-  if (is.null(col)) {
-    if (isTRUE(dens)) {
-      pal <- grDevices::hcl.colors(n = 256)
-    } else {
-      pal <- c("black", "white")
+    # decide rasterization resolution
+    # Select res that results in a major axis with length equal to size param,
+    # up to a maximum resolution of 1 (1:1 with extent dims),
+    # but with a min dim px of 100 (to help with cases where extent is small)
+    res <- max(e_r / size[1L])
+    if (!isTRUE(force_size)) {
+        res <- max(res, 1)
+        res <- min(res, c(e_r / 100))
     }
-    pargs$col <- pal[2L:length(pal)]
-    pargs$background <- pal[1L]
-    # replace background col if specifically provided
-    if (!missing(background)) pargs$background <- background
-  } else {
-    if (missing(background)) {
-      pargs$col <- col[2L:length(col)]
-      pargs$background <- col[1L]
-    } else {
-      pargs$col <- col
-      pargs$background <- background
-    }
-  }
 
-  do.call(terra::plot, args = pargs)
+    # rasterization
+    r <- terra::rast(e, res = res)
+    if (isTRUE(dens)) rargs$fun <- "count"
+    rargs$y <- r
+    rargs$x <- x[]
+    r2 <- do.call(terra::rasterize, args = rargs)
+
+    # plotting
+    pargs$x <- r2
+    if (is.null(col)) {
+        if (isTRUE(dens)) {
+            pal <- grDevices::hcl.colors(n = 256)
+        } else {
+            pal <- c("black", "white")
+        }
+        pargs$col <- pal[2L:length(pal)]
+        pargs$background <- pal[1L]
+        # replace background col if specifically provided
+        if (!missing(background)) pargs$background <- background
+    } else {
+        if (missing(background)) {
+            pargs$col <- col[2L:length(col)]
+            pargs$background <- col[1L]
+        } else {
+            pargs$col <- col
+            pargs$background <- background
+        }
+    }
+
+    do.call(terra::plot, args = pargs)
 }
 
 

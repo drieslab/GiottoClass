@@ -458,12 +458,11 @@ smoothGiottoPolygons <- function(
 #' @param feat_ID_colname column name for feature ids
 #' @param verbose be verbose
 #' @keywords internal
-.create_spatvector_object_from_dfr <- function(
-        x,
-        x_colname = NULL,
-        y_colname = NULL,
-        feat_ID_colname = NULL,
-        verbose = TRUE) {
+.create_spatvector_object_from_dfr <- function(x,
+    x_colname = NULL,
+    y_colname = NULL,
+    feat_ID_colname = NULL,
+    verbose = TRUE) {
     x <- data.table::as.data.table(x)
 
     # MANUAL OPTION

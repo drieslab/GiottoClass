@@ -139,12 +139,10 @@ plot(gimg, col = grDevices::hcl.colors(256))
 plot(gimg, max_intensity = 100)
 }
 
-
 ######### giottoPolygon plotting #########
 gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
 plot(gpoly)
 plot(gpoly, type = "centroid")
-
 
 ######### giottoPoints plotting #########
 gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
@@ -176,17 +174,14 @@ plot(gpoints, raster = FALSE, col = grDevices::rainbow(nrow(gpoints)))
 # plot specific feature(s)
 plot(gpoints, feats = featIDs(gpoints)[1:4], raster = FALSE)
 
-
 ######### spatLocsObj plotting #########
 sl <- GiottoData::loadSubObjectMini("spatLocsObj")
 plot(sl)
-
 
 ######### dimObj plotting #########
 d <- GiottoData::loadSubObjectMini("dimObj")
 plot(d)
 plot(d, dims = c(3, 5))
-
 
 }
 \concept{plot}
