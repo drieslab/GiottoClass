@@ -6,6 +6,8 @@
 - use faster `terra::rasterize()` and `terra::plot()` instead of `scattermore::scattermoreplot()` for `giottoPoints` `plot()` method
 - `plot()` `giottoPoints` method now plots density when `dens = TRUE`
 
+## enhancements
+- new `spatValues()` to get specific values from a `giotto` object in `data.table` format
 
 # GiottoClass 0.2.3 (2024/03/12)
 
