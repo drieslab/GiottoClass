@@ -4761,6 +4761,13 @@ get_spatial_enrichment <- function(
         feat_type = feat_type
     )
 
+    if (is.null(potential_names)) {
+      stop(wrap_txt(sprintf(
+        "No spatial enrichments found for spat_unit: %s and feat_type: %s",
+        spat_unit, feat_type
+      )))
+    }
+
     if (enrichm_name %in% potential_names) {
         enr_res <- gobject@spatial_enrichment[[spat_unit]][[feat_type]][[enrichm_name]]
 
