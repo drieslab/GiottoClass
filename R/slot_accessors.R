@@ -5493,7 +5493,7 @@ setGiottoImage <- function(
 spatValues <- function(gobject, spat_unit = NULL, feat_type = NULL, feats,
     expression_values = NULL, spat_enr_name = NULL, poly_info = NULL,
     verbose = NULL, debug = FALSE) {
-    checkmate::assert_class(gobject)
+    checkmate::assert_class(gobject, "giotto")
     checkmate::assert_character(feats)
 
 
