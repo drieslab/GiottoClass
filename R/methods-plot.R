@@ -805,22 +805,23 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @title Plot a giotto polygon object
 #' @param x giottoPolygon object
 #' @param point_size (default = 0.6) size of plotted points when plotting centroids
-#' @param type (default is poly) plot the 'polygon' or its 'centroid'
+#' @param type (default is poly) plot the 'poly' or its 'centroid'
 #' @param ... additional params to pass to plot function
 #' @keywords internal
 #' @noRd
 .plot_giotto_polygon <- function(
         x, point_size = 0.6,
         type = c("poly", "centroid"), ...) {
+    a <- list(...)
+
     type <- match.arg(type, choices = c("poly", "centroid"))
-    if (type == "poly") {
-        terra::plot(x = x@spatVector, ...)
-    }
-    if (type == "centroid") {
-        if (!is.null(x@spatVectorCentroids)) {
-            terra::plot(x = x@spatVectorCentroids, cex = point_size, ...)
-        } else {
-            cat("no centroids calculated\n")
+
+    switch(type,
+        "poly" = do.call(terra::plot, args = c(list(x = x@spatVector), a)),
+        "centroid" = {
+            a$cex <- point_size
+            a$x <- centroids(x)
+            do.call(terra::plot, args = a)
         }
-    }
+    )
 }
