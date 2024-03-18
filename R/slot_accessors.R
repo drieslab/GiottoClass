@@ -5402,13 +5402,18 @@ setGiottoImage <- function(
         ))
     } else if (is.null(image)) {
         wrap_msg("Warning: image argument set to NULL. Replacing current image slot with NULL will remove the image.")
-    } else if (!"giottoImage" %in% image || !"giottoLargeImage" %in% image) {
+    } else if (!inherits(image, c("giottoImage", "giottoLargeImage"))) {
         wrap_msg("Unable to set non-giottoImage objects. Please ensure a giottoImage or giottoLargeImage is provided to this function.")
         wrap_msg("See createGiottoImage or createGiottoLargeImage for more details.")
         stop(wrap_txt("Unable to set non-giottoImage object.",
             errWidth = TRUE
         ))
     }
+
+    image_type = switch(as.character(class(image)),
+        "giottoImage" = "image",
+        "giottoLargeImage" = "largeImage"
+    )
 
     gobject <- set_giottoImage(
         gobject = gobject,
