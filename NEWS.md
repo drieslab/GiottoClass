@@ -11,9 +11,8 @@
 ## enhancements
 - use faster `terra::rasterize()` and `terra::plot()` instead of `scattermore::scattermoreplot()` for `giottoPoints` `plot()` method
 - `plot()` `giottoPoints` method now plots density when `dens = TRUE`
-
-## enhancements
 - new `spatValues()` to get specific values from a `giotto` object in `data.table` format
+- new `ometif_to_tif` to convert between .ome.tif and .tif
 
 
 
