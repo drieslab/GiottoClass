@@ -2534,3 +2534,36 @@ add_img_array_alpha <- function(
     x_alpha[, , 1:3] <- x
     return(x_alpha)
 }
+
+
+
+
+# converters ####
+
+
+#' @title Convert ome.tif to tif
+#' @name ometif_to_tif
+#' @description
+#' Simple converter from .ome.tif to .tif format. Utilizes the python
+#' \pkg{tifffile} package.
+#' @param input_file character. Filepath to ome.tif to convert
+#' @param output_file character. Filepath to write .tif to
+#' @param overwrite logical. Default = FALSE. Whether to overwrite if the
+#' filename already exists.
+#' @returns returns NULL invisibly
+#' @export
+ometif_to_tif <- function(input_file, output_file, overwrite = FALSE) {
+    a <- get_args_list()
+
+    package_check("tifffile", repository = "pip:tifffile")
+    ometif2tif_path <- system.file("python", "ometif_convert.py",
+                                   package = "GiottoClass")
+    reticulate::source_python(ometif2tif_path)
+    do.call(ometif_2_tif, args = a)
+    invisible(NULL)
+}
+
+
+
+
+
