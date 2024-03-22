@@ -885,12 +885,14 @@ plot_auto_largeImage_resample <- function(
 #'   default)
 #' @param giottoLargeImage giotto large image object
 #' @param method method of plotting image distribution
+#' @param ... additional params to pass
 #' @keywords internal
 .dist_giottolargeimage <- function(
         gobject = NULL,
         image_name = NULL,
         giottoLargeImage = NULL,
-        method = "dens") {
+        method = "dens",
+        ...) {
     # get image object
     if (!is.null(gobject) & !is.null(image_name)) {
         img_obj <- getGiottoImage(
@@ -898,17 +900,18 @@ plot_auto_largeImage_resample <- function(
             image_type = "largeImage",
             name = image_name
         )
-        img_obj <- img_obj@raster_object
     } else if (!is.null(giottoLargeImage)) {
-        img_obj <- giottoLargeImage@raster_object
+        img_obj <- giottoLargeImage
     } else {
         stop("No giottoLargeImage given \n")
     }
 
+    a = list(x = img_obj, ...)
+
     # plot
     switch(method,
-        "dens" = terra::density(img_obj),
-        "hist" = terra::hist(img_obj)
+        "dens" = do.call(density, args = a),
+        "hist" = do.call(hist, args = a)
     )
 }
 
@@ -2491,13 +2494,17 @@ reconnectGiottoImage <- function(
 #' @param image_name name of image object to use
 #' @param giottoLargeImage giotto large image object
 #' @param method plot type to show image intensity distribution
+#' @param show_max logical. Plot the set max intensity as a vertical red line
+#' @param ... additional params to pass to [terra::hist()] or [terra::density()]
 #' @export
 distGiottoImage <- function(
         gobject = NULL,
         image_type = "largeImage",
         image_name = NULL,
         giottoLargeImage = NULL,
-        method = c("dens", "hist")) {
+        method = c("dens", "hist"),
+        show_max = TRUE,
+        ...) {
     # check params
     if (image_type != "largeImage") stop("Only largeImage objects currently supported \n")
     if ((is.null(image_type) | is.null(image_name) | is.null(gobject)) & (is.null(giottoLargeImage))) {
@@ -2505,16 +2512,77 @@ distGiottoImage <- function(
     }
     method <- match.arg(arg = method, choices = c("dens", "hist"))
 
+    a = list(gobject = gobject, image_name = image_name,
+             giottoLargeImage = giottoLargeImage, method = method,
+             show_max = show_max, ...)
+
     # run specific function
     if (image_type == "largeImage") {
-        .dist_giottolargeimage(
-            gobject = gobject,
-            image_name = image_name,
-            giottoLargeImage = giottoLargeImage,
-            method = method
-        )
+        do.call(.dist_giottolargeimage, args = a)
     }
 }
+
+
+
+#' @name density
+#' @title Density plot
+#' @description
+#' Create density plots of the pixel values of a giottoLargeImage. Wrapper
+#' around [terra::density()].
+#' @param x giottoLargeImage
+#' @param show_max logical. Plot the set max intensity as a vertical red line
+#' @inheritDotParams terra::density
+#' @seealso [hist()]
+#' @examples
+#' f <- system.file(package = "GiottoClass", "extdata/toy_intensity.tif")
+#' gimg <- createGiottoLargeImage(f, use_rast_ext = TRUE)
+#' density(gimg)
+#' @export
+setMethod(
+    "density", signature("giottoLargeImage"),
+    function(x, show_max = TRUE, ...) {
+        a <- list(x = x@raster_object, ...)
+        res <- do.call(terra::density, args = a)
+
+        if (isFALSE(a$plot)) {
+            return(res)
+        }
+
+        if (isTRUE(show_max)) {
+            abline(v = x@max_window, col = "red")
+        }
+    })
+
+
+#' @name hist
+#' @title Histogram
+#' @description
+#' Create a histogram of the pixel values of a giottoLargeImage. Wrapper around
+#' [terra::hist()]
+#' @param x giottoLargeImage
+#' @param show_max logical. Plot the set max intensity as a vertical red line
+#' @inheritDotParams terra::hist
+#' @seealso [density()]
+#' @examples
+#' f <- system.file(package = "GiottoClass", "extdata/toy_intensity.tif")
+#' gimg <- createGiottoLargeImage(f, use_rast_ext = TRUE, verbose = FALSE)
+#' hist(gimg)
+#' @export
+setMethod(
+    "hist", signature("giottoLargeImage"),
+    function(x, show_max = TRUE, ...) {
+        a <- list(x = x@raster_object, ...)
+        res <- do.call(terra::hist, args = a)
+
+        if (isFALSE(a$plot)) {
+            return(res)
+        }
+
+        if (isTRUE(show_max)) {
+            abline(v = x@max_window, col = "red")
+        }
+    }
+)
 
 
 
