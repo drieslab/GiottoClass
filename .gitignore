@@ -1,0 +1,10 @@
+
+.Rprofile
+.Rproj.user
+.Rhistory
+*.Rproj
+.git_old
+
+testdata
+
+*.DS_Store
