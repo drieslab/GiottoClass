@@ -298,18 +298,12 @@ reference:
   contents:
   - createNetwork
   - edge_distances
-  subtitle: Spatial networks
-  desc: Networks describing spatial relationships
-- contents:
   - createSpatialNetwork
   - createSpatialDelaunayNetwork
   - createSpatialFeaturesKNNnetwork
   - createSpatialKNNnetwork
   - createSpatialWeightMatrix
   - spat_net_to_igraph
-- subtitle: NN Networks
-  desc: Nearest neighbor networks for analysis of dimension reduction information
-  contents:
   - createNearestNetwork
   - addNetworkLayout
 - title: Spatial
