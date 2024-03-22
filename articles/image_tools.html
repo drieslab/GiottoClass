@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/JetBrains_Mono-0.4.8/font.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/JetBrains_Mono-0.4.9/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Giotto image tools">
@@ -34,7 +34,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,13 +98,8 @@
 <div class="section level3">
 <h3 id="overview">1. Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h3>
-<p>Giotto uses <code>giottoLargeImage</code> to represent images and
-raster information. This is an S4 class built based on the
-<em>terra</em> <code>SpatRaster</code>.</p>
-<p>An older class called <code>giottoImage</code> based on the
-<em>magick</em> package also exists, but is currently being phased out.
-Ideally, <code>giottoLargeImages</code> will also be renamed to
-<code>giottoImage</code> afterwards, simplifying the naming scheme.</p>
+<p>Giotto uses <code>giottoLargeImage</code> to represent images and raster information. This is an S4 class built based on the <em>terra</em> <code>SpatRaster</code>.</p>
+<p>An older class called <code>giottoImage</code> based on the <em>magick</em> package also exists, but is currently being phased out. Ideally, <code>giottoLargeImages</code> will also be renamed to <code>giottoImage</code> afterwards, simplifying the naming scheme.</p>
 <p>The object structure of <code>giottoLargeImage</code></p>
 <pre><code>giottoLargeImage
 \- name                (object name)
@@ -124,36 +119,15 @@ Ideally, <code>giottoLargeImages</code> will also be renamed to
 <div class="section level3">
 <h3 id="sampling">2. Sampling<a class="anchor" aria-label="anchor" href="#sampling"></a>
 </h3>
-<p>Spatial images are often extremely large files. The high detail
-(resolution), large spatial region captured, and precision of recorded
-values (bitdepth) often results in files in the 10s of gigabytes. This
-makes the full size images difficult to work with. One way to get around
-this is to perform regular sampling of the image, touching only the
-values of the original image that are needed generate a downscaled
-representation. This is implemented in <em>terra</em> as
-<code>spatSample()</code>.</p>
-<p>When plotting, <em>Giotto</em> optimizes the speed of this sampling
-by striking a balance between <code><a href="https://rspatial.github.io/terra/reference/crop.html" class="external-link">terra::crop()</a></code> and
-<code><a href="https://rspatial.github.io/terra/reference/sample.html" class="external-link">terra::spatSample()</a></code> to try to prevent sampling from
-unnecessary regions, but also avoid large crop operations on the
-fullsize image, which can be very costly. This is done through
-<code><a href="../reference/plot_auto_largeImage_resample.html">plot_auto_largeImage_resample()</a></code></p>
-<p><code>giottoLargeImages</code> can also be resampled to other image
-formats (<code>magick</code> and <code>EBImage</code>) in addition to
-<code>data.table</code> and <code>array</code> using
-<code>GiottoClass:::.spatraster_sample_values()</code></p>
-<p>These two functions are experimental and they will be exported using
-more common function names in the future.</p>
+<p>Spatial images are often extremely large files. The high detail (resolution), large spatial region captured, and precision of recorded values (bitdepth) often results in files in the 10s of gigabytes. This makes the full size images difficult to work with. One way to get around this is to perform regular sampling of the image, touching only the values of the original image that are needed generate a downscaled representation. This is implemented in <em>terra</em> as <code>spatSample()</code>.</p>
+<p>When plotting, <em>Giotto</em> optimizes the speed of this sampling by striking a balance between <code><a href="https://rspatial.github.io/terra/reference/crop.html" class="external-link">terra::crop()</a></code> and <code><a href="https://rspatial.github.io/terra/reference/sample.html" class="external-link">terra::spatSample()</a></code> to try to prevent sampling from unnecessary regions, but also avoid large crop operations on the fullsize image, which can be very costly. This is done through <code><a href="../reference/plot_auto_largeImage_resample.html">plot_auto_largeImage_resample()</a></code></p>
+<p><code>giottoLargeImages</code> can also be resampled to other image formats (<code>magick</code> and <code>EBImage</code>) in addition to <code>data.table</code> and <code>array</code> using <code>GiottoClass:::.spatraster_sample_values()</code></p>
+<p>These two functions are experimental and they will be exported using more common function names in the future.</p>
 </div>
 <div class="section level3">
 <h3 id="color-scaling">3 Color scaling<a class="anchor" aria-label="anchor" href="#color-scaling"></a>
 </h3>
-<p><code><a href="../reference/distGiottoImage.html">distGiottoImage()</a></code> can be used to look at the values
-present within a <code>giottoLargeImage</code>. It is often the case
-that the values recorded within an image do not map to the full set of
-values allowed by its bitdepth. <em>Giotto</em> plots images by guessing
-the bitdepth based on the estimated maximum value detected. This mapping
-may not always be optimal.</p>
+<p><code><a href="../reference/distGiottoImage.html">distGiottoImage()</a></code> can be used to look at the values present within a <code>giottoLargeImage</code>. It is often the case that the values recorded within an image do not map to the full set of values allowed by its bitdepth. <em>Giotto</em> plots images by guessing the bitdepth based on the estimated maximum value detected. This mapping may not always be optimal.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://drieslab.github.io/GiottoClass/">GiottoClass</a></span><span class="op">)</span></span>
 <span><span class="va">gimg</span> <span class="op">&lt;-</span> <span class="fu">GiottoData</span><span class="fu">::</span><span class="fu"><a href="https://drieslab.github.io/GiottoData/reference/loadSubObjectMini.html" class="external-link">loadSubObjectMini</a></span><span class="op">(</span><span class="st">"giottoLargeImage"</span>, idx <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
@@ -164,19 +138,14 @@ may not always be optimal.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/distGiottoImage.html">distGiottoImage</a></span><span class="op">(</span>giottoLargeImage <span class="op">=</span> <span class="va">gimg</span><span class="op">)</span></span></code></pre></div>
 <p><img src="image_tools_files/figure-html/unnamed-chunk-1-2.png" width="700"></p>
-<p>Since there are few values beyond 70, try setting
-<code>max_window</code> to 70 in so that the color mapping better
-represents the available information.</p>
+<p>Since there are few values beyond 70, try setting <code>max_window</code> to 70 in so that the color mapping better represents the available information.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gimg</span><span class="op">@</span><span class="va">max_window</span> <span class="op">&lt;-</span> <span class="fl">70</span></span>
 <span><span class="fu"><a href="../reference/plot-generic.html">plot</a></span><span class="op">(</span><span class="va">gimg</span><span class="op">)</span></span></code></pre></div>
 <p><img src="image_tools_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot(gimg, max_intensity = 150) # can be used without setting the slot</span></span></code></pre></div>
-<p>The colormap to use for an image can also be edited. The default for
-a greyscale image is a monochrome black to white. Other color scales can
-be supplied. For monochrome colorscales:
-<code><a href="https://drieslab.github.io/GiottoUtils/reference/getMonochromeColors.html" class="external-link">getMonochromeColors()</a></code></p>
+<p>The colormap to use for an image can also be edited. The default for a greyscale image is a monochrome black to white. Other color scales can be supplied. For monochrome colorscales: <code><a href="https://drieslab.github.io/GiottoUtils/reference/getMonochromeColors.html" class="external-link">getMonochromeColors()</a></code></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gimg</span><span class="op">@</span><span class="va">colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://drieslab.github.io/GiottoUtils/reference/getMonochromeColors.html" class="external-link">getMonochromeColors</a></span><span class="op">(</span><span class="st">"green"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot-generic.html">plot</a></span><span class="op">(</span><span class="va">gimg</span><span class="op">)</span></span></code></pre></div>
@@ -195,9 +164,9 @@ be supplied. For monochrome colorscales:
 </ul>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.3.2 (2023-10-31)</span></span>
+<pre><code><span><span class="co">## R version 4.3.3 (2024-02-29)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
-<span><span class="co">## Running under: Ubuntu 22.04.3 LTS</span></span>
+<span><span class="co">## Running under: Ubuntu 22.04.4 LTS</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Matrix products: default</span></span>
 <span><span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -216,20 +185,19 @@ be supplied. For monochrome colorscales:
 <span><span class="co">## [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">## [1] GiottoClass_0.1.3</span></span>
+<span><span class="co">## [1] GiottoClass_0.2.3</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##  [1] Matrix_1.6-5       jsonlite_1.8.8     highr_0.10         compiler_4.3.2    </span></span>
-<span><span class="co">##  [5] gtools_3.9.5       Rcpp_1.0.12        stringr_1.5.1      jquerylib_0.1.4   </span></span>
-<span><span class="co">##  [9] systemfonts_1.0.5  textshaping_0.3.7  yaml_2.3.8         fastmap_1.1.1     </span></span>
-<span><span class="co">## [13] lattice_0.21-9     R6_2.5.1           knitr_1.45         desc_1.4.3        </span></span>
-<span><span class="co">## [17] bslib_0.6.1        GiottoUtils_0.1.5  rlang_1.1.3        cachem_1.0.8      </span></span>
-<span><span class="co">## [21] stringi_1.8.3      terra_1.7-71       xfun_0.42          fs_1.6.3          </span></span>
-<span><span class="co">## [25] sass_0.4.8         memoise_2.0.1      cli_3.6.2          pkgdown_2.0.7     </span></span>
-<span><span class="co">## [29] magrittr_2.0.3     digest_0.6.34      grid_4.3.2         lifecycle_1.0.4   </span></span>
-<span><span class="co">## [33] vctrs_0.6.5        evaluate_0.23      glue_1.7.0         data.table_1.15.0 </span></span>
-<span><span class="co">## [37] codetools_0.2-19   ragg_1.2.7         GiottoData_0.2.7.0 rmarkdown_2.25    </span></span>
-<span><span class="co">## [41] purrr_1.0.2        tools_4.3.2        htmltools_0.5.7</span></span></code></pre>
+<span><span class="co">##  [1] terra_1.7-71       vctrs_0.6.5        cli_3.6.2          knitr_1.45        </span></span>
+<span><span class="co">##  [5] rlang_1.1.3        xfun_0.42          highr_0.10         GiottoData_0.2.7.0</span></span>
+<span><span class="co">##  [9] purrr_1.0.2        textshaping_0.3.7  data.table_1.15.2  gtools_3.9.5      </span></span>
+<span><span class="co">## [13] jsonlite_1.8.8     GiottoUtils_0.1.6  htmltools_0.5.7    ragg_1.3.0        </span></span>
+<span><span class="co">## [17] sass_0.4.9         rmarkdown_2.26     grid_4.3.3         evaluate_0.23     </span></span>
+<span><span class="co">## [21] jquerylib_0.1.4    fastmap_1.1.1      yaml_2.3.8         lifecycle_1.0.4   </span></span>
+<span><span class="co">## [25] memoise_2.0.1      compiler_4.3.3     codetools_0.2-19   fs_1.6.3          </span></span>
+<span><span class="co">## [29] Rcpp_1.0.12        lattice_0.22-5     systemfonts_1.0.6  digest_0.6.35     </span></span>
+<span><span class="co">## [33] R6_2.5.1           magrittr_2.0.3     Matrix_1.6-5       bslib_0.6.1       </span></span>
+<span><span class="co">## [37] tools_4.3.3        pkgdown_2.0.7      cachem_1.0.8       desc_1.4.3</span></span></code></pre>
 </div>
 </div>
 </div>

@@ -259,6 +259,9 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/createNearestNetwork.html</loc>
   </url>
   <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/createNetwork.html</loc>
+  </url>
+  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/createSpatEnrObj.html</loc>
   </url>
   <url>
@@ -454,6 +457,9 @@
     <loc>https://drieslab.github.io/GiottoClass/reference/dot-dt_to_spatvector_polygon.html</loc>
   </url>
   <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/dot-edge_coords_array.html</loc>
+  </url>
+  <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/dot-filter_network.html</loc>
   </url>
   <url>
@@ -557,6 +563,9 @@
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/dot-terra_writeraster_datatype.html</loc>
+  </url>
+  <url>
+    <loc>https://drieslab.github.io/GiottoClass/reference/edge_distances.html</loc>
   </url>
   <url>
     <loc>https://drieslab.github.io/GiottoClass/reference/estimateImageBg.html</loc>
