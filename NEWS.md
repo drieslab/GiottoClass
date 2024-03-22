@@ -13,6 +13,8 @@
 - `plot()` `giottoPoints` method now plots density when `dens = TRUE`
 - new `spatValues()` to get specific values from a `giotto` object in `data.table` format
 - new `ometif_to_tif` to convert between .ome.tif and .tif
+- new `terra::density()` and `terra::hist()` wrappers for `giottoLargeImage`
+- `show_max` param `density()` and `hist()` to show the image object's `max_window` setting
 
 
 
