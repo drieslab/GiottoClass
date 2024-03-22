@@ -13,22 +13,23 @@
 #' @param toplevel expected relative stackframe where call that is being recorded
 #' was made
 #' @export
-update_giotto_params <- function(gobject,
-                                 description = "_test",
-                                 return_gobject = TRUE,
-                                 toplevel = 2) {
-  parameters_list <- gobject@parameters
-  number_of_rounds <- length(parameters_list)
-  update_name <- paste0(number_of_rounds, description)
+update_giotto_params <- function(
+        gobject,
+        description = "_test",
+        return_gobject = TRUE,
+        toplevel = 2) {
+    parameters_list <- gobject@parameters
+    number_of_rounds <- length(parameters_list)
+    update_name <- paste0(number_of_rounds, description)
 
-  parameters_list[[update_name]] <- get_args(toplevel = toplevel)
+    parameters_list[[update_name]] <- get_args(toplevel = toplevel)
 
-  if (return_gobject == TRUE) {
-    gobject@parameters <- parameters_list
-    return(gobject)
-  } else {
-    return(list(plist = parameters_list, newname = update_name))
-  }
+    if (return_gobject == TRUE) {
+        gobject@parameters <- parameters_list
+        return(gobject)
+    } else {
+        return(list(plist = parameters_list, newname = update_name))
+    }
 }
 
 
@@ -39,10 +40,10 @@ update_giotto_params <- function(gobject,
 #' @param object giotto object
 #' @export
 objHistory <- function(object) {
-  cat("Steps and parameters used: \n \n")
-  print(object@parameters)
-  cat("\n\n")
-  invisible(x = object@parameters)
+    cat("Steps and parameters used: \n \n")
+    print(object@parameters)
+    cat("\n\n")
+    invisible(x = object@parameters)
 }
 
 
@@ -55,18 +56,18 @@ objHistory <- function(object) {
 #' @return list of processing steps and names
 #' @export
 showProcessingSteps <- function(gobject) {
-  parameters <- gobject@parameters
+    parameters <- gobject@parameters
 
-  cat("Processing steps: \n \n")
+    cat("Processing steps: \n \n")
 
-  for (step in names(parameters)) {
-    cat("\n", step, "\n")
+    for (step in names(parameters)) {
+        cat("\n", step, "\n")
 
-    sub_step <- parameters[[step]]
+        sub_step <- parameters[[step]]
 
-    if (any(grepl("name", names(sub_step)) == TRUE)) {
-      selected_names <- grep("name", names(sub_step), value = T)
-      cat("\t name info: ", sub_step[selected_names], "\n")
+        if (any(grepl("name", names(sub_step)) == TRUE)) {
+            selected_names <- grep("name", names(sub_step), value = T)
+            cat("\t name info: ", sub_step[selected_names], "\n")
+        }
     }
-  }
 }
