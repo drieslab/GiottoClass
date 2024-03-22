@@ -293,8 +293,13 @@ reference:
   desc: GiottoClass defined classes
 - contents:
   - ends_with("-class")
-- title: Spatial network
-  desc: Spatial network creation and tools
+- title: Networks
+  desc: Network creation and tools
+  contents:
+  - createNetwork
+  - edge_distances
+  subtitle: Spatial networks
+  desc: Networks describing spatial relationships
 - contents:
   - createSpatialNetwork
   - createSpatialDelaunayNetwork
@@ -302,6 +307,11 @@ reference:
   - createSpatialKNNnetwork
   - createSpatialWeightMatrix
   - spat_net_to_igraph
+- subtitle: NN Networks
+  desc: Nearest neighbor networks for analysis of dimension reduction information
+  contents:
+  - createNearestNetwork
+  - addNetworkLayout
 - title: Spatial
 - subtitle: Manipulation
   desc: Spatial manipulation and terra-based functions
@@ -319,11 +329,6 @@ reference:
   desc: Spatial querying
   contents:
   - spatQueryGiottoPolygons
-- title: NN Networks
-  desc: Nearest neighbor networks for analysis of dimension reduction information
-  contents:
-  - createNearestNetwork
-  - addNetworkLayout
 - title: Object generics
   desc: Standard generics for Giotto exported classes
 - contents:
