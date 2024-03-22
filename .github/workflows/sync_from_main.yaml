@@ -1,0 +1,39 @@
+name: Sync Main to Website
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight
+  workflow_dispatch:    # Allow manual trigger
+
+jobs:
+  sync-branches:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for all branches and tags
+
+    - name: Set up Git
+      run: |
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
+
+    - name: Check for new commits
+      id: check_commits
+      run: |
+        git checkout website
+        if git merge-base --is-ancestor website main; then
+          echo "No new commits to merge."
+          echo "has_new_commits=false" >> $GITHUB_OUTPUT
+        else
+          echo "New commits to merge."
+          echo "has_new_commits=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Merge and push changes
+      if: steps.check_commits.outputs.has_new_commits == 'true'
+      run: |
+        git merge --ff-only main
+        git push origin website
