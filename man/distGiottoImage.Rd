@@ -9,7 +9,9 @@ distGiottoImage(
   image_type = "largeImage",
   image_name = NULL,
   giottoLargeImage = NULL,
-  method = c("dens", "hist")
+  method = c("dens", "hist"),
+  show_max = TRUE,
+  ...
 )
 }
 \arguments{
@@ -23,6 +25,10 @@ default)}
 \item{giottoLargeImage}{giotto large image object}
 
 \item{method}{plot type to show image intensity distribution}
+
+\item{show_max}{logical. Plot the set max intensity as a vertical red line}
+
+\item{...}{additional params to pass to \code{\link[terra:hist]{terra::hist()}} or \code{\link[terra:density]{terra::density()}}}
 }
 \description{
 Plot distribution of intensity values using either a density plot

@@ -24,12 +24,8 @@ jobs:
 
     steps:
 
-      - name: Remove vignettes dir
-        run: rm -rf 'vignettes/'
-        shell: bash
-
       - name: Checkout repo for workflow access
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup pandoc
         uses: r-lib/actions/setup-pandoc@v2
@@ -46,7 +42,25 @@ jobs:
           _R_CHECK_RD_XREFS: false
         with:
           dependencies: '"hard"' # do not use suggested dependencies
-          extra-packages: any::rcmdcheck, any::testthat, any::rlang, any::R.utils, any::knitr, any::rmarkdown, any::sp, any::stars, any::raster, any::sf, any::scattermore, any::exactextractr, github::drieslab/GiottoData
+          install-pandoc: false
+          extra-packages: |
+            any::rcmdcheck
+            any::testthat
+            any::rlang
+            any::R.utils
+            any::knitr
+            any::rmarkdown
+            any::qs
+            any::sp
+            any::stars
+            any::raster
+            any::sf
+            any::scattermore
+            any::exactextractr
+            any::RTriangle
+            any::geometry
+            any::qs
+            github::drieslab/GiottoData
 
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2

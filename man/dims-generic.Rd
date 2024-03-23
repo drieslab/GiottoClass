@@ -18,6 +18,8 @@
 \alias{dim,metaData-method}
 \alias{dim,enrData-method}
 \alias{dim,giottoLargeImage-method}
+\alias{dim,giottoPolygon-method}
+\alias{dim,giottoPoints-method}
 \title{Dimensions of giotto objects}
 \usage{
 \S4method{nrow}{giottoPoints}(x)
@@ -51,6 +53,10 @@
 \S4method{dim}{enrData}(x)
 
 \S4method{dim}{giottoLargeImage}(x)
+
+\S4method{dim}{giottoPolygon}(x)
+
+\S4method{dim}{giottoPoints}(x)
 }
 \arguments{
 \item{x}{object to check dimensions of}

@@ -73,7 +73,7 @@ protein, metabolites, ... that are provided in the expression slot.}
 
 \item{\code{offset_file}}{offset file used to stitch together image fields}
 
-\item{\code{OS_platform}}{Operating System to run Giotto analysis on}
+\item{\code{versions}}{giotto object metadata and versioning info}
 
 \item{\code{join_info}}{information about joined Giotto objects}
 

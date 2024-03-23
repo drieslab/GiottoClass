@@ -8,6 +8,7 @@
 \alias{ext,giottoPoints-method}
 \alias{ext,spatialNetworkObj-method}
 \alias{ext,giottoLargeImage-method}
+\alias{ext,giottoImage-method}
 \alias{ext<-,giottoPoints,SpatExtent-method}
 \alias{ext<-,giottoPolygon,SpatExtent-method}
 \alias{ext<-,giottoLargeImage,SpatExtent-method}
@@ -23,6 +24,8 @@
 \S4method{ext}{spatialNetworkObj}(x, ...)
 
 \S4method{ext}{giottoLargeImage}(x, ...)
+
+\S4method{ext}{giottoImage}(x, ...)
 
 \S4method{ext}{giottoPoints,SpatExtent}(x) <- value
 
