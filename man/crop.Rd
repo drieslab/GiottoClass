@@ -2,16 +2,16 @@
 % Please edit documentation in R/methods-crop.R
 \name{crop}
 \alias{crop}
-\alias{crop,giottoLargeImage,ANY-method}
-\alias{crop,giottoPoints,ANY-method}
-\alias{crop,giottoPolygon,ANY-method}
+\alias{crop,giottoLargeImage-method}
+\alias{crop,giottoPoints-method}
+\alias{crop,giottoPolygon-method}
 \title{Crop to a spatial subset}
 \usage{
-\S4method{crop}{giottoLargeImage,ANY}(x, y, ...)
+\S4method{crop}{giottoLargeImage}(x, y, ...)
 
-\S4method{crop}{giottoPoints,ANY}(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL, ...)
+\S4method{crop}{giottoPoints}(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL, ...)
 
-\S4method{crop}{giottoPolygon,ANY}(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL, ...)
+\S4method{crop}{giottoPolygon}(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL, ...)
 }
 \arguments{
 \item{x}{object}
@@ -39,10 +39,10 @@ that also allows usage of additional params through ...
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{crop(x = giottoLargeImage, y = ANY)}: Crop a giottoLargeImage
+\item \code{crop(giottoLargeImage)}: Crop a giottoLargeImage
 
-\item \code{crop(x = giottoPoints, y = ANY)}: Crop a giottoPoints
+\item \code{crop(giottoPoints)}: Crop a giottoPoints
 
-\item \code{crop(x = giottoPolygon, y = ANY)}: Crop a giottoPoints
+\item \code{crop(giottoPolygon)}: Crop a giottoPoints
 
 }}
