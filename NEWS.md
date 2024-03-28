@@ -2,9 +2,20 @@
 
 # GiottoClass 0.2.4
 
+## breaking changes
+- deprecation of `reconnect_image_object()`, `reconnect_giottoImage_MG()` and `reconnect_giottoLargeImage()` internals in favor of simpler `reconnect()` generic
+
+## bug fixes
+- fix `plot()` params passing for `giottoPolygon` when `type = "centroid"`
+
 ## enhancements
 - use faster `terra::rasterize()` and `terra::plot()` instead of `scattermore::scattermoreplot()` for `giottoPoints` `plot()` method
 - `plot()` `giottoPoints` method now plots density when `dens = TRUE`
+- new `spatValues()` to get specific values from a `giotto` object in `data.table` format
+- new `ometif_to_tif` to convert between .ome.tif and .tif
+- new `terra::density()` and `terra::hist()` wrappers for `giottoLargeImage`
+- `show_max` param `density()` and `hist()` to show the image object's `max_window` setting
+
 
 
 # GiottoClass 0.2.3 (2024/03/12)

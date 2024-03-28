@@ -566,8 +566,12 @@ updateGiottoImageMG <- function(gobject = NULL,
 #' @returns reconnected giottoImage
 #' @keywords internal
 #' @export
-reconnect_giottoImage_MG <- function(giottoImage,
-    image_path) {
+reconnect_giottoImage_MG <- function(
+        giottoImage,
+        image_path) {
+
+    deprecate_soft("0.2.4", "reconnect_giottoImage_MG()", "reconnect()")
+
     # load in new magick object
     mg_object <- magick::image_read(image_path)
 
@@ -940,12 +944,15 @@ plot_auto_largeImage_resample <- function(gobject,
 #' default)
 #' @param giottoLargeImage giotto large image object
 #' @param method method of plotting image distribution
+#' @param ... additional params to pass
 #' @returns density or histogram plot
 #' @keywords internal
-.dist_giottolargeimage <- function(gobject = NULL,
-    image_name = NULL,
-    giottoLargeImage = NULL,
-    method = "dens") {
+.dist_giottolargeimage <- function(
+        gobject = NULL,
+        image_name = NULL,
+        giottoLargeImage = NULL,
+        method = "dens",
+        ...) {
     # get image object
     if (!is.null(gobject) & !is.null(image_name)) {
         img_obj <- getGiottoImage(
@@ -953,17 +960,18 @@ plot_auto_largeImage_resample <- function(gobject,
             image_type = "largeImage",
             name = image_name
         )
-        img_obj <- img_obj@raster_object
     } else if (!is.null(giottoLargeImage)) {
-        img_obj <- giottoLargeImage@raster_object
+        img_obj <- giottoLargeImage
     } else {
         stop("No giottoLargeImage given \n")
     }
 
+    a = list(x = img_obj, ...)
+
     # plot
     switch(method,
-        "dens" = terra::density(img_obj),
-        "hist" = terra::hist(img_obj)
+        "dens" = do.call(density, args = a),
+        "hist" = do.call(hist, args = a)
     )
 }
 
@@ -2073,8 +2081,12 @@ addGiottoLargeImage <- function(gobject = NULL,
 #' @returns reconnected giottoLargeImage
 #' @keywords internal
 #' @export
-reconnect_giottoLargeImage <- function(giottoLargeImage,
-    image_path) {
+reconnect_giottoLargeImage <- function(
+        giottoLargeImage,
+        image_path) {
+
+    deprecate_soft("0.2.4", "reconnect_giottoLargeImage()", "reconnect()")
+
     # load in new terra raster objects
     raster_object <- .create_terra_spatraster(image_path = image_path)
 
@@ -2347,21 +2359,17 @@ updateGiottoImage <- function(gobject = NULL,
 #' @param image_path path to image source to reconnect image object with
 #' @returns reconnected image_object
 #' @keywords internal
-reconnect_image_object <- function(image_object,
-    image_type,
-    image_path) {
-    if (image_type == "image") {
-        image_object <- reconnect_giottoImage_MG(
-            giottoImage = image_object,
-            image_path = image_path
-        )
-    }
-    if (image_type == "largeImage") {
-        image_object <- reconnect_giottoLargeImage(
-            giottoLargeImage = image_object,
-            image_path = image_path
-        )
-    }
+reconnect_image_object <- function(
+        image_object,
+        image_type,
+        image_path) {
+
+    deprecate_soft("0.2.4", "reconnect_image_object()", "reconnect()")
+
+    image_object <- reconnect(
+        x = image_object,
+        path = image_path
+    )
 
     return(image_object)
 }
@@ -2671,10 +2679,9 @@ reconnectGiottoImage <- function(gobject,
         img_list[[image_type]] <- lapply(
             X = seq_len(length(img_list[[image_type]])),
             function(x) {
-                reconnect_image_object(
-                    image_object = img_list[[image_type]][[x]],
-                    image_type = image_type,
-                    image_path = img_path[[image_type]][[x]]
+                reconnect(
+                    x = img_list[[image_type]][[x]],
+                    path = img_path[[image_type]][[x]]
                 )
             }
         )
@@ -2717,13 +2724,18 @@ reconnectGiottoImage <- function(gobject,
 #' @param image_name name of image object to use
 #' @param giottoLargeImage giotto large image object
 #' @param method plot type to show image intensity distribution
+#' @param show_max logical. Plot the set max intensity as a vertical red line
+#' @param ... additional params to pass to [terra::hist()] or [terra::density()]
 #' @returns density or histogram plot
 #' @export
-distGiottoImage <- function(gobject = NULL,
-    image_type = "largeImage",
-    image_name = NULL,
-    giottoLargeImage = NULL,
-    method = c("dens", "hist")) {
+distGiottoImage <- function(
+        gobject = NULL,
+        image_type = "largeImage",
+        image_name = NULL,
+        giottoLargeImage = NULL,
+        method = c("dens", "hist"),
+        show_max = TRUE,
+        ...) {
     # check params
     if (image_type != "largeImage") 
         stop("Only largeImage objects currently supported \n")
@@ -2734,16 +2746,77 @@ distGiottoImage <- function(gobject = NULL,
     }
     method <- match.arg(arg = method, choices = c("dens", "hist"))
 
+    a = list(gobject = gobject, image_name = image_name,
+             giottoLargeImage = giottoLargeImage, method = method,
+             show_max = show_max, ...)
+
     # run specific function
     if (image_type == "largeImage") {
-        .dist_giottolargeimage(
-            gobject = gobject,
-            image_name = image_name,
-            giottoLargeImage = giottoLargeImage,
-            method = method
-        )
+        do.call(.dist_giottolargeimage, args = a)
     }
 }
+
+
+
+#' @name density
+#' @title Density plot
+#' @description
+#' Create density plots of the pixel values of a giottoLargeImage. Wrapper
+#' around [terra::density()].
+#' @param x giottoLargeImage
+#' @param show_max logical. Plot the set max intensity as a vertical red line
+#' @inheritDotParams terra::density
+#' @seealso [hist()]
+#' @examples
+#' f <- system.file(package = "GiottoClass", "extdata/toy_intensity.tif")
+#' gimg <- createGiottoLargeImage(f, use_rast_ext = TRUE)
+#' density(gimg)
+#' @export
+setMethod(
+    "density", signature("giottoLargeImage"),
+    function(x, show_max = TRUE, ...) {
+        a <- list(x = x@raster_object, ...)
+        res <- do.call(terra::density, args = a)
+
+        if (isFALSE(a$plot)) {
+            return(res)
+        }
+
+        if (isTRUE(show_max)) {
+            abline(v = x@max_window, col = "red")
+        }
+    })
+
+
+#' @name hist
+#' @title Histogram
+#' @description
+#' Create a histogram of the pixel values of a giottoLargeImage. Wrapper around
+#' [terra::hist()]
+#' @param x giottoLargeImage
+#' @param show_max logical. Plot the set max intensity as a vertical red line
+#' @inheritDotParams terra::hist
+#' @seealso [density()]
+#' @examples
+#' f <- system.file(package = "GiottoClass", "extdata/toy_intensity.tif")
+#' gimg <- createGiottoLargeImage(f, use_rast_ext = TRUE, verbose = FALSE)
+#' hist(gimg)
+#' @export
+setMethod(
+    "hist", signature("giottoLargeImage"),
+    function(x, show_max = TRUE, ...) {
+        a <- list(x = x@raster_object, ...)
+        res <- do.call(terra::hist, args = a)
+
+        if (isFALSE(a$plot)) {
+            return(res)
+        }
+
+        if (isTRUE(show_max)) {
+            abline(v = x@max_window, col = "red")
+        }
+    }
+)
 
 
 
@@ -2762,3 +2835,36 @@ add_img_array_alpha <- function(x,
     x_alpha[, , seq_len(3)] <- x
     return(x_alpha)
 }
+
+
+
+
+# converters ####
+
+
+#' @title Convert ome.tif to tif
+#' @name ometif_to_tif
+#' @description
+#' Simple converter from .ome.tif to .tif format. Utilizes the python
+#' \pkg{tifffile} package.
+#' @param input_file character. Filepath to ome.tif to convert
+#' @param output_file character. Filepath to write .tif to
+#' @param overwrite logical. Default = FALSE. Whether to overwrite if the
+#' filename already exists.
+#' @returns returns NULL invisibly
+#' @export
+ometif_to_tif <- function(input_file, output_file, overwrite = FALSE) {
+    a <- get_args_list()
+
+    package_check("tifffile", repository = "pip:tifffile")
+    ometif2tif_path <- system.file("python", "ometif_convert.py",
+                                   package = "GiottoClass")
+    reticulate::source_python(ometif2tif_path)
+    do.call(ometif_2_tif, args = a)
+    invisible(NULL)
+}
+
+
+
+
+

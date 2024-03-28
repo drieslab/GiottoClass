@@ -4969,6 +4969,13 @@ get_spatial_enrichment <- function(gobject,
         feat_type = feat_type
     )
 
+    if (is.null(potential_names)) {
+        stop(wrap_txt(sprintf(
+            "No spatial enrichments found for spat_unit: %s and feat_type: %s",
+            spat_unit, feat_type
+        )))
+    }
+
     if (enrichm_name %in% potential_names) {
         enr_res <- gobject@spatial_enrichment[[spat_unit]][[feat_type
                                                             ]][[enrichm_name]]
@@ -5626,17 +5633,22 @@ setGiottoImage <- function(gobject = NULL,
             errWidth = TRUE
         ))
     } else if (is.null(image)) {
-        wrap_msg("Warning: image argument set to NULL. Replacing current 
-                image slot with NULL will remove the image.")
-    } else if (!"giottoImage" %in% image || !"giottoLargeImage" %in% image) {
+        wrap_msg("Warning: image argument set to NULL. Replacing current image 
+                slot with NULL will remove the image.")
+    } else if (!inherits(image, c("giottoImage", "giottoLargeImage"))) {
         wrap_msg("Unable to set non-giottoImage objects. Please ensure a 
                 giottoImage or giottoLargeImage is provided to this function.")
-        wrap_msg("See createGiottoImage or createGiottoLargeImage for more 
-                details.")
+        wrap_msg("See createGiottoImage or createGiottoLargeImage for 
+                more details.")
         stop(wrap_txt("Unable to set non-giottoImage object.",
             errWidth = TRUE
         ))
     }
+
+    image_type = switch(as.character(class(image)),
+        "giottoImage" = "image",
+        "giottoLargeImage" = "largeImage"
+    )
 
     gobject <- set_giottoImage(
         gobject = gobject,
@@ -5653,14 +5665,283 @@ setGiottoImage <- function(gobject = NULL,
 
 
 
-# set_mirai = function(gobject, x) {
-#   checkmate::assert_class(x, 'mirai')
-#   mirai_length <- length(gobject@mirai)
-#   gobject@mirai[mirai_length + 1] <- x
-#   gobject
-# }
-#
-#
-# get_mirai_list = function(gobject) {
-#   gobject@mirai
-# }
+## spatValues getter ####
+
+#' @name spatValues
+#' @title Giotto object spatial values
+#' @description
+#' `r GiottoUtils::lifecycle_badge("experimental")`\cr
+#' Retrieve specific values from the `giotto` object for a specific `spat_unit`
+#' and `feat_type`. Values are returned as a data.table with the features
+#' requested and a `cell_ID` column. This function may be updated in the future
+#' to search in additional sets of information. To see the currently available
+#' slot it checks, see details.
+#' @param gobject `giotto` object
+#' @param spat_unit character. spatial unit to check
+#' @param feat_type character. feature type to check
+#' @param feats character vector. One or more features or values to find within
+#' the giotto object
+#' @param expression_values character. (optional) Name of expression information
+#' to use
+#' @param spat_enr_name character. (optional) Name of spatial enrichments to
+#' use
+#' @param poly_info character. (optional) Name of polygons to use
+#' @param verbose verbosity
+#' @param debug logical. (default = FALSE) See details.
+#' @details
+#' **\[search\]**\cr
+#' spatValues searches through the set of available information within the
+#' `giotto` object for matches to `feats`. The current search order is
+#' \enumerate{
+#'   \item cell expression
+#'   \item{cell metadata}
+#'   \item{spatial enrichment}
+#'   \item{polygon info}
+#' }
+#' If a specific name for one of the types of information is provided via a
+#' param such as `expression_values`, `spat_enr_name`, `poly_info`, then
+#' the search will only be performed on that type of data.\cr\cr
+#' **\[debug\]**\cr
+#' This function uses Giotto's accessor functions which can usually throw errors
+#' whenever a specific set of data or the features within that set do not
+#' exist. This function muffles those errors, and only sends an error that the
+#' data was not found when all getters fail. By setting `debug = TRUE`, you can
+#' see the errors returned from each failed getter printed as messages for
+#' easier debugging.
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#'
+#' # expression
+#' spatValues(g, spat_unit = "aggregate", feats = c("Mlc1", "Gfap"))
+#' spatValues(g,
+#'     spat_unit = "aggregate", feats = c("Mlc1", "Gfap"),
+#'     expression_values = "normalized"
+#' )
+#'
+#' # spatial enrichment
+#' spatValues(g, spat_unit = "aggregate", feats = c("1", "3"))
+#'
+#' # polygon info
+#' spatValues(g, spat_unit = "aggregate", feats = c("agg_n", "valid"))
+#'
+#' # cell meta
+#' spatValues(g, spat_unit = "aggregate", feats = c("nr_feats"))
+#'
+#' @returns A data.table with a cell_ID column and whichever feats were
+#' requested
+#' @export
+spatValues <- function(gobject, spat_unit = NULL, feat_type = NULL, feats,
+    expression_values = NULL, spat_enr_name = NULL, poly_info = NULL,
+    verbose = NULL, debug = FALSE) {
+    checkmate::assert_class(gobject, "giotto")
+    checkmate::assert_character(feats)
+
+
+    # defaults
+    spat_unit <- set_default_spat_unit(
+        gobject = gobject,
+        spat_unit = spat_unit
+    )
+    feat_type <- set_default_feat_type(
+        gobject = gobject,
+        spat_unit = spat_unit,
+        feat_type = feat_type
+    )
+
+
+    # checker closures ------------------------------------------------- #
+    check_expr <- function(vals) { # %%%%%%%%%%%%%%%%%%%%% EXPR %%%%%%
+        if (!is.null(vals)) {
+            return(vals)
+        }
+        e <- getExpression(
+            gobject = gobject,
+            spat_unit = spat_unit,
+            feat_type = feat_type,
+            values = expression_values,
+            set_defaults = TRUE, # try to guess name if needed
+            output = "exprObj"
+        )
+        if (is.null(e)) {
+            return(NULL)
+        }
+        if (all(feats %in% featIDs(e))) {
+            vals <- data.table::as.data.table(
+                as.matrix(t_flex(e[][feats, , drop = FALSE])),
+                keep.rownames = TRUE
+            )
+            data.table::setnames(vals, old = "rn", new = "cell_ID")
+            vmsg(
+                .v = verbose,
+                sprintf(
+                    "Getting values from [%s][%s][%s] expression",
+                    spatUnit(e), featType(e), objName(e)
+                )
+            )
+            return(vals)
+        }
+        return(NULL)
+    }
+    check_cellmeta <- function(vals) { # %%%%%%%%%%%% CELL META %%%%%%
+        if (!is.null(vals)) {
+            return(vals)
+        }
+        cx <- getCellMetadata(
+            gobject = gobject,
+            spat_unit = spat_unit,
+            feat_type = feat_type,
+            output = "cellMetaObj",
+            copy_obj = FALSE,
+            set_defaults = FALSE
+        )
+        if (is.null(cx)) {
+            return(NULL)
+        }
+        if (all(feats %in% colnames(cx))) {
+            vals <- cx[][, unique(c("cell_ID", feats)), with = FALSE]
+            vmsg(
+                .v = verbose,
+                sprintf(
+                    "Getting values from [%s][%s] cell metadata",
+                    spatUnit(cx), featType(cx)
+                )
+            )
+            return(vals)
+        }
+        return(NULL)
+    }
+    check_spatenr <- function(vals) { # %%%%%%%%%%%%%% SPAT ENR %%%%%%
+        if (!is.null(vals)) {
+            return(vals)
+        }
+        enr <- getSpatialEnrichment(
+            gobject = gobject,
+            spat_unit = spat_unit,
+            feat_type = feat_type,
+            name = spat_enr_name,
+            output = "spatEnrObj",
+            copy_obj = FALSE,
+            set_defaults = TRUE # try to guess name
+        )
+        if (is.null(enr)) {
+            return(NULL)
+        }
+        if (all(feats %in% colnames(enr[]))) {
+            vals <- enr[][, unique(c("cell_ID", feats)), with = FALSE]
+            vmsg(
+                .v = verbose,
+                sprintf(
+                    "Getting values from [%s][%s][%s] spatial enrichment",
+                    spatUnit(enr), featType(enr), objName(enr)
+                )
+            )
+            return(vals)
+        }
+        return(NULL)
+    }
+    check_polyinfo <- function(vals) { # %%%%%%%%%%%% POLY INFO %%%%%%
+        if (!is.null(vals)) {
+            return(vals)
+        }
+        p <- getPolygonInfo(
+            gobject = gobject,
+            polygon_name = spat_unit,
+            return_giottoPolygon = TRUE,
+            verbose = FALSE
+        )
+        if (is.null(p)) {
+            return(NULL)
+        }
+        sv <- p[]
+        if (all(feats %in% names(sv))) {
+            vals <- data.table::as.data.table(sv)
+            data.table::setnames(vals, old = "poly_ID", new = "cell_ID")
+            vmsg(
+                .v = verbose,
+                sprintf(
+                    "Getting values from [%s] polygon info",
+                    spatUnit(p)
+                )
+            )
+            return(vals[, unique(c("cell_ID", feats)), with = FALSE])
+        }
+        return(NULL)
+    }
+
+
+    # [Getting the data]
+    # Iterate through checks defined by `nextcheck` looking for the `feats`
+    # desired.
+    # If values of `feats` are not found after iterating through all
+    # available checks, throw descriptive error.
+
+
+    # set nextcheck if location is known -------------------------------- #
+    nextcheck <- NULL
+    if (!is.null(spat_enr_name)) nextcheck <- "spatial enrichment"
+    if (!is.null(expression_values)) nextcheck <- "cell expression"
+    if (!is.null(poly_info)) nextcheck <- "polygon info"
+
+    # set order of checks if location not known ------------------------- #
+    if (is.null(nextcheck)) {
+        nextcheck <- c(
+            "cell expression",
+            "cell metadata",
+            "spatial enrichment",
+            "polygon info"
+        )
+    }
+
+
+    # run check(s) ------------------------------------------------------ #
+    vals <- NULL
+
+    # requires error handling because the giotto accessors may normally throw
+    # errors when the data you are looking for does not exist in the slot or
+    # if the slot is simply empty.
+    # Here we just silence those errors unless debug flag is TRUE.
+    # Silenced errors pass NULL, triggering the loop to continue searching.
+    err_handler <- function(fun, location) {
+        qfun <- quote(fun)
+        # eval(qfun)
+        withRestarts(
+            eval(qfun),
+            muffleError = function() {
+                invisible(NULL)
+            }
+        ) %>%
+            withCallingHandlers(
+                error = function(cond) {
+                    if (isTRUE(debug)) {
+                        message(sprintf(
+                            "Caught an error at [%s]:\n%s\n",
+                            location,
+                            conditionMessage(cond)
+                        ))
+                    }
+                    invokeRestart("muffleError")
+                }
+            )
+    }
+
+    for (data in nextcheck) {
+        vals <- switch(data,
+            "cell expression" = err_handler(check_expr(vals), data),
+            "cell metadata" = err_handler(check_cellmeta(vals), data),
+            "spatial enrichment" = err_handler(check_spatenr(vals), data),
+            "polygon info" = err_handler(check_polyinfo(vals), data)
+        )
+    }
+
+
+
+    if (is.null(vals)) {
+        stop(wrap_txt(
+            "features:", paste(feats, collapse = ", "), "not found in: ",
+            paste(nextcheck, collapse = ", "),
+            "for spat_unit", spat_unit, "and feat_type", feat_type
+        ))
+    }
+
+    return(vals)
+}
