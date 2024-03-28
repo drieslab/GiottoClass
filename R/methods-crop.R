@@ -15,6 +15,7 @@
 #' @param x object
 #' @param y any object that has a SpatExtent or returns a SpatExtent
 #' @param \dots additional params to pass to terra::crop
+#' @returns SpatRaster
 NULL
 
 

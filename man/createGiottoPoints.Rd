@@ -67,9 +67,9 @@ names x, y, and/or feat_ID.
 \examples{
 # data.frame input
 x <- data.frame(
-    ID = letters[1:6],
-    x = 1:6,
-    y = 6:1
+    ID = letters[seq_len(6)],
+    x = seq_len(6),
+    y = seq(6,1)
 )
 gpoints <- createGiottoPoints(x)
 plot(gpoints,

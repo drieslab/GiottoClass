@@ -33,3 +33,8 @@ Extended cell metadata in data.table format.
 This function combines the cell metadata with spatial locations
 and enrichment results from \code{\link[Giotto]{runSpatialEnrich}}
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+combineMetadata(g)
+
+}

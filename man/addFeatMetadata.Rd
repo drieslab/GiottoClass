@@ -51,33 +51,19 @@ the \emph{feat_ID} column in fDataDT(gobject).}
 }
 }
 \examples{
-# dummy matrix
-m <- readRDS(system.file("extdata/toy_matrix.RDS", package = "GiottoClass"))
-g <- createGiottoObject(m)
+g <- GiottoData::loadGiottoMini("visium")
 
-fDataDT(g)
-
-# appending a character vector, merge on vector names
-v <- seq(10)
-names(v) <- sample(letters[seq(10)])
-force(v)
-
-g <- addFeatMetadata(g, new_metadata = v, by_column = TRUE)
-fDataDT(g)
-
-# appending a data.frame, merge on specified column "ID"
-df <- data.frame(
-    IDS = rev(letters[seq(10)]), # reversed
-    l = LETTERS[seq(10)],
-    x = c(rep(TRUE, 5), rep(FALSE, 5))
-)
-force(df)
+m <- fDataDT(g)
+m <- m[,"feat_ID"]
+m$new_feat_ID <- paste0("gene_", m$feat_ID)
 
 g <- addFeatMetadata(
     g,
-    new_metadata = df,
+    new_metadata = m,
     by_column = TRUE,
-    column_feat_ID = "IDS"
+    column_feat_ID = "feat_ID"
 )
+
 fDataDT(g)
+
 }

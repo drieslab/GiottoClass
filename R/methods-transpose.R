@@ -5,6 +5,7 @@
 #' @name transpose-generic
 #' @param x object to be transposed
 #' @aliases t
+#' @returns transposed object
 NULL
 
 

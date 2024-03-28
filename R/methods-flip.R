@@ -11,6 +11,7 @@
 #' @param y0 y value to flip vertically over (ignored for horizontal). Pass NULL
 #' to flip over the extent
 #' @param ... additional args to pass
+#' @returns flipped object
 NULL
 # ---------------------------------------------------------------- #
 

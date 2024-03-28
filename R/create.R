@@ -48,7 +48,7 @@ NULL
 #' use (e.g. 'dgCMatrix', 'DelayedArray')
 #' @param h5_file path to h5 file
 #' @param verbose be verbose when building Giotto object
-#' @return giotto object
+#' @returns giotto object
 #' @details
 #'
 #' See \url{http://giottosuite.com/articles/getting_started_gobject.html} for 
@@ -93,6 +93,12 @@ NULL
 #' }
 #'
 #' @concept giotto
+#' @examples
+#' expr_matrix <- readRDS(system.file("extdata/toy_matrix.RDS", 
+#' package = "GiottoClass"))
+#' 
+#' createGiottoObject(expression = expr_matrix)
+#' 
 #' @export
 createGiottoObject <- function(expression,
     expression_feat = "rna",
@@ -348,8 +354,8 @@ createGiottoObject <- function(expression,
             # create square dummy coordinates
             nr_cells <- raw_cell_dim_list[[spat_unit]][[1]]
             x <- ceiling(sqrt(nr_cells))
-            first_col <- rep(1:x, each = x)[1:nr_cells]
-            second_col <- rep(1:x, times = x)[1:nr_cells]
+            first_col <- rep(seq_len(x), each = x)[seq_len(nr_cells)]
+            second_col <- rep(seq_len(x), times = x)[seq_len(nr_cells)]
 
             spatial_locs <- data.table::data.table(
                 cell_ID = gobject@cell_ID[[spat_unit]],
@@ -450,7 +456,7 @@ createGiottoObject <- function(expression,
             length(spatial_grid) != length(spatial_grid_name)) {
             stop("\n each spatial grid must be given a unique name \n")
         } else {
-            for (grid_i in 1:length(spatial_grid)) {
+            for (grid_i in seq_len(length(spatial_grid))) {
                 gridname <- spatial_grid_name[[grid_i]]
                 grid <- spatial_grid[[grid_i]]
 
@@ -567,10 +573,10 @@ createGiottoObject <- function(expression,
     # prefer to make giottoImage creation separate from this function
     if (!is.null(images)) {
         if (is.null(names(images))) {
-            names(images) <- paste0("image.", 1:length(images))
+            names(images) <- paste0("image.", seq_len(length(images)))
         }
 
-        for (image_i in 1:length(images)) {
+        for (image_i in seq_len(length(images))) {
             im <- images[[image_i]]
             im_name <- names(images)[[image_i]]
 
@@ -635,7 +641,7 @@ createGiottoObject <- function(expression,
 #' @param cores how many cores or threads to use to read data if paths are 
 #' provided
 #' @param verbose be verbose when building Giotto object
-#' @return giotto object
+#' @returns giotto object
 #' @details There are two different ways to create a Giotto Object with 
 #' subcellular information:
 #' - Starting from polygons (spatial units e.g. cell) represented by a mask 
@@ -643,6 +649,13 @@ createGiottoObject <- function(expression,
 #' - Starting from polygons (spatial units e.g. cell) represented by a mask 
 #' or dataframe file and raw intensity images (e.g. protein stains)
 #' @concept giotto
+#' @examples
+#' x_gpolygons <- GiottoData::loadSubObjectMini("giottoPolygon")
+#' x_gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
+#' 
+#' createGiottoObjectSubcellular(gpolygons = x_gpolygons,
+#' gpoints = x_gpoints)
+#' 
 #' @export
 createGiottoObjectSubcellular <- function(
         gpolygons = NULL,
@@ -759,7 +772,7 @@ createGiottoObjectSubcellular <- function(
             centroidsDT_loc <- centroidsDT[, .(poly_ID, x, y)]
             colnames(centroidsDT_loc) <- c("cell_ID", "sdimx", "sdimy")
 
-            locsObj <- create_spat_locs_obj(
+            locsObj <- createSpatLocsObj(
                 name = "raw",
                 coordinates = centroidsDT_loc,
                 spat_unit = polygon_info,
@@ -768,7 +781,7 @@ createGiottoObjectSubcellular <- function(
             )
 
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-            gobject <- set_spatial_locations(gobject, spatlocs = locsObj)
+            gobject <- setSpatialLocations(gobject, x = locsObj)
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
     }
@@ -893,7 +906,7 @@ createGiottoObjectSubcellular <- function(
             length(spatial_network) != length(spatial_network_name)) {
             stop("\n each spatial network must be given a unique name \n")
         } else {
-            for (network_i in 1:length(spatial_network)) {
+            for (network_i in seq_len(length(spatial_network))) {
                 networkname <- spatial_network_name[[network_i]]
                 network <- spatial_network[[network_i]]
 
@@ -909,9 +922,9 @@ createGiottoObjectSubcellular <- function(
                         spat_unit will be assumed: "', 
                         names(slot(gobject, "spatial_info"))[[1]], '"\n')
                         
-                        spatial_network_Obj <- create_spat_net_obj(
+                        spatial_network_Obj <- createSpatNetObj(
                             name = networkname,
-                            networkDT = network,
+                            network = network,
                             spat_unit = names(slot(gobject, "spatial_info")
                                             )[[1]],
                             provenance = names(slot(gobject, "spatial_info")
@@ -919,8 +932,8 @@ createGiottoObjectSubcellular <- function(
                         ) # assumed
 
                         ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-                        gobject <- set_spatialNetwork(gobject, 
-                                        spatial_network = spatial_network_Obj)
+                        gobject <- setSpatialNetwork(gobject, 
+                                        x = spatial_network_Obj)
                         ### ### ### ### ### ### ### ### ### ### ### ### ### ###
                     } else {
                         stop("\n network ", networkname, 
@@ -929,8 +942,8 @@ createGiottoObjectSubcellular <- function(
                     }
                 } else if (inherits(network, "spatialNetworkObj")) {
                     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-                    gobject <- set_spatialNetwork(gobject, 
-                                                spatial_network = network)
+                    gobject <- setSpatialNetwork(gobject, 
+                                                x = network)
                     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
                 } else {
                     stop("\n network ", networkname, 
@@ -948,7 +961,7 @@ createGiottoObjectSubcellular <- function(
             length(spatial_grid) != length(spatial_grid_name)) {
             stop("\n each spatial grid must be given a unique name \n")
         } else {
-            for (grid_i in 1:length(spatial_grid)) {
+            for (grid_i in seq_len(length(spatial_grid))) {
                 gridname <- spatial_grid_name[[grid_i]]
                 grid <- spatial_grid[[grid_i]]
 
@@ -975,7 +988,7 @@ createGiottoObjectSubcellular <- function(
                         )
 
                         ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-                        gobject <- set_spatialGrid(gobject = gobject, 
+                        gobject <- setSpatialGrid(gobject = gobject, 
                                                 spatial_grid = grid)
                         ### ### ### ### ### ### ### ### ### ### ### ### ### ###
                     } else {
@@ -985,7 +998,7 @@ createGiottoObjectSubcellular <- function(
                     }
                 } else if (inherits(grid, "spatialGridObj")) {
                     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-                    gobject <- set_spatialGrid(gobject, spatial_grid = grid)
+                    gobject <- setSpatialGrid(gobject, spatial_grid = grid)
                     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
                 } else {
                     stop("\n grid ", gridname, 
@@ -1003,7 +1016,7 @@ createGiottoObjectSubcellular <- function(
             stop("\n each spatial enrichment data.table or data.frame must be 
                 given a unique name \n")
         } else {
-            for (spat_enrich_i in 1:length(spatial_enrichment)) {
+            for (spat_enrich_i in seq_len(length(spatial_enrichment))) {
                 spatenrichname <- spatial_enrichment_name[[spat_enrich_i]]
                 spatenrich <- spatial_enrichment[[spat_enrich_i]]
 
@@ -1021,7 +1034,7 @@ createGiottoObjectSubcellular <- function(
 
     ## dimension reduction
     if (!is.null(dimension_reduction)) {
-        for (dim_i in 1:length(dimension_reduction)) {
+        for (dim_i in seq_len(length(dimension_reduction))) {
             dim_red <- dimension_reduction[[dim_i]]
 
             if (all(c("type", "name", "reduction_method", "coordinates", "misc"
@@ -1052,7 +1065,7 @@ createGiottoObjectSubcellular <- function(
 
     # NN network
     if (!is.null(nn_network)) {
-        for (nn_i in 1:length(nn_network)) {
+        for (nn_i in seq_len(length(nn_network))) {
             nn_netw <- nn_network[[nn_i]]
 
             if (all(c("type", "name", "igraph") %in% names(nn_netw))) {
@@ -1079,10 +1092,10 @@ createGiottoObjectSubcellular <- function(
     # expect a list of giotto object images
     if (!is.null(images)) {
         if (is.null(names(images))) {
-            names(images) <- paste0("image.", 1:length(images))
+            names(images) <- paste0("image.", seq_len(length(images)))
         }
 
-        for (image_i in 1:length(images)) {
+        for (image_i in seq_len(length(images))) {
             im <- images[[image_i]]
             im_name <- names(images)[[image_i]]
 
@@ -1102,11 +1115,12 @@ createGiottoObjectSubcellular <- function(
 
 
         if (is.null(names(largeImages))) {
-            names(largeImages) <- paste0("largeImage.", 1:length(largeImages))
+            names(largeImages) <- paste0(
+                "largeImage.", seq_len(length(largeImages)))
         }
 
 
-        for (largeImage_i in 1:length(largeImages)) {
+        for (largeImage_i in seq_len(length(largeImages))) {
             im <- largeImages[[largeImage_i]]
             im_name <- names(largeImages)[[largeImage_i]]
 
@@ -1135,10 +1149,6 @@ createGiottoObjectSubcellular <- function(
                     name = im_name,
                     largeImages_list_params
                 ))
-
-                # glargeImage = createGiottoLargeImage(raster_object = im,
-                #                                      negative_y = FALSE,
-                #                                      name = im_name)
 
                 gobject <- addGiottoImage(
                     gobject = gobject,
@@ -1177,6 +1187,13 @@ createGiottoObjectSubcellular <- function(
 #' @param misc misc
 #' @param expression_matrix_class class of expression matrix to 
 #' use (e.g. 'dgCMatrix', 'DelayedArray')
+#' @returns exprObj
+#' @examples
+#' x_expr <- readRDS(system.file("extdata/toy_matrix.RDS", 
+#' package = "GiottoClass"))
+#' 
+#' createExprObj(expression_data = x_expr)
+#' 
 #' @export
 createExprObj <- function(expression_data,
     name = "test",
@@ -1205,6 +1222,13 @@ createExprObj <- function(expression_data,
 #' @name create_expr_obj
 #' @param exprMat matrix of expression information
 #' @keywords internal
+#' @returns expr_obj
+#' @examples
+#' x_expr <- readRDS(system.file("extdata/toy_matrix.RDS", 
+#' package = "GiottoClass"))
+#' 
+#' create_expr_obj(exprMat = x_expr)
+#' 
 #' @export
 create_expr_obj <- function(name = "test",
     exprMat = NULL,
@@ -1245,6 +1269,12 @@ create_expr_obj <- function(name = "test",
 #' @param provenance origin data of aggregated expression 
 #' information (if applicable)
 #' @param verbose be verbose
+#' @returns cellMetaObj
+#' @examples
+#' df <- data.frame(cell_ID = c("cell_1", "cell_2", "cell_3"))
+#' 
+#' createCellMetaObj(metadata = df)
+#' 
 #' @export
 createCellMetaObj <- function(metadata,
     spat_unit = "cell",
@@ -1270,6 +1300,8 @@ createCellMetaObj <- function(metadata,
 #' @title create_cell_meta_obj
 #' @name create_cell_meta_obj
 #' @keywords internal
+#' @returns cell_meta_obj
+#' 
 #' @export
 create_cell_meta_obj <- function(metaDT = NULL,
     col_desc = NA_character_,
@@ -1311,6 +1343,7 @@ create_cell_meta_obj <- function(metaDT = NULL,
 #' @param provenance origin data of aggregated expression 
 #' information (if applicable)
 #' @param verbose be verbose
+#' @returns featMetaObj
 #' @export
 createFeatMetaObj <- function(metadata,
     spat_unit = "cell",
@@ -1336,6 +1369,7 @@ createFeatMetaObj <- function(metadata,
 #' @title create_feat_meta_obj
 #' @name create_feat_meta_obj
 #' @keywords internal
+#' @returns feat_meta_obj
 #' @export
 create_feat_meta_obj <- function(metaDT = NULL,
     col_desc = NA_character_,
@@ -1381,6 +1415,7 @@ create_feat_meta_obj <- function(metaDT = NULL,
 #' information (if applicable)
 #' @param misc misc
 #' @param my_rownames (optional) if needed, set coordinates rowname values here
+#' @returns dimObj
 #' @export
 createDimObj <- function(coordinates,
     name = "test",
@@ -1410,6 +1445,7 @@ createDimObj <- function(coordinates,
 #' @title create_dim_obj
 #' @name create_dim_obj
 #' @keywords internal
+#' @returns dim_obj
 #' @export
 create_dim_obj <- function(name = "test",
     reduction = "cells",
@@ -1468,6 +1504,7 @@ create_dim_obj <- function(name = "test",
 #' For igraph, it must have, at minimum vertex 'name' attributes and 'distance'
 #' edge attribute.
 #' dataframe-like inputs must have 'from', 'to', and 'distance' columns
+#' @returns nnNetObj
 #' @export
 createNearestNetObj <- function(name = "test",
     network,
@@ -1498,6 +1535,7 @@ createNearestNetObj <- function(name = "test",
 #' @title create_nn_net_obj
 #' @name create_nn_net_obj
 #' @keywords internal
+#' @returns nn_net_obj
 #' @export
 create_nn_net_obj <- function(name = "test",
     nn_type = NA_character_,
@@ -1541,6 +1579,7 @@ create_nn_net_obj <- function(name = "test",
 #' information (if applicable)
 #' @param misc misc
 #' @param verbose be verbose
+#' @returns spatLocsObj
 #' @export
 createSpatLocsObj <- function(coordinates,
     name = "test",
@@ -1567,6 +1606,7 @@ createSpatLocsObj <- function(coordinates,
 #' @title create_spat_locs_obj
 #' @name create_spat_locs_obj
 #' @keywords internal
+#' @returns spat_locs_obj
 #' @export
 create_spat_locs_obj <- function(name = "test",
     coordinates = NULL,
@@ -1625,6 +1665,7 @@ create_spat_locs_obj <- function(name = "test",
 #' @param crossSectionObjects (optional) crossSectionObjects
 #' @param provenance (optional) origin of aggregated information (if applicable)
 #' @param misc misc
+#' @returns spatialNetworkObj
 #' @export
 createSpatNetObj <- function(network,
     name = "test",
@@ -1658,6 +1699,7 @@ createSpatNetObj <- function(network,
 #' @title create_spat_net_obj
 #' @name create_spat_net_obj
 #' @keywords internal
+#' @returns spat_net_obj
 #' @export
 create_spat_net_obj <- function(name = "test",
     method = NA_character_,
@@ -1711,6 +1753,7 @@ create_spat_net_obj <- function(name = "test",
 #' @param misc misc additional information about the spatial enrichment or 
 #' how it was generated
 #' @param verbose be verbose
+#' @returns spatEnrObj
 #' @export
 createSpatEnrObj <- function(enrichment_data,
     name = "test",
@@ -1737,6 +1780,7 @@ createSpatEnrObj <- function(enrichment_data,
 #' @title create_spat_enr_obj
 #' @name create_spat_enr_obj
 #' @keywords internal
+#' @returns spat_enr_obj
 #' @export
 create_spat_enr_obj <- function(name = "test",
     method = NA_character_,
@@ -1787,6 +1831,7 @@ create_spat_enr_obj <- function(name = "test",
 #' @param provenance origin of aggregated information (if applicable)
 #' @param misc misc
 #' @keywords internal
+#' @returns spatialGridObj
 #' @export
 create_spat_grid_obj <- function(name = "test",
     method = NA_character_,
@@ -1821,6 +1866,7 @@ create_spat_grid_obj <- function(name = "test",
 #' @param network_lookup_id network lookup id
 #' @param full fully connected status
 #' @keywords internal
+#' @returns featureNetwork_object
 create_featureNetwork_object <- function(name = "feat_network",
     network_datatable = NULL,
     network_lookup_id = NULL,
@@ -1879,13 +1925,14 @@ create_featureNetwork_object <- function(name = "feat_network",
 #' Using the manual option where you can select the names of the x, y, and 
 #' feat_ID columns is not compatible with a data.frame that already has the 
 #' names x, y, and/or feat_ID.
+#' @returns giottoPoints
 #'
 #' @examples
 #' # data.frame input
 #' x <- data.frame(
-#'     ID = letters[1:6],
-#'     x = 1:6,
-#'     y = 6:1
+#'     ID = letters[seq_len(6)],
+#'     x = seq_len(6),
+#'     y = seq(6,1)
 #' )
 #' gpoints <- createGiottoPoints(x)
 #' plot(gpoints,
@@ -1907,7 +1954,6 @@ create_featureNetwork_object <- function(name = "feat_network",
 #' gpoints[c(TRUE, FALSE, FALSE)] # logical
 #' gpoints[c("a", "f")] # character subsetting is keyed on feat_ID attribute
 #' gpoints[] # drop to SpatVector
-#' @return giottoPoints
 #' @concept points
 NULL
 
@@ -2010,6 +2056,7 @@ setMethod(
 #' @param networks (optional) feature network object
 #' @param unique_IDs (optional) unique IDs in spatVector for cacheing
 #' @keywords internal
+#' @returns giotto_points_object
 create_giotto_points_object <- function(feat_type = "rna",
     spatVector = NULL,
     networks = NULL,
@@ -2072,6 +2119,7 @@ create_giotto_points_object <- function(feat_type = "rna",
 #' @param name name for polygons
 #' @param calc_centroids calculate centroids for polygons
 #' @param verbose be verbose
+#' @returns giottoPolygon
 NULL
 
 
@@ -2278,7 +2326,6 @@ setMethod(
 #' If a "%" character is detected in the input then the input will be treated as
 #' a `sprintf()` `fmt` param input instead. (ie: `ID_fmt = "cell_%03d"` produces
 #' `cell_001`, `cell_002`, `cell_003`, ...)
-#' @return a giotto polygon object
 #' @examples
 #' mask_multi <- system.file("extdata/toy_mask_multi.tif",
 #'     package = "GiottoClass"
@@ -2540,6 +2587,7 @@ createGiottoPolygonsFromMask <- function(
 #' also unsuccessful then poly_ID defaults to the 3rd column. 'x' and 'y' then 
 #' default to the 1st and 2nd columns.
 #' @concept polygon
+#' @returns giottoPolygon
 #' @export
 createGiottoPolygonsFromDfr <- function(segmdfr,
     name = "cell",
@@ -2589,6 +2637,7 @@ createGiottoPolygonsFromDfr <- function(segmdfr,
 #' @param calc_centroids (default FALSE) calculate centroids for polygons
 #' @param verbose be verbose
 #' @concept polygon
+#' @returns giottoPolygon
 #' @export
 createGiottoPolygonsFromGeoJSON <- function(GeoJSON,
     name = "cell",
@@ -2636,6 +2685,7 @@ createGiottoPolygonsFromGeoJSON <- function(GeoJSON,
 #' @param overlaps (optional) feature overlaps of polygons
 #' @param unique_IDs unique polygon IDs for cacheing
 #' @keywords internal
+#' @returns giotto_polygon_object
 create_giotto_polygon_object <- function(name = "cell",
     spatVector = NULL,
     spatVectorCentroids = NULL,
@@ -2732,7 +2782,7 @@ create_giotto_polygon_object <- function(name = "cell",
 #' \[\strong{flip_y_axis}\] flip y-axis (\code{\link[magick]{image_flip}})
 #' Example: image_transformations = c(flip_x_axis, flip_y_axis); first flip 
 #' x-axis and then y-axis
-#' @return a giottoImage object
+#' @returns a giottoImage object
 #' @export
 createGiottoImage <- function(gobject = NULL,
     spat_unit = NULL,
@@ -2983,7 +3033,7 @@ createGiottoImage <- function(gobject = NULL,
 #' @param scale_factor scaling of image dimensions relative to spatial 
 #' coordinates
 #' @param verbose be verbose
-#' @return a giottoLargeImage object
+#' @returns a giottoLargeImage object
 #' @export
 createGiottoLargeImage <- function(raster_object,
     name = "image",
@@ -3183,7 +3233,7 @@ createGiottoLargeImage <- function(raster_object,
 #' coordinates
 #' @param verbose be verbose
 #' @details See \code{\link{createGiottoLargeImage}}
-#' @return a list with giottoLargeImage objects
+#' @returns a list with giottoLargeImage objects
 #' @export
 createGiottoLargeImageList <- function(raster_objects,
     names = "image",
@@ -3208,7 +3258,7 @@ createGiottoLargeImageList <- function(raster_objects,
 
     result_list <- list()
 
-    for (i in 1:l_images) {
+    for (i in seq_len(l_images)) {
         image_res <- createGiottoLargeImage(
             raster_object = raster_objects[[i]],
             name = names[[i]],

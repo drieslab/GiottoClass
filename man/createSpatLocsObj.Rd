@@ -27,6 +27,9 @@ information (if applicable)}
 
 \item{verbose}{be verbose}
 }
+\value{
+spatLocsObj
+}
 \description{
 Create an S4 spatLocsObj
 }

@@ -17,6 +17,9 @@
 
 \item{value}{spat_unit to set as default}
 }
+\value{
+active spatial unit
+}
 \description{
 Retrieve or set the active spatial unit. This value will be the
 default spatial unit that the giotto object uses.

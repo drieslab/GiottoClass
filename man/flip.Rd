@@ -51,6 +51,9 @@ to flip over the extent}
 
 \item{...}{additional args to pass}
 }
+\value{
+flipped object
+}
 \description{
 Flip an object over a designated x or y value depending on
 direction param input. Note that this behavior may be different from terra's

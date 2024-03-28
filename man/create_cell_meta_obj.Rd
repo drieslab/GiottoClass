@@ -12,6 +12,9 @@ create_cell_meta_obj(
   provenance = NULL
 )
 }
+\value{
+cell_meta_obj
+}
 \description{
 create_cell_meta_obj
 }

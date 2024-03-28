@@ -14,6 +14,9 @@ get_feat_id(gobject, feat_type = NULL, set_defaults = TRUE)
 \item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
 expression and spat_info are not expected to exist.}
 }
+\value{
+character
+}
 \description{
 Across a single modality/feature type, all feature information
 is expected to share a single set of feat_IDs. These feat_IDs are stored

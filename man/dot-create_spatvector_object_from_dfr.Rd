@@ -23,6 +23,9 @@
 
 \item{verbose}{be verbose}
 }
+\value{
+SpatVector
+}
 \description{
 create terra spatvector from a data.frame where cols 1 and 2
 must be x and y coordinates respectively. Additional columns are set as

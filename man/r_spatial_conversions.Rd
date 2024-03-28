@@ -88,6 +88,9 @@ instead of wrapped in a \code{giottoPoints} or \code{giottoPolygon} object}
 
 \item{type}{whether data is 'vector' or 'raster'}
 }
+\value{
+sf, sp, stars or terra
+}
 \description{
 R spatial conversions
 }

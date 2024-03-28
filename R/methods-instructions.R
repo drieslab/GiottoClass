@@ -15,6 +15,7 @@ NULL
 #' @param initialize (boolean, default = TRUE) whether to initialize the giotto 
 #' object
 #' @param value value to set
+#' @returns giotto instructions
 NULL
 
 #' @title Active spatial unit
@@ -24,6 +25,7 @@ NULL
 #' default spatial unit that the giotto object uses.
 #' @inheritParams data_access_params
 #' @param value spat_unit to set as default
+#' @returns active spatial unit
 NULL
 
 #' @title Active feature type
@@ -33,6 +35,7 @@ NULL
 #' default feature type that the giotto object uses.
 #' @inheritParams data_access_params
 #' @param value feat_type to set as default
+#' @returns active feature type
 NULL
 
 # ---------------------------------------------------------------- #

@@ -20,7 +20,7 @@
 #' @param clip boolean. Default = FALSE. Whether final round of querying should
 #' return polygons clipped by the polygons used to select them. If TRUE, a value
 #' must be provided to \code{name} param to generate a new spatial unit
-#' @return giottoPolygon
+#' @returns giottoPolygon
 # #' @seealso [spatQueryGiottoSpatLocs()]
 #' @export
 spatQueryGiottoPolygons <- function(gobject,

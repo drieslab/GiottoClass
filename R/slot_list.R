@@ -7,7 +7,7 @@
 #' @param slot giotto object slot of 
 #' interest (e.g. "expression", "spatial_locs", etc.)
 #' @param ... additional params to pass
-#' @return names and locations of data within giotto object slot
+#' @returns names and locations of data within giotto object slot
 #' @keywords internal
 #' @export
 list_giotto_data <- function(gobject = NULL,
@@ -59,7 +59,7 @@ list_giotto_data <- function(gobject = NULL,
 #' @name list_expression
 #' @description lists the available matrices
 #' @inheritParams data_access_params
-#' @return names and locations of available matrices as data.table. 
+#' @returns names and locations of available matrices as data.table. 
 #' col order matters.
 #' @export
 list_expression <- function(gobject,
@@ -107,7 +107,7 @@ list_expression <- function(gobject,
 #' @description lists the available matrices names for a given spatial unit 
 #' and feature type
 #' @inheritParams data_access_params
-#' @return vector with names of available matrices
+#' @returns vector with names of available matrices
 #' @export
 list_expression_names <- function(gobject,
     spat_unit = NULL,
@@ -127,7 +127,7 @@ list_expression_names <- function(gobject,
 #' @description lists the available cell id names. In effect, these names are 
 #' the spat_units and poly info in the gobject
 #' @inheritParams data_access_params
-#' @return vector with names of available sets of cell_IDs
+#' @returns vector with names of available sets of cell_IDs
 #' @export
 list_cell_id_names <- function(gobject) {
     return(names(gobject@cell_ID))
@@ -139,7 +139,7 @@ list_cell_id_names <- function(gobject) {
 #' @description lists the available feat id names In effect, these names are the
 #' feat_types and feature info in the gobject
 #' @inheritParams data_access_params
-#' @return vector with names of available sets of feat_IDs
+#' @returns vector with names of available sets of feat_IDs
 #' @export
 list_feat_id_names <- function(gobject) {
     return(names(gobject@feat_ID))
@@ -150,7 +150,7 @@ list_feat_id_names <- function(gobject) {
 #' @name list_cell_metadata
 #' @description lists the available cell metadata.
 #' @inheritParams data_access_params
-#' @return names and locations of available cell metadata as data.table
+#' @returns names and locations of available cell metadata as data.table
 #' @export
 list_cell_metadata <- function(gobject,
     spat_unit = NULL,
@@ -200,7 +200,7 @@ list_cell_metadata <- function(gobject,
 #' @name list_feat_metadata
 #' @description lists the available feature metadata
 #' @inheritParams data_access_params
-#' @return names and locations of available feature metadata as data.table
+#' @returns names and locations of available feature metadata as data.table
 #' @export
 list_feat_metadata <- function(gobject,
     spat_unit = NULL,
@@ -250,7 +250,7 @@ list_feat_metadata <- function(gobject,
 #' @name list_spatial_locations
 #' @description shows the available spatial locations
 #' @inheritParams data_access_params
-#' @return names and locations of available data.table as data.table
+#' @returns names and locations of available data.table as data.table
 #' @export
 list_spatial_locations <- function(gobject,
     spat_unit = NULL,
@@ -301,7 +301,7 @@ list_spatial_locations <- function(gobject,
 #' @description lists the available spatial location names for a given spatial 
 #' unit
 #' @inheritParams data_access_params
-#' @return vector with names of available spatial locations
+#' @returns vector with names of available spatial locations
 #' @export
 list_spatial_locations_names <- function(gobject,
     spat_unit = NULL) {
@@ -318,7 +318,7 @@ list_spatial_locations_names <- function(gobject,
 #' @name list_spatial_enrichments
 #' @description return the available spatial enrichment results
 #' @inheritParams data_access_params
-#' @return names and locations of available data as data.table
+#' @returns names and locations of available data as data.table
 #' @export
 list_spatial_enrichments <- function(gobject,
     spat_unit = NULL,
@@ -369,7 +369,7 @@ list_spatial_enrichments <- function(gobject,
 #' @description returns the available spatial enrichment names for a given 
 #' spatial unit
 #' @inheritParams data_access_params
-#' @return vector of names for available spatial enrichments
+#' @returns vector of names for available spatial enrichments
 #' @export
 list_spatial_enrichments_names <- function(gobject,
     spat_unit = NULL,
@@ -392,7 +392,7 @@ list_spatial_enrichments_names <- function(gobject,
 #' @inheritParams data_access_params
 #' @param data_type "cells" or "feats" data used in dim reduction
 #' @param dim_type dimensional reduction method (e.g. "pca", "umap")
-#' @return names and locations of dimension reduction as a data.table
+#' @returns names and locations of dimension reduction as a data.table
 #' @export
 list_dim_reductions <- function(gobject,
     data_type = NULL,
@@ -462,7 +462,7 @@ list_dim_reductions <- function(gobject,
 #' @inheritParams data_access_params
 #' @param data_type cells or feats dim reduction
 #' @param dim_type dimensional reduction type (method)
-#' @return names of dimension reduction object
+#' @returns names of dimension reduction object
 #' @details function that can be used to find which names have been used
 #' @export
 list_dim_reductions_names <- function(gobject,
@@ -487,7 +487,7 @@ list_dim_reductions_names <- function(gobject,
 #' @description return the available nearest neighbor network information
 #' @inheritParams data_access_params
 #' @param nn_type nearest neighbor method (e.g. "sNN", "kNN")
-#' @return names and locations of nearest neighbor networks as a data.table
+#' @returns names and locations of nearest neighbor networks as a data.table
 #' @export
 list_nearest_networks <- function(gobject,
     spat_unit = NULL,
@@ -559,7 +559,7 @@ list_nearest_networks <- function(gobject,
 #' @description return the available nearest neighbor network object names
 #' @inheritParams data_access_params
 #' @param nn_type nearest neighbor method (e.g. "sNN", "kNN")
-#' @return names of nearest neighbor network object
+#' @returns names of nearest neighbor network object
 #' @details function that can be used to find which names have been used
 #' @export
 list_nearest_networks_names <- function(gobject,
@@ -582,7 +582,7 @@ list_nearest_networks_names <- function(gobject,
 #' @name list_spatial_info
 #' @description return the available giotto spatial polygon information
 #' @param gobject giotto object
-#' @return names of available spatial polygon information
+#' @returns names of available spatial polygon information
 #' @export
 list_spatial_info <- function(gobject) {
     availableSpatInfo <- data.table()
@@ -608,7 +608,7 @@ list_spatial_info <- function(gobject) {
 #' @description return the available names for giotto spatial polygon 
 #' information
 #' @param gobject giotto object
-#' @return vector with names of available spatial polygon information
+#' @returns vector with names of available spatial polygon information
 #' @export
 list_spatial_info_names <- function(gobject) {
     spat_info_names <- names(gobject@spatial_info)
@@ -622,7 +622,7 @@ list_spatial_info_names <- function(gobject) {
 #' @name list_feature_info
 #' @description return the available giotto spatial feature information
 #' @param gobject giotto object
-#' @return names of available feature information
+#' @returns names of available feature information
 #' @export
 list_feature_info <- function(gobject) {
     availableFeatInfo <- data.table()
@@ -645,7 +645,7 @@ list_feature_info <- function(gobject) {
 #' @name list_feature_info_names
 #' @description return the available names for giotto feature information
 #' @param gobject giotto object
-#' @return vector with names of available feature information
+#' @returns vector with names of available feature information
 #' @export
 list_feature_info_names <- function(gobject) {
     feat_info_names <- names(gobject@feat_info)
@@ -660,7 +660,7 @@ list_feature_info_names <- function(gobject) {
 #' @description return the available spatial networks that are attached to 
 #' the Giotto object
 #' @inheritParams data_access_params
-#' @return data.table of names and locations of available spatial networks,
+#' @returns data.table of names and locations of available spatial networks,
 #' col order matters or list of unique nestings
 #' @export
 list_spatial_networks <- function(gobject,
@@ -709,7 +709,7 @@ list_spatial_networks <- function(gobject,
 #' @name list_spatial_networks_names
 #' @description return the available names for giotto feature information
 #' @inheritParams data_access_params
-#' @return vector with names of available feature information
+#' @returns vector with names of available feature information
 #' @export
 list_spatial_networks_names <- function(gobject,
     spat_unit = NULL) {
@@ -728,7 +728,7 @@ list_spatial_networks_names <- function(gobject,
 #' @description return the available spatial grids that are attached to the 
 #' Giotto object
 #' @inheritParams data_access_params
-#' @return data.table of names and locations of available spatial grids. 
+#' @returns data.table of names and locations of available spatial grids. 
 #' col order matters
 #' @export
 list_spatial_grids <- function(gobject,
@@ -792,7 +792,7 @@ list_spatial_grids <- function(gobject,
 #' @inheritParams data_access_params
 #' @param return_uniques return unique nesting 
 #' names (ignores if final object exists/is correct class)
-#' @return vector with names of available spatial grids names
+#' @returns vector with names of available spatial grids names
 #' @export
 list_spatial_grids_names <- function(gobject,
     spat_unit = NULL,
@@ -813,7 +813,7 @@ list_spatial_grids_names <- function(gobject,
 #' Giotto object
 #' @param gobject giotto object
 #' @param img_type "image" or "largeImage"
-#' @return data.table of giotto image names attached to the giotto object
+#' @returns data.table of giotto image names attached to the giotto object
 #' @export
 list_images <- function(gobject,
     img_type = NULL) {
@@ -870,7 +870,7 @@ list_images <- function(gobject,
 #' are attached to the Giotto object
 #' @param gobject a giotto object
 #' @param img_type "image" or "largeImage"
-#' @return vector with names of available image names
+#' @returns vector with names of available image names
 #' @export
 list_images_names <- function(gobject,
     img_type) {

@@ -8,7 +8,7 @@
 #' matrix (ignored for sparse matrices)
 #' @param ncols number of columns to print for each 
 #' matrix (ignored for sparse matrices)
-#' @return prints the name and small subset of available matrices
+#' @returns prints the name and small subset of available matrices
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
@@ -97,7 +97,7 @@ showGiottoExpression <- function(gobject, nrows = 4, ncols = 4) {
 #' @description shows the available cell metadata
 #' @param gobject giotto object
 #' @param nrows number of rows to print for each metadata
-#' @return prints the name and small subset of available metadata
+#' @returns prints the name and small subset of available metadata
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
@@ -131,8 +131,8 @@ showGiottoCellMetadata <- function(gobject,
             objRows[[obj_i]] <- nrow(dataObj[])
 
             objPrints[[obj_i]] <-
-                dataObj[1:if (nrows <= objRows[[obj_i]]) 
-                    nrows else objRows[[obj_i]], ] %>%
+                dataObj[seq_len(if (nrows <= objRows[[obj_i]]) 
+                    nrows else objRows[[obj_i]]), ] %>%
                 print() %>%
                 capture.output()
         }
@@ -175,7 +175,7 @@ showGiottoCellMetadata <- function(gobject,
 #' @description shows the available feature metadata
 #' @param gobject giotto object
 #' @param nrows number of rows to print for each metadata
-#' @return prints the name and small subset of available metadata
+#' @returns prints the name and small subset of available metadata
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
@@ -209,8 +209,8 @@ showGiottoFeatMetadata <- function(gobject,
             objRows[[obj_i]] <- nrow(dataObj[])
 
             objPrints[[obj_i]] <-
-                dataObj[1:if (nrows <= objRows[[obj_i]]) 
-                    nrows else objRows[[obj_i]], ] %>%
+                dataObj[seq_len(if (nrows <= objRows[[obj_i]]) 
+                    nrows else objRows[[obj_i]]), ] %>%
                 print() %>%
                 capture.output()
         }
@@ -254,7 +254,7 @@ showGiottoFeatMetadata <- function(gobject,
 #' @description shows the available spatial locations
 #' @param gobject giotto object
 #' @param nrows number of rows to print for each spatial location data.table
-#' @return prints the name and small subset of available data.table
+#' @returns prints the name and small subset of available data.table
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
@@ -342,7 +342,8 @@ showGiottoSpatLocs <- function(gobject,
     #     if(inherits(gobject@spatial_locs[[spatial_unit]][[spatlocname]], 
     #     'data.frame')) {
     #       cat('--> Name: ', spatlocname, ' \n\n')
-    #       print(gobject@spatial_locs[[spatial_unit]][[spatlocname]][1:nrows,])
+    #       print(gobject@spatial_locs[[spatial_unit]][[spatlocname
+    #       ]][seq_len(nrows),])
     #       cat('\n')
     #     }
     #     if(inherits(gobject@spatial_locs[[spatial_unit]][[spatlocname]], 
@@ -352,7 +353,7 @@ showGiottoSpatLocs <- function(gobject,
     #       cat('Provenance: ', slot(gobject@spatial_locs[[spatial_unit
     #       ]][[spatlocname]], 'provenance'), ' \n')
     #       print(slot(gobject@spatial_locs[[spatial_unit]][[spatlocname]], 
-    #       'coordinates')[1:nrows,])
+    #       'coordinates')[seq_len(nrows),])
     #       cat('\n')
     #     }
     #   }
@@ -365,7 +366,7 @@ showGiottoSpatLocs <- function(gobject,
 #' @description shows the available spatial enrichment results
 #' @param gobject giotto object
 #' @param nrows number of rows to print for each spatial enrichment data.table
-#' @return prints the name and small subset of available data.table
+#' @returns prints the name and small subset of available data.table
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
@@ -394,7 +395,8 @@ showGiottoSpatEnrichments <- function(gobject,
                 cat("----> Name ", spatenrichname, ": \n\n")
 
                 print(gobject@spatial_enrichment[[spatial_unit]][[feature_type
-                                            ]][[spatenrichname]][][1:nrows, ])
+                                            ]][[spatenrichname]][][
+                                                seq_len(nrows), ])
             }
         }
     }
@@ -408,7 +410,7 @@ showGiottoSpatEnrichments <- function(gobject,
 #' @param gobject giotto object
 #' @param nrows number of coordinates rows to print
 #' @param ncols number of coordinates columns to print
-#' @return prints the name and small subset of available dimension reduction 
+#' @returns prints the name and small subset of available dimension reduction 
 #' coordinates
 #' @family functions to show data in giotto object
 #' @keywords show
@@ -451,9 +453,9 @@ showGiottoDimRed <- function(gobject,
 
             objPrints[[obj_i]] <-
                 dataObj[
-                    1:if (nrows <= objRows[[obj_i]]) 
-                        nrows else objRows[[obj_i]],
-                    1:if (ncols <= objCols[[obj_i]]) ncols else objCols[[obj_i]]
+                    seq_len(if (nrows <= objRows[[obj_i]]) 
+                        nrows else objRows[[obj_i]]),
+                    seq_len(if (ncols <= objCols[[obj_i]]) ncols else objCols[[obj_i]])
                 ] %>%
                 print() %>%
                 capture.output()
@@ -536,7 +538,7 @@ showGiottoDimRed <- function(gobject,
 #' @description shows the available nearest neighbor networks
 #' @param gobject giotto object
 #' @param nrows number of network rows to print
-#' @return prints the name and small subset of available nearest neighbor 
+#' @returns prints the name and small subset of available nearest neighbor 
 #' network info
 #' @family functions to show data in giotto object
 #' @keywords show
@@ -572,8 +574,8 @@ showGiottoNearestNetworks <- function(gobject,
             objRows[[obj_i]] <- nrow(dataObj)
 
             objPrints[[obj_i]] <-
-                dataObj[1:if (nrows <= objRows[[obj_i]]) 
-                    nrows else objRows[[obj_i]], ] %>%
+                dataObj[seq_len(if (nrows <= objRows[[obj_i]]) 
+                    nrows else objRows[[obj_i]]), ] %>%
                 print() %>%
                 capture.output()
         }
@@ -642,8 +644,13 @@ showGiottoNearestNetworks <- function(gobject,
 #' @name showGiottoSpatialInfo
 #' @description show the available giotto spatial polygon information
 #' @param gobject giotto object
+#' @returns SpatVector
 #' @family functions to show data in giotto object
 #' @keywords show
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' showGiottoSpatialInfo(g)
+#' 
 #' @export
 showGiottoSpatialInfo <- function(gobject) {
     if (is.null(gobject)) stop("A giotto object needs to be provided \n")
@@ -666,6 +673,11 @@ showGiottoSpatialInfo <- function(gobject) {
 #' @param gobject giotto object
 #' @family functions to show data in giotto object
 #' @keywords show
+#' @returns SpatVector
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' showGiottoFeatInfo(g)
+#' 
 #' @export
 showGiottoFeatInfo <- function(gobject) {
     if (is.null(gobject)) stop("A giotto object needs to be provided \n")
@@ -690,7 +702,7 @@ showGiottoFeatInfo <- function(gobject) {
 #' Giotto object
 #' @param gobject a giotto object
 #' @param nrows number of rows to print
-#' @return prints names and small subset of available spatial network info
+#' @returns prints names and small subset of available spatial network info
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
@@ -723,8 +735,8 @@ showGiottoSpatNetworks <- function(gobject,
             objRows[[obj_i]] <- nrow(dataObj)
 
             objPrints[[obj_i]] <-
-                dataObj[1:if (nrows <= objRows[[obj_i]]) 
-                    nrows else objRows[[obj_i]], ] %>%
+                dataObj[seq_len(if (nrows <= objRows[[obj_i]]) 
+                    nrows else objRows[[obj_i]]), ] %>%
                 print() %>%
                 capture.output()
         }
@@ -770,6 +782,7 @@ showGiottoSpatNetworks <- function(gobject,
 #' @title Show networks
 #' @name showNetworks
 #' @inheritDotParams showGiottoSpatNetworks
+#' @returns prints names and small subset of available spatial network info
 #' @seealso \code{\link{showGiottoSpatNetworks}}
 #' @export
 showNetworks <- function(...) {
@@ -785,7 +798,7 @@ showNetworks <- function(...) {
 #' Giotto object
 #' @param gobject giotto object
 #' @param nrows number of rows to print
-#' @return prints name of available spatial grids
+#' @returns prints name of available spatial grids
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
@@ -817,8 +830,8 @@ showGiottoSpatGrids <- function(gobject,
             objRows[[obj_i]] <- nrow(dataObj)
 
             objPrints[[obj_i]] <-
-                dataObj[1:if (nrows <= objRows[[obj_i]]) 
-                    nrows else objRows[[obj_i]], ] %>%
+                dataObj[seq_len(if (nrows <= objRows[[obj_i]]) 
+                    nrows else objRows[[obj_i]]), ] %>%
                 print() %>%
                 capture.output()
         }
@@ -866,6 +879,7 @@ showGiottoSpatGrids <- function(gobject,
 #' @title Show Spatial Grids
 #' @name showGrids
 #' @inheritDotParams showGiottoSpatGrids
+#' @returns prints name of available spatial grids
 #' @seealso \code{\link{showGiottoSpatGrids}}
 #' @export
 showGrids <- function(...) {
@@ -880,7 +894,7 @@ showGrids <- function(...) {
 #' @description Prints the available giotto images that are attached to the 
 #' Giotto object
 #' @param gobject a giotto object
-#' @return prints names of available giotto image objects
+#' @returns prints names of available giotto image objects
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
@@ -912,9 +926,10 @@ showGiottoImageNames <- function(gobject) {
 #' @param inherit_last (boolean) determine behavior from previous level for 
 #' last level (intended for values print)
 #' Only TRUE behavior defined. #TODO
-#' @param indent ident characters to print for this level (top level is '')
+#' @param indent indent characters to print for this level (top level is '')
 #' @keywords internal
 #' @details Much inspiration taken from https://rdrr.io/cran/fs/src/R/tree.R
+#' @returns Hierarchical tree
 #' @keywords internal
 .print_leaf <- function(level_index,
     availableDT,
@@ -962,6 +977,7 @@ showGiottoImageNames <- function(gobject) {
 #' @description print abbreviated matrix exprObj. Works for Matrix pkg denseMatrix,
 #' matrix, data.frame and classes that inherit them.
 #' @keywords internal
+#' @returns abbreviated matrix exprObj
 .abbrev_mat <- function(exprObj, nrows, ncols, header = TRUE) {
     mat <- as.matrix(exprObj[])
     four_names <- head(colnames(mat), 4)
@@ -970,8 +986,8 @@ showGiottoImageNames <- function(gobject) {
 
     # suppress colnames
     mat <- mat[
-        1:if (nrows <= mat_rows) nrows else mat_rows,
-        1:if (ncols <= mat_cols) ncols else mat_cols
+        seq_len(if (nrows <= mat_rows) nrows else mat_rows),
+        seq_len(if (ncols <= mat_cols) ncols else mat_cols)
     ]
     colnames(mat) <- NULL
 
@@ -1000,12 +1016,13 @@ showGiottoImageNames <- function(gobject) {
 #' @name .abbrev_spatlocs
 #' @description print abbreviated spatLocsObj
 #' @keywords internal
+#' @returns abbreviated spatLocsObj
 .abbrev_spatlocs <- function(spatLocsObj, nrows) {
     # data.table vars
     sdimx <- sdimy <- NULL
 
     DT_rows <- nrow(spatLocsObj[])
-    spatlocs <- spatLocsObj[][1:if (nrows <= DT_rows) nrows else DT_rows, ]
+    spatlocs <- spatLocsObj[][seq_len(if (nrows <= DT_rows) nrows else DT_rows), ]
 
     # prints
     cat("An object of class", class(spatLocsObj), "\n")

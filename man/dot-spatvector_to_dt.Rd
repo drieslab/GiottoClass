@@ -6,6 +6,9 @@
 \usage{
 .spatvector_to_dt(spatvector, include_values = TRUE)
 }
+\value{
+data.table
+}
 \description{
 convert spatVector to data.table
 }

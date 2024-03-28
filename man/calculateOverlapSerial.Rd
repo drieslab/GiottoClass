@@ -45,4 +45,9 @@ Serial overlapping function that works on groups of polygons
 at a time. Number of polygons per group is defined
 by \code{polygon_group_size} param
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+calculateOverlapSerial(g, spatial_info = "z1")
+
+}
 \concept{overlap}

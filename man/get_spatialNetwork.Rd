@@ -33,6 +33,9 @@ object (default = TRUE)}
 
 \item{verbose}{be verbose}
 }
+\value{
+spatialNetworkObj of data.table
+}
 \description{
 Function to get a spatial network
 }

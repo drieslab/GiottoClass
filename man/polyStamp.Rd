@@ -29,7 +29,7 @@ should be stamped. Column names are 'cell_ID', 'sdimx' and 'sdimy' by default}
 \item{verbose}{be verbose}
 }
 \value{
-returns a data.table of polygon vertices
+a data.table of polygon vertices
 }
 \description{
 Takes a given stamp polygon and places it at each spatial
@@ -42,7 +42,7 @@ hex <- hexVertices(radius = 1)
 spatlocs <- data.table::data.table(
     sdimx = rnorm(10, mean = 5, sd = 20),
     sdimy = rnorm(10, mean = 5, sd = 20),
-    cell_ID = paste0("spot_", 1:10)
+    cell_ID = paste0("spot_", seq_len(10))
 )
 random_hex <- polyStamp(hex, spatlocs)
 random_hex_poly <- createGiottoPolygon(random_hex)

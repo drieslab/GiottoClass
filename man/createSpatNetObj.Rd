@@ -43,6 +43,9 @@ during spatial network generation}
 
 \item{misc}{misc}
 }
+\value{
+spatialNetworkObj
+}
 \description{
 Create S4 spatialNetworkObj
 }

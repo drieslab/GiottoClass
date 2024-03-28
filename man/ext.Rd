@@ -42,6 +42,9 @@
 
 \item{value}{value to set. Accepts any object that \code{ext()} will work on}
 }
+\value{
+SpatExtent
+}
 \description{
 Get a SpatExtent of an object. This is the spatial minmax x
 and y that the object is mapped to.

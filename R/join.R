@@ -7,7 +7,7 @@
 .join_expression_matrices <- function(matrix_list) {
     # find all features
     final_feats <- list()
-    for (matr_i in 1:length(matrix_list)) {
+    for (matr_i in seq_len(length(matrix_list))) {
         rowfeats <- rownames(matrix_list[[matr_i]])
         final_feats[[matr_i]] <- rowfeats
     }
@@ -19,7 +19,7 @@
 
     # extend matrices with missing ids
     final_mats <- list()
-    for (matr_i in 1:length(matrix_list)) {
+    for (matr_i in seq_len(length(matrix_list))) {
         matr <- matrix_list[[matr_i]]
 
         missing_feats <- final_feats[!final_feats %in% rownames(matr)]
@@ -98,11 +98,8 @@
 #' @param y_shift list of values to shift along y-axis if method is shift
 #' @param x_padding padding between datasets/images if method is shift
 #' @param y_padding padding between datasets/images if method is shift
-#' @param dry_run (experimental) Works best for join_method 'shift' or 
-#' 'no_change'.
 #' @param verbose be verbose
 #' Preview where each gobject will be in space with bounding polygons
-#' @return giotto object
 #' @details This function joins both the expression and spatial information of
 #' multiple giotto objects into a single one. Giotto supports multiple ways of
 #' joining spatial information as selected through param \code{join_method}:
@@ -145,6 +142,7 @@
 #' }
 #'
 #' @concept giotto
+#' @returns giotto object
 #' @export
 joinGiottoObjects <- function(gobject_list,
     gobject_names = NULL,
@@ -240,12 +238,14 @@ joinGiottoObjects <- function(gobject_list,
             if (isTRUE(verbose)) 
                 wrap_msg("Only one value given through z_vals param
                         Treating this value as a z step")
-            z_vals <- ((1:n_gobjects) - 1) * z_vals # Find z vals stepwise
+            z_vals <- (seq_len(n_gobjects) - 1) * z_vals # Find z vals stepwise
         }
     }
 
 
     # TODO # **** dry run ****
+    # dry_run (experimental) Works best for join_method 'shift' or 'no_change'.
+    # 
     # if(isTRUE(dry_run)) {
     #   if(isTRUE(verbose)) wrap_msg('dry_run = TRUE:
     #                                Spatial preview of join operation.')

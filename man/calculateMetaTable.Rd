@@ -37,3 +37,9 @@ per (combined) annotation
 calculates the average gene expression for one or
 more (combined) annotation columns.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+calculateMetaTable(g, metadata_cols = "leiden_clus")
+
+}

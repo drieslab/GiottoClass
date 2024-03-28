@@ -24,6 +24,9 @@
   ...
 )
 }
+\value{
+spatial 2D Delaunay network
+}
 \description{
 Create a spatial 2D Delaunay network.
 }

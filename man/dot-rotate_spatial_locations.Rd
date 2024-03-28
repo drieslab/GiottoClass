@@ -24,6 +24,9 @@ coordinates (defaults to coordinate center)}
 \item{geom}{character. Named vector of colames of x, y, z coordinate columns.
 Default is \code{c("sdimx", "sdimy", "sdimz")}}
 }
+\value{
+spatial locations
+}
 \description{
 Rotate given spatlocs by given radians
 }

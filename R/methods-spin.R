@@ -9,6 +9,7 @@
 #' center x val if not given.
 #' @param y0 numeric. y-coordinate of the center of rotation. Defaults to 
 #' center y val if not given.
+#' @returns spun object
 NULL
 
 
@@ -240,6 +241,7 @@ setMethod(
 #' coordinates (defaults to coordinate center)
 #' @param geom character. Named vector of colames of x, y, z coordinate columns.
 #' Default is `c("sdimx", "sdimy", "sdimz")`
+#' @returns spatial locations
 #' @details Radians are provided through \code{rotateradians} param as a named 
 #' vector with values for \code{xy} (yaw), \code{zy} (pitch), \code{xz} (roll)
 #' @keywords internal

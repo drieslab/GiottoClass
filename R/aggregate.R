@@ -27,6 +27,12 @@ NULL
 #' when rasterizing to assign values. Passing NULL uses the first attribute.
 #' @description  convert polygon to raster
 #' @returns list
+#' @examples
+#' df <- data.frame(x = 1:5, y = c(1,4,4,3,1))
+#' d <- data.frame(id = 1, name = "polygon_1")
+#' my_polygon <- terra::vect(as.matrix(df), type = "polygons", atts = d)
+#' polygon_to_raster(my_polygon)
+#' 
 #' @export
 polygon_to_raster <- function(polygon, field = NULL) {
     pol_xmax <- terra::xmax(polygon)
@@ -44,7 +50,7 @@ polygon_to_raster <- function(polygon, field = NULL) {
     }
 
     # ensure that field is numerical
-    polygon$poly_i <- 1:nrow(unique(polygon[[field]]))
+    polygon$poly_i <- seq_len(nrow(unique(polygon[[field]])))
     poly_rast <- terra::rasterize(x = polygon, r, field = "poly_i")
 
     poly_ID_vector <- polygon[[field]][, 1]
@@ -140,6 +146,7 @@ NULL
 #' @param image_names character vector. Name(s) of the image feature information
 #' to overlap
 #' @param return_gobject return giotto object (default: TRUE)
+#' @import checkmate
 #' @export
 setMethod(
     "calculateOverlap", signature(x = "giotto", y = "missing"),
@@ -524,10 +531,14 @@ setMethod(
 #' @param count_info_column column with count information (optional)
 #' @param return_gobject return giotto object (default: TRUE)
 #' @param verbose be verbose
+#' @returns giotto object or spatVector with overlapping information
 #' @details Serial overlapping function.
 #' @concept overlap
-#' @returns giotto object or spatVector with overlapping information
 #' @seealso [.calculate_overlap_raster()]
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' calculateOverlapRaster(g)
+#' 
 #' @export
 calculateOverlapRaster <- function(
         gobject,
@@ -733,6 +744,11 @@ calculateOverlapRaster <- function(
 #' @param ... additional params to \code{\link[exactextractr]{exact_extract}}
 #' @concept overlap
 #' @returns giotto object or data.table with overlapping information
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' calculateOverlapPolygonImages(g, spatial_info = "z0", 
+#' image_names = "dapi_z0")
+#' 
 #' @export
 calculateOverlapPolygonImages <- function(gobject,
     name_overlap = "protein",
@@ -759,7 +775,7 @@ calculateOverlapPolygonImages <- function(gobject,
     package_check("exactextractr")
 
     ## get polygon information
-    poly_info <- get_polygon_info(
+    poly_info <- getPolygonInfo(
         gobject = gobject,
         polygon_name = spatial_info,
         return_giottoPolygon = TRUE
@@ -791,7 +807,7 @@ calculateOverlapPolygonImages <- function(gobject,
 
     image_list <- list()
 
-    for (i in 1:length(image_names)) {
+    for (i in seq_len(length(image_names))) {
         img_name <- image_names[i]
 
         if (!img_name %in% potential_large_image_names) {
@@ -924,11 +940,15 @@ calculateOverlapPolygonImages <- function(gobject,
 #' @param polygon_group_size number of polygons to process per group
 #' @param return_gobject return giotto object (default: TRUE)
 #' @param verbose be verbose
+#' @returns giotto object or spatVector with overlapping information
 #' @details Serial overlapping function that works on groups of polygons 
 #' at a time. Number of polygons per group is defined 
 #' by \code{polygon_group_size} param
 #' @concept overlap
-#' @returns giotto object or spatVector with overlapping information
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' calculateOverlapSerial(g, spatial_info = "z1")
+#' 
 #' @export
 calculateOverlapSerial <- function(gobject,
     name_overlap = NULL,
@@ -953,15 +973,15 @@ calculateOverlapSerial <- function(gobject,
 
     total_polygons <- length(poly_ID_names)
     total_nr_groups <- ceiling(total_polygons / polygon_group_size)
-    groupnames <- cut(1:total_polygons,
+    groupnames <- cut(seq_len(total_polygons),
         breaks = total_nr_groups,
-        labels = 1:total_nr_groups
+        labels = seq_len(total_nr_groups)
     )
     names(poly_ID_names) <- groupnames
 
 
     final_result <- list()
-    for (i in 1:total_nr_groups) {
+    for (i in seq_len(total_nr_groups)) {
         if (verbose) print((total_nr_groups - i))
 
         selected_poly_ID_names <- poly_ID_names[names(poly_ID_names) == i]
@@ -1040,13 +1060,17 @@ calculateOverlapSerial <- function(gobject,
 #' parallelization group
 #' @param return_gobject return giotto object (default: TRUE)
 #' @param verbose be verbose
+#' @returns giotto object or spatVector with overlapping information
 #' @details parallel follows the future approach. This means that 
 #' plan(multisession) does not work,
 #' since the underlying terra objects are internal C pointers. 
 #' plan(multicore) is also not supported for
 #' Rstudio users.
 #' @concept overlap
-#' @returns giotto object or spatVector with overlapping information
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' calculateOverlapParallel(g, spatial_info = "z1")
+#' 
 #' @export
 calculateOverlapParallel <- function(gobject,
     name_overlap = NULL,
@@ -1071,9 +1095,9 @@ calculateOverlapParallel <- function(gobject,
 
     total_polygons <- length(poly_ID_names)
     total_nr_groups <- ceiling(total_polygons / polygon_group_size)
-    groupnames <- cut(1:total_polygons,
+    groupnames <- cut(seq_len(total_polygons),
         breaks = total_nr_groups,
-        labels = 1:total_nr_groups
+        labels = seq_len(total_nr_groups)
     )
     names(poly_ID_names) <- groupnames
 
@@ -1082,7 +1106,7 @@ calculateOverlapParallel <- function(gobject,
 
     # wrap SpatVectors for polygons
     spatvec_wrap_list <- list()
-    for (i in 1:total_nr_groups) {
+    for (i in seq_len(total_nr_groups)) {
         selected_poly_ID_names <- poly_ID_names[names(poly_ID_names) == i]
         selected_spatvec <- spatvec[spatvec$poly_ID %in% selected_poly_ID_names]
         spatvec_wrap_list[[i]] <- terra::wrap(selected_spatvec)
@@ -1091,7 +1115,7 @@ calculateOverlapParallel <- function(gobject,
 
     # first intersect in parallel on wrapped terra objects
     result1 <- lapply_flex(
-        X = 1:length(spatvec_wrap_list),
+        X = seq_len(length(spatvec_wrap_list)),
         FUN = function(x) {
             test <- .overlap_points_per_polygon_wrapped(
                 spatvec_wrapped = spatvec_wrap_list[[x]],
@@ -1102,7 +1126,7 @@ calculateOverlapParallel <- function(gobject,
     )
 
     # unwrap overlap results
-    final_result <- lapply(X = 1:length(result1), FUN = function(x) {
+    final_result <- lapply(X = seq_len(length(result1)), FUN = function(x) {
         terra::vect(result1[x][[1]])
     })
 
@@ -1481,6 +1505,10 @@ setMethod(
 #' @param return_gobject return giotto object (default: TRUE)
 #' @concept overlap
 #' @returns giotto object or count matrix
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' overlapToMatrixMultiPoly(g, poly_info = "z0")
+#' 
 #' @export
 overlapToMatrixMultiPoly <- function(gobject,
     name = "raw",
@@ -1494,7 +1522,7 @@ overlapToMatrixMultiPoly <- function(gobject,
     result_list <- list()
     cell_ids_list <- list()
 
-    for (poly_info_i in 1:length(poly_info)) {
+    for (poly_info_i in seq_len(length(poly_info))) {
         poly_info_set <- poly_info[[poly_info_i]]
 
         expr_names <- list_expression_names(
@@ -1513,18 +1541,19 @@ overlapToMatrixMultiPoly <- function(gobject,
             )
         }
 
-        testmat <- get_expression_values(
+        testmat <- getExpression(
             gobject = gobject,
             spat_unit = poly_info_set,
             feat_type = feat_info,
-            values = name
+            values = name,
+            output = "matrix"
         )
 
         featnames <- dimnames(testmat)[[1]]
-        names(featnames) <- 1:length(featnames)
+        names(featnames) <- seq_len(length(featnames))
 
         colnames <- dimnames(testmat)[[2]]
-        names(colnames) <- 1:length(colnames)
+        names(colnames) <- seq_len(length(colnames))
 
         testmat_DT <- data.table::as.data.table(Matrix::summary(testmat))
         testmat_DT[, i := featnames[i]]
@@ -1601,6 +1630,7 @@ overlapToMatrixMultiPoly <- function(gobject,
 #' @param return_gobject return giotto object (default: TRUE)
 #' @concept overlap
 #' @returns giotto object or data.table with aggregated information
+#' 
 #' @export
 overlapImagesToMatrix <- function(gobject,
     name = "raw",
@@ -1615,7 +1645,7 @@ overlapImagesToMatrix <- function(gobject,
     value <- poly_ID <- feat_ID <- x <- y <- NULL
 
     ## get polygon information
-    polygon_info <- get_polygon_info(
+    polygon_info <- getPolygonInfo(
         gobject = gobject,
         polygon_name = poly_info,
         return_giottoPolygon = TRUE
@@ -1624,6 +1654,8 @@ overlapImagesToMatrix <- function(gobject,
 
     image_info <- 
         gobject@spatial_info[[poly_info]]@overlaps[["intensity"]][[feat_info]]
+    
+    
     melt_image_info <- data.table::melt.data.table(data = image_info, 
                             id.vars = "poly_ID", variable.name = "feat_ID")
 
@@ -1639,21 +1671,19 @@ overlapImagesToMatrix <- function(gobject,
 
 
         # create cell and feature metadata
-        S4_cell_meta <- create_cell_meta_obj(
-            metaDT = data.table::data.table(cell_ID = cell_IDs),
+        S4_cell_meta <- createCellMetaObj(
+            metadata = data.table::data.table(cell_ID = cell_IDs),
             spat_unit = poly_info, feat_type = feat_info
         )
-        gobject <- set_cell_metadata(gobject = gobject, 
-                                    S4_cell_meta, 
-                                    set_defaults = FALSE)
+        gobject <- setCellMetadata(gobject = gobject, 
+                                    x = S4_cell_meta)
 
-        S4_feat_meta <- create_feat_meta_obj(
-            metaDT = data.table::data.table(feat_ID = feat_IDs),
+        S4_feat_meta <- createFeatMetaObj(
+            metadata = data.table::data.table(feat_ID = feat_IDs),
             spat_unit = poly_info, feat_type = feat_info
         )
-        gobject <- set_feature_metadata(gobject = gobject, 
-                                        S4_feat_meta, 
-                                        set_defaults = FALSE)
+        gobject <- setFeatureMetadata(gobject = gobject, 
+                                    x = S4_feat_meta)
 
 
         # add feat_ID and cell_ID
@@ -1666,15 +1696,15 @@ overlapImagesToMatrix <- function(gobject,
         centroidsDT_loc <- centroidsDT[, .(poly_ID, x, y)]
         colnames(centroidsDT_loc) <- c("cell_ID", "sdimx", "sdimy")
 
-        S4_spat_locs <- create_spat_locs_obj(
+        S4_spat_locs <- createSpatLocsObj(
             name = name,
             coordinates = centroidsDT_loc,
             spat_unit = poly_info
         )
 
-        gobject <- set_spatial_locations(
+        gobject <- setSpatialLocations(
             gobject = gobject,
-            spatlocs = S4_spat_locs
+            x = S4_spat_locs
         )
 
         # create matrix
@@ -1690,16 +1720,16 @@ overlapImagesToMatrix <- function(gobject,
             match(gobject@cell_ID[[poly_info]], colnames(overlapmatrix))
         ]
 
-        S4_expr_obj <- create_expr_obj(
+        S4_expr_obj <- createExprObj(
             name = name,
-            exprMat = overlapmatrix,
+            expression_data = overlapmatrix,
             spat_unit = poly_info,
             feat_type = feat_info
         )
 
-        gobject <- set_expression_values(
+        gobject <- setExpression(
             gobject = gobject,
-            values = S4_expr_obj
+            x = S4_expr_obj
         )
     } else {
         return(aggr_comb)
@@ -1733,7 +1763,7 @@ overlapImagesToMatrix <- function(gobject,
 
     # loop through all matrices
     # create a triplet data.table (i, j, x)
-    for (mat_i in 1:length(mat_list)) {
+    for (mat_i in seq_len(length(mat_list))) {
         mat <- mat_list[[mat_i]]
 
         if (!inherits(mat, c("matrix", "dgCMatrix"))) {
@@ -1744,11 +1774,11 @@ overlapImagesToMatrix <- function(gobject,
         if (inherits(mat, "matrix")) mat <- methods::as(mat, "dgCMatrix")
 
         mat_feats <- mat@Dimnames[[1]]
-        names(mat_feats) <- 1:mat@Dim[[1]]
+        names(mat_feats) <- seq_len(mat@Dim[[1]])
         feats_list[[mat_i]] <- mat_feats
 
         mat_samples <- mat@Dimnames[[2]]
-        names(mat_samples) <- 1:mat@Dim[[2]]
+        names(mat_samples) <- seq_len(mat@Dim[[2]])
         samples_list[[mat_i]] <- mat_samples
 
         matDT <- data.table::as.data.table(Matrix::summary(mat))
@@ -1768,12 +1798,12 @@ overlapImagesToMatrix <- function(gobject,
 
     # feature list
     all_features <- unique(unlist(feats_list))
-    featnames <- 1:length(all_features)
+    featnames <- seq_len(length(all_features))
     names(featnames) <- all_features
 
     # sample list
     all_samples <- unique(unlist(samples_list))
-    samplenames <- 1:length(all_samples)
+    samplenames <- seq_len(length(all_samples))
     names(samplenames) <- all_samples
 
     # convert i and j to numericals for dgCmatrix
@@ -1812,6 +1842,10 @@ overlapImagesToMatrix <- function(gobject,
 #' @param verbose verbosity
 #' @family aggregate stacks
 #' @returns giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' aggregateStacksExpression(g, spat_units = c("z0", "z1"), feat_type = "rna")
+#' 
 #' @export
 #'
 aggregateStacksExpression <- function(gobject,
@@ -1924,6 +1958,10 @@ aggregateStacksExpression <- function(gobject,
 #' @param new_spat_unit new name for aggregated spatial unit
 #' @returns giotto object
 #' @family aggregate stacks
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' aggregateStacksLocations(g, spat_units = c("z0", "z1"))
+#' 
 #' @export
 #'
 aggregateStacksLocations <- function(gobject,
@@ -2000,44 +2038,6 @@ aggregateStacksLocations <- function(gobject,
 }
 
 
-
-
-# aggregateStacksPolygonsOLD <- function(gobject,
-#                                        spat_units,
-#                                        new_spat_unit = "aggregate") {
-#   # aggregate spatvectors
-#   polygon_list <- list()
-#
-#   for (i in 1:length(spat_units)) {
-#     spat_unit <- spat_units[i]
-#     vecDT <- gobject@spatial_info[[spat_unit]]@spatVector
-#     vecDT <- .spatvector_to_dt(vecDT)
-#     vecDT <- vecDT[, c("geom", "part", "x", "y", "hole", "poly_ID"), 
-#     with = FALSE]
-#     vecDT[, "stack" := i]
-#     polygon_list[[spat_unit]] <- vecDT
-#   }
-#
-#   combined_polygons <- .combine_polygons(polygon_list = polygon_list)
-#
-#   gpolygon <- create_giotto_polygon_object(
-#     name = new_spat_unit,
-#     spatVector = combined_polygons,
-#     spatVectorCentroids = NULL,
-#     overlaps = NULL
-#   )
-#
-#   gobject <- set_polygon_info(
-#     gobject = gobject,
-#     polygon_name = new_spat_unit,
-#     gpolygon = gpolygon,
-#     verbose = FALSE
-#   )
-#
-#   return(gobject)
-# }
-
-
 #' @title .combine_stack_spatvectors
 #' @description combines/aggregates polygons with the same cell ID from 
 #' different z-stacks
@@ -2049,7 +2049,7 @@ aggregateStacksLocations <- function(gobject,
     for_loop_group_size = 100) {
     # 1. combine all spatVectors across all stacks
     stack_list <- list()
-    for (spat_i in 1:length(spat_units)) {
+    for (spat_i in seq_len(length(spat_units))) {
         spat <- spat_units[[spat_i]]
         stackspatvector <- get_polygon_info(
             gobject = gobject,
@@ -2083,7 +2083,7 @@ aggregateStacksLocations <- function(gobject,
         poly_id_groups <- split(all_poly_ids, 
                         ceiling(seq_along(all_poly_ids) / for_loop_group_size))
 
-        for (group_i in 1:length(poly_id_groups)) {
+        for (group_i in seq_len(length(poly_id_groups))) {
             selected_poly_ids <- poly_id_groups[[group_i]]
             selected_poly <- stack_spatvector[stack_spatvector$poly_ID %in% 
                                                 selected_poly_ids]
@@ -2116,6 +2116,10 @@ aggregateStacksLocations <- function(gobject,
 #' @param for_loop_group_size size of polygon groups to aggregate in each loop
 #' @returns giotto object
 #' @family aggregate stacks
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' aggregateStacksPolygons(g, spat_units = c("z0", "z1"))
+#' 
 #' @export
 #'
 aggregateStacksPolygons <- function(gobject,
@@ -2159,6 +2163,11 @@ aggregateStacksPolygons <- function(gobject,
 #' @param new_spat_unit new name for aggregated spatial unit
 #' @returns giotto object
 #' @family aggregate stacks
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' aggregateStacksPolygonOverlaps(g, spat_units = c("z0", "z1"), 
+#' feat_type = "rna")
+#' 
 #' @export
 #'
 aggregateStacksPolygonOverlaps <- function(gobject,
@@ -2168,7 +2177,7 @@ aggregateStacksPolygonOverlaps <- function(gobject,
     # aggregate spatvectors
     polygon_list <- list()
 
-    for (i in 1:length(spat_units)) {
+    for (i in seq_len(length(spat_units))) {
         spat_unit <- spat_units[i]
         vecDT <- gobject@spatial_info[[spat_unit]]@overlaps[[feat_type]]
 
@@ -2210,8 +2219,12 @@ aggregateStacksPolygonOverlaps <- function(gobject,
 #' and \code{\link{aggregateStacksLocations}}
 #' @returns giotto object
 #' @family aggregate stacks
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' aggregateStacks(g, spat_units = c("z0", "z1"), feat_type = "rna", 
+#' values = "raw")
+#' 
 #' @export
-#'
 aggregateStacks <- function(gobject,
     spat_units,
     feat_type,

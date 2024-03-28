@@ -9,6 +9,9 @@ colMeans_flex(mymatrix)
 \arguments{
 \item{mymatrix}{matrix to use}
 }
+\value{
+numeric
+}
 \description{
 colMeans_flex
 }

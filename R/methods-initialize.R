@@ -727,6 +727,7 @@ init_cell_and_feat_IDs <- function(gobject) {
 #' @param gobject giotto object
 #' @param provenance provenance information (optional)
 #' and feature type in the giotto object.
+#' @returns cellMetaObjs
 #' @keywords internal
 init_cell_metadata <- function(gobject,
     provenance = NULL) {
@@ -790,6 +791,7 @@ init_cell_metadata <- function(gobject,
 #' spatial unit and feature type in the giotto object.
 #' @param gobject giotto object
 #' @param provenance provenance information (optional)
+#' @returns featMetaObjs
 #' @keywords internal
 init_feat_metadata <- function(gobject,
     provenance = NULL) {

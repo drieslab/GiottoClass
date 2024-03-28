@@ -4,7 +4,7 @@
 \alias{estimateImageBg}
 \title{estimateImageBg}
 \usage{
-estimateImageBg(mg_object, top_color_range = 1:50)
+estimateImageBg(mg_object, top_color_range = seq_len(50))
 }
 \arguments{
 \item{mg_object}{magick image or Giotto image object}

@@ -11,6 +11,9 @@
   ...
 )
 }
+\value{
+spatial Delaunay network with deldir
+}
 \description{
 Create a spatial Delaunay network with deldir
 }

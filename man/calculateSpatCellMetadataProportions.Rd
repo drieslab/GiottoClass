@@ -39,3 +39,9 @@ column (e.g. cluster labels) for all the spatial neighbors of a source cell.
 In other words it calculates the niche composition for a given annotation
 for each cell.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+calculateSpatCellMetadataProportions(g, 
+spat_network = "Delaunay_network", metadata_column = "leiden_clus")
+
+}

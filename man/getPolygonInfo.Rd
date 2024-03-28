@@ -24,6 +24,9 @@ S4 object}
 
 \item{verbose}{be verbose}
 }
+\value{
+spatVector
+}
 \description{
 Get giotto polygon spatVector
 }

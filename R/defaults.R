@@ -8,6 +8,7 @@
 #' methods-instructions.R for a way to manually assign this default
 #' @inheritParams data_access_params
 #' @keywords internal
+#' @returns character
 #' @export
 set_default_spat_unit <- function(gobject,
     spat_unit = NULL) {
@@ -44,6 +45,7 @@ set_default_spat_unit <- function(gobject,
 #' methods-instructions.R for a way to manually assign this default
 #' @inheritParams data_access_params
 #' @keywords internal
+#' @returns character
 #' @export
 set_default_feat_type <- function(gobject,
     feat_type = NULL,

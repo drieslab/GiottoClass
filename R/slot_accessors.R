@@ -204,7 +204,7 @@ read_s4_nesting <- function(x) {
 #' set of cell_IDs that are shared across any feature types. These cell_IDs 
 #' are stored within the giotto object's \code{cell_ID} slot. Getters and 
 #' setters for this slot directly retrieve (get) or replace (set) this slot.
-#' @return character vector of cell_IDs
+#' @returns character vector of cell_IDs
 #' @seealso set_cell_id
 #' @family functions to set data in giotto object
 #' @keywords internal
@@ -249,7 +249,7 @@ get_cell_id <- function(gobject,
 #' values are AUTOMATICALLY updated every time \code{initialize()} is called 
 #' on the giotto object.
 #' @seealso get_cell_id
-#' @return giotto object with set cell_ID slot
+#' @returns giotto object with set cell_ID slot
 #' @family functions to set data in giotto object
 #' @keywords internal
 set_cell_id <- function(gobject,
@@ -326,6 +326,7 @@ set_cell_id <- function(gobject,
 #' is expected to share a single set of feat_IDs. These feat_IDs are stored 
 #' within the giotto object's \code{feat_ID} slot. Getters and setters for this 
 #' slot directly (get) or replace (set) this slot.
+#' @returns character
 #' @seealso set_feat_id
 #' @family functions to set data in giotto object
 #' @keywords internal
@@ -375,7 +376,7 @@ get_feat_id <- function(gobject,
 #' values are AUTOMATICALLY updated every time \code{initialize()} is called on 
 #' the giotto object.
 #' @seealso get_feat_id
-#' @return giotto object with set cell_ID slot
+#' @returns giotto object with set cell_ID slot
 #' @family functions to set data in giotto object
 #' @keywords internal
 set_feat_id <- function(gobject,
@@ -575,6 +576,7 @@ set_feat_id <- function(gobject,
 #' @inheritParams data_access_params
 #' @param output return as either 'data.table' or 'cellMetaObj'
 #' @description Get cell metadata from giotto object
+#' @returns a data.table or cellMetaObj
 #' @seealso pDataDT
 #' @keywords internal
 #' @export
@@ -629,6 +631,7 @@ get_cell_metadata <- function(gobject,
 #' @inheritParams data_access_params
 #' @param output return as either 'data.table' or 'cellMetaObj'
 #' @description Get cell metadata from giotto object
+#' @returns a data.table or cellMetaObj
 #' @seealso pDataDT
 #' @export
 getCellMetadata <- function(gobject,
@@ -660,7 +663,7 @@ getCellMetadata <- function(gobject,
 #' reset a specified set of cell metadata in the giotto object.
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family functions to set data in giotto object
 #' @export
 setCellMetadata <- function(gobject,
@@ -749,7 +752,7 @@ setCellMetadata <- function(gobject,
 #' Setting NULL will remove the object. Passing 'initialize' will reset 
 #' the object.
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family functions to set data in giotto object
 #' @keywords internal
 #' @export
@@ -991,6 +994,7 @@ set_cell_metadata <- function(gobject,
 #' @param output return as either 'data.table' or 'featMetaObj'
 #' @param copy_obj whether to perform a deepcopy of the data.table information
 #' @description Get feature metadata from giotto object
+#' @returns a data.table or featMetaObj
 #' @seealso fDataDT
 #' @keywords internal
 #' @export
@@ -1042,6 +1046,7 @@ get_feature_metadata <- function(gobject,
 #' @param output return as either 'data.table' or 'featMetaObj'
 #' @param copy_obj whether to perform a deepcopy of the data.table information
 #' @description Get feature metadata from giotto object
+#' @returns a data.table or featMetaObj
 #' @seealso fDataDT
 #' @export
 getFeatureMetadata <- function(gobject,
@@ -1073,7 +1078,7 @@ getFeatureMetadata <- function(gobject,
 #' reset a specified set of feature metadata in the giotto object.
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family functions to set data in giotto object
 #' @export
 setFeatureMetadata <- function(gobject,
@@ -1157,7 +1162,7 @@ setFeatureMetadata <- function(gobject,
 #' Setting NULL will remove the object. Passing 'initialize' will reset the 
 #' object.
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family functions to set data in giotto object
 #' @keywords internal
 #' @export
@@ -1373,7 +1378,7 @@ set_feature_metadata <- function(gobject,
 #' @param output what object type to retrieve the expression as. Currently 
 #' either matrix' for the matrix object contained in the exprObj or 
 #' 'exprObj' (default) for the exprObj itself are allowed.
-#' @return exprObj or matrix depending on output param
+#' @returns exprObj or matrix depending on output param
 #' @family expression accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -1442,6 +1447,7 @@ getExpression <- function(gobject,
 #' @param output what object type to retrieve the expression as. Currently 
 #' either matrix' for the matrix object contained in the exprObj or 
 #' 'exprObj' (default) for the exprObj itself are allowed.
+#' @returns exprObj or matrix depending on output param
 #' @export
 get_expression_values <- function(gobject,
     spat_unit = NULL,
@@ -1594,7 +1600,7 @@ get_expression_values_list <- function(gobject,
 #' @param provenance provenance information (optional)
 #' information for the giotto object. Pass NULL to remove an expression object
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family expression accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -1684,7 +1690,7 @@ setExpression <- function(gobject,
 #' @param verbose be verbose
 #' @param initialize (default = FALSE) whether to initialize the gobject before
 #' returning. Will be set to TRUE when called by the external
-#' @return giotto object
+#' @returns giotto object
 #' @family expression accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -1866,7 +1872,7 @@ set_expression_values <- function(gobject,
 #' @param result_name Default = 'theta_weighted_matrix'
 #' @param verbose be verbose
 #'
-#' @return A giotto object
+#' @returns A giotto object
 #' @family multiomics accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -1930,7 +1936,7 @@ set_multiomics <- function(gobject,
 #' @param result_name Default = 'theta_weighted_matrix'
 #' @param verbose be verbose
 #'
-#' @return A giotto object
+#' @returns A giotto object
 #' @family multiomics accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -1971,7 +1977,7 @@ setMultiomics <- function(gobject = NULL,
 #' @param integration_method multiomics integration method used. Default = 'WNN'
 #' @param result_name Default = 'theta_weighted_matrix'
 #'
-#' @return A multiomics integration result (e.g. theta_weighted_matrix from WNN)
+#' @returns A multiomics integration result (e.g. theta_weighted_matrix from WNN)
 #' @family multiomics accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -2031,7 +2037,7 @@ get_multiomics <- function(gobject,
 #' @param integration_method multiomics integration method used. Default = 'WNN'
 #' @param result_name Default = 'theta_weighted_matrix'
 #'
-#' @return A multiomics integration result (e.g. theta_weighted_matrix from WNN)
+#' @returns A multiomics integration result (e.g. theta_weighted_matrix from WNN)
 #' @family multiomics accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -2078,7 +2084,7 @@ getMultiomics <- function(gobject = NULL,
 #' @param copy_obj whether to copy/duplicate when getting the 
 #' object (default = TRUE)
 #' @param verbose be verbose
-#' @return data.table with coordinates or spatLocsObj depending on \code{output}
+#' @returns data.table with coordinates or spatLocsObj depending on \code{output}
 #' @family spatial location data accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -2121,7 +2127,7 @@ getSpatialLocations <- function(gobject,
 #' @param copy_obj whether to copy/duplicate when getting the 
 #' object (default = TRUE)
 #' @param verbose be verbose
-#' @return data.table with coordinates or spatLocsObj depending on \code{output}
+#' @returns data.table with coordinates or spatLocsObj depending on \code{output}
 #' @family spatial location data accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -2246,7 +2252,7 @@ get_spatial_locations <- function(gobject,
 
 #' @description Get all spatial locations for a specified spatial unit
 #' @keywords internal
-#' @return list of spatLocsObj or data.tables depending on output param
+#' @returns list of spatLocsObj or data.tables depending on output param
 #' @noRd
 get_spatial_locations_list <- function(gobject,
     spat_unit = NULL,
@@ -2305,7 +2311,7 @@ get_spatial_locations_list <- function(gobject,
 #' @details Spatial information will be set to the nested location described
 #' by their tagged spat_unit and name information. An alternative location can 
 #' also be specified through the respective params in this function.
-#' @return giotto object
+#' @returns giotto object
 #' @family spatial location data accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -2408,7 +2414,7 @@ setSpatialLocations <- function(gobject,
 #' param \code{spat_unit = NULL}. BUT if param \code{spat_unit = 'nucleus'} then
 #' the \code{spatLocsObj} will be nested by spat_unit 'nucleus' instead and
 #' its spat_unit slot will be changed to 'nucleus'
-#' @return giotto object
+#' @returns giotto object
 #' @family spatial location data accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -2536,7 +2542,7 @@ set_spatial_locations <- function(gobject,
 #' @param output object type to return as. Either 'dimObj' (default) or 'matrix'
 #' of the embedding coordinates.
 #' @description Function to get a dimension reduction object
-#' @return dim reduction object (default) or dim reduction coordinates
+#' @returns dim reduction object (default) or dim reduction coordinates
 #' @family dimensional reduction data accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -2621,7 +2627,7 @@ get_dimReduction <- function(gobject,
 #' @param output object type to return as. Either 'dimObj' (default) or 'matrix'
 #' of the embedding coordinates.
 #' @description Function to get a dimension reduction object
-#' @return dim reduction object (default) or dim reduction coordinates
+#' @returns dim reduction object (default) or dim reduction coordinates
 #' @family dimensional reduction data accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -2720,7 +2726,7 @@ get_dim_reduction_list <- function(gobject,
 #' @param reduction_method reduction method (e.g. "pca")
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @keywords autocomplete
 #' @family dimensional reduction data accessor functions
 #' @family functions to set data in giotto object
@@ -2832,7 +2838,7 @@ setDimReduction <- function(gobject,
 #' @param dimObject dimension object result to set
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family dimensional reduction data accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -2991,7 +2997,7 @@ set_dimReduction <- function(gobject,
 #' @param nn_network_to_use "kNN" or "sNN"
 #' @param network_name name of NN network to be used
 #' @param output return a igraph or data.table object. Default 'igraph'
-#' @return igraph or data.table object
+#' @returns igraph or data.table object
 #' @family expression space nearest network accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -3093,7 +3099,7 @@ get_NearestNetwork <- function(gobject,
 #' @param nn_type "kNN" or "sNN"
 #' @param name name of NN network to be used
 #' @param output return a igraph or data.table object. Default 'igraph'
-#' @return igraph or data.table object
+#' @returns igraph or data.table object
 #' @family expression space nearest network accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -3185,7 +3191,7 @@ get_nearest_network_list <- function(gobject,
 #' yet supported.
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family expression space nearest network accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -3287,7 +3293,7 @@ setNearestNetwork <- function(gobject,
 #' yet supported.
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family expression space nearest network accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -3437,6 +3443,7 @@ set_NearestNetwork <- function(gobject,
 #' @param copy_obj whether to copy/duplicate when getting the 
 #' object (default = TRUE)
 #' @param verbose be verbose
+#' @returns spatialNetworkObj of data.table
 #' @family spatial network data accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -3526,6 +3533,7 @@ get_spatialNetwork <- function(gobject,
 #' @param copy_obj whether to copy/duplicate when getting the 
 #' object (default = TRUE)
 #' @param verbose be verbose
+#' @returns spatialNetworkObj of data.table
 #' @family spatial network data accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -3633,7 +3641,7 @@ get_spatial_network_list <- function(gobject,
 #' @param name name of spatial network
 #' @param provenance provenance name
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family spatial network data accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -3726,7 +3734,7 @@ setSpatialNetwork <- function(gobject,
 #' @param provenance provenance name
 #' @param spatial_network spatial network
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family spatial network data accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -3845,6 +3853,7 @@ set_spatialNetwork <- function(gobject,
 #' @inheritParams data_access_params
 #' @param name name of spatial grid
 #' @param return_grid_Obj return grid object (default = FALSE)
+#' @returns spatialGridObj
 #' @family spatial grid data accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -3950,6 +3959,7 @@ get_spatialGrid <- function(gobject,
 #' @param return_grid_Obj return grid object (default = FALSE)
 #' @family spatial grid data accessor functions
 #' @family functions to get data from giotto object
+#' @returns spatialGridObj
 #' @export
 getSpatialGrid <- function(gobject,
     spat_unit = NULL,
@@ -3977,7 +3987,7 @@ getSpatialGrid <- function(gobject,
 #' @param spatial_grid spatial grid object
 #' @param name name of spatial grid
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family spatial grid data accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -4075,7 +4085,7 @@ set_spatialGrid <- function(gobject,
 #' @param spatial_grid spatial grid object
 #' @param name name of spatial grid
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family spatial grid data accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -4111,6 +4121,7 @@ setSpatialGrid <- function(gobject,
 #' @param return_giottoPolygon (Defaults to FALSE) Return as giottoPolygon S4 
 #' object
 #' @param verbose be verbose
+#' @returns spatVector
 #' @family polygon info data accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -4180,6 +4191,7 @@ get_polygon_info <- function(gobject,
 #' @param return_giottoPolygon (Defaults to FALSE) Return as giottoPolygon 
 #' S4 object
 #' @param verbose be verbose
+#' @returns spatVector
 #' @family polygon info data accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -4245,7 +4257,6 @@ get_polygon_info_list <- function(gobject,
 #' @param centroids_to_spatlocs if centroid information is discovered, whether
 #' to additionally set them as a set of spatial locations (default = FALSE)
 #' @param verbose be verbose
-#' @return giotto object
 #' @details Inputs can be provided as either single objects or named lists of
 #' objects. If the list is not named, then a generic name of the template
 #' 'cell_i' will be applied. \cr
@@ -4253,6 +4264,7 @@ get_polygon_info_list <- function(gobject,
 #' filepath. \cr
 #' For required formatting when reading tabular data or objects, see
 #' \code{\link{createGiottoPolygonsFromDfr}} details.
+#' @returns giotto object
 #' @family polygon info data accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -4406,7 +4418,7 @@ setPolygonInfo <- function(gobject,
 #' "cell" (only used when gpolygon is length of 1)
 #' @param gpolygon giottoPolygon object
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family polygon info data accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -4560,6 +4572,7 @@ set_polygon_info <- function(gobject,
 #' @description Get giotto points spatVector
 #' @inheritParams data_access_params
 #' @param return_giottoPoints return as a giottoPoints object
+#' @returns giotto points spatVector
 #' @family feature info data accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -4586,12 +4599,12 @@ getFeatureInfo <- function(gobject = gobject,
 #' @title Get feature info
 #' @name get_feature_info
 #' @param return_giottoPoints return as a giottoPoints object
-#' @description Get giotto points spatVector
 #' @inheritParams data_access_params
+#' @description Get giotto points spatVector
+#' @returns a SpatVector (default) or giottoPoints object depending on value of
+#' return_giottoPoints
 #' @family feature info data accessor functions
 #' @family functions to get data from giotto object
-#' @return a SpatVector (default) or giottoPoints object depending on value of
-#' return_giottoPoints
 #' @export
 get_feature_info <- function(gobject,
     feat_type = NULL,
@@ -4606,7 +4619,7 @@ get_feature_info <- function(gobject,
     if (isTRUE(set_defaults)) {
         feat_type <- set_default_feat_type(
             gobject = gobject,
-            spat_unit = spat_unit,
+            spat_unit = NULL,
             feat_type = feat_type
         )
     }
@@ -4661,7 +4674,7 @@ get_feature_info_list <- function(gobject,
 #' @param x giottoPoints object or list of giottoPoints to set. Passing NULL
 #' will remove the specified giottoPoints object from the giotto object
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family feature info data accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -4738,7 +4751,7 @@ setFeatureInfo <- function(gobject,
 #' @param gpoints giotto points object
 #' @param gpolygon typo do not use
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family feature info data accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -4902,7 +4915,7 @@ set_feature_info <- function(gobject,
 #' @description Function to get a spatial enrichment data.table
 #' @inheritParams data_access_params
 #' @param enrichm_name name of spatial enrichment results. Default "DWLS"
-#' @return data.table with fractions
+#' @returns spatEnrObj or data.table with fractions
 #' @family spatial enrichment data accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -4978,7 +4991,7 @@ get_spatial_enrichment <- function(gobject,
 #' @description Function to get a spatial enrichment data.table
 #' @inheritParams data_access_params
 #' @param name name of spatial enrichment results. Default "DWLS"
-#' @return data.table with fractions
+#' @returns spatEnrObj or data.table with fractions
 #' @family spatial enrichment data accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -5010,7 +5023,7 @@ getSpatialEnrichment <- function(gobject,
 #' @description Get all spatial enrichments for a specified spatial unit and
 #' feature type
 #' @keywords internal
-#' @return list of spatEnrObj or data.table depending on output param
+#' @returns list of spatEnrObj or data.table depending on output param
 #' @noRd
 get_spatial_enrichment_list <- function(gobject,
     spat_unit = NULL,
@@ -5063,7 +5076,7 @@ get_spatial_enrichment_list <- function(gobject,
 #' a specified set of spatial enrichment information from the gobject.
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family spatial enrichment data accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -5156,7 +5169,7 @@ setSpatialEnrichment <- function(gobject,
 #' @param spatenrichment spatial enrichment results
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family spatial enrichment data accessor functions
 #' @family functions to set data in giotto object
 #' @export
@@ -5291,7 +5304,7 @@ set_spatial_enrichment <- function(gobject,
 #' @description Get a giottoImage from a giotto object
 #' @param gobject giotto object
 #' @param name name of giottoImage \code{\link{showGiottoImageNames}}
-#' @return a giottoImage
+#' @returns a giottoImage
 #' @keywords internal
 get_giottoImage_MG <- function(gobject = NULL,
     name = NULL) {
@@ -5324,7 +5337,7 @@ get_giottoImage_MG <- function(gobject = NULL,
 #' @param image_object a giottoImage object
 #' @param name name to assign giottoImage
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @keywords internal
 set_giottoImage_MG <- function(gobject,
     image_object,
@@ -5363,7 +5376,7 @@ set_giottoImage_MG <- function(gobject,
 #' @description Set a giottoLargeImage from a giottoObject
 #' @param gobject giotto object
 #' @param name name of giottoLargeImage \code{\link{showGiottoImageNames}}
-#' @return a giottoLargeImage
+#' @returns a giottoLargeImage
 #' @keywords internal
 get_giottoLargeImage <- function(gobject = NULL,
     name = NULL) {
@@ -5398,7 +5411,7 @@ get_giottoLargeImage <- function(gobject = NULL,
 #' @param largeImage_object a giottoLargeImage object
 #' @param name name to assign giottoLargeImage
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @keywords internal
 set_giottoLargeImage <- function(gobject,
     largeImage_object,
@@ -5439,7 +5452,7 @@ set_giottoLargeImage <- function(gobject,
 #' @param gobject giotto object
 #' @param image_type type of giotto image object. Either "image" or "largeImage"
 #' @param name name of a giotto image object \code{\link{showGiottoImageNames}}
-#' @return a giotto image object
+#' @returns a giotto image object
 #' @family image data accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -5474,7 +5487,7 @@ get_giottoImage <- function(gobject = NULL,
 #' @param gobject giotto object
 #' @param image_type type of giotto image object. Either "image" or "largeImage"
 #' @param name name of a giotto image object \code{\link{showGiottoImageNames}}
-#' @return a giotto image object
+#' @returns a giotto image object
 #' @family image data accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -5546,7 +5559,7 @@ get_giotto_image_list <- function(gobject,
 #' @param image_type type of giotto image object. Either "image" or "largeImage"
 #' @param name name of giotto image object
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family image data accessor functions
 #' @family functions to set data in giotto object
 #' @seealso \code{\link{addGiottoImage}}
@@ -5597,7 +5610,7 @@ set_giottoImage <- function(gobject = NULL,
 #' @param image_type type of giotto image object. Either "image" or "largeImage"
 #' @param name name of giotto image object
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family image data accessor functions
 #' @family functions to set data in giotto object
 #' @seealso \code{\link{addGiottoImage}}

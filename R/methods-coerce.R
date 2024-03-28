@@ -15,6 +15,7 @@ NULL
 #' is 'XY'
 #' @param \dots additional arguments to pass
 #' @family As coercion functions
+#' @returns data.table
 NULL
 
 
@@ -23,6 +24,7 @@ NULL
 #' @description Coversion to a SpatVector of polygons.
 #' @param x SpatRaster, SpatVector, SpatExtent, or correctly formatted 
 #' data.frame
+#' @returns SpatVector polygons
 #' @seealso [terra::as.polygons()]
 #' @family As coercion functions
 NULL
@@ -32,6 +34,7 @@ NULL
 #' @description Coversion to a SpatVector of points.
 #' @param x SpatRaster, SpatVector, SpatExtent, or correctly formatted 
 #' data.frame
+#' @returns SpatVector points
 #' @seealso [terra::as.points()]
 #' @family As coercion functions
 NULL
@@ -43,6 +46,7 @@ NULL
 #' @param x The object to coerce
 #' @param drop When TRUE, returned object will be of the desired object type
 #' instead of wrapped in a `giottoPoints` or `giottoPolygon` object
+#' @returns  sf, sp, stars or terra
 #' @family As coercion functions
 NULL
 
@@ -430,6 +434,7 @@ setMethod(
 
 #' @title Convert spatVector to data.table
 #' @name .spatvector_to_dt
+#' @returns data.table
 #' @description  convert spatVector to data.table
 #' @keywords internal
 .spatvector_to_dt <- function(spatvector,
@@ -441,7 +446,7 @@ setMethod(
 
     if (isTRUE(include_values)) {
         DT_values <- data.table::as.data.table(terra::values(spatvector))
-        DT_values[, geom := 1:nrow(DT_values)]
+        DT_values[, geom := seq_len(nrow(DT_values))]
         DT_full <- data.table::merge.data.table(DT_geom, DT_values, by = "geom")
         return(DT_full)
     } else {
@@ -460,6 +465,7 @@ setMethod(
 #' attributes if `include_values = TRUE`.
 #' @param sort_geom `logical`. Whether to sort key the data.table input by
 #' 'geom', 'part', and 'hole' columns.
+#' @returns polygon spatVector
 #' @keywords internal
 .dt_to_spatvector_polygon <- function(dt,
     include_values = TRUE,
@@ -521,6 +527,7 @@ setMethod(
 #' attributes paired with created terra spatVector
 #' @param specific_values specific values to include as attributes if
 #' include_values == TRUE
+#' @returns spatVector for points
 #' @keywords internal
 .dt_to_spatvector_points <- function(dt,
     include_values = TRUE,

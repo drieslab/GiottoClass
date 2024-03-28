@@ -10,6 +10,7 @@ NULL
 #' @param add_list_ID whether to generate a list_ID column when giottoPolygons
 #' to append have different names
 #' @param \dots additional params to pass to methods
+#' @returns object with appended rows 
 NULL
 # ---------------------------------------------------------------- #
 
@@ -62,6 +63,7 @@ setMethod("rbind", "giottoPolygon", function(..., deparse.level = 1) {
 #' Performed recursively through \code{rbind2} and \code{rbind}
 #' @param x \code{giottoPolygon} 1
 #' @param y \code{giottoPolygon} 2
+#' @returns giottoPolygon
 #' @keywords internal
 rbind2_giotto_polygon_homo <- function(x, y) {
     if (is.null(slot(x, "spatVector"))) {
@@ -101,6 +103,7 @@ rbind2_giotto_polygon_homo <- function(x, y) {
 #' combined \code{giottoPolygon} object
 #' @param add_list_ID whether to include the name of the 
 #' origin \code{giottoPolygons} as a new 'list_ID' attribute
+#' @returns giottoPolygon
 #' @keywords internal
 rbind2_giotto_polygon_hetero <- function(x, y, new_name, add_list_ID = TRUE) {
     # handle as homo but different name if add_list_ID = FALSE

@@ -14,6 +14,9 @@ showNetworks(...)
     \item{\code{nrows}}{number of rows to print}
   }}
 }
+\value{
+prints names and small subset of available spatial network info
+}
 \description{
 Show networks
 }

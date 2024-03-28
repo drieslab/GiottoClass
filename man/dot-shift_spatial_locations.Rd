@@ -24,6 +24,9 @@
 
 \item{copy_obj}{copy/duplicate object (default = TRUE)}
 }
+\value{
+spatial locations
+}
 \description{
 Shift given coordinates by given translation values
 }

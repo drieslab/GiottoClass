@@ -6,6 +6,9 @@
 \usage{
 .identify_background_range_polygons(spatVector)
 }
+\value{
+giottoPolygon
+}
 \description{
 function to remove background polygon based on largest range
 }

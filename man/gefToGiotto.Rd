@@ -15,6 +15,9 @@ gefToGiotto(gef_file, bin_size = "bin100", verbose = FALSE, h5_file = NULL)
 
 \item{h5_file}{name to create and on-disk HDF5 file}
 }
+\value{
+giotto object
+}
 \description{
 Converts .gef file (output stereo-seq pipeline) into
 giotto subcellular object

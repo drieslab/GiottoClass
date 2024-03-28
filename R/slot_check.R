@@ -280,6 +280,7 @@
 #' @description check cell ID (spatial unit) names between spatial location 
 #' and expression data. It will look for identical IDs after sorting.
 #' @keywords internal
+#' @returns character or NULL
 .check_spatial_location_data <- function(gobject) {
     # define for data.table
     cell_ID <- spat_unit <- name <- NULL

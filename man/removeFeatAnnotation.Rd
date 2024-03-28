@@ -33,3 +33,9 @@ specific feature modality
 \details{
 if \code{return_gobject = FALSE}, it will return the gene metadata
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+g <- removeFeatAnnotation(g, columns = "hvf")
+
+}

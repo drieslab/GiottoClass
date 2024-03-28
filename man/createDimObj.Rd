@@ -37,6 +37,9 @@ information (if applicable)}
 
 \item{my_rownames}{(optional) if needed, set coordinates rowname values here}
 }
+\value{
+dimObj
+}
 \description{
 Create an S4 dimObj
 }

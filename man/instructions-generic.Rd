@@ -34,6 +34,9 @@ object}
 
 \item{param}{Specific param in instructions to access or modify}
 }
+\value{
+giotto instructions
+}
 \description{
 Retrieve or set giotto instructions. Specific instructions can
 be replaced using the \code{field} param. Additionally, when using

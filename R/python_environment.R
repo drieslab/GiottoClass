@@ -11,7 +11,7 @@
 #' @param verbose be verbose
 #' @details Checks if a miniconda giotto environment can be found.
 #' Can be installed with \code{\link{installGiottoEnvironment}}.
-#' @return logical
+#' @returns logical
 #' @export
 checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
     ## get operating system
@@ -58,7 +58,7 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 
 #' @title .giotto_environment_path
 #' @description returns the path to the detected giotto environment
-#' @return string path
+#' @returns string path
 #' @keywords internal
 .giotto_environment_path <- function() {
     ## get operating system
@@ -83,7 +83,7 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 
 #' @title .giotto_environment_path_executable
 #' @description returns the path to the detected giotto environment executable
-#' @return string path
+#' @returns string path
 #' @keywords internal
 .giotto_environment_path_executable <- function() {
     ## get operating system
@@ -112,6 +112,7 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 #' @name .check_giotto_python_modules
 #' @title Check if Giotto python modules are in python environment
 #' @param my_python_path path to python environment
+#' @returns character or NULL
 #' @keywords internal
 .check_giotto_python_modules <- function(my_python_path) {
     if (isFALSE(getOption("giotto.has_conda", TRUE))) {
@@ -140,6 +141,7 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 #' @title .install_giotto_environment_specific
 #' @description installation of giotto environment
 #' @keywords internal
+#' @returns character or NULL
 .install_giotto_environment_specific <- function(packages_to_install = c(
         "pandas", "networkx", "python-igraph",
         "leidenalg", "python-louvain", "python.app",
@@ -249,6 +251,7 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 
 #' @title .install_giotto_environment
 #' @description installation options of giotto environment
+#' @returns character or NULL
 #' @keywords internal
 .install_giotto_environment <- function(force_environment = FALSE,
     packages_to_install = c(
@@ -325,7 +328,6 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 #' @param force_miniconda force reinstallation of miniconda
 #' @param force_environment force reinstallation of the giotto environment
 #' @param verbose be verbose
-#' @return installs a giotto environment using the reticulate miniconda system
 #' @details This function will install a local giotto environment using
 #' the miniconda system as implemented by reticulate. Once this giotto 
 #' environment is installed it will be automatically detected when you run the 
@@ -364,7 +366,7 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 #'   - scikit-learn==0.24.2
 #' }
 #'
-#' @export
+#' @returns installs a giotto environment using the reticulate miniconda system
 #' @examples
 #' \dontrun{
 #'
@@ -372,6 +374,7 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 #' # and a giotto environment with all necessary python modules
 #' installGiottoEnvironment()
 #' }
+#' @export
 installGiottoEnvironment <- function(packages_to_install = c(
         "pandas==1.5.1",
         "networkx==2.8.8",
@@ -477,6 +480,7 @@ installGiottoEnvironment <- function(packages_to_install = c(
 #' @param verbose be verbose
 #' @details Removes a previously installed giotto environment.
 #' See \code{\link{installGiottoEnvironment}}.
+#' @returns character or NULL
 #' @export
 removeGiottoEnvironment <- function(mini_path = NULL, verbose = TRUE) {
     if (is.null(mini_path)) {
@@ -517,8 +521,8 @@ removeGiottoEnvironment <- function(mini_path = NULL, verbose = TRUE) {
 #' if getOption('giotto.use_conda') is FALSE.
 #' @param python_path character. Full path to python executable
 #' @param verbose be verbose
-#' @return path to python executable
 #' @keywords internal
+#' @returns path to python executable
 #' @export
 set_giotto_python_path <- function(python_path = NULL,
     verbose = TRUE) {
@@ -608,6 +612,7 @@ set_giotto_python_path <- function(python_path = NULL,
 #' @param env environment into which package will be installed
 #' @description prompts user to install a package
 #' @keywords internal
+#' @returns numeric
 .py_install_prompt <- function(package = NULL,
     env = NULL) {
     if (is.null(package) | is.null(env)) {
@@ -640,6 +645,7 @@ set_giotto_python_path <- function(python_path = NULL,
 #' @description
 #' Installs `link` to python `env`
 #' @keywords internal
+#' @returns character or NULL
 .install_github_link_pip <- function(link = NULL,
     env = NULL) {
     # Guard
@@ -682,6 +688,7 @@ set_giotto_python_path <- function(python_path = NULL,
 #' Installation is done via `py_install` from the
 #' `reticulate` package.
 #' @keywords internal
+#' @returns character or NULL
 .install_py_pkg_reticulate <- function(package = NULL,
     env = NULL) {
     resp <- .py_install_prompt(
@@ -730,7 +737,7 @@ set_giotto_python_path <- function(python_path = NULL,
 #' `package_name`, i.e. if both are provided, only the github
 #' URL will be installed. This function should only be provided
 #' one parameter, or the other.
-#'
+#' @returns character or NULL
 #' @keywords export
 checkPythonPackage <- function(package_name = NULL,
     github_package_url = NULL,

@@ -25,6 +25,9 @@ attributes if \code{include_values = TRUE}.}
 \item{sort_geom}{\code{logical}. Whether to sort key the data.table input by
 'geom', 'part', and 'hole' columns.}
 }
+\value{
+SpatVector polygons
+}
 \description{
 Coversion to a SpatVector of polygons.
 }

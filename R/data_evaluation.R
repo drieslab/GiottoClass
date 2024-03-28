@@ -28,6 +28,10 @@
 #' @param type character. Type of giotto data to evaluate to.
 #' @param x data to evaluate
 #' @param \dots additional params to pass
+#' @returns character or the same class of x
+#' @examples
+#' x <- GiottoData::loadSubObjectMini("exprObj", 1)
+#' evaluate_input(type = "expression", x)
 #' @export
 evaluate_input <- function(type, x, ...) {
     type <- match.arg(
@@ -73,10 +77,10 @@ evaluate_input <- function(type, x, ...) {
 #' @param inputmatrix inputmatrix to evaluate
 #' @param sparse create sparse matrix (default = TRUE)
 #' @param cores how many cores to use
-#' @return sparse matrix
 #' @details The inputmatrix can be a matrix, sparse matrix, data.frame, 
 #' data.table or path to any of these.
 #' @keywords internal
+#' @returns sparse matrix
 #' @noRd
 .evaluate_expr_matrix <- function(inputmatrix,
     sparse = TRUE,
@@ -339,13 +343,13 @@ evaluate_input <- function(type, x, ...) {
     if (ncol(spatial_locs) > 3) {
         warning("There are more than 3 columns for spatial locations, only the 
                 first 3 will be used \n")
-        spatial_locs <- spatial_locs[, 1:3]
+        spatial_locs <- spatial_locs[, seq_len(3)]
     }
 
     # for spatial dimension names
     spatial_dimensions <- c("x", "y", "z")
     colnames(spatial_locs) <- paste0("sdim", 
-                                    spatial_dimensions[1:ncol(spatial_locs)])
+                                    spatial_dimensions[seq_len(ncol(spatial_locs))])
 
     # Assign first non-numeric as cell_ID
     if (!is.null(potential_cell_IDs)) {
@@ -904,11 +908,12 @@ evaluate_input <- function(type, x, ...) {
 
 
     # 3D or 2D data
-    if (all(column_classes[1:3] == "numeric")) {
-        colnames(spatial_feat_info)[1:4] <- c(
+    if (all(column_classes[seq_len(3)] == "numeric")) {
+        colnames(spatial_feat_info)[seq_len(4)] <- c(
             "sdimx", "sdimy", "sdimz", "feat_ID")
-    } else if (all(column_classes[1:2] == "numeric")) {
-        colnames(spatial_feat_info)[1:3] <- c("sdimx", "sdimy", "feat_ID")
+    } else if (all(column_classes[seq_len(2)] == "numeric")) {
+        colnames(spatial_feat_info)[seq_len(3)] <- c(
+            "sdimx", "sdimy", "feat_ID")
     } else {
         .gstop("First 3 or 2 columns need to be numeric for 3D and 2D data 
             respectively")

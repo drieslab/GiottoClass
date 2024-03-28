@@ -49,6 +49,11 @@ features (points).
 \details{
 Serial overlapping function.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+calculateOverlapRaster(g)
+
+}
 \seealso{
 \code{\link[=.calculate_overlap_raster]{.calculate_overlap_raster()}}
 }

@@ -27,6 +27,9 @@ get_feature_metadata(
 \item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
 expression and spat_info are not expected to exist.}
 }
+\value{
+a data.table or featMetaObj
+}
 \description{
 Get feature metadata from giotto object
 }

@@ -4,8 +4,9 @@
 #' @name convert_mgImage_to_array_DT
 #' @description converts a magick image object to a data.table
 #' @param mg_object magick image or Giotto image object
-#' @return data.table with image pixel information
+#' @import reshape2
 #' @keywords internal
+#' @returns data.table with image pixel information
 #' @export
 convert_mgImage_to_array_DT <- function(mg_object) {
     if (inherits(mg_object, "giottoImage")) {
@@ -34,9 +35,9 @@ convert_mgImage_to_array_DT <- function(mg_object) {
 #' plot
 #' @param mg_object magick image or Giotto image object
 #' @param top_color_range top possible background colors to return
-#' @return vector of pixel color frequencies and an associated barplot
+#' @returns vector of pixel color frequencies and an associated barplot
 #' @export
-estimateImageBg <- function(mg_object, top_color_range = 1:50) {
+estimateImageBg <- function(mg_object, top_color_range = seq_len(50)) {
     if (inherits(mg_object, "giottoImage")) {
         mg_object <- mg_object@mg_object
     }
@@ -61,7 +62,8 @@ estimateImageBg <- function(mg_object, top_color_range = 1:50) {
 #' include (percentage)
 #' @param new_color new background color
 #' @param new_name change name of Giotto image
-#' @return magick image or giotto image object with updated background color
+#' @import magick
+#' @returns magick image or giotto image object with updated background color
 #' @export
 changeImageBg <- function(mg_object,
     bg_color,
@@ -159,6 +161,7 @@ changeImageBg <- function(mg_object,
 #' automatic alignment. Meaning that origin is in upper left instead of lower 
 #' left.
 #' @keywords internal
+#' @returns numeric
 #' @export
 get_img_minmax <- function(mg_img,
     negative_y = TRUE) {
@@ -188,6 +191,7 @@ get_img_minmax <- function(mg_img,
 #' @name get_adj_rescale_img
 #' @title get_adj_rescale_img
 #' @keywords internal
+#' @returns numeric
 #' @export
 get_adj_rescale_img <- function(img_minmax,
     spatial_locs,
@@ -241,7 +245,7 @@ get_adj_rescale_img <- function(img_minmax,
 #' @param negative_y Map image to negative y spatial values if TRUE during 
 #' automatic alignment. Meaning that origin is in upper left instead of lower 
 #' left.
-#' @return an updated Giotto object with access to the list of images
+#' @returns an updated Giotto object with access to the list of images
 #' @export
 addGiottoImageMG <- function(gobject,
     images,
@@ -292,7 +296,7 @@ addGiottoImageMG <- function(gobject,
 
 
     # 2. Add image with for loop
-    for (image_i in 1:length(images)) {
+    for (image_i in seq_len(length(images))) {
         im <- images[[image_i]]
 
         if (inherits(im, "giottoImage")) {
@@ -403,7 +407,7 @@ addGiottoImageMG <- function(gobject,
 #' @param ymax_set set image ymax boundary. Applied before adjustments
 #' @param return_gobject return a \code{giotto} object if \code{TRUE}, a 
 #' giotto \code{image} object if \code{FALSE}
-#' @return a \code{giotto} object or an updated giotto \code{image} object 
+#' @returns a \code{giotto} object or an updated giotto \code{image} object 
 #' if \code{return_gobject = FALSe}
 #' @export
 updateGiottoImageMG <- function(gobject = NULL,
@@ -559,7 +563,7 @@ updateGiottoImageMG <- function(gobject = NULL,
 #' @description reconnect giottoImage if image pointer is broken
 #' @param giottoImage giottoImage to reconnect
 #' @param image_path path to source file of giottoImage
-#' @return reconnected giottoImage
+#' @returns reconnected giottoImage
 #' @keywords internal
 #' @export
 reconnect_giottoImage_MG <- function(giottoImage,
@@ -584,6 +588,7 @@ reconnect_giottoImage_MG <- function(giottoImage,
 #' @param image_path existing full filepath to image to be loaded as a terra 
 #' spatRaster
 #' @keywords internal
+#' @returns spatRaster object
 .create_terra_spatraster <- function(image_path) {
     raster_object <- try(suppressWarnings(terra::rast(x = image_path)))
     if (inherits(raster_object, "try-error")) {
@@ -644,7 +649,7 @@ reconnect_giottoImage_MG <- function(giottoImage,
 #' switching to \strong{method B} (see description)
 #' @param max_resample_scale maximum cells allowed to resample to compensate for
 #' decreased resolution when cropping after sampling
-#' @return a \code{giottoLargeImage} cropped and resampled properly for plotting
+#' @returns a \code{giottoLargeImage} cropped and resampled properly for plotting
 #' @seealso \code{\link[terra]{spatSample}}
 #' @export
 plot_auto_largeImage_resample <- function(gobject,
@@ -705,7 +710,7 @@ plot_auto_largeImage_resample <- function(gobject,
             sdimy = c(centroid_sample_DT$y)
         )
 
-        # sub_ext = terra::ext(sub_obj)[1:4]
+        # sub_ext = terra::ext(sub_obj)[seq_len(4)]
         # cell_locations = data.table::data.table(
         # sdimx = c(sub_ext[['xmin']], sub_ext[['xmax']]),
         # sdimy = c(sub_ext[['ymin']], sub_ext[['ymax']]))
@@ -716,7 +721,7 @@ plot_auto_largeImage_resample <- function(gobject,
             largeImage resample extent\n")
 
     # Get image extent minmax
-    im_minmax <- terra::ext(giottoLargeImage@raster_object)[1:4]
+    im_minmax <- terra::ext(giottoLargeImage@raster_object)[seq_len(4)]
     # Determine crop
     if (isTRUE(include_image_in_border)) {
         # with crop padding
@@ -819,6 +824,7 @@ plot_auto_largeImage_resample <- function(gobject,
 #' @param output what output to return as. Defaults to "data.frame"
 #' @param verbose be verbose
 #' @param \dots additional params to pass to `terra::spatSample`
+#' @returns magick or EBImage image
 #' @keywords internal
 .spatraster_sample_values <- function(raster_object,
     size = 5000,
@@ -934,6 +940,7 @@ plot_auto_largeImage_resample <- function(gobject,
 #' default)
 #' @param giottoLargeImage giotto large image object
 #' @param method method of plotting image distribution
+#' @returns density or histogram plot
 #' @keywords internal
 .dist_giottolargeimage <- function(gobject = NULL,
     image_name = NULL,
@@ -1036,7 +1043,7 @@ plot_auto_largeImage_resample <- function(gobject,
 #' @param overwrite boolean. Overwrite if filename to save image as already 
 #' exists. Defaults to TRUE
 #' @param verbose boolean. Be verbose
-#' @return \code{largeGiottoImage} object with pointer to stitched image
+#' @returns \code{largeGiottoImage} object with pointer to stitched image
 #' @export
 stitchGiottoLargeImage <- function(largeImage_list = NULL,
     gobject_list = NULL,
@@ -1101,7 +1108,7 @@ stitchGiottoLargeImage <- function(largeImage_list = NULL,
         if (!is.null(gobject_list)) {
             # For loop to grab giottoLargeImages
             largeImage_list <- list()
-            for (gobj_i in 1:length(gobject_list)) {
+            for (gobj_i in seq_len(length(gobject_list))) {
                 largeImage_list[[gobj_i]] <- get_giottoLargeImage(
                     gobject = gobject_list[[gobj_i]],
                     name = largeImage_nameList[[gobj_i]]
@@ -1122,7 +1129,7 @@ stitchGiottoLargeImage <- function(largeImage_list = NULL,
 
     # For loop to extract raster_objects
     raster_list <- list()
-    for (img_i in 1:length(largeImage_list)) {
+    for (img_i in seq_len(length(largeImage_list))) {
         raster_list[[img_i]] <- largeImage_list[[img_i]]@raster_object
     }
 
@@ -1139,7 +1146,7 @@ stitchGiottoLargeImage <- function(largeImage_list = NULL,
         }
 
         # Shift the image extents as specified by POV_positions
-        for (rast_i in 1:length(raster_list)) {
+        for (rast_i in seq_len(length(raster_list))) {
             raster_list[[rast_i]] <- terra::shift(
                 x = raster_list[[rast_i]],
                 dx = FOV_positions[rast_i, FOV_xcol],
@@ -1155,7 +1162,7 @@ stitchGiottoLargeImage <- function(largeImage_list = NULL,
         if (verbose == TRUE) 
             cat("round_positions == TRUE \n Image spatial positions will be 
                 rounded to integers. \n")
-        for (rast_i in 1:length(raster_list)) {
+        for (rast_i in seq_len(length(raster_list))) {
             terra::ext(raster_list[[rast_i]]) <- round(
                 terra::ext(raster_list[[rast_i]]))
         }
@@ -1164,7 +1171,7 @@ stitchGiottoLargeImage <- function(largeImage_list = NULL,
     if (dryRun == TRUE) {
         # Collect SpatExtents then convert to polygons
         imgBounds_list <- list()
-        for (rast_i in 1:length(raster_list)) {
+        for (rast_i in seq_len(length(raster_list))) {
             img_ext <- terra::ext(raster_list[[rast_i]])
             img_bound_poly <- terra::as.polygons(img_ext)
             img_bound_poly$FOV <- rast_i
@@ -1247,7 +1254,7 @@ stitchGiottoLargeImage <- function(largeImage_list = NULL,
 #' @param crop_name arbitrary name for cropped giottoLargeImage
 #' @param crop_extent terra extent object used to crop the giottoLargeImage
 #' @param xmax_crop,xmin_crop,ymax_crop,ymin_crop crop min/max x and y bounds
-#' @return a giottoLargeImage object
+#' @returns a giottoLargeImage object
 #' @export
 cropGiottoLargeImage <- function(gobject = NULL,
     largeImage_name = NULL,
@@ -1340,7 +1347,7 @@ cropGiottoLargeImage <- function(gobject = NULL,
 #' @param max_intensity value to treat as maximum intensity in color scale
 #' @param return_gobject return as giotto object
 #' @param verbose be verbose
-#' @return a giotto object if \code{return_gobject = TRUE} or an updated giotto
+#' @returns a giotto object if \code{return_gobject = TRUE} or an updated giotto
 #' image object if \code{return_gobject = FALSE}
 #' @export
 convertGiottoLargeImageToMG <- function(gobject = NULL,
@@ -1485,6 +1492,7 @@ convertGiottoLargeImageToMG <- function(gobject = NULL,
 #' @param return_max logical. default is `FALSE`. Whether to return the maximum
 #' possible value for the detected bitdepth instead of the bitdepth itself
 #' @keywords internal
+#' @returns numeric
 .bitdepth <- function(x, return_max = FALSE) {
     res <- ceiling(log(max(x), base = 2L)) # power of 2 needed to represent 
     # value(s)
@@ -1518,7 +1526,7 @@ convertGiottoLargeImageToMG <- function(gobject = NULL,
 #' @param bitDepth image bitDepth
 #' @param verbose be verbose
 #' @keywords internal
-#' @return datatype for terra writeRaster function
+#' @returns datatype for terra writeRaster function
 .terra_writeraster_datatype <- function(giottoLargeImage = NULL,
     quick_INTS_maxval = NULL,
     max_intensity = NULL,
@@ -1662,6 +1670,7 @@ convertGiottoLargeImageToMG <- function(gobject = NULL,
 #' which \code{dataType} can be automatically determined
 #' @param overwrite Overwrite if \code{filename} is already existing
 #' @param verbose be verbose
+#' @returns image local file
 #' @export
 writeGiottoLargeImage <- function(giottoLargeImage = NULL,
     gobject = NULL,
@@ -1757,7 +1766,7 @@ writeGiottoLargeImage <- function(giottoLargeImage = NULL,
 #' @param giottoLargeImage \code{largeImage} object to directly update
 #' @param return_gobject return a \code{giotto} object if \code{TRUE}, a giotto
 #' \code{largeImage} object if \code{FALSE}
-#' @return a \code{giotto} object or an updated giotto \code{largeImage} object 
+#' @returns a \code{giotto} object or an updated giotto \code{largeImage} object 
 #' if \code{return_gobject = FALSE}
 #' @export
 updateGiottoLargeImage <- function(gobject = NULL,
@@ -1842,7 +1851,7 @@ updateGiottoLargeImage <- function(gobject = NULL,
 
     # 2. Find minmax spatial anchor values if set values not supplied
     if (is.null(spatAnchor)) {
-        spatAnchor <- terra::ext(x = g_imageL@raster_object)[1:4] 
+        spatAnchor <- terra::ext(x = g_imageL@raster_object)[seq_len(4)] 
         # (xmin, xmax, ymin, ymax)
         names(spatAnchor) <- NULL
     }
@@ -1925,7 +1934,7 @@ updateGiottoLargeImage <- function(gobject = NULL,
 #' automatic alignment. Meaning that origin is in upper left instead of lower 
 #' left.
 #' @param verbose be verbose
-#' @return an updated Giotto object with access to the list of images
+#' @returns an updated Giotto object with access to the list of images
 #' @export
 addGiottoLargeImage <- function(gobject = NULL,
     largeImages = NULL,
@@ -1967,7 +1976,7 @@ addGiottoLargeImage <- function(gobject = NULL,
 
 
     # 2. Add image with for loop
-    for (image_i in 1:length(largeImages)) {
+    for (image_i in seq_len(length(largeImages))) {
         im <- largeImages[[image_i]]
 
         if (inherits(im, "giottoLargeImage")) {
@@ -2061,7 +2070,7 @@ addGiottoLargeImage <- function(gobject = NULL,
 #' @description  reconnect giottoLargeImage if image pointer is broken
 #' @param giottoLargeImage giottoLargeImage to reconnect
 #' @param image_path path to source file of giottoLargeImage
-#' @return reconnected giottoLargeImage
+#' @returns reconnected giottoLargeImage
 #' @keywords internal
 #' @export
 reconnect_giottoLargeImage <- function(giottoLargeImage,
@@ -2118,6 +2127,7 @@ reconnect_giottoLargeImage <- function(giottoLargeImage,
 #'     outlier intensity values in the image and a preview with alternative
 #'     color scaling is desired.
 #' @family basic image functions
+#' @returns image
 #' @export
 plotGiottoImage <- function(gobject = NULL,
     image_name = NULL,
@@ -2186,7 +2196,7 @@ plotGiottoImage <- function(gobject = NULL,
 #' @param negative_y Map image to negative y spatial values if TRUE during 
 #' automatic alignment. Meaning that origin is in upper left instead of lower 
 #' left.
-#' @return an updated Giotto object with access to the list of images
+#' @returns an updated Giotto object with access to the list of images
 #' @family basic image functions
 #' @export
 addGiottoImage <- function(gobject = NULL,
@@ -2240,7 +2250,7 @@ addGiottoImage <- function(gobject = NULL,
 #' @param return_gobject return a giotto object if \code{TRUE}, a giotto image 
 #' object if \code{FALSE}
 #' @param verbose be verbose
-#' @return a giotto object or an updated giotto image object if 
+#' @returns a giotto object or an updated giotto image object if 
 #' return_gobject = FALSE
 #' @family basic image functions
 #' @export
@@ -2335,7 +2345,7 @@ updateGiottoImage <- function(gobject = NULL,
 #' @param image_object giotto image object
 #' @param image_type type of giotto image object
 #' @param image_path path to image source to reconnect image object with
-#' @return reconnected image_object
+#' @returns reconnected image_object
 #' @keywords internal
 reconnect_image_object <- function(image_object,
     image_type,
@@ -2363,6 +2373,7 @@ reconnect_image_object <- function(image_object,
 #' @name select_gimage
 #' @description selects and (possibly resamples) giotto images for plotting
 #' @keywords internal
+#' @returns giotto image
 #' @export
 select_gimage <- function(gobject,
     gimage = NULL,
@@ -2381,7 +2392,7 @@ select_gimage <- function(gobject,
                 warning("image_name: ", image_name, " does not exists")
         } else {
             gimage <- list()
-            for (gim in 1:length(image_name)) {
+            for (gim in seq_len(length(image_name))) {
                 gimage[[gim]] <- gobject@images[[gim]]
                 if (is.null(gimage[[gim]])) 
                     warning("image_name: ", gim, " does not exists")
@@ -2401,7 +2412,7 @@ select_gimage <- function(gobject,
             )
         } else {
             gimage <- list()
-            for (gim in 1:length(largeImage_name)) {
+            for (gim in seq_len(length(largeImage_name))) {
                 gimage[[gim]] <- plot_auto_largeImage_resample(
                     gobject = gobject,
                     largeImage_name = largeImage_name[[gim]],
@@ -2454,7 +2465,7 @@ select_gimage <- function(gobject,
 #' @param largeImage_path named list of paths to images to reconnect to
 #' giottoLargeImages
 #' @param verbose be verbose
-#' @return a giotto object with updated image pointer
+#' @returns a giotto object with updated image pointer
 #' @family basic image functions
 #' @export
 reconnectGiottoImage <- function(gobject,
@@ -2526,7 +2537,7 @@ reconnectGiottoImage <- function(gobject,
 
             # get file paths from image objects
             img_path[[image_type]] <- lapply(
-                X = 1:length(img_list[[image_type]]),
+                X = seq_len(length(img_list[[image_type]])),
                 function(x) {
                     img_list[[image_type]][[x]]@file_path
                 }
@@ -2537,7 +2548,7 @@ reconnectGiottoImage <- function(gobject,
             if (verbose == TRUE) 
                 cat(image_type, "(s) discovered...\n", sep = "")
 
-            for (image_i in 1:length(img_path[[image_type]])) {
+            for (image_i in seq_len(length(img_path[[image_type]]))) {
                 if (!is.null(img_path[[image_type]][[image_i]])) {
                     if (verbose == TRUE) 
                         cat("-->", name_list[[image_type]][[image_i]], 
@@ -2610,7 +2621,7 @@ reconnectGiottoImage <- function(gobject,
 
             # update file_path
             img_list[[image_type]] <- lapply(
-                X = 1:length(img_list[[image_type]]),
+                X = seq_len(length(img_list[[image_type]])),
                 function(x) {
                     img_list[[image_type]][[x]]@file_path <- 
                         img_path[[image_type]][[x]]
@@ -2641,7 +2652,7 @@ reconnectGiottoImage <- function(gobject,
             if (verbose == TRUE) {
                 cat("\n Skipping ", image_type, 
                     "s with missing filepaths: \n", sep = "")
-                for (image_NULL_i in 1:sum(image_path_NULL[[image_type]])) {
+                for (image_NULL_i in seq_len(sum(image_path_NULL[[image_type]]))) {
                     cat(name_list[[image_type]][[which(
                         image_path_NULL[[image_type]])[[image_NULL_i]]]], "\n")
                 }
@@ -2658,7 +2669,7 @@ reconnectGiottoImage <- function(gobject,
 
         # Load pointers
         img_list[[image_type]] <- lapply(
-            X = 1:length(img_list[[image_type]]),
+            X = seq_len(length(img_list[[image_type]])),
             function(x) {
                 reconnect_image_object(
                     image_object = img_list[[image_type]][[x]],
@@ -2672,7 +2683,7 @@ reconnectGiottoImage <- function(gobject,
         # 4. Update gobject:---------------------------------------------------#
 
         # Set the image objects into the gobject
-        for (image_ii in 1:length(img_list[[image_type]])) {
+        for (image_ii in seq_len(length(img_list[[image_type]]))) {
             gobject <- set_giottoImage(
                 gobject = gobject,
                 image = img_list[[image_type]][[image_ii]],
@@ -2706,6 +2717,7 @@ reconnectGiottoImage <- function(gobject,
 #' @param image_name name of image object to use
 #' @param giottoLargeImage giotto large image object
 #' @param method plot type to show image intensity distribution
+#' @returns density or histogram plot
 #' @export
 distGiottoImage <- function(gobject = NULL,
     image_type = "largeImage",
@@ -2741,12 +2753,12 @@ distGiottoImage <- function(gobject = NULL,
 #' @param x image array to use
 #' @param alpha global alpha value to use. Numeric. Scales from 0 to 1, with 0
 #' being fully transparent and 1 being fully visible
-#' @return image array with 4th channel for transparency
+#' @returns image array with 4th channel for transparency
 #' @export
 add_img_array_alpha <- function(x,
     alpha) {
     img_dims <- dim(x)
     x_alpha <- array(data = alpha, dim = c(img_dims[1], img_dims[2], 4))
-    x_alpha[, , 1:3] <- x
+    x_alpha[, , seq_len(3)] <- x
     return(x_alpha)
 }

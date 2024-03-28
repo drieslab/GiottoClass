@@ -13,6 +13,7 @@
 #' the center of the extent of x is used
 #' @param z0 numeric. z-coordinate of the center of rescaling. If missing, 
 #' the center of the extent of x is used (only for supported objects)
+#' @returns re-scaled object
 NULL
 # ------------------------------------------------------------------- #
 
@@ -196,6 +197,7 @@ setMethod("rescale", signature("giottoPoints"),
 #' vector of xy(z) coordinates. Default is `c(0, 0, 0)`
 #' @param geom character. Named vector of colnames of x, y, (z) coordinate 
 #' columns. Default is `c("sdimx", "sdimy", "sdimz")`
+#' @returns spatial locations
 #' @details \code{scale_factor} either given as a single value where it will
 #' be applied to x, y, and z (if available) dimensions or as a vector of named 
 #' values for 'x', y', (and 'z').
@@ -255,6 +257,7 @@ setMethod("rescale", signature("giottoPoints"),
 
 #' @title Rescale polygons
 #' @name .rescale_polygons
+#' @returns polygons
 #' @description  rescale individual polygons by a factor x and y
 #' @keywords internal
 .rescale_polygons <- function(spatVector,

@@ -280,6 +280,7 @@ setClass("featData",
 #' Classes (such as dimObj) that can hold information from multiple types of 
 #' methods use the misc slot to hold additional information specific to each 
 #' method. Information may be stored within as S3 structures.
+#' @returns slot for miscellaneous information
 setClass("miscData",
     contains = "VIRTUAL",
     slots = list(misc = "ANY"),
@@ -292,6 +293,7 @@ setClass("miscData",
 #' @description
 #' Classes that inherit from this class will contain a spatVector slot meant to
 #' hold and work with terra SpatVector objects
+#' @returns object with spatVector slot
 terraVectData <- setClass(
     "terraVectData",
     contains = "VIRTUAL",
@@ -357,9 +359,9 @@ setClass("spatFeatData",
 #' }
 #' @returns giotto object
 #' @examples
-#' \dontrun{
-#' gobject <- updateGiottoObject(gobject)
-#' }
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g <- updateGiottoObject(g)
+#' 
 #' @export
 updateGiottoObject <- function(gobject) {
     if (!inherits(gobject, "giotto")) {

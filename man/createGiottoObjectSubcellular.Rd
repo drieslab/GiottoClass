@@ -90,4 +90,12 @@ or dataframe file and giotto points (analyte coordinates e.g. transcripts)
 or dataframe file and raw intensity images (e.g. protein stains)
 }
 }
+\examples{
+x_gpolygons <- GiottoData::loadSubObjectMini("giottoPolygon")
+x_gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
+
+createGiottoObjectSubcellular(gpolygons = x_gpolygons,
+gpoints = x_gpoints)
+
+}
 \concept{giotto}

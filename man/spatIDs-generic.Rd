@@ -62,6 +62,9 @@ only (currently gpoly and gpoints only)}
 
 \item{feat_type}{(optional) specify which feature type}
 }
+\value{
+spatIDs and featIDs
+}
 \description{
 Get the cell
 IDs (termed spatial IDs to better reflect when not at the single-cell level)

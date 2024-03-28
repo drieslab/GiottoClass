@@ -3,6 +3,7 @@
 #' @param gobject giotto object
 #' @param x giottoSubobject to set
 #' @param \dots additional params to pass to specific Giotto setter functions
+#' @returns giottoSubobject
 NULL
 
 

@@ -45,6 +45,9 @@ spat units}
 
 \item{verbose}{be verbose}
 }
+\value{
+giotto object
+}
 \description{
 deprecated
 }

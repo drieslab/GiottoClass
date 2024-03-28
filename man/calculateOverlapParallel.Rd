@@ -48,4 +48,9 @@ since the underlying terra objects are internal C pointers.
 plan(multicore) is also not supported for
 Rstudio users.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+calculateOverlapParallel(g, spatial_info = "z1")
+
+}
 \concept{overlap}

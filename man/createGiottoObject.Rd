@@ -138,4 +138,11 @@ the appropriate slots:
 \item{images}
 }
 }
+\examples{
+expr_matrix <- readRDS(system.file("extdata/toy_matrix.RDS", 
+package = "GiottoClass"))
+
+createGiottoObject(expression = expr_matrix)
+
+}
 \concept{giotto}

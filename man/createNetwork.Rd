@@ -133,7 +133,7 @@ kNN_spat <- createNetwork(
 
 # kNN NN network
 kNN <- createNetwork(
-    pca[, 1:10],
+    pca[, seq_len(10)],
     type = "kNN",
     method = "dbscan",
     node_ids = rownames(pca),
@@ -142,7 +142,7 @@ kNN <- createNetwork(
 
 # sNN NN network
 sNN <- createNetwork(
-    pca[, 1:10],
+    pca[, seq_len(10)],
     type = "sNN",
     method = "dbscan",
     node_ids = rownames(pca),
@@ -150,6 +150,6 @@ sNN <- createNetwork(
 )
 
 # using defaults for sNN with index IDs to create igraph
-sNN_idx <- createNetwork(pca[, 1:10])
+sNN_idx <- createNetwork(pca[, seq_len(10)])
 }
 }

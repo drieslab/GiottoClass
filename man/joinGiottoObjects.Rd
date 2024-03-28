@@ -36,9 +36,6 @@ z-stack (default is step of 1000)}
 
 \item{verbose}{be verbose
 Preview where each gobject will be in space with bounding polygons}
-
-\item{dry_run}{(experimental) Works best for join_method 'shift' or
-'no_change'.}
 }
 \value{
 giotto object

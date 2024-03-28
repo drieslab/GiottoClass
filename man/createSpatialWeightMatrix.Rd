@@ -30,6 +30,9 @@ with attached results or the bare weighted matrix}
 
 \item{verbose}{be verbose}
 }
+\value{
+spatial weight matrix
+}
 \description{
 Generate spatial weight matrix based on the strength of spatial
 interactions between nodes. Requires spatial networks to be first generated.

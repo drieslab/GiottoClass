@@ -86,6 +86,9 @@ size based on \code{raster_size} param. See details. When \code{FALSE}, plots vi
 
 \item{dims}{dimensions to plot}
 }
+\value{
+plot
+}
 \description{
 S4 generic for previewing Giotto's image and subcellular
 objects.
@@ -165,7 +168,7 @@ plot(gpoints, dens = TRUE, raster_size = 300)
 plot(gpoints, dens = TRUE, raster_size = 80, force_size = TRUE)
 
 # plot specific feature(s)
-plot(gpoints, feats = featIDs(gpoints)[1:4])
+plot(gpoints, feats = featIDs(gpoints)[seq_len(4)])
 
 # ----- vector plotting ----- #
 # non-rasterized plotting (slower, but higher quality)
@@ -175,7 +178,7 @@ plot(gpoints, raster = FALSE)
 plot(gpoints, raster = FALSE, col = grDevices::rainbow(nrow(gpoints)))
 
 # plot specific feature(s)
-plot(gpoints, feats = featIDs(gpoints)[1:4], raster = FALSE)
+plot(gpoints, feats = featIDs(gpoints)[seq_len(4)], raster = FALSE)
 
 
 ######### spatLocsObj plotting #########

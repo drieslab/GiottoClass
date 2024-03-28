@@ -212,6 +212,9 @@ the S4.}
 \item{i, j}{indices specifying elements to extract or replace. Indices are
 numeric or character vectors or empty}
 }
+\value{
+columns or values from a data.table
+}
 \description{
 Operators Giotto S4 internal data.tables to extract
 or replace parts.

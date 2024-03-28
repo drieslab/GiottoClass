@@ -12,6 +12,7 @@
 #' @param return_gobject logical. Whether the giotto object should be returned
 #' @param toplevel expected relative stackframe where call that is being 
 #' recorded was made
+#' @returns giotto object or list of parameters
 #' @export
 update_giotto_params <- function(gobject,
     description = "_test",
@@ -37,6 +38,11 @@ update_giotto_params <- function(gobject,
 #' @name objHistory
 #' @description Print and return giotto object history
 #' @param object giotto object
+#' @returns list
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' objHistory(g)
+#' 
 #' @export
 objHistory <- function(object) {
     cat("Steps and parameters used: \n \n")
@@ -52,7 +58,11 @@ objHistory <- function(object) {
 #' @description shows the sequential processing steps that were performed
 #' on a Giotto object in a summarized format
 #' @param gobject giotto object
-#' @return list of processing steps and names
+#' @returns list of processing steps and names
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' showProcessingSteps(g)
+#' 
 #' @export
 showProcessingSteps <- function(gobject) {
     parameters <- gobject@parameters

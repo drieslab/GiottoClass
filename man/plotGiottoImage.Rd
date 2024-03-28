@@ -35,6 +35,9 @@ maximum intensity in color scale when plotting giottoLargeImage}
 \item{...}{additional params to pass to image object specific plotting
 functions}
 }
+\value{
+image
+}
 \description{
 Display a giotto image in the viewer panel. Image object to plot
 can be specified by providing the giotto object containing the

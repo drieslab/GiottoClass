@@ -30,6 +30,9 @@ information (see details)}
 
 \item{misc}{misc}
 }
+\value{
+nnNetObj
+}
 \description{
 Create an S4 nnNetObj
 }

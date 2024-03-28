@@ -22,6 +22,9 @@
 \item{image_type}{image object type (only supports largeImage and is set as
 default)}
 }
+\value{
+density or histogram plot
+}
 \description{
 Plot smoothed curve of giotto largeImage intensity values
 }

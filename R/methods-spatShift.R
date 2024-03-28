@@ -6,6 +6,7 @@
 #' @param dz numeric. The shift on the z axis
 #' @param copy_obj Default = TRUE
 #' @param ... additional params to pass to methods
+#' @returns object with shifted spatial locations
 #' @description Shift the spatial locations of an object
 NULL
 
@@ -188,6 +189,7 @@ setMethod("spatShift", signature("giottoLargeImage"),
 #' @param dy value to shift coordinates in the positive y direction
 #' @param dz value to shift coordinates in the positive z direction
 #' @param copy_obj copy/duplicate object (default = TRUE)
+#' @returns spatial locations
 #' @keywords internal
 .shift_spatial_locations <- function(spatlocs,
     dx = 0,
@@ -228,6 +230,7 @@ setMethod("spatShift", signature("giottoLargeImage"),
 #' @param dy distance to shift on y axis
 #' @param dz distance to shift on z axis
 #' @param copy_obj copy/duplicate object (default = TRUE)
+#' @returns spatial network
 #' @keywords internal
 shift_spatial_network <- function(spatnet, dx = 0, dy = 0, dz = 0, 
                                 copy_obj = TRUE) {

@@ -20,7 +20,7 @@
 #' @param fiji_path path to fiji executable
 #' @param no_python_warn turn off warning that no compatible python env has 
 #' been detected
-#' @return named vector with giotto instructions
+#' @returns named vector with giotto instructions
 #' @seealso More online information can be found 
 #' here \url{http://giottosuite.com}
 #' @export
@@ -177,7 +177,7 @@ create_giotto_instructions <- function(python_path = NULL,
 #' @param param parameter to retrieve
 #' @param default default object to return if parameter to retrieve does not
 #' exist
-#' @return specific parameter
+#' @returns specific parameter
 #' @export
 readGiottoInstructions <- function(giotto_instructions,
     param = NULL,
@@ -206,7 +206,7 @@ readGiottoInstructions <- function(giotto_instructions,
 #' @name showGiottoInstructions
 #' @description Function to display all instructions from giotto object
 #' @param gobject giotto object
-#' @return named vector with giotto instructions
+#' @returns named vector with giotto instructions
 #' @export
 showGiottoInstructions <- function(gobject) {
     instrs <- gobject@instructions
@@ -224,7 +224,7 @@ showGiottoInstructions <- function(gobject) {
 #' @param new_values new value(s) for parameter(s)
 #' @param return_gobject (boolean, default = TRUE) return giotto object
 #' @param init_gobject (boolean, default = TRUE) initialize gobject if returning
-#' @return giotto object with one or more changed instructions
+#' @returns giotto object with one or more changed instructions
 #' @export
 changeGiottoInstructions <- function(gobject,
     params = NULL,
@@ -249,7 +249,7 @@ changeGiottoInstructions <- function(gobject,
     instrs[params] <- new_values
 
     ## make sure that classes remain consistent
-    new_instrs <- lapply(1:length(instrs), function(x) {
+    new_instrs <- lapply(seq_len(length(instrs)), function(x) {
         if (names(instrs[x]) %in% c("dpi", "height", "width")) {
             instrs[[x]] <- as.numeric(instrs[[x]])
         } else if (names(instrs[x]) %in% 
@@ -288,7 +288,7 @@ changeGiottoInstructions <- function(gobject,
 #' instructions (e.g. result from createGiottoInstructions)
 #' @param init_gobject (boolean, default = TRUE) initialize gobject when 
 #' returning
-#' @return giotto object with replaces instructions
+#' @returns giotto object with replaces instructions
 #' @export
 replaceGiottoInstructions <- function(gobject,
     instructions = NULL,

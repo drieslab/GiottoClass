@@ -36,6 +36,9 @@ how it was generated}
 
 \item{verbose}{be verbose}
 }
+\value{
+spatEnrObj
+}
 \description{
 Create S4 spatEnrObj
 }

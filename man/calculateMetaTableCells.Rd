@@ -33,3 +33,10 @@ data.table with average metadata values per (combined) annotation
 calculates the average metadata values for one or
 more (combined) annotation columns.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+calculateMetaTableCells(g, metadata_cols = "cell_ID", 
+value_cols = "leiden_clus")
+
+}

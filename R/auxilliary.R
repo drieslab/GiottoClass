@@ -10,6 +10,11 @@
 #' @inheritParams data_access_params
 #' @param ... additional params to pass
 #' @returns data.table with cell metadata
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' pDataDT(g)
+#' 
 #' @export
 pDataDT <- function(gobject,
     spat_unit = NULL,
@@ -58,6 +63,11 @@ pDataDT <- function(gobject,
 #' @inheritParams data_access_params
 #' @param ... additional params to pass
 #' @returns data.table with feature metadata
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' fDataDT(g)
+#' 
 #' @export
 fDataDT <- function(gobject,
     spat_unit = NULL,
@@ -112,7 +122,8 @@ fDataDT <- function(gobject,
 #' @param annotation_vector named annotation vector (names = cluster ids)
 #' @param cluster_column cluster column to convert to annotation names
 #' @param name new name for annotation column
-#' @details You need to specifify which (cluster) column you want to annotate
+#' @returns giotto object
+#' @details You need to specify which (cluster) column you want to annotate
 #' and you need to provide an annotation vector like this:
 #' \itemize{
 #'   \item{1. identify the cell type of each cluster}
@@ -121,7 +132,21 @@ fDataDT <- function(gobject,
 #'   \item{3. provide original cluster names to previous vector, 
 #'   e.g. names(cell_types) = c(2, 1, 3)}
 #' }
-#' @returns giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' annotation <- c("1" = "cell_type_1",
+#' "2" = "cell_type_2",
+#' "3" = "cell_type_3",
+#' "4" = "cell_type_4",
+#' "5" = "cell_type_5",
+#' "6" = "cell_type_6",
+#' "7" = "cell_type_7",
+#' "8" = "cell_type_8")
+#' 
+#' g <- annotateGiotto(g, annotation_vector = annotation, 
+#' cluster_column = "leiden_clus")
+#' 
 #' @export
 annotateGiotto <- function(gobject,
     spat_unit = NULL,
@@ -189,11 +214,11 @@ annotateGiotto <- function(gobject,
         )
 
         cell_metadata[][, temp_cluster_name := annotation_vector[[
-            as.character(get(cluster_column))]], by = 1:nrow(cell_metadata[])]
+            as.character(get(cluster_column))]], by = seq_len(nrow(cell_metadata[]))]
         cell_metadata[][, (name) := NULL]
     } else {
         cell_metadata[][, temp_cluster_name := annotation_vector[[
-            as.character(get(cluster_column))]], by = 1:nrow(cell_metadata[])]
+            as.character(get(cluster_column))]], by = seq_len(nrow(cell_metadata[]))]
     }
 
     data.table::setnames(cell_metadata[], old = "temp_cluster_name", new = name)
@@ -219,8 +244,25 @@ annotateGiotto <- function(gobject,
 #' @param feat_type feature type
 #' @param columns names of columns to remove
 #' @param return_gobject boolean: return giotto object (default = TRUE)
-#' @details if \code{return_gobject = FALSE}, it will return the cell metadata
 #' @returns giotto object
+#' @details if \code{return_gobject = FALSE}, it will return the cell metadata
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' annotation <- c("1" = "cell_type_1",
+#' "2" = "cell_type_2",
+#' "3" = "cell_type_3",
+#' "4" = "cell_type_4",
+#' "5" = "cell_type_5",
+#' "6" = "cell_type_6",
+#' "7" = "cell_type_7",
+#' "8" = "cell_type_8")
+#' 
+#' g <- annotateGiotto(g, annotation_vector = annotation, 
+#' cluster_column = "leiden_clus")
+#' 
+#' g <- removeCellAnnotation(g, columns = "cell_types")
+#' 
 #' @export
 removeCellAnnotation <- function(gobject,
     spat_unit = NULL,
@@ -277,8 +319,13 @@ removeCellAnnotation <- function(gobject,
 #' @param feat_type feature type
 #' @param columns names of columns to remove
 #' @param return_gobject boolean: return giotto object (default = TRUE)
-#' @details if \code{return_gobject = FALSE}, it will return the gene metadata
 #' @returns giotto object
+#' @details if \code{return_gobject = FALSE}, it will return the gene metadata
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' g <- removeFeatAnnotation(g, columns = "hvf")
+#' 
 #' @export
 removeFeatAnnotation <- function(gobject,
     spat_unit = NULL,
@@ -358,34 +405,20 @@ removeFeatAnnotation <- function(gobject,
 #' 
 #' @returns giotto object
 #' @examples
-#' # dummy matrix
-#' m <- readRDS(system.file("extdata/toy_matrix.RDS", package = "GiottoClass"))
-#' g <- createGiottoObject(m)
-#'
-#' pDataDT(g)
-#'
-#' # appending a character vector, merge on vector names
-#' v <- seq(10)
-#' names(v) <- sample(LETTERS[seq(10)])
-#' force(v)
-#'
-#' g <- addCellMetadata(g, new_metadata = v, by_column = TRUE)
-#' pDataDT(g)
-#'
-#' # appending a data.frame, merge on specified column "ID"
-#' df <- data.frame(
-#'     IDS = rev(LETTERS[seq(10)]), # reversed
-#'     l = letters[seq(10)],
-#'     x = c(rep(TRUE, 5), rep(FALSE, 5))
-#' )
-#' force(df)
-#'
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' m <- pDataDT(g)
+#' m <- m[,c("cell_ID", "leiden_clus")]
+#' m$cell_type <- paste0("cell_type_", m$leiden_clus)
+#' m <- m[, c("cell_ID", "cell_type")]
+#' 
 #' g <- addCellMetadata(
 #'     g,
-#'     new_metadata = df,
+#'     new_metadata = m,
 #'     by_column = TRUE,
-#'     column_cell_ID = "IDS"
+#'     column_cell_ID = "cell_ID"
 #' )
+#' 
 #' pDataDT(g)
 #' @export
 addCellMetadata <- function(gobject,
@@ -538,6 +571,7 @@ addCellMetadata <- function(gobject,
 #' @param by_column merge metadata based on \emph{feat_ID} column 
 #' in \code{\link{fDataDT}}
 #' @param column_feat_ID column name of new metadata to use if by_column = TRUE
+#' @returns giotto object
 #' @details You can add additional feature metadata in several manners:
 #' \itemize{
 #'   \item{1. Provide a data.table or data.frame with feature annotations in 
@@ -550,37 +584,22 @@ addCellMetadata <- function(gobject,
 #'   they correspond to. These names will be matched against 
 #'   the \emph{feat_ID} column in fDataDT(gobject).}
 #' }
-#' @returns giotto object
 #' @examples
-#' # dummy matrix
-#' m <- readRDS(system.file("extdata/toy_matrix.RDS", package = "GiottoClass"))
-#' g <- createGiottoObject(m)
-#'
-#' fDataDT(g)
-#'
-#' # appending a character vector, merge on vector names
-#' v <- seq(10)
-#' names(v) <- sample(letters[seq(10)])
-#' force(v)
-#'
-#' g <- addFeatMetadata(g, new_metadata = v, by_column = TRUE)
-#' fDataDT(g)
-#'
-#' # appending a data.frame, merge on specified column "ID"
-#' df <- data.frame(
-#'     IDS = rev(letters[seq(10)]), # reversed
-#'     l = LETTERS[seq(10)],
-#'     x = c(rep(TRUE, 5), rep(FALSE, 5))
-#' )
-#' force(df)
-#'
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' m <- fDataDT(g)
+#' m <- m[,"feat_ID"]
+#' m$new_feat_ID <- paste0("gene_", m$feat_ID)
+#' 
 #' g <- addFeatMetadata(
 #'     g,
-#'     new_metadata = df,
+#'     new_metadata = m,
 #'     by_column = TRUE,
-#'     column_feat_ID = "IDS"
+#'     column_feat_ID = "feat_ID"
 #' )
+#' 
 #' fDataDT(g)
+#' 
 #' @export
 addFeatMetadata <- function(gobject,
     feat_type = NULL,
@@ -733,8 +752,13 @@ addFeatMetadata <- function(gobject,
 #' @param feat_type feature type
 #' @param meta_data_name name of metadata column to use
 #' @param expression_values which expression values to use
-#' @keywords internal
 #' @returns data.table with average gene expression values for each factor
+#' @keywords internal
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' create_average_DT(g, meta_data_name = "leiden_clus")
+#' 
 #' @export
 create_average_DT <- function(gobject,
     spat_unit = NULL,
@@ -797,8 +821,13 @@ create_average_DT <- function(gobject,
 #' @param meta_data_name name of metadata column to use
 #' @param expression_values which expression values to use
 #' @param detection_threshold detection threshold to consider a gene detected
-#' @keywords internal
 #' @returns data.table with average gene epression values for each factor
+#' @keywords internal
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' create_average_detection_DT(g, meta_data_name = "leiden_clus")
+#' 
 #' @export
 create_average_detection_DT <- function(gobject,
     feat_type = NULL,
@@ -872,8 +901,13 @@ create_average_detection_DT <- function(gobject,
 #' @param cluster_column name of cluster column to use,
 #' @param feat_subset subset of features to use
 #' @param gene_subset deprecated do not use.
-#' @keywords internal
 #' @returns matrix
+#' @keywords internal
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' create_cluster_matrix(g, cluster_column = "leiden_clus")
+#' 
 #' @export
 create_cluster_matrix <- function(gobject,
     spat_unit = NULL,
@@ -963,6 +997,11 @@ create_cluster_matrix <- function(gobject,
 #' @param selected_genes subset of genes to use (deprecated)
 #' @returns data.table with average expression values for each gene 
 #' per (combined) annotation
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' calculateMetaTable(g, metadata_cols = "leiden_clus")
+#' 
 #' @export
 calculateMetaTable <- function(gobject,
     spat_unit = NULL,
@@ -1000,7 +1039,7 @@ calculateMetaTable <- function(gobject,
         gobject, feat_type = feat_type, spat_unit = spat_unit))
     if (length(metadata_cols) > 1) {
         metadata[, uniq_ID := paste(.SD, collapse = "-"), 
-                by = 1:nrow(metadata), .SDcols = metadata_cols]
+                by = seq_len(nrow(metadata)), .SDcols = metadata_cols]
     } else {
         metadata[, uniq_ID := get(metadata_cols)]
     }
@@ -1009,7 +1048,7 @@ calculateMetaTable <- function(gobject,
     possible_groups <- unique(metadata[, metadata_cols, with = FALSE])
     if (length(metadata_cols) > 1) {
         possible_groups[, uniq_ID := paste(.SD, collapse = "-"), 
-                    by = 1:nrow(possible_groups), .SDcols = metadata_cols]
+                    by = seq_len(nrow(possible_groups)), .SDcols = metadata_cols]
     } else {
         possible_groups[, uniq_ID := get(metadata_cols)]
     }
@@ -1032,7 +1071,7 @@ calculateMetaTable <- function(gobject,
     ## summarize unique groups (average)
     result_list <- list()
 
-    for (row in 1:nrow(possible_groups)) {
+    for (row in seq_len(nrow(possible_groups))) {
         uniq_identifiier <- possible_groups[row][["uniq_ID"]]
         selected_cell_IDs <- metadata[uniq_ID == uniq_identifiier][["cell_ID"]]
         sub_expr_values <- expr_values[, 
@@ -1065,6 +1104,12 @@ calculateMetaTable <- function(gobject,
 #' @param metadata_cols annotation columns found in \code{pDataDT(gobject)}
 #' @param spat_enr_names which spatial enrichment results to include
 #' @returns data.table with average metadata values per (combined) annotation
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' calculateMetaTableCells(g, metadata_cols = "cell_ID", 
+#' value_cols = "leiden_clus")
+#' 
 #' @export
 calculateMetaTableCells <- function(gobject,
     spat_unit = NULL,
@@ -1138,12 +1183,11 @@ calculateMetaTableCells <- function(gobject,
 #' @param feat_clusters numerical vector with features as names
 #' @param name name of the metagene results
 #' @param return_gobject return giotto object
+#' @returns giotto object
 #' @details An example for the 'gene_clusters' could be like this:
 #' cluster_vector = c(1, 1, 2, 2) 
 #' names(cluster_vector) = c('geneA', 'geneB', 'geneC', 'geneD')
-#' @returns giotto object
 #' @examples
-#' \dontrun{
 #' # load a dataset
 #' g <- GiottoData::loadGiottoMini("viz")
 #' # set a spat unit to use
@@ -1157,7 +1201,7 @@ calculateMetaTableCells <- function(gobject,
 #' # Here we create an example annotation vector by arbitrarily using the 
 #' # first 6 features and putting 3 in cluster 1 and the other 3 in cluster 2.
 #' 
-#' feats_to_use <- featIDs(g)[1:6]
+#' feats_to_use <- featIDs(g)[seq_len(6)]
 #' clust_to_use <- c(1, 1, 1, 2, 2, 2)
 #' names(clust_to_use) <- feats_to_use
 #'
@@ -1170,14 +1214,6 @@ calculateMetaTableCells <- function(gobject,
 #'     name = "new_metagene"
 #' )
 #'
-#' GiottoVisuals::spatCellPlot(
-#'     gobject = g,
-#'     spat_enr_names = "new_metagene",
-#'     cell_annotation_values = c("1", "2"),
-#'     point_size = 3.5,
-#'     cow_n_col = 2
-#' )
-#' }
 #' @seealso [GiottoVisuals::spatCellPlot()]
 #' @export
 createMetafeats <- function(gobject,

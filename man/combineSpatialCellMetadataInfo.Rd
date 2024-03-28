@@ -30,3 +30,8 @@ The returned data.table has the following columns: \cr
 \item{other columns that are part of the cell metadata}
 }
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+combineSpatialCellMetadataInfo(g, spat_unit = "aggregate", feat_type = "rna")
+
+}

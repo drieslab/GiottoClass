@@ -13,9 +13,9 @@
 #' @param expression_matrix_class class of expression matrix to 
 #' use (e.g. 'dgCMatrix', 'DelayedArray')
 #' @inheritParams data_access_params
-#' @return sparse matrix
 #' @details The expression matrix needs to have both unique column names and 
 #' row names
+#' @returns sparse matrix
 #' @export
 readExprMatrix <- function(path,
     cores = determine_cores(),
@@ -68,22 +68,23 @@ readExprMatrix <- function(path,
 #' @inheritParams read_data_params
 #' @details
 #'
-#' mylistA = list('a' = matrix(1:5), 'b' = matrix(1:5))
+#' mylistA = list('a' = matrix(seq(5)), 'b' = matrix(seq(5)))
 #' depth(mylistA)
 #'
-#' mylistB = list(A = list('a' = matrix(1:5), 'b' = matrix(1:5)),
-#'                B = list('c' = matrix(1:5),'d' = matrix(1:5)))
+#' mylistB = list(A = list('a' = matrix(seq(5)), 'b' = matrix(seq(5))),
+#'                B = list('c' = matrix(seq(5)),'d' = matrix(seq(5))))
 #' depth(mylistB)
 #'
-#' mylistC = list('RNA' = list('RAW' = list('cell' = matrix(1:5), 
-#'                             'nucleus' = matrix(6:10)),
-#'                             'NORM' = list('cell' = matrix(11:15),
-#'                             'nucleus' = matrix(20:25))),
-#'                'PROT' = list('RAW' = list('cell' = matrix(16:20))))
+#' mylistC = list('RNA' = list('RAW' = list('cell' = matrix(seq(5)), 
+#'                             'nucleus' = matrix(seq(6,10))),
+#'                             'NORM' = list('cell' = matrix(seq(11,15)),
+#'                             'nucleus' = matrix(seq(20,25)))),
+#'                'PROT' = list('RAW' = list('cell' = matrix(seq(16,20)))))
 #' depth(mylistC)
 #'
-#' mymatD = matrix(data = 1:4)
-#'
+#' mymatD = matrix(data = seq(4))
+#' 
+#' @returns exprObj
 #' @export
 readExprData <- function(data_list,
     sparse = TRUE,
@@ -309,6 +310,7 @@ readExprData <- function(data_list,
 #' @description read cell metadata from list
 #' @param data_list nested list of cell metadata information
 #' @inheritParams read_data_params
+#' @returns cell metadata
 #' @export
 readCellMetadata <- function(data_list,
     default_spat_unit = NULL,
@@ -333,6 +335,7 @@ readCellMetadata <- function(data_list,
 #' @param metadata nested list of cell metadata information
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
+#' @returns cell metadata
 #' @keywords internal
 .read_cell_metadata <- function(metadata,
     default_spat_unit = NULL,
@@ -474,6 +477,7 @@ readCellMetadata <- function(data_list,
 #' @description read feature metadata from listt
 #' @param data_list nested list of feature metadata information
 #' @inheritParams read_data_params
+#' @returns featMetadata
 #' @export
 readFeatMetadata <- function(data_list,
     default_spat_unit = NULL,
@@ -642,7 +646,7 @@ readFeatMetadata <- function(data_list,
 #' @inheritParams read_data_params
 #' @param data_list (nested) list of spatial locations input data
 #' @param cores how many cores to use
-#' @return list of spatLocsObj
+#' @returns list of spatLocsObj
 #' @export
 readSpatLocsData <- function(data_list,
     default_spat_unit = NULL,
@@ -831,6 +835,7 @@ readSpatLocsData <- function(data_list,
 #' @inheritParams read_data_params
 #' @description read spatial networks data from list
 #' @param data_list (nested) list of spatial network input data
+#' @returns spatialNetworkObj
 #' @export
 readSpatNetData <- function(data_list,
     default_spat_unit = NULL,
@@ -995,6 +1000,7 @@ readSpatNetData <- function(data_list,
 #' @description read spatial enrichment results from list
 #' @inheritParams read_data_params
 #' @param data_list (nested) list of spatial enrichment input data
+#' @returns spatEnrObj
 #' @export
 readSpatEnrichData <- function(data_list,
     default_spat_unit = NULL,
@@ -1255,6 +1261,7 @@ readSpatEnrichData <- function(data_list,
 #' @inheritParams read_data_params
 #' @param reduction whether dim reduction was performed on 'cels' or 'feats'
 #' @param data_list (nested) list of dimension reduction input data
+#' @returns dimObj
 #' @export
 readDimReducData <- function(data_list,
     default_spat_unit = NULL,
@@ -1524,6 +1531,7 @@ readDimReducData <- function(data_list,
 #' @name readNearestNetData
 #' @inheritParams read_data_params
 #' @description read nearest network results from list
+#' @returns nnNetObj
 #' @export
 readNearestNetData <- function(data_list,
     default_spat_unit = NULL,
@@ -1795,6 +1803,7 @@ readNearestNetData <- function(data_list,
 #' @param calc_centroids whether centroids should be calculated during polygon
 #' creation
 #' @param verbose be verbose
+#' @returns giottoPolygon
 #' @export
 readPolygonData <- function(data_list,
     default_name = "cell",
@@ -1894,7 +1903,7 @@ readPolygonData <- function(data_list,
         } else {
             polygonlist_l <- length(polygonlist)
             names(polygonlist) <- c(default_name, 
-                                    paste0("info", 1:(polygonlist_l - 1)))
+                                    paste0("info", seq_len(polygonlist_l - 1)))
         }
     } else if (is.null(names(polygonlist))) {
         # if it is list
@@ -1906,7 +1915,7 @@ readPolygonData <- function(data_list,
         } else {
             polygonlist_l <- length(polygonlist)
             names(polygonlist) <- c(default_name, 
-                                    paste0("info", 1:(polygonlist_l - 1)))
+                                    paste0("info", seq_len(polygonlist_l - 1)))
         }
     } else {
         if (isTRUE(verbose)) wrap_msg("polygonlist is a list with names")
@@ -1987,8 +1996,8 @@ readPolygonData <- function(data_list,
 #' @param gpolygons list of giotto polygon objects,
 #' see \code{\link{createGiottoPolygonsFromMask}} 
 #' and \code{\link{createGiottoPolygonsFromDfr}}
-#' @return giotto object
 #' @concept polygon
+#' @returns giotto object
 #' @export
 addGiottoPolygons <- function(gobject,
     gpolygons) {
@@ -2002,7 +2011,7 @@ addGiottoPolygons <- function(gobject,
 
 
     # add each giottoPoint object to the giotto object
-    for (gp_i in 1:length(gpolygons)) {
+    for (gp_i in seq_len(length(gpolygons))) {
         gp <- gpolygons[[gp_i]]
 
         # check if giottoPoint object
@@ -2041,6 +2050,7 @@ addGiottoPolygons <- function(gobject,
 #' @description Function to read lists of feature information data and output
 #' a list of generated giottoPoints objects
 #' @inheritParams read_data_params
+#' @returns list of giottoPoints
 #' @export
 readFeatData <- function(data_list,
     verbose = TRUE) {
@@ -2160,7 +2170,7 @@ readFeatData <- function(data_list,
 #' @name addGiottoPoints
 #' @description Adds Giotto points to an existing Giotto object
 #' @param gobject giotto object
-#' @return giotto object
+#' @returns giotto object
 #' @concept polygon
 NULL
 
@@ -2185,7 +2195,7 @@ addGiottoPoints <- function(gobject,
 
 
     # add each giottoPoint object to the giotto object
-    for (gp_i in 1:length(gpoints)) {
+    for (gp_i in seq_len(length(gpoints))) {
         gp <- gpoints[[gp_i]]
 
         # check if giottoPoint object
@@ -2249,7 +2259,7 @@ addGiottoPoints3D <- function(gobject, coords, feat_type = "rna") {
     }
 
     if (inherits(coords, "data.frame")) {
-        spatvec <- terra::vect(as.matrix(coords[, 1:2]), type = "points", 
+        spatvec <- terra::vect(as.matrix(coords[, seq_len(2)]), type = "points", 
                             atts = coords)
         names(spatvec)[4] <- "feat_ID"
 

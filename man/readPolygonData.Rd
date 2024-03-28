@@ -34,6 +34,9 @@ creation}
 
 \item{verbose}{be verbose}
 }
+\value{
+giottoPolygon
+}
 \description{
 Function extract list of polygons when given raw input as either
 mask or tabular data. Calls the respective createGiottoPolygons

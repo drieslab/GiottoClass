@@ -24,6 +24,9 @@ type (only supports largeImage and is set as default)}
 
 \item{method}{plot type to show image intensity distribution}
 }
+\value{
+density or histogram plot
+}
 \description{
 Plot distribution of intensity values using either a density
 plot or a histogram. Useful for finding image artefact outliers and

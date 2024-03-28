@@ -23,6 +23,9 @@ vector of xy(z) coordinates. Default is \code{c(0, 0, 0)}}
 \item{geom}{character. Named vector of colnames of x, y, (z) coordinate
 columns. Default is \code{c("sdimx", "sdimy", "sdimz")}}
 }
+\value{
+spatial locations
+}
 \description{
 Simple scaling of spatial locations by
 given \code{scale_factor}. Values will be scaled from the coordinate origin

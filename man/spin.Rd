@@ -68,6 +68,9 @@ Overrides angle param}
 \item{geom}{character. Named vector of colnames of x, y, (z) coordinate
 columns. Default is \code{c("sdimx", "sdimy", "sdimz")}}
 }
+\value{
+spun object
+}
 \description{
 Spin (rotate) an object spatially (limited to xy rotations)
 }

@@ -6,7 +6,7 @@
 #' If it is not already installed, the user
 #' will be prompted to install `bento-tools`
 #' DEFAULT: "giotto_env"
-#' @return bento_adata bento adata object
+#' @returns bento_adata bento adata object
 #' @export
 createBentoAdata <- function(gobject = NULL,
     env_to_use = "giotto_env") {

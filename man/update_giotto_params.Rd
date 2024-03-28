@@ -21,6 +21,9 @@ update_giotto_params(
 \item{toplevel}{expected relative stackframe where call that is being
 recorded was made}
 }
+\value{
+giotto object or list of parameters
+}
 \description{
 Update giotto parameters
 }

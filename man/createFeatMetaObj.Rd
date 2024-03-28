@@ -29,6 +29,9 @@ metadata}
 
 \item{verbose}{be verbose}
 }
+\value{
+featMetaObj
+}
 \description{
 Create an S4 featMetaObj
 }

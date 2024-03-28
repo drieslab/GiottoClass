@@ -10,6 +10,9 @@ convert_to_full_spatial_network(reduced_spatial_network_DT)
 \item{reduced_spatial_network_DT}{reduced spatial network in \code{data.table}
 format}
 }
+\value{
+data.table
+}
 \description{
 Convert to a full spatial network, ie ensuring that all edges
 that may currently only be represented as \eqn{a} -> \eqn{b} also have the

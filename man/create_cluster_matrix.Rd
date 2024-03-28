@@ -35,4 +35,10 @@ matrix
 \description{
 creates aggregated matrix for a given clustering column
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+create_cluster_matrix(g, cluster_column = "leiden_clus")
+
+}
 \keyword{internal}

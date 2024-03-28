@@ -39,6 +39,9 @@ which \code{dataType} can be automatically determined}
 
 \item{verbose}{be verbose}
 }
+\value{
+image local file
+}
 \description{
 Write full resolution image to file. Filetype extension should
 be included in \code{filename} argument. Be careful if write time and disk

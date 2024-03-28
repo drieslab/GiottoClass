@@ -13,6 +13,7 @@ NULL
 #' @param object giotto object
 #' @aliases show,giotto-method
 #' @docType methods
+#' @returns giotto object or subobject
 #' @rdname show-methods
 setMethod(
     f = "show",
@@ -498,19 +499,20 @@ setMethod(
         if (!is.null(slot(object, "enrichDT"))) {
             enr_cols <- ncol(slot(object, "enrichDT"))
             if (enr_cols > 10L) {
-                show(slot(object, "enrichDT")[1:3, 1:10])
+                show(slot(object, "enrichDT")[seq_len(3), seq_len(10)])
                 cat(rep(" ", times = getOption("width") / 2.5 - 10L), 
                     rep(".", 20L), "\n", sep = "")
-                show(slot(object, "enrichDT")[1:3, "cell_ID"])
+                show(slot(object, "enrichDT")[seq_len(3), "cell_ID"])
                 cat("...", enr_cols - 11L, " cols omitted\n", sep = "")
             } else {
-                show(slot(object, "enrichDT")[1:3])
+                show(slot(object, "enrichDT")[seq_len(3)])
             }
         }
 
         cat("\n...first 20 remaining colnames:\n")
         cat("\n", wrap_txt(head(colnames(
-            slot(object, "enrichDT"))[-c(1:10)], 20L), strWidth = 40L), "\n")
+            slot(object, "enrichDT"))[-seq_len(10)], 20L), strWidth = 40L), 
+            "\n")
 
         cat("\n\n")
     }

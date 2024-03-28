@@ -9,6 +9,7 @@ NULL
 #' @param x a Giotto S4 class subobject with spatial unit
 #' @param value value to set as spatial unit
 #' @aliases spatUnit spatUnit<-
+#' @returns spat_unit
 NULL
 
 #' @title Feature type information
@@ -17,6 +18,7 @@ NULL
 #' @param x a Giotto S4 class subobject with feature type
 #' @param value value to set as feature type
 #' @aliases featType featType<-
+#' @returns feat_type
 NULL
 
 #' @title Giotto object name information
@@ -25,6 +27,7 @@ NULL
 #' @param x a Giotto S4 class subobject with name data
 #' @param value value to set as object name
 #' @aliases objName objName<-
+#' @returns name slot
 NULL
 
 #' @title Provenance information
@@ -33,6 +36,7 @@ NULL
 #' @param x a Giotto S4 class subobject
 #' @param value value to set as provenance
 #' @aliases prov prov<-
+#' @returns provenance slot
 NULL
 
 # ---------------------------------------------------------------- #

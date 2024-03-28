@@ -15,7 +15,10 @@
 last level (intended for values print)
 Only TRUE behavior defined. #TODO}
 
-\item{indent}{ident characters to print for this level (top level is '')}
+\item{indent}{indent characters to print for this level (top level is '')}
+}
+\value{
+Hierarchical tree
 }
 \description{
 Hierarchical tree printing

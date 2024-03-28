@@ -17,6 +17,9 @@
 
 \item{value}{feat_type to set as default}
 }
+\value{
+active feature type
+}
 \description{
 Retrieve or set the active feature type. This value will be the
 default feature type that the giotto object uses.

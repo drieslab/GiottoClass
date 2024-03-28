@@ -17,6 +17,9 @@ than the geometry information as \code{SpatVector} attributes. Default is TRUE.}
 \item{specific_values}{\code{character}. Specific subset of columns to include as
 attributes if \code{include_values = TRUE}.}
 }
+\value{
+SpatVector points
+}
 \description{
 Coversion to a SpatVector of points.
 }

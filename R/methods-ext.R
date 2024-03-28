@@ -8,6 +8,7 @@
 #' @param x spatial object
 #' @param value value to set. Accepts any object that `ext()` will work on
 #' @param ... additional params to pass
+#' @returns SpatExtent
 NULL
 
 #' @rdname ext

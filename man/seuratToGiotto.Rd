@@ -23,6 +23,9 @@ fetch from}
 \item{subcellular_assay}{Specify name of the subcellular assay in input
 object. Default is \code{"Vizgen"}.}
 }
+\value{
+giotto object
+}
 \description{
 Deprecated. Please use either \link{seuratToGiottoV4} or
 \link{seuratToGiottoV5}

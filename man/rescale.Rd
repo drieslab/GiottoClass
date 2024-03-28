@@ -53,6 +53,9 @@ the center of the extent of x is used (only for supported objects)}
 \item{geom}{character. Named vector of colnames of x, y, (z) coordinate
 columns. Default is \code{c("sdimx", "sdimy", "sdimz")}}
 }
+\value{
+re-scaled object
+}
 \description{
 Rescale an object spatially. Z dimension scaling is supported
 for some types of subobjects.

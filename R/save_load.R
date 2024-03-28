@@ -14,10 +14,10 @@
 #' "COG"
 #' @param verbose be verbose
 #' @param ... additional parameters for \code{\link[terra]{writeRaster}}
-#' @return Creates a directory with Giotto object information
 #' @details Works together with \code{\link{loadGiotto}} to save and re-load
 #' Giotto objects. Additional method_params need to be provided as a list 
 #' and will go to \code{\link[base]{saveRDS}} or \code{\link[qs]{qsave}}
+#' @returns Creates a directory with Giotto object information
 #' @export
 saveGiotto <- function(
         gobject,
@@ -254,13 +254,13 @@ saveGiotto <- function(
 #' @param init_gobject logical. Whether to initialize the `giotto` object after
 #' loading. (default = TRUE)
 #' @param verbose be verbose
-#' @return Giotto object
 #' @details Works together with \code{\link{saveGiotto}} to save and re-load
 #' Giotto objects.
 #' Additional load_params need to be provided as a list and will
 #' go to \code{\link[base]{readRDS}} or \code{\link[qs]{qread}}
 #' You can set the python path, alternatively it will look for an existing
 #' Giotto python environment.
+#' @returns Giotto object
 #' @export
 loadGiotto <- function(path_to_folder,
     load_params = list(),
@@ -324,7 +324,7 @@ loadGiotto <- function(path_to_folder,
             path = paste0(path_to_folder, "/Features"), pattern = ".txt", 
             full.names = TRUE)
 
-        for (feat_i in 1:length(feat_names)) {
+        for (feat_i in seq_len(length(feat_names))) {
             if (verbose) print(feat_paths[feat_i])
             spatVector <- terra::vect(x = feat_paths[feat_i])
 
@@ -366,7 +366,7 @@ loadGiotto <- function(path_to_folder,
         spat_names <- gsub(spat_files, pattern = "_spatInfo_spatVector.shp", 
                         replacement = "")
 
-        for (spat_i in 1:length(spat_names)) {
+        for (spat_i in seq_len(length(spat_names))) {
             spatVector <- terra::vect(x = spat_paths[spat_i])
 
             # read in original column names and assign to spatVector
@@ -414,7 +414,7 @@ loadGiotto <- function(path_to_folder,
                     pattern = "spatVectorCentroids_names.txt", 
                     full.names = TRUE)
 
-                for (spat_i in 1:length(spat_names)) {
+                for (spat_i in seq_len(length(spat_names))) {
                     spatVector <- terra::vect(x = centroid_paths[spat_i])
 
                     # read in original column names and assign to spatVector
@@ -504,7 +504,7 @@ loadGiotto <- function(path_to_folder,
     if (length(image_files) != 0) {
         image_names <- unique(gsub(image_files, pattern = "_spatRaster.*", 
                                 replacement = ""))
-        for (image_i in 1:length(image_names)) {
+        for (image_i in seq_len(length(image_names))) {
             image_name <- image_names[image_i]
             if (verbose) image_name
             new_path <- paste0(path_to_folder, "/Images", "/", image_name, 

@@ -37,4 +37,9 @@ or \code{\link{calculateOverlapParallel}}
 and aggregate information from multiple polygon
 layers (e.g. z-stacks) together
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+overlapToMatrixMultiPoly(g, poly_info = "z0")
+
+}
 \concept{overlap}

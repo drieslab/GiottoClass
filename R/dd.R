@@ -38,6 +38,7 @@
 #' @param initialize (default = FALSE) whether to initialize the gobject before
 #' returning
 #' @keywords internal
+#' @returns data.table
 NULL
 
 
@@ -52,5 +53,6 @@ NULL
 #' @param default_feat_type (optional) default feat_type to use
 #' @param provenance (optional) provenance information
 #' @param verbose be verbose
+#' @returns data params
 #' @keywords internal
 NULL

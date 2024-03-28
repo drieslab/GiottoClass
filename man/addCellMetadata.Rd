@@ -54,33 +54,19 @@ column in pDataDT(gobject).}
 }
 }
 \examples{
-# dummy matrix
-m <- readRDS(system.file("extdata/toy_matrix.RDS", package = "GiottoClass"))
-g <- createGiottoObject(m)
+g <- GiottoData::loadGiottoMini("visium")
 
-pDataDT(g)
-
-# appending a character vector, merge on vector names
-v <- seq(10)
-names(v) <- sample(LETTERS[seq(10)])
-force(v)
-
-g <- addCellMetadata(g, new_metadata = v, by_column = TRUE)
-pDataDT(g)
-
-# appending a data.frame, merge on specified column "ID"
-df <- data.frame(
-    IDS = rev(LETTERS[seq(10)]), # reversed
-    l = letters[seq(10)],
-    x = c(rep(TRUE, 5), rep(FALSE, 5))
-)
-force(df)
+m <- pDataDT(g)
+m <- m[,c("cell_ID", "leiden_clus")]
+m$cell_type <- paste0("cell_type_", m$leiden_clus)
+m <- m[, c("cell_ID", "cell_type")]
 
 g <- addCellMetadata(
     g,
-    new_metadata = df,
+    new_metadata = m,
     by_column = TRUE,
-    column_cell_ID = "IDS"
+    column_cell_ID = "cell_ID"
 )
+
 pDataDT(g)
 }

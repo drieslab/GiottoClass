@@ -24,7 +24,7 @@ Supported updates:
 }
 }
 \examples{
-\dontrun{
-gobject <- updateGiottoObject(gobject)
-}
+g <- GiottoData::loadGiottoMini("visium")
+g <- updateGiottoObject(g)
+
 }

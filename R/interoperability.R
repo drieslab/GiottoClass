@@ -19,6 +19,7 @@
 #' bin1, bin10, bin20, bin50, bin100, bin200.
 #'
 #' See SAW pipeline for additional information about the gef file.
+#' @returns giotto object
 #' @export
 
 gefToGiotto <- function(gef_file, bin_size = "bin100", verbose = FALSE, 
@@ -53,7 +54,7 @@ gefToGiotto <- function(gef_file, bin_size = "bin100", verbose = FALSE,
     # 2. create spatial locations
     if (isTRUE(verbose)) wrap_msg("2. create spatial_locations... \n")
     cell_locations <- unique(exprDT[, c("x", "y")], by = c("x", "y"))
-    cell_locations[, bin_ID := as.factor(seq_along(1:nrow(cell_locations)))]
+    cell_locations[, bin_ID := as.factor(seq_len(nrow(cell_locations)))]
     cell_locations[, cell_ID := paste0("cell_", bin_ID)]
     data.table::setcolorder(cell_locations, c("x", "y", "cell_ID", "bin_ID")) 
     # ensure first non-numerical col is cell_ID
@@ -103,6 +104,8 @@ gefToGiotto <- function(gef_file, bin_size = "bin100", verbose = FALSE,
 
 #' @title Check Scanpy Installation
 #' @name check_py_for_scanpy
+#' @import reticulate
+#' @returns character
 #' @description checks current python environment for scanpy 1.9.0
 #' @keywords internal
 check_py_for_scanpy <- function() {
@@ -178,12 +181,12 @@ check_py_for_scanpy <- function() {
 #' environment
 #' @param env_name name of environment containing python_path executable
 #'
-#' @return Giotto object
 #' @details Function in beta. Converts a .h5ad file into a Giotto object.
 #' The returned Giotto Object will take default insructions with the
 #' exception of the python path, which may be customized.
 #' See \code{\link{changeGiottoInstructions}} to modify instructions after 
 #' creation.
+#' @returns Giotto object
 #' @export
 anndataToGiotto <- function(anndata_path = NULL,
     n_key_added = NULL,
@@ -430,7 +433,7 @@ anndataToGiotto <- function(anndata_path = NULL,
         num_SN_nets <- 1
     }
 
-    for (i in 1:num_SN_nets) {
+    for (i in seq_len(num_SN_nets)) {
         if (inherits(spatial_n_key_added, "list")) {
             spatial_n_key_added_it <- spatial_n_key_added[[i]]
         } else {
@@ -559,7 +562,6 @@ anndataToGiotto <- function(anndata_path = NULL,
 #' environment
 #' @param env_name name of environment containing python_path executable
 #' @param save_directory directory in which the file will be saved.
-#' @return vector containing .h5ad file path(s)
 #' @details Function in beta. Converts a Giotto object into .h5ad file(s).
 #'
 #' If there are multiple spatial units and/or feature types, but only
@@ -576,6 +578,7 @@ anndataToGiotto <- function(anndata_path = NULL,
 #'
 #' The save_directory will be created if it does not already exist.
 #' The default save_directory is the working directory.
+#' @returns vector containing .h5ad file path(s)
 #' @export
 giottoToAnnData <- function(gobject = NULL,
     spat_unit = NULL,
@@ -651,7 +654,7 @@ giottoToAnnData <- function(gobject = NULL,
     }
 
 
-    adata_list <- lapply(1:su_ft_length, function(i) adata)
+    adata_list <- lapply(seq_len(su_ft_length), function(i) adata)
     adata_pos <- 1
 
     for (su in spat_unit) {
@@ -1086,7 +1089,7 @@ giottoToAnnData <- function(gobject = NULL,
 
     # Write AnnData object to .h5ad file
     # Verify it exists, and return upon success
-    fname_list <- lapply(1:su_ft_length, function(i) NULL)
+    fname_list <- lapply(seq_len(su_ft_length), function(i) NULL)
     wrap_msg("\n")
     for (su in spat_unit) {
         for (ft in names(gobject@expression[[su]])) {
@@ -1130,7 +1133,7 @@ giottoToAnnData <- function(gobject = NULL,
 #' @param obj_use Giotto object (deprecated, use gobject)
 #' @param spat_unit spatial unit (e.g. 'cell')
 #' @param ... additional params to pass to \code{\link{get_spatial_locations}}
-#' @return Seurat object
+#' @returns Seurat object
 #' @export
 giottoToSeurat <- function(gobject,
     spat_unit = NULL,
@@ -1152,7 +1155,7 @@ giottoToSeurat <- function(gobject,
 #' @param gobject Giotto object
 #' @param spat_unit spatial unit (e.g. 'cell')
 #' @param ... additional params to pass to \code{\link{get_spatial_locations}}
-#' @return Seurat object
+#' @returns Seurat object
 #' @keywords seurat interoperability
 #' @export
 giottoToSeuratV4 <- function(gobject,
@@ -1414,7 +1417,7 @@ giottoToSeuratV4 <- function(gobject,
 #' @param gobject Giotto object
 #' @param spat_unit spatial unit (e.g. 'cell')
 #' @param ... additional params to pass to \code{\link{get_spatial_locations}}
-#' @return Seurat object
+#' @returns Seurat object
 #' @keywords seurat interoperability
 #' @export
 giottoToSeuratV5 <- function(gobject,
@@ -1695,7 +1698,7 @@ giottoToSeuratV5 <- function(gobject,
             imagerow <- gobject@spatial_locs$cell$raw$sdimy
             imagecol <- gobject@spatial_locs$cell$raw$sdimx
             img <- terra::as.array(gobject@largeImages[[i]]@raster_object)
-            img[, , 1:3] <- img[, , 1:3] / 255
+            img[, , seq_len(3)] <- img[, , seq_len(3)] / 255
             coord <- data.frame(imagerow = imagerow, imagecol = imagecol)
 
             scalefactors <- Seurat::scalefactors(
@@ -1735,6 +1738,7 @@ giottoToSeuratV5 <- function(gobject,
 #' fetch from
 #' @param subcellular_assay Specify name of the subcellular assay in input 
 #' object. Default is \code{"Vizgen"}.
+#' @returns giotto object
 #' @export
 seuratToGiotto <- function(sobject,
     spatial_assay = "Spatial",
@@ -1750,14 +1754,18 @@ seuratToGiotto <- function(sobject,
 
 #' @title Convert a Seurat V4 object to a Giotto object
 #' @name seuratToGiottoV4
+#'
 #' @param sobject Input Seurat object to convert to Giotto object
 #' @param spatial_assay Specify name of the spatial assay slot in Seurat. 
 #' Default is \code{"Spatial"}.
 #' @param dim_reduction Specify which dimensional reduction computations to 
 #' fetch from input Seurat object. Default is \code{"c('pca', 'umap')"}.
 #' @param subcellular_assay Specify name of the subcellular assay in input 
+#' @param sp_network sp_network
+#' @param nn_network nn_network
+#' @param verbose logical. Default to TRUE
 #' object. Default is \code{"Vizgen"}.
-#' @return A Giotto object converted from Seurat object with all computations 
+#' @returns A Giotto object converted from Seurat object with all computations 
 #' stored in it.
 #' @keywords seurat interoperability
 #' @export
@@ -1800,9 +1808,10 @@ seuratToGiottoV4 <- function(sobject,
                 if (length(dim_eig) > 0) {
                     dim_eig <- sapply(dim_eig, function(x) x^2)
                 }
-                colnames(dim_coord) <- paste0("Dim.", 1:ncol(dim_coord))
+                colnames(dim_coord) <- paste0("Dim.", seq_len(ncol(dim_coord)))
                 if (length(dim_load) > 0) {
-                    colnames(dim_load) <- paste0("Dim.", 1:ncol(dim_load))
+                    colnames(dim_load) <- paste0(
+                        "Dim.", seq_len(ncol(dim_load)))
                 }
                 dimReduc <- create_dim_obj(
                     name = x,
@@ -1868,6 +1877,7 @@ seuratToGiottoV4 <- function(sobject,
     # Networks
 
     # spatial_network
+    weight <- distance <- NULL
 
     if (!is.null(sp_network)) {
         for (i in seq(sp_network)) {
@@ -1979,14 +1989,18 @@ seuratToGiottoV4 <- function(sobject,
 
 #' @title Convert a Seurat V5 object to a Giotto object
 #' @name seuratToGiottoV5
+#'
 #' @param sobject Input Seurat object to convert to Giotto object
 #' @param spatial_assay Specify name of the spatial assay slot in Seurat. 
 #' Default is \code{"Spatial"}.
 #' @param dim_reduction Specify which dimensional reduction computations to 
 #' fetch from input Seurat object. Default is \code{"c('pca', 'umap')"}.
 #' @param subcellular_assay Specify name of the subcellular assay in input 
+#' @param sp_network sp_network
+#' @param nn_network nn_network
+#' @param verbose logical. Default to TRUE
 #' object. Default is \code{"Vizgen"}.
-#' @return A Giotto object converted from Seurat object with all computations 
+#' @returns A Giotto object converted from Seurat object with all computations 
 #' stored in it.
 #' @keywords seurat interoperability
 #' @export
@@ -2043,9 +2057,10 @@ seuratToGiottoV5 <- function(sobject,
                 if (length(dim_eig) > 0) {
                     dim_eig <- sapply(dim_eig, function(x) x^2)
                 }
-                colnames(dim_coord) <- paste0("Dim.", 1:ncol(dim_coord))
+                colnames(dim_coord) <- paste0("Dim.", seq_len(ncol(dim_coord)))
                 if (length(dim_load) > 0) {
-                    colnames(dim_load) <- paste0("Dim.", 1:ncol(dim_load))
+                    colnames(dim_load) <- paste0(
+                        "Dim.", seq_len(ncol(dim_load)))
                 }
                 dimReduc <- create_dim_obj(
                     name = x,
@@ -2217,6 +2232,7 @@ seuratToGiottoV5 <- function(sobject,
     # Networks
 
     # spatial_network
+    weight <- distance <- NULL
 
     if (!is.null(sp_network)) {
         for (i in seq(sp_network)) {
@@ -2337,7 +2353,7 @@ seuratToGiottoV5 <- function(sobject,
 #' @param verbose A boolean value specifying if progress messages should be 
 #' displayed or not. Default \code{TRUE}.
 #'
-#' @return A SpatialExperiment object that contains data from the input Giotto 
+#' @returns A SpatialExperiment object that contains data from the input Giotto 
 #' object.
 #' @examples
 #' \dontrun{
@@ -2459,7 +2475,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
                 message("Copying spatial locations for spatial unit: '", 
                         spatialUnits[su], "'")
             SpatialExperiment::spatialCoords(spe) <- data.matrix(
-                spatialLocs[, 1:2])
+                spatialLocs[, seq_len(2)])
         } else {
             if (verbose) 
                 message("No spatial locations found in the input Giotto object")
@@ -2515,7 +2531,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
                     giottoNearestNetworks[i]$name) <- S4Vectors::SelfHits(
                     cell1, cell2,
                     nnode = ncol(spe),
-                    nn_network[, -1:-2] # removing from and to
+                    nn_network[, seq(-1,-2)] # removing from and to
                 )
             }
         } else {
@@ -2546,7 +2562,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
                         giottoSpatialNetworks[i]$name) <- S4Vectors::SelfHits(
                     cell1, cell2,
                     nnode = ncol(spe),
-                    sp_network[, -1:-2] # removing from and to
+                    sp_network[, seq(-1,-2)] # removing from and to
                 )
             }
         } else {
@@ -2620,7 +2636,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
 #' @param verbose A boolean value specifying if progress messages should
 #' be displayed or not. Default \code{TRUE}.
 #' @import data.table
-#' @return Giotto object
+#' @returns Giotto object
 #' @examples
 #' \dontrun{
 #' library(SpatialExperiment)
@@ -2851,7 +2867,7 @@ if (requireNamespace("SpatialExperiment", quietly = TRUE)) {
 #' @param gobject A Giotto object created with master version
 #' @param expression_feat available features (e.g. rna, protein, ...)
 #'
-#' @return A Giotto object compatible with suite version
+#' @returns A Giotto object compatible with suite version
 #' @export
 #'
 giottoMasterToSuite <- function(gobject,

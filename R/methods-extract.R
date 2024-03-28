@@ -18,6 +18,7 @@ NULL
 #' @param value value(s) to set
 #' This is normally matched to the colnames of the data.table object within 
 #' the S4.
+#' @returns columns or values from a data.table
 #' @section \code{`$`} methods:
 #' @section \code{`$<-`} methods:
 #' @section \code{`[`} methods:

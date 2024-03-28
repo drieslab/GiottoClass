@@ -23,7 +23,13 @@ Default is \code{"Spatial"}.}
 \item{dim_reduction}{Specify which dimensional reduction computations to
 fetch from input Seurat object. Default is \code{"c('pca', 'umap')"}.}
 
-\item{subcellular_assay}{Specify name of the subcellular assay in input
+\item{subcellular_assay}{Specify name of the subcellular assay in input}
+
+\item{sp_network}{sp_network}
+
+\item{nn_network}{nn_network}
+
+\item{verbose}{logical. Default to TRUE
 object. Default is \code{"Vizgen"}.}
 }
 \value{

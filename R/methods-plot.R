@@ -9,6 +9,7 @@ NULL
 #' @param x giotto image, giottoPolygon, or giottoPoints object
 #' @param y Not used.
 #' @param \dots additional parameters to pass
+#' @returns plot
 #' @aliases plot
 #' @family plot
 NULL
@@ -171,7 +172,7 @@ setMethod(
 #' plot(gpoints, dens = TRUE, raster_size = 80, force_size = TRUE)
 #'
 #' # plot specific feature(s)
-#' plot(gpoints, feats = featIDs(gpoints)[1:4])
+#' plot(gpoints, feats = featIDs(gpoints)[seq_len(4)])
 #'
 #' # ----- vector plotting ----- #
 #' # non-rasterized plotting (slower, but higher quality)
@@ -181,7 +182,7 @@ setMethod(
 #' plot(gpoints, raster = FALSE, col = grDevices::rainbow(nrow(gpoints)))
 #'
 #' # plot specific feature(s)
-#' plot(gpoints, feats = featIDs(gpoints)[1:4], raster = FALSE)
+#' plot(gpoints, feats = featIDs(gpoints)[seq_len(4)], raster = FALSE)
 #'
 #'
 #' @export

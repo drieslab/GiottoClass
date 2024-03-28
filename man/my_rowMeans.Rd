@@ -13,6 +13,9 @@ my_rowMeans(x, method = c("arithmic", "geometric"), offset = 0.1)
 
 \item{offset}{offset}
 }
+\value{
+numeric
+}
 \description{
 my_rowMeans
 }

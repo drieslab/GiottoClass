@@ -6,6 +6,7 @@ NULL
 #' @name dims-generic
 #' @description Find the dimensions of an object
 #' @param x object to check dimensions of
+#' @returns numeric
 NULL
 # ---------------------------------------------------------------- #
 

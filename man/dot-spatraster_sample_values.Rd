@@ -23,6 +23,9 @@
 
 \item{\dots}{additional params to pass to \code{terra::spatSample}}
 }
+\value{
+magick or EBImage image
+}
 \description{
 Sample numerical values from a \code{SpatRaster}. The output format depends on the
 value of the \code{output} param.

@@ -61,6 +61,9 @@
 \arguments{
 \item{x}{object to check dimensions of}
 }
+\value{
+numeric
+}
 \description{
 Find the dimensions of an object
 }

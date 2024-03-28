@@ -24,7 +24,6 @@ NULL
 #' as `data.table`
 #' @param verbose be verbose. Default = NULL (uses giotto verbosity option)
 #' @param ... additional params to pass. See details section
-#' @returns Either `igraph` if `as.igraph = TRUE` and `data.table` otherwise.
 #' @details
 #' Additional params are described below. Items in parenthesis refer to which
 #' network types and/or methods the params are specific to.
@@ -53,6 +52,8 @@ NULL
 #'   `"kNN"` and `"sNN"` types and \eqn{weight = 1 / distance} for `delaunay`
 #'   type
 #' networks
+#' @import deldir igraph
+#' @returns Either `igraph` if `as.igraph = TRUE` and `data.table` otherwise.
 #' @examples
 #' \dontrun{
 #' pca <- GiottoData::loadSubObjectMini("dimObj")[]
@@ -107,7 +108,7 @@ NULL
 #'
 #' # kNN NN network
 #' kNN <- createNetwork(
-#'     pca[, 1:10],
+#'     pca[, seq_len(10)],
 #'     type = "kNN",
 #'     method = "dbscan",
 #'     node_ids = rownames(pca),
@@ -116,7 +117,7 @@ NULL
 #'
 #' # sNN NN network
 #' sNN <- createNetwork(
-#'     pca[, 1:10],
+#'     pca[, seq_len(10)],
 #'     type = "sNN",
 #'     method = "dbscan",
 #'     node_ids = rownames(pca),
@@ -124,7 +125,7 @@ NULL
 #' )
 #'
 #' # using defaults for sNN with index IDs to create igraph
-#' sNN_idx <- createNetwork(pca[, 1:10])
+#' sNN_idx <- createNetwork(pca[, seq_len(10)])
 #' }
 NULL
 
@@ -236,7 +237,7 @@ createNetwork <- function(
     nn_network <- dbscan::kNN(x = x, k = k, sort = TRUE, ...)
 
     nn_network_dt <- data.table::data.table(
-        from = rep(1:nrow(nn_network$id), k),
+        from = rep(seq_len(nrow(nn_network$id)), k),
         to = as.vector(nn_network$id)
     )
 
@@ -294,7 +295,7 @@ createNetwork <- function(
     snn_network <- dbscan::sNN(x = nn_network, k = k, kt = NULL, ...)
 
     snn_network_dt <- data.table::data.table(
-        from = rep(1:nrow(snn_network$id), k),
+        from = rep(seq_len(nrow(snn_network$id)), k),
         to = as.vector(snn_network$id),
         shared = as.vector(snn_network$shared)
     )
@@ -311,7 +312,7 @@ createNetwork <- function(
 
     # rank snn. LOWER ranking means MORE shared per source
     data.table::setorder(snn_network_dt, from, -shared)
-    snn_network_dt[, rank := 1:.N, by = from]
+    snn_network_dt[, rank := seq_len(.N), by = from]
 
     # filter snn
     # keep at at least `top_shared` - 1 interactions where the ones selected 
@@ -477,6 +478,7 @@ createNetwork <- function(
 #' indices matching the rows of x.
 #' @param x_node_ids if y is indexed by character in from and to cols, then the
 #' node IDs that apply to the coords in x must be supplied as a character vector
+#' @returns numeric
 #' @examples
 #' m <- matrix(c(0, 0, 0, 1, 1, 1, 3, 2, 4), byrow = TRUE, nrow = 3)
 #' edges <- data.table::data.table(
@@ -504,6 +506,7 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
 #' @param y network data.table with `from` and `to` cols
 #' @param x_node_ids if y is indexed by character in from and to cols, then the
 #' node IDs that apply to the coords in x must be supplied as a character vector
+#' @returns numeric
 #' @keywords internal
 .edge_coords_array <- function(x, y, x_node_ids = NULL) {
     # NSE vars
@@ -577,7 +580,6 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
 #' @param top_shared keep at ...
 #' @param verbose be verbose
 #' @param ... additional parameters for kNN and sNN functions from dbscan
-#' @return giotto object with updated NN network
 #' @details This function creates a k-nearest neighbour (kNN) or shared 
 #' nearest neighbour (sNN) network based on the provided dimension reduction 
 #' space. To run it directly on the gene expression matrix
@@ -609,7 +611,8 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
 #'   \item{top_shared: }{keep this number of the top shared neighbours, 
 #'   irrespective of minimum_shared setting}
 #' }
-#'
+#' @import dbscan
+#' @returns giotto object with updated NN network
 #' @export
 createNearestNetwork <- function(
         gobject,
@@ -618,7 +621,7 @@ createNearestNetwork <- function(
         type = c("sNN", "kNN"),
         dim_reduction_to_use = "pca",
         dim_reduction_name = NULL,
-        dimensions_to_use = 1:10,
+        dimensions_to_use = seq_len(10),
         feats_to_use = NULL,
         expression_values = c("normalized", "scaled", "custom"),
         name = NULL,
@@ -691,7 +694,7 @@ createNearestNetwork <- function(
 
         dim_coord <- dim_obj[]
         dimensions_to_use <- dimensions_to_use[dimensions_to_use %in% 
-                                                1:ncol(dim_coord)]
+                                                seq_len(ncol(dim_coord))]
         matrix_to_use <- dim_coord[, dimensions_to_use]
     } else {
         ## using original matrix ##
@@ -722,7 +725,7 @@ createNearestNetwork <- function(
 
     # vector for cell_ID
     cell_names <- rownames(matrix_to_use)
-    names(cell_names) <- 1:nrow(matrix_to_use)
+    names(cell_names) <- seq_len(nrow(matrix_to_use))
 
     ## run nearest-neighbour algorithm ##
     if (k >= nrow(matrix_to_use)) {
@@ -738,7 +741,7 @@ createNearestNetwork <- function(
         shared <- NULL
 
     nn_network_dt <- data.table::data.table(
-        from = rep(1:nrow(nn_network$id), k),
+        from = rep(seq_len(nrow(nn_network$id)), k),
         to = as.vector(nn_network$id),
         weight = 1 / (1 + as.vector(nn_network$dist)),
         distance = as.vector(nn_network$dist)
@@ -750,7 +753,7 @@ createNearestNetwork <- function(
     if (type == "sNN") {
         snn_network <- dbscan::sNN(x = nn_network, k = k, kt = NULL, ...)
         snn_network_dt <- data.table::data.table(
-            from = rep(1:nrow(snn_network$id), k),
+            from = rep(seq_len(nrow(snn_network$id)), k),
             to = as.vector(snn_network$id),
             weight = 1 / (1 + as.vector(snn_network$dist)),
             distance = as.vector(snn_network$dist),
@@ -762,7 +765,7 @@ createNearestNetwork <- function(
 
         # rank snn
         data.table::setorder(snn_network_dt, from, -shared)
-        snn_network_dt[, rank := 1:.N, by = from]
+        snn_network_dt[, rank := seq_len(.N), by = from]
 
         # filter snn
         snn_network_dt <- snn_network_dt[rank <= top_shared | 
@@ -843,12 +846,12 @@ createNearestNetwork <- function(
 #' @param options_list list of options for selected layout
 #' @param layout_name name for layout
 #' @param return_gobject boolean: return giotto object (default = TRUE)
-#' @return giotto object with updated layout for selected NN network
 #' @details This function creates layout coordinates based on the provided 
 #' kNN or sNN.
 #' Currently only the force-directed graph layout "drl", 
 #' see \code{\link[igraph]{layout_with_drl}}, is implemented. 
 #' This provides an alternative to tSNE or UMAP based visualizations.
+#' @returns giotto object with updated layout for selected NN network
 #' @export
 addNetworkLayout <- function(gobject,
     spat_unit = NULL,
@@ -923,7 +926,7 @@ addNetworkLayout <- function(gobject,
 #' @description Convert a nearest network data.table to a kNN object
 #' @param nnDT nearest neighbor network in data.table format
 #' @keywords internal
-#' @return kNN object
+#' @returns kNN object
 #' @export
 nnDT_to_kNN <- function(nnDT) {
     # data.table variable
@@ -935,7 +938,7 @@ nnDT_to_kNN <- function(nnDT) {
         stop("\n k is not the same for all cells \n")
     }
 
-    nnDT[, rank := 1:.N, by = from]
+    nnDT[, rank := seq_len(.N), by = from]
 
     # distance matrix
     dist_prep <- data.table::dcast.data.table(

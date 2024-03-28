@@ -8,6 +8,7 @@ NULL
 #' @param x a Giotto S4 class subobject
 #' @seealso \code{\link[data.table]{copy}} \code{\link[terra]{deepcopy}}
 #' @aliases copy
+#' @returns giotto subobjects
 NULL
 
 #' @describeIn copy Copy \emph{data.table}-based spatial locations object.

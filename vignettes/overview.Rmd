@@ -27,16 +27,16 @@ showGiottoSpatLocs(vizmini)
 ```
 
 ```{r}
-Giottolist_expression(vizmini)
+list_expression(vizmini)
 ```
 
 ```{r}
 # Find specific spat_unit objects #
-Giottolist_expression(vizmini, spat_unit = 'z0')
+list_expression(vizmini, spat_unit = 'z0')
 ```
 
 ```{r}
-Giottolist_expression_names(vizmini, spat_unit = 'z1', feat_type = 'rna')
+list_expression_names(vizmini, spat_unit = 'z1', feat_type = 'rna')
 ```
 
 ## Provenance
@@ -66,7 +66,7 @@ constructors
 createExprObj() createCellMetaObj() createFeatMetaObj() createDimObj() createNearestNetObj() createSpatLocsObj() createSpatNetObj() createSpatEnrObj() createSpatialGrid() createGiottoPoints() createGiottoPolygonsFromDfr() createGiottoPolygonsFromMask() createGiottoImage() createGiottoLargeImage()
 
 ```{r}
-coords = data.table(
+coords = data.table::data.table(
   sdimx = c(1,2,3),
   sdimy = c(1,2,3),
   cell_ID = c('A','B','C')
@@ -154,7 +154,7 @@ vizmini <- setExpression(vizmini, expval)
 ```
 
 ```{r}
-Giottolist_expression(vizmini)
+list_expression(vizmini)
 ```
 
 ## Working with S4 subobjects

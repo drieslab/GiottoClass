@@ -15,6 +15,9 @@ select_gimage(
   polygon_feat_type = NULL
 )
 }
+\value{
+giotto image
+}
 \description{
 selects and (possibly resamples) giotto images for plotting
 }

@@ -25,6 +25,7 @@ NULL
 #' @aliases spatIDs featIDs
 #' @param x an object
 #' @param ... additional parameters to pass
+#' @returns spatIDs and featIDs
 #' @include classes.R
 NULL
 

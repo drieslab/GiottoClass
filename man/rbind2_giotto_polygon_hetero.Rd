@@ -17,6 +17,9 @@ origin \code{giottoPolygons} as a new 'list_ID' attribute}
 \item{poly_names}{sorted polygon names to be used in the
 combined \code{giottoPolygon} object}
 }
+\value{
+giottoPolygon
+}
 \description{
 Append two giotto polygons together of different names
 Performed recursively through \code{rbind2} and \code{rbind}. Generates an

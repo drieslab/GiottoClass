@@ -30,4 +30,10 @@ data.table with average gene expression values for each factor
 calculates average gene expression for a cell metadata
 factor (e.g. cluster)
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+create_average_DT(g, meta_data_name = "leiden_clus")
+
+}
 \keyword{internal}

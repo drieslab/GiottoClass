@@ -13,6 +13,9 @@
 
 \item{args}{a \code{list} of additional args}
 }
+\value{
+giottoPolygon
+}
 \description{
 giottoPolygon objects carry 3 pieces of spatial information.
 The polygons, their centroids, and the polygon overlapped features. All of

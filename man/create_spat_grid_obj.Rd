@@ -33,6 +33,9 @@ spatial grid generation}
 
 \item{misc}{misc}
 }
+\value{
+spatialGridObj
+}
 \description{
 Create S4 spatialGridObj
 }

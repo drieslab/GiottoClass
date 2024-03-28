@@ -33,6 +33,9 @@ is 'XY'}
 
 \item{\dots}{additional arguments to pass}
 }
+\value{
+data.table
+}
 \description{
 Coerce to data.table if possible
 }

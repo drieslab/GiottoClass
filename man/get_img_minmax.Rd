@@ -13,6 +13,9 @@ get_img_minmax(mg_img, negative_y = TRUE)
 automatic alignment. Meaning that origin is in upper left instead of lower
 left.}
 }
+\value{
+numeric
+}
 \description{
 get_img_minmax
 }

@@ -10,6 +10,7 @@
 #' @param what a call to do
 #' @param args a \code{list} of additional args
 #' @keywords internal
+#' @returns giottoPolygon
 .do_gpoly <- function(x, what, args = NULL) {
     x@spatVector <- do.call(what, args = append(list(x@spatVector), args))
     if (!is.null(x@spatVectorCentroids)) {
@@ -46,6 +47,7 @@
 #' @name .identify_background_range_polygons
 #' @description function to remove background polygon based on largest range
 #' @keywords internal
+#' @returns giottoPolygon
 .identify_background_range_polygons <- function(spatVector) {
     # define for data.table
     x <- y <- geom <- V1 <- NULL
@@ -73,7 +75,7 @@
 #' @title Create segmentation polygons
 #' @name .create_segm_polygons
 #' @description creates giotto polygons from segmentation mask data
-#' @return giotto polygon
+#' @returns giotto polygon
 #' @keywords internal
 .create_segm_polygons <- function(maskfile,
     name = "cell",
@@ -139,7 +141,7 @@
         terra_polygon$poly_ID <- poly_IDs
     } else {
         terra_polygon$poly_ID <- paste0(name, "_", 
-                                        1:nrow(terra::values(terra_polygon)))
+                                    seq_len(nrow(terra::values(terra_polygon))))
     }
 
 
@@ -156,6 +158,7 @@
 #' @name .calculate_centroids_polygons
 #' @description calculates centroids from selected polygons
 #' @keywords internal
+#' @returns SpatVector or giotto polygon
 .calculate_centroids_polygons <- function(gpolygon,
     name = "centroids",
     append_gpolygon = TRUE) {
@@ -178,6 +181,7 @@
 #' @name .fix_multipart_geoms
 #' @description function to split geoms (polygons) that have multiple parts
 #' @keywords internal
+#' @returns SpatVector
 .fix_multipart_geoms <- function(spatVector) {
     # data.table variables
     x <- y <- geom <- part <- NULL
@@ -192,10 +196,10 @@
     # rename
     total_geoms <- length(unique(tokeepDT$geom))
 
-    uniq_geom_vec <- 1:total_geoms
+    uniq_geom_vec <- seq_len(total_geoms)
     names(uniq_geom_vec) <- unique(tokeepDT$geom)
     tokeepDT[, geom := uniq_geom_vec[[as.character(geom)]], 
-            by = 1:nrow(tokeepDT)]
+            by = seq_len(nrow(tokeepDT))]
 
     new_list <- list()
     add_i <- 1
@@ -247,13 +251,14 @@
 #' @description
 #' Combine multiple giottoPolygon geometries into a set of multipolygons. Note
 #' that attributes cannot be kept
+#' @returns giottoPolygon
 #'
 #' @examples
 #' \dontrun{
 #' gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
 #' groups <- data.table::data.table(
 #'     poly_ID = gpoly$poly_ID,
-#'     group_ID = sort(rep(LETTERS[1:5], length.out = nrow(gpoly))) 
+#'     group_ID = sort(rep(LETTERS[seq_len(5)], length.out = nrow(gpoly))) 
 #'     # make 5 groups
 #' )
 #' multi_gp <- combineToMultiPolygon(gpoly, groups)
@@ -339,22 +344,24 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 #' @param k k
 #' @param ... additional params to pass
 #' @keywords internal
+#' @returns polygon
 .spline_poly <- function(xy, vertices = 20, k = 3, ...) {
     # Assert: xy is an n by 2 matrix with n >= k.
 
     # Wrap k vertices around each end.
     n <- dim(xy)[1]
     if (k >= 1) {
-        data <- rbind(xy[(n - k + 1):n, ], xy, xy[1:k, ])
+        data <- rbind(xy[(n - k + 1):n, ], xy, xy[seq_len(k), ])
     } else {
         data <- xy
     }
 
     # Spline the x and y coordinates.
-    data.spline <- stats::spline(1:(n + 2 * k), data[, 1], n = vertices, ...)
+    data.spline <- stats::spline(seq_len(n + 2 * k), data[, 1], 
+                                n = vertices, ...)
     x <- data.spline$x
     x1 <- data.spline$y
-    x2 <- stats::spline(1:(n + 2 * k), data[, 2], n = vertices, ...)$y
+    x2 <- stats::spline(seq_len(n + 2 * k), data[, 2], n = vertices, ...)$y
 
     # Retain only the middle part.
     cbind(x1, x2)[k < x & x <= n + k, ]
@@ -371,7 +378,7 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 #' @param k k
 #' @param set_neg_to_zero set negative values to zero (default: TRUE)
 #' @param ... additional params to pass to \code{spline}
-#' @return Smoothed Giotto polygon object with reduced vertices
+#' @returns Smoothed Giotto polygon object with reduced vertices
 #' @concept polygon
 #' @seealso \code{\link[stats]{spline}}
 #' @export
@@ -466,6 +473,7 @@ smoothGiottoPolygons <- function(gpolygon,
 #' @param feat_ID_colname column name for feature ids
 #' @param verbose be verbose
 #' @keywords internal
+#' @returns SpatVector
 .create_spatvector_object_from_dfr <- function(
         x,
         x_colname = NULL,
@@ -574,7 +582,7 @@ smoothGiottoPolygons <- function(gpolygon,
     spatvec <- terra::vect(as.matrix(loc_dfr), type = "points", atts = att_dfr)
 
     # will be given and is a unique numerical barcode for each feature
-    spatvec[["feat_ID_uniq"]] <- 1:nrow(spatvec)
+    spatvec[["feat_ID_uniq"]] <- seq_len(nrow(spatvec))
 
     return(spatvec)
 }
@@ -603,6 +611,7 @@ smoothGiottoPolygons <- function(gpolygon,
 #' @param verbose be verbose
 #' @param ... additional parameters to pass to \code{\link[dbscan]{kNN}}
 #' @keywords internal
+#' @returns kNN spatial feature network
 createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
     feat_type = NULL,
     name = "knn_feats_network",
@@ -630,7 +639,7 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
     # important with multiple joined objects where row id is not always equal 
     # to unique gene
     network_id_lookup_table <- data.table::data.table(
-        row = 1:nrow(featDT),
+        row = seq_len(nrow(featDT)),
         id = featDT$feat_ID_uniq
     )
 
@@ -643,7 +652,7 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
     )
 
     knn_sptial.norm <- data.table::data.table(
-        from = rep(1:nrow(knn_spatial$id), k),
+        from = rep(seq_len(nrow(knn_spatial$id)), k),
         to = as.vector(knn_spatial$id),
         # weight = 1/(1 + as.vector(knn_spatial$dist)),
         distance = as.vector(knn_spatial$dist)
@@ -652,7 +661,7 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
     ## 3. keep minimum and filter
     if (verbose == TRUE) 
         cat("Filter output for distance and minimum neighbours \n")
-    knn_sptial.norm[, rank := 1:.N, by = "from"]
+    knn_sptial.norm[, rank := seq_len(.N), by = "from"]
 
     if (minimum_k != 0) {
         filter_bool <- knn_sptial.norm$rank <= minimum_k
@@ -720,7 +729,7 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
 #' @param return_gobject return giotto object (default: TRUE)
 #' @param toplevel_params toplevel value to pass when updating giotto params
 #' @param ... additional parameters to pass to \code{\link[dbscan]{kNN}}
-#' @return If \code{return_gobject = TRUE} a giotto object containing the 
+#' @returns If \code{return_gobject = TRUE} a giotto object containing the 
 #'     network will be returned. If \code{return_gobject = FALSE} the network 
 #'     will be returned as a datatable.
 #' @concept feature
@@ -805,7 +814,7 @@ createSpatialFeaturesKNNnetwork <- function(gobject,
 #' @param provenance (optional) provenance to assign to generated spatLocsObj. 
 #' If not provided, provenance will default to \code{poly_info}
 #' @param return_gobject return giotto object (default: TRUE)
-#' @return If \code{return_gobject = TRUE} the giotto object containing the 
+#' @returns If \code{return_gobject = TRUE} the giotto object containing the 
 #'     calculated polygon centroids will be returned. 
 #'     If \code{return_gobject = FALSE} only the generated polygon centroids 
 #'     will be returned as spatLocsObj.
@@ -923,7 +932,7 @@ addSpatialCentroidLocationsLayer <- function(gobject,
 #' If not provided, provenance will default to \code{poly_info}
 #' @param return_gobject return giotto object (default: TRUE)
 #' @param verbose be verbose
-#' @return If \code{return_gobject = TRUE} the giotto object containing the 
+#' @returns If \code{return_gobject = TRUE} the giotto object containing the 
 #'     calculated polygon centroids will be returned. 
 #'     If \code{return_gobject = FALSE} only the generated polygon centroids 
 #'     will be returned as \code{spatLocObj}.

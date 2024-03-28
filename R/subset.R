@@ -716,7 +716,7 @@
 #' @param verbose be verbose
 #' @param toplevel_params expected stackframe from which parameters should be
 #' extracted
-#' @return giotto object
+#' @returns giotto object
 #' @keywords internal
 .subset_giotto <- function(gobject,
     spat_unit = ":all:",
@@ -1388,7 +1388,7 @@
 #' subsets to these feat_types
 #' @param verbose be verbose
 #' @param toplevel_params parameters to extract
-#' @return giotto object
+#' @returns giotto object
 #' @details Subsets a Giotto object for a specific spatial unit and feature type
 #' @export
 subsetGiotto <- function(gobject,
@@ -1482,7 +1482,7 @@ subsetGiotto <- function(gobject,
 #' @param return_gobject return Giotto object
 #' @param verbose be verbose
 #' @param toplevel_params parameters to extract
-#' @return giotto object
+#' @returns giotto object
 #' @details If `return_gobject = FALSE`, then a filtered combined metadata
 #' data.table will be returned
 #' @export
@@ -1525,6 +1525,7 @@ subsetGiottoLocs <- function(gobject,
 #' @param poly_info named list of character vectors. names correspond to 
 #' spat_unit and character vectors are the polygons associated with those 
 #' spat units
+#' @returns giotto object
 #' @export
 subsetGiottoLocsMulti <- function(gobject,
     spat_unit = ":all:",
@@ -1562,13 +1563,13 @@ subsetGiottoLocsMulti <- function(gobject,
 #' @param poly_info character. which polygons to spatially subset
 #' @param feat_type character. which feature info to spatially subset
 #' @inheritParams subsetGiottoLocs
-#' @return giotto object
 #' @details
 #' This is separate from [subsetGiottoLocs] because spat_units with attached
 #' aggregated information should be removed using a cell_ids-based approach in
 #' order to ensure that paired information is removed together. Polygons and
 #' points information without associated aggregated values do not have this
 #' issue and can be directly spatially subset.
+#' @returns giotto object
 #' @export
 subsetGiottoLocsSubcellular <- function(gobject,
     poly_info = NULL,
