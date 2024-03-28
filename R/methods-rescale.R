@@ -165,6 +165,19 @@ setMethod("rescale", signature("giottoPoints"), function(
     return(x)
 })
 
+#' @rdname rescale
+#' @export
+setMethod("rescale", signature("giottoLargeImage"), function(
+        x, fx = 1, fy = fx, x0, y0
+    ) {
+    a <- list(x = x@raster_object, fx = fx, fy = fy)
+    if (!missing(x0)) a$x0 <- x0
+    if (!missing(y0)) a$y0 <- y0
+
+    x@raster_object <- do.call("rescale", args = a)
+    return(x)
+})
+
 
 
 # TODO more methods for other objects

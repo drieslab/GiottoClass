@@ -7,6 +7,7 @@
 \alias{rescale,data.frame-method}
 \alias{rescale,giottoPolygon-method}
 \alias{rescale,giottoPoints-method}
+\alias{rescale,giottoLargeImage-method}
 \title{Rescale an object}
 \usage{
 \S4method{rescale}{giotto}(x, fx = 1, fy = fx, x0, y0, spat_unit = ":all:", feat_type = ":all:")
@@ -27,6 +28,8 @@
 \S4method{rescale}{giottoPolygon}(x, fx = 1, fy = fx, x0, y0)
 
 \S4method{rescale}{giottoPoints}(x, fx = 1, fy = fx, x0, y0)
+
+\S4method{rescale}{giottoLargeImage}(x, fx = 1, fy = fx, x0, y0)
 }
 \arguments{
 \item{x}{object}
