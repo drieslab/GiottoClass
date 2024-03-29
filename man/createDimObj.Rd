@@ -43,3 +43,11 @@ dimObj
 \description{
 Create an S4 dimObj
 }
+\examples{
+x <- matrix(c(2.81, 5.59, 10.54, 2.25, 5.12, 2.79), nrow = 3)
+rownames(x) <- c("cell_1", "cell_2", "cell_3")
+colnames(x) <- c("Dim.1", "Dim.2")
+
+createDimObj(coordinates = x, name = "pca", method = "pca")
+
+}

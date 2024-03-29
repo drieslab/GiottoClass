@@ -52,7 +52,8 @@ NULL
 #'   `"kNN"` and `"sNN"` types and \eqn{weight = 1 / distance} for `delaunay`
 #'   type
 #' networks
-#' @import deldir igraph
+#' @import deldir
+#' @importFrom igraph graph_from_data_frame 
 #' @returns Either `igraph` if `as.igraph = TRUE` and `data.table` otherwise.
 #' @examples
 #' \dontrun{

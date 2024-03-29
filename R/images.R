@@ -4,7 +4,6 @@
 #' @name convert_mgImage_to_array_DT
 #' @description converts a magick image object to a data.table
 #' @param mg_object magick image or Giotto image object
-#' @import reshape2
 #' @keywords internal
 #' @returns data.table with image pixel information
 #' @export
@@ -2783,7 +2782,7 @@ setMethod(
         }
 
         if (isTRUE(show_max)) {
-            abline(v = x@max_window, col = "red")
+            graphics::abline(v = x@max_window, col = "red")
         }
     })
 
@@ -2813,7 +2812,7 @@ setMethod(
         }
 
         if (isTRUE(show_max)) {
-            abline(v = x@max_window, col = "red")
+            graphics::abline(v = x@max_window, col = "red")
         }
     }
 )

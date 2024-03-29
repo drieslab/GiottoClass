@@ -1344,6 +1344,12 @@ create_cell_meta_obj <- function(metaDT = NULL,
 #' information (if applicable)
 #' @param verbose be verbose
 #' @returns featMetaObj
+#' @examples
+#' x <- data.frame(feat_ID = c("Mlc1", "Gprc5b", "Gfap"),
+#' nr_cells = c(80, 138, 151))
+#' 
+#' createFeatMetaObj(metadata = x)
+#' 
 #' @export
 createFeatMetaObj <- function(metadata,
     spat_unit = "cell",
@@ -1416,6 +1422,13 @@ create_feat_meta_obj <- function(metaDT = NULL,
 #' @param misc misc
 #' @param my_rownames (optional) if needed, set coordinates rowname values here
 #' @returns dimObj
+#' @examples
+#' x <- matrix(c(2.81, 5.59, 10.54, 2.25, 5.12, 2.79), nrow = 3)
+#' rownames(x) <- c("cell_1", "cell_2", "cell_3")
+#' colnames(x) <- c("Dim.1", "Dim.2")
+#' 
+#' createDimObj(coordinates = x, name = "pca", method = "pca")
+#' 
 #' @export
 createDimObj <- function(coordinates,
     name = "test",
@@ -1505,6 +1518,12 @@ create_dim_obj <- function(name = "test",
 #' edge attribute.
 #' dataframe-like inputs must have 'from', 'to', and 'distance' columns
 #' @returns nnNetObj
+#' @examples
+#' x <- GiottoData::loadSubObjectMini("nnNetObj")
+#' 
+#' createNearestNetObj(network = slot(x, "igraph"), name = "sNN", 
+#' nn_type = "sNN")
+#' 
 #' @export
 createNearestNetObj <- function(name = "test",
     network,
@@ -1580,6 +1599,13 @@ create_nn_net_obj <- function(name = "test",
 #' @param misc misc
 #' @param verbose be verbose
 #' @returns spatLocsObj
+#' @examples
+#' x <- data.frame(cell_ID = c("cell_1", "cell_2", "cell_3"),
+#' sdimx = c(6637.881, 6471.978, 6801.610), 
+#' sdimy = c(-5140.465, -4883.541, -4968.685))
+#' 
+#' createSpatLocsObj(coordinates = x, name = "raw")
+#' 
 #' @export
 createSpatLocsObj <- function(coordinates,
     name = "test",
@@ -1666,6 +1692,11 @@ create_spat_locs_obj <- function(name = "test",
 #' @param provenance (optional) origin of aggregated information (if applicable)
 #' @param misc misc
 #' @returns spatialNetworkObj
+#' @examples
+#' x <- GiottoData::loadSubObjectMini("spatialNetworkObj")
+#' 
+#' createSpatNetObj(network = slot(x, "networkDT"), name = "Delaunay_network")
+#' 
 #' @export
 createSpatNetObj <- function(network,
     name = "test",
@@ -1754,6 +1785,12 @@ create_spat_net_obj <- function(name = "test",
 #' how it was generated
 #' @param verbose be verbose
 #' @returns spatEnrObj
+#' @examples
+#' x <- GiottoData::loadSubObjectMini("spatEnrObj")
+#' 
+#' createSpatEnrObj(enrichment_data = slot(x, "enrichDT"),
+#' name = "cluster_metagene")
+#' 
 #' @export
 createSpatEnrObj <- function(enrichment_data,
     name = "test",
@@ -1832,6 +1869,12 @@ create_spat_enr_obj <- function(name = "test",
 #' @param misc misc
 #' @keywords internal
 #' @returns spatialGridObj
+#' @examples
+#' x <- GiottoData::loadSubObjectMini("spatialGridObj")
+#' 
+#' create_spat_grid_obj(name = "test",
+#' gridDT = x)
+#' 
 #' @export
 create_spat_grid_obj <- function(name = "test",
     method = NA_character_,
@@ -1841,7 +1884,7 @@ create_spat_grid_obj <- function(name = "test",
     feat_type = "rna",
     provenance = NULL,
     misc = NULL) {
-    return(new("spatGridObj",
+    return(new("spatialGridObj",
         name = name,
         method = method,
         parameters = parameters,

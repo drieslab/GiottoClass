@@ -42,3 +42,10 @@ spatEnrObj
 \description{
 Create S4 spatEnrObj
 }
+\examples{
+x <- GiottoData::loadSubObjectMini("spatEnrObj")
+
+createSpatEnrObj(enrichment_data = slot(x, "enrichDT"),
+name = "cluster_metagene")
+
+}
