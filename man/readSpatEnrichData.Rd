@@ -23,6 +23,9 @@ readSpatEnrichData(
 
 \item{verbose}{be verbose}
 }
+\value{
+spatEnrObj
+}
 \description{
 read spatial enrichment results from list
 }

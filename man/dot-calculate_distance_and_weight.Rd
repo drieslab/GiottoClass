@@ -23,6 +23,9 @@
 
 \item{d2_or_d3}{number of dimensions}
 }
+\value{
+data.table
+}
 \description{
 Calculate distance and weight metrics of a data.table spatial
 network

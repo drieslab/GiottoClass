@@ -6,6 +6,9 @@
 \usage{
 .find_grid_2d(grid_DT, x_loc, y_loc)
 }
+\value{
+character
+}
 \description{
 find grid location in 2D
 }

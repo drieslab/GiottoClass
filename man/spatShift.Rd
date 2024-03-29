@@ -50,8 +50,11 @@
 
 \item{...}{additional params to pass to methods}
 
-\item{geom}{character. Named vector of colnames of x, y, (z) coordinate columns.
-Default is \code{c("sdimx", "sdimy", "sdimz")}}
+\item{geom}{character. Named vector of colnames of x, y, (z) coordinate
+columns. Default is \code{c("sdimx", "sdimy", "sdimz")}}
+}
+\value{
+object with shifted spatial locations
 }
 \description{
 Shift the spatial locations of an object

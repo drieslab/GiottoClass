@@ -23,9 +23,13 @@
 
 \item{verbose}{be verbose}
 }
+\value{
+SpatVector
+}
 \description{
-create terra spatvector from a data.frame where cols 1 and 2 must
-be x and y coordinates respectively. Additional columns are set as attributes
-to the points where the first additional (col 3) should be the feat_ID.
+create terra spatvector from a data.frame where cols 1 and 2
+must be x and y coordinates respectively. Additional columns are set as
+attributes to the points where the first additional (col 3) should be the
+feat_ID.
 }
 \keyword{internal}

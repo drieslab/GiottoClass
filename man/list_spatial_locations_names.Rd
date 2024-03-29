@@ -15,5 +15,6 @@ list_spatial_locations_names(gobject, spat_unit = NULL)
 vector with names of available spatial locations
 }
 \description{
-lists the available spatial location names for a given spatial unit
+lists the available spatial location names for a given spatial
+unit
 }

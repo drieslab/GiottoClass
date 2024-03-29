@@ -10,14 +10,14 @@
 #' @param gobject giotto object
 #' @param description description of function run
 #' @param return_gobject logical. Whether the giotto object should be returned
-#' @param toplevel expected relative stackframe where call that is being recorded
-#' was made
+#' @param toplevel expected relative stackframe where call that is being 
+#' recorded was made
+#' @returns giotto object or list of parameters
 #' @export
-update_giotto_params <- function(
-        gobject,
-        description = "_test",
-        return_gobject = TRUE,
-        toplevel = 2) {
+update_giotto_params <- function(gobject,
+    description = "_test",
+    return_gobject = TRUE,
+    toplevel = 2) {
     parameters_list <- gobject@parameters
     number_of_rounds <- length(parameters_list)
     update_name <- paste0(number_of_rounds, description)
@@ -38,6 +38,11 @@ update_giotto_params <- function(
 #' @name objHistory
 #' @description Print and return giotto object history
 #' @param object giotto object
+#' @returns list
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' objHistory(g)
+#' 
 #' @export
 objHistory <- function(object) {
     cat("Steps and parameters used: \n \n")
@@ -53,7 +58,11 @@ objHistory <- function(object) {
 #' @description shows the sequential processing steps that were performed
 #' on a Giotto object in a summarized format
 #' @param gobject giotto object
-#' @return list of processing steps and names
+#' @returns list of processing steps and names
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' showProcessingSteps(g)
+#' 
 #' @export
 showProcessingSteps <- function(gobject) {
     parameters <- gobject@parameters
@@ -66,7 +75,7 @@ showProcessingSteps <- function(gobject) {
         sub_step <- parameters[[step]]
 
         if (any(grepl("name", names(sub_step)) == TRUE)) {
-            selected_names <- grep("name", names(sub_step), value = T)
+            selected_names <- grep("name", names(sub_step), value = TRUE)
             cat("\t name info: ", sub_step[selected_names], "\n")
         }
     }

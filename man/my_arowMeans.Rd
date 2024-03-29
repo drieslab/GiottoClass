@@ -9,6 +9,9 @@ my_arowMeans(x)
 \arguments{
 \item{x}{data to use}
 }
+\value{
+numeric
+}
 \description{
 my_arowMeans
 }

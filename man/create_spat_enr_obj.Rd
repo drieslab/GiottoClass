@@ -14,6 +14,9 @@ create_spat_enr_obj(
   misc = NULL
 )
 }
+\value{
+spat_enr_obj
+}
 \description{
 create_spat_enr_obj
 }

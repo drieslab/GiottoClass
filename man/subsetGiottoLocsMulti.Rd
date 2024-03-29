@@ -34,15 +34,19 @@ subset}
 
 \item{spat_loc_name}{name of spatial locations to use within spat_unit}
 
-\item{x_max, x_min, y_max, y_min, z_max, z_min}{minimum and maximum x, y, and z coordinates
-to subset to}
+\item{x_max, x_min, y_max, y_min, z_max, z_min}{minimum and maximum x, y, and z
+coordinates to subset to}
 
-\item{poly_info}{named list of character vectors. names correspond to spat_unit
-and character vectors are the polygons associated with those spat units}
+\item{poly_info}{named list of character vectors. names correspond to
+spat_unit and character vectors are the polygons associated with those
+spat units}
 
 \item{return_gobject}{return Giotto object}
 
 \item{verbose}{be verbose}
+}
+\value{
+giotto object
 }
 \description{
 deprecated

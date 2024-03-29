@@ -1,16 +1,19 @@
 # docs -------------------------------------------------------------- #
 #' @title Rescale an object
 #' @name rescale
-#' @description Rescale an object spatially. Z dimension scaling is supported for
-#' some types of subobjects.
+#' @description Rescale an object spatially. Z dimension scaling is supported 
+#' for some types of subobjects.
 #' @param x object
 #' @param fx numeric > 0. The horizontal scaling factor
 #' @param fy numeric > 0. The vertical scaling factor
 #' @param fz numeric > 0. The z scaling factor (only for supported objects)
-#' @param x0 numeric. x-coordinate of the center of rescaling. If missing, the center of the extent of x is used
-#' @param y0 numeric. y-coordinate of the center of rescaling. If missing, the center of the extent of x is used
-#' @param z0 numeric. z-coordinate of the center of rescaling. If missing, the center of the extent of x is used
-#' (only for supported objects)
+#' @param x0 numeric. x-coordinate of the center of rescaling. If missing, 
+#' the center of the extent of x is used
+#' @param y0 numeric. y-coordinate of the center of rescaling. If missing, 
+#' the center of the extent of x is used
+#' @param z0 numeric. z-coordinate of the center of rescaling. If missing, 
+#' the center of the extent of x is used (only for supported objects)
+#' @returns re-scaled object
 NULL
 # ------------------------------------------------------------------- #
 
@@ -20,8 +23,9 @@ NULL
 #' @param feat_type character vector. feature types to affect
 #' @export
 setMethod(
-    "rescale", signature("giotto"), function(
-        x, fx = 1, fy = fx, x0, y0, spat_unit = ":all:", feat_type = ":all:") {
+    "rescale", signature("giotto"), 
+    function(x, fx = 1, fy = fx, x0, y0, spat_unit = ":all:", 
+            feat_type = ":all:") {
         a <- list(fx = fx, fy = fy)
         if (!missing(x0)) a$x0 <- x0
         if (!missing(y0)) a$y0 <- y0
@@ -31,7 +35,8 @@ setMethod(
         all_su <- spat_unit == ":all:"
         all_ft <- feat_type == ":all:"
 
-        # no need to set default spat_unit and feat_type. NULL is acceptable input
+        # no need to set default spat_unit and feat_type. NULL is acceptable 
+        # input
 
         # polygons --------------------------------------------------------- #
         poly <- get_polygon_info_list(
@@ -60,10 +65,12 @@ setMethod(
         if (!is.null(sls)) {
             for (sl in sls) {
                 sl <- do.call(rescale, args = c(list(x = sl), a))
-                x <- setSpatialLocations(x, sl, verbose = FALSE, initialize = FALSE)
+                x <- setSpatialLocations(x, sl, 
+                                        verbose = FALSE, initialize = FALSE)
             }
 
-            # TODO remove this after spatial info is removed from spatialNetwork objs
+            # TODO remove this after spatial info is removed from 
+            # spatialNetwork objs
             sn_list <- get_spatial_network_list(
                 gobject = x,
                 spat_unit = ":all:",
@@ -71,9 +78,9 @@ setMethod(
                 copy_obj = FALSE
             )
             if (length(sn_list) > 0) {
-                warning(wrap_txt(
-                    "spatial locations have been modified.
-          Relevant spatial networks may need to be regenerated"
+                warning(wrap_txt("spatial locations have been modified. 
+                                Relevant spatial networks may need to be 
+                                regenerated"
                 ), call. = FALSE)
             }
         }
@@ -113,13 +120,12 @@ setMethod(
 )
 
 #' @rdname rescale
-#' @param geom character. Named vector of colnames of x, y, (z) coordinate columns.
-#' Default is `c("sdimx", "sdimy", "sdimz")`
+#' @param geom character. Named vector of colnames of x, y, (z) coordinate 
+#' columns. Default is `c("sdimx", "sdimy", "sdimz")`
 setMethod(
     "rescale", signature("data.frame"),
-    function(
-        x, fx = 1, fy = fx, fz = fx, x0, y0, z0,
-        geom = c("sdimx", "sdimy", "sdimz")) {
+    function(x, fx = 1, fy = fx, fz = fx, x0, y0, z0,
+    geom = c("sdimx", "sdimy", "sdimz")) {
         x <- data.table::as.data.table(x)
 
         # find center
@@ -144,8 +150,8 @@ setMethod(
 
 #' @rdname rescale
 #' @export
-setMethod("rescale", signature("giottoPolygon"), function(
-        x, fx = 1, fy = fx, x0, y0) {
+setMethod("rescale", signature("giottoPolygon"), 
+        function(x, fx = 1, fy = fx, x0, y0) {
     a <- list(fx = fx, fy = fy)
     if (!missing(x0)) a$x0 <- x0
     if (!missing(y0)) a$y0 <- y0
@@ -155,8 +161,8 @@ setMethod("rescale", signature("giottoPolygon"), function(
 
 #' @rdname rescale
 #' @export
-setMethod("rescale", signature("giottoPoints"), function(
-        x, fx = 1, fy = fx, x0, y0) {
+setMethod("rescale", signature("giottoPoints"), 
+        function(x, fx = 1, fy = fx, x0, y0) {
     a <- list(x = x[], fx = fx, fy = fy)
     if (!missing(x0)) a$x0 <- x0
     if (!missing(y0)) a$y0 <- y0
@@ -191,27 +197,28 @@ setMethod("rescale", signature("giottoLargeImage"), function(
 
 #' @title Scale spatial locations
 #' @name .scale_spatial_locations
-#' @description Simple scaling of spatial locations by given \code{scale_factor}.
-#' Values will be scaled from the coordinate origin or coordinates provided through
-#' \code{scenter} param. Default values supply values for z axis, but these
-#' values will only be applied if input `data.table` has z information as
-#' detected by the third item in the `geom` param.
+#' @description Simple scaling of spatial locations by 
+#' given \code{scale_factor}. Values will be scaled from the coordinate origin 
+#' or coordinates provided through \code{scenter} param. Default values supply 
+#' values for z axis, but these values will only be applied if 
+#' input `data.table` has z information as detected by the third item in 
+#' the `geom` param.
 #' @param spatlocs data.table. spatial locations information to scale
 #' @param scale_factor scaling factor to apply to coordinates. Default is
 #' `c(1, 1, 1)`
-#' @param scenter center from which to scale spatial coordinates. Given as vector
-#' of xy(z) coordinates. Default is `c(0, 0, 0)`
-#' @param geom character. Named vector of colnames of x, y, (z) coordinate columns.
-#' Default is `c("sdimx", "sdimy", "sdimz")`
-#' @details \code{scale_factor} either given as a single value where it will be applied to
-#' x, y, and z (if available) dimensions or as a vector of named values for 'x',
-#' 'y', (and 'z').
+#' @param scenter center from which to scale spatial coordinates. Given as 
+#' vector of xy(z) coordinates. Default is `c(0, 0, 0)`
+#' @param geom character. Named vector of colnames of x, y, (z) coordinate 
+#' columns. Default is `c("sdimx", "sdimy", "sdimz")`
+#' @returns spatial locations
+#' @details \code{scale_factor} either given as a single value where it will
+#' be applied to x, y, and z (if available) dimensions or as a vector of named 
+#' values for 'x', y', (and 'z').
 #' @keywords internal
-.scale_spatial_locations <- function(
-        spatlocs,
-        scale_factor = c(1, 1, 1),
-        scenter = c(0, 0, 0),
-        geom = c("sdimx", "sdimy", "sdimz")) {
+.scale_spatial_locations <- function(spatlocs,
+    scale_factor = c(1, 1, 1),
+    scenter = c(0, 0, 0),
+    geom = c("sdimx", "sdimy", "sdimz")) {
     checkmate::assert_data_table(spatlocs)
 
     xyz <- c("x", "y", "z")
@@ -221,9 +228,12 @@ setMethod("rescale", signature("giottoLargeImage"), function(
 
     hasZ <- geom[["z"]] %in% colnames(spatlocs)
 
-    if (length(scale_factor) == 1) scale_factor <- c(x = scale_factor, y = scale_factor, z = scale_factor)
-    if (!all(names(scenter) %in% xyz)) stop("scenter value names not recognized")
-    if (!all(names(scale_factor) %in% xyz)) stop("scale_factor value names not recognized")
+    if (length(scale_factor) == 1) 
+        scale_factor <- c(x = scale_factor, y = scale_factor, z = scale_factor)
+    if (!all(names(scenter) %in% xyz)) 
+        stop("scenter value names not recognized")
+    if (!all(names(scale_factor) %in% xyz)) 
+        stop("scale_factor value names not recognized")
     if (!all(names(geom) %in% xyz)) stop("geom value names not recognized")
 
     # Adjust for scaling center
@@ -260,12 +270,12 @@ setMethod("rescale", signature("giottoLargeImage"), function(
 
 #' @title Rescale polygons
 #' @name .rescale_polygons
+#' @returns polygons
 #' @description  rescale individual polygons by a factor x and y
 #' @keywords internal
-.rescale_polygons <- function(
-        spatVector,
-        spatVectorCentroids,
-        fx = 0.5, fy = 0.5) {
+.rescale_polygons <- function(spatVector,
+    spatVectorCentroids,
+    fx = 0.5, fy = 0.5) {
     # DT vars
     poly_ID <- NULL
 
@@ -304,14 +314,13 @@ setMethod("rescale", signature("giottoLargeImage"), function(
 #' @return giotto object
 #' @concept polygon scaling
 #' @export
-rescalePolygons <- function(
-        gobject,
-        poly_info = "cell",
-        name = "rescaled_cell",
-        fx = 0.5,
-        fy = 0.5,
-        calculate_centroids = TRUE,
-        return_gobject = TRUE) {
+rescalePolygons <- function(gobject,
+    poly_info = "cell",
+    name = "rescaled_cell",
+    fx = 0.5,
+    fy = 0.5,
+    calculate_centroids = TRUE,
+    return_gobject = TRUE) {
     # 1. get polygon information
     original <- get_polygon_info(
         gobject = gobject,

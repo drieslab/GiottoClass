@@ -16,6 +16,9 @@ indices matching the rows of x.}
 \item{x_node_ids}{if y is indexed by character in from and to cols, then the
 node IDs that apply to the coords in x must be supplied as a character vector}
 }
+\value{
+numeric
+}
 \description{
 Calculate network edge euclidean distances
 }

@@ -13,7 +13,8 @@
 )
 }
 \arguments{
-\item{x}{SpatRaster, SpatVector, SpatExtent, or correctly formatted data.frame}
+\item{x}{SpatRaster, SpatVector, SpatExtent, or correctly formatted
+data.frame}
 
 \item{include_values}{\code{logical}. Whether to include additional columns other
 than the geometry information as \code{SpatVector} attributes. Default is TRUE.}
@@ -23,6 +24,9 @@ attributes if \code{include_values = TRUE}.}
 
 \item{sort_geom}{\code{logical}. Whether to sort key the data.table input by
 'geom', 'part', and 'hole' columns.}
+}
+\value{
+SpatVector polygons
 }
 \description{
 Coversion to a SpatVector of polygons.

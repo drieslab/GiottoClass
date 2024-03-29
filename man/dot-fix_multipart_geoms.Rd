@@ -6,6 +6,9 @@
 \usage{
 .fix_multipart_geoms(spatVector)
 }
+\value{
+SpatVector
+}
 \description{
 function to split geoms (polygons) that have multiple parts
 }

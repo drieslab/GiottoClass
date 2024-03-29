@@ -15,40 +15,44 @@
 #' @param height height of plots
 #' @param width width of  plots
 #' @param is_docker using docker implementation of Giotto (defaults to FALSE)
-#' @param plot_count (global option) start count for creating automatic unique plots
+#' @param plot_count (global option) start count for creating automatic unique 
+#' plots
 #' @param fiji_path path to fiji executable
-#' @param no_python_warn turn off warning that no compatible python env has been detected
-#' @return named vector with giotto instructions
-#' @seealso More online information can be found here \url{https://rubd.github.io/Giotto_site/articles/instructions_and_plotting.html}
+#' @param no_python_warn turn off warning that no compatible python env has 
+#' been detected
+#' @returns named vector with giotto instructions
+#' @seealso More online information can be found 
+#' here \url{http://giottosuite.com}
 #' @export
-createGiottoInstructions <- function(
-        python_path = NULL,
-        show_plot = NULL,
-        return_plot = NULL,
-        save_plot = NULL,
-        save_dir = NULL,
-        plot_format = NULL,
-        dpi = NULL,
-        units = NULL,
-        height = NULL,
-        width = NULL,
-        is_docker = FALSE,
-        plot_count = 0,
-        fiji_path = NULL,
-        no_python_warn = FALSE) {
+createGiottoInstructions <- function(python_path = NULL,
+    show_plot = NULL,
+    return_plot = NULL,
+    save_plot = NULL,
+    save_dir = NULL,
+    plot_format = NULL,
+    dpi = NULL,
+    units = NULL,
+    height = NULL,
+    width = NULL,
+    is_docker = FALSE,
+    plot_count = 0,
+    fiji_path = NULL,
+    no_python_warn = FALSE) {
     # python path to use
-    # try used here to allow instructions to be made in the absence of a compatible
-    # python env
+    # try used here to allow instructions to be made in the absence of a 
+    # compatible python env
     python_path <- try(
         if (is_docker) {
-            set_giotto_python_path(python_path = "/usr/bin/python3") # fixed path in docker version
+            set_giotto_python_path(python_path = "/usr/bin/python3") 
+            # fixed path in docker version
         } else {
             set_giotto_python_path(python_path = python_path)
         },
         silent = TRUE
     )
 
-    if ((is.null(python_path) | inherits(python_path, "try-error")) & !no_python_warn) {
+    if ((is.null(python_path) | inherits(python_path, "try-error")) & 
+        !no_python_warn) {
         warning(wrap_txt("Python is required for full Giotto functionality."))
         options("giotto.has_conda" = FALSE)
     }
@@ -136,18 +140,17 @@ createGiottoInstructions <- function(
 
 
 #' @keywords internal
-create_giotto_instructions <- function(
-        python_path = NULL,
-        show_plot = NULL,
-        return_plot = NULL,
-        save_plot = NULL,
-        save_dir = NULL,
-        plot_format = NULL,
-        dpi = NULL,
-        units = NULL,
-        height = NULL,
-        width = NULL,
-        is_docker = NULL) {
+create_giotto_instructions <- function(python_path = NULL,
+    show_plot = NULL,
+    return_plot = NULL,
+    save_plot = NULL,
+    save_dir = NULL,
+    plot_format = NULL,
+    dpi = NULL,
+    units = NULL,
+    height = NULL,
+    width = NULL,
+    is_docker = NULL) {
     instructions_list <- list(
         python_path = python_path,
         show_plot = show_plot,
@@ -169,16 +172,16 @@ create_giotto_instructions <- function(
 #' @title Read giotto instructions associated with giotto object
 #' @name readGiottoInstructions
 #' @description Retrieves the instruction associated with the provided parameter
-#' @param giotto_instructions giotto object or result from createGiottoInstructions()
+#' @param giotto_instructions giotto object or result from 
+#' createGiottoInstructions()
 #' @param param parameter to retrieve
 #' @param default default object to return if parameter to retrieve does not
 #' exist
-#' @return specific parameter
+#' @returns specific parameter
 #' @export
-readGiottoInstructions <- function(
-        giotto_instructions,
-        param = NULL,
-        default) {
+readGiottoInstructions <- function(giotto_instructions,
+    param = NULL,
+    default) {
     # get instructions if provided the giotto object
     if (inherits(giotto_instructions, "giotto")) {
         giotto_instructions <- giotto_instructions@instructions
@@ -203,7 +206,7 @@ readGiottoInstructions <- function(
 #' @name showGiottoInstructions
 #' @description Function to display all instructions from giotto object
 #' @param gobject giotto object
-#' @return named vector with giotto instructions
+#' @returns named vector with giotto instructions
 #' @export
 showGiottoInstructions <- function(gobject) {
     instrs <- gobject@instructions
@@ -221,14 +224,13 @@ showGiottoInstructions <- function(gobject) {
 #' @param new_values new value(s) for parameter(s)
 #' @param return_gobject (boolean, default = TRUE) return giotto object
 #' @param init_gobject (boolean, default = TRUE) initialize gobject if returning
-#' @return giotto object with one or more changed instructions
+#' @returns giotto object with one or more changed instructions
 #' @export
-changeGiottoInstructions <- function(
-        gobject,
-        params = NULL,
-        new_values = NULL,
-        return_gobject = TRUE,
-        init_gobject = TRUE) {
+changeGiottoInstructions <- function(gobject,
+    params = NULL,
+    new_values = NULL,
+    return_gobject = TRUE,
+    init_gobject = TRUE) {
     instrs <- gobject@instructions
 
     if (is.null(params) | is.null(new_values)) {
@@ -247,12 +249,15 @@ changeGiottoInstructions <- function(
     instrs[params] <- new_values
 
     ## make sure that classes remain consistent
-    new_instrs <- lapply(1:length(instrs), function(x) {
+    new_instrs <- lapply(seq_len(length(instrs)), function(x) {
         if (names(instrs[x]) %in% c("dpi", "height", "width")) {
             instrs[[x]] <- as.numeric(instrs[[x]])
-        } else if (names(instrs[x]) %in% c("show_plot", "return_plot", "save_plot", "is_docker")) {
+        } else if (names(instrs[x]) %in% 
+                c("show_plot", "return_plot", "save_plot", "is_docker")) {
             instrs[[x]] <- as.logical(instrs[[x]])
-        } else if (names(instrs[x]) %in% c("active_spat_unit", "active_feat_type", "plot_format", "units")) {
+        } else if (names(instrs[x]) %in% 
+                c("active_spat_unit", "active_feat_type", "plot_format", 
+                "units")) {
             instrs[[x]] <- as.character(instrs[[x]])
         } else {
             instrs[[x]] <- instrs[[x]]
@@ -279,14 +284,15 @@ changeGiottoInstructions <- function(
 #' @description Function to replace all instructions from giotto object. Does
 #' not call \code{initialize} on the giotto object
 #' @param gobject giotto object
-#' @param instructions new instructions (e.g. result from createGiottoInstructions)
-#' @param init_gobject (boolean, default = TRUE) initialize gobject when returning
-#' @return giotto object with replaces instructions
+#' @param instructions new 
+#' instructions (e.g. result from createGiottoInstructions)
+#' @param init_gobject (boolean, default = TRUE) initialize gobject when 
+#' returning
+#' @returns giotto object with replaces instructions
 #' @export
-replaceGiottoInstructions <- function(
-        gobject,
-        instructions = NULL,
-        init_gobject = TRUE) {
+replaceGiottoInstructions <- function(gobject,
+    instructions = NULL,
+    init_gobject = TRUE) {
     instrs_needed <- names(create_giotto_instructions())
 
     # validate new instructions

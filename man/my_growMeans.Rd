@@ -11,6 +11,9 @@ my_growMeans(x, offset = 0.1)
 
 \item{offset}{offset}
 }
+\value{
+numeric
+}
 \description{
 my_growMeans
 }

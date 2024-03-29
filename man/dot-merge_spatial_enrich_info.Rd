@@ -12,6 +12,9 @@
   spat_enr_names = NULL
 )
 }
+\value{
+data.table
+}
 \description{
 take a combine data.table result and append spatial enrichment
 results.

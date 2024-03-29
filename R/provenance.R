@@ -4,8 +4,8 @@
 #' @name .prov_match
 #' @param ... list of s4 subobjects to match provenance
 #' @param verbose print discovered provenance info
+#' @returns logical or NULL
 #' @keywords internal
-#' @return NULL
 .prov_match <- function(..., verbose = FALSE) {
     if (length(match.call()) == 2) {
         if (isS4(...)) stop("more than one object must be provided")

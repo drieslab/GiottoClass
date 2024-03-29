@@ -34,7 +34,8 @@ createSpatialFeaturesKNNnetwork(
 
 \item{minimum_k}{minimum number of neighbors to find}
 
-\item{add_feat_ids}{add feature id names (default = FALSE, increases object size)}
+\item{add_feat_ids}{add feature id
+names (default = FALSE, increases object size)}
 
 \item{verbose}{be verbose}
 
@@ -45,9 +46,9 @@ createSpatialFeaturesKNNnetwork(
 \item{...}{additional parameters to pass to \code{\link[dbscan]{kNN}}}
 }
 \value{
-If \code{return_gobject = TRUE} a giotto object containing the network
-will be returned. If \code{return_gobject = FALSE} the network will be returned
-as a datatable.
+If \code{return_gobject = TRUE} a giotto object containing the
+network will be returned. If \code{return_gobject = FALSE} the network
+will be returned as a datatable.
 }
 \description{
 Calculates the centroid locations for the giotto polygons

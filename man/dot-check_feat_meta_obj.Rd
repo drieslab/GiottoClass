@@ -9,6 +9,9 @@
 \arguments{
 \item{object}{S4 featMetaObj to check}
 }
+\value{
+character or TRUE
+}
 \description{
 Function to check S4 featMetaObj
 }

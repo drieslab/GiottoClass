@@ -34,5 +34,6 @@ instead of through \code{gobject} and \code{largeImage_name} params}
 a giottoLargeImage object
 }
 \description{
-Crop a giottoLargeImage based on crop_extent argument or given values
+Crop a giottoLargeImage based on crop_extent argument or
+given values
 }

@@ -7,7 +7,11 @@
 convert_to_full_spatial_network(reduced_spatial_network_DT)
 }
 \arguments{
-\item{reduced_spatial_network_DT}{reduced spatial network in \code{data.table} format}
+\item{reduced_spatial_network_DT}{reduced spatial network in \code{data.table}
+format}
+}
+\value{
+data.table
 }
 \description{
 Convert to a full spatial network, ie ensuring that all edges

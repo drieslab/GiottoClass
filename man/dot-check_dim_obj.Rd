@@ -9,6 +9,9 @@
 \arguments{
 \item{object}{S4 dimObj to check}
 }
+\value{
+character or TRUE
+}
 \description{
 check function for S4 dimObj
 }

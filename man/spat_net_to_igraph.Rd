@@ -11,6 +11,9 @@ spat_net_to_igraph(spatialNetworkObj, attr = NULL)
 
 \item{attr}{columns to include as edge attributes.}
 }
+\value{
+igraph
+}
 \description{
 Convert a \code{spatialNetworkObj} to a non-directed igraph
 representation.

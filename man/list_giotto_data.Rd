@@ -9,7 +9,8 @@ list_giotto_data(gobject = NULL, slot = NULL, ...)
 \arguments{
 \item{gobject}{giotto object}
 
-\item{slot}{giotto object slot of interest (e.g. "expression", "spatial_locs", etc.)}
+\item{slot}{giotto object slot of
+interest (e.g. "expression", "spatial_locs", etc.)}
 
 \item{...}{additional params to pass}
 }

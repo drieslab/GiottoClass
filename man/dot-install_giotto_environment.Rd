@@ -13,6 +13,9 @@
   verbose = TRUE
 )
 }
+\value{
+character or NULL
+}
 \description{
 installation options of giotto environment
 }

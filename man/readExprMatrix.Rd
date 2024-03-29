@@ -21,7 +21,8 @@ readExprMatrix(
 
 \item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
 
-\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'DelayedArray')}
+\item{expression_matrix_class}{class of expression matrix to
+use (e.g. 'dgCMatrix', 'DelayedArray')}
 }
 \value{
 sparse matrix
@@ -30,5 +31,6 @@ sparse matrix
 Function to read an expression matrix into a sparse matrix.
 }
 \details{
-The expression matrix needs to have both unique column names and row names
+The expression matrix needs to have both unique column names and
+row names
 }

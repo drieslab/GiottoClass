@@ -16,6 +16,9 @@ create_dim_obj(
   my_rownames = NULL
 )
 }
+\value{
+dim_obj
+}
 \description{
 create_dim_obj
 }

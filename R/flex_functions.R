@@ -17,6 +17,7 @@
 #' @param x data to use
 #' @param ... other arguments to pass
 #' @keywords internal
+#' @returns numeric
 #' @export
 mean_flex <- function(x, ...) {
     if (inherits(x, "HDF5Matrix")) {
@@ -36,6 +37,7 @@ mean_flex <- function(x, ...) {
 #' @name rowSums_flex
 #' @param mymatrix matrix to use
 #' @keywords internal
+#' @returns numeric
 #' @export
 rowSums_flex <- function(mymatrix) {
     if (inherits(mymatrix, "DelayedArray")) {
@@ -60,6 +62,7 @@ rowSums_flex <- function(mymatrix) {
 #' @name rowMeans_flex
 #' @param mymatrix matrix to use
 #' @keywords internal
+#' @returns numeric
 #' @export
 rowMeans_flex <- function(mymatrix) {
     # replace by MatrixGenerics?
@@ -85,6 +88,7 @@ rowMeans_flex <- function(mymatrix) {
 #' @name colSums_flex
 #' @param mymatrix matrix to use
 #' @keywords internal
+#' @returns numeric
 #' @export
 colSums_flex <- function(mymatrix) {
     if (inherits(mymatrix, "DelayedArray")) {
@@ -109,6 +113,7 @@ colSums_flex <- function(mymatrix) {
 #' @name colMeans_flex
 #' @param mymatrix matrix to use
 #' @keywords internal
+#' @returns numeric
 #' @export
 colMeans_flex <- function(mymatrix) {
     if (inherits(mymatrix, "DelayedArray")) {
@@ -133,6 +138,7 @@ colMeans_flex <- function(mymatrix) {
 #' @name t_flex
 #' @param mymatrix matrix to use
 #' @keywords internal
+#' @returns matrix
 #' @export
 t_flex <- function(mymatrix) {
     if (inherits(mymatrix, "DelayedArray")) {
@@ -159,6 +165,8 @@ t_flex <- function(mymatrix) {
 #' @name cor_flex
 #' @param x data to use
 #' @param ... other arguments passed to stats::cor()
+#' @importFrom stats cor
+#' @returns numeric
 #' @keywords internal
 #' @export
 cor_flex <- function(x, ...) {
@@ -175,6 +183,7 @@ cor_flex <- function(x, ...) {
 #' @name  my_arowMeans
 #' @param x data to use
 #' @keywords internal
+#' @returns numeric
 #' @export
 my_arowMeans <- function(x) {
     if (is.null(nrow(x))) {
@@ -192,6 +201,7 @@ my_arowMeans <- function(x) {
 #' @param x data to use
 #' @param offset offset
 #' @keywords internal
+#' @returns numeric
 #' @export
 my_growMeans <- function(x, offset = 0.1) {
     if (is.null(nrow(x))) {
@@ -208,6 +218,7 @@ my_growMeans <- function(x, offset = 0.1) {
 #' @param method method is either "arithmic" or "geometric"
 #' @param offset offset
 #' @keywords internal
+#' @returns numeric
 #' @export
 my_rowMeans <- function(x, method = c("arithmic", "geometric"), offset = 0.1) {
     method <- match.arg(method, c("arithmic", "geometric"))
@@ -227,8 +238,9 @@ my_rowMeans <- function(x, method = c("arithmic", "geometric"), offset = 0.1) {
 #' @param x matrix
 #' @param center center data
 #' @param scale scale data
+#' @importFrom matrixStats colSds
+#' @returns standardized matrix
 #' @keywords internal
-#' @return standardized matrix
 #' @export
 standardise_flex <- function(x, center = TRUE, scale = TRUE) {
     if (inherits(x, "DelayedArray")) {

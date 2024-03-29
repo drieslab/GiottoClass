@@ -17,7 +17,8 @@ set_multiomics(
 \arguments{
 \item{gobject}{A Giotto object}
 
-\item{result}{A matrix or result from multiomics integration (e.g. theta weighted values from runWNN)}
+\item{result}{A matrix or result from multiomics
+integration (e.g. theta weighted values from runWNN)}
 
 \item{spat_unit}{spatial unit (e.g. 'cell')}
 

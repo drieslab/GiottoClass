@@ -9,6 +9,9 @@ updateGiottoPointsObject(gpoints)
 \arguments{
 \item{gpoints}{giotto points object}
 }
+\value{
+GiottoPointsObject
+}
 \description{
 Update giotto points object
 }

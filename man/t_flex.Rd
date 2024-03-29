@@ -9,6 +9,9 @@ t_flex(mymatrix)
 \arguments{
 \item{mymatrix}{matrix to use}
 }
+\value{
+matrix
+}
 \description{
 t_flex
 }

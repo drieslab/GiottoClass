@@ -20,6 +20,9 @@
 
 \item{value}{value to set as feature type}
 }
+\value{
+feat_type
+}
 \description{
 access and set feat_type slot of S4 subobject
 }

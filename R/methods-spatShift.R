@@ -6,6 +6,7 @@
 #' @param dz numeric. The shift on the z axis
 #' @param copy_obj Default = TRUE
 #' @param ... additional params to pass to methods
+#' @returns object with shifted spatial locations
 #' @description Shift the spatial locations of an object
 NULL
 
@@ -57,10 +58,12 @@ setMethod(
         if (!is.null(sls)) {
             for (sl in sls) {
                 sl <- do.call(spatShift, args = c(list(x = sl), a))
-                x <- setSpatialLocations(x, sl, verbose = FALSE, initialize = FALSE)
+                x <- setSpatialLocations(x, sl, verbose = FALSE, 
+                                        initialize = FALSE)
             }
 
-            # TODO remove this after spatial info is removed from spatialNetwork objs
+            # TODO remove this after spatial info is removed from 
+            # spatialNetwork objs
             sn_list <- get_spatial_network_list(
                 gobject = x,
                 spat_unit = ":all:",
@@ -68,9 +71,9 @@ setMethod(
                 copy_obj = FALSE
             )
             if (length(sn_list) > 0) {
-                warning(wrap_txt(
-                    "spatial locations have been modified.
-          Relevant spatial networks may need to be regenerated"
+                warning(wrap_txt("spatial locations have been modified.
+                                Relevant spatial networks may need to be 
+                                regenerated"
                 ), call. = FALSE)
             }
         }
@@ -110,13 +113,14 @@ setMethod(
 )
 
 #' @rdname spatShift
-#' @param geom character. Named vector of colnames of x, y, (z) coordinate columns.
-#' Default is `c("sdimx", "sdimy", "sdimz")`
+#' @param geom character. Named vector of colnames of x, y, (z) coordinate 
+#' columns. Default is `c("sdimx", "sdimy", "sdimz")`
 #' @export
 setMethod(
     "spatShift", signature("data.frame"),
-    function(x, dx = 0, dy = 0, dz = 0, copy_obj = TRUE,
-    geom = c("sdimx", "sdimy", "sdimz"), ...) {
+    function(
+        x, dx = 0, dy = 0, dz = 0, copy_obj = TRUE,
+        geom = c("sdimx", "sdimy", "sdimz"), ...) {
         x <- data.table::as.data.table(x)
         x <- .shift_spatial_locations(
             spatlocs = x,
@@ -132,9 +136,9 @@ setMethod(
 
 #' @describeIn spatShift Shift the locations of a spatialNetworkObj
 #' @export
-setMethod("spatShift", signature("spatialNetworkObj"), function(
-        x, dx = 0, dy = 0, dz = 0,
-        copy_obj = TRUE, ...) {
+setMethod("spatShift", signature("spatialNetworkObj"), 
+        function(x, dx = 0, dy = 0, dz = 0,
+    copy_obj = TRUE, ...) {
     x@networkDT <- shift_spatial_network(
         spatnet = x@networkDT,
         dx = dx, dy = dy, dz = dz, ...
@@ -150,19 +154,22 @@ setMethod("spatShift", signature("spatialNetworkObj"), function(
 
 #' @rdname spatShift
 #' @export
-setMethod("spatShift", signature("giottoPolygon"), function(x, dx = 0, dy = 0, copy_obj = FALSE, ...) {
+setMethod("spatShift", signature("giottoPolygon"), 
+        function(x, dx = 0, dy = 0, copy_obj = FALSE, ...) {
     shift_gpoly(gpoly = x, dx = dx, dy = dy, copy_obj = copy_obj, ...)
 })
 
 #' @rdname spatShift
 #' @export
-setMethod("spatShift", signature("giottoPoints"), function(x, dx = 0, dy = 0, copy_obj = FALSE, ...) {
+setMethod("spatShift", signature("giottoPoints"), 
+        function(x, dx = 0, dy = 0, copy_obj = FALSE, ...) {
     shift_gpoints(gpoints = x, dx = dx, dy = dy, copy_obj = copy_obj, ...)
 })
 
 #' @rdname spatShift
 #' @export
-setMethod("spatShift", signature("giottoLargeImage"), function(x, dx = 0, dy = 0, copy_obj = FALSE, ...) {
+setMethod("spatShift", signature("giottoLargeImage"), 
+        function(x, dx = 0, dy = 0, copy_obj = FALSE, ...) {
     shift_large_image(image = x, dx = dx, dy = dy, copy_obj = copy_obj, ...)
 })
 
@@ -182,14 +189,14 @@ setMethod("spatShift", signature("giottoLargeImage"), function(x, dx = 0, dy = 0
 #' @param dy value to shift coordinates in the positive y direction
 #' @param dz value to shift coordinates in the positive z direction
 #' @param copy_obj copy/duplicate object (default = TRUE)
+#' @returns spatial locations
 #' @keywords internal
-.shift_spatial_locations <- function(
-        spatlocs,
-        dx = 0,
-        dy = 0,
-        dz = 0,
-        geom = c("sdimx", "sdimy", "sdimz"),
-        copy_obj = TRUE) {
+.shift_spatial_locations <- function(spatlocs,
+    dx = 0,
+    dy = 0,
+    dz = 0,
+    geom = c("sdimx", "sdimy", "sdimz"),
+    copy_obj = TRUE) {
     if (copy_obj) spatlocs <- data.table::copy(spatlocs)
 
     xyz <- c("x", "y", "z")
@@ -223,9 +230,12 @@ setMethod("spatShift", signature("giottoLargeImage"), function(x, dx = 0, dy = 0
 #' @param dy distance to shift on y axis
 #' @param dz distance to shift on z axis
 #' @param copy_obj copy/duplicate object (default = TRUE)
+#' @returns spatial network
 #' @keywords internal
-shift_spatial_network <- function(spatnet, dx = 0, dy = 0, dz = 0, copy_obj = TRUE) {
-    sdimx_begin <- sdimx_end <- sdimy_begin <- sdimy_end <- sdimz_begin <- sdimz_end <- NULL
+shift_spatial_network <- function(spatnet, dx = 0, dy = 0, dz = 0, 
+                                copy_obj = TRUE) {
+    sdimx_begin <- sdimx_end <- sdimy_begin <- sdimy_end <- sdimz_begin <- 
+        sdimz_end <- NULL
 
     # if 3D info present
     is3D <- FALSE
@@ -256,16 +266,16 @@ shift_spatial_network <- function(spatnet, dx = 0, dy = 0, dz = 0, copy_obj = TR
 #' @param ... additional params to pass
 #' @keywords internal
 #' @noRd
-shift_large_image <- function(
-        image,
-        dx = 0,
-        dy = 0,
-        copy_obj = FALSE,
-        ...) {
+shift_large_image <- function(image,
+    dx = 0,
+    dy = 0,
+    copy_obj = FALSE,
+    ...) {
     if (copy_obj) image@raster_object <- terra::deepcopy(image@raster_object)
 
     if (!all(dx == 0, dy == 0)) {
-        image@raster_object <- terra::shift(image@raster_object, dx = dx, dy = dy, ...)
+        image@raster_object <- terra::shift(
+            image@raster_object, dx = dx, dy = dy, ...)
     }
     image
 }
@@ -273,16 +283,16 @@ shift_large_image <- function(
 #' @rdname spatShift
 #' @keywords internal
 #' @noRd
-shift_gpoints <- function(
-        gpoints,
-        dx = 0,
-        dy = 0,
-        copy_obj = FALSE,
-        ...) {
+shift_gpoints <- function(gpoints,
+    dx = 0,
+    dy = 0,
+    copy_obj = FALSE,
+    ...) {
     if (copy_obj) gpoints@spatVector <- terra::deepcopy(gpoints@spatVector)
 
     if (!all(dx == 0, dy == 0)) {
-        gpoints@spatVector <- terra::shift(gpoints@spatVector, dx = dx, dy = dy, ...)
+        gpoints@spatVector <- terra::shift(
+            gpoints@spatVector, dx = dx, dy = dy, ...)
     }
     gpoints
 }
@@ -290,12 +300,11 @@ shift_gpoints <- function(
 #' @rdname spatShift
 #' @keywords internal
 #' @noRd
-shift_gpoly <- function(
-        gpoly,
-        dx = 0,
-        dy = 0,
-        copy_obj = FALSE,
-        ...) {
+shift_gpoly <- function(gpoly,
+    dx = 0,
+    dy = 0,
+    copy_obj = FALSE,
+    ...) {
     if (copy_obj) gpoly@spatVector <- terra::deepcopy(gpoly@spatVector)
 
     if (!all(dx == 0, dy == 0)) {

@@ -88,8 +88,8 @@ giotto_slot_depths <- function() {
 
 ## Read S4 Nesting Tags ####
 #' @noRd
-#' @description SHOULD ONLY BE CALLED FROM ACCESSORS. RELIES ON SPECIFIC NAMES FOR
-#' NESTING ELEMENTS IN PARENT FRAME. \cr
+#' @description SHOULD ONLY BE CALLED FROM ACCESSORS. RELIES ON SPECIFIC NAMES 
+#' FOR NESTING ELEMENTS IN PARENT FRAME. \cr
 #' Reads the nesting information attached to giotto S4 subobjects and
 #' compares against the already-existing default values in parent frame. Final
 #' nesting values will be sent to the parent frame.
@@ -100,15 +100,15 @@ giotto_slot_depths <- function() {
 #' nesting element
 #' @details Nesting elements define the nesting structure within giotto slots.
 #' Common examples are 'spat_unit', 'feat_type', and 'name' \cr
-#' This function compares the nest_elements that are currently available vs those
-#' that are suggested by the S4 subobject's appended information on the basis of
-#' whether the existing nest_elements were directly specified by the user or if
-#' they were simply default values \cr
-#' If values were directly specified, then the external nest_elements values will
-#' be used downstream and assigned into the relevant S4 subobject slots.
-#' If the values were NOT specified then the subobject values will be used downstream.
-#' Values will be directly pulled from and set to the parent frame, with the
-#' exception of the S4 object itself.
+#' This function compares the nest_elements that are currently available vs 
+#' those that are suggested by the S4 subobject's appended information on the 
+#' basis of whether the existing nest_elements were directly specified by the 
+#' user or if they were simply default values \cr
+#' If values were directly specified, then the external nest_elements values 
+#' will be used downstream and assigned into the relevant S4 subobject slots.
+#' If the values were NOT specified then the subobject values will be used 
+#' downstream. Values will be directly pulled from and set to the parent frame, 
+#' with the exception of the S4 object itself.
 #' @return modified S4 object
 #' @keywords internal
 read_s4_nesting <- function(x) {
@@ -120,8 +120,8 @@ read_s4_nesting <- function(x) {
     # Determine nesting element to use. If parent frame variables are edited, it
     # will happen within the if statements.
 
-    # if S4 objects will also be edited within if statements, but values will only
-    # be sent back to parent frame at end of function
+    # if S4 objects will also be edited within if statements, but values will 
+    # only be sent back to parent frame at end of function
 
     if ("spat_unit" %in% s_names) {
         if (isTRUE(p$nospec_unit)) {
@@ -157,7 +157,8 @@ read_s4_nesting <- function(x) {
 
     if ("reduction" %in% s_names) {
         if (isTRUE(p$nospec_red)) {
-            if (!is.na(slot(x, "reduction"))) p$reduction <- slot(x, "reduction")
+            if (!is.na(slot(x, "reduction"))) 
+                p$reduction <- slot(x, "reduction")
         } else {
             slot(x, "reduction") <- p$reduction
         }
@@ -165,7 +166,8 @@ read_s4_nesting <- function(x) {
 
     if ("reduction_method" %in% s_names) {
         if (isTRUE(p$nospec_red_method)) {
-            if (!is.na(slot(x, "reduction_method"))) p$reduction_method <- slot(x, "reduction_method")
+            if (!is.na(slot(x, "reduction_method"))) 
+                p$reduction_method <- slot(x, "reduction_method")
         } else {
             slot(x, "reduction_method") <- p$reduction_method
         }
@@ -198,18 +200,17 @@ read_s4_nesting <- function(x) {
 #' @title Get cell IDs for a given spatial unit
 #' @name get_cell_id
 #' @inheritParams data_access_params
-#' @description Data for each spatial unit is expected to agree on a single set of cell_IDs
-#' that are shared across any feature types. These cell_IDs are stored within the
-#' giotto object's \code{cell_ID} slot. Getters and setters for this slot directly
-#' retrieve (get) or replace (set) this slot.
-#' @return character vector of cell_IDs
+#' @description Data for each spatial unit is expected to agree on a single 
+#' set of cell_IDs that are shared across any feature types. These cell_IDs 
+#' are stored within the giotto object's \code{cell_ID} slot. Getters and 
+#' setters for this slot directly retrieve (get) or replace (set) this slot.
+#' @returns character vector of cell_IDs
 #' @seealso set_cell_id
 #' @family functions to set data in giotto object
 #' @keywords internal
-get_cell_id <- function(
-        gobject,
-        spat_unit = NULL,
-        set_defaults = TRUE) {
+get_cell_id <- function(gobject,
+    spat_unit = NULL,
+    set_defaults = TRUE) {
     assert_giotto(gobject)
     if (isTRUE(set_defaults)) {
         spat_unit <- set_default_spat_unit(
@@ -237,26 +238,25 @@ get_cell_id <- function(
 #' this slot
 #' @details
 #' Data for each spatial unit is expected to agree on a single set of cell_IDs
-#' that are shared across any feature types. These cell_IDs are stored within the
-#' giotto object's \code{cell_ID} slot. \cr
+#' that are shared across any feature types. These cell_IDs are stored within 
+#' the giotto object's \code{cell_ID} slot. \cr
 #'
 #' Pass \code{NULL} to \code{cell_IDs} param in order to delete the entry. \cr
 #' Pass \code{'initialize'} to \code{cell_IDs} param in order to initialize the
 #' specified entry. \cr
 #'
-#' \strong{NOTE:} The main purpose of the setter is to initialize, as cell_ID values
-#' are AUTOMATICALLY updated every time \code{initialize()} is called on the
-#' giotto object.
+#' \strong{NOTE:} The main purpose of the setter is to initialize, as cell_ID 
+#' values are AUTOMATICALLY updated every time \code{initialize()} is called 
+#' on the giotto object.
 #' @seealso get_cell_id
-#' @return giotto object with set cell_ID slot
+#' @returns giotto object with set cell_ID slot
 #' @family functions to set data in giotto object
 #' @keywords internal
-set_cell_id <- function(
-        gobject,
-        spat_unit = NULL,
-        cell_IDs,
-        set_defaults = TRUE,
-        verbose = TRUE) {
+set_cell_id <- function(gobject,
+    spat_unit = NULL,
+    cell_IDs,
+    set_defaults = TRUE,
+    verbose = TRUE) {
     assert_giotto(gobject)
 
     # set default spat_unit
@@ -268,7 +268,8 @@ set_cell_id <- function(
     }
 
     if (!is.null(cell_IDs)) {
-        if (!inherits(cell_IDs, "character")) stop("cell_IDs must be a character vector.")
+        if (!inherits(cell_IDs, "character")) 
+            stop("cell_IDs must be a character vector.")
     }
 
     # if input is 'initialize', RESET/reinitialize object
@@ -298,7 +299,8 @@ set_cell_id <- function(
             ))
         } else {
             # catch
-            stop(wrap_txt("No data found to initialize cell_ID with", errWidth = TRUE))
+            stop(wrap_txt("No data found to initialize cell_ID with", 
+                        errWidth = TRUE))
         }
     }
 
@@ -320,17 +322,17 @@ set_cell_id <- function(
 #' @title Get feat IDs for a given feature type
 #' @name get_feat_id
 #' @inheritParams data_access_params
-#' @description Across a single modality/feature type, all feature information is
-#' expected to share a single set of feat_IDs. These feat_IDs are stored within
-#' the giotto object's \code{feat_ID} slot. Getters and setters for this slot
-#' directly (get) or replace (set) this slot.
+#' @description Across a single modality/feature type, all feature information 
+#' is expected to share a single set of feat_IDs. These feat_IDs are stored 
+#' within the giotto object's \code{feat_ID} slot. Getters and setters for this 
+#' slot directly (get) or replace (set) this slot.
+#' @returns character
 #' @seealso set_feat_id
 #' @family functions to set data in giotto object
 #' @keywords internal
-get_feat_id <- function(
-        gobject,
-        feat_type = NULL,
-        set_defaults = TRUE) {
+get_feat_id <- function(gobject,
+    feat_type = NULL,
+    set_defaults = TRUE) {
     assert_giotto(gobject)
     if (isTRUE(set_defaults)) {
         spat_unit <- set_default_spat_unit(
@@ -370,24 +372,24 @@ get_feat_id <- function(
 #' Pass \code{'initialize'} to \code{feat_IDs} param in order to initialize the
 #' specified entry. \cr
 #'
-#' \strong{NOTE:} The main purpose of the setter is to initialize, as feat_ID values
-#' are AUTOMATICALLY updated every time \code{initialize()} is called on the
-#' giotto object.
+#' \strong{NOTE:} The main purpose of the setter is to initialize, as feat_ID 
+#' values are AUTOMATICALLY updated every time \code{initialize()} is called on 
+#' the giotto object.
 #' @seealso get_feat_id
-#' @return giotto object with set cell_ID slot
+#' @returns giotto object with set cell_ID slot
 #' @family functions to set data in giotto object
 #' @keywords internal
-set_feat_id <- function(
-        gobject,
-        feat_type = NULL,
-        feat_IDs,
-        set_defaults = TRUE,
-        verbose = TRUE) {
+set_feat_id <- function(gobject,
+    feat_type = NULL,
+    feat_IDs,
+    set_defaults = TRUE,
+    verbose = TRUE) {
     assert_giotto(gobject)
 
     if (isTRUE(set_defaults)) {
         if (identical(feat_IDs, "initialize")) {
-            spat_unit <- suppressWarnings( # expected to be missing sometimes with init
+            spat_unit <- suppressWarnings(
+                # expected to be missing sometimes with init
                 set_default_spat_unit(
                     gobject = gobject,
                     spat_unit = NULL
@@ -407,7 +409,8 @@ set_feat_id <- function(
     }
 
     if (!is.null(feat_IDs)) {
-        if (!inherits(feat_IDs, "character")) stop("feat_IDs must be a character vector.\n")
+        if (!inherits(feat_IDs, "character")) 
+            stop("feat_IDs must be a character vector.\n")
     }
 
     # initialize feat_ID
@@ -425,7 +428,8 @@ set_feat_id <- function(
                 set_defaults = FALSE,
                 output = "exprObj"
             ))
-        } else if (feat_type %in% fi_avail$feat_info) { # fallback to feature info
+        } else if (feat_type %in% fi_avail$feat_info) { 
+            # fallback to feature info
 
             feat_IDs <- unique(featIDs(get_feature_info(
                 gobject = gobject,
@@ -435,7 +439,8 @@ set_feat_id <- function(
             )))
         } else {
             # catch
-            stop(wrap_txt("No data found to intitialize feat_ID with", errWidth = TRUE))
+            stop(wrap_txt("No data found to intitialize feat_ID with", 
+                        errWidth = TRUE))
         }
     }
 
@@ -454,7 +459,8 @@ set_feat_id <- function(
 # #' @name set_cell_metadata
 # #' @description Set cell metadata
 # #' @param gobject giotto object
-# #' @param cell_metadata cell_metadata supplied as a nested list with spat_unit$feat_type$name
+# #' @param cell_metadata cell_metadata supplied as a nested list with 
+# #' spat_unit$feat_type$name
 # #' @keywords internal
 # set_cell_metadata = function(gobject,
 #                              cell_metadata) {
@@ -472,10 +478,12 @@ set_feat_id <- function(
 #       for(feat_type in names(gobject@expression[[spat_unit]])) {
 #
 #         if(is.null(gobject@spatial_info)) {
-#           gobject@cell_metadata[[spat_unit]][[feat_type]] = data.table::data.table(cell_ID = gobject@cell_ID[[spat_unit]])
+#           gobject@cell_metadata[[spat_unit]][[feat_type
+#           ]] = data.table::data.table(cell_ID = gobject@cell_ID[[spat_unit]])
 #         } else {
 #           for(poly in names(gobject@spatial_info)) {
-#             gobject@cell_metadata[[poly]][[feat_type]] = data.table::data.table(cell_ID = gobject@cell_ID[[poly]])
+#             gobject@cell_metadata[[poly]][[feat_type
+#             ]] = data.table::data.table(cell_ID = gobject@cell_ID[[poly]])
 #           }
 #         }
 #       }
@@ -490,13 +498,20 @@ set_feat_id <- function(
 #       for(feat_type in names(cell_metadata[[spat_unit]])) {
 #
 #
-#         gobject@cell_metadata[[spat_unit]][[feat_type]] = data.table::as.data.table(cell_metadata[[spat_unit]][[feat_type]])
-#         gobject@cell_metadata[[spat_unit]][[feat_type]][, cell_ID := gobject@cell_ID[[spat_unit]]]
+#         gobject@cell_metadata[[spat_unit]][[feat_type
+#         ]] = data.table::as.data.table(
+#         cell_metadata[[spat_unit]][[feat_type]])
+#         gobject@cell_metadata[[spat_unit]][[feat_type]][, 
+#         cell_ID := gobject@cell_ID[[spat_unit]]]
 #
 #         # put cell_ID first
-#         all_colnames = colnames(gobject@cell_metadata[[spat_unit]][[feat_type]])
-#         other_colnames = grep('cell_ID', all_colnames, invert = T, value = T)
-#         gobject@cell_metadata[[spat_unit]][[feat_type]] = gobject@cell_metadata[[spat_unit]][[feat_type]][, c('cell_ID', other_colnames), with = FALSE]
+#         all_colnames = colnames(
+#         gobject@cell_metadata[[spat_unit]][[feat_type]])
+#         other_colnames = grep('cell_ID', all_colnames, invert = TRUE, 
+#         value = TRUE)
+#         gobject@cell_metadata[[spat_unit]][[feat_type
+#         ]] = gobject@cell_metadata[[spat_unit]][[feat_type]][, 
+#         c('cell_ID', other_colnames), with = FALSE]
 #
 #       }
 #     }
@@ -521,7 +536,8 @@ set_feat_id <- function(
 #
 #     for(spat_unit in names(gobject@expression)) {
 #       for(feat_type in names(gobject@expression[[spat_unit]])) {
-#         gobject@feat_metadata[[spat_unit]][[feat_type]] = data.table::data.table(feat_ID = gobject@feat_ID[[feat_type]])
+#         gobject@feat_metadata[[spat_unit]][[feat_type
+#         ]] = data.table::data.table(feat_ID = gobject@feat_ID[[feat_type]])
 #       }
 #     }
 #
@@ -529,13 +545,20 @@ set_feat_id <- function(
 #
 #     for(spat_unit in names(gobject@expression)) {
 #       for(feat_type in names(gobject@expression[[spat_unit]])) {
-#         gobject@feat_metadata[[spat_unit]][[feat_type]] = data.table::as.data.table(feat_metadata[[spat_unit]][[feat_type]])
-#         gobject@feat_metadata[[spat_unit]][[feat_type]][, feat_ID := gobject@feat_ID[[feat_type]]]
+#         gobject@feat_metadata[[spat_unit]][[feat_type
+#         ]] = data.table::as.data.table(
+#         feat_metadata[[spat_unit]][[feat_type]])
+#         gobject@feat_metadata[[spat_unit]][[feat_type]][, 
+#         feat_ID := gobject@feat_ID[[feat_type]]]
 #
 #         # put feat_ID first
-#         all_colnames = colnames(gobject@feat_metadata[[spat_unit]][[feat_type]])
-#         other_colnames = grep('feat_ID', all_colnames, invert = T, value = T)
-#         gobject@feat_metadata[[spat_unit]][[feat_type]] = gobject@feat_metadata[[spat_unit]][[feat_type]][, c('feat_ID', other_colnames), with = FALSE]
+#         all_colnames = colnames(
+#         gobject@feat_metadata[[spat_unit]][[feat_type]])
+#         other_colnames = grep('feat_ID', all_colnames, invert = TRUE, 
+#         value = TRUE)
+#         gobject@feat_metadata[[spat_unit]][[feat_type
+#         ]] = gobject@feat_metadata[[spat_unit]][[feat_type]][, 
+#         c('feat_ID', other_colnames), with = FALSE]
 #
 #       }
 #     }
@@ -553,16 +576,16 @@ set_feat_id <- function(
 #' @inheritParams data_access_params
 #' @param output return as either 'data.table' or 'cellMetaObj'
 #' @description Get cell metadata from giotto object
+#' @returns a data.table or cellMetaObj
 #' @seealso pDataDT
 #' @keywords internal
 #' @export
-get_cell_metadata <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        output = c("cellMetaObj", "data.table"),
-        copy_obj = TRUE,
-        set_defaults = TRUE) {
+get_cell_metadata <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    output = c("cellMetaObj", "data.table"),
+    copy_obj = TRUE,
+    set_defaults = TRUE) {
     deprecate_soft("3.3.0", "get_cell_metadata()", "getCellMetadata()")
 
     output <- match.arg(output, choices = c("cellMetaObj", "data.table"))
@@ -583,8 +606,10 @@ get_cell_metadata <- function(
     # 2. Find object - note that metadata objects do not have names
     cellMeta <- gobject@cell_metadata[[spat_unit]][[feat_type]]
 
-    if (inherits(cellMeta, "list") | is.null(cellMeta)) stop("metadata referenced does not exist.")
-    if (!inherits(cellMeta, "cellMetaObj")) stop("metadata referenced is not cellMetaObj")
+    if (inherits(cellMeta, "list") | is.null(cellMeta)) 
+        stop("metadata referenced does not exist.")
+    if (!inherits(cellMeta, "cellMetaObj")) 
+        stop("metadata referenced is not cellMetaObj")
 
     if (isTRUE(copy_obj)) cellMeta[] <- data.table::copy(cellMeta[])
 
@@ -606,15 +631,15 @@ get_cell_metadata <- function(
 #' @inheritParams data_access_params
 #' @param output return as either 'data.table' or 'cellMetaObj'
 #' @description Get cell metadata from giotto object
+#' @returns a data.table or cellMetaObj
 #' @seealso pDataDT
 #' @export
-getCellMetadata <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        output = c("cellMetaObj", "data.table"),
-        copy_obj = TRUE,
-        set_defaults = TRUE) {
+getCellMetadata <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    output = c("cellMetaObj", "data.table"),
+    copy_obj = TRUE,
+    set_defaults = TRUE) {
     get_cell_metadata(
         gobject = gobject,
         spat_unit = spat_unit,
@@ -638,17 +663,16 @@ getCellMetadata <- function(
 #' reset a specified set of cell metadata in the giotto object.
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family functions to set data in giotto object
 #' @export
-setCellMetadata <- function(
-        gobject,
-        x,
-        spat_unit = NULL,
-        feat_type = NULL,
-        provenance = NULL,
-        verbose = TRUE,
-        initialize = TRUE) {
+setCellMetadata <- function(gobject,
+    x,
+    spat_unit = NULL,
+    feat_type = NULL,
+    provenance = NULL,
+    verbose = TRUE,
+    initialize = TRUE) {
     assert_giotto(gobject)
     if (!methods::hasArg(x)) {
         stop(wrap_txt("x param (data to set) must be given",
@@ -724,34 +748,35 @@ setCellMetadata <- function(
 #' @description Function to set cell metadata information into giotto object
 #' @inheritParams data_access_params
 #' @param provenance provenance information to set
-#' @param metadata cellMetaObj or data.table containing cell metadata. Setting NULL will remove
-#' the object. Passing 'initialize' will reset the object.
+#' @param metadata cellMetaObj or data.table containing cell metadata. 
+#' Setting NULL will remove the object. Passing 'initialize' will reset 
+#' the object.
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family functions to set data in giotto object
 #' @keywords internal
 #' @export
-set_cell_metadata <- function(
-        gobject,
-        metadata,
-        spat_unit = NULL,
-        feat_type = NULL,
-        provenance = NULL,
-        verbose = TRUE,
-        set_defaults = TRUE,
-        initialize = FALSE) {
+set_cell_metadata <- function(gobject,
+    metadata,
+    spat_unit = NULL,
+    feat_type = NULL,
+    provenance = NULL,
+    verbose = TRUE,
+    set_defaults = TRUE,
+    initialize = FALSE) {
     deprecate_soft("3.3.0", "set_cell_metadata()", "setCellMetadata()")
 
     # data.table vars
     cell_ID <- NULL
 
     assert_giotto(gobject)
-    if (!methods::hasArg(metadata)) stop(wrap_txt("metadata param must be given"))
+    if (!methods::hasArg(metadata)) 
+        stop(wrap_txt("metadata param must be given"))
 
     if (!inherits(metadata, c("cellMetaObj", "NULL")) &
         !identical(metadata, "initialize")) {
-        stop(wrap_txt(deparse(substitute(metadata)), "is not a cellMetaObj (set)
-                  or NULL (remove)"))
+        stop(wrap_txt(deparse(substitute(metadata)), 
+                    "is not a cellMetaObj (set) or NULL (remove)"))
     }
 
 
@@ -783,7 +808,8 @@ set_cell_metadata <- function(
 
     # 3.1 if input is NULL, remove object
     if (is.null(metadata)) {
-        if (isTRUE(verbose)) message("NULL passed to metadata.\n Removing specified metadata.")
+        if (isTRUE(verbose)) 
+            message("NULL passed to metadata.\n Removing specified metadata.")
         gobject@cell_metadata[[spat_unit]][[feat_type]] <- NULL
         if (isTRUE(initialize)) {
             return(initialize(gobject))
@@ -796,7 +822,8 @@ set_cell_metadata <- function(
     if (inherits(metadata, "character")) {
         if (identical(metadata, "initialize")) {
             if (isTRUE(verbose)) message("Initializing specified metadata.")
-            gobject@cell_metadata[[spat_unit]][[feat_type]] <- create_cell_meta_obj(
+            gobject@cell_metadata[[spat_unit]][[feat_type
+                                                ]] <- create_cell_meta_obj(
                 metaDT = data.table::data.table(cell_ID = get_cell_id(gobject,
                     spat_unit = spat_unit
                 )),
@@ -817,12 +844,14 @@ set_cell_metadata <- function(
     # 4.1 import info if S4 object, else generate S4
     if (inherits(metadata, "cellMetaObj")) {
         if (isTRUE(nospec_unit)) {
-            if (!is.na(slot(metadata, "spat_unit"))) spat_unit <- slot(metadata, "spat_unit")
+            if (!is.na(slot(metadata, "spat_unit"))) 
+                spat_unit <- slot(metadata, "spat_unit")
         } else {
             slot(metadata, "spat_unit") <- spat_unit
         }
         if (isTRUE(nospec_feat)) {
-            if (!is.na(slot(metadata, "feat_type"))) feat_type <- slot(metadata, "feat_type")
+            if (!is.na(slot(metadata, "feat_type"))) 
+                feat_type <- slot(metadata, "feat_type")
         } else {
             slot(metadata, "feat_type") <- feat_type
         }
@@ -853,9 +882,9 @@ set_cell_metadata <- function(
         # 4.3 otherwise assume data.frame type object
 
         if (is.null(spat_unit) | is.null(feat_type)) {
-            stop(wrap_txt(
-                "Add expression or polygon info first
-        Alternatively, specify expected spat_unit and feat_type using activeSpatUnit() and activeFeatType()",
+            stop(wrap_txt("Add expression or polygon info first. Alternatively, 
+                        specify expected spat_unit and feat_type using 
+                        activeSpatUnit() and activeFeatType()",
                 errWidth = TRUE
             ))
         }
@@ -865,18 +894,24 @@ set_cell_metadata <- function(
 
         # if cell ID col is missing, try to automatically set
         if (is.null(metadata[["cell_ID"]])) {
-            id_error <- try(metadata[, cell_ID := get_cell_id(gobject, spat_unit = spat_unit)], silent = TRUE)
-            if (inherits(id_error, "try-error")) stop("cannot automatically set metadata cell_ID based on gobject cell_ID slot.")
+            id_error <- try(metadata[, cell_ID := get_cell_id(
+                gobject, spat_unit = spat_unit)], silent = TRUE)
+            if (inherits(id_error, "try-error")) 
+                stop("cannot automatically set metadata cell_ID based on 
+                     gobject cell_ID slot.")
         } else if (spat_unit %in% list_cell_id_names(gobject)) {
             # if cell ID col is present in both, try to match
-            if (!identical(metadata[, cell_ID], get_cell_id(gobject, spat_unit = spat_unit))) {
-                stop('metadata cell_ID does not match that in gobject cell_ID slot for spat_unit "', spat_unit, '".\n')
+            if (!identical(metadata[, cell_ID], 
+                        get_cell_id(gobject, spat_unit = spat_unit))) {
+                stop('metadata cell_ID does not match that in gobject cell_ID 
+                    slot for spat_unit "', spat_unit, '".\n')
             }
         }
 
         # put cell_ID first
         all_colnames <- colnames(metadata)
-        other_colnames <- grep("cell_ID", all_colnames, invert = TRUE, value = TRUE)
+        other_colnames <- grep("cell_ID", all_colnames, invert = TRUE, 
+                            value = TRUE)
         metadata <- metadata[, c("cell_ID", other_colnames), with = FALSE]
 
         metadata <- new("cellMetaObj",
@@ -889,18 +924,22 @@ set_cell_metadata <- function(
     }
 
     # 5. check if nesting address is already used - just feat_type for metadata
-    potential_names <- list_cell_metadata(gobject, spat_unit = spat_unit)[, feat_type]
+    potential_names <- list_cell_metadata(
+        gobject, spat_unit = spat_unit)[, feat_type]
     if (feat_type %in% potential_names) {
         if (isTRUE(verbose)) {
             wrap_msg(
-                '> Cell metadata for spat_unit "', spat_unit, '" and feat_type "',
-                feat_type, '" already exists and will be replaced with new metadata.'
+                '> Cell metadata for spat_unit "', 
+                spat_unit, '" and feat_type "',
+                feat_type, 
+                '" already exists and will be replaced with new metadata.'
             )
         }
     }
 
 
-    # old_meta = data.table::copy(gobject@cell_metadata[[spat_unit]][[feat_type]])
+    # old_meta = data.table::copy(
+    # gobject@cell_metadata[[spat_unit]][[feat_type]])
     #
     # new_cols = NULL
     # if(!is.null(old_meta) && inherits(old_meta, "data.table")){
@@ -933,7 +972,8 @@ set_cell_metadata <- function(
 
     if (isTRUE(verbose) & isTRUE(call_from_external)) {
         wrap_msg(
-            "Setting cell metadata [", spatUnit(metadata), "][", featType(metadata), "] ",
+            "Setting cell metadata [", 
+            spatUnit(metadata), "][", featType(metadata), "] ",
             sep = ""
         )
     }
@@ -954,16 +994,16 @@ set_cell_metadata <- function(
 #' @param output return as either 'data.table' or 'featMetaObj'
 #' @param copy_obj whether to perform a deepcopy of the data.table information
 #' @description Get feature metadata from giotto object
+#' @returns a data.table or featMetaObj
 #' @seealso fDataDT
 #' @keywords internal
 #' @export
-get_feature_metadata <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        output = c("featMetaObj", "data.table"),
-        copy_obj = TRUE,
-        set_defaults = TRUE) {
+get_feature_metadata <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    output = c("featMetaObj", "data.table"),
+    copy_obj = TRUE,
+    set_defaults = TRUE) {
     deprecate_soft("3.3.0", "get_feature_metadata()", "getFeatureMetadata()")
 
     output <- match.arg(output, choices = c("featMetaObj", "data.table"))
@@ -984,7 +1024,8 @@ get_feature_metadata <- function(
     # 2. Find object - note that metadata objects do not have names
     featMeta <- gobject@feat_metadata[[spat_unit]][[feat_type]]
     if (is.null(featMeta)) stop("metadata referenced does not exist")
-    if (!inherits(featMeta, "featMetaObj")) stop("metadata referenced is not featMetaObj")
+    if (!inherits(featMeta, "featMetaObj")) 
+        stop("metadata referenced is not featMetaObj")
 
     # 3. Return as desired object type
 
@@ -1005,15 +1046,15 @@ get_feature_metadata <- function(
 #' @param output return as either 'data.table' or 'featMetaObj'
 #' @param copy_obj whether to perform a deepcopy of the data.table information
 #' @description Get feature metadata from giotto object
+#' @returns a data.table or featMetaObj
 #' @seealso fDataDT
 #' @export
-getFeatureMetadata <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        output = c("featMetaObj", "data.table"),
-        copy_obj = TRUE,
-        set_defaults = TRUE) {
+getFeatureMetadata <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    output = c("featMetaObj", "data.table"),
+    copy_obj = TRUE,
+    set_defaults = TRUE) {
     get_feature_metadata(
         gobject = gobject,
         spat_unit = spat_unit,
@@ -1037,17 +1078,16 @@ getFeatureMetadata <- function(
 #' reset a specified set of feature metadata in the giotto object.
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family functions to set data in giotto object
 #' @export
-setFeatureMetadata <- function(
-        gobject,
-        x,
-        spat_unit = NULL,
-        feat_type = NULL,
-        provenance = NULL,
-        verbose = TRUE,
-        initialize = TRUE) {
+setFeatureMetadata <- function(gobject,
+    x,
+    spat_unit = NULL,
+    feat_type = NULL,
+    provenance = NULL,
+    verbose = TRUE,
+    initialize = TRUE) {
     assert_giotto(gobject)
     if (!methods::hasArg(x)) {
         stop(wrap_txt("x param (data to set) must be given",
@@ -1118,34 +1158,35 @@ setFeatureMetadata <- function(
 #' @description Function to set feature metadata information into giotto object
 #' @inheritParams data_access_params
 #' @param provenance provenance information to set
-#' @param metadata featMetaObj or data.table containing feature metadata. Setting NULL will remove
-#' the object. Passing 'initialize' will reset the object.
+#' @param metadata featMetaObj or data.table containing feature metadata. 
+#' Setting NULL will remove the object. Passing 'initialize' will reset the 
+#' object.
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family functions to set data in giotto object
 #' @keywords internal
 #' @export
-set_feature_metadata <- function(
-        gobject,
-        metadata,
-        spat_unit = NULL,
-        feat_type = NULL,
-        provenance = NULL,
-        verbose = TRUE,
-        set_defaults = TRUE,
-        initialize = FALSE) {
+set_feature_metadata <- function(gobject,
+    metadata,
+    spat_unit = NULL,
+    feat_type = NULL,
+    provenance = NULL,
+    verbose = TRUE,
+    set_defaults = TRUE,
+    initialize = FALSE) {
     deprecate_soft("3.3.0", "set_feature_metadata()", "setFeatureMetadata()")
 
     # data.table vars
     feat_ID <- NULL
 
     assert_giotto(gobject)
-    if (!methods::hasArg(metadata)) stop(wrap_txt("metadata param must be given"))
+    if (!methods::hasArg(metadata)) 
+        stop(wrap_txt("metadata param must be given"))
 
     if (!inherits(metadata, c("featMetaObj", "NULL")) &
         !identical(metadata, "initialize")) {
-        stop(wrap_txt(deparse(substitute(metadata)), "is not featMetaObj (set)
-                  or NULL (remove)"))
+        stop(wrap_txt(deparse(substitute(metadata)), 
+                    "is not featMetaObj (set) or NULL (remove)"))
     }
 
 
@@ -1177,7 +1218,8 @@ set_feature_metadata <- function(
 
     # 3.1 if input is NULL, remove object
     if (is.null(metadata)) {
-        if (isTRUE(verbose)) wrap_msg("NULL passed to metadata.\n Removing specified metadata.")
+        if (isTRUE(verbose)) 
+            wrap_msg("NULL passed to metadata.\n Removing specified metadata.")
         gobject@feat_metadata[[spat_unit]][[feat_type]] <- NULL
         if (isTRUE(initialize)) {
             return(initialize(gobject))
@@ -1190,7 +1232,8 @@ set_feature_metadata <- function(
     if (inherits(metadata, "character")) {
         if (metadata == "initialize") {
             if (isTRUE(verbose)) message("Initializing specified metadata.")
-            gobject@feat_metadata[[spat_unit]][[feat_type]] <- create_feat_meta_obj(
+            gobject@feat_metadata[[spat_unit]][[feat_type
+                                                ]] <- create_feat_meta_obj(
                 metaDT = data.table::data.table(feat_ID = get_feat_id(gobject,
                     feat_type = feat_type
                 )),
@@ -1211,12 +1254,14 @@ set_feature_metadata <- function(
     # 4.1 import info if S4 object, else generate S4
     if (inherits(metadata, "featMetaObj")) {
         if (isTRUE(nospec_unit)) {
-            if (!is.na(slot(metadata, "spat_unit"))) spat_unit <- slot(metadata, "spat_unit")
+            if (!is.na(slot(metadata, "spat_unit"))) 
+                spat_unit <- slot(metadata, "spat_unit")
         } else {
             slot(metadata, "spat_unit") <- spat_unit
         }
         if (isTRUE(nospec_feat)) {
-            if (!is.na(slot(metadata, "feat_type"))) feat_type <- slot(metadata, "feat_type")
+            if (!is.na(slot(metadata, "feat_type"))) 
+                feat_type <- slot(metadata, "feat_type")
         } else {
             slot(metadata, "feat_type") <- feat_type
         }
@@ -1243,9 +1288,9 @@ set_feature_metadata <- function(
         # 4.3 otherwise assume data.frame type object
 
         if (is.null(spat_unit) | is.null(feat_type)) {
-            stop(wrap_txt(
-                "Add expression or polygon info first
-        Alternatively, specify expected spat_unit and feat_type using activeSpatUnit() and activeFeatType()",
+            stop(wrap_txt("Add expression or polygon info first. Alternatively, 
+                        specify expected spat_unit and feat_type using 
+                        activeSpatUnit() and activeFeatType()",
                 errWidth = TRUE
             ))
         }
@@ -1255,18 +1300,25 @@ set_feature_metadata <- function(
 
         # if feat ID col is missing, try to automatically set
         if (is.null(metadata[["feat_ID"]])) {
-            id_error <- try(metadata[, feat_ID := get_feat_id(gobject, feat_type = feat_type)], silent = TRUE)
-            if (inherits(id_error, "try-error")) stop("cannot automatically set metadata feat_ID based on gobject feat_ID slot.")
+            id_error <- try(metadata[, feat_ID := get_feat_id(gobject, 
+                                                feat_type = feat_type)], 
+                            silent = TRUE)
+            if (inherits(id_error, "try-error")) 
+                stop("cannot automatically set metadata feat_ID based on 
+                    gobject feat_ID slot.")
         } else if (feat_type %in% list_feat_id_names(gobject)) {
             # if feat ID col is present in both, try to match
-            if (!identical(metadata[, feat_ID], get_feat_id(gobject, feat_type = feat_type))) {
-                stop('metadata feat_ID does not match that in gobject feat_ID slot for feat_type "', feat_type, '".\n')
+            if (!identical(metadata[, feat_ID], 
+                        get_feat_id(gobject, feat_type = feat_type))) {
+                stop('metadata feat_ID does not match that in gobject feat_ID 
+                    slot for feat_type "', feat_type, '".\n')
             }
         }
 
         # put feat_ID first
         all_colnames <- colnames(metadata)
-        other_colnames <- grep("feat_ID", all_colnames, invert = TRUE, value = TRUE)
+        other_colnames <- grep("feat_ID", all_colnames, invert = TRUE, 
+                            value = TRUE)
         metadata <- metadata[, c("feat_ID", other_colnames), with = FALSE]
 
         metadata <- new("featMetaObj",
@@ -1279,12 +1331,15 @@ set_feature_metadata <- function(
     }
 
     # 5. check if nesting address is already used - just feat_type for metadata
-    potential_names <- list_feat_metadata(gobject, spat_unit = spat_unit)[, feat_type]
+    potential_names <- list_feat_metadata(
+        gobject, spat_unit = spat_unit)[, feat_type]
     if (feat_type %in% potential_names) {
         if (isTRUE(verbose)) {
             wrap_msg(
-                '> Feat metadata for spat_unit "', spat_unit, '" and feat_type "',
-                feat_type, '" already exists and will be replaced with new metadata.'
+                '> Feat metadata for spat_unit "', spat_unit, 
+                '" and feat_type "',
+                feat_type, 
+                '" already exists and will be replaced with new metadata.'
             )
         }
     }
@@ -1295,7 +1350,8 @@ set_feature_metadata <- function(
 
     if (isTRUE(verbose) & isTRUE(call_from_external)) {
         wrap_msg(
-            "Setting feature metadata [", spatUnit(metadata), "][", featType(metadata), "] ",
+            "Setting feature metadata [", 
+            spatUnit(metadata), "][", featType(metadata), "] ",
             sep = ""
         )
     }
@@ -1317,21 +1373,21 @@ set_feature_metadata <- function(
 #' @name getExpression
 #' @description Function to get expression values from giotto object
 #' @inheritParams data_access_params
-#' @param values expression values to extract (e.g. "raw", "normalized", "scaled")
-#' @param output what object type to retrieve the expression as. Currently either
-#' 'matrix' for the matrix object contained in the exprObj or 'exprObj' (default) for
-#' the exprObj itself are allowed.
-#' @return exprObj or matrix depending on output param
+#' @param values expression values to 
+#' extract (e.g. "raw", "normalized", "scaled")
+#' @param output what object type to retrieve the expression as. Currently 
+#' either matrix' for the matrix object contained in the exprObj or 
+#' 'exprObj' (default) for the exprObj itself are allowed.
+#' @returns exprObj or matrix depending on output param
 #' @family expression accessor functions
 #' @family functions to get data from giotto object
 #' @export
-getExpression <- function(
-        gobject,
-        values = NULL,
-        spat_unit = NULL,
-        feat_type = NULL,
-        output = c("exprObj", "matrix"),
-        set_defaults = TRUE) {
+getExpression <- function(gobject,
+    values = NULL,
+    spat_unit = NULL,
+    feat_type = NULL,
+    output = c("exprObj", "matrix"),
+    set_defaults = TRUE) {
     # 0. Check input
     assert_giotto(gobject)
     output <- match.arg(output, choices = c("exprObj", "matrix"))
@@ -1386,18 +1442,19 @@ getExpression <- function(
 #' @name get_expression_values
 #' @title get_expression_values
 #' @inheritParams data_access_params
-#' @param values expression values to extract (e.g. "raw", "normalized", "scaled")
-#' @param output what object type to retrieve the expression as. Currently either
-#' 'matrix' for the matrix object contained in the exprObj or 'exprObj' (default) for
-#' the exprObj itself are allowed.
+#' @param values expression values to 
+#' extract (e.g. "raw", "normalized", "scaled")
+#' @param output what object type to retrieve the expression as. Currently 
+#' either matrix' for the matrix object contained in the exprObj or 
+#' 'exprObj' (default) for the exprObj itself are allowed.
+#' @returns exprObj or matrix depending on output param
 #' @export
-get_expression_values <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        values = NULL,
-        output = c("exprObj", "matrix"),
-        set_defaults = TRUE) {
+get_expression_values <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    values = NULL,
+    output = c("exprObj", "matrix"),
+    set_defaults = TRUE) {
     deprecate_soft("3.3.0", "get_expression_values()", "getExpression()")
 
     assert_giotto(gobject)
@@ -1437,21 +1494,21 @@ get_expression_values <- function(
     ## special checks/cases for giotto standard pipeline
     if (values == "scaled" & !"scaled" %in% potential_values) {
         stop(wrap_txt("Scaled expression not found.
-                  First run scaling (& normalization) step(s)", errWidth = TRUE))
+                First run scaling (& normalization) step(s)", errWidth = TRUE))
     } else if (values == "normalized" & !"normalized" %in% potential_values) {
         stop(wrap_txt("Normalized expression not found.
-                  First run normalization step", errWidth = TRUE))
+                First run normalization step", errWidth = TRUE))
     } else if (values == "custom" & !"custom" %in% potential_values) {
         stop(wrap_txt("Custom expression not found.
-                  First add custom expression matrix", errWidth = TRUE))
+                First add custom expression matrix", errWidth = TRUE))
     }
 
     if (!values %in% potential_values) {
-        stop(wrap_txt(
-            "Requested expression info not found
-    [spat_unit:", spat_unit, "] [feat_type:", feat_type, "] [values:", values, "]",
-            sep = "",
-            errWidth = TRUE
+        stop(wrap_txt("Requested expression info not found [spat_unit:", 
+                    spat_unit, "] [feat_type:", 
+                    feat_type, "] [values:", values, "]",
+                    sep = "",
+                    errWidth = TRUE
         ))
     }
 
@@ -1496,12 +1553,11 @@ get_expression_values <- function(
 #' @keywords internal
 #' @return list of exprObj
 #' @noRd
-get_expression_values_list <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        output = c("exprObj", "matrix"),
-        set_defaults = TRUE) {
+get_expression_values_list <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    output = c("exprObj", "matrix"),
+    set_defaults = TRUE) {
     assert_giotto(gobject)
 
     output <- match.arg(output, choices = c("exprObj", "matrix"))
@@ -1544,21 +1600,21 @@ get_expression_values_list <- function(
 #' @param provenance provenance information (optional)
 #' information for the giotto object. Pass NULL to remove an expression object
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family expression accessor functions
 #' @family functions to set data in giotto object
 #' @export
-setExpression <- function(
-        gobject,
-        x,
-        spat_unit = NULL,
-        feat_type = NULL,
-        name = "raw",
-        provenance = NULL,
-        verbose = TRUE,
-        initialize = TRUE) {
+setExpression <- function(gobject,
+    x,
+    spat_unit = NULL,
+    feat_type = NULL,
+    name = "raw",
+    provenance = NULL,
+    verbose = TRUE,
+    initialize = TRUE) {
     assert_giotto(gobject)
-    if (!methods::hasArg(x)) stop(wrap_txt("x param (data to set) must be given"))
+    if (!methods::hasArg(x)) 
+        stop(wrap_txt("x param (data to set) must be given"))
 
     # 1. Determine user inputs
     nospec_unit <- ifelse(is.null(spat_unit), yes = TRUE, no = FALSE)
@@ -1634,27 +1690,27 @@ setExpression <- function(
 #' @param verbose be verbose
 #' @param initialize (default = FALSE) whether to initialize the gobject before
 #' returning. Will be set to TRUE when called by the external
-#' @return giotto object
+#' @returns giotto object
 #' @family expression accessor functions
 #' @family functions to set data in giotto object
 #' @export
-set_expression_values <- function(
-        gobject,
-        values,
-        spat_unit = NULL,
-        feat_type = NULL,
-        name = "test",
-        provenance = NULL,
-        verbose = TRUE,
-        set_defaults = TRUE,
-        initialize = FALSE) {
-    deprecate_soft("3.3.0", what = "set_expression_values()", with = "setExpression()")
+set_expression_values <- function(gobject,
+    values,
+    spat_unit = NULL,
+    feat_type = NULL,
+    name = "test",
+    provenance = NULL,
+    verbose = TRUE,
+    set_defaults = TRUE,
+    initialize = FALSE) {
+    deprecate_soft("3.3.0", what = "set_expression_values()", 
+                with = "setExpression()")
 
     assert_giotto(gobject)
 
     if (!inherits(values, c("exprObj", "NULL"))) {
-        stop(wrap_txt(deparse(substitute(values)), "is not exprObj (set)
-                  or NULL (remove)"))
+        stop(wrap_txt(deparse(substitute(values)), 
+                    "is not exprObj (set) or NULL (remove)"))
     }
 
     # 1. Determine user inputs
@@ -1668,7 +1724,8 @@ set_expression_values <- function(
     } else {
         nospec_unit <- ifelse(is.null(spat_unit), yes = TRUE, no = FALSE)
         nospec_feat <- ifelse(is.null(feat_type), yes = TRUE, no = FALSE)
-        nospec_name <- ifelse(is.null(match.call()$name), yes = TRUE, no = FALSE)
+        nospec_name <- ifelse(is.null(match.call()$name), yes = TRUE, 
+                            no = FALSE)
     }
 
     if (inherits(values, "exprObj")) {
@@ -1725,15 +1782,20 @@ set_expression_values <- function(
     values <- read_s4_nesting(values)
 
     # 5. check if specified name has already been used
-    potential_names <- list_expression_names(gobject, spat_unit = spat_unit, feat_type = feat_type)
+    potential_names <- list_expression_names(gobject, 
+                                            spat_unit = spat_unit, 
+                                            feat_type = feat_type)
     if (name %in% potential_names) {
-        if (isTRUE(verbose)) wrap_msg("> ", name, " already exists and will be replaced with new values \n")
+        if (isTRUE(verbose)) 
+            wrap_msg("> ", name, 
+                    " already exists and will be replaced with new values \n")
     }
 
     ## 6. update and return giotto object
     if (isTRUE(verbose) & isTRUE(call_from_external)) {
         wrap_msg(
-            "Setting expression [", spatUnit(values), "][", featType(values), "] ",
+            "Setting expression [", spatUnit(values), 
+            "][", featType(values), "] ",
             objName(values),
             sep = ""
         )
@@ -1804,23 +1866,23 @@ set_expression_values <- function(
 #' @param gobject A Giotto object
 #' @param spat_unit spatial unit (e.g. 'cell')
 #' @param feat_type (e.g. 'rna_protein')
-#' @param result A matrix or result from multiomics integration (e.g. theta weighted values from runWNN)
+#' @param result A matrix or result from multiomics 
+#' integration (e.g. theta weighted values from runWNN)
 #' @param integration_method multiomics integration method used. Default = 'WNN'
 #' @param result_name Default = 'theta_weighted_matrix'
 #' @param verbose be verbose
 #'
-#' @return A giotto object
+#' @returns A giotto object
 #' @family multiomics accessor functions
 #' @family functions to set data in giotto object
 #' @export
-set_multiomics <- function(
-        gobject,
-        result,
-        spat_unit = NULL,
-        feat_type = NULL,
-        integration_method = "WNN",
-        result_name = "theta_weighted_matrix",
-        verbose = TRUE) {
+set_multiomics <- function(gobject,
+    result,
+    spat_unit = NULL,
+    feat_type = NULL,
+    integration_method = "WNN",
+    result_name = "theta_weighted_matrix",
+    verbose = TRUE) {
     # 1. determine user input
     nospec_unit <- ifelse(is.null(spat_unit), yes = TRUE, no = FALSE)
     nospec_feat <- ifelse(is.null(feat_type), yes = TRUE, no = FALSE)
@@ -1838,20 +1900,26 @@ set_multiomics <- function(
 
     # 3. If input is null, remove object
     if (is.null(result)) {
-        if (isTRUE(verbose)) message("NULL passed to result\n Removing specified result")
-        gobject@multiomics[[spat_unit]][[feat_type]][[integration_method]][[result_name]] <- result
+        if (isTRUE(verbose)) 
+            message("NULL passed to result\n Removing specified result")
+        gobject@multiomics[[spat_unit]][[feat_type]][[integration_method
+                                                    ]][[result_name]] <- result
         return(gobject)
     }
 
     ## 4. check if specified name has already been used
-    potential_names <- names(slot(gobject, "multiomics")[[spat_unit]][[integration_method]][[feat_type]])
+    potential_names <- names(
+    slot(gobject, "multiomics")[[spat_unit]][[integration_method]][[feat_type]])
 
     if (result_name %in% potential_names) {
-        if (isTRUE(verbose)) wrap_msg('> "', result_name, '" already exists and will be replaced with new result')
+        if (isTRUE(verbose)) 
+            wrap_msg('> "', result_name, 
+                    '" already exists and will be replaced with new result')
     }
 
     ## 5. update and return giotto object
-    gobject@multiomics[[spat_unit]][[feat_type]][[integration_method]][[result_name]] <- result
+    gobject@multiomics[[spat_unit]][[feat_type]][[integration_method
+                                                ]][[result_name]] <- result
     return(gobject)
 }
 
@@ -1862,23 +1930,23 @@ set_multiomics <- function(
 #' @param gobject A Giotto object
 #' @param spat_unit spatial unit (e.g. 'cell')
 #' @param feat_type (e.g. 'rna_protein')
-#' @param result A matrix or result from multiomics integration (e.g. theta weighted values from runWNN)
+#' @param result A matrix or result from multiomics 
+#' integration (e.g. theta weighted values from runWNN)
 #' @param integration_method multiomics integration method used. Default = 'WNN'
 #' @param result_name Default = 'theta_weighted_matrix'
 #' @param verbose be verbose
 #'
-#' @return A giotto object
+#' @returns A giotto object
 #' @family multiomics accessor functions
 #' @family functions to set data in giotto object
 #' @export
-setMultiomics <- function(
-        gobject = NULL,
-        result,
-        spat_unit = NULL,
-        feat_type = NULL,
-        integration_method = "WNN",
-        result_name = "theta_weighted_matrix",
-        verbose = TRUE) {
+setMultiomics <- function(gobject = NULL,
+    result,
+    spat_unit = NULL,
+    feat_type = NULL,
+    integration_method = "WNN",
+    result_name = "theta_weighted_matrix",
+    verbose = TRUE) {
     if (!"giotto" %in% class(gobject)) {
         wrap_msg("Unable to set multiomics info to non-Giotto object.")
         stop(wrap_txt("Please provide a Giotto object to the gobject argument.",
@@ -1909,16 +1977,15 @@ setMultiomics <- function(
 #' @param integration_method multiomics integration method used. Default = 'WNN'
 #' @param result_name Default = 'theta_weighted_matrix'
 #'
-#' @return A multiomics integration result (e.g. theta_weighted_matrix from WNN)
+#' @returns A multiomics integration result (e.g. theta_weighted_matrix from WNN)
 #' @family multiomics accessor functions
 #' @family functions to get data from giotto object
 #' @export
-get_multiomics <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        integration_method = "WNN",
-        result_name = "theta_weighted_matrix") {
+get_multiomics <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    integration_method = "WNN",
+    result_name = "theta_weighted_matrix") {
     # 1.  Set feat_type and spat_unit
 
     spat_unit <- set_default_spat_unit(
@@ -1935,21 +2002,25 @@ get_multiomics <- function(
 
     # automatic result selection
     if (is.null(result_name)) {
-        result_to_use <- names(gobject@multiomics[[spat_unit]][[integration_method]][[feat_type]])[[1]]
+        result_to_use <- names(
+        gobject@multiomics[[spat_unit]][[integration_method]][[feat_type]])[[1]]
         if (is.null(result_to_use)) {
             stop('There is currently no multiomics integration created for
-           spatial unit: "', spat_unit, '" and feature type "', feat_type, '".
-           First run runWNN() or other multiomics integration method\n')
+            spatial unit: "', spat_unit, '" and feature type "', feat_type, '".
+            First run runWNN() or other multiomics integration method\n')
         } else {
-            message('The result name was not specified, default to the first: "', result_to_use, '"')
+            message('The result name was not specified, default to the 
+                    first: "', result_to_use, '"')
         }
     }
 
     # 3. get object
 
-    result <- gobject@multiomics[[spat_unit]][[feat_type]][[integration_method]][[result_name]]
+    result <- gobject@multiomics[[spat_unit]][[feat_type]][[integration_method
+                                                            ]][[result_name]]
     if (is.null(result)) {
-        stop('result: "', result_to_use, '" does not exist. Create a multiomics integration first')
+        stop('result: "', result_to_use, 
+            '" does not exist. Create a multiomics integration first')
     }
 
     # return WNN_result
@@ -1966,19 +2037,19 @@ get_multiomics <- function(
 #' @param integration_method multiomics integration method used. Default = 'WNN'
 #' @param result_name Default = 'theta_weighted_matrix'
 #'
-#' @return A multiomics integration result (e.g. theta_weighted_matrix from WNN)
+#' @returns A multiomics integration result (e.g. theta_weighted_matrix from WNN)
 #' @family multiomics accessor functions
 #' @family functions to get data from giotto object
 #' @export
-getMultiomics <- function(
-        gobject = NULL,
-        spat_unit = NULL,
-        feat_type = NULL,
-        integration_method = "WNN",
-        result_name = "theta_weighted_matrix") {
+getMultiomics <- function(gobject = NULL,
+    spat_unit = NULL,
+    feat_type = NULL,
+    integration_method = "WNN",
+    result_name = "theta_weighted_matrix") {
     if (!"giotto" %in% class(gobject)) {
         wrap_msg("Unable to get multiomics info from non-Giotto object.")
-        stop(wrap_msg("Please provide a Giotto object to the gobject argument."))
+        stop(wrap_msg(
+            "Please provide a Giotto object to the gobject argument."))
     }
     multiomics_result <- get_multiomics(
         gobject = gobject,
@@ -2006,23 +2077,24 @@ getMultiomics <- function(
 #' @name getSpatialLocations
 #' @description Function to get a spatial location data.table
 #' @inheritParams data_access_params
-#' @param name name of spatial locations (defaults to first name in spatial_locs slot, e.g. "raw")
+#' @param name name of spatial 
+#' locations (defaults to first name in spatial_locs slot, e.g. "raw")
 #' @param output what object type to get the spatial locations as. Default is as
 #' a 'spatLocsObj'. Returning as 'data.table' is also possible.
-#' @param copy_obj whether to copy/duplicate when getting the object (default = TRUE)
+#' @param copy_obj whether to copy/duplicate when getting the 
+#' object (default = TRUE)
 #' @param verbose be verbose
-#' @return data.table with coordinates or spatLocsObj depending on \code{output}
+#' @returns data.table with coordinates or spatLocsObj depending on \code{output}
 #' @family spatial location data accessor functions
 #' @family functions to get data from giotto object
 #' @export
-getSpatialLocations <- function(
-        gobject,
-        spat_unit = NULL,
-        name = NULL,
-        output = c("spatLocsObj", "data.table"),
-        copy_obj = TRUE,
-        verbose = TRUE,
-        set_defaults = TRUE) {
+getSpatialLocations <- function(gobject,
+    spat_unit = NULL,
+    name = NULL,
+    output = c("spatLocsObj", "data.table"),
+    copy_obj = TRUE,
+    verbose = TRUE,
+    set_defaults = TRUE) {
     # Pass to internal function
     spatloc <- get_spatial_locations(
         gobject = gobject,
@@ -2048,30 +2120,34 @@ getSpatialLocations <- function(
 #' @name get_spatial_locations
 #' @description Function to get a spatial location data.table
 #' @inheritParams data_access_params
-#' @param spat_loc_name name of spatial locations (defaults to first name in spatial_locs slot, e.g. "raw")
+#' @param spat_loc_name name of spatial 
+#' locations (defaults to first name in spatial_locs slot, e.g. "raw")
 #' @param output what object type to get the spatial locations as. Default is as
 #' a 'spatLocsObj'. Returning as 'data.table' is also possible.
-#' @param copy_obj whether to copy/duplicate when getting the object (default = TRUE)
+#' @param copy_obj whether to copy/duplicate when getting the 
+#' object (default = TRUE)
 #' @param verbose be verbose
-#' @return data.table with coordinates or spatLocsObj depending on \code{output}
+#' @returns data.table with coordinates or spatLocsObj depending on \code{output}
 #' @family spatial location data accessor functions
 #' @family functions to get data from giotto object
 #' @export
-get_spatial_locations <- function(
-        gobject,
-        spat_unit = NULL,
-        spat_loc_name = NULL,
-        output = c("spatLocsObj", "data.table"),
-        copy_obj = TRUE,
-        verbose = TRUE,
-        set_defaults = TRUE) {
-    deprecate_soft("3.3.0", what = "get_spatial_locations()", with = "getSpatialLocations()")
+get_spatial_locations <- function(gobject,
+    spat_unit = NULL,
+    spat_loc_name = NULL,
+    output = c("spatLocsObj", "data.table"),
+    copy_obj = TRUE,
+    verbose = TRUE,
+    set_defaults = TRUE) {
+    deprecate_soft("3.3.0", what = "get_spatial_locations()", 
+                with = "getSpatialLocations()")
 
     output <- match.arg(output, choices = c("spatLocsObj", "data.table"))
 
     if (!is.null(spat_unit)) {
         potential_spat_unit <- names(slot(gobject, "spatial_locs"))
-        if (!spat_unit %in% potential_spat_unit) stop(wrap_txt('No spatial locations for spatial unit "', spat_unit, '" exist in spatial_locs slot.'))
+        if (!spat_unit %in% potential_spat_unit) 
+            stop(wrap_txt('No spatial locations for spatial unit "', 
+                        spat_unit, '" exist in spatial_locs slot.'))
     }
 
     # spatial locations
@@ -2083,12 +2159,16 @@ get_spatial_locations <- function(
     }
 
 
-    # if NULL (not given) and spatial locations have been added, then use first one
-    # if NULL (not given) and spatial locations have NOT been added, then keep NULL
+    # if NULL (not given) and spatial locations have been added, then use first 
+    # one
+    # if NULL (not given) and spatial locations have NOT been added, then keep 
+    # NULL
     if (is.null(spat_loc_name)) {
         if (!is.null(slot(gobject, "spatial_locs"))) {
-            spat_loc_name <- names(slot(gobject, "spatial_locs")[[spat_unit]])[[1]]
-            # cat('No spatial locations have been selected, the first one -',spat_loc_name, '- will be used \n')
+            spat_loc_name <- names(
+                slot(gobject, "spatial_locs")[[spat_unit]])[[1]]
+            # cat('No spatial locations have been selected, the first 
+            # one -',spat_loc_name, '- will be used \n')
         } else {
             spat_loc_name <- NULL
             cat("No spatial locations have been found \n")
@@ -2101,52 +2181,67 @@ get_spatial_locations <- function(
     # get object to return in desired format
     if (spat_loc_name %in% potential_names) { # case if found
         if (output == "data.table") { # case if return as data.table
-            if (inherits(slot(gobject, "spatial_locs")[[spat_unit]][[spat_loc_name]], "spatLocsObj")) { # if is spatLocsObj
+            if (inherits(slot(gobject, 
+                "spatial_locs")[[spat_unit]][[spat_loc_name]], "spatLocsObj")) 
+                { # if is spatLocsObj
                 if (isTRUE(copy_obj)) {
-                    spatloc <- data.table::copy(slot(slot(gobject, "spatial_locs")[[spat_unit]][[spat_loc_name]], "coordinates"))
+                    spatloc <- data.table::copy(slot(slot(gobject, 
+                                "spatial_locs")[[spat_unit]][[spat_loc_name]], 
+                                "coordinates"))
                 } # copy
                 else {
-                    spatloc <- slot(slot(gobject, "spatial_locs")[[spat_unit]][[spat_loc_name]], "coordinates")
+                    spatloc <- slot(slot(gobject, "spatial_locs"
+                                )[[spat_unit]][[spat_loc_name]], "coordinates")
                 } # no copy
             } else { # to be deprecated | if is data.table
                 if (isTRUE(copy_obj)) {
-                    spatloc <- data.table::copy(slot(gobject, "spatial_locs")[[spat_unit]][[spat_loc_name]])
+                    spatloc <- data.table::copy(slot(
+                        gobject, "spatial_locs")[[spat_unit]][[spat_loc_name]])
                 } # copy
                 else {
-                    spatloc <- slot(gobject, "spatial_locs")[[spat_unit]][[spat_loc_name]]
+                    spatloc <- slot(
+                        gobject, "spatial_locs")[[spat_unit]][[spat_loc_name]]
                 } # no copy
             }
         } else if (output == "spatLocsObj") { # case if return as spatLocsObj
-            if (inherits(slot(gobject, "spatial_locs")[[spat_unit]][[spat_loc_name]], "spatLocsObj")) { # if is spatLocsObj
+            if (inherits(slot(
+                gobject, "spatial_locs")[[spat_unit]][[spat_loc_name]], 
+                "spatLocsObj")) { # if is spatLocsObj
                 if (isTRUE(copy_obj)) {
-                    spatloc <- copy(slot(gobject, "spatial_locs")[[spat_unit]][[spat_loc_name]])
+                    spatloc <- copy(slot(gobject, 
+                                "spatial_locs")[[spat_unit]][[spat_loc_name]])
                 } # copy
                 else {
-                    spatloc <- slot(gobject, "spatial_locs")[[spat_unit]][[spat_loc_name]]
+                    spatloc <- slot(
+                        gobject, "spatial_locs")[[spat_unit]][[spat_loc_name]]
                 } # no copy
             } else { # to be deprecated | if is data.table
                 if (isTRUE(copy_obj)) { # copy
                     spatloc <- new("spatLocsObj",
                         name = spat_loc_name,
                         spat_unit = spat_unit,
-                        coordinates = data.table::copy(slot(gobject, "spatial_locs")[[spat_unit]][[spat_loc_name]]),
+                        coordinates = data.table::copy(slot(gobject, 
+                                "spatial_locs")[[spat_unit]][[spat_loc_name]]),
                         provenance = spat_unit
                     ) # assume
                 } else { # no copy
                     spatloc <- new("spatLocsObj",
                         name = spat_loc_name,
                         spat_unit = spat_unit,
-                        coordinates = slot(gobject, "spatial_locs")[[spat_unit]][[spat_loc_name]],
+                        coordinates = slot(gobject, 
+                                "spatial_locs")[[spat_unit]][[spat_loc_name]],
                         provenance = spat_unit
                     ) # assume
                 }
             }
         } else {
-            if (isTRUE(verbose)) wrap_msg("Other spatial locations outputs not yet supported")
+            if (isTRUE(verbose)) 
+                wrap_msg("Other spatial locations outputs not yet supported")
         }
         return(spatloc)
     } else { # case if not found
-        stop(wrap_txt("The spatial locations with name ", "'", spat_loc_name, "'", " can not be found \n"))
+        stop(wrap_txt("The spatial locations with name ", "'", spat_loc_name, 
+                    "'", " can not be found \n"))
     }
 }
 
@@ -2157,15 +2252,14 @@ get_spatial_locations <- function(
 
 #' @description Get all spatial locations for a specified spatial unit
 #' @keywords internal
-#' @return list of spatLocsObj or data.tables depending on output param
+#' @returns list of spatLocsObj or data.tables depending on output param
 #' @noRd
-get_spatial_locations_list <- function(
-        gobject,
-        spat_unit = NULL,
-        output = c("spatLocsObj", "data.table"),
-        copy_obj = TRUE,
-        verbose = TRUE,
-        set_defaults = TRUE) {
+get_spatial_locations_list <- function(gobject,
+    spat_unit = NULL,
+    output = c("spatLocsObj", "data.table"),
+    copy_obj = TRUE,
+    verbose = TRUE,
+    set_defaults = TRUE) {
     assert_giotto(gobject)
 
     output <- match.arg(output, choices = c("spatLocsObj", "data.table"))
@@ -2215,22 +2309,22 @@ get_spatial_locations_list <- function(
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
 #' @details Spatial information will be set to the nested location described
-#' by their tagged spat_unit and name information. An alternative location can also
-#' be specified through the respective params in this function.
-#' @return giotto object
+#' by their tagged spat_unit and name information. An alternative location can 
+#' also be specified through the respective params in this function.
+#' @returns giotto object
 #' @family spatial location data accessor functions
 #' @family functions to set data in giotto object
 #' @export
-setSpatialLocations <- function(
-        gobject,
-        x,
-        spat_unit = NULL,
-        name = "raw",
-        provenance = NULL,
-        verbose = TRUE,
-        initialize = TRUE) {
+setSpatialLocations <- function(gobject,
+    x,
+    spat_unit = NULL,
+    name = "raw",
+    provenance = NULL,
+    verbose = TRUE,
+    initialize = TRUE) {
     assert_giotto(gobject)
-    if (!methods::hasArg(x)) stop(wrap_txt("x (data to set) param must be given"))
+    if (!methods::hasArg(x)) 
+        stop(wrap_txt("x (data to set) param must be given"))
 
 
     # check hierarchical slots
@@ -2311,37 +2405,38 @@ setSpatialLocations <- function(
 #' @param spat_loc_name name of spatial locations, default "raw"
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @details If a \code{spatLocsObj} is provided to \code{spatlocs} param then any
-#' attached name and spat_unit info will be used for input to this function's
-#' \code{spat_loc_name} and \code{spat_unit}params, BUT will be overridden by any
-#' alternative specific inputs to those params. \cr
+#' @details If a \code{spatLocsObj} is provided to \code{spatlocs} param then 
+#' any attached name and spat_unit info will be used for input to this 
+#' function's \code{spat_loc_name} and \code{spat_unit}params, BUT will be 
+#' overridden by any alternative specific inputs to those params. \cr
 #' ie: a \code{spatLocsObj} with spat_unit slot == 'cell' will be automatically
 #' nested by spat_unit 'cell' when using \code{set_spatial_locations} as long as
 #' param \code{spat_unit = NULL}. BUT if param \code{spat_unit = 'nucleus'} then
 #' the \code{spatLocsObj} will be nested by spat_unit 'nucleus' instead and
 #' its spat_unit slot will be changed to 'nucleus'
-#' @return giotto object
+#' @returns giotto object
 #' @family spatial location data accessor functions
 #' @family functions to set data in giotto object
 #' @export
-set_spatial_locations <- function(
-        gobject,
-        spatlocs,
-        spat_unit = NULL,
-        spat_loc_name = "raw",
-        provenance = NULL,
-        verbose = TRUE,
-        set_defaults = TRUE,
-        initialize = FALSE) {
-    deprecate_soft("3.3.0", what = "set_spatial_locations()", with = "setSpatialLocations()")
+set_spatial_locations <- function(gobject,
+    spatlocs,
+    spat_unit = NULL,
+    spat_loc_name = "raw",
+    provenance = NULL,
+    verbose = TRUE,
+    set_defaults = TRUE,
+    initialize = FALSE) {
+    deprecate_soft("3.3.0", what = "set_spatial_locations()", 
+                with = "setSpatialLocations()")
 
     assert_giotto(gobject)
-    if (!methods::hasArg(spatlocs)) stop(wrap_txt("spatlocs param must be given"))
+    if (!methods::hasArg(spatlocs)) 
+        stop(wrap_txt("spatlocs param must be given"))
 
     # 0. pass to external if not native formats
     if (!inherits(spatlocs, c("spatLocsObj", "NULL"))) {
         stop(wrap_txt(deparse(substitute(spatlocs)), "is not spatLocsObj (set)
-                  or NULL (remove)"))
+                or NULL (remove)"))
         gobject <- setSpatialLocations(
             gobject = gobject,
             x = spatlocs,
@@ -2378,8 +2473,9 @@ set_spatial_locations <- function(
 
     # 3. remove if input is NULL
     if (is.null(spatlocs)) {
-        if (isTRUE(verbose)) wrap_msg("NULL passed to spatlocs.
-                                 Removing specified spatial locations.")
+        if (isTRUE(verbose)) 
+            wrap_msg("NULL passed to spatlocs. Removing specified spatial 
+                    locations.")
         gobject@spatial_locs[[spat_unit]][[name]] <- NULL
 
         # prune if empty
@@ -2402,10 +2498,13 @@ set_spatial_locations <- function(
     spatlocs <- read_s4_nesting(spatlocs)
 
     # 5. check if specified name has already been used
-    potential_names <- list_spatial_locations_names(gobject, spat_unit = spat_unit)
+    potential_names <- list_spatial_locations_names(gobject, 
+                                                    spat_unit = spat_unit)
     if (name %in% potential_names) {
         if (isTRUE(verbose)) {
-            wrap_msg("> ", name, " already exists and will be replaced with new spatial locations \n")
+            wrap_msg("> ", name, 
+                " already exists and will be replaced with new spatial 
+                locations \n")
         }
     }
 
@@ -2443,19 +2542,18 @@ set_spatial_locations <- function(
 #' @param output object type to return as. Either 'dimObj' (default) or 'matrix'
 #' of the embedding coordinates.
 #' @description Function to get a dimension reduction object
-#' @return dim reduction object (default) or dim reduction coordinates
+#' @returns dim reduction object (default) or dim reduction coordinates
 #' @family dimensional reduction data accessor functions
 #' @family functions to get data from giotto object
 #' @export
-get_dimReduction <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        reduction = c("cells", "feats"),
-        reduction_method = c("pca", "umap", "tsne"),
-        name = "pca",
-        output = c("dimObj", "matrix"),
-        set_defaults = TRUE) {
+get_dimReduction <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    reduction = c("cells", "feats"),
+    reduction_method = c("pca", "umap", "tsne"),
+    name = "pca",
+    output = c("dimObj", "matrix"),
+    set_defaults = TRUE) {
     deprecate_soft(when = "3.3.0", "get_dimReduction()", "getDimReduction()")
 
     assert_giotto(gobject)
@@ -2481,10 +2579,12 @@ get_dimReduction <- function(
 
     ## check parameters
     reduction <- match.arg(arg = reduction, choices = c("cells", "feats"))
-    reduction_method <- match.arg(arg = reduction_method, choices = unique(c("pca", "umap", "tsne", reduction_method)))
+    reduction_method <- match.arg(arg = reduction_method, 
+                choices = unique(c("pca", "umap", "tsne", reduction_method)))
 
     ## check reduction
-    reduction_res <- slot(gobject, "dimension_reduction")[[reduction]][[spat_unit]][[feat_type]]
+    reduction_res <- slot(gobject, "dimension_reduction"
+                        )[[reduction]][[spat_unit]][[feat_type]]
     if (is.null(reduction_res)) {
         stop("No dimension reduction for ", reduction, " has been applied \n")
     }
@@ -2498,7 +2598,8 @@ get_dimReduction <- function(
     ## check name for method
     reduction_res <- reduction_res[[name]]
     if (is.null(reduction_res)) {
-        stop(name, ": this name is not available for method: ", reduction_method, "\n")
+        stop(name, ": this name is not available for method: ", 
+            reduction_method, "\n")
     }
 
     ## S3 backwards compatibility
@@ -2526,19 +2627,18 @@ get_dimReduction <- function(
 #' @param output object type to return as. Either 'dimObj' (default) or 'matrix'
 #' of the embedding coordinates.
 #' @description Function to get a dimension reduction object
-#' @return dim reduction object (default) or dim reduction coordinates
+#' @returns dim reduction object (default) or dim reduction coordinates
 #' @family dimensional reduction data accessor functions
 #' @family functions to get data from giotto object
 #' @export
-getDimReduction <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        reduction = c("cells", "feats"),
-        reduction_method = c("pca", "umap", "tsne"),
-        name = "pca",
-        output = c("dimObj", "matrix"),
-        set_defaults = TRUE) {
+getDimReduction <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    reduction = c("cells", "feats"),
+    reduction_method = c("pca", "umap", "tsne"),
+    name = "pca",
+    output = c("dimObj", "matrix"),
+    set_defaults = TRUE) {
     # pass to internal
     dimRed <- get_dimReduction(
         gobject = gobject,
@@ -2566,13 +2666,12 @@ getDimReduction <- function(
 #' @keywords internal
 #' @return list of dimObj or matrix depending on output param
 #' @noRd
-get_dim_reduction_list <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        reduction = c("cells", "feats"),
-        output = c("dimObj", "matrix"),
-        set_defaults = TRUE) {
+get_dim_reduction_list <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    reduction = c("cells", "feats"),
+    output = c("dimObj", "matrix"),
+    set_defaults = TRUE) {
     assert_giotto(gobject)
 
     reduction <- match.arg(reduction, choices = c("cells", "feats"))
@@ -2595,7 +2694,8 @@ get_dim_reduction_list <- function(
         )
     }
 
-    data_list <- slot(gobject, "dimension_reduction")[[reduction]][[spat_unit]][[feat_type]]
+    data_list <- slot(gobject, "dimension_reduction"
+                    )[[reduction]][[spat_unit]][[feat_type]]
 
     data_list <- unlist(data_list, recursive = TRUE, use.names = FALSE)
     data_list <- assign_objnames_2_list(data_list)
@@ -2619,33 +2719,34 @@ get_dim_reduction_list <- function(
 #' @description Function to dimension reduction information into the Giotto
 #' object.
 #' @inheritParams data_access_params
-#' @param x dimObj or list of dimObj to set. Passing NULL will remove a specified
-#' set of dimension reduction information from the gobject
+#' @param x dimObj or list of dimObj to set. Passing NULL will remove a 
+#' specified set of dimension reduction information from the gobject
 #' @param name name of reduction results
 #' @param reduction reduction on cells or features
 #' @param reduction_method reduction method (e.g. "pca")
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @keywords autocomplete
 #' @family dimensional reduction data accessor functions
 #' @family functions to set data in giotto object
 #' @export
-setDimReduction <- function(
-        gobject,
-        x,
-        spat_unit = NULL,
-        feat_type = NULL,
-        name = "pca",
-        reduction = c("cells", "feats"),
-        reduction_method = c("pca", "umap", "tsne"),
-        provenance = NULL,
-        verbose = TRUE,
-        initialize = TRUE) {
+setDimReduction <- function(gobject,
+    x,
+    spat_unit = NULL,
+    feat_type = NULL,
+    name = "pca",
+    reduction = c("cells", "feats"),
+    reduction_method = c("pca", "umap", "tsne"),
+    provenance = NULL,
+    verbose = TRUE,
+    initialize = TRUE) {
     assert_giotto(gobject)
     reduction <- match.arg(reduction, choices = c("cells", "feats"))
-    # reduction_method = match.arg(reduction_method, choices = c('pca', 'umap', 'tsne'))
-    if (!methods::hasArg(x)) stop(wrap_txt("x (data to set) param must be given"))
+    # reduction_method = match.arg(reduction_method, 
+    # choices = c('pca', 'umap', 'tsne'))
+    if (!methods::hasArg(x)) 
+        stop(wrap_txt("x (data to set) param must be given"))
 
 
     # check hierarchical slots
@@ -2658,8 +2759,10 @@ setDimReduction <- function(
     nospec_unit <- ifelse(is.null(spat_unit), yes = TRUE, no = FALSE)
     nospec_feat <- ifelse(is.null(feat_type), yes = TRUE, no = FALSE)
     nospec_name <- ifelse(is.null(match.call()$name), yes = TRUE, no = FALSE)
-    nospec_red <- ifelse(is.null(match.call()$reduction), yes = TRUE, no = FALSE)
-    nospec_red_method <- ifelse(is.null(match.call()$reduction_method), yes = TRUE, no = FALSE)
+    nospec_red <- ifelse(is.null(match.call()$reduction), 
+                        yes = TRUE, no = FALSE)
+    nospec_red_method <- ifelse(is.null(match.call()$reduction_method), 
+                                yes = TRUE, no = FALSE)
     .external_accessor_dimred <- list(
         nospec_unit = nospec_unit,
         nospec_feat = nospec_feat,
@@ -2716,7 +2819,7 @@ setDimReduction <- function(
 
     # catch
     stop(wrap_txt("Only dimObj or lists of dimObj accepted.
-                  For raw or external data, please first use readDimReducData()"))
+                For raw or external data, please first use readDimReducData()"))
 }
 
 
@@ -2735,28 +2838,30 @@ setDimReduction <- function(
 #' @param dimObject dimension object result to set
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family dimensional reduction data accessor functions
 #' @family functions to set data in giotto object
 #' @export
-set_dimReduction <- function(
-        gobject,
-        dimObject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        reduction = c("cells", "feats"),
-        reduction_method = c("pca", "umap", "tsne"),
-        name = "pca",
-        provenance = NULL,
-        verbose = TRUE,
-        set_defaults = TRUE,
-        initialize = FALSE) {
-    deprecate_soft("3.3.0", what = "set_dimReduction()", with = "setDimReduction()")
+set_dimReduction <- function(gobject,
+    dimObject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    reduction = c("cells", "feats"),
+    reduction_method = c("pca", "umap", "tsne"),
+    name = "pca",
+    provenance = NULL,
+    verbose = TRUE,
+    set_defaults = TRUE,
+    initialize = FALSE) {
+    deprecate_soft("3.3.0", what = "set_dimReduction()", 
+                with = "setDimReduction()")
 
     assert_giotto(gobject)
     reduction <- match.arg(reduction, choices = c("cells", "feats"))
-    # reduction_method = match.arg(reduction_method, choices = c('pca', 'umap', 'tsne'))
-    if (!methods::hasArg(dimObject)) stop(wrap_txt("dimObject param must be given"))
+    # reduction_method = match.arg(reduction_method, 
+    # choices = c('pca', 'umap', 'tsne'))
+    if (!methods::hasArg(dimObject)) 
+        stop(wrap_txt("dimObject param must be given"))
 
     # 0. pass to external if not native format
     if (!inherits(dimObject, c("dimObj", "NULL"))) {
@@ -2777,9 +2882,12 @@ set_dimReduction <- function(
     } else {
         nospec_unit <- ifelse(is.null(spat_unit), yes = TRUE, no = FALSE)
         nospec_feat <- ifelse(is.null(feat_type), yes = TRUE, no = FALSE)
-        nospec_name <- ifelse(is.null(match.call()$name), yes = TRUE, no = FALSE)
-        nospec_red <- ifelse(is.null(match.call()$reduction), yes = TRUE, no = FALSE)
-        nospec_red_method <- ifelse(is.null(match.call()$reduction_method), yes = TRUE, no = FALSE)
+        nospec_name <- ifelse(is.null(match.call()$name), 
+                            yes = TRUE, no = FALSE)
+        nospec_red <- ifelse(is.null(match.call()$reduction), 
+                            yes = TRUE, no = FALSE)
+        nospec_red_method <- ifelse(is.null(match.call()$reduction_method), 
+                                    yes = TRUE, no = FALSE)
     }
 
 
@@ -2798,17 +2906,26 @@ set_dimReduction <- function(
 
     # 3. if input is NULL, remove object
     if (is.null(dimObject)) {
-        if (isTRUE(verbose)) wrap_msg("NULL passed to dimObject param.
-                                 Removing specified expression")
-        slot(gobject, "dimension_reduction")[[reduction]][[spat_unit]][[feat_type]][[reduction_method]][[name]] <- NULL
+        if (isTRUE(verbose)) 
+            wrap_msg("NULL passed to dimObject param. Removing specified 
+                    expression")
+        slot(gobject, "dimension_reduction"
+        )[[reduction]][[spat_unit]][[feat_type]][[reduction_method]][[name]] <- 
+            NULL
 
         # prune if empty
-        if (length(gobject@dimension_reduction[[reduction]][[spat_unit]][[feat_type]][[reduction_method]]) == 0L) {
-            gobject@dimension_reduction[[reduction]][[spat_unit]][[feat_type]][[reduction_method]] <- NULL
-            if (length(gobject@dimension_reduction[[reduction]][[spat_unit]][[feat_type]]) == 0) {
-                gobject@dimension_reduction[[reduction]][[spat_unit]][[feat_type]] <- NULL
-                if (length(gobject@dimension_reduction[[reduction]][[spat_unit]]) == 0) {
-                    gobject@dimension_reduction[[reduction]][[spat_unit]] <- NULL
+        if (length(gobject@dimension_reduction[[reduction]][[spat_unit
+                                ]][[feat_type]][[reduction_method]]) == 0L) {
+            gobject@dimension_reduction[[reduction]][[spat_unit]][[feat_type
+                                                ]][[reduction_method]] <- NULL
+            if (length(gobject@dimension_reduction[[reduction]][[spat_unit
+                                                    ]][[feat_type]]) == 0) {
+                gobject@dimension_reduction[[reduction]][[spat_unit
+                                                        ]][[feat_type]] <- NULL
+                if (length(gobject@dimension_reduction[[reduction
+                                                    ]][[spat_unit]]) == 0) {
+                    gobject@dimension_reduction[[reduction]][[spat_unit
+                                                            ]] <- NULL
                     if (length(gobject@dimension_reduction[[reduction]]) == 0) {
                         gobject@dimension_reduction[[reduction]] <- NULL
                         if (length(gobject@dimension_reduction) == 0) {
@@ -2827,7 +2944,8 @@ set_dimReduction <- function(
     }
 
     # 4. import data from S4 if available
-    # NOTE: modifies spat_unit/feat_type/name/provenance/reduction/reduction_method/data slots
+    # NOTE: modifies spat_unit/feat_type/name/provenance/reduction/
+    # reduction_method/data slots
     dimObject <- read_s4_nesting(dimObject)
 
 
@@ -2839,7 +2957,9 @@ set_dimReduction <- function(
         dim_type = reduction_method
     )
     if (name %in% potential_names) {
-        if (isTRUE(verbose)) wrap_msg("> ", name, " already exists and will be replaced with new dimension reduction object \n")
+        if (isTRUE(verbose)) 
+            wrap_msg("> ", name, " already exists and will be replaced with 
+                    new dimension reduction object \n")
     }
 
 
@@ -2847,13 +2967,15 @@ set_dimReduction <- function(
     ## 6. update and return giotto object
     if (isTRUE(verbose) & isTRUE(call_from_external)) {
         wrap_msg(
-            "Setting dimension reduction [", spatUnit(dimObject), "][", featType(dimObject), "] ",
+            "Setting dimension reduction [", spatUnit(dimObject), "][", 
+            featType(dimObject), "] ",
             objName(dimObject),
             sep = ""
         )
     }
 
-    slot(gobject, "dimension_reduction")[[reduction]][[spat_unit]][[feat_type]][[reduction_method]][[name]] <- dimObject
+    slot(gobject, "dimension_reduction")[[reduction]][[spat_unit]][[feat_type
+                                    ]][[reduction_method]][[name]] <- dimObject
     if (isTRUE(initialize)) {
         return(initialize(gobject))
     } else {
@@ -2875,21 +2997,22 @@ set_dimReduction <- function(
 #' @param nn_network_to_use "kNN" or "sNN"
 #' @param network_name name of NN network to be used
 #' @param output return a igraph or data.table object. Default 'igraph'
-#' @return igraph or data.table object
+#' @returns igraph or data.table object
 #' @family expression space nearest network accessor functions
 #' @family functions to get data from giotto object
 #' @export
-get_NearestNetwork <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        nn_network_to_use = NULL,
-        network_name = NULL,
-        output = c("nnNetObj", "igraph", "data.table"),
-        set_defaults = TRUE) {
-    deprecate_soft(when = "3.3.0", "get_NearestNetwork()", "getNearestNetwork()")
+get_NearestNetwork <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    nn_network_to_use = NULL,
+    network_name = NULL,
+    output = c("nnNetObj", "igraph", "data.table"),
+    set_defaults = TRUE) {
+    deprecate_soft(when = "3.3.0", what = "get_NearestNetwork()", 
+                with = "getNearestNetwork()")
 
-    output <- match.arg(arg = output, choices = c("nnNetObj", "igraph", "data.table"))
+    output <- match.arg(arg = output, 
+                        choices = c("nnNetObj", "igraph", "data.table"))
 
     # 1.  Set feat_type and spat_unit
     if (isTRUE(set_defaults)) {
@@ -2906,40 +3029,49 @@ get_NearestNetwork <- function(
 
     # 2 Find the object
     if (is.null(nn_network_to_use)) {
-        nn_network_to_use <- names(slot(gobject, "nn_network")[[spat_unit]][[feat_type]])[[1]]
+        nn_network_to_use <- names(slot(gobject, "nn_network"
+                                )[[spat_unit]][[feat_type]])[[1]]
         if (is.null(nn_network_to_use)) {
-            stop(wrap_txt('There is currently no nearest-neighbor network created for
-                     spatial unit: "', spat_unit, '" and feature type "', feat_type, '".
-                     First run createNearestNetwork()\n', sep = ""))
+            stop(wrap_txt('There is currently no nearest-neighbor network 
+                        created for spatial unit: "', spat_unit, 
+                        '" and feature type "', feat_type, 
+                        '". First run createNearestNetwork()\n', sep = ""))
         } else {
-            wrap_msg('The NN network type was not specified, default to the first: "',
-                nn_network_to_use, '"',
-                sep = ""
+            wrap_msg('The NN network type was not specified, default to the 
+                    first: "',
+                    nn_network_to_use, '"',
+                    sep = ""
             )
         }
     }
 
     if (is.null(network_name)) {
-        network_name <- names(slot(gobject, "nn_network")[[spat_unit]][[feat_type]][[nn_network_to_use]])[[1]]
+        network_name <- names(slot(gobject, "nn_network"
+                    )[[spat_unit]][[feat_type]][[nn_network_to_use]])[[1]]
         if (is.null(network_name)) {
-            stop(wrap_txt('There is currently no nearest-neighbor network built for spatial unit: "', spat_unit,
-                '" feature type: "', feat_type, '" and network type: "', nn_network_to_use, '"\n',
-                sep = ""
+            stop(wrap_txt('There is currently no nearest-neighbor network 
+                        built for spatial unit: "', spat_unit,
+                        '" feature type: "', feat_type, 
+                        '" and network type: "', nn_network_to_use, '"\n',
+                        sep = ""
             ))
         } else {
-            wrap_msg('The NN network name was not specified, default to the first: "',
-                network_name, '"',
-                sep = ""
+            wrap_msg('The NN network name was not specified, default to the 
+                    first: "',
+                    network_name, '"',
+                    sep = ""
             )
         }
     }
 
     # 3. get object in desired format
 
-    nnNet <- slot(gobject, "nn_network")[[spat_unit]][[feat_type]][[nn_network_to_use]][[network_name]]
+    nnNet <- slot(gobject, "nn_network")[[spat_unit]][[feat_type
+                                        ]][[nn_network_to_use]][[network_name]]
     if (is.null(nnNet)) {
-        stop(wrap_txt('nn_network_to_use: "', nn_network_to_use, '" or network_name: "', network_name, '" does not exist.
-                  Create a nearest-neighbor network first', sep = ""))
+        stop(wrap_txt('nn_network_to_use: "', nn_network_to_use, 
+                    '" or network_name: "', network_name, '" does not exist.
+                    Create a nearest-neighbor network first', sep = ""))
     }
 
     if (output == "nnNetObj") {
@@ -2967,18 +3099,17 @@ get_NearestNetwork <- function(
 #' @param nn_type "kNN" or "sNN"
 #' @param name name of NN network to be used
 #' @param output return a igraph or data.table object. Default 'igraph'
-#' @return igraph or data.table object
+#' @returns igraph or data.table object
 #' @family expression space nearest network accessor functions
 #' @family functions to get data from giotto object
 #' @export
-getNearestNetwork <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        nn_type = NULL,
-        name = NULL,
-        output = c("nnNetObj", "igraph", "data.table"),
-        set_defaults = TRUE) {
+getNearestNetwork <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    nn_type = NULL,
+    name = NULL,
+    output = c("nnNetObj", "igraph", "data.table"),
+    set_defaults = TRUE) {
     # pass to internal
     nn <- get_NearestNetwork(
         gobject = gobject,
@@ -3003,12 +3134,11 @@ getNearestNetwork <- function(
 #' @keywords internal
 #' @return list of nnNetObj, igraph, or data.table depending on output param
 #' @noRd
-get_nearest_network_list <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        output = c("nnNetObj", "igraph", "data.table"),
-        set_defaults = TRUE) {
+get_nearest_network_list <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    output = c("nnNetObj", "igraph", "data.table"),
+    set_defaults = TRUE) {
     checkmate::assert_class(gobject, classes = "giotto")
 
     output <- match.arg(output, choices = c("nnNetObj", "igraph", "data.table"))
@@ -3061,22 +3191,22 @@ get_nearest_network_list <- function(
 #' yet supported.
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family expression space nearest network accessor functions
 #' @family functions to set data in giotto object
 #' @export
-setNearestNetwork <- function(
-        gobject,
-        x,
-        spat_unit = NULL,
-        feat_type = NULL,
-        nn_type = "sNN",
-        name = "sNN.pca",
-        provenance = NULL,
-        verbose = TRUE,
-        initialize = TRUE) {
+setNearestNetwork <- function(gobject,
+    x,
+    spat_unit = NULL,
+    feat_type = NULL,
+    nn_type = "sNN",
+    name = "sNN.pca",
+    provenance = NULL,
+    verbose = TRUE,
+    initialize = TRUE) {
     assert_giotto(gobject)
-    if (!methods::hasArg(x)) stop(wrap_txt("x (data to set) param must be given"))
+    if (!methods::hasArg(x)) 
+        stop(wrap_txt("x (data to set) param must be given"))
 
 
     # check hierarchical slots
@@ -3143,7 +3273,7 @@ setNearestNetwork <- function(
     }
     # catch
     stop(wrap_txt("Only nnNetObj or lists of nnNetObj accepted.
-                For raw or external data, please first use readNearestNetData()"))
+            For raw or external data, please first use readNearestNetData()"))
 }
 
 
@@ -3163,30 +3293,31 @@ setNearestNetwork <- function(
 #' yet supported.
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family expression space nearest network accessor functions
 #' @family functions to set data in giotto object
 #' @export
-set_NearestNetwork <- function(
-        gobject,
-        nn_network,
-        spat_unit = NULL,
-        feat_type = NULL,
-        nn_network_to_use = "sNN",
-        network_name = "sNN.pca",
-        provenance = NULL,
-        verbose = TRUE,
-        set_defaults = TRUE,
-        initialize = FALSE) {
-    deprecate_soft("3.3.0", what = "set_NearestNetwork()", with = "setNearestNetwork()")
+set_NearestNetwork <- function(gobject,
+    nn_network,
+    spat_unit = NULL,
+    feat_type = NULL,
+    nn_network_to_use = "sNN",
+    network_name = "sNN.pca",
+    provenance = NULL,
+    verbose = TRUE,
+    set_defaults = TRUE,
+    initialize = FALSE) {
+    deprecate_soft("3.3.0", what = "set_NearestNetwork()", 
+                with = "setNearestNetwork()")
 
     assert_giotto(gobject)
-    if (!methods::hasArg(nn_network)) stop(wrap_txt("nn_network param must be given"))
+    if (!methods::hasArg(nn_network)) 
+        stop(wrap_txt("nn_network param must be given"))
 
     # 0. stop if not native formats
     if (!inherits(nn_network, c("nnNetObj", "NULL"))) {
-        stop(wrap_txt(deparse(substitute(nn_network)), "is not nnNetObj (set).
-                  or NULL (remove)"))
+        stop(wrap_txt(deparse(substitute(nn_network)), 
+                    "is not nnNetObj (set). or NULL (remove)"))
     }
 
 
@@ -3202,8 +3333,10 @@ set_NearestNetwork <- function(
     } else {
         nospec_unit <- ifelse(is.null(spat_unit), yes = TRUE, no = FALSE)
         nospec_feat <- ifelse(is.null(feat_type), yes = TRUE, no = FALSE)
-        nospec_net <- ifelse(is.null(match.call()$nn_network_to_use), yes = TRUE, no = FALSE)
-        nospec_name <- ifelse(is.null(match.call()$network_name), yes = TRUE, no = FALSE)
+        nospec_net <- ifelse(is.null(match.call()$nn_network_to_use), 
+                            yes = TRUE, no = FALSE)
+        nospec_name <- ifelse(is.null(match.call()$network_name), 
+                            yes = TRUE, no = FALSE)
     }
 
     # change var name for use with read_s4_nesting()
@@ -3227,11 +3360,12 @@ set_NearestNetwork <- function(
     # 3. If input is null, remove object
     if (is.null(nn_network)) {
         if (isTRUE(verbose)) wrap_msg("NULL passed to nn_network.
-                                 Removing specified nearest neighbor network.")
+                                Removing specified nearest neighbor network.")
         gobject@nn_network[[spat_unit]][[feat_type]][[nn_type]][[name]] <- NULL
 
         # prune if empty
-        if (length(gobject@nn_network[[spat_unit]][[feat_type]][[nn_type]]) == 0L) {
+        if (length(gobject@nn_network[[spat_unit]][[feat_type]][[nn_type]]
+                ) == 0L) {
             gobject@nn_network[[spat_unit]][[feat_type]][[nn_type]] <- NULL
             if (length(gobject@nn_network[[spat_unit]][[feat_type]]) == 0) {
                 gobject@nn_network[[spat_unit]][[feat_type]] <- NULL
@@ -3254,7 +3388,8 @@ set_NearestNetwork <- function(
     # 4. import data from S4 if available
     # NOTE: modifies spat_unit/feat_type/name/nn_type/nn_network/provenance
     nn_network <- read_s4_nesting(nn_network)
-    # Use updated values in nn_type and name instead of network_name and nn_network_to_use
+    # Use updated values in nn_type and name instead of network_name and 
+    # nn_network_to_use
 
 
     ## 5. check if specified name has already been used
@@ -3264,19 +3399,23 @@ set_NearestNetwork <- function(
         nn_type = nn_type
     )
     if (name %in% potential_names) {
-        if (isTRUE(verbose)) wrap_msg('> "', name, '" already exists and will be replaced with new nearest neighbor network')
+        if (isTRUE(verbose)) 
+            wrap_msg('> "', name, '" already exists and will be replaced with 
+                    new nearest neighbor network')
     }
 
     ## 6. update and return giotto object
     if (isTRUE(verbose) & isTRUE(call_from_external)) {
         wrap_msg(
-            "Setting nearest neighbor network [", spatUnit(nn_network), "][", featType(nn_network), "] ",
+            "Setting nearest neighbor network [", spatUnit(nn_network), 
+            "][", featType(nn_network), "] ",
             objName(nn_network),
             sep = ""
         )
     }
 
-    gobject@nn_network[[spat_unit]][[feat_type]][[nn_type]][[name]] <- nn_network
+    gobject@nn_network[[spat_unit]][[feat_type]][[nn_type]][[name]] <- 
+        nn_network
     if (isTRUE(initialize)) {
         return(initialize(gobject))
     } else {
@@ -3298,27 +3437,30 @@ set_NearestNetwork <- function(
 #' @description Function to get a spatial network
 #' @inheritParams data_access_params
 #' @param name name of spatial network
-#' @param output object type to return as. Options: 'spatialNetworkObj' (default),
+#' @param output object type to return as. Options: 
+#' 'spatialNetworkObj' (default),
 #' 'networkDT' and 'networkDT_before_filter' for data.table outputs.
-#' @param copy_obj whether to copy/duplicate when getting the object (default = TRUE)
+#' @param copy_obj whether to copy/duplicate when getting the 
+#' object (default = TRUE)
 #' @param verbose be verbose
+#' @returns spatialNetworkObj of data.table
 #' @family spatial network data accessor functions
 #' @family functions to get data from giotto object
 #' @export
-get_spatialNetwork <- function(
-        gobject,
-        spat_unit = NULL,
-        name = NULL,
-        output = c(
-            "spatialNetworkObj",
-            "networkDT",
-            "networkDT_before_filter",
-            "outputObj"
-        ),
-        set_defaults = TRUE,
-        copy_obj = TRUE,
-        verbose = TRUE) {
-    deprecate_soft("3.3.0", what = "get_spatialNetwork()", with = "getSpatialNetwork()")
+get_spatialNetwork <- function(gobject,
+    spat_unit = NULL,
+    name = NULL,
+    output = c(
+        "spatialNetworkObj",
+        "networkDT",
+        "networkDT_before_filter",
+        "outputObj"
+    ),
+    set_defaults = TRUE,
+    copy_obj = TRUE,
+    verbose = TRUE) {
+    deprecate_soft("3.3.0", what = "get_spatialNetwork()", 
+                with = "getSpatialNetwork()")
 
     output <- match.arg(output, choices = c(
         "spatialNetworkObj",
@@ -3337,12 +3479,17 @@ get_spatialNetwork <- function(
     }
 
     # set name to get if missing
-    if (is.null(name)) name <- names(slot(gobject, "spatial_network")[[spat_unit]])[[1]]
+    if (is.null(name)) name <- names(
+        slot(gobject, "spatial_network")[[spat_unit]])[[1]]
 
     # check if given name is present
-    if (!is.element(name, names(slot(gobject, "spatial_network")[[spat_unit]]))) {
-        if (isTRUE(verbose)) msg <- wrap_txt("spatial network", name, "has not been created. Returning NULL.
-                                       check which spatial networks exist with showGiottoSpatNetworks()")
+    if (!is.element(name, names(
+        slot(gobject, "spatial_network")[[spat_unit]]))) {
+        if (isTRUE(verbose)) 
+            msg <- wrap_txt("spatial network", name, 
+                            "has not been created. Returning NULL. check which 
+                            spatial networks exist with 
+                            showGiottoSpatNetworks()")
         warning(msg)
         return(NULL)
     } else {
@@ -3356,7 +3503,8 @@ get_spatialNetwork <- function(
     if (copy_obj) {
         networkObj@networkDT <- data.table::copy(networkObj@networkDT)
         if (!is.null(networkObj@networkDT_before_filter)) {
-            networkObj@networkDT_before_filter <- data.table::copy(networkObj@networkDT_before_filter)
+            networkObj@networkDT_before_filter <- data.table::copy(
+                networkObj@networkDT_before_filter)
         }
     }
 
@@ -3379,26 +3527,28 @@ get_spatialNetwork <- function(
 #' @description Function to get a spatial network
 #' @inheritParams data_access_params
 #' @param name name of spatial network
-#' @param output object type to return as. Options: 'spatialNetworkObj' (default),
+#' @param output object type to return as. Options: 
+#' 'spatialNetworkObj' (default),
 #' 'networkDT' and 'networkDT_before_filter' for data.table outputs.
-#' @param copy_obj whether to copy/duplicate when getting the object (default = TRUE)
+#' @param copy_obj whether to copy/duplicate when getting the 
+#' object (default = TRUE)
 #' @param verbose be verbose
+#' @returns spatialNetworkObj of data.table
 #' @family spatial network data accessor functions
 #' @family functions to get data from giotto object
 #' @export
-getSpatialNetwork <- function(
-        gobject,
-        spat_unit = NULL,
-        name = NULL,
-        output = c(
-            "spatialNetworkObj",
-            "networkDT",
-            "networkDT_before_filter",
-            "outputObj"
-        ),
-        set_defaults = TRUE,
-        copy_obj = TRUE,
-        verbose = TRUE) {
+getSpatialNetwork <- function(gobject,
+    spat_unit = NULL,
+    name = NULL,
+    output = c(
+        "spatialNetworkObj",
+        "networkDT",
+        "networkDT_before_filter",
+        "outputObj"
+    ),
+    set_defaults = TRUE,
+    copy_obj = TRUE,
+    verbose = TRUE) {
     # Pass to internal function
     network <- get_spatialNetwork(
         gobject = gobject,
@@ -3422,17 +3572,16 @@ getSpatialNetwork <- function(
 #' @keywords internal
 #' @return list of dimObj or data.table depending on output param
 #' @noRd
-get_spatial_network_list <- function(
-        gobject,
-        spat_unit = NULL,
-        output = c(
-            "spatialNetworkObj",
-            "networkDT",
-            "networkDT_before_filter",
-            "outputObj"
-        ),
-        set_defaults = TRUE,
-        copy_obj = TRUE) {
+get_spatial_network_list <- function(gobject,
+    spat_unit = NULL,
+    output = c(
+        "spatialNetworkObj",
+        "networkDT",
+        "networkDT_before_filter",
+        "outputObj"
+    ),
+    set_defaults = TRUE,
+    copy_obj = TRUE) {
     assert_giotto(gobject)
 
     output <- match.arg(output, choices = c(
@@ -3492,27 +3641,29 @@ get_spatial_network_list <- function(
 #' @param name name of spatial network
 #' @param provenance provenance name
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family spatial network data accessor functions
 #' @family functions to set data in giotto object
 #' @export
-setSpatialNetwork <- function(
-        gobject,
-        x,
-        spat_unit = NULL,
-        name = NULL,
-        provenance = NULL,
-        verbose = TRUE,
-        initialize = TRUE) {
+setSpatialNetwork <- function(gobject,
+    x,
+    spat_unit = NULL,
+    name = NULL,
+    provenance = NULL,
+    verbose = TRUE,
+    initialize = TRUE) {
     assert_giotto(gobject)
-    if (!methods::hasArg(x)) stop(wrap_txt("x param (data to set) must be given"))
+    if (!methods::hasArg(x)) 
+        stop(wrap_txt("x param (data to set) must be given"))
 
 
     # check hierarchical slots
     avail_ex <- list_expression(gobject)
     avail_sl <- list_spatial_locations(gobject)
-    if (is.null(avail_ex)) stop(wrap_txt("Add expression and spatial location information first"))
-    if (is.null(avail_sl)) stop(wrap_txt("Add spatial location information first"))
+    if (is.null(avail_ex)) 
+        stop(wrap_txt("Add expression and spatial location information first"))
+    if (is.null(avail_sl))
+        stop(wrap_txt("Add spatial location information first"))
 
 
     # 1. Determine user inputs
@@ -3564,8 +3715,9 @@ setSpatialNetwork <- function(
     }
 
     # catch
-    stop(wrap_txt("Only spatialNetworkObj or lists of spatialNetworkObj accepted.
-                For raw or external data, please first use readSpatNetData()"))
+    stop(wrap_txt(
+        "Only spatialNetworkObj or lists of spatialNetworkObj accepted.
+        For raw or external data, please first use readSpatNetData()"))
 }
 
 
@@ -3582,28 +3734,29 @@ setSpatialNetwork <- function(
 #' @param provenance provenance name
 #' @param spatial_network spatial network
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family spatial network data accessor functions
 #' @family functions to set data in giotto object
 #' @export
-set_spatialNetwork <- function(
-        gobject,
-        spatial_network,
-        spat_unit = NULL,
-        name = NULL,
-        provenance = NULL,
-        verbose = TRUE,
-        set_defaults = TRUE,
-        initialize = FALSE) {
-    deprecate_soft("3.3.0", what = "set_spatialNetwork()", with = "setSpatialNetwork()")
+set_spatialNetwork <- function(gobject,
+    spatial_network,
+    spat_unit = NULL,
+    name = NULL,
+    provenance = NULL,
+    verbose = TRUE,
+    set_defaults = TRUE,
+    initialize = FALSE) {
+    deprecate_soft("3.3.0", what = "set_spatialNetwork()", 
+                with = "setSpatialNetwork()")
 
     assert_giotto(gobject)
-    if (!methods::hasArg(spatial_network)) stop(wrap_txt("spatial_network param must be given"))
+    if (!methods::hasArg(spatial_network)) 
+        stop(wrap_txt("spatial_network param must be given"))
 
     # 0. stop if not native formats
     if (!inherits(spatial_network, c("spatialNetworkObj", "NULL"))) {
-        stop(wrap_txt(deparse(substitute(spatial_network)), "is not spatialNetworkObj (set).
-                  or NULL (remove)"))
+        stop(wrap_txt(deparse(substitute(spatial_network)),
+                    "is not spatialNetworkObj (set). or NULL (remove)"))
     }
 
     # 1. determine if input was supplied to spat_unit and name
@@ -3615,7 +3768,8 @@ set_spatialNetwork <- function(
         nospec_name <- p$.external_accessor_sn$nospec_name
     } else {
         nospec_unit <- ifelse(is.null(spat_unit), yes = TRUE, no = FALSE)
-        nospec_name <- ifelse(is.null(match.call()$name), yes = TRUE, no = FALSE)
+        nospec_name <- ifelse(is.null(match.call()$name), 
+                            yes = TRUE, no = FALSE)
     }
 
 
@@ -3629,8 +3783,9 @@ set_spatialNetwork <- function(
 
     # 3. If input is NULL, remove object
     if (is.null(spatial_network)) {
-        if (isTRUE(verbose)) wrap_msg("NULL passed to spatial_network.
-                                 Removing specified spatial network.")
+        if (isTRUE(verbose)) 
+            wrap_msg("NULL passed to spatial_network. Removing specified 
+                    spatial network.")
         gobject@spatial_network[[spat_unit]][[name]] <- NULL
 
         # prune if empty
@@ -3661,7 +3816,8 @@ set_spatialNetwork <- function(
             spat_unit = spat_unit
         )
         if (name %in% potential_names) {
-            wrap_msg('> "', name, '" already exists and will be replaced with new spatial network')
+            wrap_msg('> "', name, 
+            '" already exists and will be replaced with new spatial network')
         }
     }
 
@@ -3697,17 +3853,18 @@ set_spatialNetwork <- function(
 #' @inheritParams data_access_params
 #' @param name name of spatial grid
 #' @param return_grid_Obj return grid object (default = FALSE)
+#' @returns spatialGridObj
 #' @family spatial grid data accessor functions
 #' @family functions to get data from giotto object
 #' @export
-get_spatialGrid <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        name = NULL,
-        return_grid_Obj = FALSE,
-        set_defaults = TRUE) {
-    deprecate_soft("3.3.0", what = "get_spatialGrid()", with = "getSpatialGrid()")
+get_spatialGrid <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    name = NULL,
+    return_grid_Obj = FALSE,
+    set_defaults = TRUE) {
+    deprecate_soft("3.3.0", what = "get_spatialGrid()", 
+                with = "getSpatialGrid()")
 
     # Set feat_type and spat_unit
     if (isTRUE(set_defaults)) {
@@ -3723,21 +3880,29 @@ get_spatialGrid <- function(
     }
 
     # **To be deprecated** - check for old nesting
-    if (is.null(names(gobject@spatial_grid[[spat_unit]][[feat_type]])[[1]])) { # If gobject has nothing for this feat_type
+    if (is.null(
+        names(gobject@spatial_grid[[spat_unit]][[feat_type]])[[1]])) { 
+        # If gobject has nothing for this feat_type
         available <- list_spatial_grids(gobject,
             spat_unit = spat_unit
         )
-        if (nrow(available > 0 & is.null(available$feat_type))) { # If ANY old nesting objects are discovered (only reports old nestings if any detected)
+        if (nrow(available > 0 & is.null(available$feat_type))) { 
+            # If ANY old nesting objects are discovered (only reports old 
+            # nestings if any detected)
             if (is.null(name)) {
-                gridObj <- gobject@spatial_grid[[spat_unit]][[available$name[[1]]]]
+                gridObj <- gobject@spatial_grid[[spat_unit
+                                                ]][[available$name[[1]]]]
             } else {
                 gridObj <- gobject@spatial_grid[[spat_unit]][[name]]
             }
             if (inherits(gridObj, "spatialGridObj")) {
-                if (is.null(name)) message('The grid name was not specified, default to the first: "', available$name[[1]], '"')
+                if (is.null(name)) 
+                    message('The grid name was not specified, default to the 
+                            first: "', available$name[[1]], '"')
                 # S3 backwards compatibility
                 if (!isS4(gridObj)) gridObj <- S3toS4spatialGridObj(gridObj)
-                silent <- validObject(gridObj) # variable used to hide TRUE print
+                silent <- validObject(gridObj) 
+                # variable used to hide TRUE print
 
                 gridDT <- slot(gridObj, "gridDT")
                 if (return_grid_Obj == TRUE) {
@@ -3746,20 +3911,24 @@ get_spatialGrid <- function(
                     return(gridDT)
                 }
             } else {
-                stop('There is currently no spatial grid created for
-             spatial unit: "', spat_unit, '" and feature type "', feat_type, '".
-             First run createSpatialGrid()')
+                stop('There is currently no spatial grid created for spatial 
+                    unit: "', spat_unit, '" and feature type "', feat_type, 
+                    '". First run createSpatialGrid()')
             }
         }
     } # ** deprecation end**
 
     # Automatically select first grid for given spat_unit/feat_type combination
     if (is.null(name)) {
-        name <- names(slot(gobject, "spatial_grid")[[spat_unit]][[feat_type]])[[1]]
-        message('The grid name was not specified, default to the first: "', name, '"')
-    } else if (!is.element(name, names(slot(gobject, "spatial_grid")[[spat_unit]][[feat_type]]))) {
-        message <- sprintf("spatial grid %s has not been created. Returning NULL.
-                      check which spatial grids exist with showGiottoSpatGrids()\n", name)
+        name <- names(
+            slot(gobject, "spatial_grid")[[spat_unit]][[feat_type]])[[1]]
+        message('The grid name was not specified, default to the first: "', 
+                name, '"')
+    } else if (!is.element(name, names(slot(gobject, "spatial_grid"
+                                            )[[spat_unit]][[feat_type]]))) {
+        message <- sprintf("spatial grid %s has not been created. Returning 
+                        NULL. check which spatial grids exist with 
+                        showGiottoSpatGrids()\n", name)
         warning(message)
         return(NULL)
     }
@@ -3790,14 +3959,14 @@ get_spatialGrid <- function(
 #' @param return_grid_Obj return grid object (default = FALSE)
 #' @family spatial grid data accessor functions
 #' @family functions to get data from giotto object
+#' @returns spatialGridObj
 #' @export
-getSpatialGrid <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        name = NULL,
-        return_grid_Obj = FALSE,
-        set_defaults = TRUE) {
+getSpatialGrid <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    name = NULL,
+    return_grid_Obj = FALSE,
+    set_defaults = TRUE) {
     # Pass to internal function
     grid <- get_spatialGrid(
         gobject = gobject,
@@ -3818,19 +3987,19 @@ getSpatialGrid <- function(
 #' @param spatial_grid spatial grid object
 #' @param name name of spatial grid
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family spatial grid data accessor functions
 #' @family functions to set data in giotto object
 #' @export
-set_spatialGrid <- function(
-        gobject,
-        spatial_grid,
-        spat_unit = NULL,
-        feat_type = NULL,
-        name = NULL,
-        verbose = TRUE,
-        set_defaults = TRUE) {
-    deprecate_soft("3.3.0", what = "set_spatialGrid()", with = "setSpatialGrid()")
+set_spatialGrid <- function(gobject,
+    spatial_grid,
+    spat_unit = NULL,
+    feat_type = NULL,
+    name = NULL,
+    verbose = TRUE,
+    set_defaults = TRUE) {
+    deprecate_soft("3.3.0", what = "set_spatialGrid()", 
+                with = "setSpatialGrid()")
 
     # 1. check input
     nospec_unit <- ifelse(is.null(spat_unit), yes = TRUE, no = FALSE)
@@ -3852,7 +4021,8 @@ set_spatialGrid <- function(
 
     # 3. if input is null, remove object
     if (is.null(spatial_grid)) {
-        if (isTRUE(verbose)) message("NULL passed to metadata.\n Removing specified metadata.")
+        if (isTRUE(verbose)) 
+            message("NULL passed to metadata.\n Removing specified metadata.")
         gobject@spatial_grid[[spat_unit]][[feat_type]][[name]] <- NULL
     }
 
@@ -3861,19 +4031,22 @@ set_spatialGrid <- function(
         spatial_grid <- read_s4_nesting(spatial_grid)
 
         # if(isTRUE(nospec_unit)) {
-        #   if(!is.na(slot(spatial_grid, 'spat_unit'))) spat_unit = slot(spatial_grid, 'spat_unit')
+        #   if(!is.na(slot(spatial_grid, 'spat_unit'))) 
+        #   spat_unit = slot(spatial_grid, 'spat_unit')
         #   else slot(spatial_grid, 'spat_unit') = spat_unit
         # } else {
         #   slot(spatial_grid, 'spat_unit') = spat_unit
         # }
         # if(isTRUE(nospec_feat)) {
-        #   if(!is.na(slot(spatial_grid, 'feat_type'))) feat_type = slot(spatial_grid, 'feat_type')
+        #   if(!is.na(slot(spatial_grid, 'feat_type'))) 
+        #   feat_type = slot(spatial_grid, 'feat_type')
         #   else slot(spatial_grid, 'feat_type') = feat_type
         # } else {
         #   slot(spatial_grid, 'feat_type') = feat_type
         # }
         # if(isTRUE(nospec_name)) {
-        #   if(!is.na(slot(spatial_grid, 'name'))) name = slot(spatial_grid, 'name')
+        #   if(!is.na(slot(spatial_grid, 'name'))) 
+        #   name = slot(spatial_grid, 'name')
         #   else slot(spatial_grid, 'name') = name
         # } else {
         #   slot(spatial_grid, 'name') = name
@@ -3884,19 +4057,23 @@ set_spatialGrid <- function(
 
     ## 5. check if specified name has already been used
     if (isTRUE(verbose)) {
-        potential_names <- names(slot(gobject, "spatial_grid")[[spat_unit]][[feat_type]])
+        potential_names <- names(slot(gobject, "spatial_grid"
+                                    )[[spat_unit]][[feat_type]])
         if (name %in% potential_names) {
-            wrap_msg('> "', name, '" already exists and will be replaced with new spatial grid \n')
+            wrap_msg('> "', name, 
+            '" already exists and will be replaced with new spatial grid \n')
         }
     }
 
 
     ## TODO: 2. check input for spatial grid
-    if (!inherits(spatial_grid, "spatialGridObj")) stop('spatial_grid to set must be S4 "spatialGridObj"\n')
+    if (!inherits(spatial_grid, "spatialGridObj")) 
+        stop('spatial_grid to set must be S4 "spatialGridObj"\n')
     silent <- validObject(spatial_grid) # Variable only used to hide TRUE prints
 
     ## 6. update and return giotto object
-    slot(gobject, "spatial_grid")[[spat_unit]][[feat_type]][[name]] <- spatial_grid
+    slot(gobject, "spatial_grid")[[spat_unit]][[feat_type]][[name]] <- 
+        spatial_grid
 
     return(gobject)
 }
@@ -3908,18 +4085,17 @@ set_spatialGrid <- function(
 #' @param spatial_grid spatial grid object
 #' @param name name of spatial grid
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family spatial grid data accessor functions
 #' @family functions to set data in giotto object
 #' @export
-setSpatialGrid <- function(
-        gobject,
-        spatial_grid,
-        spat_unit = NULL,
-        feat_type = NULL,
-        name = NULL,
-        verbose = TRUE,
-        set_defaults = TRUE) {
+setSpatialGrid <- function(gobject,
+    spatial_grid,
+    spat_unit = NULL,
+    feat_type = NULL,
+    name = NULL,
+    verbose = TRUE,
+    set_defaults = TRUE) {
     # Pass to internal function
     gobject <- set_spatialGrid(
         gobject = gobject,
@@ -3942,28 +4118,33 @@ setSpatialGrid <- function(
 #' @param gobject giotto object
 #' @param polygon_name name of polygons. Default "cell"
 #' @param polygon_overlap include polygon overlap information
-#' @param return_giottoPolygon (Defaults to FALSE) Return as giottoPolygon S4 object
+#' @param return_giottoPolygon (Defaults to FALSE) Return as giottoPolygon S4 
+#' object
 #' @param verbose be verbose
+#' @returns spatVector
 #' @family polygon info data accessor functions
 #' @family functions to get data from giotto object
 #' @export
-get_polygon_info <- function(
-        gobject,
-        polygon_name = NULL,
-        polygon_overlap = NULL,
-        return_giottoPolygon = FALSE,
-        verbose = TRUE) {
-    deprecate_soft("3.3.0", what = "get_polygon_info()", with = "getPolygonInfo()")
+get_polygon_info <- function(gobject,
+    polygon_name = NULL,
+    polygon_overlap = NULL,
+    return_giottoPolygon = FALSE,
+    verbose = TRUE) {
+    deprecate_soft("3.3.0", what = "get_polygon_info()", 
+                with = "getPolygonInfo()")
 
     potential_names <- names(slot(gobject, "spatial_info"))
-    if (is.null(potential_names)) stop("Giotto object contains no polygon information")
+    if (is.null(potential_names)) 
+        stop("Giotto object contains no polygon information")
 
     # If polygon_name is not given...
     if (is.null(polygon_name)) {
         if ("cell" %in% potential_names) {
-            polygon_name <- "cell" # Default to 'cell' as polygon_name if available
+            polygon_name <- "cell" 
+            # Default to 'cell' as polygon_name if available
         } else {
-            polygon_name <- potential_names[1] # Select 1st available name if 'cell' is missing
+            polygon_name <- potential_names[1] 
+            # Select 1st available name if 'cell' is missing
             if (isTRUE(verbose)) {
                 wrap_msg('No polygon information named "cell" discovered.
                  Selecting first available ("', polygon_name, '")')
@@ -3981,12 +4162,15 @@ get_polygon_info <- function(
         if (is.null(polygon_overlap)) {
             poly_info <- gobject@spatial_info[[polygon_name]]@spatVector
         } else {
-            potential_overlaps <- names(gobject@spatial_info[[polygon_name]]@overlaps)
+            potential_overlaps <- names(
+                gobject@spatial_info[[polygon_name]]@overlaps)
 
             if (!polygon_overlap %in% potential_overlaps) {
-                stop("There is no polygon overlap information with name ", polygon_overlap, "\n")
+                stop("There is no polygon overlap information with name ", 
+                    polygon_overlap, "\n")
             } else {
-                poly_info <- gobject@spatial_info[[polygon_name]]@overlaps[[polygon_overlap]]
+                poly_info <- gobject@spatial_info[[polygon_name
+                                                ]]@overlaps[[polygon_overlap]]
             }
         }
         return(poly_info)
@@ -4004,17 +4188,18 @@ get_polygon_info <- function(
 #' @param gobject giotto object
 #' @param polygon_name name of polygons. Default is "cell"
 #' @param polygon_overlap include polygon overlap information
-#' @param return_giottoPolygon (Defaults to FALSE) Return as giottoPolygon S4 object
+#' @param return_giottoPolygon (Defaults to FALSE) Return as giottoPolygon 
+#' S4 object
 #' @param verbose be verbose
+#' @returns spatVector
 #' @family polygon info data accessor functions
 #' @family functions to get data from giotto object
 #' @export
-getPolygonInfo <- function(
-        gobject = NULL,
-        polygon_name = NULL,
-        polygon_overlap = NULL,
-        return_giottoPolygon = FALSE,
-        verbose = TRUE) {
+getPolygonInfo <- function(gobject = NULL,
+    polygon_name = NULL,
+    polygon_overlap = NULL,
+    return_giottoPolygon = FALSE,
+    verbose = TRUE) {
     if (!inherits(gobject, "giotto")) {
         wrap_msg("Unable to get polygon spatVector from non-Giotto object.")
         stop(wrap_txt("Please provide a Giotto object to the gobject argument.",
@@ -4041,9 +4226,8 @@ getPolygonInfo <- function(
 #' @return list of giottoPolygon or SpatVector depending on return_giottoPolygon
 #' param
 #' @noRd
-get_polygon_info_list <- function(
-        gobject,
-        return_giottoPolygon = TRUE) {
+get_polygon_info_list <- function(gobject,
+    return_giottoPolygon = TRUE) {
     assert_giotto(gobject)
 
     data_list <- slot(gobject, "spatial_info")
@@ -4073,7 +4257,6 @@ get_polygon_info_list <- function(
 #' @param centroids_to_spatlocs if centroid information is discovered, whether
 #' to additionally set them as a set of spatial locations (default = FALSE)
 #' @param verbose be verbose
-#' @return giotto object
 #' @details Inputs can be provided as either single objects or named lists of
 #' objects. If the list is not named, then a generic name of the template
 #' 'cell_i' will be applied. \cr
@@ -4081,21 +4264,22 @@ get_polygon_info_list <- function(
 #' filepath. \cr
 #' For required formatting when reading tabular data or objects, see
 #' \code{\link{createGiottoPolygonsFromDfr}} details.
+#' @returns giotto object
 #' @family polygon info data accessor functions
 #' @family functions to set data in giotto object
 #' @export
-setPolygonInfo <- function(
-        gobject,
-        x,
-        name = "cell",
-        centroids_to_spatlocs = FALSE,
-        verbose = TRUE,
-        initialize = TRUE) {
+setPolygonInfo <- function(gobject,
+    x,
+    name = "cell",
+    centroids_to_spatlocs = FALSE,
+    verbose = TRUE,
+    initialize = TRUE) {
     # data.table vars
     poly_ID <- y <- NULL
 
     assert_giotto(gobject)
-    if (!methods::hasArg(x)) stop(wrap_txt("x param (data to be set) must be given"))
+    if (!methods::hasArg(x)) 
+        stop(wrap_txt("x param (data to be set) must be given"))
 
 
     # 1. determine user inputs
@@ -4114,7 +4298,8 @@ setPolygonInfo <- function(
             polygon_name = name,
             gpolygon = x,
             verbose = verbose,
-            initialize = !isTRUE(centroids_to_spatlocs) & initialize # delay so centroids can be added
+            initialize = !isTRUE(centroids_to_spatlocs) & 
+                initialize # delay so centroids can be added
         )
 
         # Attach centroids if found
@@ -4133,7 +4318,7 @@ setPolygonInfo <- function(
                     misc = NULL
                 )
 
-                ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+                ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
                 .external_accessor_spatloc <- list(
                     # set spatlocs 'spat_unit' using 'name' if it was EXPLICITLY
                     # supplied to setPolygonInfo
@@ -4149,7 +4334,7 @@ setPolygonInfo <- function(
                     set_defaults = FALSE,
                     initialize = initialize
                 )
-                ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+                ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             }
         }
         return(gobject)
@@ -4169,24 +4354,29 @@ setPolygonInfo <- function(
                 )
 
                 # Attach centroids if found
-                if (inherits(x[[obj_i]], "giottoPolygon") & isTRUE(centroids_to_spatlocs)) {
+                if (inherits(x[[obj_i]], "giottoPolygon") & 
+                    isTRUE(centroids_to_spatlocs)) {
                     if (!is.null(x[[obj_i]]@spatVectorCentroids)) {
                         centroids <- x[[obj_i]]@spatVectorCentroids
                         centroidsDT <- .spatvector_to_dt(centroids)
                         centroidsDT_loc <- centroidsDT[, .(poly_ID, x, y)]
-                        colnames(centroidsDT_loc) <- c("cell_ID", "sdimx", "sdimy")
+                        colnames(centroidsDT_loc) <- c(
+                            "cell_ID", "sdimx", "sdimy")
 
                         locsObj <- create_spat_locs_obj(
                             name = "raw",
                             coordinates = centroidsDT_loc,
-                            spat_unit = x[[obj_i]]@name, # tag same spat_unit as poly
-                            provenance = x[[obj_i]]@name, # TODO change this if polygons get prov
+                            spat_unit = x[[obj_i]]@name, 
+                            # tag same spat_unit as poly
+                            provenance = x[[obj_i]]@name,
+                            # TODO change this if polygons get prov
                             misc = initialize
                         )
 
-                        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+                        ### ### ### ### ### ### ### ### ### ### ### ### ### ###
                         .external_accessor_spatloc <- list(
-                            # set spatlocs 'spat_unit' using 'name' if it was EXPLICITLY
+                            # set spatlocs 'spat_unit' using 'name' if it 
+                            # was EXPLICITLY
                             # supplied to setPolygonInfo
                             # otherwise, set spatlocs 'spat_unit' as x@name
                             nospec_unit = nospec_name,
@@ -4200,7 +4390,7 @@ setPolygonInfo <- function(
                             set_defaults = FALSE,
                             initialize = initialize
                         )
-                        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+                        ### ### ### ### ### ### ### ### ### ### ### ### ### ###
                     }
                 }
             }
@@ -4224,38 +4414,40 @@ setPolygonInfo <- function(
 #' @name set_polygon_info
 #' @description Set giotto polygon spatVector
 #' @inheritParams data_access_params
-#' @param polygon_name name of polygons. Default "cell" (only used when gpolygon
-#' is length of 1)
+#' @param polygon_name name of polygons. Default 
+#' "cell" (only used when gpolygon is length of 1)
 #' @param gpolygon giottoPolygon object
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family polygon info data accessor functions
 #' @family functions to set data in giotto object
 #' @export
-set_polygon_info <- function(
-        gobject,
-        gpolygon,
-        polygon_name = "cell",
-        verbose = TRUE,
-        initialize = FALSE) {
-    deprecate_soft("3.3.0", what = "set_polygon_info()", with = "setPolygonInfo()")
+set_polygon_info <- function(gobject,
+    gpolygon,
+    polygon_name = "cell",
+    verbose = TRUE,
+    initialize = FALSE) {
+    deprecate_soft("3.3.0", what = "set_polygon_info()", 
+                with = "setPolygonInfo()")
 
     assert_giotto(gobject)
-    if (!methods::hasArg(gpolygon)) stop(wrap_txt("gpolygon param must be given"))
+    if (!methods::hasArg(gpolygon)) 
+        stop(wrap_txt("gpolygon param must be given"))
 
     # 0. stop if not native formats
     if (inherits(gpolygon, "list")) {
         if (!all(sapply(gpolygon, class) == "giottoPolygon")) {
-            stop(wrap_txt("If providing a list to internal setter, only lists of",
+            stop(wrap_txt("If providing a list to internal setter, only 
+                lists of",
                 "giottoPolygon objects are permitted",
                 errWidth = TRUE
             ))
         }
     }
     if (!inherits(gpolygon, c("giottoPolygon", "NULL", "list"))) {
-        stop(wrap_txt(deparse(substitute(gpolygon)), "is not a giottoPolygon (set),
-                  list of giottoPolygons (set),
-                  or NULL (remove)"))
+        stop(wrap_txt(deparse(substitute(gpolygon)), 
+                "is not a giottoPolygon (set), list of giottoPolygons (set),
+                or NULL (remove)"))
     }
 
     # 1. determine user input
@@ -4277,8 +4469,9 @@ set_polygon_info <- function(
 
     # 3.1 if input is NULL, remove object
     if (is.null(gpolygon)) {
-        if (isTRUE(verbose)) wrap_msg("NULL passed to gpolygon.
-                                 Removing specified polygon information")
+        if (isTRUE(verbose)) 
+            wrap_msg("NULL passed to gpolygon. Removing specified polygon 
+                    information")
         gobject@spatial_info[[name]] <- NULL
 
         # prune if empty
@@ -4298,11 +4491,13 @@ set_polygon_info <- function(
         # ensure list names are accurate
         gp_names <- names(gpolygon)
         if (is.null(gp_names)) {
-            stop(wrap_txt('if "gpolygon" is a list, then it must be a named list',
-                errWidth = TRUE
+            stop(wrap_txt('if "gpolygon" is a list, then it must be a named 
+                        list',
+                        errWidth = TRUE
             ))
         }
-        if (any(is.na(gp_names))) stop(wrap_txt('No NA values allowed in "gpolygon" list names'))
+        if (any(is.na(gp_names))) 
+            stop(wrap_txt('No NA values allowed in "gpolygon" list names'))
         dup_bool <- duplicated(gp_names)
         if (any(dup_bool)) {
             stop(wrap_txt(
@@ -4318,7 +4513,9 @@ set_polygon_info <- function(
             ## check if specified name has already been used
             potential_names <- names(gobject@spatial_info)
             if (gp_name %in% potential_names) {
-                if (verbose) wrap_msg('> "', gp_name, '" already exists and will be replaced with new giotto polygon \n')
+                if (verbose) 
+                    wrap_msg('> "', gp_name, '" already exists and will be 
+                            replaced with new giotto polygon \n')
             }
 
             # set items
@@ -4342,7 +4539,9 @@ set_polygon_info <- function(
     # 5. check if specified name has already been used
     potential_names <- names(gobject@spatial_info)
     if (name %in% potential_names) {
-        if (verbose) wrap_msg('> "', name, '" already exists and will be replaced with new giotto polygon \n')
+        if (verbose) 
+            wrap_msg('> "', name, '" already exists and will be replaced 
+                    with new giotto polygon \n')
     }
 
 
@@ -4373,16 +4572,17 @@ set_polygon_info <- function(
 #' @description Get giotto points spatVector
 #' @inheritParams data_access_params
 #' @param return_giottoPoints return as a giottoPoints object
+#' @returns giotto points spatVector
 #' @family feature info data accessor functions
 #' @family functions to get data from giotto object
 #' @export
-getFeatureInfo <- function(
-        gobject = gobject,
-        feat_type = NULL,
-        return_giottoPoints = FALSE,
-        set_defaults = TRUE) {
+getFeatureInfo <- function(gobject = gobject,
+    feat_type = NULL,
+    return_giottoPoints = FALSE,
+    set_defaults = TRUE) {
     if (!inherits(gobject, "giotto")) {
-        wrap_msg("Unable to get giotto points spatVector feature info from non-Giotto object.")
+        wrap_msg("Unable to get giotto points spatVector feature info from 
+                non-Giotto object.")
         stop(wrap_txt("Please provide a Giotto object to the gobject argument.",
             errWidth = TRUE
         ))
@@ -4399,19 +4599,19 @@ getFeatureInfo <- function(
 #' @title Get feature info
 #' @name get_feature_info
 #' @param return_giottoPoints return as a giottoPoints object
-#' @description Get giotto points spatVector
 #' @inheritParams data_access_params
+#' @description Get giotto points spatVector
+#' @returns a SpatVector (default) or giottoPoints object depending on value of
+#' return_giottoPoints
 #' @family feature info data accessor functions
 #' @family functions to get data from giotto object
-#' @return a SpatVector (default) or giottoPoints object depending on value of
-#' return_giottoPoints
 #' @export
-get_feature_info <- function(
-        gobject,
-        feat_type = NULL,
-        set_defaults = TRUE,
-        return_giottoPoints = FALSE) {
-    deprecate_soft("3.3.0", what = "get_feature_info()", with = "getFeatureInfo()")
+get_feature_info <- function(gobject,
+    feat_type = NULL,
+    set_defaults = TRUE,
+    return_giottoPoints = FALSE) {
+    deprecate_soft("3.3.0", what = "get_feature_info()", 
+                with = "getFeatureInfo()")
 
     assert_giotto(gobject)
 
@@ -4419,6 +4619,7 @@ get_feature_info <- function(
     if (isTRUE(set_defaults)) {
         feat_type <- set_default_feat_type(
             gobject = gobject,
+            spat_unit = NULL,
             feat_type = feat_type
         )
     }
@@ -4447,9 +4648,8 @@ get_feature_info <- function(
 #' @return list of giottoPoints or SpatVector depending on return_giottoPoints
 #' param
 #' @noRd
-get_feature_info_list <- function(
-        gobject,
-        return_giottoPoints = TRUE) {
+get_feature_info_list <- function(gobject,
+    return_giottoPoints = TRUE) {
     assert_giotto(gobject)
 
     data_list <- slot(gobject, "feat_info")
@@ -4474,18 +4674,18 @@ get_feature_info_list <- function(
 #' @param x giottoPoints object or list of giottoPoints to set. Passing NULL
 #' will remove the specified giottoPoints object from the giotto object
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family feature info data accessor functions
 #' @family functions to set data in giotto object
 #' @export
-setFeatureInfo <- function(
-        gobject,
-        x,
-        feat_type = NULL,
-        verbose = TRUE,
-        initialize = TRUE) {
+setFeatureInfo <- function(gobject,
+    x,
+    feat_type = NULL,
+    verbose = TRUE,
+    initialize = TRUE) {
     assert_giotto(gobject)
-    if (!methods::hasArg(x)) stop(wrap_txt("x param (data to set) must be given"))
+    if (!methods::hasArg(x)) 
+        stop(wrap_txt("x param (data to set) must be given"))
 
     # 1. Determine user inputs
     nospec_feat <- ifelse(is.null(feat_type), yes = TRUE, no = FALSE)
@@ -4494,7 +4694,8 @@ setFeatureInfo <- function(
 
 
     # Extra defaults: expression, feature_info, spat_info specific
-    default_feat <- if (is.null(gobject@expression_feat)) "rna" else gobject@expression_feat[[1L]]
+    default_feat <- if (is.null(gobject@expression_feat)) "rna" else 
+        gobject@expression_feat[[1L]]
 
 
     # NATIVE INPUT TYPES
@@ -4550,22 +4751,23 @@ setFeatureInfo <- function(
 #' @param gpoints giotto points object
 #' @param gpolygon typo do not use
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family feature info data accessor functions
 #' @family functions to set data in giotto object
 #' @export
-set_feature_info <- function(
-        gobject,
-        gpoints,
-        feat_type = NULL,
-        verbose = TRUE,
-        set_defaults = TRUE,
-        initialize = FALSE,
-        gpolygon = NULL) {
-    deprecate_soft("3.3.0", what = "set_feature_info()", with = "setFeatureInfo()")
+set_feature_info <- function(gobject,
+    gpoints,
+    feat_type = NULL,
+    verbose = TRUE,
+    set_defaults = TRUE,
+    initialize = FALSE,
+    gpolygon = NULL) {
+    deprecate_soft("3.3.0", what = "set_feature_info()", 
+                with = "setFeatureInfo()")
 
     assert_giotto(gobject)
-    if (!methods::hasArg(gpoints) & !methods::hasArg(gpolygon)) stop(wrap_txt("gpoints param must be given"))
+    if (!methods::hasArg(gpoints) & !methods::hasArg(gpolygon)) 
+        stop(wrap_txt("gpoints param must be given"))
 
     if (!is.null(gpolygon)) { # deprecation
         warning(wrap_txt("do not use gpolygon param. Use gpoints instead"))
@@ -4576,16 +4778,15 @@ set_feature_info <- function(
     # 0. stop if not native formats
     if (inherits(gpoints, "list")) {
         if (!all(sapply(gpoints, class) == "giottoPoints")) {
-            stop(wrap_txt("If providing a list to internal setter, only lists of",
-                "giottoPoints objects are permitted",
+            stop(wrap_txt("If providing a list to internal setter, only lists 
+                of", "giottoPoints objects are permitted",
                 errWidth = TRUE
             ))
         }
     }
     if (!inherits(gpoints, c("giottoPoints", "NULL", "list"))) {
         stop(wrap_txt(deparse(substitute(gpoints)), "is not giottoPoints (set),
-                  list of giottoPoints (set),
-                  or NULL (remove)"))
+                list of giottoPoints (set), or NULL (remove)"))
     }
 
 
@@ -4615,8 +4816,9 @@ set_feature_info <- function(
 
     # 3.1 if input is NULL, remove object
     if (is.null(gpoints)) {
-        if (isTRUE(verbose)) wrap_msg("NULL passed to gpoints.
-                                 Removing specified feature information.")
+        if (isTRUE(verbose)) 
+            wrap_msg("NULL passed to gpoints. Removing specified feature 
+                    information.")
         gobject@feat_info[[feat_type]] <- NULL
 
         # prune if empty
@@ -4636,11 +4838,13 @@ set_feature_info <- function(
         # ensure list names are accurate
         gp_names <- names(gpoints)
         if (is.null(gp_names)) {
-            stop(wrap_txt('If "gpoints" is a list, then it must be a named list',
-                errWidth = TRUE
+            stop(wrap_txt('If "gpoints" is a list, then it must be a named 
+                        list',
+                        errWidth = TRUE
             ))
         }
-        if (any(is.na(gp_names))) stop(wrap_txt('No NA values allowed in "gpoints" list names"'))
+        if (any(is.na(gp_names))) 
+            stop(wrap_txt('No NA values allowed in "gpoints" list names"'))
         dup_bool <- duplicated(gp_names)
         if (any(dup_bool)) {
             stop(wrap_txt(
@@ -4652,8 +4856,8 @@ set_feature_info <- function(
             featType(gpoints[[gp_name]]) <- gp_name
         }
 
-        # replacements warning already given during extract points list (external setter)
-        # remove items to replace
+        # replacements warning already given during extract points list 
+        # (external setter) remove items to replace
         for (gp_name in gp_names) {
             gobject@feat_info[[gp_name]] <- gpoints[[gp_name]]
         }
@@ -4674,7 +4878,9 @@ set_feature_info <- function(
     ## 5. check if specified name has already been used
     potential_names <- names(gobject@feat_info)
     if (feat_type %in% potential_names) {
-        if (isTRUE(verbose)) wrap_msg('> "', feat_type, '" already exists and will be replaced with new giotto points \n')
+        if (isTRUE(verbose)) 
+            wrap_msg('> "', feat_type, '" already exists and will be 
+                    replaced with new giotto points \n')
     }
 
     ## 6. update and return giotto object
@@ -4709,7 +4915,7 @@ set_feature_info <- function(
 #' @description Function to get a spatial enrichment data.table
 #' @inheritParams data_access_params
 #' @param enrichm_name name of spatial enrichment results. Default "DWLS"
-#' @return data.table with fractions
+#' @returns spatEnrObj or data.table with fractions
 #' @family spatial enrichment data accessor functions
 #' @family functions to get data from giotto object
 #' @export
@@ -4720,7 +4926,8 @@ get_spatial_enrichment <- function(gobject,
     output = c("spatEnrObj", "data.table"),
     copy_obj = TRUE,
     set_defaults = TRUE) {
-    deprecate_soft("3.3.0", what = "get_spatial_enrichment()", with = "getSpatialEnrichment()")
+    deprecate_soft("3.3.0", what = "get_spatial_enrichment()", 
+                with = "getSpatialEnrichment()")
 
     output <- match.arg(output, choices = c("spatEnrObj", "data.table"))
 
@@ -4738,15 +4945,17 @@ get_spatial_enrichment <- function(gobject,
     }
 
     # spatial locations
-    # if NULL (not given) and spatial locations have been added, then use first one
-    # if NULL (not given) and spatial locations have NOT been added, then keep NULL
+    # if NULL (not given) and spatial locations have been added, then 
+    # use first one if NULL (not given) and spatial locations have NOT been 
+    # added, then keep NULL
     if (is.null(enrichm_name)) {
         if (!is.null(gobject@spatial_enrichment)) {
             enrichm_name <- list_spatial_enrichments_names(gobject,
                 spat_unit = spat_unit,
                 feat_type = feat_type
             )[[1]]
-            # cat('No spatial locations have been selected, the first one -',spat_loc_name, '- will be used \n')
+            # cat('No spatial locations have been selected, the first 
+            # one -',spat_loc_name, '- will be used \n')
         } else {
             enrichm_name <- NULL
             cat("No spatial enrichment results have been found \n")
@@ -4768,7 +4977,8 @@ get_spatial_enrichment <- function(gobject,
     }
 
     if (enrichm_name %in% potential_names) {
-        enr_res <- gobject@spatial_enrichment[[spat_unit]][[feat_type]][[enrichm_name]]
+        enr_res <- gobject@spatial_enrichment[[spat_unit]][[feat_type
+                                                            ]][[enrichm_name]]
 
         if (isTRUE(copy_obj)) enr_res[] <- data.table::copy(enr_res[])
 
@@ -4778,7 +4988,8 @@ get_spatial_enrichment <- function(gobject,
             return(enr_res[])
         }
     } else {
-        stop("The spatial enrichment result with name ", "'", enrichm_name, "'", " can not be found \n")
+        stop("The spatial enrichment result with name ", "'", enrichm_name, 
+            "'", " can not be found \n")
     }
 }
 
@@ -4787,18 +4998,17 @@ get_spatial_enrichment <- function(gobject,
 #' @description Function to get a spatial enrichment data.table
 #' @inheritParams data_access_params
 #' @param name name of spatial enrichment results. Default "DWLS"
-#' @return data.table with fractions
+#' @returns spatEnrObj or data.table with fractions
 #' @family spatial enrichment data accessor functions
 #' @family functions to get data from giotto object
 #' @export
-getSpatialEnrichment <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        name = "DWLS",
-        output = c("spatEnrObj", "data.table"),
-        copy_obj = TRUE,
-        set_defaults = TRUE) {
+getSpatialEnrichment <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    name = "DWLS",
+    output = c("spatEnrObj", "data.table"),
+    copy_obj = TRUE,
+    set_defaults = TRUE) {
     # Pass to internal function
     enr_res <- get_spatial_enrichment(
         gobject = gobject,
@@ -4820,15 +5030,14 @@ getSpatialEnrichment <- function(
 #' @description Get all spatial enrichments for a specified spatial unit and
 #' feature type
 #' @keywords internal
-#' @return list of spatEnrObj or data.table depending on output param
+#' @returns list of spatEnrObj or data.table depending on output param
 #' @noRd
-get_spatial_enrichment_list <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        output = c("spatEnrObj", "data.table"),
-        copy_obj = TRUE,
-        set_defaults = TRUE) {
+get_spatial_enrichment_list <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    output = c("spatEnrObj", "data.table"),
+    copy_obj = TRUE,
+    set_defaults = TRUE) {
     assert_giotto(gobject)
 
     output <- match.arg(output, choices = c("spatEnrObj", "data.table"))
@@ -4874,27 +5083,29 @@ get_spatial_enrichment_list <- function(
 #' a specified set of spatial enrichment information from the gobject.
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family spatial enrichment data accessor functions
 #' @family functions to set data in giotto object
 #' @export
-setSpatialEnrichment <- function(
-        gobject,
-        x,
-        spat_unit = NULL,
-        feat_type = NULL,
-        name = "enrichment",
-        provenance = NULL,
-        verbose = TRUE,
-        initialize = TRUE) {
+setSpatialEnrichment <- function(gobject,
+    x,
+    spat_unit = NULL,
+    feat_type = NULL,
+    name = "enrichment",
+    provenance = NULL,
+    verbose = TRUE,
+    initialize = TRUE) {
     assert_giotto(gobject)
-    if (!methods::hasArg(x)) stop(wrap_txt("x param (data to set) must be given"))
+    if (!methods::hasArg(x)) 
+        stop(wrap_txt("x param (data to set) must be given"))
 
     # check hierarchical slots
     avail_ex <- list_expression(gobject)
     avail_sl <- list_spatial_locations(gobject)
-    if (is.null(avail_ex)) stop(wrap_txt("Add expression and spatial information first"))
-    if (is.null(avail_sl)) stop(wrap_txt("Add spatial location information first"))
+    if (is.null(avail_ex)) 
+        stop(wrap_txt("Add expression and spatial information first"))
+    if (is.null(avail_sl)) 
+        stop(wrap_txt("Add spatial location information first"))
 
     # 1. determine user inputs
     nospec_unit <- ifelse(is.null(spat_unit), yes = TRUE, no = FALSE)
@@ -4947,7 +5158,7 @@ setSpatialEnrichment <- function(
     }
     # catch
     stop(wrap_txt("Only spatEnrObj or lists of spatEnrObj accepted.
-                For raw or external data, please first use readSpatEnrichData()"))
+            For raw or external data, please first use readSpatEnrichData()"))
 }
 
 
@@ -4965,29 +5176,30 @@ setSpatialEnrichment <- function(
 #' @param spatenrichment spatial enrichment results
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family spatial enrichment data accessor functions
 #' @family functions to set data in giotto object
 #' @export
-set_spatial_enrichment <- function(
-        gobject,
-        spatenrichment,
-        spat_unit = NULL,
-        feat_type = NULL,
-        enrichm_name = "enrichment",
-        provenance = NULL,
-        verbose = TRUE,
-        set_defaults = TRUE,
-        initialize = FALSE) {
-    deprecate_soft("3.3.0", what = "set_spatial_enrichment()", with = "setSpatialEnrichment()")
+set_spatial_enrichment <- function(gobject,
+    spatenrichment,
+    spat_unit = NULL,
+    feat_type = NULL,
+    enrichm_name = "enrichment",
+    provenance = NULL,
+    verbose = TRUE,
+    set_defaults = TRUE,
+    initialize = FALSE) {
+    deprecate_soft("3.3.0", what = "set_spatial_enrichment()", 
+                with = "setSpatialEnrichment()")
 
     assert_giotto(gobject)
-    if (!methods::hasArg(spatenrichment)) stop(wrap_txt("spatenrichment param must be given"))
+    if (!methods::hasArg(spatenrichment)) 
+        stop(wrap_txt("spatenrichment param must be given"))
 
     # 0. stop if not native formats
     if (!inherits(spatenrichment, c("spatEnrObj", "NULL"))) {
-        stop(wrap_txt(deparse(substitute(spatenrichment)), "is not spatEnrObj (set).
-                  or NULL (remove)"))
+        stop(wrap_txt(deparse(substitute(spatenrichment)), 
+                    "is not spatEnrObj (set). or NULL (remove)"))
     }
 
     # 1. Check user input
@@ -5001,7 +5213,8 @@ set_spatial_enrichment <- function(
     } else {
         nospec_unit <- ifelse(is.null(spat_unit), yes = TRUE, no = FALSE)
         nospec_feat <- ifelse(is.null(feat_type), yes = TRUE, no = FALSE)
-        nospec_name <- ifelse(is.null(match.call()$enrichm_name), yes = TRUE, no = FALSE)
+        nospec_name <- ifelse(is.null(match.call()$enrichm_name), 
+                            yes = TRUE, no = FALSE)
     }
 
     # change var name to be compatible with read_S4_nesting()
@@ -5023,12 +5236,14 @@ set_spatial_enrichment <- function(
 
     # 3. Remove object if input is NULL
     if (is.null(spatenrichment)) {
-        if (isTRUE(verbose)) wrap_msg("NULL passed to spatenrichment.
-                                 Removing specified spatial enrichment.")
+        if (isTRUE(verbose)) 
+            wrap_msg("NULL passed to spatenrichment. Removing specified 
+                    spatial enrichment.")
         gobject@spatial_enrichment[[spat_unit]][[feat_type]][[name]] <- NULL
 
         # prune if empty
-        if (length(gobject@spatial_enrichment[[spat_unit]][[feat_type]]) == 0L) {
+        if (length(gobject@spatial_enrichment[[spat_unit]][[feat_type]]) == 0L)
+            {
             gobject@spatial_enrichment[[spat_unit]][[feat_type]] <- NULL
             if (length(gobject@spatial_enrichment[[spat_unit]]) == 0L) {
                 gobject@spatial_enrichment[[spat_unit]] <- NULL
@@ -5059,20 +5274,24 @@ set_spatial_enrichment <- function(
             feat_type = feat_type
         )
         if (name %in% potential_names) {
-            wrap_msg('> "', name, '" already exists and will be replaced with new spatial enrichment results')
+            wrap_msg('> "', name, 
+                    '" already exists and will be replaced with new spatial 
+                    enrichment results')
         }
     }
 
     # 6. update and return giotto object
     if (isTRUE(verbose) & isTRUE(call_from_external)) {
         wrap_msg(
-            "Setting spatial enrichment [", spatUnit(spatenrichment), "][", featType(spatenrichment), "] ",
+            "Setting spatial enrichment [", spatUnit(spatenrichment), "][", 
+            featType(spatenrichment), "] ",
             objName(spatenrichment),
             sep = ""
         )
     }
 
-    gobject@spatial_enrichment[[spat_unit]][[feat_type]][[name]] <- spatenrichment
+    gobject@spatial_enrichment[[spat_unit]][[feat_type]][[name]] <- 
+        spatenrichment
     if (isTRUE(initialize)) {
         return(initialize(gobject))
     } else {
@@ -5092,12 +5311,13 @@ set_spatial_enrichment <- function(
 #' @description Get a giottoImage from a giotto object
 #' @param gobject giotto object
 #' @param name name of giottoImage \code{\link{showGiottoImageNames}}
-#' @return a giottoImage
+#' @returns a giottoImage
 #' @keywords internal
-get_giottoImage_MG <- function(
-        gobject = NULL,
-        name = NULL) {
-    if (is.null(gobject)) stop("The giotto object holding the giottoImage needs to be provided \n")
+get_giottoImage_MG <- function(gobject = NULL,
+    name = NULL) {
+    if (is.null(gobject)) 
+        stop("The giotto object holding the giottoImage needs to be 
+            provided \n")
     g_image_names <- names(gobject@images)
     if (is.null(g_image_names)) stop("No giottoImages have been found \n")
 
@@ -5105,7 +5325,9 @@ get_giottoImage_MG <- function(
         name <- g_image_names[1]
     }
 
-    if (!name %in% g_image_names) stop(name, " was not found among the image names, see showGiottoImageNames()")
+    if (!name %in% g_image_names) 
+        stop(name, 
+            " was not found among the image names, see showGiottoImageNames()")
 
     g_image <- gobject@images[[name]]
 
@@ -5116,21 +5338,22 @@ get_giottoImage_MG <- function(
 
 #' @title Set \emph{magick}-based giotto \code{image}
 #' @name set_giottoImage_MG
-#' @description Set a giottoImage for a giotto object with no additional modifications
+#' @description Set a giottoImage for a giotto object with no additional 
+#' modifications
 #' @param gobject giotto object
 #' @param image_object a giottoImage object
 #' @param name name to assign giottoImage
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @keywords internal
-set_giottoImage_MG <- function(
-        gobject,
-        image_object,
-        name = NULL,
-        verbose = TRUE) {
+set_giottoImage_MG <- function(gobject,
+    image_object,
+    name = NULL,
+    verbose = TRUE) {
     # Check params
     if (is.null(gobject)) stop("gobject must be given \n")
-    if (is.null(image_object)) stop("image_object to be attached must be given \n")
+    if (is.null(image_object)) 
+        stop("image_object to be attached must be given \n")
 
     # Default to name present in image object name slot
     if (is.null(name)) name <- image_object@name
@@ -5139,7 +5362,9 @@ set_giottoImage_MG <- function(
     potential_names <- list_images_names(gobject = gobject, img_type = "image")
 
     if (verbose == TRUE) {
-        if (name %in% potential_names) wrap_msg('> "', name, '" already exists and will be replaced with new image object \n')
+        if (name %in% potential_names) 
+            wrap_msg('> "', name, 
+            '" already exists and will be replaced with new image object \n')
     }
 
     gobject@images[[name]] <- image_object
@@ -5158,20 +5383,24 @@ set_giottoImage_MG <- function(
 #' @description Set a giottoLargeImage from a giottoObject
 #' @param gobject giotto object
 #' @param name name of giottoLargeImage \code{\link{showGiottoImageNames}}
-#' @return a giottoLargeImage
+#' @returns a giottoLargeImage
 #' @keywords internal
-get_giottoLargeImage <- function(
-        gobject = NULL,
-        name = NULL) {
-    if (is.null(gobject)) stop("The giotto object holding the giottoLargeImage needs to be provided \n")
+get_giottoLargeImage <- function(gobject = NULL,
+    name = NULL) {
+    if (is.null(gobject)) 
+        stop("The giotto object holding the giottoLargeImage needs to be 
+            provided \n")
     g_image_names <- names(gobject@largeImages)
-    if (is.null(g_image_names)) stop("No giottoLargeImages have been found \n")
+    if (is.null(g_image_names)) 
+        stop("No giottoLargeImages have been found \n")
 
     if (is.null(name)) {
         name <- g_image_names[1]
     }
 
-    if (!name %in% g_image_names) stop(name, " was not found among the largeImage names. See showGiottoImageNames() \n")
+    if (!name %in% g_image_names) 
+        stop(name, " was not found among the largeImage names. 
+            See showGiottoImageNames() \n")
 
     g_imageL <- gobject@largeImages[[name]]
 
@@ -5183,30 +5412,34 @@ get_giottoLargeImage <- function(
 
 #' @title Set \emph{terra}-based giotto \code{largeImage}
 #' @name set_giottoLargeImage
-#' @description Set a giottoLargeImage for a giotto object with no additional modifications
+#' @description Set a giottoLargeImage for a giotto object with no 
+#' additional modifications
 #' @param gobject giotto object
 #' @param largeImage_object a giottoLargeImage object
 #' @param name name to assign giottoLargeImage
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @keywords internal
-set_giottoLargeImage <- function(
-        gobject,
-        largeImage_object,
-        name = NULL,
-        verbose = TRUE) {
+set_giottoLargeImage <- function(gobject,
+    largeImage_object,
+    name = NULL,
+    verbose = TRUE) {
     # Check params
     if (is.null(gobject)) stop("gobject must be given \n")
-    if (is.null(largeImage_object)) stop("largeImage_object to be attached must be given \n")
+    if (is.null(largeImage_object)) 
+        stop("largeImage_object to be attached must be given \n")
 
     # Default to name present in image object name slot
     if (is.null(name)) name <- largeImage_object@name
 
     # Find existing names
-    potential_names <- list_images_names(gobject = gobject, img_type = "largeImage")
+    potential_names <- list_images_names(gobject = gobject, 
+                                        img_type = "largeImage")
 
     if (verbose == TRUE) {
-        if (name %in% potential_names) wrap_msg('> "', name, '" already exists and will be replaced with new image object \n')
+        if (name %in% potential_names) 
+            wrap_msg('> "', name, 
+            '" already exists and will be replaced with new image object \n')
     }
 
     gobject@largeImages[[name]] <- largeImage_object
@@ -5226,15 +5459,15 @@ set_giottoLargeImage <- function(
 #' @param gobject giotto object
 #' @param image_type type of giotto image object. Either "image" or "largeImage"
 #' @param name name of a giotto image object \code{\link{showGiottoImageNames}}
-#' @return a giotto image object
+#' @returns a giotto image object
 #' @family image data accessor functions
 #' @family functions to get data from giotto object
 #' @export
-get_giottoImage <- function(
-        gobject = NULL,
-        image_type = c("image", "largeImage"),
-        name = NULL) {
-    deprecate_soft("3.3.0", what = "get_giottoImage()", with = "getGiottoImage()")
+get_giottoImage <- function(gobject = NULL,
+    image_type = c("image", "largeImage"),
+    name = NULL) {
+    deprecate_soft("3.3.0", what = "get_giottoImage()", 
+                with = "getGiottoImage()")
 
     # Check image type
     image_type <- match.arg(image_type, choices = c("image", "largeImage"))
@@ -5261,14 +5494,13 @@ get_giottoImage <- function(
 #' @param gobject giotto object
 #' @param image_type type of giotto image object. Either "image" or "largeImage"
 #' @param name name of a giotto image object \code{\link{showGiottoImageNames}}
-#' @return a giotto image object
+#' @returns a giotto image object
 #' @family image data accessor functions
 #' @family functions to get data from giotto object
 #' @export
-getGiottoImage <- function(
-        gobject = NULL,
-        image_type = c("image", "largeImage"),
-        name = NULL) {
+getGiottoImage <- function(gobject = NULL,
+    image_type = c("image", "largeImage"),
+    name = NULL) {
     if (!inherits(gobject, "giotto")) {
         wrap_msg("Unable to get Giotto Image from non-Giotto object.")
         stop(wrap_txt("Please provide a Giotto object to the gobject argument.",
@@ -5293,9 +5525,8 @@ getGiottoImage <- function(
 #' @description Get list of all giottoImages
 #' @keywords internal
 #' @noRd
-get_giotto_image_list <- function(
-        gobject,
-        image_type = c("image", "largeImage")) {
+get_giotto_image_list <- function(gobject,
+    image_type = c("image", "largeImage")) {
     assert_giotto(gobject)
 
     image_type <- match.arg(image_type, choices = c("image", "largeImage"))
@@ -5323,29 +5554,30 @@ get_giotto_image_list <- function(
 #' @title Set giotto image object
 #' @name set_giottoImage
 #' @description Directly attach a giotto image to giotto object
-#' @details \emph{\strong{Use with care!}} This function directly attaches giotto image
-#'   objects to the gobject without further modifications of spatial positioning values
-#'   within the image object that are generally needed in order for them to
-#'   plot in the correct location relative to the other modalities of spatial data. \cr
-#'   For the more general-purpose method of attaching image objects, see \code{\link{addGiottoImage}}
+#' @details \emph{\strong{Use with care!}} This function directly attaches 
+#' giotto image objects to the gobject without further modifications of 
+#' spatial positioning values within the image object that are generally 
+#' needed in order for them to plot in the correct location relative to the 
+#' other modalities of spatial data. \cr For the more general-purpose method 
+#' of attaching image objects, see \code{\link{addGiottoImage}}
 #' @param gobject giotto object
 #' @param image giotto image object to be attached without modification to the
-#'   giotto object
+#'  giotto object
 #' @param image_type type of giotto image object. Either "image" or "largeImage"
 #' @param name name of giotto image object
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family image data accessor functions
 #' @family functions to set data in giotto object
 #' @seealso \code{\link{addGiottoImage}}
 #' @export
-set_giottoImage <- function(
-        gobject = NULL,
-        image = NULL,
-        image_type = NULL,
-        name = NULL,
-        verbose = TRUE) {
-    deprecate_soft("3.3.0", what = "set_giottoImage()", with = "setGiottoImage()")
+set_giottoImage <- function(gobject = NULL,
+    image = NULL,
+    image_type = NULL,
+    name = NULL,
+    verbose = TRUE) {
+    deprecate_soft("3.3.0", what = "set_giottoImage()", 
+                with = "setGiottoImage()")
 
     # Check image type
     image_type <- match.arg(image_type, choices = c("image", "largeImage"))
@@ -5373,38 +5605,41 @@ set_giottoImage <- function(
 #' @title Set giotto image object
 #' @name setGiottoImage
 #' @description Directly attach a giotto image to giotto object
-#' @details \emph{\strong{Use with care!}} This function directly attaches giotto image
-#'   objects to the gobject without further modifications of spatial positioning values
-#'   within the image object that are generally needed in order for them to
-#'   plot in the correct location relative to the other modalities of spatial data. \cr
-#'   For the more general-purpose method of attaching image objects, see \code{\link{addGiottoImage}}
+#' @details \emph{\strong{Use with care!}} This function directly attaches 
+#' giotto image objects to the gobject without further modifications of 
+#' spatial positioning values within the image object that are generally 
+#' needed in order for them to plot in the correct location relative to the 
+#' other modalities of spatial data. \cr For the more general-purpose method 
+#' of attaching image objects, see \code{\link{addGiottoImage}}
 #' @param gobject giotto object
 #' @param image giotto image object to be attached without modification to the
-#'   giotto object
+#' giotto object
 #' @param image_type type of giotto image object. Either "image" or "largeImage"
 #' @param name name of giotto image object
 #' @param verbose be verbose
-#' @return giotto object
+#' @returns giotto object
 #' @family image data accessor functions
 #' @family functions to set data in giotto object
 #' @seealso \code{\link{addGiottoImage}}
 #' @export
-setGiottoImage <- function(
-        gobject = NULL,
-        image = NULL,
-        image_type = NULL,
-        name = NULL,
-        verbose = TRUE) {
+setGiottoImage <- function(gobject = NULL,
+    image = NULL,
+    image_type = NULL,
+    name = NULL,
+    verbose = TRUE) {
     if (!inherits(gobject, "giotto")) {
         wrap_msg("Unable to set Giotto Image to non-Giotto object.")
         stop(wrap_txt("Please provide a Giotto object to the gobject argument.",
             errWidth = TRUE
         ))
     } else if (is.null(image)) {
-        wrap_msg("Warning: image argument set to NULL. Replacing current image slot with NULL will remove the image.")
+        wrap_msg("Warning: image argument set to NULL. Replacing current image 
+                slot with NULL will remove the image.")
     } else if (!inherits(image, c("giottoImage", "giottoLargeImage"))) {
-        wrap_msg("Unable to set non-giottoImage objects. Please ensure a giottoImage or giottoLargeImage is provided to this function.")
-        wrap_msg("See createGiottoImage or createGiottoLargeImage for more details.")
+        wrap_msg("Unable to set non-giottoImage objects. Please ensure a 
+                giottoImage or giottoLargeImage is provided to this function.")
+        wrap_msg("See createGiottoImage or createGiottoLargeImage for 
+                more details.")
         stop(wrap_txt("Unable to set non-giottoImage object.",
             errWidth = TRUE
         ))

@@ -15,6 +15,7 @@
 #' @param x object
 #' @param y any object that has a SpatExtent or returns a SpatExtent
 #' @param \dots additional params to pass to terra::crop
+#' @returns SpatRaster
 NULL
 
 
@@ -47,25 +48,31 @@ setMethod("crop", signature("giottoLargeImage"), function(x, y, ...) {
 #' @param xmin,xmax,ymin,ymax only used if DT = TRUE. Set extent bounds
 #' independently
 #' @export
-setMethod("crop", signature("giottoPoints"), function(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL, ...) {
+setMethod("crop", signature("giottoPoints"), 
+        function(x, y, DT = TRUE, xmin = NULL, xmax = NULL, 
+                ymin = NULL, ymax = NULL, ...) {
     checkmate::assert_logical(DT)
     if (DT) {
         # converting to DT, subsetting, then regeneration of SpatVector with vect()
         # is currently faster than using terra::crop() as of 9/21/23
         missing_y <- missing(y)
         if (missing_y) y <- NULL # make easier to pass as a param downstream
-        n_single_bounds <- 4 - sum(sapply(list(xmin, xmax, ymin, ymax), is.null))
+        n_single_bounds <- 4 - sum(
+            sapply(list(xmin, xmax, ymin, ymax), is.null))
 
         # 1. get final crop bounds (numeric vector of xmin, xmax, ymin, ymax)
-        b <- .determine_crop_bounds(x, y, missing_y, n_single_bounds, xmin, xmax, ymin, ymax)
+        b <- .determine_crop_bounds(
+            x, y, missing_y, n_single_bounds, xmin, xmax, ymin, ymax)
 
         # 2. convert to DT
         sv <- x@spatVector
         spatDT <- as.data.table(sv, geom = "XY")
 
         # 3. spatial subset then vect() to SpatVector again
-        sub_idx <- spatDT[, which(x >= b[[1]] & x <= b[2] & y >= b[3] & y <= b[4])]
-        if (length(sub_idx) == 0L) warning("crop region is empty", call. = FALSE)
+        sub_idx <- spatDT[, 
+                        which(x >= b[[1]] & x <= b[2] & y >= b[3] & y <= b[4])]
+        if (length(sub_idx) == 0L) 
+            warning("crop region is empty", call. = FALSE)
 
         # 4. update x
         x@spatVector <- sv[sub_idx]
@@ -91,18 +98,22 @@ setMethod("crop", signature("giottoPoints"), function(x, y, DT = TRUE, xmin = NU
 #' @param xmin,xmax,ymin,ymax only used if DT = TRUE. Set extent bounds
 #' independently
 #' @export
-setMethod("crop", signature("giottoPolygon"), function(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL, ...) {
+setMethod("crop", signature("giottoPolygon"), 
+        function(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, 
+                ymax = NULL, ...) {
     # A. spatVector cropping
     checkmate::assert_logical(DT)
     if (DT) {
-        # converting to DT, subsetting, then regeneration of SpatVector with vect()
-        # is currently faster than using terra::crop() as of 9/21/23
+        # converting to DT, subsetting, then regeneration of SpatVector with 
+        # vect() is currently faster than using terra::crop() as of 9/21/23
         missing_y <- missing(y)
         if (missing_y) y <- NULL # make easier to pass as a param downstream
-        n_single_bounds <- 4 - sum(sapply(list(xmin, xmax, ymin, ymax), is.null))
+        n_single_bounds <- 4 - sum(
+            sapply(list(xmin, xmax, ymin, ymax), is.null))
 
         # 1. get final crop bounds (numeric vector of xmin, xmax, ymin, ymax)
-        b <- .determine_crop_bounds(x, y, missing_y, n_single_bounds, xmin, xmax, ymin, ymax)
+        b <- .determine_crop_bounds(
+            x, y, missing_y, n_single_bounds, xmin, xmax, ymin, ymax)
 
         # 2. convert to DT
         sv <- x@spatVectorCentroids
@@ -113,8 +124,10 @@ setMethod("crop", signature("giottoPolygon"), function(x, y, DT = TRUE, xmin = N
         spatDT <- as.data.table(sv, geom = "XY")
 
         # 3. get subset indices
-        sub_idx <- spatDT[, which(x >= b[[1]] & x <= b[2] & y >= b[3] & y <= b[4])]
-        if (length(sub_idx) == 0L) warning("crop region is empty", call. = FALSE)
+        sub_idx <- spatDT[, 
+                        which(x >= b[[1]] & x <= b[2] & y >= b[3] & y <= b[4])]
+        if (length(sub_idx) == 0L) 
+            warning("crop region is empty", call. = FALSE)
 
         # 4. update x
         x@spatVector <- x@spatVector[sub_idx]
@@ -142,7 +155,8 @@ setMethod("crop", signature("giottoPolygon"), function(x, y, DT = TRUE, xmin = N
     # iterate through all overlaps, removing cell_ids that were removed in the
     # crop.
     for (feat in names(x@overlaps)) {
-        cell_id_bool <- terra::as.list(x@overlaps[[feat]])$poly_ID %in% x@unique_ID_cache
+        cell_id_bool <- terra::as.list(
+            x@overlaps[[feat]])$poly_ID %in% x@unique_ID_cache
         x@overlaps[[feat]] <- x@overlaps[[feat]][cell_id_bool]
     }
 
@@ -162,13 +176,16 @@ setMethod("crop", signature("giottoPolygon"), function(x, y, DT = TRUE, xmin = N
 #
 # returns a numeric vector of the 4 bounds in the order of:
 #   xmin, xmax, ymin, ymax
-.determine_crop_bounds <- function(x, y, missing_y, n_single_bounds, xmin, xmax, ymin, ymax) {
+.determine_crop_bounds <- function(x, y, missing_y, n_single_bounds, 
+                                xmin, xmax, ymin, ymax) {
     # check cropping params
     # ONLY y OR the single spat bounds can be used at any one time
     if ((missing_y && n_single_bounds == 0) ||
         (!missing_y && n_single_bounds > 0)) {
-        stop(wrap_txt("Crop bounds must be supplied through either a SpatExtent passed to 'y'
-                    or single numerical bounds passed to one or more of 'xmin','xmax', 'ymin', 'ymax'"))
+        stop(wrap_txt("Crop bounds must be supplied through either a 
+                    SpatExtent passed to 'y'
+                    or single numerical bounds passed to one or more of 
+                    'xmin','xmax', 'ymin', 'ymax'"))
     }
 
     # Get full set of cropping bounds
@@ -176,7 +193,8 @@ setMethod("crop", signature("giottoPolygon"), function(x, y, DT = TRUE, xmin = N
         # if y is available, use y values directly.
         # only the extent of y is usable for the DT method
         if (!inherits(y, "SpatExtent")) {
-            warning(wrap_txt("Only the extent of y is used when cropping with DT = TRUE"))
+            warning(wrap_txt("Only the extent of y is used when cropping with 
+                            DT = TRUE"))
             y <- ext(y)
         }
 

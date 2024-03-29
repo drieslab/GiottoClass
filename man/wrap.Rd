@@ -26,6 +26,9 @@
 \arguments{
 \item{x}{giottoPolygon or giottoPoints}
 }
+\value{
+wrapped giottoPolygon or giottoPoints
+}
 \description{
 Extension of wrap methods from terra for Giotto's terra-based S4
 objects. Allows pointer information to be packaged into memory so that it can

@@ -21,15 +21,20 @@ getSpatialNetwork(
 
 \item{name}{name of spatial network}
 
-\item{output}{object type to return as. Options: 'spatialNetworkObj' (default),
+\item{output}{object type to return as. Options:
+'spatialNetworkObj' (default),
 'networkDT' and 'networkDT_before_filter' for data.table outputs.}
 
 \item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
 expression and spat_info are not expected to exist.}
 
-\item{copy_obj}{whether to copy/duplicate when getting the object (default = TRUE)}
+\item{copy_obj}{whether to copy/duplicate when getting the
+object (default = TRUE)}
 
 \item{verbose}{be verbose}
+}
+\value{
+spatialNetworkObj of data.table
 }
 \description{
 Function to get a spatial network

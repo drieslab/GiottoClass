@@ -12,6 +12,9 @@
 \item{env}{name of the environment into which the python
 package should be installed.}
 }
+\value{
+character or NULL
+}
 \description{
 Install Python Package with Reticulate
 }

@@ -18,8 +18,9 @@ set_cell_metadata(
 \arguments{
 \item{gobject}{giotto object}
 
-\item{metadata}{cellMetaObj or data.table containing cell metadata. Setting NULL will remove
-the object. Passing 'initialize' will reset the object.}
+\item{metadata}{cellMetaObj or data.table containing cell metadata.
+Setting NULL will remove the object. Passing 'initialize' will reset
+the object.}
 
 \item{spat_unit}{spatial unit (e.g. "cell")}
 

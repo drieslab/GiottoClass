@@ -29,6 +29,9 @@
 \arguments{
 \item{x}{object to be transposed}
 }
+\value{
+transposed object
+}
 \description{
 Transpose
 }

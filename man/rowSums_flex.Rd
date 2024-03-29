@@ -9,6 +9,9 @@ rowSums_flex(mymatrix)
 \arguments{
 \item{mymatrix}{matrix to use}
 }
+\value{
+numeric
+}
 \description{
 rowSums_flex
 }

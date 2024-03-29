@@ -5,11 +5,16 @@
 \alias{giottoImage-class}
 \alias{giottoImage}
 \title{S4 giottoImage Class}
+\value{
+giottoImage
+}
 \description{
-Framework of giotto object to store and work with spatial expression data
+Framework of giotto object to store and work with spatial
+expression data
 }
 \details{
-[\strong{mg_object}] Core object is any image that can be read by the magick package
+[\strong{mg_object}] Core object is any image that can be read by the
+magick package
 
 [\strong{boundaries}] Boundary adjustments can be used to manually or
 automatically through a script adjust the image with the spatial data.

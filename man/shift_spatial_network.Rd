@@ -17,6 +17,9 @@ shift_spatial_network(spatnet, dx = 0, dy = 0, dz = 0, copy_obj = TRUE)
 
 \item{copy_obj}{copy/duplicate object (default = TRUE)}
 }
+\value{
+spatial network
+}
 \description{
 Shift spatial network coordinates
 }

@@ -20,6 +20,9 @@ readSpatNetData(
 
 \item{verbose}{be verbose}
 }
+\value{
+spatialNetworkObj
+}
 \description{
 read spatial networks data from list
 }

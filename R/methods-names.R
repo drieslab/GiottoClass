@@ -14,6 +14,7 @@ NULL
 #' @description
 #' Retrieve or set the dimnames of an object
 #' @param x object
+#' @returns character
 NULL
 
 #' @rdname row-plus-colnames-generic

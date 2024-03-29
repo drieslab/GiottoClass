@@ -14,6 +14,9 @@
   ...
 )
 }
+\value{
+spatial Delaunay network with RTriangle
+}
 \description{
 Create a spatial Delaunay network with RTriangle
 }

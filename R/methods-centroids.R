@@ -10,6 +10,7 @@ NULL
 #' @details For giottoPolygon, if centroids already exist, pulls from
 #' \code{spatVectorCentroids} slot. Otherwise, generates from
 #' \code{spatVector} slot de novo
+#' @returns spatVectorCentroids or spatVector
 NULL
 # ---------------------------------------------------------------- #
 
