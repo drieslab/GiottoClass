@@ -4,7 +4,7 @@
 #' @name .do_gpoly
 #' @description giottoPolygon objects carry 3 pieces of spatial information.
 #' The polygons, their centroids, and the polygon overlapped features. All of
-#' these need to be updated when spatial manipulations are applied. This 
+#' these need to be updated when spatial manipulations are applied. This
 #' function simplifies performing functions on all SpatVector-based slots.
 #' @param x giottoPolygon
 #' @param what a call to do
@@ -20,7 +20,7 @@
     if (!is.null(x@overlaps)) {
         x@overlaps <- lapply(x@overlaps, function(sv) {
             spatial_classes <- c(
-                "SpatVector", "sf", "SpatialPolygonsDataFrame", 
+                "SpatVector", "sf", "SpatialPolygonsDataFrame",
                 "SpatialPointsDataFrame", "stars"
             )
             if (inherits(sv, spatial_classes)) {
@@ -45,113 +45,49 @@
 
 #' @title Identify background range polygons
 #' @name .identify_background_range_polygons
-#' @description function to remove background polygon based on largest range
+#' @description function to remove background polygon by comparing individual
+#' polygon vertex xy ranges against the overall `SpatVector` extent. Each
+#' `SpatVector` that this function is run on MUST contain only those polygons
+#' that were generated as part of the same FOV. This is because the individual
+#' polygons are compared against the overall extent which is assumed to be
+#' roughly that of the original mask image.
+#' @param spatVector terra polygon spatvector
+#' @param threshold if a polygon's x AND y range exceeds this fraction of the
+#' overall `SpatVector` extent, it will be flagged for removal.
+#' @examples
+#' sv <- GiottoData::loadSubObjectMini("giottoPolygon")[]
+#'
+#' # should not find anything
+#' .identify_background_range_polygons(sv, threshold = 0.9)
+#'
+#' .identify_background_range_polygons(sv, threshold = 0.03)
 #' @keywords internal
-#' @returns giottoPolygon
-.identify_background_range_polygons <- function(spatVector) {
+#' @returns A character vector of polygon IDs of variable length (but usually
+#' only either length 0 i.e. no background poly to remove, or 1, being the
+#' background poly to remove) if used with a correct threshold.
+.identify_background_range_polygons <- function(spatVector, threshold = 0.9) {
     # define for data.table
     x <- y <- geom <- V1 <- NULL
+
+    xythresholds <- range(terra::ext(spatVector)) * threshold
 
     # identify polygon with the largest average range for x and y
     gDT <- data.table::as.data.table(terra::geom(spatVector))
 
-    range_geom_x <- gDT[, max(x) - min(x), by = geom]
-    range_geom_y <- gDT[, max(y) - min(y), by = geom]
-    range_geom <- rbind(range_geom_x, range_geom_y)
-    range_geom <- range_geom[, mean(V1), by = geom]
-    data.table::setorder(range_geom, -V1)
+    range_geom_x <- gDT[, diff(range(x)), by = geom]
+    range_geom_y <- gDT[, diff(range(y)), by = geom]
+    xbool <- range_geom_x[, V1 > xythresholds[["x"]]]
+    ybool <- range_geom_y[, V1 > xythresholds[["y"]]]
+    bool <- xbool & ybool
 
     # get original mask id for identified 'background' polygon
-    backgr_polygon_id <- range_geom[1, ][["geom"]]
     values <- terra::values(spatVector)
-    poly_id <- values[backgr_polygon_id, 1]
+    poly_id <- values[bool, "poly_ID"]
 
     return(poly_id)
 }
 
 
-# TODO not used
-
-#' @title Create segmentation polygons
-#' @name .create_segm_polygons
-#' @description creates giotto polygons from segmentation mask data
-#' @returns giotto polygon
-#' @keywords internal
-.create_segm_polygons <- function(maskfile,
-    name = "cell",
-    poly_IDs = NULL,
-    flip_vertical = TRUE,
-    shift_vertical_step = TRUE,
-    flip_horizontal = TRUE,
-    shift_horizontal_step = TRUE,
-    remove_background_polygon = FALSE) {
-    if (!file.exists(maskfile)) {
-        stop("path : ", maskfile, " does not exist \n")
-    }
-
-    terra_rast <- .create_terra_spatraster(maskfile)
-    rast_dimensions <- dim(terra_rast)
-
-    terra_polygon <- terra::as.polygons(x = terra_rast, value = TRUE)
-    names(terra_polygon) <- "mask"
-
-
-    ## flip axes ##
-    if (flip_vertical == TRUE) {
-        terra_polygon <- terra::flip(terra_polygon, direction = "vertical")
-    }
-
-    if (flip_horizontal == TRUE) {
-        terra_polygon <- terra::flip(terra_polygon, direction = "horizontal")
-    }
-
-    ## shift values ##
-    if (shift_vertical_step == TRUE) {
-        shift_vertical_step <- rast_dimensions[2]
-    } else if (is.numeric(shift_vertical_step)) {
-        shift_vertical_step <- shift_vertical_step
-    } else {
-        shift_vertical_step <- 0
-    }
-    if (shift_horizontal_step == TRUE) {
-        shift_horizontal_step <- rast_dimensions[1]
-    } else if (is.numeric(shift_horizontal_step)) {
-        shift_horizontal_step <- shift_horizontal_step
-    } else {
-        shift_horizontal_step <- 0
-    }
-
-    terra_polygon <- terra::shift(terra_polygon,
-        dx = shift_horizontal_step,
-        dy = shift_vertical_step
-    )
-
-    # remove background polygon
-    if (remove_background_polygon == TRUE) {
-        mask_id <- .identify_background_range_polygons(terra_polygon)
-        terra_polygon <- terra::subset(x = terra_polygon, 
-                                    terra_polygon[["mask"]] != mask_id)
-    }
-
-    # provide own cell_ID name
-    if (!is.null(poly_IDs)) {
-        if (length(poly_IDs) != nrow(terra::values(terra_polygon))) {
-            stop("length poly_IDs does not equal number of found polygons \n")
-        }
-        terra_polygon$poly_ID <- poly_IDs
-    } else {
-        terra_polygon$poly_ID <- paste0(name, "_", 
-                                    seq_len(nrow(terra::values(terra_polygon))))
-    }
-
-
-    g_polygon <- create_giotto_polygon_object(
-        name = name,
-        spatVector = terra_polygon,
-        spatVectorCentroids = NULL
-    )
-    return(g_polygon)
-}
 
 
 #' @title Calculate polygon centroids
@@ -198,7 +134,7 @@
 
     uniq_geom_vec <- seq_len(total_geoms)
     names(uniq_geom_vec) <- unique(tokeepDT$geom)
-    tokeepDT[, geom := uniq_geom_vec[[as.character(geom)]], 
+    tokeepDT[, geom := uniq_geom_vec[[as.character(geom)]],
             by = seq_len(nrow(tokeepDT))]
 
     new_list <- list()
@@ -258,7 +194,7 @@
 #' gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
 #' groups <- data.table::data.table(
 #'     poly_ID = gpoly$poly_ID,
-#'     group_ID = sort(rep(LETTERS[seq_len(5)], length.out = nrow(gpoly))) 
+#'     group_ID = sort(rep(LETTERS[seq_len(5)], length.out = nrow(gpoly)))
 #'     # make 5 groups
 #' )
 #' multi_gp <- combineToMultiPolygon(gpoly, groups)
@@ -357,7 +293,7 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
     }
 
     # Spline the x and y coordinates.
-    data.spline <- stats::spline(seq_len(n + 2 * k), data[, 1], 
+    data.spline <- stats::spline(seq_len(n + 2 * k), data[, 1],
                                 n = vertices, ...)
     x <- data.spline$x
     x1 <- data.spline$y
@@ -424,7 +360,7 @@ smoothGiottoPolygons <- function(gpolygon,
     # add other columns back
     comb_res <- data.table::merge.data.table(
         comb_res, other_values_uniq_dt, by = "geom")
-    comb_res <- comb_res[, 
+    comb_res <- comb_res[,
             c("geom", "part", "x1", "x2", "hole", other_values), with = FALSE]
     colnames(comb_res)[3:4] <- c("x", "y")
 
@@ -463,9 +399,9 @@ smoothGiottoPolygons <- function(gpolygon,
 
 #' @title Create terra spatvector object from a data.frame
 #' @name .create_spatvector_object_from_dfr
-#' @description create terra spatvector from a data.frame where cols 1 and 2 
-#' must be x and y coordinates respectively. Additional columns are set as 
-#' attributes to the points where the first additional (col 3) should be the 
+#' @description create terra spatvector from a data.frame where cols 1 and 2
+#' must be x and y coordinates respectively. Additional columns are set as
+#' attributes to the points where the first additional (col 3) should be the
 #' feat_ID.
 #' @param x data.frame object
 #' @param x_colname column name for x-coordinates
@@ -483,19 +419,19 @@ smoothGiottoPolygons <- function(gpolygon,
     x <- data.table::as.data.table(x)
 
     # MANUAL OPTION
-    # user has defined 3 columns to be used as x-coordinates, y-coordinates 
+    # user has defined 3 columns to be used as x-coordinates, y-coordinates
     # and feature ids
 
     # check if user selected a name for one of the columns
     if (!is.null(c(x_colname, y_colname, feat_ID_colname))) {
         # stop if one or more column names are missing
         if (list(NULL) %in% list(x_colname, y_colname, feat_ID_colname)) {
-            stop("For manual selection of x, y, and feat_ID columns all 
+            stop("For manual selection of x, y, and feat_ID columns all
                 column name need to be specified.\n")
         } else {
-            if (!all(c(x_colname, y_colname, feat_ID_colname) %in% 
+            if (!all(c(x_colname, y_colname, feat_ID_colname) %in%
                     colnames(x))) {
-                stop("Not all column names were found in the data.frame or 
+                stop("Not all column names were found in the data.frame or
                     data.table.\n")
             }
 
@@ -508,7 +444,7 @@ smoothGiottoPolygons <- function(gpolygon,
 
         # data.frame like object needs to have 2 coordinate columns and
         # at least one other column as the feat_ID
-        if (ncol(x) < 3) stop("At minimum, columns for xy coordinates and 
+        if (ncol(x) < 3) stop("At minimum, columns for xy coordinates and
                             feature ID are needed.\n")
         col_classes <- sapply(x, class)
         ## find feat_ID as either first character col or named column
@@ -551,9 +487,9 @@ smoothGiottoPolygons <- function(gpolygon,
     }
 
     ## message and force data type
-    if (isTRUE(verbose)) 
-        message(paste0('  Selecting col "', 
-                colnames(x[, feat_ID_col, with = FALSE]), 
+    if (isTRUE(verbose))
+        message(paste0('  Selecting col "',
+                colnames(x[, feat_ID_col, with = FALSE]),
                 '" as feat_ID column'))
     colnames(x)[feat_ID_col] <- "feat_ID"
     if (!inherits(x$feat_ID, "character")) {
@@ -561,10 +497,10 @@ smoothGiottoPolygons <- function(gpolygon,
     }
 
 
-    if (isTRUE(verbose)) 
-        message(paste0('  Selecting cols "', 
-                    colnames(x[, x_col, with = FALSE]), '" and "', 
-                    colnames(x[, y_col, with = FALSE]), 
+    if (isTRUE(verbose))
+        message(paste0('  Selecting cols "',
+                    colnames(x[, x_col, with = FALSE]), '" and "',
+                    colnames(x[, y_col, with = FALSE]),
                     '" as x and y respectively'))
     colnames(x)[x_col] <- "x"
     colnames(x)[y_col] <- "y"
@@ -636,7 +572,7 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
         featDT[, c("x", "y", NULL), with = FALSE])
 
     # store lookup table to keep information about unique ID
-    # important with multiple joined objects where row id is not always equal 
+    # important with multiple joined objects where row id is not always equal
     # to unique gene
     network_id_lookup_table <- data.table::data.table(
         row = seq_len(nrow(featDT)),
@@ -659,7 +595,7 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
     )
 
     ## 3. keep minimum and filter
-    if (verbose == TRUE) 
+    if (verbose == TRUE)
         cat("Filter output for distance and minimum neighbours \n")
     knn_sptial.norm[, rank := seq_len(.N), by = "from"]
 
@@ -723,14 +659,14 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
 #' @param k number of neighbors
 #' @param maximum_distance maximum distance bewteen features
 #' @param minimum_k minimum number of neighbors to find
-#' @param add_feat_ids add feature id 
+#' @param add_feat_ids add feature id
 #' names (default = FALSE, increases object size)
 #' @param verbose be verbose
 #' @param return_gobject return giotto object (default: TRUE)
 #' @param toplevel_params toplevel value to pass when updating giotto params
 #' @param ... additional parameters to pass to \code{\link[dbscan]{kNN}}
-#' @returns If \code{return_gobject = TRUE} a giotto object containing the 
-#'     network will be returned. If \code{return_gobject = FALSE} the network 
+#' @returns If \code{return_gobject = TRUE} a giotto object containing the
+#'     network will be returned. If \code{return_gobject = FALSE} the network
 #'     will be returned as a datatable.
 #' @concept feature
 #' @export
@@ -805,18 +741,18 @@ createSpatialFeaturesKNNnetwork <- function(gobject,
 
 #' @title addSpatialCentroidLocationsLayer
 #' @name addSpatialCentroidLocationsLayer
-#' @description Calculates the centroid locations for the polygons within one 
+#' @description Calculates the centroid locations for the polygons within one
 #' selected layer
 #' @param gobject giotto object
 #' @param poly_info polygon information
 #' @param feat_type feature type
 #' @param spat_loc_name name to give to the created spatial locations
-#' @param provenance (optional) provenance to assign to generated spatLocsObj. 
+#' @param provenance (optional) provenance to assign to generated spatLocsObj.
 #' If not provided, provenance will default to \code{poly_info}
 #' @param return_gobject return giotto object (default: TRUE)
-#' @returns If \code{return_gobject = TRUE} the giotto object containing the 
-#'     calculated polygon centroids will be returned. 
-#'     If \code{return_gobject = FALSE} only the generated polygon centroids 
+#' @returns If \code{return_gobject = TRUE} the giotto object containing the
+#'     calculated polygon centroids will be returned.
+#'     If \code{return_gobject = FALSE} only the generated polygon centroids
 #'     will be returned as spatLocsObj.
 #' @concept centroid
 #' @export
@@ -837,13 +773,13 @@ addSpatialCentroidLocationsLayer <- function(gobject,
     # feat_type = set_default_feat_type(gobject = gobject,
     #                                   spat_unit = poly_info,
     #                                   feat_type = feat_type)
-    feat_type <- slot(gobject, "expression_feat")[[1]] # Specifically 
+    feat_type <- slot(gobject, "expression_feat")[[1]] # Specifically
     # preferable over set_default function
-    # There may be no existing data in expression slot to find feat_type 
+    # There may be no existing data in expression slot to find feat_type
     # nesting from
 
-    gpoly <- get_polygon_info(gobject, 
-                            polygon_name = poly_info, 
+    gpoly <- get_polygon_info(gobject,
+                            polygon_name = poly_info,
                             return_giottoPolygon = TRUE)
 
     extended_spatvector <- .calculate_centroids_polygons(
@@ -875,7 +811,7 @@ addSpatialCentroidLocationsLayer <- function(gobject,
             wrap_msg(
                 '> spatial locations for polygon information layer "',
                 poly_info,
-                '" and name "', spat_loc_name, 
+                '" and name "', spat_loc_name,
                 '" already exists and will be replaced\n'
             )
         }
@@ -922,19 +858,19 @@ addSpatialCentroidLocationsLayer <- function(gobject,
 
 #' @title addSpatialCentroidLocations
 #' @name addSpatialCentroidLocations
-#' @description Calculates the centroid locations for the polygons within one 
+#' @description Calculates the centroid locations for the polygons within one
 #' or more selected layers
 #' @param gobject giotto object
 #' @param poly_info polygon information
 #' @param feat_type feature type
 #' @param spat_loc_name name to give to the created spatial locations
-#' @param provenance (optional) provenance to assign to generated spatLocsObj. 
+#' @param provenance (optional) provenance to assign to generated spatLocsObj.
 #' If not provided, provenance will default to \code{poly_info}
 #' @param return_gobject return giotto object (default: TRUE)
 #' @param verbose be verbose
-#' @returns If \code{return_gobject = TRUE} the giotto object containing the 
-#'     calculated polygon centroids will be returned. 
-#'     If \code{return_gobject = FALSE} only the generated polygon centroids 
+#' @returns If \code{return_gobject = TRUE} the giotto object containing the
+#'     calculated polygon centroids will be returned.
+#'     If \code{return_gobject = FALSE} only the generated polygon centroids
 #'     will be returned as \code{spatLocObj}.
 #' @concept centroid
 #' @export
@@ -946,18 +882,18 @@ addSpatialCentroidLocations <- function(gobject,
     return_gobject = TRUE,
     verbose = TRUE) {
     # provenance setup #
-    # Require that provenance is a user-provided named list if length of 
+    # Require that provenance is a user-provided named list if length of
     # poly_info is greater than 1.
     # Provenance may often have length greater than 1, but map to a single
     # spat_unit, however at least one provenance is expected per spat_unit. We
     # differentiate these situations by ensuring that each poly_info/spat_unit
-    # maps to an entry within a list object. The entry within that list may be 
+    # maps to an entry within a list object. The entry within that list may be
     # a character vector of length greater than 1.
     if (length(poly_info) > 1) {
         if (!inherits(provenance, "list") ||
             length(provenance) != length(poly_info)) {
             stop(wrap_txt(
-                "If more than one poly_info is supplied at a time, then 
+                "If more than one poly_info is supplied at a time, then
                 provenance must",
                 "be a list of equal length",
                 errWidth = TRUE
@@ -986,12 +922,12 @@ addSpatialCentroidLocations <- function(gobject,
 
     for (poly_layer in unique(poly_info)) {
         if (!poly_layer %in% potential_polygon_names) {
-            warning("Polygon info layer with name ", poly_layer, 
+            warning("Polygon info layer with name ", poly_layer,
                     " has not been found and will be skipped")
         } else {
             if (verbose == TRUE) {
                 wrap_msg(
-                    "Start centroid calculation for polygon information 
+                    "Start centroid calculation for polygon information
                     layer: ",
                     poly_layer, "\n"
                 )

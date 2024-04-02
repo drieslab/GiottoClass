@@ -15,6 +15,7 @@
 - new `ometif_to_tif` to convert between .ome.tif and .tif
 - new `terra::density()` and `terra::hist()` wrappers for `giottoLargeImage`
 - `show_max` param `density()` and `hist()` to show the image object's `max_window` setting
+- `.identify_background_range_polygons()` now finds any polygons larger than a threshold percentage than the overall extent of the `SpatVector` input.
 
 
 

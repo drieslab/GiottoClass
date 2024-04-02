@@ -2554,17 +2554,25 @@ createGiottoPolygonsFromMask <- function(
     ## remove background polygon ##
     if (isTRUE(remove_background_polygon)) {
         if (background_algo == "range") {
-            backgr_poly_id <- .identify_background_range_polygons(terra_polygon)
+            backgr_poly_id <- .identify_background_range_polygons(
+                terra_polygon
+            )
+            if (length(backgr_poly_id) > 1L) {
+                warning("More than one background poly found.")
+            }
+        }
+
+        if (length(backgr_poly_id) > 0) {
             vmsg(.v = verbose, sprintf(
                 "removed background poly.\n ID was: %s",
                 backgr_poly_id
             ))
-        }
 
-        terra_polygon <- terra::subset(
-            x = terra_polygon,
-            terra_polygon[["poly_ID"]] != backgr_poly_id
-        )
+            terra_polygon <- terra::subset(
+                x = terra_polygon,
+                terra_polygon[["poly_ID"]] != backgr_poly_id
+            )
+        }
     }
 
 
