@@ -3054,6 +3054,7 @@ ometif_to_tif <- function(
 #' force(meta)
 #' }
 #' @returns list of image metadata information
+#' @export
 ometif_metadata <- function(path) {
     checkmate::assert_file_exists(path)
     package_check(
