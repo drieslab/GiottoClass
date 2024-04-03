@@ -11,11 +11,15 @@
 ## enhancements
 - use faster `terra::rasterize()` and `terra::plot()` instead of `scattermore::scattermoreplot()` for `giottoPoints` `plot()` method
 - `plot()` `giottoPoints` method now plots density when `dens = TRUE`
+- `show_max` param `density()` and `hist()` to show the image object's `max_window` setting
+- `.identify_background_range_polygons()` now finds any polygons larger than a threshold percentage than the overall extent of the `SpatVector` input.
+
+## new
 - new `spatValues()` to get specific values from a `giotto` object in `data.table` format
 - new `ometif_to_tif` to convert between .ome.tif and .tif
 - new `terra::density()` and `terra::hist()` wrappers for `giottoLargeImage`
-- `show_max` param `density()` and `hist()` to show the image object's `max_window` setting
-- `.identify_background_range_polygons()` now finds any polygons larger than a threshold percentage than the overall extent of the `SpatVector` input.
+- new `zoom()` generic that works like terra's for `giottoLargeImage`, `giottoPolygon`, `giottoPoints`
+
 
 
 
