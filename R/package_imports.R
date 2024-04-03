@@ -25,6 +25,7 @@
 #' @importMethodsFrom terra as.data.frame
 #' @importMethodsFrom terra as.polygons as.points
 #' @importMethodsFrom terra nrow ncol
+#' @importMethodsFrom terra zoom
 #' @importClassesFrom terra SpatExtent
 #' @importClassesFrom terra SpatVector
 #' @import GiottoUtils

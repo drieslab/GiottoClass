@@ -650,7 +650,11 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 .plot_giotto_points_all <- function(x, size = 600, force_size = FALSE, dens = FALSE, col = NULL, background, ...) {
     pargs <- list(...)
     rargs <- list()
-    e <- ext(x)
+    if (!is.null(pargs$ext)) {
+        e <- ext(pargs$ext)
+    } else {
+        e <- ext(x)
+    }
     e_r <- range(e)
 
     # decide rasterization resolution
@@ -672,6 +676,7 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 
     # plotting
     pargs$x <- r2
+    pargs$legend <- pargs$legend %null% FALSE
     if (is.null(col)) {
         if (isTRUE(dens)) {
             pal <- grDevices::hcl.colors(n = 256)
