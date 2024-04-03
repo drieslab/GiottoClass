@@ -3003,7 +3003,7 @@ ometif_to_tif <- function(
     )
     reticulate::source_python(ometif2tif_path)
     # ensure output directory exists
-    if (checkmate::test_directory_exists(output_dir)) {
+    if (!checkmate::test_directory_exists(output_dir)) {
         dir.create(output_dir, recursive = TRUE)
     }
 
