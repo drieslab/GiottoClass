@@ -4,10 +4,13 @@
 \alias{featType-generic}
 \alias{featType}
 \alias{featType<-}
+\alias{featType,list-method}
 \alias{featType,featData-method}
 \alias{featType<-,featData-method}
 \title{Feature type information}
 \usage{
+\S4method{featType}{list}(x)
+
 \S4method{featType}{featData}(x)
 
 \S4method{featType}{featData}(x) <- value

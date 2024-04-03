@@ -36,10 +36,41 @@ giotto object
 Adds feature metadata to the giotto object
 }
 \details{
-You can add additional feature metadata in two manners: \cr
-\enumerate{
-\item Provide a data.table or data.frame with feature annotations in the same order as the \emph{feat_ID} column in fDataDT(gobject) \cr
-\item Provide a data.table or data.frame with feature annotations and specify which column contains the feature IDs,
-these feature IDs need to match with the \emph{feat_ID} column in fDataDT(gobject)
+You can add additional feature metadata in several manners:
+\itemize{
+\item{1. Provide a data.table or data.frame with feature annotations in the same order as the \emph{feat_ID} column in fDataDT(gobject) This is a bit risky and not the most recommended.}
+\item{2. Provide a data.table or data.frame with feature annotations and specify which column contains the feature IDs, these feature IDs need to match with the \emph{feat_ID} column in fDataDT(gobject)}
+\item{3. Provide a vector or factor that is named with the feature IDs they correspond to. These names will be matched against the \emph{feat_ID} column in fDataDT(gobject).}
 }
+}
+\examples{
+# dummy matrix
+m <- readRDS(system.file("extdata/toy_matrix.RDS", package = "GiottoClass"))
+g <- createGiottoObject(m)
+
+fDataDT(g)
+
+# appending a character vector, merge on vector names
+v <- seq(10)
+names(v) <- sample(letters[seq(10)])
+force(v)
+
+g <- addFeatMetadata(g, new_metadata = v, by_column = TRUE)
+fDataDT(g)
+
+# appending a data.frame, merge on specified column "ID"
+df <- data.frame(
+    IDS = rev(letters[seq(10)]), # reversed
+    l = LETTERS[seq(10)],
+    x = c(rep(TRUE, 5), rep(FALSE, 5))
+)
+force(df)
+
+g <- addFeatMetadata(
+    g,
+    new_metadata = df,
+    by_column = TRUE,
+    column_feat_ID = "IDS"
+)
+fDataDT(g)
 }

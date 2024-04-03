@@ -1,5 +1,51 @@
 
 
+# GiottoClass 0.2.3 (2024/03/12)
+
+## bug fixes
+- fix `saveGiotto` with `overwrite = TRUE` [#870](https://github.com/drieslab/Giotto/issues/870) by rbutlerii
+- fix `plot()` method param passing for `giottoLargeImage`. Ensure access to terra params
+
+## enhancements
+- `createGiottoPoints` `data.frame` method can now select which columns to use with `x_colname`, `y_colname`, `feat_ID_colname` params
+- `giotto` now responds to spatial manipulation generics: `t()`, `flip()`, `rescale()`, `spatShift()`, `spin()`
+- `spatUnit()` and `featType()` are now vectorized
+- new `.evalute_extent()` internal that for fine extent modifications
+- internal `get_spatial_locations_list()` and `get_spatial_network_list()` accessors now accept ":all:" token to get all available, ignoring spat_unit
+
+
+# GiottoClass 0.2.2 (2024/03/01)
+
+## bug fixes
+- fix `createGiottoPolygonsFromMask()` IDs being applied out of sync to mask values
+- fix `createGiottoPolygon()` `character` method dispatch for `raster` inputs
+- remove unused `fix_multipart` param in `createGiottoPolygonsFromMask()`
+- fix `giottoPolygon` ID caching after `rbind()`
+
+## enhancements
+- `createGiottoPolygonsFromMask()` now has `ID_fmt` param for finer control of automatic `poly_ID` generation
+- `.flip_spatvect()` internal for flipping `SpatVector` across arbitrary x and y vals
+
+
+# GiottoClass 0.2.1 (2024/02/28)
+
+## breaking changes
+- `giotto` slot `versions` supercedes `OS_platform`. Used for tracking GiottoClass version.
+
+## bug fixes
+- fix `subsetGiotto` unused `on` argument
+- fix `giotto` object saving when image intensities overlaps data are present.
+- fix `exprObj` `show()` for small matrices
+- fix `giotto` `calculateOverlap()` method when working with image intensities data.
+
+## new
+- `createNetwork()` hub function for creation of Giotto NN and spatial networks directly from matrices. Mainly for developers and advanced users.
+- `edge_distances()` for calculating euclidean distances from numeric m x n `matrix` (nodes) and a `data.table` with *from* and *to* cols that define node connections.
+
+## enhancements
+- `addCellMetadata()` and `addFeatMetadata()` now support merging on the names of provided vector and factor data with metadata *cell_ID*/*feat_ID*.
+
+
 # GiottoClass 0.1.3 (2024/01/12)
 
 ## bug fixes

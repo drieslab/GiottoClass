@@ -53,63 +53,63 @@ z0_polygon_DT <- data.table::fread(paste0(boundary_path, "/", "z0_polygons.gz"))
 z1_polygon_DT <- data.table::fread(paste0(boundary_path, "/", "z1_polygons.gz"))
 
 z0_polygons <- createGiottoPolygonsFromDfr(
-  name = "z0",
-  segmdfr = z0_polygon_DT
+    name = "z0",
+    segmdfr = z0_polygon_DT
 )
 z1_polygons <- createGiottoPolygonsFromDfr(
-  name = "z1",
-  segmdfr = z1_polygon_DT
+    name = "z1",
+    segmdfr = z1_polygon_DT
 )
 
 
 test_that("gpolys are created from dfr", {
-  expect_identical(objName(z0_polygons), "z0")
-  expect_identical(objName(z1_polygons), "z1")
+    expect_identical(objName(z0_polygons), "z0")
+    expect_identical(objName(z1_polygons), "z1")
 
-  expect_class(z0_polygons, "giottoPolygon")
-  expect_class(z1_polygons, "giottoPolygon")
+    expect_class(z0_polygons, "giottoPolygon")
+    expect_class(z1_polygons, "giottoPolygon")
 })
 
 
 # 1. create subcellular dataset with transcript and polygon information ####
 # ------------------------------------------------------------------------ #
 suppressWarnings({
-  options("giotto.use_conda" = FALSE) # skip python checks
-  vizsubc <- createGiottoObjectSubcellular(
-    gpoints = list("rna" = tx_dt[, .(global_x, -global_y, gene, global_z)]),
-    gpolygons = list(
-      "z0" = z0_polygons,
-      "z1" = z1_polygons
+    options("giotto.use_conda" = FALSE) # skip python checks
+    vizsubc <- createGiottoObjectSubcellular(
+        gpoints = list("rna" = tx_dt[, .(global_x, -global_y, gene, global_z)]),
+        gpolygons = list(
+            "z0" = z0_polygons,
+            "z1" = z1_polygons
+        )
     )
-  )
 })
 
 test_that("gobject is created from tx and polys", {
-  rlang::local_options(lifecycle_verbosity = "quiet")
+    rlang::local_options(lifecycle_verbosity = "quiet")
 
-  expect_class(vizsubc, "giotto")
-  expect_identical(list_spatial_info_names(vizsubc), c("z0", "z1"))
-  expect_identical(list_feature_info_names(vizsubc), "rna")
-  expect_class(getFeatureInfo(vizsubc, return_giottoPoints = TRUE), "giottoPoints")
+    expect_class(vizsubc, "giotto")
+    expect_identical(list_spatial_info_names(vizsubc), c("z0", "z1"))
+    expect_identical(list_feature_info_names(vizsubc), "rna")
+    expect_class(getFeatureInfo(vizsubc, return_giottoPoints = TRUE), "giottoPoints")
 })
 
 
 # calculate centroid for each polygon
 # this can/will be used when aggregating for example counts to cells
 vizsubc <- addSpatialCentroidLocations(
-  gobject = vizsubc,
-  poly_info = paste0("z", 0:1),
-  provenance = list("z0", "z1"),
-  return_gobject = TRUE
+    gobject = vizsubc,
+    poly_info = paste0("z", 0:1),
+    provenance = list("z0", "z1"),
+    return_gobject = TRUE
 )
 
 test_that("gobject centroids can be calculated", {
-  rlang::local_options(lifecycle_verbosity = "quiet")
+    rlang::local_options(lifecycle_verbosity = "quiet")
 
-  expect_identical(list_spatial_locations_names(vizsubc, spat_unit = "z0"), c("raw"))
-  expect_identical(list_spatial_locations_names(vizsubc, spat_unit = "z1"), c("raw"))
-  expect_class(getSpatialLocations(vizsubc, spat_unit = "z0"), "spatLocsObj")
-  expect_class(getSpatialLocations(vizsubc, spat_unit = "z1"), "spatLocsObj")
+    expect_identical(list_spatial_locations_names(vizsubc, spat_unit = "z0"), c("raw"))
+    expect_identical(list_spatial_locations_names(vizsubc, spat_unit = "z1"), c("raw"))
+    expect_class(getSpatialLocations(vizsubc, spat_unit = "z0"), "spatLocsObj")
+    expect_class(getSpatialLocations(vizsubc, spat_unit = "z1"), "spatLocsObj")
 })
 
 
@@ -120,35 +120,35 @@ test_that("gobject centroids can be calculated", {
 ultra_mini_extent <- terra::ext(c(6400.029, 6900.037, -5150.007, -4699.967))
 
 image_paths <- c(
-  DAPI_z0_image_path, DAPI_z1_image_path,
-  polyT_z0_image_path, polyT_z1_image_path
+    DAPI_z0_image_path, DAPI_z1_image_path,
+    polyT_z0_image_path, polyT_z1_image_path
 )
 image_names <- c(
-  "dapi_z0", "dapi_z1",
-  "polyT_z0", "polyT_z1"
+    "dapi_z0", "dapi_z1",
+    "polyT_z0", "polyT_z1"
 )
 
 imagelist <- createGiottoLargeImageList(
-  raster_objects = image_paths,
-  names = image_names,
-  negative_y = TRUE,
-  extent = ultra_mini_extent
+    raster_objects = image_paths,
+    names = image_names,
+    negative_y = TRUE,
+    extent = ultra_mini_extent
 )
 
 test_that("giottoLargeImages are created", {
-  expect_list(imagelist)
+    expect_list(imagelist)
 })
 
 vizsubc <- addGiottoImage(
-  gobject = vizsubc,
-  largeImages = imagelist
+    gobject = vizsubc,
+    largeImages = imagelist
 )
 
 test_that("images were added", {
-  expect_identical(
-    list_images_names(vizsubc, "largeImage"),
-    c("dapi_z0", "dapi_z1", "polyT_z0", "polyT_z1")
-  )
+    expect_identical(
+        list_images_names(vizsubc, "largeImage"),
+        c("dapi_z0", "dapi_z1", "polyT_z0", "polyT_z1")
+    )
 })
 
 
@@ -160,19 +160,19 @@ test_that("images were added", {
 # options('giotto.spat_unit' = 'z1') # now you don't need to think about setting spat_unit each time
 
 vizsubc <- calculateOverlapRaster(
-  vizsubc,
-  spatial_info = "z0",
-  feat_info = "rna",
-  feat_subset_column = "global_z",
-  feat_subset_ids = 0
+    vizsubc,
+    spatial_info = "z0",
+    feat_info = "rna",
+    feat_subset_column = "global_z",
+    feat_subset_ids = 0
 )
 
 vizsubc <- calculateOverlapRaster(
-  vizsubc,
-  spatial_info = "z1",
-  feat_info = "rna",
-  feat_subset_column = "global_z",
-  feat_subset_ids = 1
+    vizsubc,
+    spatial_info = "z1",
+    feat_info = "rna",
+    feat_subset_column = "global_z",
+    feat_subset_ids = 1
 )
 
 
@@ -194,76 +194,76 @@ nfeats <- length(feats)
 
 
 test_that("overlaps are calculated", {
-  expect_class(overlaps(z0_gpoly)$rna, "SpatVector")
-  expect_class(overlaps(z0_gpoly)$rna, "SpatVector")
-  expect_identical(terra::geomtype(overlaps(z0_gpoly)$rna), "points")
-  expect_identical(terra::geomtype(overlaps(z0_gpoly)$rna), "points")
+    expect_class(overlaps(z0_gpoly)$rna, "SpatVector")
+    expect_class(overlaps(z0_gpoly)$rna, "SpatVector")
+    expect_identical(terra::geomtype(overlaps(z0_gpoly)$rna), "points")
+    expect_identical(terra::geomtype(overlaps(z0_gpoly)$rna), "points")
 })
 
 vizsubc <- overlapToMatrix(
-  vizsubc,
-  poly_info = "z0",
-  feat_info = "rna",
-  name = "raw"
+    vizsubc,
+    poly_info = "z0",
+    feat_info = "rna",
+    name = "raw"
 )
 
 vizsubc <- overlapToMatrix(
-  vizsubc,
-  poly_info = "z1",
-  feat_info = "rna",
-  name = "raw"
+    vizsubc,
+    poly_info = "z1",
+    feat_info = "rna",
+    name = "raw"
 )
 
 test_that("expression matrix is created from overlaps", {
-  rlang::local_options(lifecycle_verbosity = "quiet")
+    rlang::local_options(lifecycle_verbosity = "quiet")
 
-  z0_exp <- getExpression(vizsubc, spat_unit = "z0")
-  z1_exp <- getExpression(vizsubc, spat_unit = "z1")
+    z0_exp <- getExpression(vizsubc, spat_unit = "z0")
+    z1_exp <- getExpression(vizsubc, spat_unit = "z1")
 
-  expect_setequal(colnames(z0_exp), z0_ids)
-  expect_setequal(colnames(z1_exp), z1_ids)
-  expect_setequal(rownames(z0_exp), feats)
-  expect_setequal(rownames(z1_exp), feats)
+    expect_setequal(colnames(z0_exp), z0_ids)
+    expect_setequal(colnames(z1_exp), z1_ids)
+    expect_setequal(rownames(z0_exp), feats)
+    expect_setequal(rownames(z1_exp), feats)
 
-  expect_identical(nrow(z0_exp), nfeats)
-  expect_identical(nrow(z1_exp), nfeats)
-  expect_identical(ncol(z0_exp), z0_nids)
-  expect_identical(ncol(z1_exp), z1_nids)
+    expect_identical(nrow(z0_exp), nfeats)
+    expect_identical(nrow(z1_exp), nfeats)
+    expect_identical(ncol(z0_exp), z0_nids)
+    expect_identical(ncol(z1_exp), z1_nids)
 
-  # most stringent check
-  # Alter if object creation pipeline is altered and a different result is expected.
-  expect_identical(dim(z0_exp), c(559L, 498L))
-  expect_identical(dim(z1_exp), c(559L, 504L))
+    # most stringent check
+    # Alter if object creation pipeline is altered and a different result is expected.
+    expect_identical(dim(z0_exp), c(559L, 498L))
+    expect_identical(dim(z1_exp), c(559L, 504L))
 })
 
 
 vizsubc <- aggregateStacks(
-  gobject = vizsubc,
-  spat_units = c("z0", "z1"),
-  feat_type = "rna",
-  values = "raw",
-  summarize_expression = "sum",
-  summarize_locations = "mean",
-  new_spat_unit = "aggregate"
+    gobject = vizsubc,
+    spat_units = c("z0", "z1"),
+    feat_type = "rna",
+    values = "raw",
+    summarize_expression = "sum",
+    summarize_locations = "mean",
+    new_spat_unit = "aggregate"
 )
 
 
 test_that("aggregateStacks works", {
-  rlang::local_options(lifecycle_verbosity = "quiet")
+    rlang::local_options(lifecycle_verbosity = "quiet")
 
-  agg_exp <- getExpression(vizsubc, spat_unit = "aggregate")
+    agg_exp <- getExpression(vizsubc, spat_unit = "aggregate")
 
-  comb_ids <- unique(c(z0_ids, z1_ids))
+    comb_ids <- unique(c(z0_ids, z1_ids))
 
-  expect_setequal(colnames(agg_exp), comb_ids)
-  expect_setequal(rownames(agg_exp), feats)
+    expect_setequal(colnames(agg_exp), comb_ids)
+    expect_setequal(rownames(agg_exp), feats)
 
-  expect_identical(ncol(agg_exp), length(comb_ids))
-  expect_identical(nrow(agg_exp), nfeats)
+    expect_identical(ncol(agg_exp), length(comb_ids))
+    expect_identical(nrow(agg_exp), nfeats)
 
-  # most stringent check
-  # Alter if object creation pipeline is altered and a different result is expected.
-  expect_identical(dim(agg_exp), c(559L, 505L))
+    # most stringent check
+    # Alter if object creation pipeline is altered and a different result is expected.
+    expect_identical(dim(agg_exp), c(559L, 505L))
 })
 
 

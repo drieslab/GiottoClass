@@ -2,12 +2,15 @@
 % Please edit documentation in R/methods-spin.R
 \name{spin}
 \alias{spin}
+\alias{spin,giotto-method}
 \alias{spin,giottoPolygon-method}
 \alias{spin,giottoPoints-method}
 \alias{spin,spatLocsObj-method}
 \alias{spin,data.frame-method}
 \title{Spin an object}
 \usage{
+\S4method{spin}{giotto}(x, angle, x0 = NULL, y0 = NULL, spat_unit = ":all:", feat_type = ":all:")
+
 \S4method{spin}{giottoPolygon}(x, angle, x0 = NULL, y0 = NULL)
 
 \S4method{spin}{giottoPoints}(x, angle, x0 = NULL, y0 = NULL)
@@ -44,6 +47,11 @@
 
 \item{y0}{numeric. y-coordinate of the center of rotation. Defaults to center y val if not given.}
 
+\item{spat_unit}{character vector. spatial units to affect}
+
+\item{feat_type}{character vector. feature types to affect
+(giottoPoints only).}
+
 \item{z0}{spatLocsObj specific. Numeric. z-coordinate of the center of rotation.
 Depending on if z data is present, defaults to either 0 or center z val if not given.}
 
@@ -60,12 +68,3 @@ Default is \code{c("sdimx", "sdimy", "sdimz")}}
 \description{
 Spin (rotate) an object spatially (limited to xy rotations)
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{spin(giottoPolygon)}: Spin a giottoPolygon object
-
-\item \code{spin(giottoPoints)}: Spin a giottoPoints object
-
-\item \code{spin(spatLocsObj)}: Spin a spatLocsObj
-
-}}

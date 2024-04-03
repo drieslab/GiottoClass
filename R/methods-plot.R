@@ -33,37 +33,47 @@ setMethod("plot", signature(x = "giottoImage", y = "missing"), function(x, y, ..
 #' @param smooth logical. If TRUE the cell values are smoothed
 #' @export
 setMethod(
-  'plot',
-  signature(x = 'giottoLargeImage', y = 'missing'),
-  function(x, y, col, max_intensity, mar, asRGB = FALSE, legend = FALSE, axes = TRUE,
-           maxcell = 5e5, smooth = TRUE, ...)
-  {
-    arglist = list(giottoLargeImage = x,
-                   asRGB = asRGB,
-                   legend = legend,
-                   axes = axes,
-                   maxcell = maxcell,
-                   smooth = smooth,
-                   ...)
+    "plot",
+    signature(x = "giottoLargeImage", y = "missing"),
+    function(
+        x, y, col, max_intensity, mar, asRGB = FALSE, legend = FALSE, axes = TRUE,
+        maxcell = 5e5, smooth = TRUE, ...) {
+        arglist <- list(
+            giottoLargeImage = x,
+            asRGB = asRGB,
+            legend = legend,
+            axes = axes,
+            maxcell = maxcell,
+            smooth = smooth,
+            ...
+        )
 
-    # check for pre-0.1.2 class
-    if (is.null(attr(x, "colors"))) {
-      .gstop("This image object is out of date
+        # check for pre-0.1.2 class
+        if (is.null(attr(x, "colors"))) {
+            .gstop("This image object is out of date
              Please run `GiottoClass:::.update_giotto_image()` on this object.",
-             .n = 2)
+                .n = 2
+            )
+        }
+
+        # If no 'col' param, pull from `colors` slot
+        if (missing("col")) {
+            arglist$col <- x@colors
+        } else {
+            arglist$col <- col
+        }
+        # if no 'max_intensity' param, pull from `max_window` slot
+        if (missing("max_intensity")) {
+            arglist$max_intensity <- x@max_window
+        } else {
+            arglist$max_intensity <- max_intensity
+        }
+        # if mar param provided, use it
+        if (!missing("mar")) arglist$mar <- mar
+
+        do.call(.plot_giottolargeimage, args = arglist)
     }
-
-    # If no 'col' param, pull from `colors` slot
-    if (missing("col")) arglist$col <- x@colors
-    else arglist$col <- col
-    # if no 'max_intensity' param, pull from `max_window` slot
-    if (missing("max_intensity")) arglist$max_intensity <- x@max_window
-    else arglist$max_intensity <- max_intensity
-    # if mar param provided, use it
-    if (!missing("mar")) arglist$mar <- mar
-
-    do.call(.plot_giottolargeimage, args = arglist)
-  })
+)
 
 #' @describeIn plot-generic Plot \emph{terra}-based giottoPolygon object. ... param passes to \code{\link[terra]{plot}}
 #' @param point_size size of points when plotting giottoPolygon object centroids
@@ -73,26 +83,24 @@ setMethod(
 #' Default is 1e4. This value is settable using options("giotto.plot_max_poly")
 #' @export
 setMethod(
-  "plot", signature(x = "giottoPolygon", y = "missing"),
-  function(
-    x,
+    "plot", signature(x = "giottoPolygon", y = "missing"),
+    function(x,
     point_size = 0.6,
     type = c("poly", "centroid"),
     max_poly = getOption("giotto.plot_max_poly", 1e4),
-    ...
-  ) {
-    if (length(x@unique_ID_cache) == 0) {
-      stop(wrap_txt("No geometries to plot"), call. = FALSE)
-    }
+    ...) {
+        if (length(x@unique_ID_cache) == 0) {
+            stop(wrap_txt("No geometries to plot"), call. = FALSE)
+        }
 
-    # if greater than max_poly, simplify to centroid
-    if (nrow(x) > max_poly &&
-        length(type) == 2L) {
-      type <- "centroid"
-    }
+        # if greater than max_poly, simplify to centroid
+        if (nrow(x) > max_poly &&
+            length(type) == 2L) {
+            type <- "centroid"
+        }
 
-    .plot_giotto_polygon(x = x, point_size = point_size, type = type, ...)
-  }
+        .plot_giotto_polygon(x = x, point_size = point_size, type = type, ...)
+    }
 )
 
 #' @describeIn plot-generic \emph{terra}-based giottoPoint object. ... param passes to \code{\link[terra]{plot}}
@@ -103,29 +111,28 @@ setMethod(
 #' @param raster_size Default is 600. Only used when \code{raster} is TRUE
 #' @export
 setMethod(
-  "plot", signature(x = "giottoPoints", y = "missing"),
-  function(x, point_size = 0, feats = NULL, raster = TRUE, raster_size = 600, ...) {
-    if (length(x@unique_ID_cache) == 0) {
-      stop(wrap_txt("No geometries to plot"), call. = FALSE)
+    "plot", signature(x = "giottoPoints", y = "missing"),
+    function(x, point_size = 0, feats = NULL, raster = TRUE, raster_size = 600, ...) {
+        if (length(x@unique_ID_cache) == 0) {
+            stop(wrap_txt("No geometries to plot"), call. = FALSE)
+        }
+        .plot_giotto_points(
+            x = x, point_size = point_size, feats = feats,
+            raster = raster, raster_size = raster_size, ...
+        )
     }
-    .plot_giotto_points(
-      x = x, point_size = point_size, feats = feats,
-      raster = raster, raster_size = raster_size, ...
-    )
-  }
 )
 
 
 #' @describeIn plot-generic Plot a spatLocsObj
 #' @export
 setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) {
-
-  if ("sdimz" %in% colnames(x)) {
-    .plot_spatlocs_3d(x, ...)
-  } else {
-    # 2d plotting
-    .plot_spatlocs_2d(x, ...)
-  }
+    if ("sdimz" %in% colnames(x)) {
+        .plot_spatlocs_3d(x, ...)
+    } else {
+        # 2d plotting
+        .plot_spatlocs_2d(x, ...)
+    }
 })
 
 
@@ -133,68 +140,66 @@ setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) 
 #' @param dims dimensions to plot
 #' @export
 setMethod(
-  "plot", signature(x = "dimObj", y = "missing"),
-  function(
-    x, dims = c(1,2), ...
-  ) {
-    plot_vals <- x[][, dims]
+    "plot", signature(x = "dimObj", y = "missing"),
+    function(x, dims = c(1, 2), ...) {
+        plot_vals <- x[][, dims]
 
-    l <- list(...)
-    if (is.null(l$asp)) l$asp <- 1
-    if (is.null(l$xlab)) l$xlab <- colnames(plot_vals)[1L]
-    if (is.null(l$ylab)) l$ylab <- colnames(plot_vals)[2L]
-    if (is.null(l$cex)) l$cex <- 0.5
-    if (nrow(x) > 10000L) {
-      if (is.null(l$pch)) l$pch <- "."
-    } else {
-      if (is.null(l$pch)) l$pch <- 20
+        l <- list(...)
+        if (is.null(l$asp)) l$asp <- 1
+        if (is.null(l$xlab)) l$xlab <- colnames(plot_vals)[1L]
+        if (is.null(l$ylab)) l$ylab <- colnames(plot_vals)[2L]
+        if (is.null(l$cex)) l$cex <- 0.5
+        if (nrow(x) > 10000L) {
+            if (is.null(l$pch)) l$pch <- "."
+        } else {
+            if (is.null(l$pch)) l$pch <- 20
+        }
+
+        do.call("plot", append(l, list(x = plot_vals[, 1], y = plot_vals[, 2])))
     }
-
-    do.call("plot", append(l, list(x = plot_vals[,1], y = plot_vals[,2])))
-  }
 )
 
 
 #' @describeIn plot-generic Plot a spatialNetworkObj
 #' @export
 setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x, ...) {
-  l <- list(...)
-  if (is.null(l$asp)) l$asp <- 1
-  if (is.null(l$xlab)) l$xlab <- ""
-  if (is.null(l$ylab)) l$ylab <- ""
-  if (is.null(l$cex)) l$cex <- 0.5
-  if (is.null(l$col)) {
-    line_col <- "red"
-  } else {
-    line_col <- l$col
-    l$col <- NULL
-  }
-  if (is.null(l$lwd)) {
-    line_width <- 1L
-  } else {
-    line_width <- l$lwd
-    l$lwd <- NULL
-  }
-  if (is.null(l$lty)) {
-    line_type <- 1L
-  } else {
-    line_type <- l$lty
-    l$lty <- NULL
-  }
-  # find nodes
-  nodes <- unique(rbind(x[][, c("sdimx_begin", "sdimy_begin")],
-    x[][, c("sdimx_end", "sdimy_end")],
-    use.names = FALSE
-  ))
-  if (nrow(nodes) > 10000L) {
-    if (is.null(l$pch)) l$pch <- "."
-  }
-  do.call("plot", append(l, list(x = nodes$sdimx_begin, y = nodes$sdimy_begin)))
-  segments(
-    x0 = x[]$sdimx_begin, y0 = x[]$sdimy_begin,
-    x1 = x[]$sdimx_end, y1 = x[]$sdimy_end,
-    col = line_col, lty = line_type, lwd = line_width
-  )
+    l <- list(...)
+    if (is.null(l$asp)) l$asp <- 1
+    if (is.null(l$xlab)) l$xlab <- ""
+    if (is.null(l$ylab)) l$ylab <- ""
+    if (is.null(l$cex)) l$cex <- 0.5
+    if (is.null(l$col)) {
+        line_col <- "red"
+    } else {
+        line_col <- l$col
+        l$col <- NULL
+    }
+    if (is.null(l$lwd)) {
+        line_width <- 1L
+    } else {
+        line_width <- l$lwd
+        l$lwd <- NULL
+    }
+    if (is.null(l$lty)) {
+        line_type <- 1L
+    } else {
+        line_type <- l$lty
+        l$lty <- NULL
+    }
+    # find nodes
+    nodes <- unique(rbind(x[][, c("sdimx_begin", "sdimy_begin")],
+        x[][, c("sdimx_end", "sdimy_end")],
+        use.names = FALSE
+    ))
+    if (nrow(nodes) > 10000L) {
+        if (is.null(l$pch)) l$pch <- "."
+    }
+    do.call("plot", append(l, list(x = nodes$sdimx_begin, y = nodes$sdimy_begin)))
+    segments(
+        x0 = x[]$sdimx_begin, y0 = x[]$sdimy_begin,
+        x1 = x[]$sdimx_end, y1 = x[]$sdimy_end,
+        col = line_col, lty = line_type, lwd = line_width
+    )
 })
 
 
@@ -205,95 +210,96 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 # internals ####
 
 .plot_spatlocs_2d <- function(x, ...) {
-  l <- list(...)
-  if (is.null(l$asp)) l$asp <- 1
-  if (is.null(l$xlab)) l$xlab <- "x coordinates"
-  if (is.null(l$ylab)) l$ylab <- "y coordinates"
-  if (is.null(l$cex)) l$cex <- 0.5
-  if (nrow(x) > 10000L) {
-    if (is.null(l$pch)) l$pch <- "."
-  }
+    l <- list(...)
+    if (is.null(l$asp)) l$asp <- 1
+    if (is.null(l$xlab)) l$xlab <- "x coordinates"
+    if (is.null(l$ylab)) l$ylab <- "y coordinates"
+    if (is.null(l$cex)) l$cex <- 0.5
+    if (nrow(x) > 10000L) {
+        if (is.null(l$pch)) l$pch <- "."
+    }
 
-  do.call("plot", append(l, list(x = x[]$sdimx, y = x[]$sdimy)))
+    do.call("plot", append(l, list(x = x[]$sdimx, y = x[]$sdimy)))
 }
 
 .plot_spatlocs_3d <- function(x, ...) {
-  engine <- (getOption("giotto.plotengine3d", "rgl"))
+    engine <- (getOption("giotto.plotengine3d", "rgl"))
 
-  switch(
-    engine,
-    "rgl" = .plot_spatlocs_3d_rgl(x, ...),
-    "plotly" = .plot_spatlocs_3d_plotly(x, ...)
-  )
+    switch(engine,
+        "rgl" = .plot_spatlocs_3d_rgl(x, ...),
+        "plotly" = .plot_spatlocs_3d_plotly(x, ...)
+    )
 }
 
 .plot_spatlocs_3d_rgl <- function(x, ...) {
-  package_check("rgl", repository = "CRAN")
+    package_check("rgl", repository = "CRAN")
 
-  l <- list(...)
-  # params changes
-  l$x <- x$sdimx
-  l$y <- x$sdimy
-  l$z <- x$sdimz
-  if (is.null(l$xlab)) l$xlab <- "x coordinates"
-  if (is.null(l$ylab)) l$ylab <- "y coordinates"
-  if (is.null(l$zlab)) l$zlab <- "z coordinates"
-  if (!is.null(l$cex)) {
-    l$size <- l$cex
-  }
-  if (is.null(l$type)) l$type = "p"
+    l <- list(...)
+    # params changes
+    l$x <- x$sdimx
+    l$y <- x$sdimy
+    l$z <- x$sdimz
+    if (is.null(l$xlab)) l$xlab <- "x coordinates"
+    if (is.null(l$ylab)) l$ylab <- "y coordinates"
+    if (is.null(l$zlab)) l$zlab <- "z coordinates"
+    if (!is.null(l$cex)) {
+        l$size <- l$cex
+    }
+    if (is.null(l$type)) l$type <- "p"
 
-  do.call(rgl::plot3d, args = l)
+    do.call(rgl::plot3d, args = l)
 }
 
 .plot_spatlocs_3d_plotly <- function(x, asp, ...) {
-  package_check("plotly", repository = "CRAN")
+    package_check("plotly", repository = "CRAN")
 
-  l <- list(...)
+    l <- list(...)
 
-  l$data <- x[]
-  l$x <- ~sdimx
-  l$y <- ~sdimy
-  l$z <- ~sdimz
-  l$type <- "scatter3d"
-  l$mode <- "markers"
-  if (!is.null(l$cex)) {
-    l$marker = list(size = l$cex)
-    l$cex <- NULL
-  } else {
-    l$marker = list(size = l$size)
-    l$size <- NULL
-  }
-  if (is.null(l$marker$size)) l$marker$size = 1
+    l$data <- x[]
+    l$x <- ~sdimx
+    l$y <- ~sdimy
+    l$z <- ~sdimz
+    l$type <- "scatter3d"
+    l$mode <- "markers"
+    if (!is.null(l$cex)) {
+        l$marker <- list(size = l$cex)
+        l$cex <- NULL
+    } else {
+        l$marker <- list(size = l$size)
+        l$size <- NULL
+    }
+    if (is.null(l$marker$size)) l$marker$size <- 1
 
-  pl <- do.call(plotly::plot_ly, args = l)
+    pl <- do.call(plotly::plot_ly, args = l)
 
-  if (missing(asp)) asp <- rep(1L, 3L)
-  else if (length(asp) == 1L) asp <- rep(asp, 3L)
+    if (missing(asp)) {
+        asp <- rep(1L, 3L)
+    } else if (length(asp) == 1L) asp <- rep(asp, 3L)
 
-  # layout
-  pl <- pl %>% plotly::layout(
-    scene = list(
-      xaxis = list(title = "x coordinates"),
-      yaxis = list(title = "y coordinates"),
-      zaxis = list(title = "z coordinates"),
-      aspectmode = "manual",
-      aspectratio = list(
-        x = asp[[1]],
-        y = asp[[2]],
-        z = asp[[3]])
-    ),
-    legend = list(
-      x = 100,
-      y = 0.5,
-      font = list(
-        family = "sans-serif",
-        size = 12
-      )
+    # layout
+    pl <- pl %>% plotly::layout(
+        scene = list(
+            xaxis = list(title = "x coordinates"),
+            yaxis = list(title = "y coordinates"),
+            zaxis = list(title = "z coordinates"),
+            aspectmode = "manual",
+            aspectratio = list(
+                x = asp[[1]],
+                y = asp[[2]],
+                z = asp[[3]]
+            )
+        ),
+        legend = list(
+            x = 100,
+            y = 0.5,
+            font = list(
+                family = "sans-serif",
+                size = 12
+            )
+        )
     )
-  )
 
-  return(pl)
+    return(pl)
 }
 
 
@@ -308,20 +314,21 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @param giottoImage giottoImage object
 #' @return plot
 #' @keywords internal
-.plot_giottoimage_mg <- function(gobject = NULL,
-                                image_name = NULL,
-                                giottoImage = NULL) {
-  if (!is.null(giottoImage)) {
-    graphics::plot(giottoImage@mg_object)
-  } else {
-    if (is.null(gobject)) stop("The giotto object that will be updated needs to be provided \n")
-    if (is.null(image_name)) stop("The name of the giotto image that will be updated needs to be provided \n")
+.plot_giottoimage_mg <- function(
+        gobject = NULL,
+        image_name = NULL,
+        giottoImage = NULL) {
+    if (!is.null(giottoImage)) {
+        graphics::plot(giottoImage@mg_object)
+    } else {
+        if (is.null(gobject)) stop("The giotto object that will be updated needs to be provided \n")
+        if (is.null(image_name)) stop("The name of the giotto image that will be updated needs to be provided \n")
 
-    g_image_names <- names(gobject@images)
-    if (!image_name %in% g_image_names) stop(image_name, " was not found among the image names, see showImageNames()")
+        g_image_names <- names(gobject@images)
+        if (!image_name %in% g_image_names) stop(image_name, " was not found among the image names, see showImageNames()")
 
-    graphics::plot(gobject@images[[image_name]]@mg_object)
-  }
+        graphics::plot(gobject@images[[image_name]]@mg_object)
+    }
 }
 
 
@@ -357,81 +364,78 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' depending on image type
 #' @return plot
 #' @keywords internal
-.plot_giottolargeimage <- function(gobject = NULL,
-                                  largeImage_name = NULL,
-                                  giottoLargeImage = NULL,
-                                  crop_extent = NULL,
-                                  xmax_crop = NULL,
-                                  xmin_crop = NULL,
-                                  ymax_crop = NULL,
-                                  ymin_crop = NULL,
-                                  max_intensity = NULL,
-                                  asRGB = FALSE,
-                                  stretch = NULL,
-                                  axes = TRUE,
-                                  smooth = TRUE,
-                                  mar = c(3, 5, 1.5, 1),
-                                  legend = FALSE,
-                                  maxcell = 5e5,
-                                  col = grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1),
-                                  asp = 1,
-                                  ...) {
-  # Get giottoLargeImage and check and perform crop if needed
-  giottoLargeImage <- cropGiottoLargeImage(
-    gobject = gobject,
-    largeImage_name = largeImage_name,
-    giottoLargeImage = giottoLargeImage,
-    crop_extent = crop_extent,
-    xmax_crop = xmax_crop,
-    xmin_crop = xmin_crop,
-    ymax_crop = ymax_crop,
-    ymin_crop = ymin_crop
-  )
+.plot_giottolargeimage <- function(
+        gobject = NULL,
+        largeImage_name = NULL,
+        giottoLargeImage = NULL,
+        crop_extent = NULL,
+        xmax_crop = NULL,
+        xmin_crop = NULL,
+        ymax_crop = NULL,
+        ymin_crop = NULL,
+        max_intensity = NULL,
+        asRGB = FALSE,
+        stretch = NULL,
+        axes = TRUE,
+        smooth = TRUE,
+        mar = c(3, 5, 1.5, 1),
+        legend = FALSE,
+        maxcell = 5e5,
+        col = grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1),
+        asp = 1,
+        ...) {
+    a <- c(get_args_list(), list(...))
 
-  raster_object <- giottoLargeImage@raster_object
+    # Get giottoLargeImage and check and perform crop if needed
+    giottoLargeImage <- cropGiottoLargeImage(
+        gobject = gobject,
+        largeImage_name = largeImage_name,
+        giottoLargeImage = giottoLargeImage,
+        crop_extent = crop_extent,
+        xmax_crop = xmax_crop,
+        xmin_crop = xmin_crop,
+        ymax_crop = ymax_crop,
+        ymin_crop = ymin_crop
+    )
 
-  # Determine likely image bitdepth
-  if (is.null(max_intensity)) {
-    bitDepth <- ceiling(log(x = giottoLargeImage@max_intensity, base = 2))
-    # Assign discovered bitdepth as max_intensity
-    max_intensity <- 2^bitDepth - 1
+    a <- a[!c(names(a) %in% c(
+        "gobject", "largeImage_name", "giottoLargeImage", "crop_extent",
+        "xmax_crop", "xmin_crop", "ymax_crop", "ymin_crop", "asRGB",
+        "max_intensity"
+    ))]
+    a$x <- giottoLargeImage@raster_object
 
-    # account for situations where values are scaled from 0 to 1
-    if (max_intensity == 0) {
-      max_intensity <- 1
+
+    # Determine likely image bitdepth
+    if (is.null(max_intensity)) {
+        bitDepth <- ceiling(log(x = a$x@max_intensity, base = 2))
+        # Assign discovered bitdepth as max_intensity
+        max_intensity <- 2^bitDepth - 1
+
+        # account for situations where values are scaled from 0 to 1
+        if (max_intensity == 0) {
+            max_intensity <- 1
+        }
     }
-  }
 
-  # plot
-  if (isTRUE(asRGB) ||
-    terra::has.RGB(raster_object) ||
-    terra::nlyr(raster_object) >= 3) {
-    terra::plotRGB(raster_object,
-      axes = axes,
-      r = 1, g = 2, b = 3,
-      scale = max_intensity,
-      stretch = stretch,
-      smooth = smooth,
-      mar = mar,
-      maxcell = maxcell,
-      asp = asp,
-      ...
-    )
-  } else {
-    if (is.null(stretch)) stretch <- "lin"
-    terra::plot(raster_object,
-      col = col,
-      axes = axes,
-      range = c(0, max_intensity),
-      stretch = stretch,
-      smooth = smooth,
-      mar = mar,
-      maxcell = maxcell,
-      legend = legend,
-      asp = asp,
-      ...
-    )
-  }
+    # plot
+    if (isTRUE(asRGB) ||
+        terra::has.RGB(a$x) ||
+        terra::nlyr(a$x) >= 3) {
+        a$scale <- max_intensity
+        a$r <- 1
+        a$g <- 2
+        a$b <- 3
+        a$legend <- NULL
+        a$col <- NULL
+
+        do.call(terra::plotRGB, args = a)
+    } else {
+        if (is.null(a$stretch)) a$stretch <- "lin"
+        if (!"range" %in% names(a)) a$range <- c(0, max_intensity)
+
+        do.call(terra::plot, args = a)
+    }
 }
 
 
@@ -450,35 +454,36 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @param ... additional params to pass to plot functions
 #' @keywords internal
 #' @noRd
-.plot_giotto_points <- function(x,
-                               point_size = 0,
-                               feats = NULL,
-                               raster = TRUE,
-                               raster_size = 600L,
-                               ...) {
-  args_list <- list(feats, asp = 1L, ...)
+.plot_giotto_points <- function(
+        x,
+        point_size = 0,
+        feats = NULL,
+        raster = TRUE,
+        raster_size = 600L,
+        ...) {
+    args_list <- list(feats, asp = 1L, ...)
 
-  # point size
-  if (is.null(args_list$cex)) args_list$cex <- point_size
+    # point size
+    if (is.null(args_list$cex)) args_list$cex <- point_size
 
-  # get values to plot
-  args_list$data <- x[]
+    # get values to plot
+    args_list$data <- x[]
 
 
-  # plot
-  if (raster) {
-    package_check(
-      "scattermore",
-      repository = "CRAN",
-      custom_msg = "scattermore must be installed for plotting mode 'raster' = TRUE
+    # plot
+    if (raster) {
+        package_check(
+            "scattermore",
+            repository = "CRAN",
+            custom_msg = "scattermore must be installed for plotting mode 'raster' = TRUE
       To install:
       install.packages('scattermore')"
-    )
-    args_list$size <- raster_size
-    do.call(".plot_giotto_points_raster", args_list)
-  } else {
-    do.call(".plot_giotto_points_vector", args_list)
-  }
+        )
+        args_list$size <- raster_size
+        do.call(".plot_giotto_points_raster", args_list)
+    } else {
+        do.call(".plot_giotto_points_vector", args_list)
+    }
 }
 
 
@@ -490,147 +495,140 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @param ... additional params to pass
 #' @noRd
 .plot_giotto_points_raster <- function(data, feats = NULL, ...) {
-  args_list <- list(...)
+    args_list <- list(...)
 
-  opar <- par(no.readonly = TRUE)
-  on.exit(par(opar), add = TRUE)
-
-
-  # raster size
-  if (is.null(args_list$size)) {
-    args_list$size <- c(600, 600)
-  } else if (length(args_list$size) == 1L) {
-    # if size provided as single value, replicate to give a square window
-    args_list$size <- rep(args_list$size, 2L)
-  }
-
-  # axis font size
-  if (is.null(args_list$cex.axis)) args_list$cex.axis <- 0.7
-
-  args_list$ann <- FALSE
-
-  if (is.null(feats)) {
-    include_values = FALSE
-  } else {
-    include_values = TRUE
-  }
-
-  dataDT <- data.table::as.data.table(
-    x = data,
-    geom = "XY",
-    include_values = include_values
-  )
+    opar <- par(no.readonly = TRUE)
+    on.exit(par(opar), add = TRUE)
 
 
-  if (length(feats) == 0L) {
+    # raster size
+    if (is.null(args_list$size)) {
+        args_list$size <- c(600, 600)
+    } else if (length(args_list$size) == 1L) {
+        # if size provided as single value, replicate to give a square window
+        args_list$size <- rep(args_list$size, 2L)
+    }
 
-    .plot_giotto_points_all(
-      dataDT = dataDT,
-      args_list = args_list
+    # axis font size
+    if (is.null(args_list$cex.axis)) args_list$cex.axis <- 0.7
+
+    args_list$ann <- FALSE
+
+    if (is.null(feats)) {
+        include_values <- FALSE
+    } else {
+        include_values <- TRUE
+    }
+
+    dataDT <- data.table::as.data.table(
+        x = data,
+        geom = "XY",
+        include_values = include_values
     )
 
-  } else if (length(feats) == 1L) {
 
-    .plot_giotto_points_one(
-      dataDT = dataDT,
-      feats = feats,
-      args_list = args_list
-    )
-
-  } else {
-
-    .plot_giotto_points_several(
-      dataDT = dataDT,
-      feats = feats,
-      args_list = args_list
-    )
-
-  }
+    if (length(feats) == 0L) {
+        .plot_giotto_points_all(
+            dataDT = dataDT,
+            args_list = args_list
+        )
+    } else if (length(feats) == 1L) {
+        .plot_giotto_points_one(
+            dataDT = dataDT,
+            feats = feats,
+            args_list = args_list
+        )
+    } else {
+        .plot_giotto_points_several(
+            dataDT = dataDT,
+            feats = feats,
+            args_list = args_list
+        )
+    }
 }
 
 
 
 .plot_giotto_points_all <- function(dataDT, args_list) {
-  par(mar = c(2.7, 3.5, 2, 2))
+    par(mar = c(2.7, 3.5, 2, 2))
 
-  args_list$x <- dataDT$x
-  args_list$y <- dataDT$y
-  args_list$col <- "white"
+    args_list$x <- dataDT$x
+    args_list$y <- dataDT$y
+    args_list$col <- "white"
 
-  plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
-  u <- par("usr") # coordinates of the plot area
-  rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
-  par(new = TRUE)
+    plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
+    u <- par("usr") # coordinates of the plot area
+    rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
+    par(new = TRUE)
 
-  do.call(scattermore::scattermoreplot, args_list)
+    do.call(scattermore::scattermoreplot, args_list)
 }
 
 
 
 .plot_giotto_points_one <- function(dataDT, feats, args_list) {
+    # NSE vars
+    feat_ID <- NULL
 
-  # NSE vars
-  feat_ID <- NULL
+    if (!feats %in% dataDT[, feat_ID]) {
+        .gstop(str_vector(feats), "not found in giottoPoints", .n = 6L)
+    }
 
-  if (!feats %in% dataDT[, feat_ID]) {
-    .gstop(str_vector(feats), "not found in giottoPoints", .n = 6L)
-  }
+    par(mar = c(2.7, 3.5, 2, 2))
 
-  par(mar = c(2.7, 3.5, 2, 2))
+    dataDT <- dataDT[feat_ID == feats] # select single feats's data
+    args_list$x <- dataDT$x
+    args_list$y <- dataDT$y
+    args_list$col <- "white"
 
-  dataDT <- dataDT[feat_ID == feats] # select single feats's data
-  args_list$x <- dataDT$x
-  args_list$y <- dataDT$y
-  args_list$col <- "white"
+    plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
+    u <- par("usr") # coordinates of the plot area
+    rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
+    par(new = TRUE)
 
-  plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
-  u <- par("usr") # coordinates of the plot area
-  rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
-  par(new = TRUE)
-
-  do.call(scattermore::scattermoreplot, args_list)
+    do.call(scattermore::scattermoreplot, args_list)
 }
 
 
 
 .plot_giotto_points_several <- function(dataDT, feats, args_list) {
-  # NSE vars
-  feat_color_idx <- feat_ID <- NULL
+    # NSE vars
+    feat_color_idx <- feat_ID <- NULL
 
-  missing_feats <- feats[!feats %in% dataDT[, feat_ID]]
-  if (length(missing_feats) > 0L) {
-    .gstop(str_vector(missing_feats), "not found in giottoPoints", .n = 6L)
-  }
+    missing_feats <- feats[!feats %in% dataDT[, feat_ID]]
+    if (length(missing_feats) > 0L) {
+        .gstop(str_vector(missing_feats), "not found in giottoPoints", .n = 6L)
+    }
 
-  par(mar = c(2.7, 3.5, 2, 4))
-  feat_colors <- getRainbowColors(length(feats))
+    par(mar = c(2.7, 3.5, 2, 4))
+    feat_colors <- getRainbowColors(length(feats))
 
-  data.table::setkey(dataDT, "feat_ID")
-  dataDT <- dataDT[feat_ID %in% feats]
-  dataDT[, feat_color_idx :=
-           sapply(feat_ID, function(feat_i) which(feats == feat_i))]
+    data.table::setkey(dataDT, "feat_ID")
+    dataDT <- dataDT[feat_ID %in% feats]
+    dataDT[, feat_color_idx :=
+        sapply(feat_ID, function(feat_i) which(feats == feat_i))]
 
-  args_list$x <- dataDT$x
-  args_list$y <- dataDT$y
-  args_list$col <- feat_colors[dataDT$feat_color_idx]
+    args_list$x <- dataDT$x
+    args_list$y <- dataDT$y
+    args_list$col <- feat_colors[dataDT$feat_color_idx]
 
-  plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
-  u <- par("usr") # coordinates of the plot area
-  rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
-  par(new = TRUE)
+    plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
+    u <- par("usr") # coordinates of the plot area
+    rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
+    par(new = TRUE)
 
-  do.call(scattermore::scattermoreplot, args_list)
-  legend(
-    x = "topright",
-    inset = c(-1.3 / dev.size()[1], 0),
-    legend = feats,
-    col = feat_colors,
-    bty = "n",
-    pch = 20,
-    cex = 0.6,
-    title = "feat_ID",
-    xpd = TRUE
-  )
+    do.call(scattermore::scattermoreplot, args_list)
+    legend(
+        x = "topright",
+        inset = c(-1.3 / dev.size()[1], 0),
+        legend = feats,
+        col = feat_colors,
+        bty = "n",
+        pch = 20,
+        cex = 0.6,
+        title = "feat_ID",
+        xpd = TRUE
+    )
 }
 
 
@@ -646,27 +644,27 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' Vectorized plotting workflow for giottoPoints via base plot()
 #' @noRd
 .plot_giotto_points_vector <- function(data, feats = NULL, ...) {
-  args_list <- list(...)
+    args_list <- list(...)
 
-  # base plot does not understand cex of 0
-  if (args_list$cex == 0) args_list$cex <- 0.1
+    # base plot does not understand cex of 0
+    if (args_list$cex == 0) args_list$cex <- 0.1
 
-  args_list$background <- "black"
+    args_list$background <- "black"
 
-  if (is.null(feats)) {
-    args_list$x <- data
-    args_list$col <- "white"
-    do.call(terra::plot, args_list)
-  } else {
-    args_list$x <- terra::subset(data, terra::values(data)$feat_ID %in% feats)
-    if (length(feats) == 1L) {
-      args_list$col <- "white"
+    if (is.null(feats)) {
+        args_list$x <- data
+        args_list$col <- "white"
+        do.call(terra::plot, args_list)
+    } else {
+        args_list$x <- terra::subset(data, terra::values(data)$feat_ID %in% feats)
+        if (length(feats) == 1L) {
+            args_list$col <- "white"
+        }
+        if (length(feats) > 1L) {
+            args_list$y <- "feat_ID"
+        }
+        do.call(terra::plot, args_list)
     }
-    if (length(feats) > 1L) {
-      args_list$y <- "feat_ID"
-    }
-    do.call(terra::plot, args_list)
-  }
 }
 
 
@@ -681,17 +679,18 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @param ... additional params to pass to plot function
 #' @keywords internal
 #' @noRd
-.plot_giotto_polygon <- function(x, point_size = 0.6,
-                                type = c("poly", "centroid"), ...) {
-  type <- match.arg(type, choices = c("poly", "centroid"))
-  if (type == "poly") {
-    terra::plot(x = x@spatVector, ...)
-  }
-  if (type == "centroid") {
-    if (!is.null(x@spatVectorCentroids)) {
-      terra::plot(x = x@spatVectorCentroids, cex = point_size, ...)
-    } else {
-      cat("no centroids calculated\n")
+.plot_giotto_polygon <- function(
+        x, point_size = 0.6,
+        type = c("poly", "centroid"), ...) {
+    type <- match.arg(type, choices = c("poly", "centroid"))
+    if (type == "poly") {
+        terra::plot(x = x@spatVector, ...)
     }
-  }
+    if (type == "centroid") {
+        if (!is.null(x@spatVectorCentroids)) {
+            terra::plot(x = x@spatVectorCentroids, cex = point_size, ...)
+        } else {
+            cat("no centroids calculated\n")
+        }
+    }
 }
