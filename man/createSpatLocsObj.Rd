@@ -34,9 +34,11 @@ spatLocsObj
 Create an S4 spatLocsObj
 }
 \examples{
-x <- data.frame(cell_ID = c("cell_1", "cell_2", "cell_3"),
-sdimx = c(6637.881, 6471.978, 6801.610), 
-sdimy = c(-5140.465, -4883.541, -4968.685))
+x <- data.frame(
+    cell_ID = c("cell_1", "cell_2", "cell_3"),
+    sdimx = c(6637.881, 6471.978, 6801.610),
+    sdimy = c(-5140.465, -4883.541, -4968.685)
+)
 
 createSpatLocsObj(coordinates = x, name = "raw")
 

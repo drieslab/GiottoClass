@@ -37,8 +37,9 @@ exprObj
 Create an S4 exprObj
 }
 \examples{
-x_expr <- readRDS(system.file("extdata/toy_matrix.RDS", 
-package = "GiottoClass"))
+x_expr <- readRDS(system.file("extdata/toy_matrix.RDS",
+    package = "GiottoClass"
+))
 
 createExprObj(expression_data = x_expr)
 

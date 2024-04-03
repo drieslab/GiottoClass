@@ -54,7 +54,7 @@ the \emph{feat_ID} column in fDataDT(gobject).}
 g <- GiottoData::loadGiottoMini("visium")
 
 m <- fDataDT(g)
-m <- m[,"feat_ID"]
+m <- m[, "feat_ID"]
 m$new_feat_ID <- paste0("gene_", m$feat_ID)
 
 g <- addFeatMetadata(

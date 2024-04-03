@@ -42,8 +42,10 @@ Create S4 spatialGridObj
 \examples{
 x <- GiottoData::loadSubObjectMini("spatialGridObj")
 
-create_spat_grid_obj(name = "test",
-gridDT = x)
+create_spat_grid_obj(
+    name = "test",
+    gridDT = x
+)
 
 }
 \keyword{internal}
