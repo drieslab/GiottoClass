@@ -7,6 +7,9 @@
 \alias{getRainbowColors}
 \alias{getMonochromeColors}
 \title{Objects exported from other packages}
+\value{
+character vector of hexadecimal distinct colors
+}
 \keyword{internal}
 \description{
 These objects are imported from other packages. Follow the links

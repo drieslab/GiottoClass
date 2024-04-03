@@ -1,9 +1,9 @@
 Package: GiottoClass
 Title: Giotto Suite object definitions and framework
-Version: 0.1.3
+Version: 0.2.4
 Authors@R: c(
 	person("Ruben", "Dries", email = "rubendries@gmail.com",
-		 role = c("aut", "cre")),
+		 role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7650-7754")),
 	person("Jiaji", "George Chen", email = "jiajic@bu.edu",
 		 role = c("aut")),
 	person("Guo-Cheng", "Yuan", email = "guo-cheng.yuan@mssm.edu",
@@ -16,31 +16,32 @@ Authors@R: c(
 		 role = c("aut"))
 	)
 Description: This package contains the Giotto object and subobject class
-  definitions and frameworks. Functionalities relating to data ingestion, basic object
-  creation, data access within the Giotto object, and generics defined for the 
-  Giotto classes are all found here.\cr
-  Applications of this framework and convenience functions for loading specific
-  technologies are found in the base Giotto package.
-License: GPL (>= 3)
+  definitions and frameworks. Functionalities relating to data ingestion, basic 
+  object creation, data access within the Giotto object, and generics defined  
+  for the Giotto classes are all found here. Applications of this framework and 
+  convenience functions for loading specific technologies are found in the base 
+  Giotto package.
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Depends:
-    base (>= 3.5.0),
-    utils (>= 3.5.0),
-    R (>= 3.5.0),
+    base (>= 4.3.0),
+    utils (>= 4.3.0),
+    R (>= 4.3.0),
 Imports:
     checkmate,
     data.table (>= 1.12.2),
     dbscan (>= 1.1-3),
     deldir (>= 1.0.6),
-    GiottoUtils (>= 0.1.2),
+    GiottoUtils (>= 0.1.6),
+    graphics,
+    grDevices,
     igraph (>= 1.2.4.1),
     magick,
     Matrix (>= 1.6.2),
     matrixStats (>= 0.55.0),
     methods,
-    reshape2,
     reticulate (>= 1.25),
     sp,
     stats,
@@ -55,9 +56,12 @@ Suggests:
     GiottoData,
     HDF5Array (>= 1.18.1),
     knitr,
+    plotly,
     R.utils,
     raster,
     remotes,
+    reshape2,
+    rgl,
     rhdf5,
     rlang,
     rmarkdown,
@@ -74,13 +78,12 @@ Suggests:
     SummarizedExperiment,
     testthat (>= 3.0.0),
     qs
-Remotes: drieslab/GiottoUtils
 Config/testthat/edition: 3
 Collate: 
-    'NN_network.R'
     'package_imports.R'
     'classes.R'
     'generics.R'
+    'NN_network.R'
     'aggregate.R'
     'auxilliary.R'
     'combine_metadata.R'
@@ -116,8 +119,10 @@ Collate:
     'methods-overlaps.R'
     'methods-plot.R'
     'methods-rbind.R'
+    'methods-reconnect.R'
     'methods-rescale.R'
     'methods-setGiotto.R'
+    'methods-shear.R'
     'methods-show.R'
     'methods-spatShift.R'
     'methods-spin.R'
@@ -137,4 +142,6 @@ Collate:
     'suite_reexports.R'
     'zzz.R'
 URL: https://drieslab.github.io/GiottoClass/
+biocViews: Software, Technology, Spatial
 VignetteBuilder: knitr
+BugReports: https://github.com/drieslab/Giotto/issues

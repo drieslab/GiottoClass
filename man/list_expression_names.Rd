@@ -17,5 +17,6 @@ list_expression_names(gobject, spat_unit = NULL, feat_type = NULL)
 vector with names of available matrices
 }
 \description{
-lists the available matrices names for a given spatial unit and feature type
+lists the available matrices names for a given spatial unit
+and feature type
 }

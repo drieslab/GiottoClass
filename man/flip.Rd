@@ -2,6 +2,7 @@
 % Please edit documentation in R/methods-flip.R
 \name{flip}
 \alias{flip}
+\alias{flip,giotto-method}
 \alias{flip,giottoPolygon-method}
 \alias{flip,giottoPoints-method}
 \alias{flip,spatLocsObj-method}
@@ -10,6 +11,16 @@
 \alias{flip,SpatExtent-method}
 \title{Flip an object}
 \usage{
+\S4method{flip}{giotto}(
+  x,
+  direction = "vertical",
+  x0 = 0,
+  y0 = 0,
+  spat_unit = ":all:",
+  feat_type = ":all:",
+  ...
+)
+
 \S4method{flip}{giottoPolygon}(x, direction = "vertical", x0 = 0, y0 = 0, ...)
 
 \S4method{flip}{giottoPoints}(x, direction = "vertical", x0 = 0, y0 = 0, ...)
@@ -25,7 +36,8 @@
 \arguments{
 \item{x}{object}
 
-\item{direction}{character. Direction to flip. Should be either partial match to 'vertical' or 'horizontal'}
+\item{direction}{character. Direction to flip. Should be either partial
+match to 'vertical' or 'horizontal'}
 
 \item{x0}{x value to flip horizontally over (ignored for vertical). Pass NULL
 to flip over the extent}
@@ -33,7 +45,14 @@ to flip over the extent}
 \item{y0}{y value to flip vertically over (ignored for horizontal). Pass NULL
 to flip over the extent}
 
+\item{spat_unit}{character vector. spatial units to affect}
+
+\item{feat_type}{character vector. feature types to affect}
+
 \item{...}{additional args to pass}
+}
+\value{
+flipped object
 }
 \description{
 Flip an object over a designated x or y value depending on

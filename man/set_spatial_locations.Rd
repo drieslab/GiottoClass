@@ -42,10 +42,10 @@ giotto object
 Function to set a spatial location slot
 }
 \details{
-If a \code{spatLocsObj} is provided to \code{spatlocs} param then any
-attached name and spat_unit info will be used for input to this function's
-\code{spat_loc_name} and \code{spat_unit}params, BUT will be overridden by any
-alternative specific inputs to those params. \cr
+If a \code{spatLocsObj} is provided to \code{spatlocs} param then
+any attached name and spat_unit info will be used for input to this
+function's \code{spat_loc_name} and \code{spat_unit}params, BUT will be
+overridden by any alternative specific inputs to those params. \cr
 ie: a \code{spatLocsObj} with spat_unit slot == 'cell' will be automatically
 nested by spat_unit 'cell' when using \code{set_spatial_locations} as long as
 param \code{spat_unit = NULL}. BUT if param \code{spat_unit = 'nucleus'} then

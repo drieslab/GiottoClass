@@ -7,9 +7,19 @@
 convert_to_full_spatial_network(reduced_spatial_network_DT)
 }
 \arguments{
-\item{reduced_spatial_network_DT}{reduced spatial network in data.table format}
+\item{reduced_spatial_network_DT}{reduced spatial network in \code{data.table}
+format}
+}
+\value{
+data.table
 }
 \description{
-convert to a full spatial network
+Convert to a full spatial network, ie ensuring that all edges
+that may currently only be represented as \eqn{a} -> \eqn{b} also have the
+reverse \eqn{b} -> \eqn{a}. The entries are then made unique, after which all
+interactions are ranked by distance, where rank increases from smaller to
+larger distances. This rank is appended to the \code{data.table} as a \code{rank_int}
+column. Another \code{rnk_src_trgt} column is added with the IDs of \eqn{a} and
+\eqn{b} pasted together
 }
 \keyword{internal}

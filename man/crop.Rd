@@ -25,6 +25,9 @@
 \item{xmin, xmax, ymin, ymax}{only used if DT = TRUE. Set extent bounds
 independently}
 }
+\value{
+SpatRaster
+}
 \description{
 Spatially subset an object x using object y. Giotto spatial
 subobjects respond to \link[terra:crop]{terra::crop}. For \code{giottoPoints} and \code{giottoPolygon},

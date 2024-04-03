@@ -18,6 +18,9 @@ create_spat_net_obj(
   misc = NULL
 )
 }
+\value{
+spat_net_obj
+}
 \description{
 create_spat_net_obj
 }

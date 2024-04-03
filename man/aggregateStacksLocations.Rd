@@ -29,11 +29,16 @@ giotto object
 \description{
 aggregate expression matrices from different z-stacks
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+aggregateStacksLocations(g, spat_units = c("z0", "z1"))
+
+}
 \seealso{
 Other aggregate stacks: 
+\code{\link{aggregateStacks}()},
 \code{\link{aggregateStacksExpression}()},
 \code{\link{aggregateStacksPolygonOverlaps}()},
-\code{\link{aggregateStacksPolygons}()},
-\code{\link{aggregateStacks}()}
+\code{\link{aggregateStacksPolygons}()}
 }
 \concept{aggregate stacks}

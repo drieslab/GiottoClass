@@ -33,14 +33,15 @@ createMetafeats(
 giotto object
 }
 \description{
-This function creates an average metafeat/metagene/module for clusters.
+This function creates an average metafeat/metagene/module
+for clusters.
 }
 \details{
 An example for the 'gene_clusters' could be like this:
-cluster_vector = c(1, 1, 2, 2); names(cluster_vector) = c('geneA', 'geneB', 'geneC', 'geneD')
+cluster_vector = c(1, 1, 2, 2)
+names(cluster_vector) = c('geneA', 'geneB', 'geneC', 'geneD')
 }
 \examples{
-\dontrun{
 # load a dataset
 g <- GiottoData::loadGiottoMini("viz")
 # set a spat unit to use
@@ -48,11 +49,13 @@ activeSpatUnit(g) <- "aggregate"
 
 # create the metafeats
 # We do this by making an annotation vector which is a numerical vector
-# of cluster assignments where each number is named by the feature it describes.
+# of cluster assignments where each number is named by the feature it 
+# describes.
 #
-# Here we create an example annotation vector by arbitrarily using the first 6
-# features and putting 3 in cluster 1 and the other 3 in cluster 2.
-feats_to_use <- featIDs(g)[1:6]
+# Here we create an example annotation vector by arbitrarily using the 
+# first 6 features and putting 3 in cluster 1 and the other 3 in cluster 2.
+
+feats_to_use <- featIDs(g)[seq_len(6)]
 clust_to_use <- c(1, 1, 1, 2, 2, 2)
 names(clust_to_use) <- feats_to_use
 
@@ -60,19 +63,11 @@ names(clust_to_use) <- feats_to_use
 clust_to_use
 
 g <- createMetafeats(
-  gobject = g,
-  feat_clusters = clust_to_use,
-  name = "new_metagene"
+    gobject = g,
+    feat_clusters = clust_to_use,
+    name = "new_metagene"
 )
 
-GiottoVisuals::spatCellPlot(
-  gobject = g,
-  spat_enr_names = "new_metagene",
-  cell_annotation_values = c("1", "2"),
-  point_size = 3.5,
-  cow_n_col = 2
-)
-}
 }
 \seealso{
 \code{\link[GiottoVisuals:spatCellPlot]{GiottoVisuals::spatCellPlot()}}

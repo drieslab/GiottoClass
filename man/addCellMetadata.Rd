@@ -21,13 +21,17 @@ addCellMetadata(
 
 \item{feat_type}{feature type}
 
-\item{new_metadata}{new cell metadata to use (data.table, data.frame, ...)}
+\item{new_metadata}{new cell metadata to
+use (data.table, data.frame, vector, factor, ...)}
 
-\item{vector_name}{(optional) custom name if you provide a single vector}
+\item{vector_name}{(optional) custom name for new metadata column if single
+vector or factor is provided}
 
-\item{by_column}{merge metadata based on \emph{cell_ID} column in \code{\link{pDataDT}} (default = FALSE)}
+\item{by_column}{merge metadata based on \emph{cell_ID} column in
+\code{\link{pDataDT}} (default = FALSE)}
 
-\item{column_cell_ID}{column name of new metadata to use if by_column = TRUE}
+\item{column_cell_ID}{column name of new metadata to use if
+\code{by_column = TRUE}}
 }
 \value{
 giotto object
@@ -36,9 +40,33 @@ giotto object
 Adds cell metadata to the giotto object
 }
 \details{
-You can add additional cell metadata in two manners:
+You can add additional cell metadata in several manners:
 \itemize{
-\item{1. Provide a data.table or data.frame with cell annotations in the same order as the \emph{cell_ID} column in pDataDT(gobject) }
-\item{2. Provide a data.table or data.frame with cell annotations and specify which column contains the cell IDs, these cell IDs need to match with the \emph{cell_ID} column in pDataDT(gobject)}
+\item{1. Provide a data.frame-like object, vector, or factor with cell
+annotations in the same order as the \emph{cell_ID} column in
+pDataDT(gobject). This is a bit risky and not the most recommended.}
+\item{2. Provide a data.frame-like object with cell annotations and
+specify which column contains the cell IDs, these cell IDs need to match
+with the \emph{cell_ID} column in pDataDT(gobject)}
+\item{3. Provide a vector or factor that is named with the cell IDs they
+correspond to. These names will be matched against the \emph{cell_ID}
+column in pDataDT(gobject).}
 }
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+m <- pDataDT(g)
+m <- m[,c("cell_ID", "leiden_clus")]
+m$cell_type <- paste0("cell_type_", m$leiden_clus)
+m <- m[, c("cell_ID", "cell_type")]
+
+g <- addCellMetadata(
+    g,
+    new_metadata = m,
+    by_column = TRUE,
+    column_cell_ID = "cell_ID"
+)
+
+pDataDT(g)
 }

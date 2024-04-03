@@ -5,6 +5,9 @@
 \alias{nnNetObj-class}
 \alias{nnNetObj}
 \title{S4 nnNetObj}
+\value{
+nnNetObj
+}
 \description{
 Framework to store nearest neighbor network information
 }

@@ -5,6 +5,9 @@
 \alias{spatLocsObj-class}
 \alias{spatLocsObj}
 \title{S4 spatLocsObj Class}
+\value{
+spatLocsObj
+}
 \description{
 Framework to store spatial location information
 }

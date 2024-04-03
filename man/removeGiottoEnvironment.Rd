@@ -13,6 +13,9 @@ i.e. "C:/my/conda/lives/here" OR "C:\\my\\conda\\lives\\here"}
 
 \item{verbose}{be verbose}
 }
+\value{
+character or NULL
+}
 \description{
 removeGiottoEnvironment
 }

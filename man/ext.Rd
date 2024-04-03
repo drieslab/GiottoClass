@@ -8,6 +8,7 @@
 \alias{ext,giottoPoints-method}
 \alias{ext,spatialNetworkObj-method}
 \alias{ext,giottoLargeImage-method}
+\alias{ext,giottoImage-method}
 \alias{ext<-,giottoPoints,SpatExtent-method}
 \alias{ext<-,giottoPolygon,SpatExtent-method}
 \alias{ext<-,giottoLargeImage,SpatExtent-method}
@@ -24,6 +25,8 @@
 
 \S4method{ext}{giottoLargeImage}(x, ...)
 
+\S4method{ext}{giottoImage}(x, ...)
+
 \S4method{ext}{giottoPoints,SpatExtent}(x) <- value
 
 \S4method{ext}{giottoPolygon,SpatExtent}(x) <- value
@@ -39,7 +42,10 @@
 
 \item{value}{value to set. Accepts any object that \code{ext()} will work on}
 }
+\value{
+SpatExtent
+}
 \description{
-Get a SpatExtent of an object. This is the spatial minmax x and y
-that the object is mapped to.
+Get a SpatExtent of an object. This is the spatial minmax x
+and y that the object is mapped to.
 }

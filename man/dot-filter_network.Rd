@@ -13,6 +13,9 @@
 
 \item{minimum_k}{minimum number of neighbors}
 }
+\value{
+data.table
+}
 \description{
 Filter a spatial network by spatial characteristics
 }

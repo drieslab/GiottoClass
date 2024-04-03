@@ -27,11 +27,15 @@
 \arguments{
 \item{gobject}{giotto object}
 
-\item{initialize}{(boolean, default = TRUE) whether to initialize the giotto object}
+\item{initialize}{(boolean, default = TRUE) whether to initialize the giotto
+object}
 
 \item{value}{value to set}
 
 \item{param}{Specific param in instructions to access or modify}
+}
+\value{
+giotto instructions
 }
 \description{
 Retrieve or set giotto instructions. Specific instructions can

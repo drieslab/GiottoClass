@@ -13,7 +13,8 @@ showGiottoImageNames(gobject)
 prints names of available giotto image objects
 }
 \description{
-Prints the available giotto images that are attached to the Giotto object
+Prints the available giotto images that are attached to the
+Giotto object
 }
 \seealso{
 Other functions to show data in giotto object: 

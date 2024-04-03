@@ -26,11 +26,17 @@ giotto object
 \description{
 aggregate polygons overlap information from different z-stacks
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+aggregateStacksPolygonOverlaps(g, spat_units = c("z0", "z1"), 
+feat_type = "rna")
+
+}
 \seealso{
 Other aggregate stacks: 
+\code{\link{aggregateStacks}()},
 \code{\link{aggregateStacksExpression}()},
 \code{\link{aggregateStacksLocations}()},
-\code{\link{aggregateStacksPolygons}()},
-\code{\link{aggregateStacks}()}
+\code{\link{aggregateStacksPolygons}()}
 }
 \concept{aggregate stacks}

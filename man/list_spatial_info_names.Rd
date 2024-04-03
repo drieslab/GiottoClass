@@ -13,5 +13,6 @@ list_spatial_info_names(gobject)
 vector with names of available spatial polygon information
 }
 \description{
-return the available names for giotto spatial polygon information
+return the available names for giotto spatial polygon
+information
 }

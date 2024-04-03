@@ -24,8 +24,8 @@ subsetGiottoLocsSubcellular(
 
 \item{feat_type}{character. which feature info to spatially subset}
 
-\item{x_max, x_min, y_max, y_min, z_max, z_min}{minimum and maximum x, y, and z coordinates
-to subset to}
+\item{x_max, x_min, y_max, y_min, z_max, z_min}{minimum and maximum x, y, and z
+coordinates to subset to}
 
 \item{verbose}{be verbose}
 }

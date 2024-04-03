@@ -18,7 +18,7 @@ createSpatialDelaunayNetwork(
   Y = TRUE,
   j = TRUE,
   S = 0,
-  verbose = T,
+  verbose = TRUE,
   return_gobject = TRUE,
   output = c("spatialNetworkObj", "data.table"),
   ...
@@ -37,25 +37,37 @@ createSpatialDelaunayNetwork(
 
 \item{method}{package to use to create a Delaunay network}
 
-\item{dimensions}{which spatial dimensions to use. Use "sdimx" (spatial dimension x), "sdimy", "sdimz" respectively to refer to X (or the 1st), Y (or the 2nd) and Z(or the 3rd) dimension, see details. (default = all)}
+\item{dimensions}{which spatial dimensions to use. Use
+"sdimx" (spatial dimension x), "sdimy", "sdimz" respectively to refer to
+X (or the 1st), Y (or the 2nd) and Z(or the 3rd) dimension, see
+details. (default = all)}
 
-\item{maximum_distance}{distance cuttof for Delaunay neighbors to consider. If "auto", "upper wisker" value of the distance vector between neighbors is used; see the boxplot{graphics} documentation for more details.(default = "auto")}
+\item{maximum_distance}{distance cuttof for Delaunay neighbors to consider.
+If "auto", "upper whisker" value of the distance vector between neighbors
+is used; see the boxplot{graphics} documentation for more
+details.(default = "auto")}
 
-\item{minimum_k}{minimum number of neigbhours if maximum_distance != NULL}
+\item{minimum_k}{minimum number of neighbours if maximum_distance != NULL}
 
-\item{options}{(geometry) String containing extra control options for the underlying Qhull command; see the Qhull documentation (../doc/qhull/html/qdelaun.html) for the available options. (default = 'Pp', do not report precision problems)}
+\item{options}{(geometry) String containing extra control options for the
+underlying Qhull command; see the
+\href{http://www.qhull.org/html/qdelaun.htm}{Qhull documentation} for the
+available options. (default = 'Pp', do not report precision problems)}
 
-\item{Y}{(RTriangle) If TRUE prohibits the insertion of Steiner points on the mesh boundary.}
+\item{Y}{(RTriangle) If TRUE prohibits the insertion of Steiner points on
+the mesh boundary.}
 
-\item{j}{(RTriangle) If TRUE jettisons vertices that are not part of the final triangulation from the output.}
+\item{j}{(RTriangle) If TRUE jettisons vertices that are not part of the
+final triangulation from the output.}
 
 \item{S}{(RTriangle) Specifies the maximum number of added Steiner points.}
 
-\item{verbose}{verbose}
+\item{verbose}{be verbose}
 
-\item{return_gobject}{boolean: return giotto object (default = TRUE)}
+\item{return_gobject}{logical. return giotto object (default = TRUE)}
 
-\item{output}{object type to return spatial network as when return_gobject = FALSE. (default: 'spatialNetworkObj')}
+\item{output}{character. Object type to return spatial network as when
+\code{return_gobject = FALSE}. (default: 'spatialNetworkObj')}
 
 \item{\dots}{Other additional parameters}
 }
@@ -63,8 +75,11 @@ createSpatialDelaunayNetwork(
 giotto object with updated spatial network slot
 }
 \description{
-Create a spatial Delaunay network based on cell centroid physical distances.
+Create a spatial Delaunay network based on cell centroid
+physical distances.
 }
 \details{
-Creates a spatial Delaunay network as explained in \code{\link[geometry]{delaunayn}} (default), \code{\link[deldir]{deldir}}, or \code{\link[RTriangle]{triangulate}}.
+Creates a spatial Delaunay network as explained
+in \code{\link[geometry]{delaunayn}} (default), \code{\link[deldir]{deldir}},
+or \code{\link[RTriangle]{triangulate}}.
 }

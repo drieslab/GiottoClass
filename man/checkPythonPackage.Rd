@@ -21,6 +21,9 @@ see details.}
 \item{env_to_use}{name of the environment into which the python
 package should be installed.}
 }
+\value{
+character or NULL
+}
 \description{
 checks python environment for a
 provided package, installs if it is not found.

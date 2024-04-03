@@ -18,10 +18,10 @@ expression and spat_info are not expected to exist.}
 character vector of cell_IDs
 }
 \description{
-Data for each spatial unit is expected to agree on a single set of cell_IDs
-that are shared across any feature types. These cell_IDs are stored within the
-giotto object's \code{cell_ID} slot. Getters and setters for this slot directly
-retrieve (get) or replace (set) this slot.
+Data for each spatial unit is expected to agree on a single
+set of cell_IDs that are shared across any feature types. These cell_IDs
+are stored within the giotto object's \code{cell_ID} slot. Getters and
+setters for this slot directly retrieve (get) or replace (set) this slot.
 }
 \seealso{
 set_cell_id

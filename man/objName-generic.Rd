@@ -35,6 +35,9 @@
 
 \item{value}{value to set as object name}
 }
+\value{
+name slot
+}
 \description{
 access and set name slot fo S4 subobject
 }

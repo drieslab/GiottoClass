@@ -19,6 +19,7 @@ set_giottoLargeImage(gobject, largeImage_object, name = NULL, verbose = TRUE)
 giotto object
 }
 \description{
-Set a giottoLargeImage for a giotto object with no additional modifications
+Set a giottoLargeImage for a giotto object with no
+additional modifications
 }
 \keyword{internal}

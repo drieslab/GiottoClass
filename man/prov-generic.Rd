@@ -17,6 +17,9 @@
 
 \item{value}{value to set as provenance}
 }
+\value{
+provenance slot
+}
 \description{
 access and set provenance slot of S4 subobject
 }

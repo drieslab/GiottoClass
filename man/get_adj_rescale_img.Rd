@@ -6,6 +6,9 @@
 \usage{
 get_adj_rescale_img(img_minmax, spatial_locs, scale_factor = 1)
 }
+\value{
+numeric
+}
 \description{
 get_adj_rescale_img
 }

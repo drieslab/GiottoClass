@@ -15,7 +15,8 @@ showGiottoSpatGrids(gobject, nrows = 4)
 prints name of available spatial grids
 }
 \description{
-Prints the available spatial grids that are attached to the Giotto object
+Prints the available spatial grids that are attached to the
+Giotto object
 }
 \seealso{
 Other functions to show data in giotto object: 

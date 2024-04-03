@@ -2,15 +2,17 @@
 % Please edit documentation in R/create.R
 \name{createGiottoPolygon}
 \alias{createGiottoPolygon}
+\alias{createGiottoPolygon,character-method}
 \alias{createGiottoPolygon,SpatVector-method}
 \alias{createGiottoPolygon,SpatRaster-method}
 \alias{createGiottoPolygon,data.frame-method}
-\alias{createGiottoPolygon,character-method}
 \alias{createGiottoPolygonsFromMask}
 \alias{createGiottoPolygonsFromDfr}
 \alias{createGiottoPolygonsFromGeoJSON}
 \title{Create giotto polygons object}
 \usage{
+\S4method{createGiottoPolygon}{character}(x, ...)
+
 \S4method{createGiottoPolygon}{SpatVector}(x, name = "cell", calc_centroids = FALSE, verbose = TRUE)
 
 \S4method{createGiottoPolygon}{SpatRaster}(
@@ -21,11 +23,11 @@
   background_algo = c("range"),
   fill_holes = TRUE,
   poly_IDs = NULL,
+  ID_fmt = "cell_",
   flip_vertical = TRUE,
   shift_vertical_step = TRUE,
   flip_horizontal = TRUE,
   shift_horizontal_step = TRUE,
-  fix_multipart = TRUE,
   remove_unvalid_polygons = TRUE,
   calc_centroids = FALSE,
   verbose = TRUE
@@ -40,8 +42,6 @@
   verbose = TRUE
 )
 
-\S4method{createGiottoPolygon}{character}(x, ...)
-
 createGiottoPolygonsFromMask(
   maskfile,
   mask_method = c("guess", "single", "multiple"),
@@ -50,13 +50,14 @@ createGiottoPolygonsFromMask(
   background_algo = c("range"),
   fill_holes = TRUE,
   poly_IDs = NULL,
+  ID_fmt = "cell_",
   flip_vertical = TRUE,
   shift_vertical_step = TRUE,
   flip_horizontal = TRUE,
   shift_horizontal_step = TRUE,
   calc_centroids = FALSE,
-  fix_multipart = TRUE,
-  remove_unvalid_polygons = TRUE
+  remove_unvalid_polygons = TRUE,
+  verbose = FALSE
 )
 
 createGiottoPolygonsFromDfr(
@@ -79,21 +80,31 @@ createGiottoPolygonsFromGeoJSON(
 \item{x}{input. Filepath to a .GeoJSON or a mask image file. Can also be a
 data.frame with vertex 'x', 'y', and 'poly_ID' information.}
 
+\item{\dots}{additional params to pass. For character method, params pass to
+SpatRaster or SpatVector methods, depending on whether x was a filepath to
+a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.}
+
 \item{name}{name for the \code{giottoPolygon} object created}
 
 \item{calc_centroids}{(default FALSE) calculate centroids for polygons}
 
 \item{verbose}{be verbose}
 
-\item{mask_method}{how the mask file defines individual segmentation annotations}
+\item{mask_method}{how the mask file defines individual segmentation
+annotations. See \emph{mask_method} section}
 
-\item{remove_background_polygon}{try to remove background polygon (default: FALSE)}
+\item{remove_background_polygon}{try to remove background
+polygon (default: FALSE)}
 
 \item{background_algo}{algorithm to remove background polygon}
 
 \item{fill_holes}{fill holes within created polygons}
 
-\item{poly_IDs}{unique names for each polygon in the mask file}
+\item{poly_IDs}{character vector. Default = NULL. Custom unique names for
+each polygon in the mask file.}
+
+\item{ID_fmt}{character. Only applied if \code{poly_IDs = NULL}. Naming scheme for
+poly_IDs. Default = "cell_". See \emph{ID_fmt} section.}
 
 \item{flip_vertical}{flip mask figure in a vertical manner}
 
@@ -103,8 +114,6 @@ data.frame with vertex 'x', 'y', and 'poly_ID' information.}
 
 \item{shift_horizontal_step}{shift horizontal (boolean or numerical)}
 
-\item{fix_multipart}{try to split polygons with multiple parts (default: TRUE)}
-
 \item{remove_unvalid_polygons}{remove unvalid polygons (default: TRUE)}
 
 \item{skip_eval_dfr}{(default FALSE) skip evaluation of provided dataframe}
@@ -112,36 +121,129 @@ data.frame with vertex 'x', 'y', and 'poly_ID' information.}
 \item{copy_dt}{(default TRUE) if segmdfr is provided as dt, this determines
 whether a copy is made}
 
-\item{\dots}{additional params to pass. For character method, params pass to
-SpatRaster or SpatVector methods, depending on whether x was a filepath to
-a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.}
-
 \item{maskfile}{path to mask file}
 
-\item{segmdfr}{data.frame-like object with polygon coordinate information (x, y, poly_ID)
-with x and y being vertex information for the polygon referenced by poly_ID. See details
-for how columns are selected for coordinate and ID information.}
+\item{segmdfr}{data.frame-like object with polygon coordinate
+information (x, y, poly_ID) with x and y being vertex information for the
+polygon referenced by poly_ID. See details for how columns are selected for
+coordinate and ID information.}
 
 \item{GeoJSON}{path to .GeoJSON file}
 }
 \value{
-a giotto polygon object
+giottoPolygon
+
+giottoPolygon
+
+giottoPolygon
 }
 \description{
 Create a \code{giottoPolygon} object that is used to represent
 spatial annotations and polygons. Inputs can be from a structured data.frame
 object where three of the columns should correspond to x/y vertices and the
 polygon ID and additional columns are set as attributes, a spatial file
-such as wkt, .shp, or .GeoJSON, or a mask file (e.g. segmentation results)
+such as wkt, .shp, or .GeoJSON, or a mask file (e.g. segmentation results).
+\cr
+The character method is for file reading and will dispatch to specific
+methods based on what kind of data the file was.
 }
 \details{
-When determining which column within the tabular data is intended to
-provide polygon information, Giotto first checks the column names for 'x', 'y',
-and 'poly_ID'. If any of these are discovered, they are directly selected. If
-this is not discovered then Giotto checks the data type of the columns and selects
-the first \code{'character'} type column to be 'poly_ID' and the first two \code{'numeric'}
-columns as 'x' and 'y' respectively. If this is also unsuccessful then poly_ID
-defaults to the 3rd column. 'x' and 'y' then default to the 1st and 2nd columns.
+When determining which column within tabular data is intended to
+provide polygon information, Giotto first checks the column names for 'x',
+'y', and 'poly_ID'. If any of these are discovered, they are directly
+selected. If this is not discovered then Giotto checks the data type of the
+columns and selects the first \code{'character'} type column to be 'poly_ID' and
+the first two \code{'numeric'} columns as 'x' and 'y' respectively. If this is
+also unsuccessful then poly_ID defaults to the 3rd column. 'x' and 'y' then
+default to the 1st and 2nd columns.
+}
+\section{mask_method}{
+
+One of "single", "multiple", or "guess".
+\itemize{
+\item{\emph{"single"} assumes that the provided mask image is binary, with only
+polygon vs background being distinct values. With this kind of image, the
+expected generated polygons is a single multipart polygon. "single" takes
+this multipart polygon and breaks it apart into individual singlepart
+polygons. An initial simple \code{numeric} index as the 'nth' polygon found in
+the mask image will be applied as an ID (see \emph{ID_fmt} section).}
+\item{\emph{"multiple"} assumes that the provided mask image has distinct
+intensity values to specify the IDs of individual polygons. An initial
+\code{numeric} ID is applied as the intensity value of the pixels that made up
+the annotation for that polygon in the mask image (see \emph{ID_fmt} section).}
+\item{\emph{"guess"} examines the values in the image to pick the most likely
+appropriate method out of "single" or "multiple".}
+}
+}
+
+\section{ID_fmt}{
+
+Defaults to applying the input as a prefix (using \code{paste0()}) to the
+numerical ID values detected by  \code{mask_method}. (ie: \code{ID_fmt = "cell_"}
+produces \code{cell_1}, \code{cell_2}, \code{cell_3}, ...)\cr
+If a "\%" character is detected in the input then the input will be treated as
+a \code{sprintf()} \code{fmt} param input instead. (ie: \code{ID_fmt = "cell_\%03d"} produces
+\code{cell_001}, \code{cell_002}, \code{cell_003}, ...)
+}
+
+\examples{
+# ------- create from a mask image ------- #
+m <- system.file("extdata/toy_mask_multi.tif", package = "GiottoClass")
+plot(terra::rast(m), col = grDevices::hcl.colors(7))
+gp <- createGiottoPolygon(
+    m,
+    flip_vertical = FALSE, flip_horizontal = FALSE,
+    shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
+    ID_fmt = "id_test_\%03d",
+    name = "test"
+)
+plot(gp, col = grDevices::hcl.colors(7))
+
+# ------- create from an shp file ------- #
+shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
+# vector inputs do not have params for flipping and shifting
+gp2 <- createGiottoPolygon(shp, name = "test")
+plot(gp2, col = grDevices::hcl.colors(7))
+
+# ------- create from data.frame-like ------- #
+shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
+gpoly <- createGiottoPolygon(shp, name = "test")
+plot(gpoly)
+gpoly_dt <- data.table::as.data.table(gpoly, geom = "XY")
+needed_cols_dt <- gpoly_dt[, .(geom, part, x, y, hole, poly_ID)]
+force(needed_cols_dt)
+
+out <- createGiottoPolygon(needed_cols_dt,
+    name = "test"
+)
+plot(out)
+
+mask_multi <- system.file("extdata/toy_mask_multi.tif",
+    package = "GiottoClass"
+)
+mask_single <- system.file("extdata/toy_mask_single.tif",
+    package = "GiottoClass"
+)
+plot(terra::rast(mask_multi), col = grDevices::hcl.colors(7))
+plot(terra::rast(mask_single))
+
+gpoly1 <- createGiottoPolygonsFromMask(
+    mask_multi,
+    flip_vertical = FALSE, flip_horizontal = FALSE,
+    shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
+    ID_fmt = "id_test_\%03d",
+    name = "multi_test"
+)
+plot(gpoly1, col = grDevices::hcl.colors(7))
+
+gpoly2 <- createGiottoPolygonsFromMask(
+    mask_single,
+    flip_vertical = FALSE, flip_horizontal = FALSE,
+    shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
+    ID_fmt = "id_test_\%03d",
+    name = "single_test"
+)
+plot(gpoly2, col = grDevices::hcl.colors(5))
 }
 \concept{mask polygon}
 \concept{polygon}

@@ -31,7 +31,7 @@ get_spatial_enrichment(
 expression and spat_info are not expected to exist.}
 }
 \value{
-data.table with fractions
+spatEnrObj or data.table with fractions
 }
 \description{
 Function to get a spatial enrichment data.table

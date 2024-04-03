@@ -12,7 +12,8 @@ showGiottoNearestNetworks(gobject, nrows = 3)
 \item{nrows}{number of network rows to print}
 }
 \value{
-prints the name and small subset of available nearest neighbor network info
+prints the name and small subset of available nearest neighbor
+network info
 }
 \description{
 shows the available nearest neighbor networks

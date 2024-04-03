@@ -13,6 +13,9 @@ create_KNNnetwork_dbscan(
   ...
 )
 }
+\value{
+spatial knn network with dbscan
+}
 \description{
 Create a spatial knn network with dbscan
 }

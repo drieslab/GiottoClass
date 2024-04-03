@@ -5,21 +5,44 @@
 \alias{giotto-class}
 \alias{giotto}
 \title{S4 giotto Class}
+\value{
+giotto object
+}
 \description{
-Framework of giotto object to store and work with spatial expression data
+\pkg{Giotto}'s core object that encapsulates all the components
+of a spatial-omic project and facilitates analyses.
 }
 \details{
-[\strong{expression}] There are several ways to provide expression information:
-
-[\strong{expression_feat}] The different features or modalities such as rna, protein, metabolites, ...
-that are provided in the expression slot.
+[\strong{initialize}]
+The \code{giotto} class has a robust \code{initialize()} method that is automatically
+called upon setting data into the object, updates of
+the \code{giottoInstructions}, and loading of saved objects.
+It performs the following steps:
+\enumerate{
+\item Update the object and subobjects for class definition changes if needed
+\item Ensure a set of \code{giottoInstructions} are available, otherwise generate
+defaults
+\item Ensure a giotto python environment is accessible when the options
+giotto.has_conda and giotto.use_conda are TRUE
+\item Check the active spat_unit and feat_type
+\item Ensure spatial/cell ID consistency and initialize the cell_ID and feat_ID
+slots for the active spat_unit and feat_type, as well as cell and feature
+metadata if they do not exist. Values for IDs and metadata are pulled
+from any existing data in spatial_info/feat_info or expression slots,
+with a preference for the latter.
+\item Perform slot-specific and hierarchical checks that ensure dependent pieces
+of information are only added AFTER the data that they depend on and that
+existing information is consistent across slots.
+\item Object validity checking
+}
 }
 \section{Slots}{
 
 \describe{
 \item{\code{expression}}{expression information}
 
-\item{\code{expression_feat}}{available features (e.g. rna, protein, ...)}
+\item{\code{expression_feat}}{The different features or modalities such as rna,
+protein, metabolites, ... that are provided in the expression slot.}
 
 \item{\code{spatial_locs}}{spatial location coordinates for cells/spots/grids}
 
@@ -55,7 +78,7 @@ that are provided in the expression slot.
 
 \item{\code{offset_file}}{offset file used to stitch together image fields}
 
-\item{\code{OS_platform}}{Operating System to run Giotto analysis on}
+\item{\code{versions}}{giotto object metadata and versioning info}
 
 \item{\code{join_info}}{information about joined Giotto objects}
 

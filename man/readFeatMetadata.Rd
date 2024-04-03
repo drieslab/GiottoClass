@@ -23,6 +23,9 @@ readFeatMetadata(
 
 \item{verbose}{be verbose}
 }
+\value{
+featMetadata
+}
 \description{
 read feature metadata from listt
 }

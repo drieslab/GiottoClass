@@ -13,6 +13,9 @@
 
 \item{name}{(optional) name of overlaps information to retrieve}
 }
+\value{
+list of overlaps from object
+}
 \description{
 Access list of overlaps information from object
 }

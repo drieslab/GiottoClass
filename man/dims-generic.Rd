@@ -18,6 +18,8 @@
 \alias{dim,metaData-method}
 \alias{dim,enrData-method}
 \alias{dim,giottoLargeImage-method}
+\alias{dim,giottoPolygon-method}
+\alias{dim,giottoPoints-method}
 \title{Dimensions of giotto objects}
 \usage{
 \S4method{nrow}{giottoPoints}(x)
@@ -51,9 +53,16 @@
 \S4method{dim}{enrData}(x)
 
 \S4method{dim}{giottoLargeImage}(x)
+
+\S4method{dim}{giottoPolygon}(x)
+
+\S4method{dim}{giottoPoints}(x)
 }
 \arguments{
 \item{x}{object to check dimensions of}
+}
+\value{
+numeric
 }
 \description{
 Find the dimensions of an object
@@ -64,22 +73,29 @@ Find the dimensions of an object
 
 \item \code{nrow(giottoPolygon)}: Find rows of giottoPolygon object
 
-\item \code{nrow(spatLocsObj)}: Find rows of giotto S4s with data.table based \code{coordinates} slots
+\item \code{nrow(spatLocsObj)}: Find rows of giotto S4s with data.table
+based \code{coordinates} slots
 
-\item \code{nrow(exprData)}: Find rows of giotto S4s with data.table based \code{coordinates} slots
+\item \code{nrow(exprData)}: Find rows of giotto S4s with data.table
+based \code{coordinates} slots
 
-\item \code{nrow(metaData)}: Find rows of giotto S4s with data.table based \code{coordinates} slots
+\item \code{nrow(metaData)}: Find rows of giotto S4s with data.table
+based \code{coordinates} slots
 
 \item \code{nrow(spatialNetworkObj)}: Find rows of spatialNetworkObj
 
-\item \code{ncol(exprData)}: Find cols of giotto S4s with Matrix based \code{exprMat} slots
+\item \code{ncol(exprData)}: Find cols of giotto S4s with Matrix
+based \code{exprMat} slots
 
-\item \code{ncol(metaData)}: Find cols of giotto S4s with data.table based \code{metaDT} slots
+\item \code{ncol(metaData)}: Find cols of giotto S4s with data.table
+based \code{metaDT} slots
 
 \item \code{ncol(enrData)}: Find cols of giotto S4s with enrData
 
-\item \code{dim(exprData)}: Find dimensions of giotto S4s with Matrix based \code{exprMat} slots
+\item \code{dim(exprData)}: Find dimensions of giotto S4s with Matrix
+based \code{exprMat} slots
 
-\item \code{dim(metaData)}: Find dimensions of giotto S4s with data.table based \code{metaDT} slots
+\item \code{dim(metaData)}: Find dimensions of giotto S4s with data.table
+based \code{metaDT} slots
 
 }}

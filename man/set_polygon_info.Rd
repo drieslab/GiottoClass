@@ -17,8 +17,8 @@ set_polygon_info(
 
 \item{gpolygon}{giottoPolygon object}
 
-\item{polygon_name}{name of polygons. Default "cell" (only used when gpolygon
-is length of 1)}
+\item{polygon_name}{name of polygons. Default
+"cell" (only used when gpolygon is length of 1)}
 
 \item{verbose}{be verbose}
 

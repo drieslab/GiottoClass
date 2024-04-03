@@ -12,8 +12,10 @@ NULL
 #' initialize param is TRUE
 #' @inheritParams data_access_params
 #' @param param Specific param in instructions to access or modify
-#' @param initialize (boolean, default = TRUE) whether to initialize the giotto object
+#' @param initialize (boolean, default = TRUE) whether to initialize the giotto 
+#' object
 #' @param value value to set
+#' @returns giotto instructions
 NULL
 
 #' @title Active spatial unit
@@ -23,6 +25,7 @@ NULL
 #' default spatial unit that the giotto object uses.
 #' @inheritParams data_access_params
 #' @param value spat_unit to set as default
+#' @returns active spatial unit
 NULL
 
 #' @title Active feature type
@@ -32,6 +35,7 @@ NULL
 #' default feature type that the giotto object uses.
 #' @inheritParams data_access_params
 #' @param value feat_type to set as default
+#' @returns active feature type
 NULL
 
 # ---------------------------------------------------------------- #
@@ -43,83 +47,88 @@ NULL
 #' @rdname instructions-generic
 #' @export
 setMethod(
-  "instructions", signature(gobject = "giotto", param = "missing"),
-  function(gobject) {
-    return(showGiottoInstructions(gobject))
-  }
+    "instructions", signature(gobject = "giotto", param = "missing"),
+    function(gobject) {
+        return(showGiottoInstructions(gobject))
+    }
 )
 
 # Set instructions object
 #' @rdname instructions-generic
 #' @export
 setMethod(
-  "instructions<-",
-  signature(gobject = "giotto", param = "missing", initialize = "missing", value = "ANY"),
-  function(gobject, initialize, value) {
-    gobject <- replaceGiottoInstructions(gobject,
-      instructions = value,
-      init_gobject = TRUE
-    )
-    return(gobject)
-  }
+    "instructions<-",
+    signature(gobject = "giotto", 
+            param = "missing", initialize = "missing", value = "ANY"),
+    function(gobject, initialize, value) {
+        gobject <- replaceGiottoInstructions(gobject,
+            instructions = value,
+            init_gobject = TRUE
+        )
+        return(gobject)
+    }
 )
 #' @rdname instructions-generic
 #' @export
 setMethod(
-  "instructions<-",
-  signature(gobject = "giotto", param = "missing", initialize = "logical", value = "ANY"),
-  function(gobject, initialize, value) {
-    gobject <- replaceGiottoInstructions(gobject,
-      instructions = value,
-      init_gobject = initialize
-    )
-    return(gobject)
-  }
+    "instructions<-",
+    signature(gobject = "giotto", 
+            param = "missing", initialize = "logical", value = "ANY"),
+    function(gobject, initialize, value) {
+        gobject <- replaceGiottoInstructions(gobject,
+            instructions = value,
+            init_gobject = initialize
+        )
+        return(gobject)
+    }
 )
 
 # Get specific field
 #' @rdname instructions-generic
 #' @export
 setMethod(
-  "instructions", signature(gobject = "giotto", param = "character"),
-  function(gobject, param) {
-    instrs <- showGiottoInstructions(gobject = gobject)
-    return(readGiottoInstructions(giotto_instructions = instrs, param = param))
-  }
+    "instructions", signature(gobject = "giotto", param = "character"),
+    function(gobject, param) {
+        instrs <- showGiottoInstructions(gobject = gobject)
+        return(readGiottoInstructions(giotto_instructions = instrs, 
+                                    param = param))
+    }
 )
 
 # Set specific field
 #' @rdname instructions-generic
 #' @export
 setMethod(
-  "instructions<-",
-  signature(gobject = "giotto", param = "character", initialize = "missing", value = "ANY"),
-  function(gobject, param, initialize, value) {
-    gobject <- changeGiottoInstructions(
-      gobject = gobject,
-      params = param,
-      new_values = value,
-      return_gobject = TRUE,
-      init_gobject = TRUE
-    )
-    return(gobject)
-  }
+    "instructions<-",
+    signature(gobject = "giotto", 
+            param = "character", initialize = "missing", value = "ANY"),
+    function(gobject, param, initialize, value) {
+        gobject <- changeGiottoInstructions(
+            gobject = gobject,
+            params = param,
+            new_values = value,
+            return_gobject = TRUE,
+            init_gobject = TRUE
+        )
+        return(gobject)
+    }
 )
 #' @rdname instructions-generic
 #' @export
 setMethod(
-  "instructions<-",
-  signature(gobject = "giotto", param = "character", initialize = "logical", value = "ANY"),
-  function(gobject, param, initialize, value) {
-    gobject <- changeGiottoInstructions(
-      gobject = gobject,
-      params = param,
-      new_values = value,
-      return_gobject = TRUE,
-      init_gobject = initialize
-    )
-    return(gobject)
-  }
+    "instructions<-",
+    signature(gobject = "giotto", 
+            param = "character", initialize = "logical", value = "ANY"),
+    function(gobject, param, initialize, value) {
+        gobject <- changeGiottoInstructions(
+            gobject = gobject,
+            params = param,
+            new_values = value,
+            return_gobject = TRUE,
+            init_gobject = initialize
+        )
+        return(gobject)
+    }
 )
 
 
@@ -135,42 +144,44 @@ setMethod(
 #' @rdname activeSpatUnit-generic
 #' @export
 setMethod("activeSpatUnit", signature(gobject = "giotto"), function(gobject) {
-  su_try <- try(instructions(gobject, "active_spat_unit"), silent = TRUE)
-  if (inherits(su_try, "try-error")) su_try <- NULL
-  return(su_try)
+    su_try <- try(instructions(gobject, "active_spat_unit"), silent = TRUE)
+    if (inherits(su_try, "try-error")) su_try <- NULL
+    return(su_try)
 })
 
 
 #' @rdname activeSpatUnit-generic
 #' @export
 setMethod(
-  "activeSpatUnit<-", signature(gobject = "giotto", value = "character"),
-  function(gobject, value) {
-    instructions(gobject, "active_spat_unit") <- value
-    return(gobject)
-  }
+    "activeSpatUnit<-", signature(gobject = "giotto", value = "character"),
+    function(gobject, value) {
+        instructions(gobject, "active_spat_unit") <- value
+        return(gobject)
+    }
 )
 
 
 ## activeFeatType ####
-setGeneric("activeFeatType", function(gobject, ...) standardGeneric("activeFeatType"))
-setGeneric("activeFeatType<-", function(gobject, ..., value) standardGeneric("activeFeatType<-"))
+setGeneric("activeFeatType", 
+        function(gobject, ...) standardGeneric("activeFeatType"))
+setGeneric("activeFeatType<-", 
+        function(gobject, ..., value) standardGeneric("activeFeatType<-"))
 
 #' @rdname activeFeatType-generic
 #' @export
 setMethod("activeFeatType", signature(gobject = "giotto"), function(gobject) {
-  ft_try <- try(instructions(gobject, "active_feat_type"), silent = TRUE)
-  if (inherits(ft_try, "try-error")) ft_try <- NULL
-  return(ft_try)
+    ft_try <- try(instructions(gobject, "active_feat_type"), silent = TRUE)
+    if (inherits(ft_try, "try-error")) ft_try <- NULL
+    return(ft_try)
 })
 
 
 #' @rdname activeFeatType-generic
 #' @export
 setMethod(
-  "activeFeatType<-", signature(gobject = "giotto", value = "character"),
-  function(gobject, value) {
-    instructions(gobject, "active_feat_type") <- value
-    return(gobject)
-  }
+    "activeFeatType<-", signature(gobject = "giotto", value = "character"),
+    function(gobject, value) {
+        instructions(gobject, "active_feat_type") <- value
+        return(gobject)
+    }
 )

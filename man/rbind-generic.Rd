@@ -17,6 +17,9 @@ to append have different names}
 
 \item{\dots}{additional params to pass to methods}
 }
+\value{
+object with appended rows
+}
 \description{
 row bind two objects
 }

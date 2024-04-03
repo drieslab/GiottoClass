@@ -5,6 +5,9 @@
 \alias{dimObj-class}
 \alias{dimObj}
 \title{S4 dimObj Class}
+\value{
+dimObj
+}
 \description{
 Framework to store dimension reduction information
 }

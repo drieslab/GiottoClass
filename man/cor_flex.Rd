@@ -11,6 +11,9 @@ cor_flex(x, ...)
 
 \item{...}{other arguments passed to stats::cor()}
 }
+\value{
+numeric
+}
 \description{
 cor_flex
 }

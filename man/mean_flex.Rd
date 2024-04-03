@@ -11,6 +11,9 @@ mean_flex(x, ...)
 
 \item{...}{other arguments to pass}
 }
+\value{
+numeric
+}
 \description{
 mean_flex
 }

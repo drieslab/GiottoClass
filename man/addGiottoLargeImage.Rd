@@ -18,11 +18,15 @@ addGiottoLargeImage(
 
 \item{largeImages}{list of giottoLargeImage objects}
 
-\item{spat_loc_name}{provide spatial location slot in Giotto to align images. (optional)}
+\item{spat_loc_name}{provide spatial location slot in Giotto to align
+images. (optional)}
 
-\item{scale_factor}{provide scale of image pixel dimensions relative to spatial coordinates.}
+\item{scale_factor}{provide scale of image pixel dimensions relative to
+spatial coordinates.}
 
-\item{negative_y}{map image to negative y spatial values if TRUE during automatic alignment. Meaning that origin is in upper left instead of lower left.}
+\item{negative_y}{map image to negative y spatial values if TRUE during
+automatic alignment. Meaning that origin is in upper left instead of lower
+left.}
 
 \item{verbose}{be verbose}
 }

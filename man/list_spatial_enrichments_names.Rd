@@ -17,5 +17,6 @@ list_spatial_enrichments_names(gobject, spat_unit = NULL, feat_type = NULL)
 vector of names for available spatial enrichments
 }
 \description{
-returns the available spatial enrichment names for a given spatial unit
+returns the available spatial enrichment names for a given
+spatial unit
 }

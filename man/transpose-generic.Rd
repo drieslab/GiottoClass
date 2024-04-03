@@ -3,6 +3,7 @@
 \name{transpose-generic}
 \alias{transpose-generic}
 \alias{t}
+\alias{t,giotto-method}
 \alias{t,spatLocsObj-method}
 \alias{t,spatialNetworkObj-method}
 \alias{t,giottoPoints-method}
@@ -11,6 +12,8 @@
 \alias{t.spatialNetworkObj}
 \title{Transpose}
 \usage{
+\S4method{t}{giotto}(x)
+
 \S4method{t}{spatLocsObj}(x)
 
 \S4method{t}{spatialNetworkObj}(x)
@@ -25,6 +28,9 @@
 }
 \arguments{
 \item{x}{object to be transposed}
+}
+\value{
+transposed object
 }
 \description{
 Transpose

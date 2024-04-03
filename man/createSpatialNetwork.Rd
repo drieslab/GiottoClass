@@ -2,7 +2,7 @@
 % Please edit documentation in R/spatial_structures.R
 \name{createSpatialNetwork}
 \alias{createSpatialNetwork}
-\title{createSpatialNetwork}
+\title{Create spatial network}
 \usage{
 createSpatialNetwork(
   gobject,
@@ -22,7 +22,7 @@ createSpatialNetwork(
   knn_method = "dbscan",
   k = 4,
   maximum_distance_knn = NULL,
-  verbose = F,
+  verbose = FALSE,
   return_gobject = TRUE,
   output = c("spatialNetworkObj", "data.table"),
   ...
@@ -41,33 +41,44 @@ createSpatialNetwork(
 
 \item{dimensions}{which spatial dimensions to use (default = all)}
 
-\item{method}{which method to use to create a spatial network. (default = Delaunay)}
+\item{method}{which method to use to create a spatial
+network. (default = Delaunay)}
 
-\item{delaunay_method}{Delaunay method to use}
+\item{delaunay_method}{method to use to generate Delaunay network}
 
-\item{maximum_distance_delaunay}{distance cuttof for nearest neighbors to consider for Delaunay network}
+\item{maximum_distance_delaunay}{distance cutoff for nearest neighbors to
+consider for Delaunay network. If "auto", "upper whisker" value of the
+distance vector between neighbors is used; see the \link[grDevices:boxplot.stats]{grDevices::boxplot.stats}
+documentation for more details.(default = "auto")}
 
-\item{options}{(geometry) String containing extra control options for the underlying Qhull command; see the Qhull documentation (../doc/qhull/html/qdelaun.html) for the available options. (default = 'Pp', do not report precision problems)}
+\item{options}{(geometry) String containing extra control options for the
+underlying Qhull command; see the
+\href{http://www.qhull.org/html/qdelaun.htm}{Qhull documentation} for the
+available options. (default = 'Pp', do not report precision problems)}
 
-\item{Y}{(RTriangle) If TRUE prohibits the insertion of Steiner points on the mesh boundary.}
+\item{Y}{(RTriangle) If TRUE prohibits the insertion of Steiner points on
+the mesh boundary.}
 
-\item{j}{(RTriangle) If TRUE jettisons vertices that are not part of the final triangulation from the output.}
+\item{j}{(RTriangle) If TRUE jettisons vertices that are not part of the
+final triangulation from the output.}
 
 \item{S}{(RTriangle) Specifies the maximum number of added Steiner points.}
 
-\item{minimum_k}{minimum nearest neigbhours if maximum_distance != NULL}
+\item{minimum_k}{minimum nearest neighbours if maximum_distance != NULL}
 
 \item{knn_method}{method to create kNN network}
 
 \item{k}{number of nearest neighbors based on physical distance}
 
-\item{maximum_distance_knn}{distance cuttof for nearest neighbors to consider for kNN network}
+\item{maximum_distance_knn}{distance cutoff for nearest neighbors to consider
+for kNN network}
 
-\item{verbose}{verbose}
+\item{verbose}{be verbose}
 
-\item{return_gobject}{boolean: return giotto object (default = TRUE)}
+\item{return_gobject}{logical. return giotto object (default = TRUE)}
 
-\item{output}{object type to return spatial network as when return_gobject = FALSE. (default: 'spatialNetworkObj')}
+\item{output}{character. Object type to return spatial network as when
+\code{return_gobject = FALSE}. (default: 'spatialNetworkObj')}
 
 \item{\dots}{Additional parameters for the selected function}
 }
@@ -75,14 +86,22 @@ createSpatialNetwork(
 giotto object with updated spatial network slot
 }
 \description{
-Create a spatial network based on cell centroid physical distances.
+Create a spatial network based on cell centroids. These networks
+are often used when determining cell-cell connectivities and spatial
+relationships.
+There are several types of spatial networks and multiple methods to generate
+them. Method-specific params are labeled with the name of the method within
+parentheses in their descriptions.
 }
 \details{
-Creates a spatial network connecting single-cells based on their physical distance to each other.
-For Delaunay method, neighbors will be decided by delaunay triangulation and a maximum distance criteria. For kNN method, number of neighbors can be determined by k, or maximum distance from each cell with or without
+Creates a spatial network connecting single-cells based on their
+physical distance to each other.
+For Delaunay method, neighbors will be decided by Delaunay triangulation and
+a maximum distance criteria. For kNN method, number of neighbors can be
+determined by k, or maximum distance from each cell with or without
 setting a minimum k for each cell.
 
-\strong{dimensions: } default = 'all' which takes all possible dimensions.
-Alternatively you can provide a character vector that specififies the spatial dimensions to use, e.g. c("sdimx', "sdimy")
-or a numerical vector, e.g. 2:3
+**dimensions: ** default = 'all' which takes all possible dimensions.
+Alternatively you can provide a character vector that specifies the spatial
+dimensions to use, e.g. c("sdimx', "sdimy") or a numerical vector, e.g. 2:3
 }

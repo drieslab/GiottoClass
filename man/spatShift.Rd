@@ -2,6 +2,7 @@
 % Please edit documentation in R/methods-spatShift.R
 \name{spatShift}
 \alias{spatShift}
+\alias{spatShift,giotto-method}
 \alias{spatShift,spatLocsObj-method}
 \alias{spatShift,data.frame-method}
 \alias{spatShift,spatialNetworkObj-method}
@@ -10,6 +11,8 @@
 \alias{spatShift,giottoLargeImage-method}
 \title{Spatially shift an object}
 \usage{
+\S4method{spatShift}{giotto}(x, dx = 0, dy = 0, spat_unit = ":all:", feat_type = ":all:")
+
 \S4method{spatShift}{spatLocsObj}(x, dx = 0, dy = 0, dz = 0, copy_obj = TRUE, ...)
 
 \S4method{spatShift}{data.frame}(
@@ -37,14 +40,21 @@
 
 \item{dy}{numeric. The shift on the y axis}
 
+\item{spat_unit}{character vector. spatial units to affect}
+
+\item{feat_type}{character vector. feature types to affect}
+
 \item{dz}{numeric. The shift on the z axis}
 
 \item{copy_obj}{Default = TRUE}
 
 \item{...}{additional params to pass to methods}
 
-\item{geom}{character. Named vector of colnames of x, y, (z) coordinate columns.
-Default is \code{c("sdimx", "sdimy", "sdimz")}}
+\item{geom}{character. Named vector of colnames of x, y, (z) coordinate
+columns. Default is \code{c("sdimx", "sdimy", "sdimz")}}
+}
+\value{
+object with shifted spatial locations
 }
 \description{
 Shift the spatial locations of an object

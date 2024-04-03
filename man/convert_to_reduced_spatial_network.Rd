@@ -9,7 +9,12 @@ convert_to_reduced_spatial_network(full_spatial_network_DT)
 \arguments{
 \item{full_spatial_network_DT}{full spatial network in data.table format}
 }
+\value{
+data.table
+}
 \description{
-convert to a reduced spatial network
+Convert to a reduced spatial network. Specifically, removes
+the duplicated connections so that only \eqn{a} -> \eqn{b} interactions
+remain.
 }
 \keyword{internal}

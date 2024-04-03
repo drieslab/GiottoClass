@@ -1,12 +1,84 @@
 
 
-# GiottoClass 0.1.3
+# GiottoClass 0.2.4
+
+## breaking changes
+- deprecation of `reconnect_image_object()`, `reconnect_giottoImage_MG()` and `reconnect_giottoLargeImage()` internals in favor of simpler `reconnect()` generic
+
+## bug fixes
+- fix `plot()` params passing for `giottoPolygon` when `type = "centroid"`
+
+## enhancements
+- use faster `terra::rasterize()` and `terra::plot()` instead of `scattermore::scattermoreplot()` for `giottoPoints` `plot()` method
+- `plot()` `giottoPoints` method now plots density when `dens = TRUE`
+- new `spatValues()` to get specific values from a `giotto` object in `data.table` format
+- new `ometif_to_tif` to convert between .ome.tif and .tif
+- new `terra::density()` and `terra::hist()` wrappers for `giottoLargeImage`
+- `show_max` param `density()` and `hist()` to show the image object's `max_window` setting
+- `.identify_background_range_polygons()` now finds any polygons larger than a threshold percentage than the overall extent of the `SpatVector` input.
+
+
+
+# GiottoClass 0.2.3 (2024/03/12)
+
+## bug fixes
+- fix `saveGiotto` with `overwrite = TRUE` [#870](https://github.com/drieslab/Giotto/issues/870) by rbutlerii
+- fix `plot()` method param passing for `giottoLargeImage`. Ensure access to terra params
+
+## enhancements
+- `createGiottoPoints` `data.frame` method can now select which columns to use with `x_colname`, `y_colname`, `feat_ID_colname` params
+- `giotto` now responds to spatial manipulation generics: `t()`, `flip()`, `rescale()`, `spatShift()`, `spin()`
+- `spatUnit()` and `featType()` are now vectorized
+- new `.evalute_extent()` internal that for fine extent modifications
+- internal `get_spatial_locations_list()` and `get_spatial_network_list()` accessors now accept ":all:" token to get all available, ignoring spat_unit
+
+
+# GiottoClass 0.2.2 (2024/03/01)
+
+## bug fixes
+- fix `createGiottoPolygonsFromMask()` IDs being applied out of sync to mask values
+- fix `createGiottoPolygon()` `character` method dispatch for `raster` inputs
+- remove unused `fix_multipart` param in `createGiottoPolygonsFromMask()`
+- fix `giottoPolygon` ID caching after `rbind()`
+
+## enhancements
+- `createGiottoPolygonsFromMask()` now has `ID_fmt` param for finer control of automatic `poly_ID` generation
+- `.flip_spatvect()` internal for flipping `SpatVector` across arbitrary x and y vals
+
+
+# GiottoClass 0.2.1 (2024/02/28)
+
+## breaking changes
+- `giotto` slot `versions` supercedes `OS_platform`. Used for tracking GiottoClass version.
+
+## bug fixes
+- fix `subsetGiotto` unused `on` argument
+- fix `giotto` object saving when image intensities overlaps data are present.
+- fix `exprObj` `show()` for small matrices
+- fix `giotto` `calculateOverlap()` method when working with image intensities data.
 
 ## new
+- `createNetwork()` hub function for creation of Giotto NN and spatial networks directly from matrices. Mainly for developers and advanced users.
+- `edge_distances()` for calculating euclidean distances from numeric m x n `matrix` (nodes) and a `data.table` with *from* and *to* cols that define node connections.
+
+## enhancements
+- `addCellMetadata()` and `addFeatMetadata()` now support merging on the names of provided vector and factor data with metadata *cell_ID*/*feat_ID*.
+
+
+# GiottoClass 0.1.3 (2024/01/12)
+
+## bug fixes
+- fix unexpected sorting in `addCellMetadata()` and `addFeatMetadata()` [#853](https://github.com/drieslab/Giotto/issues/853) by rbutleriii
+
+## new
+- `init_gobject` param in `loadGiotto()` to control whether object initialization is also performed after load
 - vignette for image tools
 
 ## enhancements
+- ID sorts now use `gtools::mixedsort()` [#853](https://github.com/drieslab/Giotto/issues/853) by rbutleriii
 - more subobjects respond to `colnames`, `rownames`, `dimnames`
+- `plot()` and `show()` now handle 3D `spatLocsObj`
+
 # GiottoClass 0.1.2 (2024/01/02)
 
 ## Added

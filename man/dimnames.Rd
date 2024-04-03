@@ -13,6 +13,9 @@
 \arguments{
 \item{x}{object}
 }
+\value{
+character
+}
 \description{
 Retrieve or set the dimnames of an object
 }
