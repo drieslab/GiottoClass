@@ -2976,21 +2976,92 @@ add_img_array_alpha <- function(
 #' @name ometif_to_tif
 #' @description
 #' Simple converter from .ome.tif to .tif format. Utilizes the python
-#' \pkg{tifffile} package.
+#' \pkg{tifffile} package. Performs image conversions one page at a time.
+#' Wrap this in a for loop or lapply for more than one image or page.
 #' @param input_file character. Filepath to ome.tif to convert
-#' @param output_file character. Filepath to write .tif to
+#' @param output_dir character. Directory to write .tif to. Defaults to a new
+#' folder in the directory called "tif_exports"
+#' @param page numeric. Which page of the tif to open (if needed). If provided,
+#' a "_%04d" formatted suffix will be added to the output filename.
 #' @param overwrite logical. Default = FALSE. Whether to overwrite if the
 #' filename already exists.
-#' @returns returns NULL invisibly
+#' @returns returns the written filepath invisibly
 #' @export
-ometif_to_tif <- function(input_file, output_file, overwrite = FALSE) {
-    a <- get_args_list()
+ometif_to_tif <- function(
+        input_file,
+        output_dir = file.path(dirname(input_file), "tif_exports"),
+        page,
+        overwrite = FALSE
+) {
+    a <- list(input_file = input_file)
 
+    # get tifffile py
     package_check("tifffile", repository = "pip:tifffile")
-    ometif2tif_path <- system.file("python", "ometif_convert.py",
+    ometif2tif_path <- system.file(
+        "python", "ometif_convert.py",
         package = "GiottoClass"
     )
     reticulate::source_python(ometif2tif_path)
+    # ensure output directory exists
+    if (checkmate::test_directory_exists(output_dir)) {
+        dir.create(output_dir, recursive = TRUE)
+    }
+
+    # tif page
+    if (!missing(page)) {
+        a$page <- as.integer(page)
+        fname_page <- sprintf("_%04d", a$page)
+    } else {
+        a$page <- 1L # default to page 1
+        fname_page <- ""
+    }
+    a$page <- a$page - 1L # zero indexed
+
+    # decide output filename
+    fname <- sub(pattern = ".ome.tif$", replacement = "",
+                 x = basename(input_file))
+    fpath <- file.path(
+        output_dir, paste0(fname, fname_page, ".tif")
+    )
+    a$output_file <- fpath
+
+    # handle overwrites
+    if (file.exists(fpath)) {
+        if (isTRUE(overwrite)) {
+            unlink(fpath, force = TRUE) # if overwrite, delete original
+        } else {
+            stop(fpath, "already exists. Set overwrite = TRUE to replace.\n",
+                 call. = FALSE)
+        }
+    }
     do.call(ometif_2_tif, args = a)
-    invisible(NULL)
+    return(invisible(fpath))
+}
+
+
+
+
+#' @name ometif_metadata
+#' @title Read metadata of an ometif
+#' @description Use the python package tifffile to get the the XML metadata
+#' of a .ome.tif file. The R package XML is then used to parse the metadata
+#' as a list.
+#' @param path character. filepath to .ome.tif image
+#' @examples
+#' \dontrun{
+#' path <- file.path("[path_to_data]")
+#' meta <- ometif_metadata(path)
+#' force(meta)
+#' }
+#' @returns list of image metadata information
+ometif_metadata <- function(path) {
+    checkmate::assert_file_exists(path)
+    package_check(
+        pkg_name = c("tifffile", "XML"),
+        repository = c("pip:tifffile", "CRAN:XML")
+    )
+
+    TIF <- reticulate::import("tifffile", convert = TRUE, delay_load = TRUE)
+    img <- TIF$TiffFile(path)
+    XML::xmlToList(img$ome_metadata)
 }
