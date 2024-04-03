@@ -8,7 +8,7 @@
 
 #' @title combineMetadata
 #' @name combineMetadata
-#' @description This function combines the cell metadata with spatial locations 
+#' @description This function combines the cell metadata with spatial locations
 #' and enrichment results from \code{\link[Giotto]{runSpatialEnrich}}
 #' @param gobject Giotto object
 #' @param spat_unit spatial unit
@@ -20,14 +20,15 @@
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' combineMetadata(g)
-#' 
+#'
 #' @export
-combineMetadata <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    spat_loc_name = "raw",
-    spat_enr_names = NULL,
-    verbose = TRUE) {
+combineMetadata <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        spat_loc_name = "raw",
+        spat_enr_names = NULL,
+        verbose = TRUE) {
     # DT vars
     cell_ID <- NULL
 
@@ -108,12 +109,13 @@ combineMetadata <- function(gobject,
 #'   \item{used: how often was the feature used/assigned to a cell}
 #'   \item{feat: selected feature(s)}
 #' }
-#' 
+#'
 #' @export
-combineSpatialCellFeatureInfo <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    selected_features = NULL) {
+combineSpatialCellFeatureInfo <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        selected_features = NULL) {
     # define for data.table
     feat_ID <- NULL
 
@@ -145,11 +147,12 @@ combineSpatialCellFeatureInfo <- function(gobject,
 
         if (!is.null(selected_features)) {
             spatial_feat_locs <- spatial_feat_locs[
-                feat_ID %in% selected_features]
+                feat_ID %in% selected_features
+            ]
         }
 
         if (is.null(spatial_feat_locs)) {
-            stop("There is no available spatial feature location information 
+            stop("There is no available spatial feature location information
                 for ", feat, "\n")
         }
 
@@ -169,7 +172,7 @@ combineSpatialCellFeatureInfo <- function(gobject,
 
 #' @title combineSpatialCellMetadataInfo
 #' @name combineSpatialCellMetadataInfo
-#' @description Combine cell metadata with spatial cell 
+#' @description Combine cell metadata with spatial cell
 #' information (e.g. polygon)
 #' @param gobject Giotto object
 #' @param spat_unit spatial unit
@@ -187,11 +190,12 @@ combineSpatialCellFeatureInfo <- function(gobject,
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' combineSpatialCellMetadataInfo(g, spat_unit = "aggregate", feat_type = "rna")
-#' 
+#'
 #' @export
-combineSpatialCellMetadataInfo <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL) {
+combineSpatialCellMetadataInfo <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL) {
     # combine
     # 1. spatial morphology information ( = polygon)
     # 2. cell metadata
@@ -209,10 +213,11 @@ combineSpatialCellMetadataInfo <- function(gobject,
 
     # get spatial cell information
     spatial_cell_info <- data.table::as.data.table(
-        gobject@spatial_info[[spat_unit]])
-    
-    colnames(spatial_cell_info)[1] = "cell_ID"
-    
+        gobject@spatial_info[[spat_unit]]
+    )
+
+    colnames(spatial_cell_info)[1] <- "cell_ID"
+
 
     res_list <- list()
     for (feat in unique(feat_type)) {
@@ -223,11 +228,13 @@ combineSpatialCellMetadataInfo <- function(gobject,
         )
 
         # merge
-        spatial_cell_info_meta <- merge.data.table(spatial_cell_info, 
-                                                cell_meta, by = "cell_ID")
-        
+        spatial_cell_info_meta <- merge.data.table(spatial_cell_info,
+            cell_meta,
+            by = "cell_ID"
+        )
+
         spatial_cell_info_meta[, "feat" := feat]
-        
+
         res_list[[feat]] <- spatial_cell_info_meta
     }
 
@@ -256,16 +263,17 @@ combineSpatialCellMetadataInfo <- function(gobject,
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' combineCellData(g, poly_info = "aggregate")
-#' 
+#'
 #' @export
-combineCellData <- function(gobject,
-    feat_type = "rna",
-    include_spat_locs = TRUE,
-    spat_loc_name = "raw",
-    include_poly_info = TRUE,
-    poly_info = "cell",
-    include_spat_enr = TRUE,
-    spat_enr_names = NULL) {
+combineCellData <- function(
+        gobject,
+        feat_type = "rna",
+        include_spat_locs = TRUE,
+        spat_loc_name = "raw",
+        include_poly_info = TRUE,
+        poly_info = "cell",
+        include_spat_enr = TRUE,
+        spat_enr_names = NULL) {
     # combine
     # 1. spatial morphology information ( = polygon)
     # 2. cell metadata
@@ -390,12 +398,13 @@ combineCellData <- function(gobject,
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' combineFeatureData(g, spat_unit = "aggregate", feat_type = "rna")
-#' 
+#'
 #' @export
-combineFeatureData <- function(gobject,
-    feat_type = NULL,
-    spat_unit = NULL,
-    sel_feats = NULL) {
+combineFeatureData <- function(
+        gobject,
+        feat_type = NULL,
+        spat_unit = NULL,
+        sel_feats = NULL) {
     # data.table variables
     feat_ID <- NULL
 
@@ -470,12 +479,13 @@ combineFeatureData <- function(gobject,
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' combineFeatureOverlapData(g, poly_info = "aggregate")
-#' 
+#'
 #' @export
-combineFeatureOverlapData <- function(gobject,
-    feat_type = "rna",
-    sel_feats = NULL,
-    poly_info = "cell") {
+combineFeatureOverlapData <- function(
+        gobject,
+        feat_type = "rna",
+        sel_feats = NULL,
+        poly_info = "cell") {
     # data.table vars
     feat_ID <- NULL
 
@@ -514,12 +524,14 @@ combineFeatureOverlapData <- function(gobject,
                     polygon_overlap = feat
                 )
                 feat_overlap_info <- .spatvector_to_dt(
-                    feat_overlap_info_spatvec)
+                    feat_overlap_info_spatvec
+                )
 
                 if (!is.null(sel_feats[[feat]])) {
                     selected_features <- sel_feats[[feat]]
                     feat_overlap_info <- feat_overlap_info[
-                        feat_ID %in% selected_features]
+                        feat_ID %in% selected_features
+                    ]
                 }
 
                 feat_overlap_info[, "poly_info" := poly]
@@ -552,9 +564,9 @@ combineFeatureOverlapData <- function(gobject,
 
 #' @title calculateSpatCellMetadataProportions
 #' @name calculateSpatCellMetadataProportions
-#' @description calculates a proportion table for a cell metadata 
-#' column (e.g. cluster labels) for all the spatial neighbors of a source cell. 
-#' In other words it calculates the niche composition for a given annotation 
+#' @description calculates a proportion table for a cell metadata
+#' column (e.g. cluster labels) for all the spatial neighbors of a source cell.
+#' In other words it calculates the niche composition for a given annotation
 #' for each cell.
 #' @param gobject giotto object
 #' @param spat_unit spatial unit
@@ -563,27 +575,29 @@ combineFeatureOverlapData <- function(gobject,
 #' @param metadata_column metadata column to use
 #' @param name descriptive name for the calculated proportions
 #' @param return_gobject return giotto object
-#' @returns giotto object (default) or enrichment object if 
+#' @returns giotto object (default) or enrichment object if
 #' return_gobject = FALSE
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' calculateSpatCellMetadataProportions(g, 
-#' spat_network = "Delaunay_network", metadata_column = "leiden_clus")
-#' 
+#' calculateSpatCellMetadataProportions(g,
+#'     spat_network = "Delaunay_network", metadata_column = "leiden_clus"
+#' )
+#'
 #' @export
-calculateSpatCellMetadataProportions <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    spat_network = NULL,
-    metadata_column = NULL,
-    name = "proportion",
-    return_gobject = TRUE) {
+calculateSpatCellMetadataProportions <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        spat_network = NULL,
+        metadata_column = NULL,
+        name = "proportion",
+        return_gobject = TRUE) {
     # DT vars
     proptable <- target_clus <- source_clus <- network <- target <- NULL
 
-    if (is.null(spat_network)) stop("spat_network = NULL, you need to provide 
+    if (is.null(spat_network)) stop("spat_network = NULL, you need to provide
                                     an existing spatial network")
-    if (is.null(metadata_column)) stop("metadata_column = NULL, you need to 
+    if (is.null(metadata_column)) stop("metadata_column = NULL, you need to
                                     provide an existing cell metadata column")
 
     # Set feat_type and spat_unit
@@ -607,7 +621,8 @@ calculateSpatCellMetadataProportions <- function(gobject,
 
     # convert spatial network to a full spatial network
     sp_network <- convert_to_full_spatial_network(
-        reduced_spatial_network_DT = sp_network)
+        reduced_spatial_network_DT = sp_network
+    )
 
     # get cell metadata
     cell_meta <- get_cell_metadata(
@@ -657,9 +672,10 @@ calculateSpatCellMetadataProportions <- function(gobject,
     label <- NULL
     propensities[, "label" := tableres$tablelabels]
     propensities[, "proptable" := as.numeric(proptable)]
-    proportions_mat <- dcast.data.table(propensities, 
-                                        formula = "source~label", fill = 0, 
-                                        value.var = "proptable")
+    proportions_mat <- dcast.data.table(propensities,
+        formula = "source~label", fill = 0,
+        value.var = "proptable"
+    )
     data.table::setnames(x = proportions_mat, old = "source", new = "cell_ID")
 
     # convert to matrix
@@ -728,8 +744,9 @@ calculateSpatCellMetadataProportions <- function(gobject,
 #' @returns data.table
 #' @description merge spatial cell and feature location information
 #' @keywords internal
-.merge_spatial_locs_feat_info <- function(spatial_info,
-    feature_info) {
+.merge_spatial_locs_feat_info <- function(
+        spatial_info,
+        feature_info) {
     # data.table variables
     cell_ID <- used <- NULL
 
@@ -770,11 +787,12 @@ calculateSpatCellMetadataProportions <- function(gobject,
 #' @keywords internal
 #' @returns data.table
 # spat_unit and feat_type are expected to not be NULL.
-.merge_spatial_enrich_info <- function(gobject,
-    comb_dt,
-    spat_unit,
-    feat_type,
-    spat_enr_names = NULL) {
+.merge_spatial_enrich_info <- function(
+        gobject,
+        comb_dt,
+        spat_unit,
+        feat_type,
+        spat_enr_names = NULL) {
     if (is.null(spat_enr_names)) {
         return(comb_dt)
     } # skip if not requested
@@ -828,9 +846,10 @@ calculateSpatCellMetadataProportions <- function(gobject,
         duplicated() %>%
         sum()
     if (duplicates > 0) {
-        wrap_msg("Some column names are not unique. 
+        wrap_msg(
+            "Some column names are not unique.
                 If you add results from multiple enrichments,",
-                "consider giving the signatures unique names"
+            "consider giving the signatures unique names"
         )
     }
 

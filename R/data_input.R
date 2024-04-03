@@ -10,18 +10,19 @@
 #' @param path path to the expression matrix
 #' @param cores number of cores to use
 #' @param transpose transpose matrix
-#' @param expression_matrix_class class of expression matrix to 
+#' @param expression_matrix_class class of expression matrix to
 #' use (e.g. 'dgCMatrix', 'DelayedArray')
 #' @inheritParams data_access_params
-#' @details The expression matrix needs to have both unique column names and 
+#' @details The expression matrix needs to have both unique column names and
 #' row names
 #' @returns sparse matrix
 #' @export
-readExprMatrix <- function(path,
-    cores = determine_cores(),
-    transpose = FALSE,
-    feat_type = "rna",
-    expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
+readExprMatrix <- function(
+        path,
+        cores = determine_cores(),
+        transpose = FALSE,
+        feat_type = "rna",
+        expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
     # check if path is a character vector and exists
     if (!is.character(path)) stop("path needs to be character vector")
     if (!file.exists(path)) stop("the path: ", path, " does not exist")
@@ -63,7 +64,7 @@ readExprMatrix <- function(path,
 #' @param data_list (nested) list of expression input data
 #' @param sparse (boolean, default = TRUE) read matrix data in a sparse manner
 #' @param cores number of cores to use
-#' @param expression_matrix_class class of expression matrix to 
+#' @param expression_matrix_class class of expression matrix to
 #' use (e.g. 'dgCMatrix', 'DelayedArray')
 #' @inheritParams read_data_params
 #' @details
@@ -75,7 +76,7 @@ readExprMatrix <- function(path,
 #'                B = list('c' = matrix(seq(5)),'d' = matrix(seq(5))))
 #' depth(mylistB)
 #'
-#' mylistC = list('RNA' = list('RAW' = list('cell' = matrix(seq(5)), 
+#' mylistC = list('RNA' = list('RAW' = list('cell' = matrix(seq(5)),
 #'                             'nucleus' = matrix(seq(6,10))),
 #'                             'NORM' = list('cell' = matrix(seq(11,15)),
 #'                             'nucleus' = matrix(seq(20,25)))),
@@ -83,16 +84,17 @@ readExprMatrix <- function(path,
 #' depth(mylistC)
 #'
 #' mymatD = matrix(data = seq(4))
-#' 
+#'
 #' @returns exprObj
 #' @export
-readExprData <- function(data_list,
-    sparse = TRUE,
-    cores = determine_cores(),
-    default_feat_type = NULL,
-    verbose = TRUE,
-    provenance = NULL,
-    expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
+readExprData <- function(
+        data_list,
+        sparse = TRUE,
+        cores = determine_cores(),
+        default_feat_type = NULL,
+        verbose = TRUE,
+        provenance = NULL,
+        expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
     .read_expression_data(
         expr_list = data_list,
         sparse = sparse,
@@ -107,14 +109,15 @@ readExprData <- function(data_list,
 
 #' @keywords internal
 #' @noRd
-.read_expression_data <- function(expr_list = NULL,
-    sparse = TRUE,
-    cores = determine_cores(),
-    default_spat_unit = NULL,
-    default_feat_type = NULL,
-    verbose = TRUE,
-    provenance = NULL,
-    expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
+.read_expression_data <- function(
+        expr_list = NULL,
+        sparse = TRUE,
+        cores = determine_cores(),
+        default_spat_unit = NULL,
+        default_feat_type = NULL,
+        verbose = TRUE,
+        provenance = NULL,
+        expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
     # import box characters
     ch <- box_chars()
 
@@ -142,7 +145,7 @@ readExprData <- function(data_list,
 
     # too much information
     if (list_depth > 3L) {
-        stop("Depth of expression list is more than 3, only 3 levels are 
+        stop("Depth of expression list is more than 3, only 3 levels are
             possible:
        0)", ch$s, ".
        1)", ch$s, ch$b, "spatial unit (e.g. cell)
@@ -170,8 +173,13 @@ readExprData <- function(data_list,
 
         for (obj_i in seq_along(expr_list)) {
             ex <- expr_list[[obj_i]]
-            name <- if (is_empty_char(obj_names[[obj_i]])) paste0(
-                "data_", obj_i) else obj_names[[obj_i]]
+            name <- if (is_empty_char(obj_names[[obj_i]])) {
+                paste0(
+                    "data_", obj_i
+                )
+            } else {
+                obj_names[[obj_i]]
+            }
 
             obj_list[[length(obj_list) + 1L]] <- ex
             name_list <- c(name_list, name)
@@ -194,11 +202,19 @@ readExprData <- function(data_list,
 
             for (obj_i in seq_along(expr_list[[feat_i]])) {
                 ex <- expr_list[[feat_i]][[obj_i]]
-                name <- if (is_empty_char(obj_names[[obj_i]])) paste0(
-                    "data_", obj_i) else obj_names[[obj_i]]
+                name <- if (is_empty_char(obj_names[[obj_i]])) {
+                    paste0(
+                        "data_", obj_i
+                    )
+                } else {
+                    obj_names[[obj_i]]
+                }
                 feat_type <- if (is_empty_char(feat_type_names[[feat_i]])
-                                ) paste0("feat_", feat_i) else 
-                                    feat_type_names[[feat_i]]
+                ) {
+                    paste0("feat_", feat_i)
+                } else {
+                    feat_type_names[[feat_i]]
+                }
 
                 obj_list[[length(obj_list) + 1L]] <- ex
                 name_list <- c(name_list, name)
@@ -228,14 +244,25 @@ readExprData <- function(data_list,
 
                 for (obj_i in seq_along(expr_list[[unit_i]][[feat_i]])) {
                     ex <- expr_list[[unit_i]][[feat_i]][[obj_i]]
-                    name <- if (is_empty_char(obj_names[[obj_i]])) paste0(
-                        "data_", obj_i) else obj_names[[obj_i]]
+                    name <- if (is_empty_char(obj_names[[obj_i]])) {
+                        paste0(
+                            "data_", obj_i
+                        )
+                    } else {
+                        obj_names[[obj_i]]
+                    }
                     feat_type <- if (is_empty_char(feat_type_names[[feat_i]])
-                                    ) paste0("feat_", feat_i) else 
-                                        feat_type_names[[feat_i]]
+                    ) {
+                        paste0("feat_", feat_i)
+                    } else {
+                        feat_type_names[[feat_i]]
+                    }
                     spat_unit <- if (is_empty_char(spat_unit_names[[unit_i]])
-                                    ) paste0("unit_", unit_i) else 
-                                        spat_unit_names[[unit_i]]
+                    ) {
+                        paste0("unit_", unit_i)
+                    } else {
+                        spat_unit_names[[unit_i]]
+                    }
 
                     obj_list[[length(obj_list) + 1L]] <- ex
                     name_list <- c(name_list, name)
@@ -252,8 +279,8 @@ readExprData <- function(data_list,
     if (length(obj_list) > 0L) {
         return_list <- lapply(seq_along(obj_list), function(obj_i) {
             if (inherits(obj_list[[obj_i]], "exprObj")) {
-                warning(wrap_txt("List item [", obj_i, "]: 
-                                Not possible to read exprObj. Returning without 
+                warning(wrap_txt("List item [", obj_i, "]:
+                                Not possible to read exprObj. Returning without
                                 modifications", sep = ""))
                 return(obj_list[[obj_i]])
             } else {
@@ -278,8 +305,11 @@ readExprData <- function(data_list,
                         expression_data = exprMat,
                         spat_unit = spat_unit,
                         feat_type = feat_type,
-                        provenance = if (is_empty_char(provenance)) 
-                            spat_unit else provenance, # assumed
+                        provenance = if (is_empty_char(provenance)) {
+                            spat_unit
+                        } else {
+                            provenance
+                        }, # assumed
                         misc = NULL,
                         expression_matrix_class = expression_matrix_class
                     )
@@ -312,11 +342,12 @@ readExprData <- function(data_list,
 #' @inheritParams read_data_params
 #' @returns cell metadata
 #' @export
-readCellMetadata <- function(data_list,
-    default_spat_unit = NULL,
-    default_feat_type = NULL,
-    provenance = NULL,
-    verbose = TRUE) {
+readCellMetadata <- function(
+        data_list,
+        default_spat_unit = NULL,
+        default_feat_type = NULL,
+        provenance = NULL,
+        verbose = TRUE) {
     .read_cell_metadata(
         metadata = data_list,
         default_spat_unit = default_spat_unit,
@@ -337,11 +368,12 @@ readCellMetadata <- function(data_list,
 #' @param verbose be verbose
 #' @returns cell metadata
 #' @keywords internal
-.read_cell_metadata <- function(metadata,
-    default_spat_unit = NULL,
-    default_feat_type = NULL,
-    provenance = NULL,
-    verbose = TRUE) {
+.read_cell_metadata <- function(
+        metadata,
+        default_spat_unit = NULL,
+        default_feat_type = NULL,
+        provenance = NULL,
+        verbose = TRUE) {
     # data.table vars
     cell_ID <- NULL
 
@@ -383,8 +415,11 @@ readCellMetadata <- function(data_list,
 
         for (feat_i in seq_along(metadata)) {
             meta <- metadata[[feat_i]]
-            feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) 
-                paste0("feat_", feat_i) else feat_type_names[[feat_i]]
+            feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) {
+                paste0("feat_", feat_i)
+            } else {
+                feat_type_names[[feat_i]]
+            }
 
             obj_list[[length(obj_list) + 1L]] <- meta
             feat_type_list <- c(feat_type_list, feat_type)
@@ -406,10 +441,16 @@ readCellMetadata <- function(data_list,
 
             for (feat_i in seq_along(metadata[[unit_i]])) {
                 meta <- metadata[[unit_i]][[feat_i]]
-                spat_unit <- if (is_empty_char(spat_unit_names[[unit_i]])) 
-                    paste0("unit_", unit_i) else spat_unit_names[[unit_i]]
-                feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) 
-                    paste0("feat_", feat_i) else feat_type_names[[feat_i]]
+                spat_unit <- if (is_empty_char(spat_unit_names[[unit_i]])) {
+                    paste0("unit_", unit_i)
+                } else {
+                    spat_unit_names[[unit_i]]
+                }
+                feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) {
+                    paste0("feat_", feat_i)
+                } else {
+                    feat_type_names[[feat_i]]
+                }
 
                 obj_list[[length(obj_list) + 1L]] <- meta
                 spat_unit_list <- c(spat_unit_list, spat_unit)
@@ -423,8 +464,8 @@ readCellMetadata <- function(data_list,
     if (length(obj_list) > 0L) {
         return_list <- lapply(seq_along(obj_list), function(obj_i) {
             if (inherits(obj_list[[obj_i]], "cellMetaObj")) {
-                warning(wrap_txt("List item [", obj_i, "]: Not possible to 
-                                read cellMetaObj. Returning without 
+                warning(wrap_txt("List item [", obj_i, "]: Not possible to
+                                read cellMetaObj. Returning without
                                 modifications", sep = ""))
                 return(obj_list[[obj_i]])
             } else {
@@ -446,8 +487,11 @@ readCellMetadata <- function(data_list,
                         metadata = meta_data,
                         spat_unit = spat_unit,
                         feat_type = feat_type,
-                        provenance = if (is_empty_char(provenance)) 
-                            spat_unit else provenance, # assumed
+                        provenance = if (is_empty_char(provenance)) {
+                            spat_unit
+                        } else {
+                            provenance
+                        }, # assumed
                         verbose = TRUE,
                         col_desc = NA_character_ # unknown
                     )
@@ -479,11 +523,12 @@ readCellMetadata <- function(data_list,
 #' @inheritParams read_data_params
 #' @returns featMetadata
 #' @export
-readFeatMetadata <- function(data_list,
-    default_spat_unit = NULL,
-    default_feat_type = NULL,
-    provenance = NULL,
-    verbose = TRUE) {
+readFeatMetadata <- function(
+        data_list,
+        default_spat_unit = NULL,
+        default_feat_type = NULL,
+        provenance = NULL,
+        verbose = TRUE) {
     .read_feature_metadata(
         metadata = data_list,
         default_spat_unit = NULL,
@@ -498,11 +543,12 @@ readFeatMetadata <- function(data_list,
 
 #' @keywords internal
 #' @noRd
-.read_feature_metadata <- function(metadata,
-    default_spat_unit = NULL,
-    default_feat_type = NULL,
-    provenance = NULL,
-    verbose = TRUE) {
+.read_feature_metadata <- function(
+        metadata,
+        default_spat_unit = NULL,
+        default_feat_type = NULL,
+        provenance = NULL,
+        verbose = TRUE) {
     # data.table vars
     cell_ID <- NULL
 
@@ -544,8 +590,11 @@ readFeatMetadata <- function(data_list,
 
         for (feat_i in seq_along(metadata)) {
             meta <- metadata[[feat_i]]
-            feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) 
-                paste0("feat_", feat_i) else feat_type_names[[feat_i]]
+            feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) {
+                paste0("feat_", feat_i)
+            } else {
+                feat_type_names[[feat_i]]
+            }
 
             obj_list[[length(obj_list) + 1L]] <- meta
             feat_type_list <- c(feat_type_list, feat_type)
@@ -567,10 +616,16 @@ readFeatMetadata <- function(data_list,
 
             for (feat_i in seq_along(metadata[[unit_i]])) {
                 meta <- metadata[[unit_i]][[feat_i]]
-                spat_unit <- if (is_empty_char(spat_unit_names[[unit_i]])) 
-                    paste0("unit_", unit_i) else spat_unit_names[[unit_i]]
-                feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) 
-                    paste0("feat_", feat_i) else feat_type_names[[feat_i]]
+                spat_unit <- if (is_empty_char(spat_unit_names[[unit_i]])) {
+                    paste0("unit_", unit_i)
+                } else {
+                    spat_unit_names[[unit_i]]
+                }
+                feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) {
+                    paste0("feat_", feat_i)
+                } else {
+                    feat_type_names[[feat_i]]
+                }
 
                 obj_list[[length(obj_list) + 1L]] <- meta
                 spat_unit_list <- c(spat_unit_list, spat_unit)
@@ -584,8 +639,8 @@ readFeatMetadata <- function(data_list,
     if (length(obj_list) > 0L) {
         return_list <- lapply(seq_along(obj_list), function(obj_i) {
             if (inherits(obj_list[[obj_i]], "featMetaObj")) {
-                warning(wrap_txt("List item [", obj_i, "]: Not possible to 
-                                read featMetaObj. Returning without 
+                warning(wrap_txt("List item [", obj_i, "]: Not possible to
+                                read featMetaObj. Returning without
                                 modifications", sep = ""))
                 return(obj_list[[obj_i]])
             } else {
@@ -607,8 +662,11 @@ readFeatMetadata <- function(data_list,
                         metadata = meta_data,
                         spat_unit = spat_unit,
                         feat_type = feat_type,
-                        provenance = if (is_empty_char(provenance)) 
-                            spat_unit else provenance, # assumed
+                        provenance = if (is_empty_char(provenance)) {
+                            spat_unit
+                        } else {
+                            provenance
+                        }, # assumed
                         verbose = TRUE,
                         col_desc = NA_character_ # unknown
                     )
@@ -648,11 +706,12 @@ readFeatMetadata <- function(data_list,
 #' @param cores how many cores to use
 #' @returns list of spatLocsObj
 #' @export
-readSpatLocsData <- function(data_list,
-    default_spat_unit = NULL,
-    provenance = NULL,
-    cores = determine_cores(),
-    verbose = TRUE) {
+readSpatLocsData <- function(
+        data_list,
+        default_spat_unit = NULL,
+        provenance = NULL,
+        cores = determine_cores(),
+        verbose = TRUE) {
     spatLocsObj_list <- .read_spatial_location_data(
         spat_loc_list = data_list,
         default_spat_unit = default_spat_unit,
@@ -667,11 +726,12 @@ readSpatLocsData <- function(data_list,
 
 
 #' @noRd
-.read_spatial_location_data <- function(spat_loc_list,
-    default_spat_unit = NULL,
-    provenance = NULL,
-    cores = determine_cores(),
-    verbose = TRUE) {
+.read_spatial_location_data <- function(
+        spat_loc_list,
+        default_spat_unit = NULL,
+        provenance = NULL,
+        cores = determine_cores(),
+        verbose = TRUE) {
     # data.table vars
     cell_ID <- NULL
 
@@ -694,24 +754,24 @@ readSpatLocsData <- function(data_list,
 
     # no expression information
     if (list_depth == 0) {
-        stop("Depth of spatial location list is 0, no expression information 
+        stop("Depth of spatial location list is 0, no expression information
             is provided \n")
     }
 
     # too much information
     if (list_depth > 2) {
-        stop(wrap_txt("Depth of spatial location list is more than 2, 
+        stop(wrap_txt("Depth of spatial location list is more than 2,
                     only 2 levels are possible:
                 1) spatial unit (e.g. cell) --> 2) coordinate (e.g. raw) \n",
             errWidth = TRUE
         ))
     }
 
-    # 2. Based on depth of nesting expect related info then eval, check, and 
+    # 2. Based on depth of nesting expect related info then eval, check, and
     # assemble return list
-    ### 2.1 evaluate spatlocs - (read) and find col classes and accordingly 
+    ### 2.1 evaluate spatlocs - (read) and find col classes and accordingly
     ### assign DT and colnames
-    ### 2.2 check spatlocs - compare guessed cell_ID col vs gobject cell_ID 
+    ### 2.2 check spatlocs - compare guessed cell_ID col vs gobject cell_ID
     ### slot (from expr)
     ### 2.3 create spatloc objects
     return_list <- list()
@@ -731,13 +791,16 @@ readSpatLocsData <- function(data_list,
 
         for (obj_i in seq_along(spat_loc_list)) {
             spatlocs <- spat_loc_list[[obj_i]]
-            name <- if (is_empty_char(obj_names[[obj_i]])) 
-                paste0("coord_", obj_i) else obj_names[[obj_i]]
+            name <- if (is_empty_char(obj_names[[obj_i]])) {
+                paste0("coord_", obj_i)
+            } else {
+                obj_names[[obj_i]]
+            }
 
             obj_list[[length(obj_list) + 1L]] <- spatlocs
             name_list <- c(name_list, name)
         }
-        spat_unit_list <- rep(default_spat_unit, length(obj_list)) 
+        spat_unit_list <- rep(default_spat_unit, length(obj_list))
         # add default region = 'cell'
 
         # for list with 2 depth, expect name info and spat_unit info
@@ -757,10 +820,16 @@ readSpatLocsData <- function(data_list,
 
             for (obj_i in seq_along(spat_loc_list[[unit_i]])) {
                 spatlocs <- spat_loc_list[[unit_i]][[obj_i]]
-                spat_unit <- if (is_empty_char(spat_unit_names[[unit_i]])) 
-                    paste0("unit_", unit_i) else spat_unit_names[[unit_i]]
-                name <- if (is_empty_char(obj_names[[obj_i]])) 
-                    paste0("coord_", obj_i) else obj_names[[obj_i]]
+                spat_unit <- if (is_empty_char(spat_unit_names[[unit_i]])) {
+                    paste0("unit_", unit_i)
+                } else {
+                    spat_unit_names[[unit_i]]
+                }
+                name <- if (is_empty_char(obj_names[[obj_i]])) {
+                    paste0("coord_", obj_i)
+                } else {
+                    obj_names[[obj_i]]
+                }
 
                 obj_list[[length(obj_list) + 1L]] <- spatlocs
                 spat_unit_list <- c(spat_unit_list, spat_unit)
@@ -776,8 +845,8 @@ readSpatLocsData <- function(data_list,
     if (length(obj_list) > 0) {
         return_list <- lapply(seq_along(obj_list), function(obj_i) {
             if (inherits(obj_list[[obj_i]], "spatLocsObj")) {
-                warning(wrap_txt("\nList item [", obj_i, "]: Not possible to 
-                                read spatLocsObj. Returning without 
+                warning(wrap_txt("\nList item [", obj_i, "]: Not possible to
+                                read spatLocsObj. Returning without
                                 modifications", sep = ""))
                 return(obj_list[[obj_i]])
             } else {
@@ -799,8 +868,11 @@ readSpatLocsData <- function(data_list,
                         name = name,
                         coordinates = coordinates,
                         spat_unit = spat_unit,
-                        provenance = if (is_empty_char(provenance)) 
-                            spat_unit else provenance, # assumed
+                        provenance = if (is_empty_char(provenance)) {
+                            spat_unit
+                        } else {
+                            provenance
+                        }, # assumed
                         misc = NULL,
                         verbose = verbose
                     )
@@ -837,10 +909,11 @@ readSpatLocsData <- function(data_list,
 #' @param data_list (nested) list of spatial network input data
 #' @returns spatialNetworkObj
 #' @export
-readSpatNetData <- function(data_list,
-    default_spat_unit = NULL,
-    provenance = NULL,
-    verbose = TRUE) {
+readSpatNetData <- function(
+        data_list,
+        default_spat_unit = NULL,
+        provenance = NULL,
+        verbose = TRUE) {
     .read_spatial_networks(
         spatial_network = data_list,
         default_spat_unit = default_spat_unit,
@@ -854,10 +927,11 @@ readSpatNetData <- function(data_list,
 
 #' @keywords internal
 #' @noRd
-.read_spatial_networks <- function(spatial_network,
-    default_spat_unit = NULL,
-    provenance = NULL,
-    verbose = TRUE) {
+.read_spatial_networks <- function(
+        spatial_network,
+        default_spat_unit = NULL,
+        provenance = NULL,
+        verbose = TRUE) {
     if (is.null(spatial_network)) {
         wrap_msg("No spatial networks are provided")
         return(NULL)
@@ -888,8 +962,11 @@ readSpatNetData <- function(data_list,
 
         for (obj_i in seq_along(spatial_network)) {
             network <- spatial_network[[obj_i]]
-            name <- if (is_empty_char(obj_names[[obj_i]])) 
-                paste0("sn_", obj_i) else obj_names[[obj_i]]
+            name <- if (is_empty_char(obj_names[[obj_i]])) {
+                paste0("sn_", obj_i)
+            } else {
+                obj_names[[obj_i]]
+            }
 
             obj_list[[length(obj_list) + 1L]] <- network
             name_list <- c(name_list, name)
@@ -910,10 +987,16 @@ readSpatNetData <- function(data_list,
             }
             for (obj_i in seq_along(spatial_network[[unit_i]])) {
                 network <- spatial_network[[unit_i]][[obj_i]]
-                spat_unit <- if (is_empty_char(spat_unit_names[[unit_i]])) 
-                    paste0("unit_", unit_i) else spat_unit_names[[unit_i]]
-                name <- if (is_empty_char(obj_names[[obj_i]])) 
-                    paste0("sn_", obj_i) else obj_names[[obj_i]]
+                spat_unit <- if (is_empty_char(spat_unit_names[[unit_i]])) {
+                    paste0("unit_", unit_i)
+                } else {
+                    spat_unit_names[[unit_i]]
+                }
+                name <- if (is_empty_char(obj_names[[obj_i]])) {
+                    paste0("sn_", obj_i)
+                } else {
+                    obj_names[[obj_i]]
+                }
 
                 obj_list[[length(obj_list) + 1L]] <- network
                 spat_unit_list <- c(spat_unit_list, spat_unit)
@@ -929,8 +1012,8 @@ readSpatNetData <- function(data_list,
     if (length(obj_list) > 0) {
         return_list <- lapply(seq_along(obj_list), function(obj_i) {
             if (inherits(obj_list[[obj_i]], "spatialNetworkObj")) {
-                warning(wrap_txt("\nList item [", obj_i, "]: Not possible to 
-                                read spatialNetworkObj. Returning without 
+                warning(wrap_txt("\nList item [", obj_i, "]: Not possible to
+                                read spatialNetworkObj. Returning without
                                 modifications", sep = ""))
                 return(obj_list[[obj_i]])
             } else {
@@ -954,8 +1037,11 @@ readSpatNetData <- function(data_list,
                         name = name,
                         method = method,
                         spat_unit = spat_unit,
-                        provenance = if (is_empty_char(provenance)) 
-                            spat_unit else provenance, # assumed
+                        provenance = if (is_empty_char(provenance)) {
+                            spat_unit
+                        } else {
+                            provenance
+                        }, # assumed
                         network = networkDT,
                         networkDT_before_filter = NULL,
                         cellShapeObj = NULL,
@@ -1002,11 +1088,12 @@ readSpatNetData <- function(data_list,
 #' @param data_list (nested) list of spatial enrichment input data
 #' @returns spatEnrObj
 #' @export
-readSpatEnrichData <- function(data_list,
-    default_spat_unit = NULL,
-    default_feat_type = NULL,
-    provenance = NULL,
-    verbose = TRUE) {
+readSpatEnrichData <- function(
+        data_list,
+        default_spat_unit = NULL,
+        default_feat_type = NULL,
+        provenance = NULL,
+        verbose = TRUE) {
     .read_spatial_enrichment(
         spatial_enrichment = data_list,
         default_spat_unit = default_spat_unit,
@@ -1021,11 +1108,12 @@ readSpatEnrichData <- function(data_list,
 
 #' @keywords internal
 #' @noRd
-.read_spatial_enrichment <- function(spatial_enrichment,
-    default_spat_unit = NULL,
-    default_feat_type = NULL,
-    provenance = NULL,
-    verbose = TRUE) {
+.read_spatial_enrichment <- function(
+        spatial_enrichment,
+        default_spat_unit = NULL,
+        default_feat_type = NULL,
+        provenance = NULL,
+        verbose = TRUE) {
     if (is.null(spatial_enrichment)) {
         message("No spatial enrichment results are provided")
         return(NULL)
@@ -1059,8 +1147,11 @@ readSpatEnrichData <- function(data_list,
 
         for (obj_i in seq_along(spatial_enrichment)) {
             enr <- spatial_enrichment[[obj_i]]
-            name <- if (is_empty_char(obj_names[[obj_i]])) 
-                paste0("enr_", obj_i) else obj_names[[obj_i]]
+            name <- if (is_empty_char(obj_names[[obj_i]])) {
+                paste0("enr_", obj_i)
+            } else {
+                obj_names[[obj_i]]
+            }
             method <- name # assume
 
             obj_list[[length(obj_list) + 1L]] <- enr
@@ -1084,10 +1175,16 @@ readSpatEnrichData <- function(data_list,
 
             for (obj_i in seq_along(spatial_enrichment[[feat_i]])) {
                 enr <- spatial_enrichment[[feat_i]][[obj_i]]
-                feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) 
-                    paste0("feat_", feat_i) else feat_type_names[[feat_i]]
-                name <- if (is_empty_char(obj_names[[obj_i]])) 
-                    paste0("enr_", obj_i) else obj_names[[obj_i]]
+                feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) {
+                    paste0("feat_", feat_i)
+                } else {
+                    feat_type_names[[feat_i]]
+                }
+                name <- if (is_empty_char(obj_names[[obj_i]])) {
+                    paste0("enr_", obj_i)
+                } else {
+                    obj_names[[obj_i]]
+                }
                 method <- name # assume
 
                 obj_list[[length(obj_list) + 1L]] <- enr
@@ -1118,14 +1215,23 @@ readSpatEnrichData <- function(data_list,
                 }
 
                 for (obj_i in seq_along(spatial_enrichment[[unit_i]][[feat_i]]))
-                    {
+                {
                     enr <- spatial_enrichment[[unit_i]][[feat_i]][[obj_i]]
-                    spat_unit <- if (is_empty_char(spat_unit_names[[unit_i]])) 
-                        paste0("unit_", unit_i) else spat_unit_names[[unit_i]]
-                    feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) 
-                        paste0("feat_", feat_i) else feat_type_names[[feat_i]]
-                    name <- if (is_empty_char(obj_names[[obj_i]])) 
-                        paste0("enr_", obj_i) else obj_names[[obj_i]]
+                    spat_unit <- if (is_empty_char(spat_unit_names[[unit_i]])) {
+                        paste0("unit_", unit_i)
+                    } else {
+                        spat_unit_names[[unit_i]]
+                    }
+                    feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) {
+                        paste0("feat_", feat_i)
+                    } else {
+                        feat_type_names[[feat_i]]
+                    }
+                    name <- if (is_empty_char(obj_names[[obj_i]])) {
+                        paste0("enr_", obj_i)
+                    } else {
+                        obj_names[[obj_i]]
+                    }
                     method <- name # assume
 
                     obj_list[[length(obj_list) + 1L]] <- enr
@@ -1156,30 +1262,43 @@ readSpatEnrichData <- function(data_list,
                     wrap_msg("No list names for method. Setting defaults.")
                 }
                 for (method_i in seq_along(
-                    spatial_enrichment[[unit_i]][[feat_i]])) {
+                    spatial_enrichment[[unit_i]][[feat_i]]
+                )) {
                     obj_names <- names(
-                        spatial_enrichment[[unit_i]][[feat_i]][[method_i]])
+                        spatial_enrichment[[unit_i]][[feat_i]][[method_i]]
+                    )
                     if (is.null(obj_names) & isTRUE(verbose)) {
                         wrap_msg("No list names for object. Setting defaults.")
                     }
 
                     for (obj_i in seq_along(
-                        spatial_enrichment[[unit_i]][[feat_i]][[method_i]])) {
-                        enr <- spatial_enrichment[[unit_i]][[feat_i
-                                                        ]][[method_i]][[obj_i]]
+                        spatial_enrichment[[unit_i]][[feat_i]][[method_i]]
+                    )) {
+                        enr <- spatial_enrichment[[unit_i]][[
+                            feat_i
+                        ]][[method_i]][[obj_i]]
                         feat_type <- if (
-                            is_empty_char(feat_type_names[[feat_i]])) 
-                            paste0("feat_", feat_i) else 
-                                feat_type_names[[feat_i]]
+                            is_empty_char(feat_type_names[[feat_i]])) {
+                            paste0("feat_", feat_i)
+                        } else {
+                            feat_type_names[[feat_i]]
+                        }
                         spat_unit <- if (
-                            is_empty_char(spat_unit_names[[unit_i]])) 
-                            paste0("unit_", unit_i) else 
-                                spat_unit_names[[unit_i]]
-                        name <- if (is_empty_char(obj_names[[obj_i]])) 
-                            paste0("enr_", obj_i) else obj_names[[obj_i]]
-                        method <- if (is_empty_char(method_names[[method_i]])) 
-                            paste0("method_", method_i) else 
-                                method_names[[method_i]]
+                            is_empty_char(spat_unit_names[[unit_i]])) {
+                            paste0("unit_", unit_i)
+                        } else {
+                            spat_unit_names[[unit_i]]
+                        }
+                        name <- if (is_empty_char(obj_names[[obj_i]])) {
+                            paste0("enr_", obj_i)
+                        } else {
+                            obj_names[[obj_i]]
+                        }
+                        method <- if (is_empty_char(method_names[[method_i]])) {
+                            paste0("method_", method_i)
+                        } else {
+                            method_names[[method_i]]
+                        }
 
                         obj_list[[length(obj_list) + 1L]] <- enr
                         feat_type_list <- c(feat_type_list, feat_type)
@@ -1200,8 +1319,8 @@ readSpatEnrichData <- function(data_list,
     if (length(obj_list) > 0) {
         return_list <- lapply(seq_along(obj_list), function(obj_i) {
             if (inherits(obj_list[[obj_i]], "spatEnrObj")) {
-                warning(wrap_txt("\nList item [", obj_i, "]: Not possible to 
-                                read spatEnrObj. Returning without 
+                warning(wrap_txt("\nList item [", obj_i, "]: Not possible to
+                                read spatEnrObj. Returning without
                                 modifications", sep = ""))
                 return(obj_list[[obj_i]])
             } else {
@@ -1229,8 +1348,11 @@ readSpatEnrichData <- function(data_list,
                         enrichment_data = enrichDT,
                         spat_unit = spat_unit,
                         feat_type = feat_type,
-                        provenance = if (is_empty_char(provenance)) 
-                            spat_unit else provenance, # assumed
+                        provenance = if (is_empty_char(provenance)) {
+                            spat_unit
+                        } else {
+                            provenance
+                        }, # assumed
                         misc = NULL,
                         verbose = verbose
                     )
@@ -1263,12 +1385,13 @@ readSpatEnrichData <- function(data_list,
 #' @param data_list (nested) list of dimension reduction input data
 #' @returns dimObj
 #' @export
-readDimReducData <- function(data_list,
-    default_spat_unit = NULL,
-    default_feat_type = NULL,
-    reduction = c("cells", "feats"),
-    provenance = NULL,
-    verbose = TRUE) {
+readDimReducData <- function(
+        data_list,
+        default_spat_unit = NULL,
+        default_feat_type = NULL,
+        reduction = c("cells", "feats"),
+        provenance = NULL,
+        verbose = TRUE) {
     reduction <- match.arg(reduction, choices = c("cells", "feats"))
 
     .read_dimension_reduction(
@@ -1285,12 +1408,13 @@ readDimReducData <- function(data_list,
 
 #' @keywords internal
 #' @noRd
-.read_dimension_reduction <- function(dimension_reduction,
-    default_spat_unit = NULL,
-    default_feat_type = NULL,
-    reduction = c("cells", "feats"),
-    provenance = NULL,
-    verbose = TRUE) {
+.read_dimension_reduction <- function(
+        dimension_reduction,
+        default_spat_unit = NULL,
+        default_feat_type = NULL,
+        reduction = c("cells", "feats"),
+        provenance = NULL,
+        verbose = TRUE) {
     reduction <- match.arg(reduction, choices = c("cells", "feats"))
 
     if (is.null(dimension_reduction)) {
@@ -1327,8 +1451,11 @@ readDimReducData <- function(data_list,
 
         for (obj_i in seq_along(dimension_reduction)) {
             dr <- dimension_reduction[[obj_i]]
-            name <- if (is_empty_char(obj_names[[obj_i]])) 
-                paste0("dimRed_", obj_i) else obj_names[[obj_i]]
+            name <- if (is_empty_char(obj_names[[obj_i]])) {
+                paste0("dimRed_", obj_i)
+            } else {
+                obj_names[[obj_i]]
+            }
             method <- name # assume
 
             obj_list[[length(obj_list) + 1]] <- dr
@@ -1353,10 +1480,16 @@ readDimReducData <- function(data_list,
 
             for (obj_i in seq_along(dimension_reduction[[feat_i]])) {
                 dr <- dimension_reduction[[feat_i]][[obj_i]]
-                feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) 
-                    paste0("feat_", feat_i) else feat_type_names[[feat_i]]
-                name <- if (is_empty_char(obj_names[[obj_i]])) 
-                    paste0("dimRed_", obj_i) else obj_names[[obj_i]]
+                feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) {
+                    paste0("feat_", feat_i)
+                } else {
+                    feat_type_names[[feat_i]]
+                }
+                name <- if (is_empty_char(obj_names[[obj_i]])) {
+                    paste0("dimRed_", obj_i)
+                } else {
+                    obj_names[[obj_i]]
+                }
                 method <- name # assume
 
                 obj_list[[length(obj_list) + 1]] <- dr
@@ -1387,14 +1520,24 @@ readDimReducData <- function(data_list,
                 }
 
                 for (obj_i in seq_along(
-                    dimension_reduction[[unit_i]][[feat_i]])) {
+                    dimension_reduction[[unit_i]][[feat_i]]
+                )) {
                     dr <- dimension_reduction[[unit_i]][[feat_i]][[obj_i]]
-                    feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) 
-                        paste0("feat_", feat_i) else feat_type_names[[feat_i]]
-                    spat_unit <- if (is_empty_char(spat_unit_names[[unit_i]])) 
-                        paste0("unit_", unit_i) else spat_unit_names[[unit_i]]
-                    name <- if (is_empty_char(obj_names[[obj_i]])) 
-                        paste0("dimRed_", obj_i) else obj_names[[obj_i]]
+                    feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) {
+                        paste0("feat_", feat_i)
+                    } else {
+                        feat_type_names[[feat_i]]
+                    }
+                    spat_unit <- if (is_empty_char(spat_unit_names[[unit_i]])) {
+                        paste0("unit_", unit_i)
+                    } else {
+                        spat_unit_names[[unit_i]]
+                    }
+                    name <- if (is_empty_char(obj_names[[obj_i]])) {
+                        paste0("dimRed_", obj_i)
+                    } else {
+                        obj_names[[obj_i]]
+                    }
                     method <- name # assume
 
                     obj_list[[length(obj_list) + 1]] <- dr
@@ -1426,30 +1569,43 @@ readDimReducData <- function(data_list,
                 }
 
                 for (method_i in seq_along(
-                    dimension_reduction[[unit_i]][[feat_i]])) {
+                    dimension_reduction[[unit_i]][[feat_i]]
+                )) {
                     obj_names <- names(
-                        dimension_reduction[[unit_i]][[feat_i]][[method_i]])
+                        dimension_reduction[[unit_i]][[feat_i]][[method_i]]
+                    )
                     if (is.null(obj_names) & isTRUE(verbose)) {
                         wrap_msg("No list names for object. Setting defaults.")
                     }
 
                     for (obj_i in seq_along(
-                        dimension_reduction[[unit_i]][[feat_i]][[method_i]])) {
-                        dr <- dimension_reduction[[unit_i]][[feat_i
-                                                    ]][[method_i]][[obj_i]]
+                        dimension_reduction[[unit_i]][[feat_i]][[method_i]]
+                    )) {
+                        dr <- dimension_reduction[[unit_i]][[
+                            feat_i
+                        ]][[method_i]][[obj_i]]
                         feat_type <- if (
-                            is_empty_char(feat_type_names[[feat_i]])) 
-                            paste0("feat_", feat_i) else 
-                                feat_type_names[[feat_i]]
+                            is_empty_char(feat_type_names[[feat_i]])) {
+                            paste0("feat_", feat_i)
+                        } else {
+                            feat_type_names[[feat_i]]
+                        }
                         spat_unit <- if (
-                            is_empty_char(spat_unit_names[[unit_i]])) 
-                            paste0("unit_", unit_i) else 
-                                spat_unit_names[[unit_i]]
-                        name <- if (is_empty_char(obj_names[[obj_i]])) 
-                            paste0("dimRed_", obj_i) else obj_names[[obj_i]]
-                        method <- if (is_empty_char(method_names[[method_i]])) 
-                            paste0("method_", method_i) else 
-                                method_names[[method_i]]
+                            is_empty_char(spat_unit_names[[unit_i]])) {
+                            paste0("unit_", unit_i)
+                        } else {
+                            spat_unit_names[[unit_i]]
+                        }
+                        name <- if (is_empty_char(obj_names[[obj_i]])) {
+                            paste0("dimRed_", obj_i)
+                        } else {
+                            obj_names[[obj_i]]
+                        }
+                        method <- if (is_empty_char(method_names[[method_i]])) {
+                            paste0("method_", method_i)
+                        } else {
+                            method_names[[method_i]]
+                        }
 
                         obj_list[[length(obj_list) + 1]] <- dr
                         feat_type_list <- c(feat_type_list, feat_type)
@@ -1468,9 +1624,10 @@ readDimReducData <- function(data_list,
     if (length(obj_list) > 0L) {
         return_list <- lapply(seq_along(obj_list), function(obj_i) {
             if (inherits(obj_list[[obj_i]], "dimObj")) {
-                warning(wrap_txt("\nList item [", obj_i, "]: Not possible to 
-                                read dimObj. Returning without modifications", 
-                                sep = ""))
+                warning(wrap_txt("\nList item [", obj_i, "]: Not possible to
+                                read dimObj. Returning without modifications",
+                    sep = ""
+                ))
                 return(obj_list[[obj_i]])
             } else {
                 name <- name_list[[obj_i]]
@@ -1497,8 +1654,11 @@ readDimReducData <- function(data_list,
                         method = method,
                         spat_unit = spat_unit,
                         feat_type = feat_type,
-                        provenance = if (is_empty_char(provenance)) 
-                            spat_unit else provenance, # assumed
+                        provenance = if (is_empty_char(provenance)) {
+                            spat_unit
+                        } else {
+                            provenance
+                        }, # assumed
                         misc = NULL
                     )
                 )
@@ -1533,11 +1693,12 @@ readDimReducData <- function(data_list,
 #' @description read nearest network results from list
 #' @returns nnNetObj
 #' @export
-readNearestNetData <- function(data_list,
-    default_spat_unit = NULL,
-    default_feat_type = NULL,
-    provenance = NULL,
-    verbose = TRUE) {
+readNearestNetData <- function(
+        data_list,
+        default_spat_unit = NULL,
+        default_feat_type = NULL,
+        provenance = NULL,
+        verbose = TRUE) {
     .read_nearest_networks(
         nn_network = data_list,
         default_spat_unit = default_spat_unit,
@@ -1551,11 +1712,12 @@ readNearestNetData <- function(data_list,
 
 #' @keywords internal
 #' @noRd
-.read_nearest_networks <- function(nn_network,
-    default_spat_unit = NULL,
-    default_feat_type = NULL,
-    provenance = NULL,
-    verbose = TRUE) {
+.read_nearest_networks <- function(
+        nn_network,
+        default_spat_unit = NULL,
+        default_feat_type = NULL,
+        provenance = NULL,
+        verbose = TRUE) {
     if (is.null(nn_network)) {
         message("No nearest network results are provided")
         return(NULL)
@@ -1589,8 +1751,11 @@ readNearestNetData <- function(data_list,
 
         for (obj_i in seq_along(nn_network)) {
             nn <- nn_network[[obj_i]]
-            name <- if (is_empty_char(obj_names[[obj_i]])) 
-                paste0("nn_", obj_i) else obj_names[[obj_i]]
+            name <- if (is_empty_char(obj_names[[obj_i]])) {
+                paste0("nn_", obj_i)
+            } else {
+                obj_names[[obj_i]]
+            }
             method <- name # assume
 
             obj_list[[length(obj_list) + 1L]] <- nn
@@ -1615,10 +1780,16 @@ readNearestNetData <- function(data_list,
 
             for (obj_i in seq_along(nn_network[[feat_i]])) {
                 nn <- nn_network[[feat_i]][[obj_i]]
-                feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) 
-                    paste0("feat_", feat_i) else feat_type_names[[feat_i]]
-                name <- if (is_empty_char(obj_names[[obj_i]])) 
-                    paste0("nn_", obj_i) else obj_names[[obj_i]]
+                feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) {
+                    paste0("feat_", feat_i)
+                } else {
+                    feat_type_names[[feat_i]]
+                }
+                name <- if (is_empty_char(obj_names[[obj_i]])) {
+                    paste0("nn_", obj_i)
+                } else {
+                    obj_names[[obj_i]]
+                }
                 method <- name # assume
 
                 obj_list[[length(obj_list) + 1L]] <- nn
@@ -1650,12 +1821,21 @@ readNearestNetData <- function(data_list,
 
                 for (obj_i in seq_along(nn_network[[unit_i]][[feat_i]])) {
                     nn <- nn_network[[unit_i]][[feat_i]][[obj_i]]
-                    spat_unit <- if (is_empty_char(spat_unit_names[[unit_i]])) 
-                        paste0("unit_", unit_i) else spat_unit_names[[unit_i]]
-                    feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) 
-                        paste0("feat_", feat_i) else feat_type_names[[feat_i]]
-                    name <- if (is_empty_char(obj_names[[obj_i]])) 
-                        paste0("nn_", obj_i) else obj_names[[obj_i]]
+                    spat_unit <- if (is_empty_char(spat_unit_names[[unit_i]])) {
+                        paste0("unit_", unit_i)
+                    } else {
+                        spat_unit_names[[unit_i]]
+                    }
+                    feat_type <- if (is_empty_char(feat_type_names[[feat_i]])) {
+                        paste0("feat_", feat_i)
+                    } else {
+                        feat_type_names[[feat_i]]
+                    }
+                    name <- if (is_empty_char(obj_names[[obj_i]])) {
+                        paste0("nn_", obj_i)
+                    } else {
+                        obj_names[[obj_i]]
+                    }
                     method <- name # assume
 
                     obj_list[[length(obj_list) + 1L]] <- nn
@@ -1693,22 +1873,33 @@ readNearestNetData <- function(data_list,
                     }
 
                     for (obj_i in seq_along(
-                        nn_network[[unit_i]][[feat_i]][[method_i]])) {
-                        nn <- nn_network[[unit_i]][[feat_i]][[method_i
-                                                            ]][[obj_i]]
+                        nn_network[[unit_i]][[feat_i]][[method_i]]
+                    )) {
+                        nn <- nn_network[[unit_i]][[feat_i]][[
+                            method_i
+                        ]][[obj_i]]
                         spat_unit <- if (
-                            is_empty_char(spat_unit_names[[unit_i]])) 
-                            paste0("unit_", unit_i) else 
-                                spat_unit_names[[unit_i]]
+                            is_empty_char(spat_unit_names[[unit_i]])) {
+                            paste0("unit_", unit_i)
+                        } else {
+                            spat_unit_names[[unit_i]]
+                        }
                         feat_type <- if (
-                            is_empty_char(feat_type_names[[feat_i]])) 
-                            paste0("feat_", feat_i) else 
-                                feat_type_names[[feat_i]]
-                        name <- if (is_empty_char(obj_names[[obj_i]])) 
-                            paste0("nn_", obj_i) else obj_names[[obj_i]]
-                        method <- if (is_empty_char(method_names[[method_i]])) 
-                            paste0("method_", method_i) else 
-                                method_names[[method_i]]
+                            is_empty_char(feat_type_names[[feat_i]])) {
+                            paste0("feat_", feat_i)
+                        } else {
+                            feat_type_names[[feat_i]]
+                        }
+                        name <- if (is_empty_char(obj_names[[obj_i]])) {
+                            paste0("nn_", obj_i)
+                        } else {
+                            obj_names[[obj_i]]
+                        }
+                        method <- if (is_empty_char(method_names[[method_i]])) {
+                            paste0("method_", method_i)
+                        } else {
+                            method_names[[method_i]]
+                        }
 
                         obj_list[[length(obj_list) + 1L]] <- nn
                         spat_unit_list <- c(spat_unit_list, spat_unit)
@@ -1727,9 +1918,10 @@ readNearestNetData <- function(data_list,
     if (length(obj_list) > 0L) {
         return_list <- lapply(seq_along(obj_list), function(obj_i) {
             if (inherits(obj_list[[obj_i]], "nnNetObj")) {
-                warning(wrap_txt("\nList item [", obj_i, "]: Not possible to 
+                warning(wrap_txt("\nList item [", obj_i, "]: Not possible to
                                 read nnNetObj. Returning without modifications",
-                                sep = ""))
+                    sep = ""
+                ))
                 return(obj_list[[obj_i]])
             } else {
                 # Get data from collection lists
@@ -1756,8 +1948,11 @@ readNearestNetData <- function(data_list,
                         network = igraph,
                         spat_unit = spat_unit,
                         feat_type = feat_type,
-                        provenance = if (is_empty_char(provenance)) 
-                            spat_unit else provenance, # assume
+                        provenance = if (is_empty_char(provenance)) {
+                            spat_unit
+                        } else {
+                            provenance
+                        }, # assume
                         misc = NULL
                     )
                 )
@@ -1765,7 +1960,7 @@ readNearestNetData <- function(data_list,
         })
         return(return_list)
     } else {
-        warning(wrap_txt("No objects found in nearest neighbor network input 
+        warning(wrap_txt("No objects found in nearest neighbor network input
                         list"))
     }
 }
@@ -1788,8 +1983,8 @@ readNearestNetData <- function(data_list,
 #' @title Read list of polygons information
 #' @name readPolygonData
 #' @description Function extract list of polygons when given raw input as either
-#' mask or tabular data. Calls the respective createGiottoPolygons 
-#' functions. \cr If a \code{giottoPolygon} object is passed then no edits 
+#' mask or tabular data. Calls the respective createGiottoPolygons
+#' functions. \cr If a \code{giottoPolygon} object is passed then no edits
 #' will be made other than updating the \code{name} slot if the list is named.
 #' @param data_list read polygon results from list
 #' @param input what type of input is being used. When set to 'guess', uses
@@ -1805,13 +2000,14 @@ readNearestNetData <- function(data_list,
 #' @param verbose be verbose
 #' @returns giottoPolygon
 #' @export
-readPolygonData <- function(data_list,
-    default_name = "cell",
-    input = "guess",
-    polygon_mask_list_params = NULL,
-    polygon_dfr_list_params = NULL,
-    calc_centroids = FALSE,
-    verbose = TRUE) {
+readPolygonData <- function(
+        data_list,
+        default_name = "cell",
+        input = "guess",
+        polygon_mask_list_params = NULL,
+        polygon_dfr_list_params = NULL,
+        calc_centroids = FALSE,
+        verbose = TRUE) {
     if (is.null(data_list)) {
         message("No polygon data/spatial info is provided")
         return(NULL)
@@ -1866,8 +2062,8 @@ readPolygonData <- function(data_list,
 #' @title Extract list of polygons
 #' @name .extract_polygon_list
 #' @description Function extract list of polygons when given raw input as either
-#' mask or tabular data. Calls the respective createGiottoPolygons 
-#' functions. \cr If a \code{giottoPolygon} object is passed then no edits 
+#' mask or tabular data. Calls the respective createGiottoPolygons
+#' functions. \cr If a \code{giottoPolygon} object is passed then no edits
 #' will be made other than updating the \code{name} slot if the list is named.
 #' @param input what type of input is being used. When set to 'guess', uses
 #' 'mask' if \code{polygonlist} is of type character and 'table' when
@@ -1880,12 +2076,13 @@ readPolygonData <- function(data_list,
 #' @param verbose be verbose
 #' @keywords internal
 #' @noRd
-.extract_polygon_list <- function(polygonlist,
-    input = "guess",
-    default_name = "cell",
-    polygon_mask_list_params,
-    polygon_dfr_list_params,
-    verbose = TRUE) {
+.extract_polygon_list <- function(
+        polygonlist,
+        input = "guess",
+        default_name = "cell",
+        polygon_mask_list_params,
+        polygon_dfr_list_params,
+        verbose = TRUE) {
     named_list <- FALSE
 
     # if polygonlist is not a named list
@@ -1902,8 +2099,10 @@ readPolygonData <- function(data_list,
             names(polygonlist) <- default_name
         } else {
             polygonlist_l <- length(polygonlist)
-            names(polygonlist) <- c(default_name, 
-                                    paste0("info", seq_len(polygonlist_l - 1)))
+            names(polygonlist) <- c(
+                default_name,
+                paste0("info", seq_len(polygonlist_l - 1))
+            )
         }
     } else if (is.null(names(polygonlist))) {
         # if it is list
@@ -1914,8 +2113,10 @@ readPolygonData <- function(data_list,
             names(polygonlist) <- default_name
         } else {
             polygonlist_l <- length(polygonlist)
-            names(polygonlist) <- c(default_name, 
-                                    paste0("info", seq_len(polygonlist_l - 1)))
+            names(polygonlist) <- c(
+                default_name,
+                paste0("info", seq_len(polygonlist_l - 1))
+            )
         }
     } else {
         if (isTRUE(verbose)) wrap_msg("polygonlist is a list with names")
@@ -1935,8 +2136,9 @@ readPolygonData <- function(data_list,
         name_polyinfo <- names(polygonlist)[[poly_i]]
         polyinfo <- polygonlist[[poly_i]]
 
-        if (isTRUE(verbose)) 
+        if (isTRUE(verbose)) {
             wrap_msg("  [", name_polyinfo, "] Process polygon info...")
+        }
 
         if ((is.character(polyinfo) & input == "guess") | input == "mask") {
             parameters <- c(
@@ -1948,10 +2150,12 @@ readPolygonData <- function(data_list,
             )
             if (isTRUE(verbose)) print(parameters)
 
-            poly_results <- do.call(what = "createGiottoPolygonsFromMask", 
-                                    args = parameters)
-        } else if ((inherits(polyinfo, "data.frame") & input == "guess") | 
-                input == "table") {
+            poly_results <- do.call(
+                what = "createGiottoPolygonsFromMask",
+                args = parameters
+            )
+        } else if ((inherits(polyinfo, "data.frame") & input == "guess") |
+            input == "table") {
             parameters <- c(
                 list(
                     name = name_polyinfo,
@@ -1961,8 +2165,10 @@ readPolygonData <- function(data_list,
             )
             if (isTRUE(verbose)) print(parameters)
 
-            poly_results <- do.call(what = "createGiottoPolygonsFromDfr", 
-                                    args = parameters)
+            poly_results <- do.call(
+                what = "createGiottoPolygonsFromDfr",
+                args = parameters
+            )
         } else if (inherits(polyinfo, "giottoPolygon")) {
             # Override name slot ONLY if giottoPolygon provided as named list
             if (isTRUE(named_list)) {
@@ -1994,18 +2200,19 @@ readPolygonData <- function(data_list,
 #' @description Adds Giotto polygon to an existing Giotto object
 #' @param gobject giotto object
 #' @param gpolygons list of giotto polygon objects,
-#' see \code{\link{createGiottoPolygonsFromMask}} 
+#' see \code{\link{createGiottoPolygonsFromMask}}
 #' and \code{\link{createGiottoPolygonsFromDfr}}
 #' @concept polygon
 #' @returns giotto object
 #' @export
-addGiottoPolygons <- function(gobject,
-    gpolygons) {
+addGiottoPolygons <- function(
+        gobject,
+        gpolygons) {
     # check input
     assert_giotto(gobject)
 
     if (!inherits(gpolygons, "list")) {
-        stop("gpolygons needs to be a list of one or more giottoPolygon 
+        stop("gpolygons needs to be a list of one or more giottoPolygon
             objects")
     }
 
@@ -2017,7 +2224,7 @@ addGiottoPolygons <- function(gobject,
         # check if giottoPoint object
         if (!inherits(gp, "giottoPolygon")) {
             stop(
-                "gpolygons needs to be a list of one or more giottoPolygon 
+                "gpolygons needs to be a list of one or more giottoPolygon
                 objects", "\n",
                 "number ", gp_i, " is not a giottoPolygon object \n"
             )
@@ -2052,8 +2259,9 @@ addGiottoPolygons <- function(gobject,
 #' @inheritParams read_data_params
 #' @returns list of giottoPoints
 #' @export
-readFeatData <- function(data_list,
-    verbose = TRUE) {
+readFeatData <- function(
+        data_list,
+        verbose = TRUE) {
     if (is.null(data_list)) {
         message("No feature info is provided")
         return(NULL)
@@ -2077,8 +2285,9 @@ readFeatData <- function(data_list,
 #' @param verbose be verbose
 #' @keywords internal
 #' @noRd
-.extract_points_list <- function(pointslist,
-    verbose = TRUE) {
+.extract_points_list <- function(
+        pointslist,
+        verbose = TRUE) {
     named_list <- FALSE
 
     # if pointslist is not a named list
@@ -2096,8 +2305,10 @@ readFeatData <- function(data_list,
             names(pointslist) <- "rna"
         } else {
             pointslist_l <- length(pointslist)
-            names(pointslist) <- c("rna", 
-                                paste0("feat", seq(pointslist_l - 1L)))
+            names(pointslist) <- c(
+                "rna",
+                paste0("feat", seq(pointslist_l - 1L))
+            )
         }
     } else if (is.null(names(pointslist))) {
         # if it is list
@@ -2107,8 +2318,10 @@ readFeatData <- function(data_list,
             names(pointslist) <- "rna"
         } else {
             pointslist_l <- length(pointslist)
-            names(pointslist) <- c("rna", 
-                                paste0("feat", seq(pointslist_l - 1L)))
+            names(pointslist) <- c(
+                "rna",
+                paste0("feat", seq(pointslist_l - 1L))
+            )
         }
     } else {
         if (isTRUE(verbose)) wrap_msg("pointslist is a named list")
@@ -2128,8 +2341,9 @@ readFeatData <- function(data_list,
         name_pointinfo <- names(pointslist)[[point_i]]
         pointinfo <- pointslist[[point_i]]
 
-        if (isTRUE(verbose)) 
+        if (isTRUE(verbose)) {
             wrap_msg("  [", name_pointinfo, "] Process point info...")
+        }
 
         if (inherits(pointinfo, "giottoPoints")) {
             if (isTRUE(named_list)) {
@@ -2144,10 +2358,10 @@ readFeatData <- function(data_list,
                 feat_type = name_pointinfo
             )
         } else if (inherits(pointinfo, "character")) {
-            stop(wrap_txt("Giotto points can not yet be created directly 
+            stop(wrap_txt("Giotto points can not yet be created directly
                         from a file path"))
         } else {
-            stop(wrap_txt("Giotto points can only be created from a correctly 
+            stop(wrap_txt("Giotto points can only be created from a correctly
                         formatted data.frame-like object"))
         }
 
@@ -2175,12 +2389,13 @@ readFeatData <- function(data_list,
 NULL
 
 #' @rdname addGiottoPoints
-#' @param gpoints list of giotto point objects, 
+#' @param gpoints list of giotto point objects,
 #' see \code{\link{createGiottoPoints}}
 #' @concept polygon
 #' @export
-addGiottoPoints <- function(gobject,
-    gpoints) {
+addGiottoPoints <- function(
+        gobject,
+        gpoints) {
     # check input
     if (!inherits(gobject, "giotto")) {
         stop("gobject needs to be a giotto object")
@@ -2201,7 +2416,7 @@ addGiottoPoints <- function(gobject,
         # check if giottoPoint object
         if (!inherits(gp, "giottoPoints")) {
             stop(
-                "gpoints needs to be a list of one or more giottoPoints 
+                "gpoints needs to be a list of one or more giottoPoints
                 objects", "\n",
                 "number ", gp_i, " is not a giottoPoints object \n"
             )
@@ -2219,7 +2434,7 @@ addGiottoPoints <- function(gobject,
         extra_feats <- gpoints_feats[!gpoints_feats %in% gobject_feats]
         if (length(extra_feats) > 0) {
             warning(
-                length(extra_feats), " too many features, these features are 
+                length(extra_feats), " too many features, these features are
                 not in the original giotto object: \n",
                 paste(extra_feats, " "), " \n you may want to remove them"
             )
@@ -2228,7 +2443,7 @@ addGiottoPoints <- function(gobject,
         missing_feats <- gobject_feats[!gobject_feats %in% gpoints_feats]
         if (length(missing_feats) > 0) {
             warning(
-                length(missing_feats), " missing features, these features are 
+                length(missing_feats), " missing features, these features are
                 not found in the giotto points object: \n",
                 paste(missing_feats, " "), " \n you may want to add them"
             )
@@ -2242,9 +2457,9 @@ addGiottoPoints <- function(gobject,
 
 
 #' @rdname addGiottoPoints
-#' @param coords A \link{data.frame} or `spatVector` with at least xyz 
+#' @param coords A \link{data.frame} or `spatVector` with at least xyz
 #' coordinates and feature ids.
-#' @param feat_type a character. The feat_type must previously exist in the 
+#' @param feat_type a character. The feat_type must previously exist in the
 #' Giotto object. Default = "rna".
 #' @export
 addGiottoPoints3D <- function(gobject, coords, feat_type = "rna") {
@@ -2259,8 +2474,10 @@ addGiottoPoints3D <- function(gobject, coords, feat_type = "rna") {
     }
 
     if (inherits(coords, "data.frame")) {
-        spatvec <- terra::vect(as.matrix(coords[, seq_len(2)]), type = "points", 
-                            atts = coords)
+        spatvec <- terra::vect(as.matrix(coords[, seq_len(2)]),
+            type = "points",
+            atts = coords
+        )
         names(spatvec)[4] <- "feat_ID"
 
         g_points <- create_giotto_points_object(

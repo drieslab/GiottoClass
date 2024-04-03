@@ -15,7 +15,9 @@
     x@spatVector <- do.call(what, args = append(list(x@spatVector), args))
     if (!is.null(x@spatVectorCentroids)) {
         x@spatVectorCentroids <- do.call(
-            what, args = append(list(x@spatVectorCentroids), args))
+            what,
+            args = append(list(x@spatVectorCentroids), args)
+        )
     }
     if (!is.null(x@overlaps)) {
         x@overlaps <- lapply(x@overlaps, function(sv) {
@@ -95,9 +97,10 @@
 #' @description calculates centroids from selected polygons
 #' @keywords internal
 #' @returns SpatVector or giotto polygon
-.calculate_centroids_polygons <- function(gpolygon,
-    name = "centroids",
-    append_gpolygon = TRUE) {
+.calculate_centroids_polygons <- function(
+        gpolygon,
+        name = "centroids",
+        append_gpolygon = TRUE) {
     terra_polygon_centroids <- terra::centroids(slot(gpolygon, "spatVector"))
 
     if (isTRUE(append_gpolygon)) {
@@ -135,7 +138,8 @@
     uniq_geom_vec <- seq_len(total_geoms)
     names(uniq_geom_vec) <- unique(tokeepDT$geom)
     tokeepDT[, geom := uniq_geom_vec[[as.character(geom)]],
-            by = seq_len(nrow(tokeepDT))]
+        by = seq_len(nrow(tokeepDT))
+    ]
 
     new_list <- list()
     add_i <- 1
@@ -294,7 +298,8 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 
     # Spline the x and y coordinates.
     data.spline <- stats::spline(seq_len(n + 2 * k), data[, 1],
-                                n = vertices, ...)
+        n = vertices, ...
+    )
     x <- data.spline$x
     x1 <- data.spline$y
     x2 <- stats::spline(seq_len(n + 2 * k), data[, 2], n = vertices, ...)$y
@@ -318,11 +323,12 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 #' @concept polygon
 #' @seealso \code{\link[stats]{spline}}
 #' @export
-smoothGiottoPolygons <- function(gpolygon,
-    vertices = 20,
-    k = 3,
-    set_neg_to_zero = TRUE,
-    ...) {
+smoothGiottoPolygons <- function(
+        gpolygon,
+        vertices = 20,
+        k = 3,
+        set_neg_to_zero = TRUE,
+        ...) {
     # NSE vars
     x <- NULL
     y <- NULL
@@ -337,7 +343,8 @@ smoothGiottoPolygons <- function(gpolygon,
     geom_values <- c("geom", "part", "x", "y", "hole")
     other_values <- all_colnames[!all_colnames %in% geom_values]
     other_values_uniq_dt <- unique(
-        polygDT[, c("geom", "part", "hole", other_values), with = FALSE])
+        polygDT[, c("geom", "part", "hole", other_values), with = FALSE]
+    )
 
     # apply smoothing to each polygon
     comb <- lapply(seq_along(unique(polygDT$geom)), function(z) {
@@ -351,7 +358,8 @@ smoothGiottoPolygons <- function(gpolygon,
         }
 
         polygDT_smooth <- data.table::as.data.table(
-            .spline_poly(polygMat, vertices = vertices, k = k, ...))
+            .spline_poly(polygMat, vertices = vertices, k = k, ...)
+        )
         polygDT_smooth[, geom := z]
     })
     comb_res <- do.call("rbind", comb)
@@ -359,9 +367,13 @@ smoothGiottoPolygons <- function(gpolygon,
 
     # add other columns back
     comb_res <- data.table::merge.data.table(
-        comb_res, other_values_uniq_dt, by = "geom")
+        comb_res, other_values_uniq_dt,
+        by = "geom"
+    )
     comb_res <- comb_res[,
-            c("geom", "part", "x1", "x2", "hole", other_values), with = FALSE]
+        c("geom", "part", "x1", "x2", "hole", other_values),
+        with = FALSE
+    ]
     colnames(comb_res)[3:4] <- c("x", "y")
 
     if (set_neg_to_zero == TRUE) {
@@ -410,12 +422,11 @@ smoothGiottoPolygons <- function(gpolygon,
 #' @param verbose be verbose
 #' @keywords internal
 #' @returns SpatVector
-.create_spatvector_object_from_dfr <- function(
-        x,
-        x_colname = NULL,
-        y_colname = NULL,
-        feat_ID_colname = NULL,
-        verbose = TRUE) {
+.create_spatvector_object_from_dfr <- function(x,
+    x_colname = NULL,
+    y_colname = NULL,
+    feat_ID_colname = NULL,
+    verbose = TRUE) {
     x <- data.table::as.data.table(x)
 
     # MANUAL OPTION
@@ -430,7 +441,7 @@ smoothGiottoPolygons <- function(gpolygon,
                 column name need to be specified.\n")
         } else {
             if (!all(c(x_colname, y_colname, feat_ID_colname) %in%
-                    colnames(x))) {
+                colnames(x))) {
                 stop("Not all column names were found in the data.frame or
                     data.table.\n")
             }
@@ -487,21 +498,27 @@ smoothGiottoPolygons <- function(gpolygon,
     }
 
     ## message and force data type
-    if (isTRUE(verbose))
-        message(paste0('  Selecting col "',
-                colnames(x[, feat_ID_col, with = FALSE]),
-                '" as feat_ID column'))
+    if (isTRUE(verbose)) {
+        message(paste0(
+            '  Selecting col "',
+            colnames(x[, feat_ID_col, with = FALSE]),
+            '" as feat_ID column'
+        ))
+    }
     colnames(x)[feat_ID_col] <- "feat_ID"
     if (!inherits(x$feat_ID, "character")) {
         x$feat_ID <- as.character(x$feat_ID) # ensure char
     }
 
 
-    if (isTRUE(verbose))
-        message(paste0('  Selecting cols "',
-                    colnames(x[, x_col, with = FALSE]), '" and "',
-                    colnames(x[, y_col, with = FALSE]),
-                    '" as x and y respectively'))
+    if (isTRUE(verbose)) {
+        message(paste0(
+            '  Selecting cols "',
+            colnames(x[, x_col, with = FALSE]), '" and "',
+            colnames(x[, y_col, with = FALSE]),
+            '" as x and y respectively'
+        ))
+    }
     colnames(x)[x_col] <- "x"
     colnames(x)[y_col] <- "y"
     if (!inherits(x$x, "numeric")) x$x <- as.numeric(x$x) # ensure numeric
@@ -548,15 +565,16 @@ smoothGiottoPolygons <- function(gpolygon,
 #' @param ... additional parameters to pass to \code{\link[dbscan]{kNN}}
 #' @keywords internal
 #' @returns kNN spatial feature network
-createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
-    feat_type = NULL,
-    name = "knn_feats_network",
-    k = 4,
-    maximum_distance = NULL,
-    minimum_k = 0,
-    add_feat_ids = FALSE,
-    verbose = TRUE,
-    ...) {
+createSpatialFeaturesKNNnetwork_dbscan <- function(
+        gobject,
+        feat_type = NULL,
+        name = "knn_feats_network",
+        k = 4,
+        maximum_distance = NULL,
+        minimum_k = 0,
+        add_feat_ids = FALSE,
+        verbose = TRUE,
+        ...) {
     # define for data.table
     from_feat <- from <- to_feat <- to <- from_to_feat <- NULL
 
@@ -569,7 +587,8 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
     if (verbose == TRUE) cat("Convert feature spatial info to matrix \n")
     featDT <- .spatvector_to_dt(gobject@feat_info[[feat_type]]@spatVector)
     spatial_locations_matrix <- as.matrix(
-        featDT[, c("x", "y", NULL), with = FALSE])
+        featDT[, c("x", "y", NULL), with = FALSE]
+    )
 
     # store lookup table to keep information about unique ID
     # important with multiple joined objects where row id is not always equal
@@ -595,8 +614,9 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
     )
 
     ## 3. keep minimum and filter
-    if (verbose == TRUE)
+    if (verbose == TRUE) {
         cat("Filter output for distance and minimum neighbours \n")
+    }
     knn_sptial.norm[, rank := seq_len(.N), by = "from"]
 
     if (minimum_k != 0) {
@@ -670,18 +690,19 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
 #'     will be returned as a datatable.
 #' @concept feature
 #' @export
-createSpatialFeaturesKNNnetwork <- function(gobject,
-    method = c("dbscan"),
-    feat_type = NULL,
-    name = "knn_feats_network",
-    k = 4,
-    maximum_distance = NULL,
-    minimum_k = 0,
-    add_feat_ids = FALSE,
-    verbose = TRUE,
-    return_gobject = TRUE,
-    toplevel_params = 2,
-    ...) {
+createSpatialFeaturesKNNnetwork <- function(
+        gobject,
+        method = c("dbscan"),
+        feat_type = NULL,
+        name = "knn_feats_network",
+        k = 4,
+        maximum_distance = NULL,
+        minimum_k = 0,
+        add_feat_ids = FALSE,
+        verbose = TRUE,
+        return_gobject = TRUE,
+        toplevel_params = 2,
+        ...) {
     # 1. select feat_type
     if (is.null(feat_type)) {
         feat_type <- gobject@expression_feat[[1]]
@@ -756,12 +777,13 @@ createSpatialFeaturesKNNnetwork <- function(gobject,
 #'     will be returned as spatLocsObj.
 #' @concept centroid
 #' @export
-addSpatialCentroidLocationsLayer <- function(gobject,
-    poly_info = "cell",
-    feat_type = NULL,
-    provenance = poly_info,
-    spat_loc_name = "raw",
-    return_gobject = TRUE) {
+addSpatialCentroidLocationsLayer <- function(
+        gobject,
+        poly_info = "cell",
+        feat_type = NULL,
+        provenance = poly_info,
+        spat_loc_name = "raw",
+        return_gobject = TRUE) {
     # data.table vars
     x <- y <- poly_ID <- NULL
 
@@ -779,8 +801,9 @@ addSpatialCentroidLocationsLayer <- function(gobject,
     # nesting from
 
     gpoly <- get_polygon_info(gobject,
-                            polygon_name = poly_info,
-                            return_giottoPolygon = TRUE)
+        polygon_name = poly_info,
+        return_giottoPolygon = TRUE
+    )
 
     extended_spatvector <- .calculate_centroids_polygons(
         gpolygon = gpoly,
@@ -789,7 +812,8 @@ addSpatialCentroidLocationsLayer <- function(gobject,
     )
 
     centroid_spatvector <- .spatvector_to_dt(
-        extended_spatvector@spatVectorCentroids)
+        extended_spatvector@spatVectorCentroids
+    )
 
     # this could be 3D
     spatial_locs <- centroid_spatvector[, .(x, y, poly_ID)]
@@ -874,13 +898,14 @@ addSpatialCentroidLocationsLayer <- function(gobject,
 #'     will be returned as \code{spatLocObj}.
 #' @concept centroid
 #' @export
-addSpatialCentroidLocations <- function(gobject,
-    poly_info = "cell",
-    feat_type = NULL,
-    spat_loc_name = "raw",
-    provenance = poly_info,
-    return_gobject = TRUE,
-    verbose = TRUE) {
+addSpatialCentroidLocations <- function(
+        gobject,
+        poly_info = "cell",
+        feat_type = NULL,
+        spat_loc_name = "raw",
+        provenance = poly_info,
+        return_gobject = TRUE,
+        verbose = TRUE) {
     # provenance setup #
     # Require that provenance is a user-provided named list if length of
     # poly_info is greater than 1.
@@ -922,8 +947,10 @@ addSpatialCentroidLocations <- function(gobject,
 
     for (poly_layer in unique(poly_info)) {
         if (!poly_layer %in% potential_polygon_names) {
-            warning("Polygon info layer with name ", poly_layer,
-                    " has not been found and will be skipped")
+            warning(
+                "Polygon info layer with name ", poly_layer,
+                " has not been found and will be skipped"
+            )
         } else {
             if (verbose == TRUE) {
                 wrap_msg(

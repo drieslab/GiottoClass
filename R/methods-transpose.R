@@ -15,7 +15,7 @@ NULL
 setMethod(
     "t", signature("giotto"),
     function(x) {
-        # spat_unit and feat_type params are not allowed since t() has no ... 
+        # spat_unit and feat_type params are not allowed since t() has no ...
         # param
 
         # polygons --------------------------------------------------------- #
@@ -39,11 +39,13 @@ setMethod(
         if (!is.null(sls)) {
             for (sl in sls) {
                 sl <- do.call(t, args = list(x = sl))
-                x <- setSpatialLocations(x, sl, verbose = FALSE, 
-                                        initialize = FALSE)
+                x <- setSpatialLocations(x, sl,
+                    verbose = FALSE,
+                    initialize = FALSE
+                )
             }
 
-            # TODO remove this after spatial info is removed from 
+            # TODO remove this after spatial info is removed from
             # spatialNetwork objs
             sn_list <- get_spatial_network_list(
                 gobject = x,
@@ -91,12 +93,15 @@ setMethod("t", signature("spatLocsObj"), function(x) {
 setMethod("t", signature("spatialNetworkObj"), function(x) {
     sdimx_begin <- sdimx_end <- sdimy_begin <- sdimy_end <- NULL
     x <- data.table::copy(x)
-    x@networkDT[, c("sdimx_begin", "sdimy_begin", "sdimx_end", "sdimy_end"
-                    ) := .(sdimy_begin, sdimx_begin, sdimy_end, sdimx_end)]
+    x@networkDT[, c("sdimx_begin", "sdimy_begin", "sdimx_end", "sdimy_end") := .(sdimy_begin, sdimx_begin, sdimy_end, sdimx_end)]
     if (!is.null(x@networkDT_before_filter)) {
-        x@networkDT_before_filter[, c("sdimx_begin", "sdimy_begin", 
-            "sdimx_end", "sdimy_end") := .(sdimy_begin, sdimx_begin, sdimy_end, 
-                                        sdimx_end)]
+        x@networkDT_before_filter[, c(
+            "sdimx_begin", "sdimy_begin",
+            "sdimx_end", "sdimy_end"
+        ) := .(
+            sdimy_begin, sdimx_begin, sdimy_end,
+            sdimx_end
+        )]
     }
     return(x)
 })
@@ -131,12 +136,15 @@ t.spatLocsObj <- function(x) {
 t.spatialNetworkObj <- function(x) {
     sdimx_begin <- sdimx_end <- sdimy_begin <- sdimy_end <- NULL
     x <- data.table::copy(x)
-    x@networkDT[, c("sdimx_begin", "sdimy_begin", "sdimx_end", "sdimy_end"
-                    ) := .(sdimy_begin, sdimx_begin, sdimy_end, sdimx_end)]
+    x@networkDT[, c("sdimx_begin", "sdimy_begin", "sdimx_end", "sdimy_end") := .(sdimy_begin, sdimx_begin, sdimy_end, sdimx_end)]
     if (!is.null(x@networkDT_before_filter)) {
-        x@networkDT_before_filter[, c("sdimx_begin", "sdimy_begin", 
-            "sdimx_end", "sdimy_end") := .(sdimy_begin, sdimx_begin, sdimy_end, 
-                                        sdimx_end)]
+        x@networkDT_before_filter[, c(
+            "sdimx_begin", "sdimy_begin",
+            "sdimx_end", "sdimy_end"
+        ) := .(
+            sdimy_begin, sdimx_begin, sdimy_end,
+            sdimx_end
+        )]
     }
     return(x)
 }

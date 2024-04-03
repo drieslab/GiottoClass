@@ -16,7 +16,7 @@ NULL
 #' numeric or character vectors or empty
 #' @param name A literal character string (possibly backtick quoted).
 #' @param value value(s) to set
-#' This is normally matched to the colnames of the data.table object within 
+#' This is normally matched to the colnames of the data.table object within
 #' the S4.
 #' @returns columns or values from a data.table
 #' @section \code{`$`} methods:
@@ -203,8 +203,10 @@ setMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", signature(x = "gdtData", i = "logical", j = "missing", 
-                drop = "missing"),
+    "[", signature(
+        x = "gdtData", i = "logical", j = "missing",
+        drop = "missing"
+    ),
     function(x, i, j) {
         x_nrow <- nrow(x)
         i_len <- length(i)
@@ -226,8 +228,10 @@ setMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", signature(x = "gdtData", i = "character", j = "missing", 
-                drop = "missing"),
+    "[", signature(
+        x = "gdtData", i = "character", j = "missing",
+        drop = "missing"
+    ),
     function(x, i, j) {
         # only appropriate for objects where the spatIDs are in the same
         # order and number of repeats as the contained data.table
@@ -238,7 +242,7 @@ setMethod(
             featIDs(x)
         } else {
             stop(wrap_txt(
-                "Subset object does not contain either cell_ID or feat_ID 
+                "Subset object does not contain either cell_ID or feat_ID
                 column"
             ))
         }
@@ -255,8 +259,10 @@ setMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", signature(x = "gdtData", i = "missing", j = "numeric", 
-                drop = "missing"),
+    "[", signature(
+        x = "gdtData", i = "missing", j = "numeric",
+        drop = "missing"
+    ),
     function(x, i, j) {
         c_names <- colnames(x[])
         x <- x[j = c_names[j]]
@@ -267,8 +273,10 @@ setMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", signature(x = "gdtData", i = "missing", j = "logical", 
-                drop = "missing"),
+    "[", signature(
+        x = "gdtData", i = "missing", j = "logical",
+        drop = "missing"
+    ),
     function(x, i, j) {
         c_names <- colnames(x[j])
         x <- x[j = c_names[j]]
@@ -293,8 +301,10 @@ setMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", signature(x = "coordDataDT", i = "missing", j = "ANY", 
-                drop = "missing"),
+    "[", signature(
+        x = "coordDataDT", i = "missing", j = "ANY",
+        drop = "missing"
+    ),
     function(x, i, j) {
         x@coordinates <- x@coordinates[j = j]
         x
@@ -304,16 +314,20 @@ setMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", signature(x = "coordDataDT", i = "missing", j = "character", 
-                drop = "missing"),
+    "[", signature(
+        x = "coordDataDT", i = "missing", j = "character",
+        drop = "missing"
+    ),
     function(x, i, j) {
-        x@coordinates <- x@coordinates[j = unique(c(j, "cell_ID")), 
-                                    with = FALSE]
+        x@coordinates <- x@coordinates[
+            j = unique(c(j, "cell_ID")),
+            with = FALSE
+        ]
         x
     }
 )
 
-# setMethod('[', signature(x = 'giotto', i = 'character', j = 'missing', 
+# setMethod('[', signature(x = 'giotto', i = 'character', j = 'missing',
 # drop = 'missing'),
 # function(x, i, spat_unit = NULL, feat_type = NULL, name = NULL) {
 #
@@ -335,7 +349,7 @@ setMethod(
 # setMethod('[', signature(x = 'giotto', i = 'character', j = 'numeric',
 #                          drop = 'missing'),
 #           function(x, i, j, spat_unit = NULL, feat_type = NULL, name = NULL) {
-#               
+#
 #               avail_data = switch(i,
 #                                   'expression' = list_expression(gobject = x,
 #                                                       spat_unit = spat_unit,
@@ -347,7 +361,7 @@ setMethod(
 #                                                       gobject = x),
 #                                   'feat_info' = list_feature_info(
 #                                                       gobject = x))
-#               
+#
 #               switch(i,
 #                      'expression' = get_expression_values(gobject = x,
 #                                       spat_unit = avail_data$spat_unit[[j]],
@@ -355,13 +369,13 @@ setMethod(
 #                                       values = avail_data$name[[j]],
 #                                       output = 'exprObj',
 #                                       set_defaults = FALSE))
-#               
+#
 #           })
 
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", 
+    "[",
     signature(x = "coordDataDT", i = "ANY", j = "missing", drop = "missing"),
     function(x, i, j) {
         x@coordinates <- x@coordinates[i = i]
@@ -375,9 +389,11 @@ setMethod(
 #'   Return \code{coordinates} slot data.table from giotto S4
 #' @export
 setMethod(
-    "[", 
-    signature(x = "coordDataDT", i = "missing", j = "missing",
-            drop = "missing"),
+    "[",
+    signature(
+        x = "coordDataDT", i = "missing", j = "missing",
+        drop = "missing"
+    ),
     function(x, i, j) {
         x@coordinates
     }
@@ -390,7 +406,7 @@ setMethod(
 #' @section \code{`[<-`} methods:
 #'   Assign to \code{coordinates} slot in giotto S4
 setReplaceMethod(
-    "[", 
+    "[",
     signature(x = "coordDataDT", i = "missing", j = "missing", value = "ANY"),
     function(x, i, j, value) {
         x@coordinates <- value
@@ -401,9 +417,11 @@ setReplaceMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", 
-    signature(x = "giottoPoints", i = "gIndex", j = "missing", 
-            drop = "missing"),
+    "[",
+    signature(
+        x = "giottoPoints", i = "gIndex", j = "missing",
+        drop = "missing"
+    ),
     function(x, i, j) {
         x@spatVector <- x@spatVector[i]
         x@unique_ID_cache <- featIDs(x, uniques = TRUE, use_cache = FALSE)
@@ -431,7 +449,7 @@ setMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", 
+    "[",
     signature(x = "metaData", i = "missing", j = "character", drop = "missing"),
     function(x, i, j) {
         id_col <- colnames(x@metaDT)[1L]
@@ -455,7 +473,7 @@ setMethod(
 #'   Return \code{metaDT} slot data.table from giotto S4
 #' @export
 setMethod(
-    "[", 
+    "[",
     signature(x = "metaData", i = "missing", j = "missing", drop = "missing"),
     function(x, i, j) {
         x@metaDT
@@ -470,7 +488,7 @@ setMethod(
 #'   Assign to \code{metaDT} slot in giotto S4
 #' @export
 setMethod(
-    "[<-", 
+    "[<-",
     signature(x = "metaData", i = "missing", j = "missing", value = "ANY"),
     function(x, i, j, value) {
         x@metaDT <- value
@@ -496,7 +514,7 @@ setMethod(
 #'    Return \code{coordinates} slot matrix from giotto S4 dimObj
 #' @export
 setMethod(
-    "[", 
+    "[",
     signature(x = "dimObj", i = "missing", j = "missing", drop = "missing"),
     function(x, i, j) {
         x@coordinates
@@ -557,7 +575,7 @@ setMethod(
 #'   Return \code{exprMat} slot Matrix object from giotto S4
 #' @export
 setMethod(
-    "[", 
+    "[",
     signature(x = "exprData", i = "missing", j = "missing", drop = "missing"),
     function(x, i, j) {
         x@exprMat
@@ -572,7 +590,7 @@ setMethod(
 #'   Assign to \code{exprMat} slot in giotto S4
 #' @export
 setMethod(
-    "[<-", 
+    "[<-",
     signature(x = "exprData", i = "missing", j = "missing", value = "ANY"),
     function(x, i, j, value) {
         x@exprMat <- value
@@ -586,9 +604,11 @@ setMethod(
 #'   Return \code{spatNetData} slot network data.table object from giotto S4
 #' @export
 setMethod(
-    "[", 
-    signature(x = "spatNetData", i = "missing", j = "missing", 
-            drop = "missing"),
+    "[",
+    signature(
+        x = "spatNetData", i = "missing", j = "missing",
+        drop = "missing"
+    ),
     function(x, i, j) {
         x@networkDT
     }
@@ -602,7 +622,7 @@ setMethod(
 #'   Assign to \code{networkDT} slot in giotto S4
 #' @export
 setMethod(
-    "[<-", 
+    "[<-",
     signature(x = "spatNetData", i = "missing", j = "missing", value = "ANY"),
     function(x, i, j, value) {
         x@networkDT <- value
@@ -617,7 +637,7 @@ setMethod(
 #'   Return \code{nnData} slot igraph object from giotto S4
 #' @export
 setMethod(
-    "[", 
+    "[",
     signature(x = "nnData", i = "missing", j = "missing", drop = "missing"),
     function(x, i, j) {
         x@igraph
@@ -646,7 +666,7 @@ setMethod(
 #'   Return \code{enrData} slot enrichment data.table object from giotto S4
 #' @export
 setMethod(
-    "[", 
+    "[",
     signature(x = "enrData", i = "missing", j = "missing", drop = "missing"),
     function(x, i, j) {
         x@enrichDT
@@ -676,7 +696,7 @@ setMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", 
+    "[",
     signature(x = "enrData", i = "missing", j = "character", drop = "missing"),
     function(x, i, j) {
         x@enrichDT <- x@enrichDT[j = unique(c(j, "cell_ID")), with = FALSE]
@@ -694,7 +714,7 @@ setMethod(
 #'   Assign to \code{enrichDT} slot in giotto S4
 #' @export
 setMethod(
-    "[<-", 
+    "[<-",
     signature(x = "enrData", i = "missing", j = "missing", value = "ANY"),
     function(x, i, j, value) {
         x@enrichDT <- value
@@ -708,9 +728,11 @@ setMethod(
 #'   Return \code{spatGridData} slot data.table object from giotto S4
 #' @export
 setMethod(
-    "[", 
-    signature(x = "spatGridData", i = "missing", j = "missing", 
-            drop = "missing"),
+    "[",
+    signature(
+        x = "spatGridData", i = "missing", j = "missing",
+        drop = "missing"
+    ),
     function(x, i, j) {
         x@gridDT
     }
@@ -724,7 +746,7 @@ setMethod(
 #'   Assign to \code{gridDT} slot in giotto S4
 #' @export
 setMethod(
-    "[<-", 
+    "[<-",
     signature(x = "spatGridData", i = "missing", j = "missing", value = "ANY"),
     function(x, i, j, value) {
         x@gridDT <- value
@@ -738,9 +760,11 @@ setMethod(
 #'   Return \code{giottoPoints} spatVector slot
 #' @export
 setMethod(
-    "[", 
-    signature(x = "giottoPoints", i = "missing", j = "missing", 
-            drop = "missing"),
+    "[",
+    signature(
+        x = "giottoPoints", i = "missing", j = "missing",
+        drop = "missing"
+    ),
     function(x, i, j) {
         x@spatVector
     }
@@ -749,9 +773,11 @@ setMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", 
-    signature(x = "giottoPoints", i = "gIndex", j = "missing", 
-            drop = "missing"),
+    "[",
+    signature(
+        x = "giottoPoints", i = "gIndex", j = "missing",
+        drop = "missing"
+    ),
     function(x, i, j) {
         x@spatVector <- x@spatVector[i]
         x@unique_ID_cache <- featIDs(x, uniques = TRUE, use_cache = FALSE)
@@ -765,9 +791,11 @@ setMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", 
-    signature(x = "giottoPoints", i = "character", j = "missing", 
-            drop = "missing"),
+    "[",
+    signature(
+        x = "giottoPoints", i = "character", j = "missing",
+        drop = "missing"
+    ),
     function(x, i, j) {
         sel_bool <- x$feat_ID %in% i
         x[sel_bool]
@@ -777,9 +805,11 @@ setMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", 
-    signature(x = "giottoPoints", i = "missing", j = "gIndex", 
-            drop = "missing"),
+    "[",
+    signature(
+        x = "giottoPoints", i = "missing", j = "gIndex",
+        drop = "missing"
+    ),
     function(x, i, j) {
         x@spatVector <- x@spatVector[, j]
         if (!"feat_ID" %in% names(x@spatVector)) {
@@ -800,7 +830,7 @@ setMethod(
 #'   Assign to \code{spatVector} slot in giotto S4
 #' @export
 setMethod(
-    "[<-", 
+    "[<-",
     signature(x = "giottoPoints", i = "missing", j = "missing", value = "ANY"),
     function(x, i, j, value) {
         x@spatVector <- value
@@ -814,9 +844,11 @@ setMethod(
 #'   Return \code{giottoPolygon} spatVector slot
 #' @export
 setMethod(
-    "[", 
-    signature(x = "giottoPolygon", i = "missing", j = "missing", 
-            drop = "missing"),
+    "[",
+    signature(
+        x = "giottoPolygon", i = "missing", j = "missing",
+        drop = "missing"
+    ),
     function(x, i, j) {
         x@spatVector
     }
@@ -825,9 +857,11 @@ setMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", 
-    signature(x = "giottoPolygon", i = "gIndex", j = "missing", 
-            drop = "missing"),
+    "[",
+    signature(
+        x = "giottoPolygon", i = "gIndex", j = "missing",
+        drop = "missing"
+    ),
     function(x, i, j) {
         x@spatVector <- x@spatVector[i]
         x@spatVectorCentroids <- x@spatVectorCentroids[i]
@@ -839,7 +873,8 @@ setMethod(
 
         for (feat in names(x@overlaps)) {
             cell_id_bool <- terra::as.list(
-                x@overlaps[[feat]])$poly_ID %in% x@unique_ID_cache
+                x@overlaps[[feat]]
+            )$poly_ID %in% x@unique_ID_cache
             x@overlaps[[feat]] <- x@overlaps[[feat]][cell_id_bool]
         }
 
@@ -853,9 +888,11 @@ setMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", 
-    signature(x = "giottoPolygon", i = "character", j = "missing", 
-            drop = "missing"),
+    "[",
+    signature(
+        x = "giottoPolygon", i = "character", j = "missing",
+        drop = "missing"
+    ),
     function(x, i, j) {
         sel_bool <- x$poly_ID %in% i
         x[sel_bool]
@@ -865,9 +902,11 @@ setMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", 
-    signature(x = "giottoPolygon", i = "missing", j = "gIndex", 
-            drop = "missing"),
+    "[",
+    signature(
+        x = "giottoPolygon", i = "missing", j = "gIndex",
+        drop = "missing"
+    ),
     function(x, i, j) {
         x@spatVector <- x@spatVector[, j]
         x@spatVectorCentroids <- x@spatVectorCentroids[, j]
@@ -884,9 +923,11 @@ setMethod(
 #' @rdname extract-methods
 #' @export
 setMethod(
-    "[", 
-    signature(x = "terraVectData", i = "gIndex", j = "gIndex", 
-            drop = "missing"),
+    "[",
+    signature(
+        x = "terraVectData", i = "gIndex", j = "gIndex",
+        drop = "missing"
+    ),
     function(x, i, j) {
         x <- x[, j]
         x <- x[i, ]
@@ -904,7 +945,7 @@ setMethod(
 #'   Assign to \code{spatVector} slot in giottoPolygon
 #' @export
 setMethod(
-    "[<-", 
+    "[<-",
     signature(x = "giottoPolygon", i = "missing", j = "missing", value = "ANY"),
     function(x, i, j, value) {
         x@spatVector <- value

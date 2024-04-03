@@ -2,8 +2,9 @@
 
 #' @keywords internal
 #' @noRd
-.check_cell_metadata <- function(gobject,
-    verbose = TRUE) {
+.check_cell_metadata <- function(
+        gobject,
+        verbose = TRUE) {
     # data.table vars
     cell_ID <- spat_unit <- NULL
 
@@ -18,7 +19,7 @@
     # polygon and/or expression data
     missing_su <- !used_su %in% g_su
     if (any(missing_su)) {
-        stop(wrap_txt("No expression or polygon information discovered for 
+        stop(wrap_txt("No expression or polygon information discovered for
             spat_unit:", used_su[missing_su],
             "Please add expression or polygon information for this spatial",
             "unit first",
@@ -43,18 +44,21 @@
             )
 
             # no cell_IDs
-            if (any(meta[][, is.na(cell_ID)])) { 
+            if (any(meta[][, is.na(cell_ID)])) {
                 # denotes missing or need to repair IDs
 
-                ID_col_guess <- which.max(sapply(meta[], 
-                                        function(x) sum(search_IDs %in% x)))
+                ID_col_guess <- which.max(sapply(
+                    meta[],
+                    function(x) sum(search_IDs %in% x)
+                ))
 
-                if (ID_col_guess == 0L) { 
+                if (ID_col_guess == 0L) {
                     # likely that cell_ID col does not exist yet
                     if (length(IDs) == nrow(meta[])) {
-                        if (isTRUE(verbose)) 
+                        if (isTRUE(verbose)) {
                             wrap_msg("No cell_ID info found within cell metadata
                                 Directly assigning based on gobject cell_ID")
+                        }
                         meta[][, cell_ID := IDs] # set by reference
                     } else {
                         stop(wrap_txt("No cell_ID info found within cell
@@ -67,7 +71,9 @@
                     ID_col_name <- names(ID_col_guess)
                     meta[][, cell_ID := NULL] # remove older column
                     data.table::setnames(
-                        meta[], old = ID_col_name, new = "cell_ID")
+                        meta[],
+                        old = ID_col_name, new = "cell_ID"
+                    )
                     if (isTRUE(verbose)) {
                         wrap_msg(
                             "Cell metadata: guessing", ID_col_name,
@@ -104,7 +110,7 @@
             if (nrow(meta[]) != length(IDs)) {
                 stop(wrap_txt(
                     "Cell metadata: number of entries does not match",
-                    "number of gobject IDs for this spat_unit (", 
+                    "number of gobject IDs for this spat_unit (",
                     length(IDs), ")",
                     errWidth = TRUE
                 ))
@@ -114,7 +120,8 @@
             if (!meta[][, setequal(cell_ID, IDs)]) {
                 stop(wrap_txt(
                     "Cell_metadata: IDs do not match between metadata and
-                    cell_ID slot for this spat_unit"))
+                    cell_ID slot for this spat_unit"
+                ))
             }
 
             # ensure ID col first
@@ -126,8 +133,9 @@
 
 #' @keywords internal
 #' @noRd
-.check_feat_metadata <- function(gobject,
-    verbose = TRUE) {
+.check_feat_metadata <- function(
+        gobject,
+        verbose = TRUE) {
     # data.table vars
     feat_ID <- spat_unit <- feat_type <- NULL
 
@@ -187,22 +195,25 @@
             search_IDs <- c(head(IDs, 10L), tail(IDs, 10L))
 
             # no feat_IDs
-            if (any(meta[][, is.na(feat_ID)])) { 
+            if (any(meta[][, is.na(feat_ID)])) {
                 # denotes missing or need to repair IDs
 
-                ID_col_guess <- which.max(sapply(meta[], 
-                                        function(x) sum(search_IDs %in% x)))
+                ID_col_guess <- which.max(sapply(
+                    meta[],
+                    function(x) sum(search_IDs %in% x)
+                ))
 
-                if (ID_col_guess == 0L) { 
+                if (ID_col_guess == 0L) {
                     # likely that feat_ID col does not exist yet
                     if (length(IDs) == nrow(meta[])) {
-                        if (isTRUE(verbose)) 
+                        if (isTRUE(verbose)) {
                             wrap_msg("No feat_ID info found within feat metadata
                                 Directly assigning based on gobject feat_ID")
+                        }
                         meta[][, feat_ID := IDs] # set by reference
                     } else {
                         stop(wrap_txt(
-                            "No feat_ID info found within feat metadata and 
+                            "No feat_ID info found within feat metadata and
                             unable",
                             "to guess IDs based on gobject feat_ID",
                             errWidth = TRUE
@@ -212,7 +223,9 @@
                     ID_col_name <- names(ID_col_guess)
                     meta[][, feat_ID := NULL] # remove older column
                     data.table::setnames(
-                        meta[], old = ID_col_name, new = "feat_ID")
+                        meta[],
+                        old = ID_col_name, new = "feat_ID"
+                    )
                     if (isTRUE(verbose)) {
                         wrap_msg(
                             "Feature metadata: guessing", ID_col_name,
@@ -249,7 +262,7 @@
             if (nrow(meta[]) != length(IDs)) {
                 stop(wrap_txt(
                     "Feature metadata: number of entries does not match",
-                    "number of gobject IDs for this spat_unit (", 
+                    "number of gobject IDs for this spat_unit (",
                     length(IDs), ")",
                     errWidth = TRUE
                 ))
@@ -259,7 +272,8 @@
             if (!meta[][, setequal(feat_ID, IDs)]) {
                 stop(wrap_txt(
                     "Feature metadata: IDs do not match between metadata and
-                    feat_ID slot for this spat_unit"))
+                    feat_ID slot for this spat_unit"
+                ))
             }
 
             # ensure ID col first
@@ -277,7 +291,7 @@
 
 #' @title Check spatial location data
 #' @name .check_spatial_location_data
-#' @description check cell ID (spatial unit) names between spatial location 
+#' @description check cell ID (spatial unit) names between spatial location
 #' and expression data. It will look for identical IDs after sorting.
 #' @keywords internal
 #' @returns character or NULL
@@ -291,7 +305,7 @@
     avail_si <- list_spatial_info(gobject)
 
     # check hierarchical
-    missing_unit <- !(avail_sl$spat_unit) %in% 
+    missing_unit <- !(avail_sl$spat_unit) %in%
         c(avail_ex$spat_unit, avail_si$spat_info)
     if (any(missing_unit)) {
         stop(wrap_txt(
@@ -323,19 +337,23 @@
                 spatial_cell_id_names <- spatlocsDT[["cell_ID"]]
 
                 if (!setequal(spatial_cell_id_names, expected_cell_ID_names)) {
-                    stop("cell_IDs between spatial and expression information 
-                        are not the same for: \n spatial unit: ", 
-                        spat_unit_i, " and coordinates: ", 
-                        coord_i, " \n")
+                    stop(
+                        "cell_IDs between spatial and expression information
+                        are not the same for: \n spatial unit: ",
+                        spat_unit_i, " and coordinates: ",
+                        coord_i, " \n"
+                    )
                 }
             } else {
                 # if cell_ID column is not provided then add expected cell_IDs
 
                 ## error if spatlocs and cell_ID do not match in length
                 if (spatlocsDT[, .N] != length(expected_cell_ID_names)) {
-                    stop("Number of rows of spatial locations do not match 
-                        with cell IDs for: \n spatial unit: ", 
-                        spat_unit_i, " and coordinates: ", coord_i, " \n")
+                    stop(
+                        "Number of rows of spatial locations do not match
+                        with cell IDs for: \n spatial unit: ",
+                        spat_unit_i, " and coordinates: ", coord_i, " \n"
+                    )
                 }
 
                 ## ! modify coords within gobject by reference
@@ -365,7 +383,7 @@
     # check hierarchical
     missing_su <- !used_su %in% avail_sl$spat_unit
     if (sum(missing_su != 0L)) {
-        stop(wrap_txt("Matching spatial locations in spat_unit(s)", 
+        stop(wrap_txt("Matching spatial locations in spat_unit(s)",
             used_su[missing_su],
             "must be added before the respective spatial networks",
             errWidth = TRUE
@@ -391,7 +409,7 @@
                     warning(wrap_txt(
                         "spat_unit:", su_i,
                         "name:", su_sn$name[[obj_i]], "\n",
-                        "Spatial network vertex names are not all found in 
+                        "Spatial network vertex names are not all found in
                         gobject IDs"
                     ))
                 }
@@ -420,7 +438,7 @@
     # check hierarchical
     missing_su <- !used_su %in% avail_sl$spat_unit
     if (sum(missing_su != 0L)) {
-        stop(wrap_txt("Matching spatial locations in spat_unit(s)", 
+        stop(wrap_txt("Matching spatial locations in spat_unit(s)",
             used_su[missing_su],
             "must be added before the respective spatial enrichments",
             errWidth = TRUE
@@ -447,7 +465,7 @@
                         "spat_unit:", su_i,
                         "feat_type:", su_se$feat_type[[obj_i]],
                         "name:", su_se$name[[obj_i]], "\n",
-                        "Spatial enrichment IDs are not all found in gobject 
+                        "Spatial enrichment IDs are not all found in gobject
                         IDs"
                     ))
                 }
@@ -472,15 +490,19 @@
     # DT vars
     spat_unit <- feat_type <- NULL
 
-    # check that all spatIDs of coordinates setequals with gobject cell_ID 
+    # check that all spatIDs of coordinates setequals with gobject cell_ID
     # for the particular spat_unit
     avail_dr <- list_dim_reductions(gobject = gobject)
     avail_ex <- list_expression(gobject = gobject)
     used_su <- unique(avail_dr$spat_unit)
-    used_su_ft <- unique(avail_dr[, 
-                        paste0("[", spat_unit, "][", feat_type, "]")])
-    ex_su_ft <- unique(avail_ex[, 
-                        paste0("[", spat_unit, "][", feat_type, "]")])
+    used_su_ft <- unique(avail_dr[
+        ,
+        paste0("[", spat_unit, "][", feat_type, "]")
+    ])
+    ex_su_ft <- unique(avail_ex[
+        ,
+        paste0("[", spat_unit, "][", feat_type, "]")
+    ])
 
     # check hierarchical
     missing_su_ft <- !used_su_ft %in% ex_su_ft
@@ -512,7 +534,7 @@
                 # if matrix has no IDs, regenerate from gobject IDs
                 if (is.null(spatIDs(dr_obj))) {
                     if (nrow(dr_obj[]) == length(IDs)) {
-                        # if nrow of matrix and number of gobject cell_IDs for 
+                        # if nrow of matrix and number of gobject cell_IDs for
                         # the spat unit
                         # match, then try guessing then set data back to replace
                         warning(wrap_txt(
@@ -543,7 +565,7 @@
                             "dim_type:", su_dr$dim_type[[obj_i]],
                             "name:", su_dr$name[[obj_i]], "\n",
                             "Dimension reduction has no cell_IDs.
-                            Number of rows also does not match expression 
+                            Number of rows also does not match expression
                             columns"
                         ))
                     }
@@ -557,7 +579,7 @@
                         "feat_type:", su_dr$feat_type[[obj_i]],
                         "dim_type:", su_dr$dim_type[[obj_i]],
                         "name:", su_dr$name[[obj_i]], "\n",
-                        "Dimension reduction coord names are not all found in 
+                        "Dimension reduction coord names are not all found in
                         gobject IDs"
                     ))
                 }
@@ -582,8 +604,10 @@
     avail_nn <- list_nearest_networks(gobject = gobject)
     avail_dr <- list_dim_reductions(gobject = gobject)
     used_su <- unique(avail_nn$spat_unit)
-    used_su_ft <- unique(avail_nn[, 
-                        paste0("[", spat_unit, "][", feat_type, "]")])
+    used_su_ft <- unique(avail_nn[
+        ,
+        paste0("[", spat_unit, "][", feat_type, "]")
+    ])
     dr_su_ft <- unique(avail_dr[, paste0("[", spat_unit, "][", feat_type, "]")])
 
     # check hierarchical
@@ -617,7 +641,7 @@
                         "feat_type:", su_nn$feat_type[[obj_i]],
                         "nn_type:", su_nn$nn_type[[obj_i]],
                         "name:", su_nn$name[[obj_i]], "\n",
-                        "Nearest network vertex names are not all found in 
+                        "Nearest network vertex names are not all found in
                         gobject IDs"
                     ))
                 }
@@ -674,7 +698,7 @@
                     warning(wrap_txt(
                         "spat_unit:", su_i,
                         "spatloc name:", su_sloc$name[[obj_i]], "\n",
-                        "cell IDs in spatial locations are missing from spatial 
+                        "cell IDs in spatial locations are missing from spatial
                         polygon info"
                     ))
                 }

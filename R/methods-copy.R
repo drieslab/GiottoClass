@@ -3,7 +3,7 @@ NULL
 
 #' @title Copy an entire object
 #' @name copy
-#' @description S4 generic for Giotto's S4 subobjects to return with full 
+#' @description S4 generic for Giotto's S4 subobjects to return with full
 #' copies of certain subobjects that usually return referenced information.
 #' @param x a Giotto S4 class subobject
 #' @seealso \code{\link[data.table]{copy}} \code{\link[terra]{deepcopy}}
