@@ -92,8 +92,8 @@ setMethod(
 #' x and y axes respectively. Applied relative to the `extent` param.
 #' @param extent `SpatExtent` or object coercible to it. Shear will be applied
 #' across this extent. (defaults to extent of `x`)
-#' @param x0 numeric. x-coordinate of the center of shear. Defaults to center x val if not given.
-#' @param y0 numeric. y-coordinate of the center of shear. Defaults to center y val if not given.
+#' @param x0 numeric. x-coordinate min of shear. Defaults to center x val if not given.
+#' @param y0 numeric. y-coordinate min of shear. Defaults to center y val if not given.
 #' @param append_gimage whether to append params to `giottoLargeImage` (default)
 #' or return as `list`
 #' @keywords internal
