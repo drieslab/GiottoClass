@@ -740,7 +740,6 @@ calculateSpatCellMetadataProportions <- function(
 
 #' @title .merge_spatial_locs_feat_info
 #' @name .merge_spatial_locs_feat_info
-#' @import sp
 #' @returns data.table
 #' @description merge spatial cell and feature location information
 #' @keywords internal

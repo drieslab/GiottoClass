@@ -165,7 +165,6 @@ t_flex <- function(mymatrix) {
 #' @name cor_flex
 #' @param x data to use
 #' @param ... other arguments passed to stats::cor()
-#' @importFrom stats cor
 #' @returns numeric
 #' @keywords internal
 #' @export
@@ -238,7 +237,6 @@ my_rowMeans <- function(x, method = c("arithmic", "geometric"), offset = 0.1) {
 #' @param x matrix
 #' @param center center data
 #' @param scale scale data
-#' @importFrom matrixStats colSds
 #' @returns standardized matrix
 #' @keywords internal
 #' @export

@@ -146,7 +146,6 @@ NULL
 #' @param image_names character vector. Name(s) of the image feature information
 #' to overlap
 #' @param return_gobject return giotto object (default: TRUE)
-#' @importFrom checkmate assert_character
 #' @export
 setMethod(
     "calculateOverlap", signature(x = "giotto", y = "missing"),

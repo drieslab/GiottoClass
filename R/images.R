@@ -64,7 +64,6 @@ estimateImageBg <- function(mg_object, top_color_range = seq_len(50)) {
 #' include (percentage)
 #' @param new_color new background color
 #' @param new_name change name of Giotto image
-#' @import magick
 #' @returns magick image or giotto image object with updated background color
 #' @export
 changeImageBg <- function(

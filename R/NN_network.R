@@ -52,8 +52,6 @@ NULL
 #'   `"kNN"` and `"sNN"` types and \eqn{weight = 1 / distance} for `delaunay`
 #'   type
 #' networks
-#' @import deldir
-#' @importFrom igraph graph_from_data_frame
 #' @returns Either `igraph` if `as.igraph = TRUE` and `data.table` otherwise.
 #' @examples
 #' \dontrun{
@@ -606,7 +604,6 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
 #'   \item{top_shared: }{keep this number of the top shared neighbours,
 #'   irrespective of minimum_shared setting}
 #' }
-#' @import dbscan
 #' @returns giotto object with updated NN network
 #' @export
 createNearestNetwork <- function(gobject,
