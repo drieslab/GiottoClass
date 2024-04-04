@@ -19,4 +19,11 @@ giotto object
 \description{
 Adds Giotto polygon to an existing Giotto object
 }
+\examples{
+x <- GiottoData::loadSubObjectMini("giottoPolygon")
+g <- createGiottoObject()
+
+g <- addGiottoPolygons(gobject = g, gpolygons = list(x))
+
+}
 \concept{polygon}

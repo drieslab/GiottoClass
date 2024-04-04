@@ -43,3 +43,9 @@ mask or tabular data. Calls the respective createGiottoPolygons
 functions. \cr If a \code{giottoPolygon} object is passed then no edits
 will be made other than updating the \code{name} slot if the list is named.
 }
+\examples{
+x <- GiottoData::loadSubObjectMini("giottoPolygon")
+
+readPolygonData(x)
+
+}

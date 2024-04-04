@@ -26,5 +26,7 @@ functions.
 }
 \examples{
 x <- GiottoData::loadSubObjectMini("exprObj", 1)
+
 evaluate_input(type = "expression", x)
+
 }

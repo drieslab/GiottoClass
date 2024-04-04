@@ -1872,8 +1872,7 @@ create_spat_enr_obj <- function(name = "test",
 #' @examples
 #' x <- GiottoData::loadSubObjectMini("spatialGridObj")
 #' 
-#' create_spat_grid_obj(name = "test",
-#' gridDT = x)
+#' create_spat_grid_obj(name = "test", gridDT = x)
 #' 
 #' @export
 create_spat_grid_obj <- function(name = "test",
@@ -2826,6 +2825,12 @@ create_giotto_polygon_object <- function(name = "cell",
 #' Example: image_transformations = c(flip_x_axis, flip_y_axis); first flip 
 #' x-axis and then y-axis
 #' @returns a giottoImage object
+#' @examples
+#' image_test <- system.file("extdata/toy_intensity.tif",
+#' package = "GiottoClass")
+#' 
+#' createGiottoImage(mg_object = image_test)
+#' 
 #' @export
 createGiottoImage <- function(gobject = NULL,
     spat_unit = NULL,
@@ -3077,6 +3082,12 @@ createGiottoImage <- function(gobject = NULL,
 #' coordinates
 #' @param verbose be verbose
 #' @returns a giottoLargeImage object
+#' @examples
+#' image_test <- system.file("extdata/toy_intensity.tif",
+#' package = "GiottoClass")
+#' 
+#' createGiottoLargeImage(raster_object = image_test)
+#' 
 #' @export
 createGiottoLargeImage <- function(raster_object,
     name = "image",
@@ -3277,6 +3288,12 @@ createGiottoLargeImage <- function(raster_object,
 #' @param verbose be verbose
 #' @details See \code{\link{createGiottoLargeImage}}
 #' @returns a list with giottoLargeImage objects
+#' @examples
+#' image_test <- system.file("extdata/toy_intensity.tif",
+#' package = "GiottoClass")
+#' 
+#' createGiottoLargeImageList(raster_objects = image_test)
+#' 
 #' @export
 createGiottoLargeImageList <- function(raster_objects,
     names = "image",

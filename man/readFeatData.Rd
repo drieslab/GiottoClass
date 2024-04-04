@@ -18,3 +18,9 @@ list of giottoPoints
 Function to read lists of feature information data and output
 a list of generated giottoPoints objects
 }
+\examples{
+x <- GiottoData::loadSubObjectMini("giottoPoints")
+
+readFeatData(list(x))
+
+}
