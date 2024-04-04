@@ -7,15 +7,15 @@
 #' @name spatQueryGiottoPolygons
 #' @description Recursively select polygons based on a list of spatial filters.
 #' Results will be returned as a new polygon-based spatial unit with selection
-#' information recorded in the associated cell metadata. The final item in 
+#' information recorded in the associated cell metadata. The final item in
 #' provided in param \code{filters} is the layer of information being queried.
 #' @param gobject Giotto object
-#' @param filters list of characters. Named list of IDs to query on as spatial 
-#' filters where the names designate the spatial unit to use and the character 
+#' @param filters list of characters. Named list of IDs to query on as spatial
+#' filters where the names designate the spatial unit to use and the character
 #' values should either be 'all' or a vector of cell_IDs to use.
-#' @param name (optional) character. If not NULL, a new spatial unit of this 
+#' @param name (optional) character. If not NULL, a new spatial unit of this
 #' name will be generated from the results
-#' @param feat_type (optional) May be changed in future. Determines which 
+#' @param feat_type (optional) May be changed in future. Determines which
 #' feature type metadata in which hierarchical selection information is stored.
 #' @param clip boolean. Default = FALSE. Whether final round of querying should
 #' return polygons clipped by the polygons used to select them. If TRUE, a value
@@ -23,33 +23,35 @@
 #' @returns giottoPolygon
 # #' @seealso [spatQueryGiottoSpatLocs()]
 #' @export
-spatQueryGiottoPolygons <- function(gobject,
-    filters,
-    name = "query_polys",
-    feat_type = NULL,
-    clip = TRUE) {
+spatQueryGiottoPolygons <- function(
+        gobject,
+        filters,
+        name = "query_polys",
+        feat_type = NULL,
+        clip = TRUE) {
     assert_giotto(gobject)
     if (!is.null(name)) checkmate::assert_character(name)
     checkmate::assert_list(filters, types = "character")
-    if (!length(filters <= 2)) 
+    if (!length(filters <= 2)) {
         stop(wrap_txt("At least two elements in filters are needed."))
+    }
 
     if (isTRUE(clip) & is.null(name)) {
-        stop(wrap_txt("If clip is true, a value to 'name' param should be 
+        stop(wrap_txt("If clip is true, a value to 'name' param should be
                     provided."))
     }
 
     # check spat units input
     spat_units <- names(filters)
     if (any(sapply(spat_units, is_empty_char))) {
-        stop(wrap_txt("All elements in filters list must be named by the 
+        stop(wrap_txt("All elements in filters list must be named by the
                     spatial units being used."))
     }
     avail_polys <- list_spatial_info_names(gobject)
     missing_polys <- spat_units[!spat_units %in% avail_polys]
 
     last_info <- tail(spat_units, 1) # get final spatial info layer
-    if (is.null(name)) name <- last_info 
+    if (is.null(name)) name <- last_info
     # replace poly and meta if name not supplied
     feat_type <- set_default_feat_type(
         gobject = gobject,
@@ -119,7 +121,7 @@ spatQueryGiottoPolygons <- function(gobject,
     #
     # hierarchy_info_idx = which(names(rels) == 'poly_ID')
     # rels = rels[, ..hierarchy_info_idx]
-    # data.table::setnames(rels, new = c('cell_ID', 
+    # data.table::setnames(rels, new = c('cell_ID',
     # rev(spat_units)[2:length(spat_units)]))
 
     # merge in relationship info

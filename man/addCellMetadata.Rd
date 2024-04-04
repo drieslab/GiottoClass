@@ -57,7 +57,7 @@ column in pDataDT(gobject).}
 g <- GiottoData::loadGiottoMini("visium")
 
 m <- pDataDT(g)
-m <- m[,c("cell_ID", "leiden_clus")]
+m <- m[, c("cell_ID", "leiden_clus")]
 m$cell_type <- paste0("cell_type_", m$leiden_clus)
 m <- m[, c("cell_ID", "cell_type")]
 

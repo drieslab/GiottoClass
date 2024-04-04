@@ -57,16 +57,16 @@ particularly useful for data
 that is provided as tiles or ROIs or when analyzing multiple spatial
 datasets together and keeping their spatial data separate.
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{\\strong\{If shift values are given then a value is needed for each giotto 
+\if{html}{\out{<div class="sourceCode">}}\preformatted{\\strong\{If shift values are given then a value is needed for each giotto
 object to be joined in \code{gobject_list}. Order matters.\}
 
-If a regular step value is desired instead of a specific list of values, 
-use \code{x_padding} and \code{y_padding}. Both shift and padding values 
+If a regular step value is desired instead of a specific list of values,
+use \code{x_padding} and \code{y_padding}. Both shift and padding values
 can be used at the same time.
 
-Leaving \code{x_shift} and \code{y_shift} values as \code{NULL} will 
-have Giotto estimate an appropriate \code{x_shift} value based on the 
-x dimension of available image objects. If no image objects are 
+Leaving \code{x_shift} and \code{y_shift} values as \code{NULL} will
+have Giotto estimate an appropriate \code{x_shift} value based on the
+x dimension of available image objects. If no image objects are
 available, a default behavior of \code{x_padding = 1000} will be applied.
 }\if{html}{\out{</div>}}
 
@@ -78,7 +78,7 @@ on input supplied through param \code{z_vals}. To specify a z value for
 each dataset to join, a numeric vector must be given with a value for
 each element in \code{gobject_list}. Order matters.
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{Alternatively, a single numeric value can be supplied to \code{z_vals} 
+\if{html}{\out{<div class="sourceCode">}}\preformatted{Alternatively, a single numeric value can be supplied to \code{z_vals}
 in which case this input will be treated as a z step value.
 }\if{html}{\out{</div>}}
 

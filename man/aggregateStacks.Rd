@@ -50,8 +50,10 @@ and \code{\link{aggregateStacksLocations}}
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
-aggregateStacks(g, spat_units = c("z0", "z1"), feat_type = "rna", 
-values = "raw")
+aggregateStacks(g,
+    spat_units = c("z0", "z1"), feat_type = "rna",
+    values = "raw"
+)
 
 }
 \seealso{

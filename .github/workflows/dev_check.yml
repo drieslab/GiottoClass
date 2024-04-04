@@ -60,6 +60,7 @@ jobs:
             any::RTriangle
             any::geometry
             any::qs
+            any::future.apply
             github::drieslab/GiottoData
 
       - name: Run R CMD check

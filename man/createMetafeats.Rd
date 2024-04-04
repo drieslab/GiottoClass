@@ -49,10 +49,10 @@ activeSpatUnit(g) <- "aggregate"
 
 # create the metafeats
 # We do this by making an annotation vector which is a numerical vector
-# of cluster assignments where each number is named by the feature it 
+# of cluster assignments where each number is named by the feature it
 # describes.
 #
-# Here we create an example annotation vector by arbitrarily using the 
+# Here we create an example annotation vector by arbitrarily using the
 # first 6 features and putting 3 in cluster 1 and the other 3 in cluster 2.
 
 feats_to_use <- featIDs(g)[seq_len(6)]

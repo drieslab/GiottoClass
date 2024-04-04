@@ -4,9 +4,9 @@
 #' @name showGiottoExpression
 #' @description shows the available matrices
 #' @param gobject giotto object
-#' @param nrows number of rows to print for each 
+#' @param nrows number of rows to print for each
 #' matrix (ignored for sparse matrices)
-#' @param ncols number of columns to print for each 
+#' @param ncols number of columns to print for each
 #' matrix (ignored for sparse matrices)
 #' @returns prints the name and small subset of available matrices
 #' @family functions to show data in giotto object
@@ -41,21 +41,28 @@ showGiottoExpression <- function(gobject, nrows = 4, ncols = 4) {
             if (inherits(dataObj[], "sparseMatrix")) {
                 objPrints[[obj_i]] <- capture.output(show(dataObj))
             } else if (inherits(
-                dataObj[], c("denseMatrix", "matrix", "data.frame"))) {
+                dataObj[], c("denseMatrix", "matrix", "data.frame")
+            )) {
                 objPrints[[obj_i]] <- capture.output(
-                    .abbrev_mat(dataObj, nrows, ncols))
+                    .abbrev_mat(dataObj, nrows, ncols)
+                )
             } else {
                 # directly print slot (catch)
                 objPrints[[obj_i]] <- capture.output(
-                    show(slot(dataObj, "exprMat")))
+                    show(slot(dataObj, "exprMat"))
+                )
             }
         }
 
         # object printblock edits
-        objPrints <- lapply(objPrints, 
-                            function(x) paste0(ch$s, x)) # add indent
-        objPrints <- lapply(objPrints, 
-                            function(x) paste(x, collapse = ("\n"))) 
+        objPrints <- lapply(
+            objPrints,
+            function(x) paste0(ch$s, x)
+        ) # add indent
+        objPrints <- lapply(
+            objPrints,
+            function(x) paste(x, collapse = ("\n"))
+        )
         # linearize print
 
         # append to availability table
@@ -64,19 +71,25 @@ showGiottoExpression <- function(gobject, nrows = 4, ncols = 4) {
         # 3.2 setup general prints
         if (isTRUE(use_color_text())) {
             available_data$spat_unit <- paste0(
-                'Spatial unit "', ct$b, available_data$spat_unit, ct$x, '"')
+                'Spatial unit "', ct$b, available_data$spat_unit, ct$x, '"'
+            )
             available_data$feat_type <- paste0(
-                'Feature type "', ct$r, available_data$feat_type, ct$x, '"')
+                'Feature type "', ct$r, available_data$feat_type, ct$x, '"'
+            )
             available_data$name <- paste0(
-                'Expression data "', ct$t, available_data$name, ct$x, 
-                '" values:')
+                'Expression data "', ct$t, available_data$name, ct$x,
+                '" values:'
+            )
         } else {
             available_data$spat_unit <- paste0(
-                'Spatial unit "', available_data$spat_unit, '"')
+                'Spatial unit "', available_data$spat_unit, '"'
+            )
             available_data$feat_type <- paste0(
-                'Feature type "', available_data$feat_type, '"')
+                'Feature type "', available_data$feat_type, '"'
+            )
             available_data$name <- paste0(
-                'Expression data "', available_data$name, '" values:')
+                'Expression data "', available_data$name, '" values:'
+            )
         }
 
 
@@ -101,8 +114,9 @@ showGiottoExpression <- function(gobject, nrows = 4, ncols = 4) {
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoCellMetadata <- function(gobject,
-    nrows = 4) {
+showGiottoCellMetadata <- function(
+        gobject,
+        nrows = 4) {
     # import print styling
     ch <- box_chars()
     ct <- color_tag()
@@ -131,15 +145,18 @@ showGiottoCellMetadata <- function(gobject,
             objRows[[obj_i]] <- nrow(dataObj[])
 
             objPrints[[obj_i]] <-
-                dataObj[seq_len(if (nrows <= objRows[[obj_i]]) 
-                    nrows else objRows[[obj_i]]), ] %>%
+                dataObj[seq_len(if (nrows <= objRows[[obj_i]]) {
+                    nrows
+                } else {
+                    objRows[[obj_i]]
+                }), ] %>%
                 print() %>%
                 capture.output()
         }
 
         # object printblock edits
         objPrints <- lapply(objPrints, function(x) paste0(ch$s, x)) # add indent
-        objPrints <- lapply(objPrints, function(x) paste(x, collapse = ("\n"))) 
+        objPrints <- lapply(objPrints, function(x) paste(x, collapse = ("\n")))
         # linearize print
 
         # append to availability table
@@ -148,14 +165,18 @@ showGiottoCellMetadata <- function(gobject,
         # 3.2 setup general prints
         if (isTRUE(use_color_text())) {
             available_data$spat_unit <- paste0(
-                'Spatial unit "', ct$b, available_data$spat_unit, ct$x, '"')
+                'Spatial unit "', ct$b, available_data$spat_unit, ct$x, '"'
+            )
             available_data$feat_type <- paste0(
-                'Feature type "', ct$r, available_data$feat_type, ct$x, '"')
+                'Feature type "', ct$r, available_data$feat_type, ct$x, '"'
+            )
         } else {
             available_data$spat_unit <- paste0(
-                'Spatial unit "', available_data$spat_unit, '"')
+                'Spatial unit "', available_data$spat_unit, '"'
+            )
             available_data$feat_type <- paste0(
-                'Feature type "', available_data$feat_type, '"')
+                'Feature type "', available_data$feat_type, '"'
+            )
         }
 
 
@@ -179,8 +200,9 @@ showGiottoCellMetadata <- function(gobject,
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoFeatMetadata <- function(gobject,
-    nrows = 4) {
+showGiottoFeatMetadata <- function(
+        gobject,
+        nrows = 4) {
     # import print styling
     ch <- box_chars()
     ct <- color_tag()
@@ -209,15 +231,18 @@ showGiottoFeatMetadata <- function(gobject,
             objRows[[obj_i]] <- nrow(dataObj[])
 
             objPrints[[obj_i]] <-
-                dataObj[seq_len(if (nrows <= objRows[[obj_i]]) 
-                    nrows else objRows[[obj_i]]), ] %>%
+                dataObj[seq_len(if (nrows <= objRows[[obj_i]]) {
+                    nrows
+                } else {
+                    objRows[[obj_i]]
+                }), ] %>%
                 print() %>%
                 capture.output()
         }
 
         # object printblock edits
         objPrints <- lapply(objPrints, function(x) paste0(ch$s, x)) # add indent
-        objPrints <- lapply(objPrints, function(x) paste(x, collapse = ("\n"))) 
+        objPrints <- lapply(objPrints, function(x) paste(x, collapse = ("\n")))
         # linearize print
 
         # append to availability table
@@ -226,14 +251,18 @@ showGiottoFeatMetadata <- function(gobject,
         # 3.2 setup general prints
         if (isTRUE(use_color_text())) {
             available_data$spat_unit <- paste0(
-                'Spatial unit "', ct$b, available_data$spat_unit, ct$x, '"')
+                'Spatial unit "', ct$b, available_data$spat_unit, ct$x, '"'
+            )
             available_data$feat_type <- paste0(
-                'Feature type "', ct$r, available_data$feat_type, ct$x, '"')
+                'Feature type "', ct$r, available_data$feat_type, ct$x, '"'
+            )
         } else {
             available_data$spat_unit <- paste0(
-                'Spatial unit "', available_data$spat_unit, '"')
+                'Spatial unit "', available_data$spat_unit, '"'
+            )
             available_data$feat_type <- paste0(
-                'Feature type "', available_data$feat_type, '"')
+                'Feature type "', available_data$feat_type, '"'
+            )
         }
 
 
@@ -258,8 +287,9 @@ showGiottoFeatMetadata <- function(gobject,
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoSpatLocs <- function(gobject,
-    nrows = 4) {
+showGiottoSpatLocs <- function(
+        gobject,
+        nrows = 4) {
     # import print styling
     ch <- box_chars()
     ct <- color_tag()
@@ -288,12 +318,13 @@ showGiottoSpatLocs <- function(gobject,
             objRows[[obj_i]] <- nrow(dataObj[])
 
             objPrints[[obj_i]] <- capture.output(
-                .abbrev_spatlocs(dataObj, nrows))
+                .abbrev_spatlocs(dataObj, nrows)
+            )
         }
 
         # object printblock edits
         objPrints <- lapply(objPrints, function(x) paste0(ch$s, x)) # add indent
-        objPrints <- lapply(objPrints, function(x) paste(x, collapse = ("\n"))) 
+        objPrints <- lapply(objPrints, function(x) paste(x, collapse = ("\n")))
         # linearize print
 
         # append to availability table
@@ -302,15 +333,19 @@ showGiottoSpatLocs <- function(gobject,
         # 3.2 setup general prints
         if (isTRUE(use_color_text())) {
             available_data$spat_unit <- paste0(
-                'Spatial unit "', ct$b, available_data$spat_unit, ct$x, '"')
+                'Spatial unit "', ct$b, available_data$spat_unit, ct$x, '"'
+            )
             available_data$name <- paste0(
-                'S4 spatLocsObj "', ct$t, available_data$name, ct$x, 
-                '" coordinates:')
+                'S4 spatLocsObj "', ct$t, available_data$name, ct$x,
+                '" coordinates:'
+            )
         } else {
             available_data$spat_unit <- paste0(
-                'Spatial unit "', available_data$spat_unit, '"')
+                'Spatial unit "', available_data$spat_unit, '"'
+            )
             available_data$name <- paste0(
-                'S4 spatLocsObj "', available_data$name, '" coordinates:')
+                'S4 spatLocsObj "', available_data$name, '" coordinates:'
+            )
         }
         for (obj_i in seq(nrow(available_data))) {
             available_data$name[[obj_i]] <- paste0(
@@ -337,22 +372,22 @@ showGiottoSpatLocs <- function(gobject,
     #
     #   cat('Spatial unit: ', spatial_unit, ' \n\n')
     #
-    #   for(spatlocname in 
+    #   for(spatlocname in
     #   available_data[available_data$spat_unit == spatial_unit,]$name) {
-    #     if(inherits(gobject@spatial_locs[[spatial_unit]][[spatlocname]], 
+    #     if(inherits(gobject@spatial_locs[[spatial_unit]][[spatlocname]],
     #     'data.frame')) {
     #       cat('--> Name: ', spatlocname, ' \n\n')
     #       print(gobject@spatial_locs[[spatial_unit]][[spatlocname
     #       ]][seq_len(nrows),])
     #       cat('\n')
     #     }
-    #     if(inherits(gobject@spatial_locs[[spatial_unit]][[spatlocname]], 
+    #     if(inherits(gobject@spatial_locs[[spatial_unit]][[spatlocname]],
     #     'spatLocsObj')) {
     #       cat('--> Name: ', spatlocname, ' \n\n')
     #       cat('An object of class spatLocsObj\n')
     #       cat('Provenance: ', slot(gobject@spatial_locs[[spatial_unit
     #       ]][[spatlocname]], 'provenance'), ' \n')
-    #       print(slot(gobject@spatial_locs[[spatial_unit]][[spatlocname]], 
+    #       print(slot(gobject@spatial_locs[[spatial_unit]][[spatlocname]],
     #       'coordinates')[seq_len(nrows),])
     #       cat('\n')
     #     }
@@ -370,8 +405,9 @@ showGiottoSpatLocs <- function(gobject,
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoSpatEnrichments <- function(gobject,
-    nrows = 4) {
+showGiottoSpatEnrichments <- function(
+        gobject,
+        nrows = 4) {
     # define for data.table [] subsetting
     spat_unit <- NULL
     feat_type <- NULL
@@ -385,18 +421,19 @@ showGiottoSpatEnrichments <- function(gobject,
     for (spatial_unit in unique(available_data$spat_unit)) {
         cat("Spatial unit: ", spatial_unit, " \n\n")
 
-        for (feature_type in 
+        for (feature_type in
             available_data[spat_unit == spatial_unit][["feat_type"]]) {
             cat("--> Feature type: ", feature_type, " \n\n")
 
-            for (spatenrichname in 
-                available_data[spat_unit == spatial_unit
-                            ][feat_type == feature_type][["name"]]) {
+            for (spatenrichname in
+                available_data[spat_unit == spatial_unit][feat_type == feature_type][["name"]]) {
                 cat("----> Name ", spatenrichname, ": \n\n")
 
-                print(gobject@spatial_enrichment[[spatial_unit]][[feature_type
-                                            ]][[spatenrichname]][][
-                                                seq_len(nrows), ])
+                print(gobject@spatial_enrichment[[spatial_unit]][[
+                    feature_type
+                ]][[spatenrichname]][][
+                    seq_len(nrows),
+                ])
             }
         }
     }
@@ -410,14 +447,15 @@ showGiottoSpatEnrichments <- function(gobject,
 #' @param gobject giotto object
 #' @param nrows number of coordinates rows to print
 #' @param ncols number of coordinates columns to print
-#' @returns prints the name and small subset of available dimension reduction 
+#' @returns prints the name and small subset of available dimension reduction
 #' coordinates
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoDimRed <- function(gobject,
-    nrows = 3,
-    ncols = 2) {
+showGiottoDimRed <- function(
+        gobject,
+        nrows = 3,
+        ncols = 2) {
     # Define for data.table
     data_type <- NULL
 
@@ -453,8 +491,11 @@ showGiottoDimRed <- function(gobject,
 
             objPrints[[obj_i]] <-
                 dataObj[
-                    seq_len(if (nrows <= objRows[[obj_i]]) 
-                        nrows else objRows[[obj_i]]),
+                    seq_len(if (nrows <= objRows[[obj_i]]) {
+                        nrows
+                    } else {
+                        objRows[[obj_i]]
+                    }),
                     seq_len(if (ncols <= objCols[[obj_i]]) ncols else objCols[[obj_i]])
                 ] %>%
                 print() %>%
@@ -463,7 +504,7 @@ showGiottoDimRed <- function(gobject,
 
         # object printblock edits
         objPrints <- lapply(objPrints, function(x) paste0(ch$s, x)) # Add indent
-        objPrints <- lapply(objPrints, function(x) paste(x, collapse = ("\n"))) 
+        objPrints <- lapply(objPrints, function(x) paste(x, collapse = ("\n")))
         # Linearize print
 
         # Append to availability table
@@ -472,28 +513,36 @@ showGiottoDimRed <- function(gobject,
         # 3.2 Setup general prints
         if (isTRUE(use_color_text())) {
             available_data$spat_unit <- paste0(
-                'Spatial unit "', ct$b, available_data$spat_unit, ct$x, '"')
+                'Spatial unit "', ct$b, available_data$spat_unit, ct$x, '"'
+            )
             available_data$feat_type <- paste0(
-                'Feature type "', ct$r, available_data$feat_type, ct$x, '"')
+                'Feature type "', ct$r, available_data$feat_type, ct$x, '"'
+            )
             available_data$dim_type <- paste0(
-                'Dim reduction type "', ct$p, available_data$dim_type, ct$x, '"')
+                'Dim reduction type "', ct$p, available_data$dim_type, ct$x, '"'
+            )
             available_data$name <- paste0(
-                'S4 dimObj "', ct$t, available_data$name, ct$x, 
-                '" coordinates:')
+                'S4 dimObj "', ct$t, available_data$name, ct$x,
+                '" coordinates:'
+            )
         } else {
             available_data$spat_unit <- paste0(
-                'Spatial unit "', available_data$spat_unit, '"')
+                'Spatial unit "', available_data$spat_unit, '"'
+            )
             available_data$feat_type <- paste0(
-                'Feature type "', available_data$feat_type, '"')
+                'Feature type "', available_data$feat_type, '"'
+            )
             available_data$dim_type <- paste0(
-                'Dim reduction type "', available_data$dim_type, '"')
+                'Dim reduction type "', available_data$dim_type, '"'
+            )
             available_data$name <- paste0(
-                'S4 dimObj "', available_data$name, '" coordinates:')
+                'S4 dimObj "', available_data$name, '" coordinates:'
+            )
         }
         for (obj_i in seq(nrow(available_data))) {
             available_data$name[[obj_i]] <- paste0(
                 available_data$name[[obj_i]],
-                ch$s, "(", objRows[[obj_i]], " rows ", 
+                ch$s, "(", objRows[[obj_i]], " rows ",
                 objCols[[obj_i]], " cols)"
             )
         }
@@ -503,15 +552,27 @@ showGiottoDimRed <- function(gobject,
             data_type_subset <- available_data$data_type == data_type_red
 
             if (isTRUE(use_color_text())) {
-                if (data_type_red == "feats") cat(paste0(
-                    "Dim reduction on ", ct$y, "features", ct$x, ":"))
-                if (data_type_red == "cells") cat(paste0(
-                    "Dim reduction on ", ct$y, "cells", ct$x, ":"))
+                if (data_type_red == "feats") {
+                    cat(paste0(
+                        "Dim reduction on ", ct$y, "features", ct$x, ":"
+                    ))
+                }
+                if (data_type_red == "cells") {
+                    cat(paste0(
+                        "Dim reduction on ", ct$y, "cells", ct$x, ":"
+                    ))
+                }
             } else {
-                if (data_type_red == "feats") cat(paste0(
-                    "Dim reduction on ", "features", ":"))
-                if (data_type_red == "cells") cat(paste0(
-                    "Dim reduction on ", "cells", ":"))
+                if (data_type_red == "feats") {
+                    cat(paste0(
+                        "Dim reduction on ", "features", ":"
+                    ))
+                }
+                if (data_type_red == "cells") {
+                    cat(paste0(
+                        "Dim reduction on ", "cells", ":"
+                    ))
+                }
             }
 
             cat(
@@ -538,13 +599,14 @@ showGiottoDimRed <- function(gobject,
 #' @description shows the available nearest neighbor networks
 #' @param gobject giotto object
 #' @param nrows number of network rows to print
-#' @returns prints the name and small subset of available nearest neighbor 
+#' @returns prints the name and small subset of available nearest neighbor
 #' network info
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoNearestNetworks <- function(gobject,
-    nrows = 3) {
+showGiottoNearestNetworks <- function(
+        gobject,
+        nrows = 3) {
     # import print styling
     ch <- box_chars()
     ct <- color_tag()
@@ -574,15 +636,18 @@ showGiottoNearestNetworks <- function(gobject,
             objRows[[obj_i]] <- nrow(dataObj)
 
             objPrints[[obj_i]] <-
-                dataObj[seq_len(if (nrows <= objRows[[obj_i]]) 
-                    nrows else objRows[[obj_i]]), ] %>%
+                dataObj[seq_len(if (nrows <= objRows[[obj_i]]) {
+                    nrows
+                } else {
+                    objRows[[obj_i]]
+                }), ] %>%
                 print() %>%
                 capture.output()
         }
 
         # object printblock edits
         objPrints <- lapply(objPrints, function(x) paste0(ch$s, x)) # Add indent
-        objPrints <- lapply(objPrints, function(x) paste(x, collapse = ("\n"))) 
+        objPrints <- lapply(objPrints, function(x) paste(x, collapse = ("\n")))
         # Linearize print
 
         # Append to availability table
@@ -591,34 +656,42 @@ showGiottoNearestNetworks <- function(gobject,
         # 3.2 Setup general prints
         if (isTRUE(use_color_text())) {
             available_data$spat_unit <- paste0(
-                'Spatial unit "', ct$b, available_data$spat_unit, ct$x, '"')
+                'Spatial unit "', ct$b, available_data$spat_unit, ct$x, '"'
+            )
             if (!is.null(available_data$feat_type)) {
                 available_data$feat_type <- paste0(
-                    'Feature type "', ct$r, available_data$feat_type, ct$x, '"')
+                    'Feature type "', ct$r, available_data$feat_type, ct$x, '"'
+                )
                 # Check to be deprecated
             } else {
-                warning("Only networks from the deprecated nesting will be 
+                warning("Only networks from the deprecated nesting will be
                         shown")
             }
             available_data$nn_type <- paste0(
-                'NN network type "', ct$p, available_data$nn_type, ct$x, '"')
+                'NN network type "', ct$p, available_data$nn_type, ct$x, '"'
+            )
             available_data$name <- paste0(
-                'S4 nnNetObj "', ct$t, available_data$name, ct$x, '"')
+                'S4 nnNetObj "', ct$t, available_data$name, ct$x, '"'
+            )
         } else {
             available_data$spat_unit <- paste0(
-                'Spatial unit "', available_data$spat_unit, '"')
+                'Spatial unit "', available_data$spat_unit, '"'
+            )
             if (!is.null(available_data$feat_type)) {
                 available_data$feat_type <- paste0(
-                    'Feature type "', available_data$feat_type, '"') 
+                    'Feature type "', available_data$feat_type, '"'
+                )
                 # Check to be deprecated
             } else {
-                warning("Only networks from the deprecated nesting will 
+                warning("Only networks from the deprecated nesting will
                         be shown")
             }
             available_data$nn_type <- paste0(
-                'NN network type "', available_data$nn_type, '"')
+                'NN network type "', available_data$nn_type, '"'
+            )
             available_data$name <- paste0(
-                'S4 nnNetObj "', available_data$name, '"')
+                'S4 nnNetObj "', available_data$name, '"'
+            )
         }
         for (obj_i in seq(nrow(available_data))) {
             available_data$name[[obj_i]] <- paste0(
@@ -650,7 +723,7 @@ showGiottoNearestNetworks <- function(gobject,
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' showGiottoSpatialInfo(g)
-#' 
+#'
 #' @export
 showGiottoSpatialInfo <- function(gobject) {
     if (is.null(gobject)) stop("A giotto object needs to be provided \n")
@@ -677,7 +750,7 @@ showGiottoSpatialInfo <- function(gobject) {
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' showGiottoFeatInfo(g)
-#' 
+#'
 #' @export
 showGiottoFeatInfo <- function(gobject) {
     if (is.null(gobject)) stop("A giotto object needs to be provided \n")
@@ -698,7 +771,7 @@ showGiottoFeatInfo <- function(gobject) {
 
 #' @title showGiottoSpatNetworks
 #' @name showGiottoSpatNetworks
-#' @description Prints the available spatial networks that are attached to the 
+#' @description Prints the available spatial networks that are attached to the
 #' Giotto object
 #' @param gobject a giotto object
 #' @param nrows number of rows to print
@@ -706,8 +779,9 @@ showGiottoFeatInfo <- function(gobject) {
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoSpatNetworks <- function(gobject,
-    nrows = 4) {
+showGiottoSpatNetworks <- function(
+        gobject,
+        nrows = 4) {
     # import print styling
     ch <- box_chars()
     ct <- color_tag()
@@ -735,8 +809,11 @@ showGiottoSpatNetworks <- function(gobject,
             objRows[[obj_i]] <- nrow(dataObj)
 
             objPrints[[obj_i]] <-
-                dataObj[seq_len(if (nrows <= objRows[[obj_i]]) 
-                    nrows else objRows[[obj_i]]), ] %>%
+                dataObj[seq_len(if (nrows <= objRows[[obj_i]]) {
+                    nrows
+                } else {
+                    objRows[[obj_i]]
+                }), ] %>%
                 print() %>%
                 capture.output()
         }
@@ -752,14 +829,18 @@ showGiottoSpatNetworks <- function(gobject,
         # 3.2 Setup general prints
         if (isTRUE(use_color_text())) {
             available_data$spat_unit <- paste0(
-                'Spatial unit "', ct$b, available_data$spat_unit, ct$x, '"')
+                'Spatial unit "', ct$b, available_data$spat_unit, ct$x, '"'
+            )
             available_data$name <- paste0(
-                'S4 spatialNetworkObj "', ct$t, available_data$name, ct$x, '"')
+                'S4 spatialNetworkObj "', ct$t, available_data$name, ct$x, '"'
+            )
         } else {
             available_data$spat_unit <- paste0(
-                'Spatial unit "', available_data$spat_unit, '"')
+                'Spatial unit "', available_data$spat_unit, '"'
+            )
             available_data$name <- paste0(
-                'S4 spatialNetworkObj "', available_data$name, '"')
+                'S4 spatialNetworkObj "', available_data$name, '"'
+            )
         }
         for (obj_i in seq(nrow(available_data))) {
             available_data$name[[obj_i]] <- paste0(
@@ -794,7 +875,7 @@ showNetworks <- function(...) {
 
 #' @title showGiottoSpatGrids
 #' @name showGiottoSpatGrids
-#' @description Prints the available spatial grids that are attached to the 
+#' @description Prints the available spatial grids that are attached to the
 #' Giotto object
 #' @param gobject giotto object
 #' @param nrows number of rows to print
@@ -802,8 +883,9 @@ showNetworks <- function(...) {
 #' @family functions to show data in giotto object
 #' @keywords show
 #' @export
-showGiottoSpatGrids <- function(gobject,
-    nrows = 4) {
+showGiottoSpatGrids <- function(
+        gobject,
+        nrows = 4) {
     # import boxchars
     ch <- box_chars()
 
@@ -830,17 +912,24 @@ showGiottoSpatGrids <- function(gobject,
             objRows[[obj_i]] <- nrow(dataObj)
 
             objPrints[[obj_i]] <-
-                dataObj[seq_len(if (nrows <= objRows[[obj_i]]) 
-                    nrows else objRows[[obj_i]]), ] %>%
+                dataObj[seq_len(if (nrows <= objRows[[obj_i]]) {
+                    nrows
+                } else {
+                    objRows[[obj_i]]
+                }), ] %>%
                 print() %>%
                 capture.output()
         }
 
         # object printblock edits
-        objPrints <- lapply(objPrints, 
-                            function(x) paste0(ch$s, x)) # Add indent
-        objPrints <- lapply(objPrints, 
-                            function(x) paste(x, collapse = ("\n"))) 
+        objPrints <- lapply(
+            objPrints,
+            function(x) paste0(ch$s, x)
+        ) # Add indent
+        objPrints <- lapply(
+            objPrints,
+            function(x) paste(x, collapse = ("\n"))
+        )
         # Linearize print
 
         # Append to availability table
@@ -848,16 +937,19 @@ showGiottoSpatGrids <- function(gobject,
 
         # 3.2 Setup general prints
         available_data$spat_unit <- paste0(
-            'Spatial unit "', available_data$spat_unit, '"')
+            'Spatial unit "', available_data$spat_unit, '"'
+        )
         if (!is.null(available_data$feat_type)) {
             available_data$feat_type <- paste0(
-                'Feature type "', available_data$feat_type, '"') 
+                'Feature type "', available_data$feat_type, '"'
+            )
             # Check to be deprecated
         } else {
             warning("Only networks from the deprecated nesting will be shown")
         }
         available_data$name <- paste0(
-            'S4 spatialGridObj "', available_data$name, '"')
+            'S4 spatialGridObj "', available_data$name, '"'
+        )
         for (obj_i in seq(nrow(available_data))) {
             available_data$name[[obj_i]] <- paste0(
                 available_data$name[[obj_i]],
@@ -891,7 +983,7 @@ showGrids <- function(...) {
 
 #' @title showGiottoImageNames
 #' @name showGiottoImageNames
-#' @description Prints the available giotto images that are attached to the 
+#' @description Prints the available giotto images that are attached to the
 #' Giotto object
 #' @param gobject a giotto object
 #' @returns prints names of available giotto image objects
@@ -907,7 +999,7 @@ showGiottoImageNames <- function(gobject) {
     for (image_type in unique(available_data$img_type)) {
         cat("Image type:", image_type, "\n\n")
 
-        for (image_name in 
+        for (image_name in
             available_data[available_data$img_type == image_type, ]$name) {
             cat("--> Name:", image_name, "\n")
         }
@@ -923,7 +1015,7 @@ showGiottoImageNames <- function(gobject) {
 #' @name .print_leaf
 #' @param level_index Which col of availability matrix to start print from
 #' @param availableDT availability matrix given as data.table
-#' @param inherit_last (boolean) determine behavior from previous level for 
+#' @param inherit_last (boolean) determine behavior from previous level for
 #' last level (intended for values print)
 #' Only TRUE behavior defined. #TODO
 #' @param indent indent characters to print for this level (top level is '')
@@ -931,16 +1023,17 @@ showGiottoImageNames <- function(gobject) {
 #' @details Much inspiration taken from https://rdrr.io/cran/fs/src/R/tree.R
 #' @returns Hierarchical tree
 #' @keywords internal
-.print_leaf <- function(level_index,
-    availableDT,
-    inherit_last = TRUE,
-    indent) {
+.print_leaf <- function(
+        level_index,
+        availableDT,
+        inherit_last = TRUE,
+        indent) {
     ch <- box_chars()
 
-    leafs <- unique(unlist(availableDT[, level_index, with = FALSE])) 
+    leafs <- unique(unlist(availableDT[, level_index, with = FALSE]))
     # Read unique items for this level into 'leafs'
     for (i in seq_along(leafs)) {
-        if (isTRUE(inherit_last) & level_index == ncol(availableDT)) { 
+        if (isTRUE(inherit_last) & level_index == ncol(availableDT)) {
             # values layer has no special indent and ends
             writeLines(paste0(indent, capture.output(cat(leafs[[i]]))))
             cat(indent, "\n", sep = "")
@@ -949,9 +1042,11 @@ showGiottoImageNames <- function(gobject) {
                 cat(indent, ch$b, leafs[[i]], "\n", sep = "")
                 .print_leaf(
                     level_index = level_index + 1, # increment level_index
-                    availableDT = availableDT[as.vector(availableDT[, 
-                    level_index, with = FALSE] == leafs[[i]])], # pass subset
-                    
+                    availableDT = availableDT[as.vector(availableDT[,
+                        level_index,
+                        with = FALSE
+                    ] == leafs[[i]])], # pass subset
+
                     inherit_last = inherit_last,
                     indent = paste0(indent, "   ")
                 )
@@ -959,9 +1054,11 @@ showGiottoImageNames <- function(gobject) {
                 cat(indent, ch$t, leafs[[i]], "\n", sep = "")
                 .print_leaf(
                     level_index = level_index + 1,
-                    availableDT = availableDT[as.vector(availableDT[, 
-                    level_index, with = FALSE] == leafs[[i]])], # pass subset
-                    
+                    availableDT = availableDT[as.vector(availableDT[,
+                        level_index,
+                        with = FALSE
+                    ] == leafs[[i]])], # pass subset
+
                     inherit_last = inherit_last,
                     indent = paste0(indent, paste0(ch$v, "  "))
                 )
@@ -994,8 +1091,10 @@ showGiottoImageNames <- function(gobject) {
     # prints
     if (isTRUE(header)) {
         cat("An object of class", class(exprObj), "\n")
-        cat(paste0('for spatial unit: "', exprObj@spat_unit, 
-                '" and feature type: "', exprObj@feat_type, '"\n'))
+        cat(paste0(
+            'for spatial unit: "', exprObj@spat_unit,
+            '" and feature type: "', exprObj@feat_type, '"\n'
+        ))
     }
     cat("  Provenance:", exprObj@provenance)
     if (isTRUE(header)) {
@@ -1003,8 +1102,10 @@ showGiottoImageNames <- function(gobject) {
     } else {
         cat("\n")
     }
-    cat(paste0(mat_rows, " x ", mat_cols, ' dense matrix of class "', 
-            class(exprObj[]), '"\n\n'))
+    cat(paste0(
+        mat_rows, " x ", mat_cols, ' dense matrix of class "',
+        class(exprObj[]), '"\n\n'
+    ))
     print(mat)
     cat("\n First four colnames:")
     cat("\n", wrap_txt(four_names, strWidth = 40), "\n")
@@ -1032,7 +1133,8 @@ showGiottoImageNames <- function(gobject) {
     cat("\nranges:\n")
     try(
         expr = print(sapply(
-            slot(spatLocsObj, "coordinates")[, .(sdimx, sdimy)], range)),
+            slot(spatLocsObj, "coordinates")[, .(sdimx, sdimy)], range
+        )),
         silent = TRUE
     )
 

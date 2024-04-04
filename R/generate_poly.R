@@ -3,11 +3,11 @@
 
 #' @title Spatial polygons stamp
 #' @name polyStamp
-#' @description Takes a given stamp polygon and places it at each spatial 
+#' @description Takes a given stamp polygon and places it at each spatial
 #' location provided.
 #' @param stamp_dt data.table with x and y vertices for a polygon to be stamped.
 #' Column names are expected to be 'x' and 'y' respectively
-#' @param spatlocs spatial locations with x and y coordinates where polygons 
+#' @param spatlocs spatial locations with x and y coordinates where polygons
 #' should be stamped. Column names are 'cell_ID', 'sdimx' and 'sdimy' by default
 #' @param id_col column in spatlocs to use as IDs (default is 'cell_ID')
 #' @param x_col column in spatlocs to use as x locations (default is 'sdimx')
@@ -40,12 +40,13 @@
 #'
 #' @seealso [generate_grid] [tessellate]
 #' @export
-polyStamp <- function(stamp_dt,
-    spatlocs,
-    id_col = "cell_ID",
-    x_col = "sdimx",
-    y_col = "sdimy",
-    verbose = TRUE) {
+polyStamp <- function(
+        stamp_dt,
+        spatlocs,
+        id_col = "cell_ID",
+        x_col = "sdimx",
+        y_col = "sdimy",
+        verbose = TRUE) {
     # data.table vars
     spatlocs_idx <- rel_vertices_idx <- poly_ID <- NULL
 
@@ -59,8 +60,9 @@ polyStamp <- function(stamp_dt,
     stamp_dt$part <- 0
     stamp_dt$hole <- 0
 
-    data.table::setcolorder(stamp_dt, 
-                            neworder = c("geom", "part", "x", "y", "hole"))
+    data.table::setcolorder(stamp_dt,
+        neworder = c("geom", "part", "x", "y", "hole")
+    )
     stamp_poly <- terra::vect(as.matrix(stamp_dt), type = "polygons")
 
     centroid_dt <- data.table::as.data.table(terra::centroids(stamp_poly),
@@ -79,12 +81,13 @@ polyStamp <- function(stamp_dt,
     )
 
     # generate poly vertices around given spatlocs
-    poly_dt <- data.table::CJ(seq_len(nrow(spatlocs)), 
-                            seq_len(nrow(rel_vertices)), 
-                            sorted = FALSE)
+    poly_dt <- data.table::CJ(seq_len(nrow(spatlocs)),
+        seq_len(nrow(rel_vertices)),
+        sorted = FALSE
+    )
     colnames(poly_dt) <- c("spatlocs_idx", "rel_vertices_idx")
 
-    # compute the absolute coordinates of the polygon vertices for each 
+    # compute the absolute coordinates of the polygon vertices for each
     # spatial location
     poly_dt[, c(x_col, y_col) := {
         spat_row <- spatlocs[spatlocs_idx]
@@ -92,7 +95,7 @@ polyStamp <- function(stamp_dt,
         list(spat_row[[x_col]] + rel_row$x, spat_row[[y_col]] + rel_row$y)
     }]
 
-    # add a new column 'poly_ID' to 'poly_dt' with the ID of each spatial 
+    # add a new column 'poly_ID' to 'poly_dt' with the ID of each spatial
     # location.
     poly_dt[, poly_ID := spatlocs[poly_dt$spatlocs_idx, id_col, with = FALSE]]
     poly_dt$poly_ID <- as.character(poly_dt$poly_ID)
@@ -116,8 +119,9 @@ polyStamp <- function(stamp_dt,
 #' @family polygon stamping
 #' @seealso [generate_grid]
 #' @export
-circleVertices <- function(radius,
-    npoints = 25) {
+circleVertices <- function(
+        radius,
+        npoints = 25) {
     a <- seq(0, 2 * pi, length.out = npoints + 1)
     x <- radius * cos(a)
     y <- radius * sin(a)
@@ -128,10 +132,10 @@ circleVertices <- function(radius,
 
 #' @title Generate rectangular polygon vertices
 #' @name rectVertices
-#' @description Generates vertex coordinates for a rectangle with dimensions 
+#' @description Generates vertex coordinates for a rectangle with dimensions
 #' given through \code{dims} param.
-#' @param dims named vector in the style of c(x = \code{numeric}, 
-#' y = \code{numeric}) that defines the width (x) and height (y) of the 
+#' @param dims named vector in the style of c(x = \code{numeric},
+#' y = \code{numeric}) that defines the width (x) and height (y) of the
 #' generated rectangle polygon.
 #' @returns a data.table of rectangle vertices
 #' @family polygon stamping
@@ -207,11 +211,11 @@ hexVertices <- function(radius, major_axis = c("v", "h")) {
 #' @title Tessellated grid of polygons
 #' @name tessellate
 #' @aliases tesselate
-#' @description Generates a tessellated grid of polygons within the provided 
+#' @description Generates a tessellated grid of polygons within the provided
 #' spatial extent
-#' @param extent SpatExtent or anything else a SpatExtent can be extracted or 
+#' @param extent SpatExtent or anything else a SpatExtent can be extracted or
 #' created from
-#' @param shape Shape of the tessellation grid. Available options are "hexagon" 
+#' @param shape Shape of the tessellation grid. Available options are "hexagon"
 #' and "square".
 #' @param shape_size numeric. Size of shape to tessellate. (x-axis width for
 #' hexagons, side length for squares)
@@ -240,13 +244,14 @@ hexVertices <- function(radius, major_axis = c("v", "h")) {
 #' plot(x)
 #' @concept spatial location
 #' @export
-tessellate <- function(extent,
-    shape = c("hexagon", "square"),
-    shape_size = NULL,
-    gap = 0,
-    radius = NULL,
-    id_prefix = "ID_",
-    name = "grid") {
+tessellate <- function(
+        extent,
+        shape = c("hexagon", "square"),
+        shape_size = NULL,
+        gap = 0,
+        radius = NULL,
+        id_prefix = "ID_",
+        name = "grid") {
     if (is.null(radius) && is.null(shape_size)) stop("shape_size must be given")
     if (!is.null(radius)) shape_size <- radius * 2
 
@@ -257,7 +262,7 @@ tessellate <- function(extent,
     checkmate::assert_numeric(shape_size)
     checkmate::assert_character(name)
 
-    # Calculate the minimum difference between the x and y coordinates of the 
+    # Calculate the minimum difference between the x and y coordinates of the
     # points in spat_locs
     x_range <- c(e[["xmin"]], e[["xmax"]])
     y_range <- c(e[["ymin"]], e[["ymax"]])
@@ -270,7 +275,8 @@ tessellate <- function(extent,
     # generate shape to tessellate
     stamp_dt <- switch(shape,
         "hexagon" = hexVertices(
-            radius = (shape_size / 2 / sqrt(0.75)) - gap, major_axis = "v"),
+            radius = (shape_size / 2 / sqrt(0.75)) - gap, major_axis = "v"
+        ),
         "square" = rectVertices(dims = c(
             x = (shape_size - gap),
             y = (shape_size - gap)
@@ -280,8 +286,10 @@ tessellate <- function(extent,
     # get grid centers to tessellate
     centers <- switch(grid,
         "triangular" = triGrid(extent, ccd = shape_size, id_prefix = id_prefix),
-        "orthogonal" = orthoGrid(extent, ccd = shape_size, 
-                                id_prefix = id_prefix)
+        "orthogonal" = orthoGrid(extent,
+            ccd = shape_size,
+            id_prefix = id_prefix
+        )
     )
 
 
@@ -326,11 +334,15 @@ triGrid <- function(extent, ccd, id_prefix = "ID_") {
     e <- ext(extent)[]
     # Create a tessellation grid of points where the hexagons will be centered
     # Adjust the y-sequence spacing to be 1.5/2*ccd for hexagonal packing
-    y_seq <- seq(e[["ymin"]] + (0.5 * ccd), e[["ymax"]] - (0.5 * ccd), 
-                by = ccd * sqrt(0.75))
+    y_seq <- seq(e[["ymin"]] + (0.5 * ccd), e[["ymax"]] - (0.5 * ccd),
+        by = ccd * sqrt(0.75)
+    )
     centers <- data.table::rbindlist(lapply(seq_along(y_seq), function(i) {
-        x_start <- if (i %% 2 == 0) e[["xmin"]] + (0.5 * ccd) else 
+        x_start <- if (i %% 2 == 0) {
+            e[["xmin"]] + (0.5 * ccd)
+        } else {
             e[["xmin"]] + ccd
+        }
         x_seq <- seq(x_start, e[["xmax"]] - (0.5 * ccd), by = ccd)
         data.table::data.table(sdimx = x_seq, sdimy = y_seq[i])
     }))
@@ -367,15 +379,15 @@ orthoGrid <- function(extent, ccd, id_prefix = "ID_") {
 
 #' @title makePseudoVisium
 #' @name makePseudoVisium
-#' @description Generates a pseudo-visium grid of spots across a provided 
+#' @description Generates a pseudo-visium grid of spots across a provided
 #' spatial extent
-#' @param extent SpatExtent or anything else a SpatExtent can be extracted or 
+#' @param extent SpatExtent or anything else a SpatExtent can be extracted or
 #' created from
 #' @param micron_size size of a micrometer relative to spatial coordinates
-#' @param name character. (default is 'pseudo_visium') Name of giottoPolygon 
+#' @param name character. (default is 'pseudo_visium') Name of giottoPolygon
 #' object to create
-#' @details This function generates a pseudo-Visium grid of spots based on the 
-#' input spatial locations. The micron_size param is used to determine the size 
+#' @details This function generates a pseudo-Visium grid of spots based on the
+#' input spatial locations. The micron_size param is used to determine the size
 #' of the spots
 #' @returns A giottoPolygon for the pseudo-visium spots.
 #' @examples
@@ -384,9 +396,10 @@ orthoGrid <- function(extent, ccd, id_prefix = "ID_") {
 #' plot(x)
 #' @concept spatial location
 #' @export
-makePseudoVisium <- function(extent = NULL,
-    micron_size = 1,
-    name = "pseudo_visium") {
+makePseudoVisium <- function(
+        extent = NULL,
+        micron_size = 1,
+        name = "pseudo_visium") {
     e <- ext(extent)[]
 
     # Visium default scale parameters
@@ -402,14 +415,17 @@ makePseudoVisium <- function(extent = NULL,
     stamp_dt <- circleVertices(radius = radius, npoints = 100)
 
     # Create a grid of y points where the circles will be centered
-    y_seq <- seq(e[["ymin"]] + radius, e[["ymax"]] - radius, 
-                by = 2 * radius + gap)
+    y_seq <- seq(e[["ymin"]] + radius, e[["ymax"]] - radius,
+        by = 2 * radius + gap
+    )
 
     # Stagger center point of circles to match visium staggered grid
     centers <- data.table::rbindlist(lapply(seq_len(length(y_seq)), function(i) {
-        x_start <- if (i %% 2 == 0) 
-            e[["xmin"]] + radius + (2 * radius + gap) / 2 else 
-                e[["xmin"]] + radius
+        x_start <- if (i %% 2 == 0) {
+            e[["xmin"]] + radius + (2 * radius + gap) / 2
+        } else {
+            e[["xmin"]] + radius
+        }
         x_seq <- seq(x_start, e[["xmax"]] - radius, by = 2 * radius + gap)
         data.table::data.table(sdimx = x_seq, sdimy = y_seq[i])
     }))

@@ -12,7 +12,7 @@ vignette: >
 ```{r}
 library(GiottoClass)
 
-vizmini = GiottoData::loadGiottoMini('vizgen')
+vizmini <- GiottoData::loadGiottoMini("vizgen")
 vizmini
 ```
 
@@ -32,11 +32,11 @@ list_expression(vizmini)
 
 ```{r}
 # Find specific spat_unit objects #
-list_expression(vizmini, spat_unit = 'z0')
+list_expression(vizmini, spat_unit = "z0")
 ```
 
 ```{r}
-list_expression_names(vizmini, spat_unit = 'z1', feat_type = 'rna')
+list_expression_names(vizmini, spat_unit = "z1", feat_type = "rna")
 ```
 
 ## Provenance
@@ -44,7 +44,7 @@ list_expression_names(vizmini, spat_unit = 'z1', feat_type = 'rna')
 Going further, sometimes different sources of information can be used when aggregating to a particular spatial unit. This is most easily shown with the subcellular datasets from the Vizgen MERSCOPE platform which provide both feature polygon information for multiple confocal planes within a tissue. The aggregated information produced then could be drawn from different z-planes or combinations thereof. Giotto tracks this provenance information for each set of aggregated data.
 
 ```{r}
-expr_mat <- getExpression(vizmini, spat_unit = 'aggregate')
+expr_mat <- getExpression(vizmini, spat_unit = "aggregate")
 prov(expr_mat)
 ```
 
@@ -66,16 +66,18 @@ constructors
 createExprObj() createCellMetaObj() createFeatMetaObj() createDimObj() createNearestNetObj() createSpatLocsObj() createSpatNetObj() createSpatEnrObj() createSpatialGrid() createGiottoPoints() createGiottoPolygonsFromDfr() createGiottoPolygonsFromMask() createGiottoImage() createGiottoLargeImage()
 
 ```{r}
-coords = data.table::data.table(
-  sdimx = c(1,2,3),
-  sdimy = c(1,2,3),
-  cell_ID = c('A','B','C')
+coords <- data.table::data.table(
+    sdimx = c(1, 2, 3),
+    sdimy = c(1, 2, 3),
+    cell_ID = c("A", "B", "C")
 )
 
-st = createSpatLocsObj(name = 'test',
-                       spat_unit = 'cell',
-                       coordinates = coords,
-                       provenance = 'cell')
+st <- createSpatLocsObj(
+    name = "test",
+    spat_unit = "cell",
+    coordinates = coords,
+    provenance = "cell"
+)
 ```
 
 There are non numeric or integer columns for the spatial location input at column position(s): 3 The first non-numeric column will be considered as a cell ID to test for consistency with the expression matrix. Other non numeric columns will be removed
@@ -93,8 +95,10 @@ readers
 readPolygonData() readFeatData() readExprData() readCellMetadata() readFeatMetadata() readSpatLocsData() readSpatNetData() readSpatEnrichData() readDimReducData() readNearestNetData()
 
 ```{r}
-st2 = readSpatLocsData(list(cell2 = list(test1 = coords,
-                                         test2 = coords)))
+st2 <- readSpatLocsData(list(cell2 = list(
+    test1 = coords,
+    test2 = coords
+)))
 ```
 
 There are non numeric or integer columns for the spatial location input at column position(s): 3. The first non-numeric column will be considered as a cell ID to test for consistency with the expression matrix. Other non numeric columns will be removed
@@ -118,7 +122,7 @@ setters
 setExpression() setCellMetadata() setFeatureMetadata() setSpatialLocations() setDimReduction() setNearestNetwork() setSpatialNetwork() setPolygonInfo() setFeatureInfo() setSpatialEnrichment() setGiottoImage()
 
 ```{r}
-expval = getExpression(vizmini)
+expval <- getExpression(vizmini)
 print(expval)
 ```
 
@@ -128,19 +132,19 @@ spatUnit(), featType(), and prov() are replacement functions for tagged spatial 
 
 ```{r}
 # spat_unit
-spatUnit(expval) <- 'new_spat'
+spatUnit(expval) <- "new_spat"
 spatUnit(expval)
 ```
 
 ```{r}
 # feat_type
-featType(expval) <- 'new_feat'
+featType(expval) <- "new_feat"
 featType(expval)
 ```
 
 ```{r}
 # provenance
-prov(expval) <- 'cell'
+prov(expval) <- "cell"
 prov(expval)
 ```
 
@@ -166,7 +170,7 @@ class(spatLocsObj[]) is equivalent to class(spatLocsObj@coordinates)
 In this way, the S4 subobjects can be used in contexts that the wrapped objects could be.
 
 ```{r}
-st = getSpatialLocations(vizmini)
+st <- getSpatialLocations(vizmini)
 class(st)
 ```
 
@@ -182,7 +186,7 @@ print(st)
 ```
 
 ```{r}
-st[] = coords
+st[] <- coords
 print(st)
 ```
 

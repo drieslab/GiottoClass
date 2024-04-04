@@ -23,8 +23,9 @@ expr_obj
 create_expr_obj
 }
 \examples{
-x_expr <- readRDS(system.file("extdata/toy_matrix.RDS", 
-package = "GiottoClass"))
+x_expr <- readRDS(system.file("extdata/toy_matrix.RDS",
+    package = "GiottoClass"
+))
 
 create_expr_obj(exprMat = x_expr)
 

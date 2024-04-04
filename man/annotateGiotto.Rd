@@ -46,16 +46,20 @@ e.g. names(cell_types) = c(2, 1, 3)}
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
 
-annotation <- c("1" = "cell_type_1",
-"2" = "cell_type_2",
-"3" = "cell_type_3",
-"4" = "cell_type_4",
-"5" = "cell_type_5",
-"6" = "cell_type_6",
-"7" = "cell_type_7",
-"8" = "cell_type_8")
+annotation <- c(
+    "1" = "cell_type_1",
+    "2" = "cell_type_2",
+    "3" = "cell_type_3",
+    "4" = "cell_type_4",
+    "5" = "cell_type_5",
+    "6" = "cell_type_6",
+    "7" = "cell_type_7",
+    "8" = "cell_type_8"
+)
 
-g <- annotateGiotto(g, annotation_vector = annotation, 
-cluster_column = "leiden_clus")
+g <- annotateGiotto(g,
+    annotation_vector = annotation,
+    cluster_column = "leiden_clus"
+)
 
 }

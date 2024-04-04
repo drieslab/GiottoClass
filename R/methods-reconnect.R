@@ -1,4 +1,3 @@
-
 #' @name reconnect
 #' @title Reconnect a GiottoClass object
 #' @param x object to reconnect

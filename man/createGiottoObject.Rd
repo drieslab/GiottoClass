@@ -139,8 +139,9 @@ the appropriate slots:
 }
 }
 \examples{
-expr_matrix <- readRDS(system.file("extdata/toy_matrix.RDS", 
-package = "GiottoClass"))
+expr_matrix <- readRDS(system.file("extdata/toy_matrix.RDS",
+    package = "GiottoClass"
+))
 
 createGiottoObject(expression = expr_matrix)
 

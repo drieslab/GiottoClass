@@ -77,7 +77,8 @@ Suggests:
     stars,
     SummarizedExperiment,
     testthat (>= 3.0.0),
-    qs
+    qs,
+    XML
 Config/testthat/edition: 3
 Collate: 
     'package_imports.R'
@@ -127,6 +128,7 @@ Collate:
     'methods-spin.R'
     'methods-transpose.R'
     'methods-wrap.R'
+    'methods-zoom.R'
     'provenance.R'
     'python_bento.R'
     'python_environment.R'

@@ -36,8 +36,10 @@ featMetaObj
 Create an S4 featMetaObj
 }
 \examples{
-x <- data.frame(feat_ID = c("Mlc1", "Gprc5b", "Gfap"),
-nr_cells = c(80, 138, 151))
+x <- data.frame(
+    feat_ID = c("Mlc1", "Gprc5b", "Gfap"),
+    nr_cells = c(80, 138, 151)
+)
 
 createFeatMetaObj(metadata = x)
 
