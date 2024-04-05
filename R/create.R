@@ -2741,7 +2741,6 @@ createGiottoPolygonsFromMask <- function(maskfile,
 #' also unsuccessful then poly_ID defaults to the 3rd column. 'x' and 'y' then
 #' default to the 1st and 2nd columns.
 #' @concept polygon
-#' @returns giottoPolygon
 #' @export
 createGiottoPolygonsFromDfr <- function(
         segmdfr,
@@ -2792,7 +2791,6 @@ createGiottoPolygonsFromDfr <- function(
 #' @param calc_centroids (default FALSE) calculate centroids for polygons
 #' @param verbose be verbose
 #' @concept polygon
-#' @returns giottoPolygon
 #' @export
 createGiottoPolygonsFromGeoJSON <- function(
         GeoJSON,

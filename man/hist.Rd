@@ -17,6 +17,9 @@
     \item{\code{}}{}
   }}
 }
+\value{
+histogram
+}
 \description{
 Create a histogram of the pixel values of a giottoLargeImage. Wrapper around
 \code{\link[terra:hist]{terra::hist()}}

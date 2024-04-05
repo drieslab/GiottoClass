@@ -98,6 +98,7 @@ giotto_slot_depths <- function() {
 #' information should be nested. (see details)
 #' @param specified named logical vector for whether user specified input for a
 #' nesting element
+#' @returns modified S4 object
 #' @details Nesting elements define the nesting structure within giotto slots.
 #' Common examples are 'spat_unit', 'feat_type', and 'name' \cr
 #' This function compares the nest_elements that are currently available vs
@@ -109,7 +110,6 @@ giotto_slot_depths <- function() {
 #' If the values were NOT specified then the subobject values will be used
 #' downstream. Values will be directly pulled from and set to the parent frame,
 #' with the exception of the S4 object itself.
-#' @return modified S4 object
 #' @keywords internal
 read_s4_nesting <- function(x) {
     p <- parent.frame()
@@ -202,11 +202,11 @@ read_s4_nesting <- function(x) {
 #' @title Get cell IDs for a given spatial unit
 #' @name get_cell_id
 #' @inheritParams data_access_params
+#' @returns character vector of cell_IDs
 #' @description Data for each spatial unit is expected to agree on a single
 #' set of cell_IDs that are shared across any feature types. These cell_IDs
 #' are stored within the giotto object's \code{cell_ID} slot. Getters and
 #' setters for this slot directly retrieve (get) or replace (set) this slot.
-#' @returns character vector of cell_IDs
 #' @seealso set_cell_id
 #' @family functions to set data in giotto object
 #' @keywords internal
@@ -239,6 +239,7 @@ get_cell_id <- function(
 #' @param verbose be verbose
 #' @description Setter function for the cell_ID slot. Directly replaces (sets)
 #' this slot
+#' @returns giotto object with set cell_ID slot
 #' @details
 #' Data for each spatial unit is expected to agree on a single set of cell_IDs
 #' that are shared across any feature types. These cell_IDs are stored within
@@ -252,7 +253,6 @@ get_cell_id <- function(
 #' values are AUTOMATICALLY updated every time \code{initialize()} is called
 #' on the giotto object.
 #' @seealso get_cell_id
-#' @returns giotto object with set cell_ID slot
 #' @family functions to set data in giotto object
 #' @keywords internal
 set_cell_id <- function(
@@ -328,11 +328,11 @@ set_cell_id <- function(
 #' @title Get feat IDs for a given feature type
 #' @name get_feat_id
 #' @inheritParams data_access_params
+#' @returns character
 #' @description Across a single modality/feature type, all feature information
 #' is expected to share a single set of feat_IDs. These feat_IDs are stored
 #' within the giotto object's \code{feat_ID} slot. Getters and setters for this
 #' slot directly (get) or replace (set) this slot.
-#' @returns character
 #' @seealso set_feat_id
 #' @family functions to set data in giotto object
 #' @keywords internal
@@ -369,6 +369,7 @@ get_feat_id <- function(
 #' @param verbose be verbose
 #' @description Setter function for the feat_ID slot. Directly replaces (sets)
 #' this slot
+#' @returns giotto object with set cell_ID slot
 #' @details
 #' Across a single modality/feature type, and within a spatial unit, all feature
 #' information is expected to share a single set of feat_IDs. These feat_IDs
@@ -383,7 +384,6 @@ get_feat_id <- function(
 #' values are AUTOMATICALLY updated every time \code{initialize()} is called on
 #' the giotto object.
 #' @seealso get_feat_id
-#' @returns giotto object with set cell_ID slot
 #' @family functions to set data in giotto object
 #' @keywords internal
 set_feat_id <- function(
@@ -585,11 +585,10 @@ set_feat_id <- function(
 #' @name get_cell_metadata
 #' @inheritParams data_access_params
 #' @param output return as either 'data.table' or 'cellMetaObj'
+#' @keywords internal
 #' @description Get cell metadata from giotto object
 #' @returns a data.table or cellMetaObj
 #' @seealso pDataDT
-#' @keywords internal
-#' @export
 get_cell_metadata <- function(
         gobject,
         spat_unit = NULL,
@@ -643,9 +642,14 @@ get_cell_metadata <- function(
 #' @name getCellMetadata
 #' @inheritParams data_access_params
 #' @param output return as either 'data.table' or 'cellMetaObj'
-#' @description Get cell metadata from giotto object
 #' @returns a data.table or cellMetaObj
+#' @description Get cell metadata from giotto object
 #' @seealso pDataDT
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' getCellMetadata(g)
+#' 
 #' @export
 getCellMetadata <- function(
         gobject,
@@ -679,6 +683,14 @@ getCellMetadata <- function(
 #' @param verbose be verbose
 #' @returns giotto object
 #' @family functions to set data in giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' m1 <- getCellMetadata(g, output = "data.table")
+#' m2 <- data.frame(cell_ID = m1$cell_ID,
+#' new_column = sample(letters, 624, replace = TRUE))
+#' 
+#' setCellMetadata(gobject = g, x = createCellMetaObj(m2))
+#' 
 #' @export
 setCellMetadata <- function(
         gobject,
@@ -1079,9 +1091,14 @@ get_feature_metadata <- function(
 #' @inheritParams data_access_params
 #' @param output return as either 'data.table' or 'featMetaObj'
 #' @param copy_obj whether to perform a deepcopy of the data.table information
-#' @description Get feature metadata from giotto object
 #' @returns a data.table or featMetaObj
+#' @description Get feature metadata from giotto object
 #' @seealso fDataDT
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' getFeatureMetadata(g)
+#' 
 #' @export
 getFeatureMetadata <- function(
         gobject,
@@ -1115,6 +1132,14 @@ getFeatureMetadata <- function(
 #' @param verbose be verbose
 #' @returns giotto object
 #' @family functions to set data in giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' m1 <- getFeatureMetadata(g, output = "data.table")
+#' m2 <- data.frame(feat_ID = m1$feat_ID, 
+#' new_column = paste0("gene_", m1$feat_ID))
+#' 
+#' setFeatureMetadata(gobject = g, x = createFeatMetaObj(m2))
+#' 
 #' @export
 setFeatureMetadata <- function(
         gobject,
@@ -1435,6 +1460,11 @@ set_feature_metadata <- function(
 #' @returns exprObj or matrix depending on output param
 #' @family expression accessor functions
 #' @family functions to get data from giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' getExpression(g)
+#' 
 #' @export
 getExpression <- function(
         gobject,
@@ -1660,6 +1690,14 @@ get_expression_values_list <- function(
 #' @returns giotto object
 #' @family expression accessor functions
 #' @family functions to set data in giotto object
+#' @examples
+#' g <- createGiottoObject()
+#' m <- matrix(rnorm(100), nrow = 10)
+#' colnames(m) <- paste0("cell_", seq_len(10))
+#' rownames(m) <- paste0("feat_", seq_len(10))
+#' 
+#' g <- setExpression(gobject = g, x = createExprObj(m, name = "raw"))
+#' 
 #' @export
 setExpression <- function(
         gobject,
@@ -1944,6 +1982,12 @@ set_expression_values <- function(
 #' @returns A giotto object
 #' @family multiomics accessor functions
 #' @family functions to set data in giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' set_multiomics(gobject = g, result = matrix(rnorm(100), nrow = 10), 
+#' spat_unit = "cell", feat_type = "rna_protein")
+#' 
 #' @export
 set_multiomics <- function(
         gobject,
@@ -2016,6 +2060,12 @@ set_multiomics <- function(
 #' @returns A giotto object
 #' @family multiomics accessor functions
 #' @family functions to set data in giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' setMultiomics(gobject = g, result = matrix(rnorm(100), nrow = 10), 
+#' spat_unit = "cell", feat_type = "rna_protein")
+#' 
 #' @export
 setMultiomics <- function(
         gobject = NULL,
@@ -2058,6 +2108,13 @@ setMultiomics <- function(
 #' @returns A multiomics integration result (e.g. theta_weighted_matrix from WNN)
 #' @family multiomics accessor functions
 #' @family functions to get data from giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g <- setMultiomics(gobject = g, result = matrix(rnorm(100), nrow = 10), 
+#' spat_unit = "cell", feat_type = "rna_protein")
+#' 
+#' get_multiomics(gobject = g, spat_unit = "cell", feat_type = "rna_protein")
+#' 
 #' @export
 get_multiomics <- function(
         gobject,
@@ -2123,6 +2180,13 @@ get_multiomics <- function(
 #' @returns A multiomics integration result (e.g. theta_weighted_matrix from WNN)
 #' @family multiomics accessor functions
 #' @family functions to get data from giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g <- setMultiomics(gobject = g, result = matrix(rnorm(100), nrow = 10), 
+#' spat_unit = "cell", feat_type = "rna_protein")
+#' 
+#' getMultiomics(gobject = g, spat_unit = "cell", feat_type = "rna_protein")
+#' 
 #' @export
 getMultiomics <- function(
         gobject = NULL,
@@ -2172,6 +2236,11 @@ getMultiomics <- function(
 #' @returns data.table with coordinates or spatLocsObj depending on \code{output}
 #' @family spatial location data accessor functions
 #' @family functions to get data from giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' getSpatialLocations(g)
+#' 
 #' @export
 getSpatialLocations <- function(
         gobject,
@@ -2427,6 +2496,13 @@ get_spatial_locations_list <- function(
 #' @returns giotto object
 #' @family spatial location data accessor functions
 #' @family functions to set data in giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' x <- getSpatialLocations(g, output = "data.table")
+#' sl <- data.frame(cell_ID = x$cell_ID, sdimx = rnorm(624), sdimy = rnorm(624))
+#' 
+#' setSpatialLocations(gobject = g, x = createSpatLocsObj(sl, name = "raw"))
+#' 
 #' @export
 setSpatialLocations <- function(
         gobject,
@@ -2757,6 +2833,11 @@ get_dimReduction <- function(
 #' @returns dim reduction object (default) or dim reduction coordinates
 #' @family dimensional reduction data accessor functions
 #' @family functions to get data from giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' getDimReduction(g)
+#' 
 #' @export
 getDimReduction <- function(
         gobject,
@@ -2858,6 +2939,12 @@ get_dim_reduction_list <- function(
 #' @keywords autocomplete
 #' @family dimensional reduction data accessor functions
 #' @family functions to set data in giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' dimred <- getDimReduction(g)
+#' 
+#' setDimReduction(gobject = g, x = dimred)
+#' 
 #' @export
 setDimReduction <- function(
         gobject,
@@ -3257,6 +3344,11 @@ get_NearestNetwork <- function(
 #' @returns igraph or data.table object
 #' @family expression space nearest network accessor functions
 #' @family functions to get data from giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' getNearestNetwork(gobject = g)
+#' 
 #' @export
 getNearestNetwork <- function(
         gobject,
@@ -3351,6 +3443,12 @@ get_nearest_network_list <- function(
 #' @returns giotto object
 #' @family expression space nearest network accessor functions
 #' @family functions to set data in giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' dimred <- getNearestNetwork(gobject = g)
+#' 
+#' setNearestNetwork(gobject = g, x = dimred)
+#' 
 #' @export
 setNearestNetwork <- function(
         gobject,
@@ -3714,6 +3812,11 @@ get_spatialNetwork <- function(
 #' @returns spatialNetworkObj of data.table
 #' @family spatial network data accessor functions
 #' @family functions to get data from giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' getSpatialNetwork(g)
+#' 
 #' @export
 getSpatialNetwork <- function(
         gobject,
@@ -3824,6 +3927,12 @@ get_spatial_network_list <- function(
 #' @returns giotto object
 #' @family spatial network data accessor functions
 #' @family functions to set data in giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' spatnet <- getSpatialNetwork(g)
+#' 
+#' setSpatialNetwork(gobject = g, x = spatnet)
+#' 
 #' @export
 setSpatialNetwork <- function(
         gobject,
@@ -4162,9 +4271,15 @@ get_spatialGrid <- function(
 #' @inheritParams data_access_params
 #' @param name name of spatial grid
 #' @param return_grid_Obj return grid object (default = FALSE)
+#' @returns spatialGridObj
 #' @family spatial grid data accessor functions
 #' @family functions to get data from giotto object
-#' @returns spatialGridObj
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
+#' 
+#' getSpatialGrid(g)
+#' 
 #' @export
 getSpatialGrid <- function(
         gobject,
@@ -4300,6 +4415,13 @@ set_spatialGrid <- function(
 #' @returns giotto object
 #' @family spatial grid data accessor functions
 #' @family functions to set data in giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
+#' sg <- getSpatialGrid(g, return_grid_Obj = TRUE)
+#' 
+#' setSpatialGrid(gobject = g, spatial_grid = sg)
+#' 
 #' @export
 setSpatialGrid <- function(
         gobject,
@@ -4415,6 +4537,11 @@ get_polygon_info <- function(
 #' @returns spatVector
 #' @family polygon info data accessor functions
 #' @family functions to get data from giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' getPolygonInfo(g)
+#' 
 #' @export
 getPolygonInfo <- function(
         gobject = NULL,
@@ -4490,6 +4617,12 @@ get_polygon_info_list <- function(
 #' @returns giotto object
 #' @family polygon info data accessor functions
 #' @family functions to set data in giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' polyinfo <- getPolygonInfo(g, return_giottoPolygon = TRUE)
+#' 
+#' setPolygonInfo(gobject = g, x = polyinfo)
+#' 
 #' @export
 setPolygonInfo <- function(
         gobject,
@@ -4811,6 +4944,11 @@ set_polygon_info <- function(
 #' @returns giotto points spatVector
 #' @family feature info data accessor functions
 #' @family functions to get data from giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' getFeatureInfo(g)
+#' 
 #' @export
 getFeatureInfo <- function(
         gobject = gobject,
@@ -4918,6 +5056,12 @@ get_feature_info_list <- function(
 #' @returns giotto object
 #' @family feature info data accessor functions
 #' @family functions to set data in giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' featinfo <- getFeatureInfo(g, return_giottoPoints = TRUE)
+#' 
+#' setFeatureInfo(gobject = g, x = featinfo)
+#' 
 #' @export
 setFeatureInfo <- function(
         gobject,
@@ -5260,6 +5404,11 @@ get_spatial_enrichment <- function(
 #' @returns spatEnrObj or data.table with fractions
 #' @family spatial enrichment data accessor functions
 #' @family functions to get data from giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' getSpatialEnrichment(g, spat_unit = "aggregate", name = "cluster_metagene")
+#' 
 #' @export
 getSpatialEnrichment <- function(
         gobject,
@@ -5347,6 +5496,11 @@ get_spatial_enrichment_list <- function(
 #' @returns giotto object
 #' @family spatial enrichment data accessor functions
 #' @family functions to set data in giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' spatenrich <- GiottoData::loadSubObjectMini("spatEnrObj")
+#' g <- setSpatialEnrichment(g, spatenrich)
+#' 
 #' @export
 setSpatialEnrichment <- function(
         gobject,
@@ -5795,6 +5949,11 @@ get_giottoImage <- function(
 #' @returns a giotto image object
 #' @family image data accessor functions
 #' @family functions to get data from giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' getGiottoImage(gobject = g, image_type = "largeImage")
+#' 
 #' @export
 getGiottoImage <- function(
         gobject = NULL,
@@ -5924,6 +6083,12 @@ set_giottoImage <- function(
 #' @family image data accessor functions
 #' @family functions to set data in giotto object
 #' @seealso \code{\link{addGiottoImage}}
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' gimage <- getGiottoImage(gobject = g, image_type = "largeImage")
+#' 
+#' setGiottoImage(gobject = g, image = gimage, image_type = "largeImage")
+#' 
 #' @export
 setGiottoImage <- function(
         gobject = NULL,
@@ -5992,6 +6157,8 @@ setGiottoImage <- function(
 #' @param poly_info character. (optional) Name of polygons to use
 #' @param verbose verbosity
 #' @param debug logical. (default = FALSE) See details.
+#' @returns A data.table with a cell_ID column and whichever feats were
+#' requested
 #' @details
 #' **\[search\]**\cr
 #' spatValues searches through the set of available information within the
@@ -6031,8 +6198,6 @@ setGiottoImage <- function(
 #' # cell meta
 #' spatValues(g, spat_unit = "aggregate", feats = c("nr_feats"))
 #'
-#' @returns A data.table with a cell_ID column and whichever feats were
-#' requested
 #' @export
 spatValues <- function(
         gobject, spat_unit = NULL, feat_type = NULL, feats,

@@ -17,6 +17,9 @@
     \item{\code{}}{}
   }}
 }
+\value{
+density plot
+}
 \description{
 Create density plots of the pixel values of a giottoLargeImage. Wrapper
 around \code{\link[terra:density]{terra::density()}}.

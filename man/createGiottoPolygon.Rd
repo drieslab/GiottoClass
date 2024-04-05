@@ -132,10 +132,6 @@ coordinate and ID information.}
 }
 \value{
 giottoPolygon
-
-giottoPolygon
-
-giottoPolygon
 }
 \description{
 Create a \code{giottoPolygon} object that is used to represent

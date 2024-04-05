@@ -2893,6 +2893,7 @@ distGiottoImage <- function(gobject = NULL,
 #' @param x giottoLargeImage
 #' @param show_max logical. Plot the set max intensity as a vertical red line
 #' @inheritDotParams terra::density
+#' @returns density plot
 #' @seealso [hist()]
 #' @examples
 #' f <- system.file(package = "GiottoClass", "extdata/toy_intensity.tif")
@@ -2924,6 +2925,7 @@ setMethod(
 #' @param x giottoLargeImage
 #' @param show_max logical. Plot the set max intensity as a vertical red line
 #' @inheritDotParams terra::hist
+#' @returns histogram
 #' @seealso [density()]
 #' @examples
 #' f <- system.file(package = "GiottoClass", "extdata/toy_intensity.tif")
