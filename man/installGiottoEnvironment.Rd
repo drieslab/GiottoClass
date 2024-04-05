@@ -80,11 +80,3 @@ Python  v3.6
   - scikit-learn==0.24.2
 }
 }
-\examples{
-\dontrun{
-
-# this command will install r-miniconda
-# and a giotto environment with all necessary python modules
-installGiottoEnvironment()
-}
-}
