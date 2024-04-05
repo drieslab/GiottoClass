@@ -1965,10 +1965,11 @@ aggregateStacksExpression <- function(
     )
 
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    gobject <- set_feature_metadata(
+    gobject <- setFeatureMetadata(
         gobject = gobject,
-        feat_meta_S4,
-        verbose = verbose
+        x = feat_meta_S4,
+        verbose = verbose,
+        initialize = FALSE
     )
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 

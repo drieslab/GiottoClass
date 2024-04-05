@@ -878,9 +878,9 @@ joinGiottoObjects <- function(
         # feat_type = feat_type,
         # metaDT = data.table::data.table(feat_ID = combined_feat_ID))
 
-        # comb_gobject = set_feature_metadata(gobject = comb_gobject,
+        # comb_gobject = setFeatureMetadata(gobject = comb_gobject,
         #                                     S4_feat_metadata,
-        #                                     set_defaults = FALSE)
+        #                                     initialize = FALSE)
     } else {
         for (exprObj_i in seq(nrow(avail_expr))) {
             expr_list <- lapply(updated_object_list, function(gobj) {
@@ -1026,10 +1026,10 @@ joinGiottoObjects <- function(
             fm_list[[1]][] <- comb_fm
 
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-            comb_gobject <- set_feature_metadata(
+            comb_gobject <- setFeatureMetadata(
                 gobject = comb_gobject,
-                metadata = fm_list[[1]],
-                set_defaults = FALSE
+                x = fm_list[[1]],
+                initialize = FALSE
             )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }

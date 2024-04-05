@@ -266,9 +266,10 @@
         fm[] <- fm[][filter_bool_feats]
 
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        gobject <<- set_feature_metadata(gobject,
-            metadata = fm,
-            verbose = FALSE
+        gobject <<- setFeatureMetadata(gobject,
+            x = fm,
+            verbose = FALSE,
+            initialize = FALSE
         )
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 

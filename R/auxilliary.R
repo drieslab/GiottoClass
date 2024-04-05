@@ -378,9 +378,10 @@ removeFeatAnnotation <- function(
 
     # return giotto object or cell metadata
     if (return_gobject == TRUE) {
-        gobject <- set_feature_metadata(gobject,
-            metadata = feat_metadata,
-            verbose = FALSE
+        gobject <- setFeatureMetadata(gobject,
+            x = feat_metadata,
+            verbose = FALSE,
+            initialize = FALSE
         )
         return(gobject)
     } else {
@@ -752,9 +753,10 @@ addFeatMetadata <- function(
     feat_metadata[] <- feat_metadata[][match(ordered_feat_IDs, feat_ID)]
 
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    gobject <- set_feature_metadata(gobject,
-        metadata = feat_metadata,
-        verbose = FALSE
+    gobject <- setFeatureMetadata(gobject,
+        x = feat_metadata,
+        verbose = FALSE,
+        initialize = FALSE
     )
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
@@ -1423,11 +1425,11 @@ createMetafeats <- function(
             )
             if (!is.null(fm[])) {
                 fm[] <- data.table::setalloccol(fm[])
-                gobject <- set_feature_metadata(
+                gobject <- setFeatureMetadata(
                     gobject = gobject,
-                    metadata = fm,
-                    set_defaults = FALSE,
-                    verbose = FALSE
+                    x = fm,
+                    verbose = FALSE,
+                    initialize = FALSE
                 )
             }
         }
