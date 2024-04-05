@@ -41,9 +41,9 @@ saveGiotto <- function(gobject,
     overwrite <- as.logical(overwrite)
     method <- match.arg(arg = method, choices = c("RDS", "qs"))
 
-
     ## set directory path and folder
-    final_dir <- paste0(path.expand(dir), "/", foldername)
+    dir <- normalizePath(dir)
+    final_dir <- file.path(dir, foldername)
 
     overwriting <- FALSE
     if (dir.exists(final_dir)) {
