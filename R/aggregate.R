@@ -1948,10 +1948,11 @@ aggregateStacksExpression <- function(
     )
 
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    gobject <- set_cell_metadata(
+    gobject <- setCellMetadata(
         gobject = gobject,
         cell_meta_S4,
-        verbose = verbose
+        verbose = verbose,
+        initialize = FALSE
     )
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 

@@ -232,10 +232,11 @@ annotateGiotto <- function(
 
     data.table::setnames(cell_metadata[], old = "temp_cluster_name", new = name)
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    gobject <- set_cell_metadata(
+    gobject <- setCellMetadata(
         gobject = gobject,
-        metadata = cell_metadata,
-        verbose = FALSE
+        x = cell_metadata,
+        verbose = FALSE,
+        initialize = FALSE
     )
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
@@ -313,9 +314,10 @@ removeCellAnnotation <- function(
 
     # return giotto object or cell metadata
     if (return_gobject == TRUE) {
-        gobject <- set_cell_metadata(gobject,
-            metadata = cell_metadata,
-            verbose = FALSE
+        gobject <- setCellMetadata(gobject,
+            x = cell_metadata,
+            verbose = FALSE,
+            initialize = FALSE
         )
         return(gobject)
     } else {
@@ -568,9 +570,10 @@ addCellMetadata <- function(
 
 
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    gobject <- set_cell_metadata(gobject,
-        metadata = cell_metadata,
-        verbose = FALSE
+    gobject <- setCellMetadata(gobject,
+        x = cell_metadata,
+        verbose = FALSE,
+        initialize = FALSE
     )
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
@@ -1398,11 +1401,11 @@ createMetafeats <- function(
             )
             if (!is.null(cm[])) {
                 cm[] <- data.table::setalloccol(cm[])
-                gobject <- set_cell_metadata(
+                gobject <- setCellMetadata(
                     gobject = gobject,
-                    metadata = cm,
-                    set_defaults = FALSE,
-                    verbose = FALSE
+                    x = cm,
+                    verbose = FALSE,
+                    initialize = FALSE
                 )
             }
         }

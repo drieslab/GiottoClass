@@ -282,25 +282,25 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
             # cell metadata
             if (is.null(avail_cm)) {
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-                .Object <- set_cell_metadata(
+                .Object <- setCellMetadata(
                     gobject = .Object,
-                    metadata = "initialize",
+                    x = "initialize",
                     spat_unit = spatial_unit,
                     feat_type = feature_type,
                     verbose = FALSE,
-                    set_defaults = FALSE
+                    initialize = FALSE
                 )
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             } else if (nrow(avail_cm[spat_unit == spatial_unit &
                 feat_type == feature_type]) == 0L) {
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-                .Object <- set_cell_metadata(
+                .Object <- setCellMetadata(
                     gobject = .Object,
-                    metadata = "initialize",
+                    x = "initialize",
                     spat_unit = spatial_unit,
                     feat_type = feature_type,
                     verbose = FALSE,
-                    set_defaults = FALSE
+                    initialize = FALSE
                 )
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             }
@@ -354,9 +354,11 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
             prov(cm) <- provenance
             prov(fm) <- provenance
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-            .Object <- set_cell_metadata(
+            .Object <- setCellMetadata(
                 gobject = .Object,
-                metadata = cm, verbose = FALSE
+                x = cm, 
+                verbose = FALSE,
+                initialize = FALSE
             )
             .Object <- set_feature_metadata(
                 gobject = .Object,
@@ -753,7 +755,7 @@ init_cell_metadata <- function(
             # initialize relevant metadata
 
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-            gobject <- set_cell_metadata(
+            gobject <- setCellMetadata(
                 gobject = gobject,
                 spat_unit = avail_expr[expr_i, spat_unit],
                 feat_type = avail_expr[expr_i, feat_type],
@@ -762,8 +764,9 @@ init_cell_metadata <- function(
                 } else {
                     provenance
                 },
-                metadata = "initialize",
-                verbose = FALSE
+                x = "initialize",
+                verbose = FALSE,
+                initialize = FALSE
             )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
@@ -778,13 +781,14 @@ init_cell_metadata <- function(
         for (poly in avail_spat_info) {
             for (feature_type in unique(avail_to_use)) {
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-                gobject <- set_cell_metadata(
+                gobject <- setCellMetadata(
                     gobject = gobject,
                     spat_unit = poly,
                     feat_type = feature_type,
                     provenance = if (is.null(provenance)) poly else provenance,
-                    metadata = "initialize",
-                    verbose = FALSE
+                    x = "initialize",
+                    verbose = FALSE,
+                    initialize = FALSE
                 )
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             }

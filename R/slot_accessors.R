@@ -782,7 +782,6 @@ setCellMetadata <- function(
 #' @returns giotto object
 #' @family functions to set data in giotto object
 #' @keywords internal
-#' @export
 set_cell_metadata <- function(
         gobject,
         metadata,
@@ -1041,7 +1040,6 @@ set_cell_metadata <- function(
 #' @returns a data.table or featMetaObj
 #' @seealso fDataDT
 #' @keywords internal
-#' @export
 get_feature_metadata <- function(
         gobject,
         spat_unit = NULL,

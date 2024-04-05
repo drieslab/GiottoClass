@@ -988,10 +988,10 @@ joinGiottoObjects <- function(
             S4_cell_meta[] <- combcellmeta
 
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-            comb_gobject <- set_cell_metadata(
+            comb_gobject <- setCellMetadata(
                 gobject = comb_gobject,
-                metadata = S4_cell_meta,
-                set_defaults = FALSE
+                x = S4_cell_meta,
+                initialize = FALSE
             )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }

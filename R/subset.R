@@ -214,7 +214,10 @@
         cm[] <- cm[][filter_bool_cells]
 
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        gobject <<- set_cell_metadata(gobject, metadata = cm, verbose = FALSE)
+        gobject <<- setCellMetadata(gobject, 
+                                    x = cm, 
+                                    verbose = FALSE,
+                                    initialize = FALSE)
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
         return(FALSE) # ignore this
