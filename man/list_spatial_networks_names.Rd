@@ -17,3 +17,9 @@ vector with names of available feature information
 \description{
 return the available names for giotto feature information
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+list_spatial_networks_names(g, spat_unit = "cell")
+
+}

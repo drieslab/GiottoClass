@@ -29,6 +29,12 @@ Smoothed Giotto polygon object with reduced vertices
 \description{
 Smooths Giotto polygon object
 }
+\examples{
+gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
+
+smoothGiottoPolygons(gpolygon = gpoly)
+
+}
 \seealso{
 \code{\link[stats]{spline}}
 }

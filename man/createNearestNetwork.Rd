@@ -96,3 +96,9 @@ For sNN networks two additional parameters can be set:
 irrespective of minimum_shared setting}
 }
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+createNearestNetwork(g)
+
+}

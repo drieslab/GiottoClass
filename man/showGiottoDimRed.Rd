@@ -20,6 +20,12 @@ coordinates
 \description{
 shows the available dimension reductions
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+showGiottoDimRed(g)
+
+}
 \seealso{
 Other functions to show data in giotto object: 
 \code{\link{showGiottoCellMetadata}()},

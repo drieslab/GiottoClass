@@ -15,4 +15,10 @@ numeric
 \description{
 colSums_flex
 }
+\examples{
+m <- matrix(rnorm(100), nrow = 10)
+
+colSums_flex(m)
+
+}
 \keyword{internal}

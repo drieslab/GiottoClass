@@ -33,6 +33,12 @@ a data.table or cellMetaObj
 \description{
 Get cell metadata from giotto object
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+getCellMetadata(g)
+
+}
 \seealso{
 pDataDT
 }

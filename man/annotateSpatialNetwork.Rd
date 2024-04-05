@@ -33,3 +33,9 @@ annotated network in data.table format
 \description{
 Annotate spatial network with cell metadata information.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+annotateSpatialNetwork(g, cluster_column = "leiden_clus")
+
+}

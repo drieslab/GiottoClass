@@ -46,3 +46,9 @@ two nodes are connected in the spatial network and 0 indicating that
 they are not.}
 }
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+createSpatialWeightMatrix(g, spatial_network_to_use = "spatial_network")
+
+}

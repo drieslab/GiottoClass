@@ -9,6 +9,11 @@
 #' @param ... additional params to pass
 #' @returns names and locations of data within giotto object slot
 #' @keywords internal
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' list_giotto_data(gobject = g, slot = "expression")
+#' 
 #' @export
 list_giotto_data <- function(
         gobject = NULL,
@@ -62,6 +67,11 @@ list_giotto_data <- function(
 #' @inheritParams data_access_params
 #' @returns names and locations of available matrices as data.table.
 #' col order matters.
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' list_expression(g)
+#' 
 #' @export
 list_expression <- function(
         gobject,
@@ -116,6 +126,11 @@ list_expression <- function(
 #' and feature type
 #' @inheritParams data_access_params
 #' @returns vector with names of available matrices
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' list_expression_names(g, spat_unit = "cell", feat_type = "rna")
+#' 
 #' @export
 list_expression_names <- function(
         gobject,
@@ -137,6 +152,11 @@ list_expression_names <- function(
 #' the spat_units and poly info in the gobject
 #' @inheritParams data_access_params
 #' @returns vector with names of available sets of cell_IDs
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' list_cell_id_names(g)
+#' 
 #' @export
 list_cell_id_names <- function(gobject) {
     return(names(gobject@cell_ID))
@@ -149,6 +169,11 @@ list_cell_id_names <- function(gobject) {
 #' feat_types and feature info in the gobject
 #' @inheritParams data_access_params
 #' @returns vector with names of available sets of feat_IDs
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' list_feat_id_names(g)
+#' 
 #' @export
 list_feat_id_names <- function(gobject) {
     return(names(gobject@feat_ID))
@@ -160,6 +185,11 @@ list_feat_id_names <- function(gobject) {
 #' @description lists the available cell metadata.
 #' @inheritParams data_access_params
 #' @returns names and locations of available cell metadata as data.table
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' list_cell_metadata(g)
+#' 
 #' @export
 list_cell_metadata <- function(
         gobject,
@@ -217,6 +247,11 @@ list_cell_metadata <- function(
 #' @description lists the available feature metadata
 #' @inheritParams data_access_params
 #' @returns names and locations of available feature metadata as data.table
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' list_feat_metadata(g)
+#' 
 #' @export
 list_feat_metadata <- function(
         gobject,
@@ -274,6 +309,11 @@ list_feat_metadata <- function(
 #' @description shows the available spatial locations
 #' @inheritParams data_access_params
 #' @returns names and locations of available data.table as data.table
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' list_spatial_locations(g)
+#' 
 #' @export
 list_spatial_locations <- function(
         gobject,
@@ -330,6 +370,11 @@ list_spatial_locations <- function(
 #' unit
 #' @inheritParams data_access_params
 #' @returns vector with names of available spatial locations
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' list_spatial_locations_names(g, spat_unit = "cell")
+#' 
 #' @export
 list_spatial_locations_names <- function(
         gobject,
@@ -348,6 +393,11 @@ list_spatial_locations_names <- function(
 #' @description return the available spatial enrichment results
 #' @inheritParams data_access_params
 #' @returns names and locations of available data as data.table
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' list_spatial_enrichments(g)
+#' 
 #' @export
 list_spatial_enrichments <- function(
         gobject,
@@ -407,6 +457,11 @@ list_spatial_enrichments <- function(
 #' spatial unit
 #' @inheritParams data_access_params
 #' @returns vector of names for available spatial enrichments
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' list_spatial_enrichments_names(g, spat_unit = "aggregate", feat_type = "rna")
+#' 
 #' @export
 list_spatial_enrichments_names <- function(
         gobject,
@@ -431,6 +486,11 @@ list_spatial_enrichments_names <- function(
 #' @param data_type "cells" or "feats" data used in dim reduction
 #' @param dim_type dimensional reduction method (e.g. "pca", "umap")
 #' @returns names and locations of dimension reduction as a data.table
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' list_dim_reductions(g)
+#' 
 #' @export
 list_dim_reductions <- function(
         gobject,
@@ -512,6 +572,12 @@ list_dim_reductions <- function(
 #' @param dim_type dimensional reduction type (method)
 #' @returns names of dimension reduction object
 #' @details function that can be used to find which names have been used
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' list_dim_reductions_names(g, spat_unit = "cell", feat_type = "rna", 
+#' dim_type = "pca")
+#' 
 #' @export
 list_dim_reductions_names <- function(
         gobject,
@@ -536,6 +602,11 @@ list_dim_reductions_names <- function(
 #' @inheritParams data_access_params
 #' @param nn_type nearest neighbor method (e.g. "sNN", "kNN")
 #' @returns names and locations of nearest neighbor networks as a data.table
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' list_nearest_networks(g)
+#' 
 #' @export
 list_nearest_networks <- function(
         gobject,
@@ -618,6 +689,12 @@ list_nearest_networks <- function(
 #' @param nn_type nearest neighbor method (e.g. "sNN", "kNN")
 #' @returns names of nearest neighbor network object
 #' @details function that can be used to find which names have been used
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' list_nearest_networks_names(g, spat_unit = "cell", feat_type = "rna", 
+#' nn_type = "sNN")
+#' 
 #' @export
 list_nearest_networks_names <- function(
         gobject,
@@ -642,6 +719,11 @@ list_nearest_networks_names <- function(
 #' @description return the available giotto spatial polygon information
 #' @param gobject giotto object
 #' @returns names of available spatial polygon information
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' list_spatial_info(g)
+#' 
 #' @export
 list_spatial_info <- function(gobject) {
     availableSpatInfo <- data.table()
@@ -668,6 +750,11 @@ list_spatial_info <- function(gobject) {
 #' information
 #' @param gobject giotto object
 #' @returns vector with names of available spatial polygon information
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' list_spatial_info_names(g)
+#' 
 #' @export
 list_spatial_info_names <- function(gobject) {
     spat_info_names <- names(gobject@spatial_info)
@@ -682,6 +769,11 @@ list_spatial_info_names <- function(gobject) {
 #' @description return the available giotto spatial feature information
 #' @param gobject giotto object
 #' @returns names of available feature information
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' list_feature_info(g)
+#' 
 #' @export
 list_feature_info <- function(gobject) {
     availableFeatInfo <- data.table()
@@ -705,6 +797,11 @@ list_feature_info <- function(gobject) {
 #' @description return the available names for giotto feature information
 #' @param gobject giotto object
 #' @returns vector with names of available feature information
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' list_feature_info_names(g)
+#' 
 #' @export
 list_feature_info_names <- function(gobject) {
     feat_info_names <- names(gobject@feat_info)
@@ -721,6 +818,11 @@ list_feature_info_names <- function(gobject) {
 #' @inheritParams data_access_params
 #' @returns data.table of names and locations of available spatial networks,
 #' col order matters or list of unique nestings
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' list_spatial_networks(g)
+#' 
 #' @export
 list_spatial_networks <- function(
         gobject,
@@ -774,6 +876,11 @@ list_spatial_networks <- function(
 #' @description return the available names for giotto feature information
 #' @inheritParams data_access_params
 #' @returns vector with names of available feature information
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' list_spatial_networks_names(g, spat_unit = "cell")
+#' 
 #' @export
 list_spatial_networks_names <- function(
         gobject,
@@ -795,6 +902,12 @@ list_spatial_networks_names <- function(
 #' @inheritParams data_access_params
 #' @returns data.table of names and locations of available spatial grids.
 #' col order matters
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
+#' 
+#' list_spatial_grids(g)
+#' 
 #' @export
 list_spatial_grids <- function(
         gobject,
@@ -866,6 +979,12 @@ list_spatial_grids <- function(
 #' @param return_uniques return unique nesting
 #' names (ignores if final object exists/is correct class)
 #' @returns vector with names of available spatial grids names
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
+#' 
+#' list_spatial_grids_names(g, spat_unit = "cell", feat_type = "rna")
+#' 
 #' @export
 list_spatial_grids_names <- function(
         gobject,
@@ -888,6 +1007,11 @@ list_spatial_grids_names <- function(
 #' @param gobject giotto object
 #' @param img_type "image" or "largeImage"
 #' @returns data.table of giotto image names attached to the giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' list_images(g, img_type = "largeImage")
+#' 
 #' @export
 list_images <- function(
         gobject,
@@ -949,6 +1073,11 @@ list_images <- function(
 #' @param gobject a giotto object
 #' @param img_type "image" or "largeImage"
 #' @returns vector with names of available image names
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' list_images_names(g, img_type = "largeImage")
+#' 
 #' @export
 list_images_names <- function(
         gobject,

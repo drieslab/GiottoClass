@@ -15,4 +15,10 @@ numeric
 \description{
 my_arowMeans
 }
+\examples{
+m <- matrix(rnorm(100), nrow = 10)
+
+my_arowMeans(m)
+
+}
 \keyword{internal}

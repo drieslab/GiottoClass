@@ -15,3 +15,9 @@ names of available feature information
 \description{
 return the available giotto spatial feature information
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+list_feature_info(g)
+
+}

@@ -47,6 +47,13 @@ giotto object
 Function to dimension reduction information into the Giotto
 object.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+dimred <- getDimReduction(g)
+
+setDimReduction(gobject = g, x = dimred)
+
+}
 \seealso{
 Other dimensional reduction data accessor functions: 
 \code{\link{getDimReduction}()},

@@ -15,3 +15,9 @@ names of available spatial polygon information
 \description{
 return the available giotto spatial polygon information
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+list_spatial_info(g)
+
+}

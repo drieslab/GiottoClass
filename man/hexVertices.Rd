@@ -18,6 +18,10 @@ a data.table of regular hexagon vertices
 \description{
 Generates vertex coordinates for a regular hexagon.
 }
+\examples{
+hexVertices(radius = 10)
+
+}
 \seealso{
 \link{generate_grid}
 

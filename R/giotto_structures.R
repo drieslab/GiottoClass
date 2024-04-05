@@ -56,6 +56,10 @@
 #' @param spatVector terra polygon spatvector
 #' @param threshold if a polygon's x AND y range exceeds this fraction of the
 #' overall `SpatVector` extent, it will be flagged for removal.
+#' @returns A character vector of polygon IDs of variable length (but usually
+#' only either length 0 i.e. no background poly to remove, or 1, being the
+#' background poly to remove) if used with a correct threshold.
+#' @keywords internal
 #' @examples
 #' sv <- GiottoData::loadSubObjectMini("giottoPolygon")[]
 #'
@@ -63,10 +67,6 @@
 #' .identify_background_range_polygons(sv, threshold = 0.9)
 #'
 #' .identify_background_range_polygons(sv, threshold = 0.03)
-#' @keywords internal
-#' @returns A character vector of polygon IDs of variable length (but usually
-#' only either length 0 i.e. no background poly to remove, or 1, being the
-#' background poly to remove) if used with a correct threshold.
 .identify_background_range_polygons <- function(spatVector, threshold = 0.9) {
     # define for data.table
     x <- y <- geom <- V1 <- NULL
@@ -192,9 +192,7 @@
 #' Combine multiple giottoPolygon geometries into a set of multipolygons. Note
 #' that attributes cannot be kept
 #' @returns giottoPolygon
-#'
 #' @examples
-#' \dontrun{
 #' gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
 #' groups <- data.table::data.table(
 #'     poly_ID = gpoly$poly_ID,
@@ -204,7 +202,6 @@
 #' multi_gp <- combineToMultiPolygon(gpoly, groups)
 #'
 #' plot(multi_gp["A"])
-#' }
 #'
 #' @export
 combineToMultiPolygon <- function(x, groups, name = NULL) {
@@ -283,8 +280,8 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 #' @param vertices vertices
 #' @param k k
 #' @param ... additional params to pass
-#' @keywords internal
 #' @returns polygon
+#' @keywords internal
 .spline_poly <- function(xy, vertices = 20, k = 3, ...) {
     # Assert: xy is an n by 2 matrix with n >= k.
 
@@ -322,6 +319,11 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 #' @returns Smoothed Giotto polygon object with reduced vertices
 #' @concept polygon
 #' @seealso \code{\link[stats]{spline}}
+#' @examples
+#' gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
+#' 
+#' smoothGiottoPolygons(gpolygon = gpoly)
+#' 
 #' @export
 smoothGiottoPolygons <- function(
         gpolygon,
@@ -420,8 +422,8 @@ smoothGiottoPolygons <- function(
 #' @param y_colname column name for y-coordinates
 #' @param feat_ID_colname column name for feature ids
 #' @param verbose be verbose
-#' @keywords internal
 #' @returns SpatVector
+#' @keywords internal
 .create_spatvector_object_from_dfr <- function(x,
     x_colname = NULL,
     y_colname = NULL,
@@ -563,8 +565,8 @@ smoothGiottoPolygons <- function(
 #' @param add_feat_ids boolean. whether to add feature information
 #' @param verbose be verbose
 #' @param ... additional parameters to pass to \code{\link[dbscan]{kNN}}
-#' @keywords internal
 #' @returns kNN spatial feature network
+#' @keywords internal
 createSpatialFeaturesKNNnetwork_dbscan <- function(
         gobject,
         feat_type = NULL,
@@ -689,10 +691,15 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(
 #'     network will be returned. If \code{return_gobject = FALSE} the network
 #'     will be returned as a datatable.
 #' @concept feature
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' createSpatialFeaturesKNNnetwork(g)
+#' 
 #' @export
 createSpatialFeaturesKNNnetwork <- function(
         gobject,
-        method = c("dbscan"),
+        method = "dbscan",
         feat_type = NULL,
         name = "knn_feats_network",
         k = 4,
@@ -776,6 +783,11 @@ createSpatialFeaturesKNNnetwork <- function(
 #'     If \code{return_gobject = FALSE} only the generated polygon centroids
 #'     will be returned as spatLocsObj.
 #' @concept centroid
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' addSpatialCentroidLocationsLayer(g, poly_info = "aggregate")
+#' 
 #' @export
 addSpatialCentroidLocationsLayer <- function(
         gobject,
@@ -897,6 +909,11 @@ addSpatialCentroidLocationsLayer <- function(
 #'     If \code{return_gobject = FALSE} only the generated polygon centroids
 #'     will be returned as \code{spatLocObj}.
 #' @concept centroid
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' addSpatialCentroidLocations(g, poly_info = "aggregate")
+#' 
 #' @export
 addSpatialCentroidLocations <- function(
         gobject,

@@ -15,4 +15,10 @@ numeric
 \description{
 rowMeans_flex
 }
+\examples{
+m <- matrix(rnorm(100), nrow = 10)
+
+rowMeans_flex(m)
+
+}
 \keyword{internal}

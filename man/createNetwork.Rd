@@ -80,7 +80,6 @@ networks
 }
 }
 \examples{
-\dontrun{
 pca <- GiottoData::loadSubObjectMini("dimObj")[]
 sl <- GiottoData::loadSubObjectMini("spatLocsObj")[]
 
@@ -151,5 +150,4 @@ sNN <- createNetwork(
 
 # using defaults for sNN with index IDs to create igraph
 sNN_idx <- createNetwork(pca[, seq_len(10)])
-}
 }

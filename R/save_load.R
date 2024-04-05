@@ -14,10 +14,15 @@
 #' "COG"
 #' @param verbose be verbose
 #' @param ... additional parameters for \code{\link[terra]{writeRaster}}
+#' @returns Creates a directory with Giotto object information
 #' @details Works together with \code{\link{loadGiotto}} to save and re-load
 #' Giotto objects. Additional method_params need to be provided as a list
 #' and will go to \code{\link[base]{saveRDS}} or \code{\link[qs]{qsave}}
-#' @returns Creates a directory with Giotto object information
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' saveGiotto(gobject = g, dir = tempdir())
+#' 
 #' @export
 saveGiotto <- function(gobject,
     foldername = "saveGiottoDir",
@@ -284,6 +289,13 @@ saveGiotto <- function(gobject,
 #' You can set the python path, alternatively it will look for an existing
 #' Giotto python environment.
 #' @returns Giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' td <- tempdir()
+#' saveGiotto(gobject = g, dir = td)
+#' 
+#' loadGiotto(path_to_folder = fs::path(td, "saveGiottoDir"))
+#' 
 #' @export
 loadGiotto <- function(
         path_to_folder,

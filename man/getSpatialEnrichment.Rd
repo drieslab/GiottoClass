@@ -36,6 +36,12 @@ spatEnrObj or data.table with fractions
 \description{
 Function to get a spatial enrichment data.table
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+getSpatialEnrichment(g, spat_unit = "aggregate", name = "cluster_metagene")
+
+}
 \seealso{
 Other spatial enrichment data accessor functions: 
 \code{\link{get_spatial_enrichment}()},

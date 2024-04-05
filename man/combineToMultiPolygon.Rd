@@ -22,7 +22,6 @@ Combine multiple giottoPolygon geometries into a set of multipolygons. Note
 that attributes cannot be kept
 }
 \examples{
-\dontrun{
 gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
 groups <- data.table::data.table(
     poly_ID = gpoly$poly_ID,
@@ -32,6 +31,5 @@ groups <- data.table::data.table(
 multi_gp <- combineToMultiPolygon(gpoly, groups)
 
 plot(multi_gp["A"])
-}
 
 }

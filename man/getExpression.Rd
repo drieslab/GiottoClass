@@ -36,6 +36,12 @@ exprObj or matrix depending on output param
 \description{
 Function to get expression values from giotto object
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+getExpression(g)
+
+}
 \seealso{
 Other expression accessor functions: 
 \code{\link{setExpression}()},

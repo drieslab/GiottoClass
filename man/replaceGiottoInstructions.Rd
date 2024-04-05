@@ -22,3 +22,10 @@ giotto object with replaces instructions
 Function to replace all instructions from giotto object. Does
 not call \code{initialize} on the giotto object
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+replaceGiottoInstructions(gobject = g, 
+instructions = createGiottoInstructions())
+
+}

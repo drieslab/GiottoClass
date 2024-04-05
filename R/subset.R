@@ -1413,6 +1413,11 @@
 #' @param toplevel_params parameters to extract
 #' @returns giotto object
 #' @details Subsets a Giotto object for a specific spatial unit and feature type
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' subsetGiotto(g, cell_ids = c("AACTCGATGGCGCAGT-1", "GGCTGGCTAGCTTAAA-1"))
+#' 
 #' @export
 subsetGiotto <- function(
         gobject,
@@ -1509,6 +1514,11 @@ subsetGiotto <- function(
 #' @returns giotto object
 #' @details If `return_gobject = FALSE`, then a filtered combined metadata
 #' data.table will be returned
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' subsetGiottoLocs(g, x_max = 4000, y_max = -1000)
+#' 
 #' @export
 subsetGiottoLocs <- function(
         gobject,

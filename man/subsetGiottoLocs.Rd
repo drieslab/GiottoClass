@@ -63,3 +63,9 @@ Giotto object using \link{subsetGiotto}.
 If \code{return_gobject = FALSE}, then a filtered combined metadata
 data.table will be returned
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+subsetGiottoLocs(g, x_max = 4000, y_max = -1000)
+
+}

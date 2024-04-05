@@ -18,6 +18,10 @@ a data.table of rectangle vertices
 Generates vertex coordinates for a rectangle with dimensions
 given through \code{dims} param.
 }
+\examples{
+rectVertices(c(x = 1, y = 2))
+
+}
 \seealso{
 \link{generate_grid}
 

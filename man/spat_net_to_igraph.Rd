@@ -27,4 +27,5 @@ g <- spat_net_to_igraph(sn)
 head(sn[], 1)
 # include distance and weight col info
 g <- spat_net_to_igraph(sn, attr = c("distance", "weight"))
+
 }

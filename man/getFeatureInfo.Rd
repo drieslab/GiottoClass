@@ -27,6 +27,12 @@ giotto points spatVector
 \description{
 Get giotto points spatVector
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+getFeatureInfo(g)
+
+}
 \seealso{
 Other feature info data accessor functions: 
 \code{\link{get_feature_info}()},

@@ -20,4 +20,10 @@ names and locations of data within giotto object slot
 \description{
 list the available data within specified giotto object slot
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+list_giotto_data(gobject = g, slot = "expression")
+
+}
 \keyword{internal}

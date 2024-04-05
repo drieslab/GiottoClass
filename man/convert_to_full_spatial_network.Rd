@@ -22,4 +22,11 @@ larger distances. This rank is appended to the \code{data.table} as a \code{rank
 column. Another \code{rnk_src_trgt} column is added with the IDs of \eqn{a} and
 \eqn{b} pasted together
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+spat_net <- getSpatialNetwork(g, output = "networkDT")
+
+spat_net_full <- convert_to_full_spatial_network(spat_net)
+
+}
 \keyword{internal}

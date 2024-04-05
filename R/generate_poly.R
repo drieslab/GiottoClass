@@ -118,6 +118,9 @@ polyStamp <- function(
 #' @returns a data.table of circle vertices
 #' @family polygon stamping
 #' @seealso [generate_grid]
+#' @examples
+#' circleVertices(radius = 10)
+#' 
 #' @export
 circleVertices <- function(
         radius,
@@ -140,6 +143,9 @@ circleVertices <- function(
 #' @returns a data.table of rectangle vertices
 #' @family polygon stamping
 #' @seealso [generate_grid]
+#' @examples
+#' rectVertices(c(x = 1, y = 2))
+#' 
 #' @export
 rectVertices <- function(dims) {
     if (length(dims) == 1) {
@@ -166,6 +172,9 @@ rectVertices <- function(dims) {
 #' @returns a data.table of regular hexagon vertices
 #' @family polygon stamping
 #' @seealso [generate_grid]
+#' @examples
+#' hexVertices(radius = 10)
+#' 
 #' @export
 hexVertices <- function(radius, major_axis = c("v", "h")) {
     major_axis <- match.arg(major_axis, choices = c("v", "h"))

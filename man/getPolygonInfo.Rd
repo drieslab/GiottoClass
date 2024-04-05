@@ -30,6 +30,12 @@ spatVector
 \description{
 Get giotto polygon spatVector
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+getPolygonInfo(g)
+
+}
 \seealso{
 Other polygon info data accessor functions: 
 \code{\link{get_polygon_info}()},

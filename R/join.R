@@ -100,6 +100,7 @@
 #' @param y_padding padding between datasets/images if method is shift
 #' @param verbose be verbose
 #' Preview where each gobject will be in space with bounding polygons
+#' @returns giotto object
 #' @details This function joins both the expression and spatial information of
 #' multiple giotto objects into a single one. Giotto supports multiple ways of
 #' joining spatial information as selected through param \code{join_method}:
@@ -142,7 +143,17 @@
 #' }
 #'
 #' @concept giotto
-#' @returns giotto object
+#' @examples
+#' m1 <- matrix(rnorm(100), nrow = 10)
+#' m2 <- matrix(rnorm(100), nrow = 10)
+#' colnames(m1) <- paste0("cell_", seq_len(10))
+#' colnames(m2) <- paste0("cell_", seq_len(10))
+#' 
+#' g1 <- createGiottoObject(expression = m1)
+#' g2 <- createGiottoObject(expression = m2)
+#' 
+#' joinGiottoObjects(gobject_list = list(g1, g2), gobject_names = c("g1", "g2"))
+#' 
 #' @export
 joinGiottoObjects <- function(
         gobject_list,
@@ -966,7 +977,7 @@ joinGiottoObjects <- function(
             }
             combcellmeta <- .join_cell_meta(dt_list = savelist)
 
-            S4_cell_meta <- get_cell_metadata(
+            S4_cell_meta <- getCellMetadata(
                 gobject = first_obj,
                 spat_unit = spat_unit,
                 feat_type = feat_type,

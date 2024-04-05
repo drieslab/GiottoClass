@@ -18,6 +18,12 @@ prints names and small subset of available spatial network info
 Prints the available spatial networks that are attached to the
 Giotto object
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+showGiottoSpatNetworks(g)
+
+}
 \seealso{
 Other functions to show data in giotto object: 
 \code{\link{showGiottoCellMetadata}()},

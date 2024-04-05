@@ -11,6 +11,11 @@
 #' @returns prints the name and small subset of available matrices
 #' @family functions to show data in giotto object
 #' @keywords show
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' showGiottoExpression(g)
+#' 
 #' @export
 showGiottoExpression <- function(gobject, nrows = 4, ncols = 4) {
     # import print styling
@@ -113,6 +118,11 @@ showGiottoExpression <- function(gobject, nrows = 4, ncols = 4) {
 #' @returns prints the name and small subset of available metadata
 #' @family functions to show data in giotto object
 #' @keywords show
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' showGiottoCellMetadata(g)
+#' 
 #' @export
 showGiottoCellMetadata <- function(
         gobject,
@@ -133,7 +143,7 @@ showGiottoCellMetadata <- function(
         objPrints <- objRows <- list()
         for (obj_i in seq(nrow(available_data))) {
             # get object
-            dataObj <- get_cell_metadata(
+            dataObj <- getCellMetadata(
                 gobject = gobject,
                 spat_unit = available_data$spat_unit[[obj_i]],
                 feat_type = available_data$feat_type[[obj_i]],
@@ -199,6 +209,11 @@ showGiottoCellMetadata <- function(
 #' @returns prints the name and small subset of available metadata
 #' @family functions to show data in giotto object
 #' @keywords show
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' showGiottoFeatMetadata(g)
+#' 
 #' @export
 showGiottoFeatMetadata <- function(
         gobject,
@@ -286,6 +301,11 @@ showGiottoFeatMetadata <- function(
 #' @returns prints the name and small subset of available data.table
 #' @family functions to show data in giotto object
 #' @keywords show
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' showGiottoSpatLocs(g)
+#' 
 #' @export
 showGiottoSpatLocs <- function(
         gobject,
@@ -404,6 +424,11 @@ showGiottoSpatLocs <- function(
 #' @returns prints the name and small subset of available data.table
 #' @family functions to show data in giotto object
 #' @keywords show
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' showGiottoSpatEnrichments(g)
+#' 
 #' @export
 showGiottoSpatEnrichments <- function(
         gobject,
@@ -451,6 +476,11 @@ showGiottoSpatEnrichments <- function(
 #' coordinates
 #' @family functions to show data in giotto object
 #' @keywords show
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' showGiottoDimRed(g)
+#' 
 #' @export
 showGiottoDimRed <- function(
         gobject,
@@ -603,6 +633,11 @@ showGiottoDimRed <- function(
 #' network info
 #' @family functions to show data in giotto object
 #' @keywords show
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' showGiottoNearestNetworks(g)
+#' 
 #' @export
 showGiottoNearestNetworks <- function(
         gobject,
@@ -722,6 +757,7 @@ showGiottoNearestNetworks <- function(
 #' @keywords show
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
 #' showGiottoSpatialInfo(g)
 #'
 #' @export
@@ -749,6 +785,7 @@ showGiottoSpatialInfo <- function(gobject) {
 #' @returns SpatVector
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
 #' showGiottoFeatInfo(g)
 #'
 #' @export
@@ -778,6 +815,11 @@ showGiottoFeatInfo <- function(gobject) {
 #' @returns prints names and small subset of available spatial network info
 #' @family functions to show data in giotto object
 #' @keywords show
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' showGiottoSpatNetworks(g)
+#' 
 #' @export
 showGiottoSpatNetworks <- function(
         gobject,
@@ -882,6 +924,12 @@ showNetworks <- function(...) {
 #' @returns prints name of available spatial grids
 #' @family functions to show data in giotto object
 #' @keywords show
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
+#' 
+#' showGiottoSpatGrids(g)
+#' 
 #' @export
 showGiottoSpatGrids <- function(
         gobject,
@@ -989,6 +1037,11 @@ showGrids <- function(...) {
 #' @returns prints names of available giotto image objects
 #' @family functions to show data in giotto object
 #' @keywords show
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' showGiottoImageNames(g)
+#' 
 #' @export
 showGiottoImageNames <- function(gobject) {
     if (is.null(gobject)) stop("A giotto object needs to be provided \n")

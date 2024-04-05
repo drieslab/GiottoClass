@@ -18,3 +18,9 @@ vector with names of available spatial locations
 lists the available spatial location names for a given spatial
 unit
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+list_spatial_locations_names(g, spat_unit = "cell")
+
+}

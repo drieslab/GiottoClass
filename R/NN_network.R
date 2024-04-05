@@ -54,7 +54,6 @@ NULL
 #' networks
 #' @returns Either `igraph` if `as.igraph = TRUE` and `data.table` otherwise.
 #' @examples
-#' \dontrun{
 #' pca <- GiottoData::loadSubObjectMini("dimObj")[]
 #' sl <- GiottoData::loadSubObjectMini("spatLocsObj")[]
 #'
@@ -125,7 +124,6 @@ NULL
 #'
 #' # using defaults for sNN with index IDs to create igraph
 #' sNN_idx <- createNetwork(pca[, seq_len(10)])
-#' }
 NULL
 
 #' @rdname createNetwork
@@ -573,6 +571,7 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
 #' @param top_shared keep at ...
 #' @param verbose be verbose
 #' @param ... additional parameters for kNN and sNN functions from dbscan
+#' @returns giotto object with updated NN network
 #' @details This function creates a k-nearest neighbour (kNN) or shared
 #' nearest neighbour (sNN) network based on the provided dimension reduction
 #' space. To run it directly on the gene expression matrix
@@ -604,7 +603,11 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
 #'   \item{top_shared: }{keep this number of the top shared neighbours,
 #'   irrespective of minimum_shared setting}
 #' }
-#' @returns giotto object with updated NN network
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' createNearestNetwork(g)
+#' 
 #' @export
 createNearestNetwork <- function(gobject,
     spat_unit = NULL,
@@ -847,12 +850,17 @@ createNearestNetwork <- function(gobject,
 #' @param options_list list of options for selected layout
 #' @param layout_name name for layout
 #' @param return_gobject boolean: return giotto object (default = TRUE)
+#' @returns giotto object with updated layout for selected NN network
 #' @details This function creates layout coordinates based on the provided
 #' kNN or sNN.
 #' Currently only the force-directed graph layout "drl",
 #' see \code{\link[igraph]{layout_with_drl}}, is implemented.
 #' This provides an alternative to tSNE or UMAP based visualizations.
-#' @returns giotto object with updated layout for selected NN network
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' addNetworkLayout(g)
+#' 
 #' @export
 addNetworkLayout <- function(
         gobject,

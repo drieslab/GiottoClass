@@ -20,3 +20,9 @@ col order matters.
 \description{
 lists the available matrices
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+list_expression(g)
+
+}

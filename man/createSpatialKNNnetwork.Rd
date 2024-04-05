@@ -66,3 +66,9 @@ only, you also need to set k to a very high value, e.g. k = 100
 \description{
 Create a spatial knn network.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+createSpatialKNNnetwork(g)
+
+}

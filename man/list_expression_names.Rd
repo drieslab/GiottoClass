@@ -20,3 +20,9 @@ vector with names of available matrices
 lists the available matrices names for a given spatial unit
 and feature type
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+list_expression_names(g, spat_unit = "cell", feat_type = "rna")
+
+}

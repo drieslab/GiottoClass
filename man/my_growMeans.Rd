@@ -17,4 +17,10 @@ numeric
 \description{
 my_growMeans
 }
+\examples{
+m <- matrix(rnorm(100), nrow = 10)
+
+my_growMeans(abs(m))
+
+}
 \keyword{internal}

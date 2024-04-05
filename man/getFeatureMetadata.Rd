@@ -33,6 +33,12 @@ a data.table or featMetaObj
 \description{
 Get feature metadata from giotto object
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+getFeatureMetadata(g)
+
+}
 \seealso{
 fDataDT
 }

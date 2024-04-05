@@ -23,6 +23,12 @@ a giotto image object
 \description{
 Get giotto image object from gobject
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+getGiottoImage(gobject = g, image_type = "largeImage")
+
+}
 \seealso{
 Other image data accessor functions: 
 \code{\link{get_giottoImage}()},
