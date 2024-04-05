@@ -1006,7 +1006,7 @@ joinGiottoObjects <- function(
         if (isTRUE(verbose)) message("   feature metadata \n")
         for (fmObj_i in seq(nrow(avail_featmeta))) {
             fm_list <- lapply(updated_object_list, function(gobj) {
-                get_feature_metadata(
+                getFeatureMetadata(
                     gobject = gobj,
                     spat_unit = avail_featmeta$spat_unit[[fmObj_i]],
                     feat_type = avail_featmeta$feat_type[[fmObj_i]],

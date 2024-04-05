@@ -254,7 +254,7 @@
 
     # for each selected featmeta, perform subset
     lapply(seq(nrow(avail_fm)), function(fm_i) {
-        fm <- get_feature_metadata(
+        fm <- getFeatureMetadata(
             gobject = gobject,
             spat_unit = avail_fm[fm_i]$spat_unit,
             feat_type = avail_fm[fm_i]$feat_type,

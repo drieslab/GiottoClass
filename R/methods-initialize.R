@@ -343,7 +343,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
                 copy_obj = FALSE,
                 set_defaults = FALSE
             )
-            fm <- get_feature_metadata(
+            fm <- getFeatureMetadata(
                 gobject = .Object,
                 spat_unit = spatial_unit,
                 feat_type = feature_type,

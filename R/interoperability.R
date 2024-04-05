@@ -766,7 +766,7 @@ giottoToAnnData <- function(
                 set_defaults = FALSE
             )
 
-            fm <- get_feature_metadata(
+            fm <- getFeatureMetadata(
                 gobject = gobject,
                 spat_unit = su,
                 feat_type = ft,
@@ -1303,7 +1303,7 @@ giottoToSeuratV4 <- function(
         )
         # add feature metadata
         meta_genes <- data.table::setDF(
-            get_feature_metadata(
+            getFeatureMetadata(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = assay_use,
@@ -1585,7 +1585,7 @@ giottoToSeuratV5 <- function(
 
         # add feature metadata
         meta_genes <- data.table::setDF(
-            get_feature_metadata(
+            getFeatureMetadata(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = assay_use,

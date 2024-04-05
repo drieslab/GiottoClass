@@ -95,7 +95,7 @@ fDataDT <- function(
             output <- match.call(expand.dots = TRUE)$output
         }
 
-        return(get_feature_metadata(
+        return(getFeatureMetadata(
             gobject = gobject,
             spat_unit = spat_unit,
             feat_type = feat_type,
@@ -367,7 +367,7 @@ removeFeatAnnotation <- function(
     }
 
     # get feat metadata
-    feat_metadata <- get_feature_metadata(gobject,
+    feat_metadata <- getFeatureMetadata(gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
         output = "featMetaObj",
@@ -1414,7 +1414,7 @@ createMetafeats <- function(
     avail_fm <- list_feat_metadata(gobject)
     if (!is.null(avail_fm)) {
         for (fm_i in seq(nrow(avail_fm))) {
-            fm <- get_feature_metadata(
+            fm <- getFeatureMetadata(
                 gobject = gobject,
                 spat_unit = avail_fm[fm_i, spat_unit],
                 feat_type = avail_fm[fm_i, feat_type],

@@ -234,7 +234,7 @@ showGiottoFeatMetadata <- function(
         objPrints <- objRows <- list()
         for (obj_i in seq(nrow(available_data))) {
             # get object
-            dataObj <- get_feature_metadata(
+            dataObj <- getFeatureMetadata(
                 gobject = gobject,
                 spat_unit = available_data$spat_unit[[obj_i]],
                 feat_type = available_data$feat_type[[obj_i]],

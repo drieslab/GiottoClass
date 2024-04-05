@@ -164,7 +164,7 @@
             su_i <- ft_fm$spat_unit[[obj_i]]
 
             # get metadata
-            meta <- get_feature_metadata(
+            meta <- getFeatureMetadata(
                 gobject = gobject,
                 spat_unit = su_i,
                 feat_type = ft_i,
