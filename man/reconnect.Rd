@@ -19,6 +19,9 @@ has changed.}
 
 \item{...}{additional params to pass}
 }
+\value{
+GiottoClass object
+}
 \description{
 Reconnect a GiottoClass object
 }
