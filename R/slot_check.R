@@ -34,7 +34,7 @@
         su_cm <- avail_cm[spat_unit == su_i, ]
         lapply(seq(nrow(su_cm)), function(obj_i) {
             # get metadata
-            meta <- get_cell_metadata(
+            meta <- getCellMetadata(
                 gobject = gobject,
                 spat_unit = su_i,
                 feat_type = su_cm$feat_type[[obj_i]],

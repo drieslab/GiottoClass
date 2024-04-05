@@ -625,7 +625,7 @@ calculateSpatCellMetadataProportions <- function(
     )
 
     # get cell metadata
-    cell_meta <- get_cell_metadata(
+    cell_meta <- getCellMetadata(
         gobject = gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,

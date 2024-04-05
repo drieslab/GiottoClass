@@ -335,7 +335,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
             # update provenance (always happens for all metadata objects)
             if (is.null(provenance)) next() # skip if no provenance info
 
-            cm <- get_cell_metadata(
+            cm <- getCellMetadata(
                 gobject = .Object,
                 spat_unit = spatial_unit,
                 feat_type = feature_type,

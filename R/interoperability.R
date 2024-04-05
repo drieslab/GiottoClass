@@ -21,7 +21,6 @@
 #' See SAW pipeline for additional information about the gef file.
 #' @returns giotto object
 #' @export
-
 gefToGiotto <- function(gef_file, bin_size = "bin100", verbose = FALSE,
     h5_file = NULL) {
     # data.table vars
@@ -759,7 +758,7 @@ giottoToAnnData <- function(
     # Feat Metadata
     for (su in spat_unit) {
         for (ft in names(gobject@expression[[su]])) {
-            cmeta <- get_cell_metadata(
+            cmeta <- getCellMetadata(
                 gobject = gobject,
                 spat_unit = su,
                 feat_type = ft,
@@ -1286,7 +1285,7 @@ giottoToSeuratV4 <- function(
         }
         # add cell metadata
         meta_cells <- data.table::setDF(
-            get_cell_metadata(
+            getCellMetadata(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = assay_use,
@@ -1564,7 +1563,7 @@ giottoToSeuratV5 <- function(
 
         # add cell metadata
         meta_cells <- data.table::setDF(
-            get_cell_metadata(
+            getCellMetadata(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = assay_use,

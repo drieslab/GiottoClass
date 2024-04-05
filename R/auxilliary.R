@@ -46,7 +46,7 @@ pDataDT <- function(
             output <- match.call(expand.dots = TRUE)$output
         }
 
-        return(get_cell_metadata(
+        return(getCellMetadata(
             gobject = gobject,
             spat_unit = spat_unit,
             feat_type = feat_type,
@@ -180,7 +180,7 @@ annotateGiotto <- function(
             the corresponding cluster column  \n")
     }
 
-    cell_metadata <- get_cell_metadata(
+    cell_metadata <- getCellMetadata(
         gobject = gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
@@ -302,7 +302,7 @@ removeCellAnnotation <- function(
 
 
     # get cell metadata
-    cell_metadata <- get_cell_metadata(gobject,
+    cell_metadata <- getCellMetadata(gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
         output = "cellMetaObj",
@@ -812,7 +812,7 @@ create_average_DT <- function(
     )
 
     # metadata
-    cell_metadata <- get_cell_metadata(gobject,
+    cell_metadata <- getCellMetadata(gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
         output = "data.table",
@@ -885,7 +885,7 @@ create_average_detection_DT <- function(
     )
 
     # metadata
-    cell_metadata <- get_cell_metadata(gobject,
+    cell_metadata <- getCellMetadata(gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
         output = "data.table",
@@ -1389,7 +1389,7 @@ createMetafeats <- function(
     avail_cm <- list_cell_metadata(gobject)
     if (!is.null(avail_cm)) {
         for (cm_i in seq(nrow(avail_cm))) {
-            cm <- get_cell_metadata(
+            cm <- getCellMetadata(
                 gobject = gobject,
                 spat_unit = avail_cm[cm_i, spat_unit],
                 feat_type = avail_cm[cm_i, feat_type],
