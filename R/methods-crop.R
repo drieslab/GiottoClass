@@ -69,7 +69,7 @@ setMethod(
 
             # 2. convert to DT
             sv <- x@spatVector
-            spatDT <- as.data.table(sv, geom = "XY")
+            spatDT <- data.table::as.data.table(sv, geom = "XY")
 
             # 3. spatial subset then vect() to SpatVector again
             sub_idx <- spatDT[
