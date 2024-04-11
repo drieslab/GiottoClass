@@ -205,6 +205,11 @@ setMethod(
 #'
 #' @export
 setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) {
+    if (nrow(x) == 0L) {
+        message("No locations to plot")
+        return(invisible(NULL))
+    }
+
     if ("sdimz" %in% colnames(x)) {
         .plot_spatlocs_3d(x, ...)
     } else {
