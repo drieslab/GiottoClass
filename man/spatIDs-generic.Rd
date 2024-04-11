@@ -84,3 +84,8 @@ by\code{spatIDs()} and \code{featIDs()} should be regarded as the minimal set of
 expected IDs within all \code{giotto} slots, and not always the exact set or
 ordering.
 }
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPoints")
+
+featIDs(g)
+}

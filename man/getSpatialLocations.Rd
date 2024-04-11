@@ -39,6 +39,11 @@ data.table with coordinates or spatLocsObj depending on \code{output}
 \description{
 Function to get a spatial location data.table
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+getSpatialLocations(g)
+}
 \seealso{
 Other spatial location data accessor functions: 
 \code{\link{get_spatial_locations}()},

@@ -75,6 +75,7 @@ Suggests:
     SingleCellExperiment,
     SpatialExperiment,
     stars,
+    STexampleData,
     SummarizedExperiment,
     testthat (>= 3.0.0),
     qs,

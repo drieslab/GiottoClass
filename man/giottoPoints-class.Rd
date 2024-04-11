@@ -27,4 +27,7 @@ Contains vector-type feature data
 spatVector slot}
 }}
 
+\examples{
+giottoPoints()
+}
 \concept{giotto points class}

@@ -39,6 +39,11 @@ spatialNetworkObj of data.table
 \description{
 Function to get a spatial network
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+getSpatialNetwork(g)
+}
 \seealso{
 Other spatial network data accessor functions: 
 \code{\link{get_spatialNetwork}()},

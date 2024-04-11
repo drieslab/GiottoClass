@@ -37,6 +37,5 @@ factor (e.g. cluster)
 g <- GiottoData::loadGiottoMini("visium")
 
 create_average_detection_DT(g, meta_data_name = "leiden_clus")
-
 }
 \keyword{internal}

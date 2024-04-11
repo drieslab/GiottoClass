@@ -81,10 +81,5 @@ Python  v3.6
 }
 }
 \examples{
-\dontrun{
-
-# this command will install r-miniconda
-# and a giotto environment with all necessary python modules
 installGiottoEnvironment()
-}
 }

@@ -78,6 +78,11 @@ adjusted depending on system resources. Additionally, \code{flex_resample}
 determines if this switching behavior happens.
 When set to \code{FALSE}, only method A is used.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+plot_auto_largeImage_resample(g)
+}
 \seealso{
 \code{\link[terra]{spatSample}}
 }

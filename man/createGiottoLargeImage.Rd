@@ -56,3 +56,9 @@ a giottoLargeImage object
 Creates a large giotto image that can be added to a Giotto
 subcellular object. Generates deep copy of SpatRaster
 }
+\examples{
+image_test <- system.file("extdata/toy_intensity.tif",
+package = "GiottoClass")
+
+createGiottoLargeImage(raster_object = image_test)
+}

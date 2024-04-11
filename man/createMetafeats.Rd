@@ -67,7 +67,6 @@ g <- createMetafeats(
     feat_clusters = clust_to_use,
     name = "new_metagene"
 )
-
 }
 \seealso{
 \code{\link[GiottoVisuals:spatCellPlot]{GiottoVisuals::spatCellPlot()}}

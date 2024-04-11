@@ -39,5 +39,4 @@ Create an S4 cellMetaObj
 df <- data.frame(cell_ID = c("cell_1", "cell_2", "cell_3"))
 
 createCellMetaObj(metadata = df)
-
 }

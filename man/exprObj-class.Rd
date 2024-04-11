@@ -27,3 +27,6 @@ Framework to store aggregated expression information
 \item{\code{misc}}{misc}
 }}
 
+\examples{
+exprObj()
+}

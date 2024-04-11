@@ -288,7 +288,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
                     spat_unit = spatial_unit,
                     feat_type = feature_type,
                     verbose = FALSE,
-                    set_defaults = FALSE
+                    initialize = FALSE
                 )
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             } else if (nrow(avail_cm[spat_unit == spatial_unit &
@@ -300,7 +300,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
                     spat_unit = spatial_unit,
                     feat_type = feature_type,
                     verbose = FALSE,
-                    set_defaults = FALSE
+                    initialize = FALSE
                 )
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             }
@@ -314,7 +314,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
                     spat_unit = spatial_unit,
                     feat_type = feature_type,
                     verbose = FALSE,
-                    set_defaults = FALSE
+                    initialize = FALSE
                 )
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             } else if (nrow(avail_fm[spat_unit == spatial_unit &
@@ -326,7 +326,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
                     spat_unit = spatial_unit,
                     feat_type = feature_type,
                     verbose = FALSE,
-                    set_defaults = FALSE
+                    initialize = FALSE
                 )
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             }
@@ -335,7 +335,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
             # update provenance (always happens for all metadata objects)
             if (is.null(provenance)) next() # skip if no provenance info
 
-            cm <- get_cell_metadata(
+            cm <- getCellMetadata(
                 gobject = .Object,
                 spat_unit = spatial_unit,
                 feat_type = feature_type,
@@ -343,7 +343,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
                 copy_obj = FALSE,
                 set_defaults = FALSE
             )
-            fm <- get_feature_metadata(
+            fm <- getFeatureMetadata(
                 gobject = .Object,
                 spat_unit = spatial_unit,
                 feat_type = feature_type,
@@ -356,12 +356,15 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             .Object <- set_cell_metadata(
                 gobject = .Object,
-                metadata = cm, verbose = FALSE
+                metadata = cm, 
+                verbose = FALSE,
+                initialize = FALSE
             )
             .Object <- set_feature_metadata(
                 gobject = .Object,
                 metadata = fm,
-                verbose = FALSE
+                verbose = FALSE,
+                initialize = FALSE
             )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
@@ -763,7 +766,8 @@ init_cell_metadata <- function(
                     provenance
                 },
                 metadata = "initialize",
-                verbose = FALSE
+                verbose = FALSE,
+                initialize = FALSE
             )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
@@ -784,7 +788,8 @@ init_cell_metadata <- function(
                     feat_type = feature_type,
                     provenance = if (is.null(provenance)) poly else provenance,
                     metadata = "initialize",
-                    verbose = FALSE
+                    verbose = FALSE,
+                    initialize = FALSE
                 )
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             }
@@ -831,7 +836,8 @@ init_feat_metadata <- function(
                     provenance
                 },
                 metadata = "initialize",
-                verbose = FALSE
+                verbose = FALSE,
+                initialize = FALSE
             )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
@@ -852,7 +858,8 @@ init_feat_metadata <- function(
                     feat_type = feature_type,
                     provenance = if (is.null(provenance)) poly else provenance,
                     metadata = "initialize",
-                    verbose = FALSE
+                    verbose = FALSE,
+                    initialize = FALSE
                 )
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             }

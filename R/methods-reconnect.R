@@ -5,6 +5,7 @@
 #' Only needed if the filepath is not normally carried by the object or the path
 #' has changed.
 #' @param ... additional params to pass
+#' @returns GiottoClass object
 NULL
 
 

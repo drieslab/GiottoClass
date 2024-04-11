@@ -47,7 +47,7 @@ by \code{polygon_group_size} param
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
-calculateOverlapSerial(g, spatial_info = "z1")
 
+calculateOverlapSerial(g, spatial_info = "z1")
 }
 \concept{overlap}

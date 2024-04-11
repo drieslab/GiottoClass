@@ -66,3 +66,8 @@ attached to a \code{giotto} object if both \code{gobject}
 and \code{largeImage_name} params are given. Alternatively can directly
 accept and return as \code{largeImage}
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+updateGiottoLargeImage(g, largeImage_name = "image")
+}

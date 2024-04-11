@@ -38,6 +38,12 @@ needed in order for them to plot in the correct location relative to the
 other modalities of spatial data. \cr For the more general-purpose method
 of attaching image objects, see \code{\link{addGiottoImage}}
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+gimage <- getGiottoImage(gobject = g, image_type = "largeImage")
+
+setGiottoImage(gobject = g, image = gimage, image_type = "largeImage")
+}
 \seealso{
 \code{\link{addGiottoImage}}
 

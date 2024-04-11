@@ -39,7 +39,7 @@ layers (e.g. z-stacks) together
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
-overlapToMatrixMultiPoly(g, poly_info = "z0")
 
+overlapToMatrixMultiPoly(g, poly_info = "z0")
 }
 \concept{overlap}

@@ -64,3 +64,8 @@ image object if \code{return_gobject = FALSE}
 convert a giottoLargeImage by downsampling into a normal
 magick based giottoImage
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+convertGiottoLargeImageToMG(g, largeImage_name = "image")
+}

@@ -16,6 +16,12 @@
 #' @details The expression matrix needs to have both unique column names and
 #' row names
 #' @returns sparse matrix
+#' @examples
+#' x <- matrix(seq_len(100), nrow = 10)
+#' temporal_dir <- tempdir()
+#' write.csv(x, paste0(temporal_dir,"/mymatrix.csv"))
+#' 
+#' readExprMatrix(paste0(temporal_dir,"/mymatrix.csv"))
 #' @export
 readExprMatrix <- function(
         path,
@@ -67,6 +73,7 @@ readExprMatrix <- function(
 #' @param expression_matrix_class class of expression matrix to
 #' use (e.g. 'dgCMatrix', 'DelayedArray')
 #' @inheritParams read_data_params
+#' @returns exprObj
 #' @details
 #'
 #' mylistA = list('a' = matrix(seq(5)), 'b' = matrix(seq(5)))
@@ -84,8 +91,13 @@ readExprMatrix <- function(
 #' depth(mylistC)
 #'
 #' mymatD = matrix(data = seq(4))
-#'
-#' @returns exprObj
+#' 
+#' @examples
+#' x <- matrix(seq_len(100), nrow = 10)
+#' temporal_dir <- tempdir()
+#' write.csv(x, paste0(temporal_dir,"/mymatrix.csv"))
+#' 
+#' readExprData(paste0(temporal_dir,"/mymatrix.csv"))
 #' @export
 readExprData <- function(
         data_list,
@@ -341,6 +353,13 @@ readExprData <- function(
 #' @param data_list nested list of cell metadata information
 #' @inheritParams read_data_params
 #' @returns cell metadata
+#' @examples
+#' df <- data.frame(cell_ID = c("cell_1", "cell_2", "cell_3"),
+#' annotation = c("cell_type_1", "cell_type_1", "cell_type_2"))
+#' temporal_dir <- tempdir()
+#' write.csv(df, paste0(temporal_dir,"/metadata.csv"), row.names = FALSE)
+#' 
+#' readCellMetadata(paste0(temporal_dir,"/metadata.csv"))
 #' @export
 readCellMetadata <- function(
         data_list,
@@ -522,6 +541,13 @@ readCellMetadata <- function(
 #' @param data_list nested list of feature metadata information
 #' @inheritParams read_data_params
 #' @returns featMetadata
+#' @examples
+#' df <- data.frame(feat_ID = c("feat_1", "feat_2", "feat_3"),
+#' geneID = c("gene_1", "gene_1", "gene_2"))
+#' temporal_dir <- tempdir()
+#' write.csv(df, paste0(temporal_dir,"/metadata.csv"), row.names = FALSE)
+#' 
+#' readFeatMetadata(paste0(temporal_dir,"/metadata.csv"))
 #' @export
 readFeatMetadata <- function(
         data_list,
@@ -705,6 +731,13 @@ readFeatMetadata <- function(
 #' @param data_list (nested) list of spatial locations input data
 #' @param cores how many cores to use
 #' @returns list of spatLocsObj
+#' @examples
+#' df <- data.frame(feat_ID = c("feat_1", "feat_2", "feat_3"),
+#' sdimx = c(1,2,3), sdimy = c(1,2,1))
+#' temporal_dir <- tempdir()
+#' write.csv(df, paste0(temporal_dir,"/spatlocs.csv"), row.names = FALSE)
+#' 
+#' readSpatLocsData(paste0(temporal_dir,"/spatlocs.csv"))
 #' @export
 readSpatLocsData <- function(
         data_list,
@@ -908,6 +941,10 @@ readSpatLocsData <- function(
 #' @description read spatial networks data from list
 #' @param data_list (nested) list of spatial network input data
 #' @returns spatialNetworkObj
+#' @examples
+#' x <- GiottoData::loadSubObjectMini("spatialNetworkObj", idx = 2)
+#' 
+#' readSpatNetData(x)
 #' @export
 readSpatNetData <- function(
         data_list,
@@ -1087,6 +1124,10 @@ readSpatNetData <- function(
 #' @inheritParams read_data_params
 #' @param data_list (nested) list of spatial enrichment input data
 #' @returns spatEnrObj
+#' @examples
+#' x <- GiottoData::loadSubObjectMini("spatEnrObj")
+#' 
+#' readSpatEnrichData(x)
 #' @export
 readSpatEnrichData <- function(
         data_list,
@@ -1384,6 +1425,10 @@ readSpatEnrichData <- function(
 #' @param reduction whether dim reduction was performed on 'cels' or 'feats'
 #' @param data_list (nested) list of dimension reduction input data
 #' @returns dimObj
+#' @examples
+#' x <- GiottoData::loadSubObjectMini("dimObj")
+#' 
+#' readDimReducData(x)
 #' @export
 readDimReducData <- function(
         data_list,
@@ -1692,6 +1737,10 @@ readDimReducData <- function(
 #' @inheritParams read_data_params
 #' @description read nearest network results from list
 #' @returns nnNetObj
+#' @examples
+#' x <- GiottoData::loadSubObjectMini("nnNetObj")
+#' 
+#' readNearestNetData(x)
 #' @export
 readNearestNetData <- function(
         data_list,
@@ -1999,6 +2048,10 @@ readNearestNetData <- function(
 #' creation
 #' @param verbose be verbose
 #' @returns giottoPolygon
+#' @examples
+#' x <- GiottoData::loadSubObjectMini("giottoPolygon")
+#' 
+#' readPolygonData(x)
 #' @export
 readPolygonData <- function(
         data_list,
@@ -2204,6 +2257,11 @@ readPolygonData <- function(
 #' and \code{\link{createGiottoPolygonsFromDfr}}
 #' @concept polygon
 #' @returns giotto object
+#' @examples
+#' x <- GiottoData::loadSubObjectMini("giottoPolygon")
+#' g <- createGiottoObject()
+#' 
+#' g <- addGiottoPolygons(gobject = g, gpolygons = list(x))
 #' @export
 addGiottoPolygons <- function(
         gobject,
@@ -2258,6 +2316,10 @@ addGiottoPolygons <- function(
 #' a list of generated giottoPoints objects
 #' @inheritParams read_data_params
 #' @returns list of giottoPoints
+#' @examples
+#' x <- GiottoData::loadSubObjectMini("giottoPoints")
+#' 
+#' readFeatData(list(x))
 #' @export
 readFeatData <- function(
         data_list,
@@ -2392,6 +2454,13 @@ NULL
 #' @param gpoints list of giotto point objects,
 #' see \code{\link{createGiottoPoints}}
 #' @concept polygon
+#' @examples
+#' x_points <- GiottoData::loadSubObjectMini("giottoPoints")
+#' x_expression <- matrix(seq_len(337*2), nrow = 337)
+#' rownames(x_expression) <- unique(x_points$feat_ID)
+#' g <- createGiottoObject(expression = x_expression)
+#' 
+#' g <- addGiottoPoints(gobject = g, gpoints = list(x_points))
 #' @export
 addGiottoPoints <- function(
         gobject,

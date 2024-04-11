@@ -27,4 +27,12 @@ giotto object
 \description{
 Adds Giotto points to an existing Giotto object
 }
+\examples{
+x_points <- GiottoData::loadSubObjectMini("giottoPoints")
+x_expression <- matrix(seq_len(337*2), nrow = 337)
+rownames(x_expression) <- unique(x_points$feat_ID)
+g <- createGiottoObject(expression = x_expression)
+
+g <- addGiottoPoints(gobject = g, gpoints = list(x_points))
+}
 \concept{polygon}

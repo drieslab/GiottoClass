@@ -33,3 +33,9 @@ annotated spatial grid data.table
 \description{
 annotate spatial grid with cell ID and cell metadata (optional)
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
+
+annotateSpatialGrid(g)
+}

@@ -35,6 +35,6 @@ and enrichment results from \code{\link[Giotto]{runSpatialEnrich}}
 }
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
-combineMetadata(g)
 
+combineMetadata(g)
 }

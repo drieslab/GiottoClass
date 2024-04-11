@@ -26,3 +26,6 @@ Framework to store feature metadata
 information (if applicable)}
 }}
 
+\examples{
+featMetaObj()
+}

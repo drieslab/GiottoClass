@@ -24,3 +24,7 @@ active spatial unit
 Retrieve or set the active spatial unit. This value will be the
 default spatial unit that the giotto object uses.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+activeSpatUnit(g)
+}

@@ -49,3 +49,8 @@ that also allows usage of additional params through ...
 \item \code{crop(giottoPolygon)}: Crop a giottoPoints
 
 }}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g_image <- getGiottoImage(g, image_type = "largeImage")
+crop(g_image, g_image)
+}

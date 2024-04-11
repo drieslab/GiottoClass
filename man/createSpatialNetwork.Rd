@@ -105,3 +105,8 @@ setting a minimum k for each cell.
 Alternatively you can provide a character vector that specifies the spatial
 dimensions to use, e.g. c("sdimx', "sdimy") or a numerical vector, e.g. 2:3
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+createSpatialNetwork(g)
+}

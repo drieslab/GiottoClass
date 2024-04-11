@@ -31,8 +31,8 @@ aggregate expression matrices from different z-stacks
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
-aggregateStacksLocations(g, spat_units = c("z0", "z1"))
 
+aggregateStacksLocations(g, spat_units = c("z0", "z1"))
 }
 \seealso{
 Other aggregate stacks: 

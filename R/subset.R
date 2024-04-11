@@ -214,7 +214,10 @@
         cm[] <- cm[][filter_bool_cells]
 
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        gobject <<- set_cell_metadata(gobject, metadata = cm, verbose = FALSE)
+        gobject <<- setCellMetadata(gobject, 
+                                    x = cm, 
+                                    verbose = FALSE,
+                                    initialize = FALSE)
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
         return(FALSE) # ignore this
@@ -251,7 +254,7 @@
 
     # for each selected featmeta, perform subset
     lapply(seq(nrow(avail_fm)), function(fm_i) {
-        fm <- get_feature_metadata(
+        fm <- getFeatureMetadata(
             gobject = gobject,
             spat_unit = avail_fm[fm_i]$spat_unit,
             feat_type = avail_fm[fm_i]$feat_type,
@@ -263,9 +266,10 @@
         fm[] <- fm[][filter_bool_feats]
 
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        gobject <<- set_feature_metadata(gobject,
-            metadata = fm,
-            verbose = FALSE
+        gobject <<- setFeatureMetadata(gobject,
+            x = fm,
+            verbose = FALSE,
+            initialize = FALSE
         )
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
@@ -1413,6 +1417,10 @@
 #' @param toplevel_params parameters to extract
 #' @returns giotto object
 #' @details Subsets a Giotto object for a specific spatial unit and feature type
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' subsetGiotto(g, cell_ids = c("AACTCGATGGCGCAGT-1", "GGCTGGCTAGCTTAAA-1"))
 #' @export
 subsetGiotto <- function(
         gobject,
@@ -1509,6 +1517,10 @@ subsetGiotto <- function(
 #' @returns giotto object
 #' @details If `return_gobject = FALSE`, then a filtered combined metadata
 #' data.table will be returned
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' subsetGiottoLocs(g, x_max = 4000, y_max = -1000)
 #' @export
 subsetGiottoLocs <- function(
         gobject,

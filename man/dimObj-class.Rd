@@ -31,3 +31,6 @@ Framework to store dimension reduction information
 \item{\code{misc}}{method-specific additional outputs}
 }}
 
+\examples{
+dimObj()
+}

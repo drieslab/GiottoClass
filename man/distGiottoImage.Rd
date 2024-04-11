@@ -52,3 +52,8 @@ examined. \strong{Bandwidth} refers to the curve smoothing value applied.
 Histogram of intensity values for image objects.
 }
 
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+distGiottoImage(g, image_name = "image")
+}

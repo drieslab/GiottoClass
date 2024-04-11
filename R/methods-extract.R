@@ -23,7 +23,10 @@ NULL
 #' @section \code{`$<-`} methods:
 #' @section \code{`[`} methods:
 #' @section \code{`[<-`} methods:
-#'
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("spatEnrObj")
+#' 
+#' g$cell_ID
 NULL
 
 

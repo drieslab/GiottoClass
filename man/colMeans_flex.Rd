@@ -15,4 +15,9 @@ numeric
 \description{
 colMeans_flex
 }
+\examples{
+m <- matrix(rnorm(100), nrow = 10)
+
+colMeans_flex(m)
+}
 \keyword{internal}

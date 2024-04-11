@@ -7,8 +7,12 @@
 #' Function to guess a default spatial unit. Also see [activeSpatUnit()] in
 #' methods-instructions.R for a way to manually assign this default
 #' @inheritParams data_access_params
-#' @keywords internal
 #' @returns character
+#' @keywords internal
+#' @examples
+#' g <- createGiottoObject()
+#' 
+#' set_default_spat_unit(gobject = g, spat_unit = "cell")
 #' @export
 set_default_spat_unit <- function(
         gobject,
@@ -46,8 +50,12 @@ set_default_spat_unit <- function(
 #' Function to guess a default feature type. Also see [activeFeatType()] in
 #' methods-instructions.R for a way to manually assign this default
 #' @inheritParams data_access_params
-#' @keywords internal
 #' @returns character
+#' @keywords internal
+#' @examples
+#' g <- createGiottoObject()
+#' 
+#' set_default_feat_type(gobject = g, spat_unit = "cell", feat_type = "rna")
 #' @export
 set_default_feat_type <- function(
         gobject,

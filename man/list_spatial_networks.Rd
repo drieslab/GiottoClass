@@ -21,3 +21,8 @@ col order matters or list of unique nestings
 return the available spatial networks that are attached to
 the Giotto object
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+list_spatial_networks(g)
+}

@@ -41,5 +41,4 @@ x <- data.frame(
 )
 
 createSpatLocsObj(coordinates = x, name = "raw")
-
 }

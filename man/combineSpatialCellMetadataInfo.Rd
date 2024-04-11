@@ -32,6 +32,6 @@ The returned data.table has the following columns: \cr
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
-combineSpatialCellMetadataInfo(g, spat_unit = "aggregate", feat_type = "rna")
 
+combineSpatialCellMetadataInfo(g, spat_unit = "aggregate", feat_type = "rna")
 }

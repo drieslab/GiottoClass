@@ -29,4 +29,7 @@ holds polygon data
 spatVector slot}
 }}
 
+\examples{
+giottoPolygon()
+}
 \concept{giotto polygon class}

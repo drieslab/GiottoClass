@@ -18,3 +18,8 @@ vector with names of available image names
 return the available image names for a given image type that
 are attached to the Giotto object
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+list_images_names(g, img_type = "largeImage")
+}

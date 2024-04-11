@@ -25,6 +25,6 @@ Supported updates:
 }
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
-g <- updateGiottoObject(g)
 
+g <- updateGiottoObject(g)
 }

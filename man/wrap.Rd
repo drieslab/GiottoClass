@@ -49,3 +49,8 @@ be passed over a connection (e.g. nodes on a computer cluster)
 \item \code{vect(packedGiotto)}: Unwrap giotto
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPoints")
+
+wrap(g)
+}

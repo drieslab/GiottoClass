@@ -16,6 +16,10 @@ NULL
 #' object
 #' @param value value to set
 #' @returns giotto instructions
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' showGiottoInstructions(g)
 NULL
 
 #' @title Active spatial unit
@@ -26,6 +30,9 @@ NULL
 #' @inheritParams data_access_params
 #' @param value spat_unit to set as default
 #' @returns active spatial unit
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' activeSpatUnit(g)
 NULL
 
 #' @title Active feature type
@@ -36,6 +43,9 @@ NULL
 #' @inheritParams data_access_params
 #' @param value feat_type to set as default
 #' @returns active feature type
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' activeFeatType(g)
 NULL
 
 # ---------------------------------------------------------------- #

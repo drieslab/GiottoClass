@@ -6,7 +6,7 @@
 \usage{
 createSpatialFeaturesKNNnetwork(
   gobject,
-  method = c("dbscan"),
+  method = "dbscan",
   feat_type = NULL,
   name = "knn_feats_network",
   k = 4,
@@ -52,5 +52,10 @@ will be returned as a datatable.
 }
 \description{
 Calculates the centroid locations for the giotto polygons
+}
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+createSpatialFeaturesKNNnetwork(g)
 }
 \concept{feature}

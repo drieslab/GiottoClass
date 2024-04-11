@@ -6,6 +6,10 @@
 #' @param x object to be transposed
 #' @aliases t
 #' @returns transposed object
+#' @examples
+#' m <- matrix(rnorm(10), nrow = 5)
+#' 
+#' t(m)
 NULL
 
 

@@ -28,3 +28,6 @@ Framework to store spatial enrichment results
 \item{\code{misc}}{misc}
 }}
 
+\examples{
+g <- GiottoData::loadSubObjectMini("spatEnrObj")
+}

@@ -65,5 +65,4 @@ g <- addFeatMetadata(
 )
 
 fDataDT(g)
-
 }

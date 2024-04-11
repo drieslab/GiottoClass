@@ -87,4 +87,7 @@ protein, metabolites, ... that are provided in the expression slot.}
 \item{\code{h5_file}}{path to h5 file}
 }}
 
+\examples{
+giotto()
+}
 \concept{giotto object}

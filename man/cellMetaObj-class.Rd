@@ -26,3 +26,6 @@ Framework to store cell metadata
 information (if applicable)}
 }}
 
+\examples{
+cellMetaObj()
+}

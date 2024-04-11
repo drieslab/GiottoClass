@@ -18,4 +18,11 @@ TRUE or character
 Function to evaluate if a spatial network is compatible
 with a provided expression matrix
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+spat_net <- getSpatialNetwork(g, output = "networkDT")
+expr_m <- getExpression(g)
+
+compatible_spatial_network(spat_net, expr_m)
+}
 \keyword{internal}

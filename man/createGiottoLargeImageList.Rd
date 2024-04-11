@@ -59,3 +59,9 @@ Giotto object. Generates deep copy of SpatRaster
 \details{
 See \code{\link{createGiottoLargeImage}}
 }
+\examples{
+image_test <- system.file("extdata/toy_intensity.tif",
+package = "GiottoClass")
+
+createGiottoLargeImageList(raster_objects = image_test)
+}

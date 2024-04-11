@@ -28,3 +28,6 @@ checkGiottoEnvironment
 Checks if a miniconda giotto environment can be found.
 Can be installed with \code{\link{installGiottoEnvironment}}.
 }
+\examples{
+checkGiottoEnvironment()
+}

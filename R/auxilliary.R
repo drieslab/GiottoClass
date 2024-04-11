@@ -14,7 +14,6 @@
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' pDataDT(g)
-#'
 #' @export
 pDataDT <- function(
         gobject,
@@ -46,7 +45,7 @@ pDataDT <- function(
             output <- match.call(expand.dots = TRUE)$output
         }
 
-        return(get_cell_metadata(
+        return(getCellMetadata(
             gobject = gobject,
             spat_unit = spat_unit,
             feat_type = feat_type,
@@ -68,7 +67,6 @@ pDataDT <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' fDataDT(g)
-#'
 #' @export
 fDataDT <- function(
         gobject,
@@ -95,7 +93,7 @@ fDataDT <- function(
             output <- match.call(expand.dots = TRUE)$output
         }
 
-        return(get_feature_metadata(
+        return(getFeatureMetadata(
             gobject = gobject,
             spat_unit = spat_unit,
             feat_type = feat_type,
@@ -152,7 +150,6 @@ fDataDT <- function(
 #'     annotation_vector = annotation,
 #'     cluster_column = "leiden_clus"
 #' )
-#'
 #' @export
 annotateGiotto <- function(
         gobject,
@@ -180,7 +177,7 @@ annotateGiotto <- function(
             the corresponding cluster column  \n")
     }
 
-    cell_metadata <- get_cell_metadata(
+    cell_metadata <- getCellMetadata(
         gobject = gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
@@ -232,10 +229,11 @@ annotateGiotto <- function(
 
     data.table::setnames(cell_metadata[], old = "temp_cluster_name", new = name)
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    gobject <- set_cell_metadata(
+    gobject <- setCellMetadata(
         gobject = gobject,
-        metadata = cell_metadata,
-        verbose = FALSE
+        x = cell_metadata,
+        verbose = FALSE,
+        initialize = FALSE
     )
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
@@ -275,7 +273,6 @@ annotateGiotto <- function(
 #' )
 #'
 #' g <- removeCellAnnotation(g, columns = "cell_types")
-#'
 #' @export
 removeCellAnnotation <- function(
         gobject,
@@ -302,7 +299,7 @@ removeCellAnnotation <- function(
 
 
     # get cell metadata
-    cell_metadata <- get_cell_metadata(gobject,
+    cell_metadata <- getCellMetadata(gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
         output = "cellMetaObj",
@@ -313,9 +310,10 @@ removeCellAnnotation <- function(
 
     # return giotto object or cell metadata
     if (return_gobject == TRUE) {
-        gobject <- set_cell_metadata(gobject,
-            metadata = cell_metadata,
-            verbose = FALSE
+        gobject <- setCellMetadata(gobject,
+            x = cell_metadata,
+            verbose = FALSE,
+            initialize = FALSE
         )
         return(gobject)
     } else {
@@ -339,7 +337,6 @@ removeCellAnnotation <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' g <- removeFeatAnnotation(g, columns = "hvf")
-#'
 #' @export
 removeFeatAnnotation <- function(
         gobject,
@@ -365,7 +362,7 @@ removeFeatAnnotation <- function(
     }
 
     # get feat metadata
-    feat_metadata <- get_feature_metadata(gobject,
+    feat_metadata <- getFeatureMetadata(gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
         output = "featMetaObj",
@@ -376,9 +373,10 @@ removeFeatAnnotation <- function(
 
     # return giotto object or cell metadata
     if (return_gobject == TRUE) {
-        gobject <- set_feature_metadata(gobject,
-            metadata = feat_metadata,
-            verbose = FALSE
+        gobject <- setFeatureMetadata(gobject,
+            x = feat_metadata,
+            verbose = FALSE,
+            initialize = FALSE
         )
         return(gobject)
     } else {
@@ -568,9 +566,10 @@ addCellMetadata <- function(
 
 
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    gobject <- set_cell_metadata(gobject,
-        metadata = cell_metadata,
-        verbose = FALSE
+    gobject <- setCellMetadata(gobject,
+        x = cell_metadata,
+        verbose = FALSE,
+        initialize = FALSE
     )
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
@@ -617,7 +616,6 @@ addCellMetadata <- function(
 #' )
 #'
 #' fDataDT(g)
-#'
 #' @export
 addFeatMetadata <- function(
         gobject,
@@ -749,9 +747,10 @@ addFeatMetadata <- function(
     feat_metadata[] <- feat_metadata[][match(ordered_feat_IDs, feat_ID)]
 
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    gobject <- set_feature_metadata(gobject,
-        metadata = feat_metadata,
-        verbose = FALSE
+    gobject <- setFeatureMetadata(gobject,
+        x = feat_metadata,
+        verbose = FALSE,
+        initialize = FALSE
     )
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
@@ -779,7 +778,6 @@ addFeatMetadata <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' create_average_DT(g, meta_data_name = "leiden_clus")
-#'
 #' @export
 create_average_DT <- function(
         gobject,
@@ -812,7 +810,7 @@ create_average_DT <- function(
     )
 
     # metadata
-    cell_metadata <- get_cell_metadata(gobject,
+    cell_metadata <- getCellMetadata(gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
         output = "data.table",
@@ -851,7 +849,6 @@ create_average_DT <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' create_average_detection_DT(g, meta_data_name = "leiden_clus")
-#'
 #' @export
 create_average_detection_DT <- function(
         gobject,
@@ -885,7 +882,7 @@ create_average_detection_DT <- function(
     )
 
     # metadata
-    cell_metadata <- get_cell_metadata(gobject,
+    cell_metadata <- getCellMetadata(gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
         output = "data.table",
@@ -934,7 +931,6 @@ create_average_detection_DT <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' create_cluster_matrix(g, cluster_column = "leiden_clus")
-#'
 #' @export
 create_cluster_matrix <- function(
         gobject,
@@ -1033,7 +1029,6 @@ create_cluster_matrix <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' calculateMetaTable(g, metadata_cols = "leiden_clus")
-#'
 #' @export
 calculateMetaTable <- function(
         gobject,
@@ -1154,9 +1149,7 @@ calculateMetaTable <- function(
 #'
 #' calculateMetaTableCells(g,
 #'     metadata_cols = "cell_ID",
-#'     value_cols = "leiden_clus"
-#' )
-#'
+#'     value_cols = "leiden_clus")
 #' @export
 calculateMetaTableCells <- function(
         gobject,
@@ -1262,7 +1255,6 @@ calculateMetaTableCells <- function(
 #'     feat_clusters = clust_to_use,
 #'     name = "new_metagene"
 #' )
-#'
 #' @seealso [GiottoVisuals::spatCellPlot()]
 #' @export
 createMetafeats <- function(
@@ -1389,7 +1381,7 @@ createMetafeats <- function(
     avail_cm <- list_cell_metadata(gobject)
     if (!is.null(avail_cm)) {
         for (cm_i in seq(nrow(avail_cm))) {
-            cm <- get_cell_metadata(
+            cm <- getCellMetadata(
                 gobject = gobject,
                 spat_unit = avail_cm[cm_i, spat_unit],
                 feat_type = avail_cm[cm_i, feat_type],
@@ -1398,11 +1390,11 @@ createMetafeats <- function(
             )
             if (!is.null(cm[])) {
                 cm[] <- data.table::setalloccol(cm[])
-                gobject <- set_cell_metadata(
+                gobject <- setCellMetadata(
                     gobject = gobject,
-                    metadata = cm,
-                    set_defaults = FALSE,
-                    verbose = FALSE
+                    x = cm,
+                    verbose = FALSE,
+                    initialize = FALSE
                 )
             }
         }
@@ -1411,7 +1403,7 @@ createMetafeats <- function(
     avail_fm <- list_feat_metadata(gobject)
     if (!is.null(avail_fm)) {
         for (fm_i in seq(nrow(avail_fm))) {
-            fm <- get_feature_metadata(
+            fm <- getFeatureMetadata(
                 gobject = gobject,
                 spat_unit = avail_fm[fm_i, spat_unit],
                 feat_type = avail_fm[fm_i, feat_type],
@@ -1420,11 +1412,11 @@ createMetafeats <- function(
             )
             if (!is.null(fm[])) {
                 fm[] <- data.table::setalloccol(fm[])
-                gobject <- set_feature_metadata(
+                gobject <- setFeatureMetadata(
                     gobject = gobject,
-                    metadata = fm,
-                    set_defaults = FALSE,
-                    verbose = FALSE
+                    x = fm,
+                    verbose = FALSE,
+                    initialize = FALSE
                 )
             }
         }

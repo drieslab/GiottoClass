@@ -40,4 +40,9 @@ will be returned as \code{spatLocObj}.
 Calculates the centroid locations for the polygons within one
 or more selected layers
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+addSpatialCentroidLocations(g, poly_info = "aggregate")
+}
 \concept{centroid}

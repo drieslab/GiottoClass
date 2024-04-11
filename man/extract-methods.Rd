@@ -333,3 +333,8 @@ Assign to \code{spatVector} slot in giotto S4
 Assign to \code{spatVector} slot in giottoPolygon
 }
 
+\examples{
+g <- GiottoData::loadSubObjectMini("spatEnrObj")
+
+g$cell_ID
+}

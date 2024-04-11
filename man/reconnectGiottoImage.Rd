@@ -54,6 +54,11 @@ if image files have been moved since the the giotto image object was
 generated. In such cases, use manual reconnection by
 setting \code{auto_reconnect = FALSE}.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+reconnectGiottoImage(g, reconnect_type = "largeImage")
+}
 \seealso{
 Other basic image functions: 
 \code{\link{addGiottoImage}()},

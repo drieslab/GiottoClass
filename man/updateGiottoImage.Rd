@@ -66,6 +66,11 @@ giotto \code{image} or \code{largeImage} attached to a giotto object.
 \details{
 This function works for all image objects associated with Giotto.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+updateGiottoImage(g, largeImage_name = "image")
+}
 \seealso{
 Other basic image functions: 
 \code{\link{addGiottoImage}()},

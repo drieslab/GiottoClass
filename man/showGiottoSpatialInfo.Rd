@@ -17,8 +17,8 @@ show the available giotto spatial polygon information
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
-showGiottoSpatialInfo(g)
 
+showGiottoSpatialInfo(g)
 }
 \seealso{
 Other functions to show data in giotto object: 

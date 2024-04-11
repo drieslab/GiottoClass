@@ -43,3 +43,10 @@ go to \code{\link[base]{readRDS}} or \code{\link[qs]{qread}}
 You can set the python path, alternatively it will look for an existing
 Giotto python environment.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+td <- tempdir()
+saveGiotto(gobject = g, dir = td)
+
+loadGiotto(path_to_folder = fs::path(td, "saveGiottoDir"))
+}

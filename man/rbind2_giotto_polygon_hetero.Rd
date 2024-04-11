@@ -26,4 +26,9 @@ Performed recursively through \code{rbind2} and \code{rbind}. Generates an
 additional list_ID attribute based on the original names. The object name
 also becomes a combination of both previous names
 }
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPolygon")
+
+rbind2_giotto_polygon_hetero(x = g, y = g, new_name = "new_poly")
+}
 \keyword{internal}

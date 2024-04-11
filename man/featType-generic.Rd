@@ -33,3 +33,8 @@ access and set feat_type slot of S4 subobject
 \item \code{featType(featData) <- value}: Set feature type information
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("featMetaObj")
+
+featType(g)
+}

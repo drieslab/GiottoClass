@@ -15,3 +15,8 @@ GiottoPointsObject
 \description{
 Update giotto points object
 }
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPoints")
+
+updateGiottoPointsObject(g)
+}

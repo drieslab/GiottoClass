@@ -84,3 +84,9 @@ image_transformations: transformation options from magick library
 Example: image_transformations = c(flip_x_axis, flip_y_axis); first flip
 x-axis and then y-axis
 }
+\examples{
+image_test <- system.file("extdata/toy_intensity.tif",
+package = "GiottoClass")
+
+createGiottoImage(mg_object = image_test)
+}

@@ -36,6 +36,12 @@ an updated Giotto object with access to the list of images
 \description{
 Adds lists of giottoImages and giottoLargeImages to gobjects
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g_image <- getGiottoImage(g, image_type = "largeImage")
+
+addGiottoImage(g, largeImages = list(g_image))
+}
 \seealso{
 Other basic image functions: 
 \code{\link{plotGiottoImage}()},

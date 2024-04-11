@@ -58,6 +58,9 @@ named vector with giotto instructions
 \description{
 Function to set global instructions for giotto functions
 }
+\examples{
+createGiottoInstructions()
+}
 \seealso{
 More online information can be found
 here \url{http://giottosuite.com}

@@ -20,4 +20,9 @@ character
 Function to guess a default feature type. Also see \code{\link[=activeFeatType]{activeFeatType()}} in
 methods-instructions.R for a way to manually assign this default
 }
+\examples{
+g <- createGiottoObject()
+
+set_default_feat_type(gobject = g, spat_unit = "cell", feat_type = "rna")
+}
 \keyword{internal}

@@ -29,3 +29,11 @@ featMetadata
 \description{
 read feature metadata from listt
 }
+\examples{
+df <- data.frame(feat_ID = c("feat_1", "feat_2", "feat_3"),
+geneID = c("gene_1", "gene_1", "gene_2"))
+temporal_dir <- tempdir()
+write.csv(df, paste0(temporal_dir,"/metadata.csv"), row.names = FALSE)
+
+readFeatMetadata(paste0(temporal_dir,"/metadata.csv"))
+}

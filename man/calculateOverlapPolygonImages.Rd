@@ -45,10 +45,9 @@ and images (intensities)
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
+
 calculateOverlapPolygonImages(g,
     spatial_info = "z0",
-    image_names = "dapi_z0"
-)
-
+    image_names = "dapi_z0")
 }
 \concept{overlap}

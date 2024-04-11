@@ -39,4 +39,7 @@ automatically through a script adjust the image with the spatial data.
 \item{\code{OS_platform}}{Operating System to run Giotto analysis on}
 }}
 
+\examples{
+giottoImage()
+}
 \concept{giotto image object}

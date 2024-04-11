@@ -41,5 +41,4 @@ more (combined) annotation columns.
 g <- GiottoData::loadGiottoMini("visium")
 
 calculateMetaTable(g, metadata_cols = "leiden_clus")
-
 }

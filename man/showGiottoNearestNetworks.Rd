@@ -18,6 +18,11 @@ network info
 \description{
 shows the available nearest neighbor networks
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+showGiottoNearestNetworks(g)
+}
 \seealso{
 Other functions to show data in giotto object: 
 \code{\link{showGiottoCellMetadata}()},

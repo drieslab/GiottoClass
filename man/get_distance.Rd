@@ -18,3 +18,9 @@ numeric
 estimate average distance between neighboring cells with network
 table as input
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+spat_net <- getSpatialNetwork(g, output = "networkDT")
+
+get_distance(spat_net, method = "mean")
+}

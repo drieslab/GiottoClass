@@ -52,11 +52,8 @@ NULL
 #'   `"kNN"` and `"sNN"` types and \eqn{weight = 1 / distance} for `delaunay`
 #'   type
 #' networks
-#' @import deldir
-#' @importFrom igraph graph_from_data_frame
 #' @returns Either `igraph` if `as.igraph = TRUE` and `data.table` otherwise.
 #' @examples
-#' \dontrun{
 #' pca <- GiottoData::loadSubObjectMini("dimObj")[]
 #' sl <- GiottoData::loadSubObjectMini("spatLocsObj")[]
 #'
@@ -127,7 +124,6 @@ NULL
 #'
 #' # using defaults for sNN with index IDs to create igraph
 #' sNN_idx <- createNetwork(pca[, seq_len(10)])
-#' }
 NULL
 
 #' @rdname createNetwork
@@ -480,6 +476,7 @@ createNetwork <- function(x,
 #'     from = c(1, 1),
 #'     to = c(2, 3)
 #' )
+#' 
 #' edge_distances(m, edges)
 #' @export
 edge_distances <- function(x, y, x_node_ids = NULL) {
@@ -575,6 +572,7 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
 #' @param top_shared keep at ...
 #' @param verbose be verbose
 #' @param ... additional parameters for kNN and sNN functions from dbscan
+#' @returns giotto object with updated NN network
 #' @details This function creates a k-nearest neighbour (kNN) or shared
 #' nearest neighbour (sNN) network based on the provided dimension reduction
 #' space. To run it directly on the gene expression matrix
@@ -606,8 +604,10 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
 #'   \item{top_shared: }{keep this number of the top shared neighbours,
 #'   irrespective of minimum_shared setting}
 #' }
-#' @import dbscan
-#' @returns giotto object with updated NN network
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' createNearestNetwork(g)
 #' @export
 createNearestNetwork <- function(gobject,
     spat_unit = NULL,
@@ -850,12 +850,16 @@ createNearestNetwork <- function(gobject,
 #' @param options_list list of options for selected layout
 #' @param layout_name name for layout
 #' @param return_gobject boolean: return giotto object (default = TRUE)
+#' @returns giotto object with updated layout for selected NN network
 #' @details This function creates layout coordinates based on the provided
 #' kNN or sNN.
 #' Currently only the force-directed graph layout "drl",
 #' see \code{\link[igraph]{layout_with_drl}}, is implemented.
 #' This provides an alternative to tSNE or UMAP based visualizations.
-#' @returns giotto object with updated layout for selected NN network
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' addNetworkLayout(g)
 #' @export
 addNetworkLayout <- function(
         gobject,
@@ -938,6 +942,11 @@ addNetworkLayout <- function(
 #' @param nnDT nearest neighbor network in data.table format
 #' @keywords internal
 #' @returns kNN object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g_nn <- getNearestNetwork(g, output = "data.table", name = "custom_NN")
+#' 
+#' nnDT_to_kNN(g_nn)
 #' @export
 nnDT_to_kNN <- function(nnDT) {
     # data.table variable

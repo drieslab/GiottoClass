@@ -42,5 +42,4 @@ x_expr <- readRDS(system.file("extdata/toy_matrix.RDS",
 ))
 
 createExprObj(expression_data = x_expr)
-
 }

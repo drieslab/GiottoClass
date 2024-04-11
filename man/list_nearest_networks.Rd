@@ -29,3 +29,8 @@ names and locations of nearest neighbor networks as a data.table
 \description{
 return the available nearest neighbor network information
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+list_nearest_networks(g)
+}

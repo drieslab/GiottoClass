@@ -31,6 +31,7 @@
 #' @returns character or the same class of x
 #' @examples
 #' x <- GiottoData::loadSubObjectMini("exprObj", 1)
+#' 
 #' evaluate_input(type = "expression", x)
 #' @export
 evaluate_input <- function(type, x, ...) {

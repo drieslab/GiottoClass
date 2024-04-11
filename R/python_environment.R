@@ -12,6 +12,8 @@
 #' @details Checks if a miniconda giotto environment can be found.
 #' Can be installed with \code{\link{installGiottoEnvironment}}.
 #' @returns logical
+#' @examples
+#' checkGiottoEnvironment()
 #' @export
 checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
     ## get operating system
@@ -351,6 +353,7 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 #' @param force_miniconda force reinstallation of miniconda
 #' @param force_environment force reinstallation of the giotto environment
 #' @param verbose be verbose
+#' @returns installs a giotto environment using the reticulate miniconda system
 #' @details This function will install a local giotto environment using
 #' the miniconda system as implemented by reticulate. Once this giotto
 #' environment is installed it will be automatically detected when you run the
@@ -388,15 +391,8 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 #'   - python.app==2 # macOS only
 #'   - scikit-learn==0.24.2
 #' }
-#'
-#' @returns installs a giotto environment using the reticulate miniconda system
 #' @examples
-#' \dontrun{
-#'
-#' # this command will install r-miniconda
-#' # and a giotto environment with all necessary python modules
 #' installGiottoEnvironment()
-#' }
 #' @export
 installGiottoEnvironment <- function(
         packages_to_install = c(
@@ -509,9 +505,9 @@ installGiottoEnvironment <- function(
 #' Default: reticulate::miniconda_path()
 #' i.e. "C:/my/conda/lives/here" OR "C:\\my\\conda\\lives\\here"
 #' @param verbose be verbose
+#' @returns character or NULL
 #' @details Removes a previously installed giotto environment.
 #' See \code{\link{installGiottoEnvironment}}.
-#' @returns character or NULL
 #' @export
 removeGiottoEnvironment <- function(mini_path = NULL, verbose = TRUE) {
     if (is.null(mini_path)) {
@@ -554,8 +550,10 @@ removeGiottoEnvironment <- function(mini_path = NULL, verbose = TRUE) {
 #' if getOption('giotto.use_conda') is FALSE.
 #' @param python_path character. Full path to python executable
 #' @param verbose be verbose
-#' @keywords internal
 #' @returns path to python executable
+#' @keywords internal
+#' @examples
+#' set_giotto_python_path()
 #' @export
 set_giotto_python_path <- function(
         python_path = NULL,
@@ -780,12 +778,12 @@ set_giotto_python_path <- function(
 #' package should be installed.
 #' @description checks python environment for a
 #' provided package, installs if it is not found.
+#' @returns character or NULL
 #' @details
 #' Parameter `github_package_url` takes precedent over
 #' `package_name`, i.e. if both are provided, only the github
 #' URL will be installed. This function should only be provided
 #' one parameter, or the other.
-#' @returns character or NULL
 #' @keywords export
 checkPythonPackage <- function(
         package_name = NULL,

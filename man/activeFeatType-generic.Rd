@@ -24,3 +24,7 @@ active feature type
 Retrieve or set the active feature type. This value will be the
 default feature type that the giotto object uses.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+activeFeatType(g)
+}

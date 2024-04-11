@@ -16,6 +16,10 @@
 #' @param y any object that has a SpatExtent or returns a SpatExtent
 #' @param \dots additional params to pass to terra::crop
 #' @returns SpatRaster
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g_image <- getGiottoImage(g, image_type = "largeImage")
+#' crop(g_image, g_image)
 NULL
 
 

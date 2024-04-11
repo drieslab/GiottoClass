@@ -73,3 +73,8 @@ direction param input. Note that this behavior may be different from terra's
 \item \code{flip(SpatExtent)}: Flip a SpatExtent
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("spatLocsObj")
+
+flip(g)
+}

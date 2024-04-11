@@ -50,7 +50,7 @@ Rstudio users.
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
-calculateOverlapParallel(g, spatial_info = "z1")
 
+calculateOverlapParallel(g, spatial_info = "z1")
 }
 \concept{overlap}

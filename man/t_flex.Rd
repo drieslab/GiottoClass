@@ -15,4 +15,9 @@ matrix
 \description{
 t_flex
 }
+\examples{
+m <- matrix(rnorm(100), nrow = 10)
+
+t_flex(m)
+}
 \keyword{internal}

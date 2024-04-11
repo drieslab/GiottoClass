@@ -48,3 +48,8 @@ Currently only the force-directed graph layout "drl",
 see \code{\link[igraph]{layout_with_drl}}, is implemented.
 This provides an alternative to tSNE or UMAP based visualizations.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+addNetworkLayout(g)
+}

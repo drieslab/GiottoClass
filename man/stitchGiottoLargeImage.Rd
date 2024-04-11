@@ -129,3 +129,9 @@ is optional and Giotto attempts to determine compatible data type to
 save the image as automatically.
 }
 
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g_image <- getGiottoImage(g, image_type = "largeImage")
+
+stitchGiottoLargeImage(largeImage_list = list(g_image))
+}

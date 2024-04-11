@@ -12,8 +12,13 @@
 #' \eqn{b} pasted together
 #' @param reduced_spatial_network_DT reduced spatial network in `data.table`
 #' format
-#' @keywords internal
 #' @returns data.table
+#' @keywords internal
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' spat_net <- getSpatialNetwork(g, output = "networkDT")
+#' 
+#' spat_net_full <- convert_to_full_spatial_network(spat_net)
 #' @export
 convert_to_full_spatial_network <- function(reduced_spatial_network_DT) {
     # data.table variables
@@ -92,8 +97,14 @@ convert_to_full_spatial_network <- function(reduced_spatial_network_DT) {
 #' the duplicated connections so that only \eqn{a} -> \eqn{b} interactions
 #' remain.
 #' @param full_spatial_network_DT full spatial network in data.table format
-#' @keywords internal
 #' @returns data.table
+#' @keywords internal
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' spat_net <- getSpatialNetwork(g, output = "networkDT")
+#' spat_net_full <- convert_to_full_spatial_network(spat_net)
+#' 
+#' convert_to_reduced_spatial_network(spat_net_full)
 #' @export
 convert_to_reduced_spatial_network <- function(full_spatial_network_DT) {
     # data.table variables
@@ -237,6 +248,11 @@ convert_to_reduced_spatial_network <- function(full_spatial_network_DT) {
 #' @param networkDT networkDT
 #' @param method method
 #' @returns numeric
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' spat_net <- getSpatialNetwork(g, output = "networkDT")
+#' 
+#' get_distance(spat_net, method = "mean")
 #' @export
 get_distance <- function(
         networkDT,
@@ -295,8 +311,14 @@ get_distance <- function(
 #' with a provided expression matrix
 #' @param spatial_network spatial network to evaluate
 #' @param expression_matrix expression to compare against
-#' @keywords internal
 #' @returns TRUE or character
+#' @keywords internal
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' spat_net <- getSpatialNetwork(g, output = "networkDT")
+#' expr_m <- getExpression(g)
+#' 
+#' compatible_spatial_network(spat_net, expr_m)
 #' @export
 compatible_spatial_network <- function(
         spatial_network,
@@ -341,6 +363,7 @@ compatible_spatial_network <- function(
 #'
 #' # view other column info besides to and from cols
 #' head(sn[], 1)
+#' 
 #' # include distance and weight col info
 #' g <- spat_net_to_igraph(sn, attr = c("distance", "weight"))
 #' @export
@@ -1056,10 +1079,14 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
 #' @param S (RTriangle) Specifies the maximum number of added Steiner points.
 #' @inheritParams createSpatialNetwork
 #' @param \dots Other additional parameters
+#' @returns giotto object with updated spatial network slot
 #' @details Creates a spatial Delaunay network as explained
 #' in \code{\link[geometry]{delaunayn}} (default), \code{\link[deldir]{deldir}},
 #' or \code{\link[RTriangle]{triangulate}}.
-#' @returns giotto object with updated spatial network slot
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' createSpatialDelaunayNetwork(g)
 #' @export
 createSpatialDelaunayNetwork <- function(
         gobject,
@@ -1342,7 +1369,11 @@ create_KNNnetwork_dbscan <- function(
 #' \strong{maximum_distance: } to create a network based on maximum distance
 #' only, you also need to set k to a very high value, e.g. k = 100
 #'
-#'
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' createSpatialKNNnetwork(g)
+#' 
 #' @export
 createSpatialKNNnetwork <- function(
         gobject,
@@ -1563,6 +1594,7 @@ createSpatialKNNnetwork <- function(
 #' @param output character. Object type to return spatial network as when
 #' `return_gobject = FALSE`. (default: 'spatialNetworkObj')
 #' @param \dots Additional parameters for the selected function
+#' @returns giotto object with updated spatial network slot
 #' @details Creates a spatial network connecting single-cells based on their
 #' physical distance to each other.
 #' For Delaunay method, neighbors will be decided by Delaunay triangulation and
@@ -1575,7 +1607,10 @@ createSpatialKNNnetwork <- function(
 #' dimensions to use, e.g. c("sdimx', "sdimy") or a numerical vector, e.g. 2:3
 #'
 #' @md
-#' @returns giotto object with updated spatial network slot
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' createSpatialNetwork(g)
 #' @export
 createSpatialNetwork <- function(
         gobject,
@@ -1673,6 +1708,10 @@ createSpatialNetwork <- function(
 #' @param create_full_network convert from reduced to full network
 #' representation
 #' @returns annotated network in data.table format
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' annotateSpatialNetwork(g, cluster_column = "leiden_clus")
 #' @export
 annotateSpatialNetwork <- function(
         gobject,
@@ -1700,7 +1739,7 @@ annotateSpatialNetwork <- function(
             spatial_network_name, " does not exist \n"
         )
     }
-    spatial_network <- get_spatialNetwork(
+    spatial_network <- getSpatialNetwork(
         gobject = gobject,
         spat_unit = spat_unit,
         name = spatial_network_name,
@@ -1743,7 +1782,7 @@ annotateSpatialNetwork <- function(
 
 
     # cell metadata
-    cell_metadata <- get_cell_metadata(gobject,
+    cell_metadata <- getCellMetadata(gobject,
         feat_type = feat_type,
         spat_unit = spat_unit,
         output = "data.table",
@@ -1801,6 +1840,7 @@ annotateSpatialNetwork <- function(
 #' @param return_gobject (default = TRUE) whether to return as the giotto object
 #' with attached results or the bare weighted matrix
 #' @param verbose be verbose
+#' @returns spatial weight matrix
 #' @details
 #' \itemize{
 #'   \item{\code{"distance"} method is calculated using 1/(1+distance) to
@@ -1809,7 +1849,10 @@ annotateSpatialNetwork <- function(
 #'   two nodes are connected in the spatial network and 0 indicating that
 #'   they are not.}
 #' }
-#' @returns spatial weight matrix
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' createSpatialWeightMatrix(g, spatial_network_to_use = "spatial_network")
 #' @export
 createSpatialWeightMatrix <- function(
         gobject,
@@ -2169,9 +2212,13 @@ createSpatialWeightMatrix <- function(
 #' @param minimum_padding minimum padding on the edges
 #' @param name name for spatial grid (default = 'spatial_grid')
 #' @param return_gobject boolean: return giotto object (default = TRUE)
+#' @returns giotto object with updated spatial grid slot
 #' @details Creates a spatial grid with defined x, y (and z) dimensions.
 #' The dimension units are based on the provided spatial location units.
-#' @returns giotto object with updated spatial grid slot
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' createSpatialDefaultGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
 #' @export
 createSpatialDefaultGrid <- function(
         gobject,
@@ -2314,12 +2361,17 @@ createSpatialDefaultGrid <- function(
 #' @param sdimz_stepsize stepsize along the z-axis
 #' @param minimum_padding minimum padding on the edges
 #' @param return_gobject boolean: return giotto object (default = TRUE)
+#' @returns giotto object with updated spatial grid slot
 #' @details Creates a spatial grid with defined x, y (and z) dimensions.
 #' The dimension units are based on the provided spatial location units.
 #' \itemize{
 #'   \item{default method: }{\code{\link{createSpatialDefaultGrid}}}
 #' }
-#' @returns giotto object with updated spatial grid slot
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
+#' 
 #' @export
 createSpatialGrid <- function(
         gobject,
@@ -2363,6 +2415,14 @@ createSpatialGrid <- function(
 #' @param spatloc spatial_locs slot from giotto object
 #' @param spatgrid selected spatial_grid slot from giotto object
 #' @returns annotated spatial location data.table
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
+#' g_spatloc <- getSpatialLocations(g, output = "data.table")
+#' g_spatgrid <- getSpatialGrid(g)
+#' 
+#' annotate_spatlocs_with_spatgrid_2D(spatloc = g_spatloc, 
+#' spatgrid = g_spatgrid)
 #' @export
 annotate_spatlocs_with_spatgrid_2D <- function(
         spatloc,
@@ -2412,6 +2472,13 @@ annotate_spatlocs_with_spatgrid_2D <- function(
 #' @param spatloc spatial_locs slot from giotto object
 #' @param spatgrid selected spatial_grid slot from giotto object
 #' @returns annotated spatial location data.table
+#' @examples
+#' g <- GiottoData::loadGiottoMini("starmap")
+#' g_spatloc <- getSpatialLocations(g, output = "data.table")
+#' g_spatgrid <- getSpatialGrid(g)
+#' 
+#' annotate_spatlocs_with_spatgrid_3D(spatloc = g_spatloc, 
+#' spatgrid = g_spatgrid)
 #' @export
 annotate_spatlocs_with_spatgrid_3D <- function(
         spatloc,
@@ -2483,6 +2550,11 @@ annotate_spatlocs_with_spatgrid_3D <- function(
 #' see \code{\link{showGiottoSpatGrids}}
 #' @param cluster_columns names of cell metadata, see \code{\link{pDataDT}}
 #' @returns annotated spatial grid data.table
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
+#' 
+#' annotateSpatialGrid(g)
 #' @export
 annotateSpatialGrid <- function(
         gobject,

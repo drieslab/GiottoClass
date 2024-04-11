@@ -100,6 +100,7 @@
 #' @param y_padding padding between datasets/images if method is shift
 #' @param verbose be verbose
 #' Preview where each gobject will be in space with bounding polygons
+#' @returns giotto object
 #' @details This function joins both the expression and spatial information of
 #' multiple giotto objects into a single one. Giotto supports multiple ways of
 #' joining spatial information as selected through param \code{join_method}:
@@ -142,7 +143,16 @@
 #' }
 #'
 #' @concept giotto
-#' @returns giotto object
+#' @examples
+#' m1 <- matrix(rnorm(100), nrow = 10)
+#' m2 <- matrix(rnorm(100), nrow = 10)
+#' colnames(m1) <- paste0("cell_", seq_len(10))
+#' colnames(m2) <- paste0("cell_", seq_len(10))
+#' 
+#' g1 <- createGiottoObject(expression = m1)
+#' g2 <- createGiottoObject(expression = m2)
+#' 
+#' joinGiottoObjects(gobject_list = list(g1, g2), gobject_names = c("g1", "g2"))
 #' @export
 joinGiottoObjects <- function(
         gobject_list,
@@ -867,9 +877,9 @@ joinGiottoObjects <- function(
         # feat_type = feat_type,
         # metaDT = data.table::data.table(feat_ID = combined_feat_ID))
 
-        # comb_gobject = set_feature_metadata(gobject = comb_gobject,
+        # comb_gobject = setFeatureMetadata(gobject = comb_gobject,
         #                                     S4_feat_metadata,
-        #                                     set_defaults = FALSE)
+        #                                     initialize = FALSE)
     } else {
         for (exprObj_i in seq(nrow(avail_expr))) {
             expr_list <- lapply(updated_object_list, function(gobj) {
@@ -966,7 +976,7 @@ joinGiottoObjects <- function(
             }
             combcellmeta <- .join_cell_meta(dt_list = savelist)
 
-            S4_cell_meta <- get_cell_metadata(
+            S4_cell_meta <- getCellMetadata(
                 gobject = first_obj,
                 spat_unit = spat_unit,
                 feat_type = feat_type,
@@ -977,10 +987,10 @@ joinGiottoObjects <- function(
             S4_cell_meta[] <- combcellmeta
 
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-            comb_gobject <- set_cell_metadata(
+            comb_gobject <- setCellMetadata(
                 gobject = comb_gobject,
-                metadata = S4_cell_meta,
-                set_defaults = FALSE
+                x = S4_cell_meta,
+                initialize = FALSE
             )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
@@ -995,7 +1005,7 @@ joinGiottoObjects <- function(
         if (isTRUE(verbose)) message("   feature metadata \n")
         for (fmObj_i in seq(nrow(avail_featmeta))) {
             fm_list <- lapply(updated_object_list, function(gobj) {
-                get_feature_metadata(
+                getFeatureMetadata(
                     gobject = gobj,
                     spat_unit = avail_featmeta$spat_unit[[fmObj_i]],
                     feat_type = avail_featmeta$feat_type[[fmObj_i]],
@@ -1015,10 +1025,10 @@ joinGiottoObjects <- function(
             fm_list[[1]][] <- comb_fm
 
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-            comb_gobject <- set_feature_metadata(
+            comb_gobject <- setFeatureMetadata(
                 gobject = comb_gobject,
-                metadata = fm_list[[1]],
-                set_defaults = FALSE
+                x = fm_list[[1]],
+                initialize = FALSE
             )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }

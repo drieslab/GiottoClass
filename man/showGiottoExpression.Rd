@@ -21,6 +21,11 @@ prints the name and small subset of available matrices
 \description{
 shows the available matrices
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+showGiottoExpression(g)
+}
 \seealso{
 Other functions to show data in giotto object: 
 \code{\link{showGiottoCellMetadata}()},

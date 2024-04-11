@@ -10,6 +10,9 @@
 \value{
 character vector of hexadecimal distinct colors
 }
+\examples{
+getDistinctColors(n = 5)
+}
 \keyword{internal}
 \description{
 These objects are imported from other packages. Follow the links

@@ -23,6 +23,8 @@
 #' @returns named vector with giotto instructions
 #' @seealso More online information can be found
 #' here \url{http://giottosuite.com}
+#' @examples
+#' createGiottoInstructions()
 #' @export
 createGiottoInstructions <- function(
         python_path = NULL,
@@ -180,6 +182,9 @@ create_giotto_instructions <- function(
 #' @param default default object to return if parameter to retrieve does not
 #' exist
 #' @returns specific parameter
+#' @examples
+#' readGiottoInstructions(giotto_instructions = createGiottoInstructions(),
+#' param = "show_plot")
 #' @export
 readGiottoInstructions <- function(
         giotto_instructions,
@@ -210,6 +215,10 @@ readGiottoInstructions <- function(
 #' @description Function to display all instructions from giotto object
 #' @param gobject giotto object
 #' @returns named vector with giotto instructions
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' showGiottoInstructions(g)
 #' @export
 showGiottoInstructions <- function(gobject) {
     instrs <- gobject@instructions
@@ -228,6 +237,11 @@ showGiottoInstructions <- function(gobject) {
 #' @param return_gobject (boolean, default = TRUE) return giotto object
 #' @param init_gobject (boolean, default = TRUE) initialize gobject if returning
 #' @returns giotto object with one or more changed instructions
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' changeGiottoInstructions(gobject = g, params = "save_plot", 
+#' new_values = TRUE)
 #' @export
 changeGiottoInstructions <- function(
         gobject,
@@ -295,6 +309,11 @@ changeGiottoInstructions <- function(
 #' @param init_gobject (boolean, default = TRUE) initialize gobject when
 #' returning
 #' @returns giotto object with replaces instructions
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' replaceGiottoInstructions(gobject = g, 
+#' instructions = createGiottoInstructions())
 #' @export
 replaceGiottoInstructions <- function(
         gobject,

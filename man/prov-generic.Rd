@@ -30,3 +30,8 @@ access and set provenance slot of S4 subobject
 \item \code{prov(provData) <- value}: Set provenance information
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("exprObj")
+
+prov(g)
+}

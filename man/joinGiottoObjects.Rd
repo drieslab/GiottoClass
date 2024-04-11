@@ -89,4 +89,15 @@ joining.
 }
 }
 }
+\examples{
+m1 <- matrix(rnorm(100), nrow = 10)
+m2 <- matrix(rnorm(100), nrow = 10)
+colnames(m1) <- paste0("cell_", seq_len(10))
+colnames(m2) <- paste0("cell_", seq_len(10))
+
+g1 <- createGiottoObject(expression = m1)
+g2 <- createGiottoObject(expression = m2)
+
+joinGiottoObjects(gobject_list = list(g1, g2), gobject_names = c("g1", "g2"))
+}
 \concept{giotto}

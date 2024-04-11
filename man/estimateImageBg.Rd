@@ -18,3 +18,10 @@ vector of pixel color frequencies and an associated barplot
 helps to estimate which color is the background color of your
 plot
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g_image <- convertGiottoLargeImageToMG(g, largeImage_name = "image", 
+return_gobject = FALSE)
+
+estimateImageBg(g_image)
+}

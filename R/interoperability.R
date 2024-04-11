@@ -21,7 +21,6 @@
 #' See SAW pipeline for additional information about the gef file.
 #' @returns giotto object
 #' @export
-
 gefToGiotto <- function(gef_file, bin_size = "bin100", verbose = FALSE,
     h5_file = NULL) {
     # data.table vars
@@ -106,7 +105,6 @@ gefToGiotto <- function(gef_file, bin_size = "bin100", verbose = FALSE,
 
 #' @title Check Scanpy Installation
 #' @name check_py_for_scanpy
-#' @import reticulate
 #' @returns character
 #' @description checks current python environment for scanpy 1.9.0
 #' @keywords internal
@@ -189,6 +187,13 @@ check_py_for_scanpy <- function() {
 #' See \code{\link{changeGiottoInstructions}} to modify instructions after
 #' creation.
 #' @returns Giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' temp_directory <- tempdir()
+#' giottoToAnnData(g, save_directory = paste0(temp_directory,"/"))
+#' 
+#' anndataToGiotto(anndata_path = paste0(temp_directory,
+#' "/cell_rna_converted_gobject.h5ad"))
 #' @export
 anndataToGiotto <- function(
         anndata_path = NULL,
@@ -595,6 +600,10 @@ anndataToGiotto <- function(
 #' The save_directory will be created if it does not already exist.
 #' The default save_directory is the working directory.
 #' @returns vector containing .h5ad file path(s)
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' giottoToAnnData(g, save_directory = paste0(tempdir(),"/"))
 #' @export
 giottoToAnnData <- function(
         gobject = NULL,
@@ -760,7 +769,7 @@ giottoToAnnData <- function(
     # Feat Metadata
     for (su in spat_unit) {
         for (ft in names(gobject@expression[[su]])) {
-            cmeta <- get_cell_metadata(
+            cmeta <- getCellMetadata(
                 gobject = gobject,
                 spat_unit = su,
                 feat_type = ft,
@@ -768,7 +777,7 @@ giottoToAnnData <- function(
                 set_defaults = FALSE
             )
 
-            fm <- get_feature_metadata(
+            fm <- getFeatureMetadata(
                 gobject = gobject,
                 spat_unit = su,
                 feat_type = ft,
@@ -1287,7 +1296,7 @@ giottoToSeuratV4 <- function(
         }
         # add cell metadata
         meta_cells <- data.table::setDF(
-            get_cell_metadata(
+            getCellMetadata(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = assay_use,
@@ -1305,7 +1314,7 @@ giottoToSeuratV4 <- function(
         )
         # add feature metadata
         meta_genes <- data.table::setDF(
-            get_feature_metadata(
+            getFeatureMetadata(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = assay_use,
@@ -1459,6 +1468,10 @@ giottoToSeuratV4 <- function(
 #' @param ... additional params to pass to \code{\link{get_spatial_locations}}
 #' @returns Seurat object
 #' @keywords seurat interoperability
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' giottoToSeuratV5(g)
 #' @export
 giottoToSeuratV5 <- function(
         gobject,
@@ -1565,7 +1578,7 @@ giottoToSeuratV5 <- function(
 
         # add cell metadata
         meta_cells <- data.table::setDF(
-            get_cell_metadata(
+            getCellMetadata(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = assay_use,
@@ -1587,7 +1600,7 @@ giottoToSeuratV5 <- function(
 
         # add feature metadata
         meta_genes <- data.table::setDF(
-            get_feature_metadata(
+            getFeatureMetadata(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = assay_use,
@@ -2086,6 +2099,11 @@ seuratToGiottoV4 <- function(
 #' @returns A Giotto object converted from Seurat object with all computations
 #' stored in it.
 #' @keywords seurat interoperability
+#' @examples
+#' m_expression <- Matrix::Matrix(rnorm(100), nrow = 10, sparse = TRUE)
+#' s <- Seurat::CreateSeuratObject(counts = m_expression)
+#' 
+#' seuratToGiottoV5(s, spatial_assay = "RNA")
 #' @export
 seuratToGiottoV5 <- function(
         sobject,
@@ -2478,11 +2496,6 @@ seuratToGiottoV5 <- function(
 #'
 #' @returns A SpatialExperiment object that contains data from the input Giotto
 #' object.
-#' @examples
-#' \dontrun{
-#' mini_gobject <- GiottoData::loadGiottoMini("vizgen")
-#' giottoToSpatialExperiment(mini_gobject)
-#' }
 #' @export
 giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
     spat_unit <- NULL
@@ -2810,14 +2823,11 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
 #' networks. This can be a vector of multiple network names.
 #' @param verbose A boolean value specifying if progress messages should
 #' be displayed or not. Default \code{TRUE}.
-#' @import data.table
 #' @returns Giotto object
 #' @examples
-#' \dontrun{
-#' library(SpatialExperiment)
-#' example(read10xVisium, echo = FALSE)
-#' spatialExperimentToGiotto(spe)
-#' }
+#' spe <- STexampleData::Visium_humanDLPFC()
+#' 
+#' spatialExperimentToGiotto(spe, python_path = NULL)
 #' @export
 spatialExperimentToGiotto <- function(
         spe,
@@ -3064,7 +3074,6 @@ if (requireNamespace("SpatialExperiment", quietly = TRUE)) {
 #'
 #' @returns A Giotto object compatible with suite version
 #' @export
-#'
 giottoMasterToSuite <- function(
         gobject,
         expression_feat = "rna") {

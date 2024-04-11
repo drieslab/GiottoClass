@@ -7,6 +7,10 @@ NULL
 #' @description Retrieve or set the row or column names of an object
 #' @param x object
 #' @return A character vector of row or col names
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("exprObj")
+#' 
+#' colnames(g)
 NULL
 
 #' @title Dimnames of an object
@@ -15,6 +19,10 @@ NULL
 #' Retrieve or set the dimnames of an object
 #' @param x object
 #' @returns character
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("exprObj")
+#' 
+#' dimnames(g)
 NULL
 
 #' @rdname row-plus-colnames-generic

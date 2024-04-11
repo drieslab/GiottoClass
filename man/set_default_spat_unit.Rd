@@ -18,4 +18,9 @@ character
 Function to guess a default spatial unit. Also see \code{\link[=activeSpatUnit]{activeSpatUnit()}} in
 methods-instructions.R for a way to manually assign this default
 }
+\examples{
+g <- createGiottoObject()
+
+set_default_spat_unit(gobject = g, spat_unit = "cell")
+}
 \keyword{internal}

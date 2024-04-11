@@ -14,6 +14,10 @@
 #' @param z0 numeric. z-coordinate of the center of rescaling. If missing,
 #' the center of the extent of x is used (only for supported objects)
 #' @returns re-scaled object
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("spatLocsObj")
+#' 
+#' rescale(g)
 NULL
 # ------------------------------------------------------------------- #
 
@@ -321,6 +325,10 @@ setMethod("rescale", signature("giottoLargeImage"), function(x, fx = 1, fy = fx,
 #' @param return_gobject return giotto object
 #' @return giotto object
 #' @concept polygon scaling
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' rescalePolygons(g, poly_info = "aggregate")
 #' @export
 rescalePolygons <- function(
         gobject,

@@ -38,3 +38,6 @@ Results will be returned as a new polygon-based spatial unit with selection
 information recorded in the associated cell metadata. The final item in
 provided in param \code{filters} is the layer of information being queried.
 }
+\seealso{
+[spatQueryGiottoSpatLocs()
+}

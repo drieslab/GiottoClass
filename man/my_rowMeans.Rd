@@ -19,4 +19,9 @@ numeric
 \description{
 my_rowMeans
 }
+\examples{
+m <- matrix(rnorm(100), nrow = 10)
+
+my_rowMeans(m)
+}
 \keyword{internal}

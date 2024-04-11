@@ -16,6 +16,8 @@
 #' reversed?
 #' @param reverse_final_y (boolean) Do the final y coordinates need to be
 #' reversed?
+#' @returns Updated location dataframe with new X \['X_final'\] and
+#' Y \['Y_final'\] coordinates
 #' @details Stitching of fields:
 #' \itemize{
 #'   \item{1. have cell locations: }{at least 3 columns: field, X, Y}
@@ -26,9 +28,6 @@
 #'   \item{4. provide new cell location file
 #'   to \code{\link{createGiottoObject}}}
 #' }
-#' @returns Updated location dataframe with new X \['X_final'\] and
-#' Y \['Y_final'\] coordinates
-#'
 #' @export
 stitchFieldCoordinates <- function(
         location_file,
@@ -98,6 +97,12 @@ stitchFieldCoordinates <- function(
 #' @param Xtilespan numerical value specifying the width of each tile
 #' @param Ytilespan numerical value specifying the height of each tile
 #' @returns data.table
+#' @examples
+#' location_file <- data.table::data.table(field = rep(c(1,2),5), 
+#' X.X = rnorm(10), Y.Y = rnorm(10), XtileIndex = seq_len(10), 
+#' YtileIndex = seq_len(10))
+#' 
+#' stitchTileCoordinates(location_file, Xtilespan = 0.5, Ytilespan = 0.5)
 #' @export
 stitchTileCoordinates <- function(
         location_file,

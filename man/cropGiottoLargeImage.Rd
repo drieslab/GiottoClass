@@ -37,3 +37,8 @@ a giottoLargeImage object
 Crop a giottoLargeImage based on crop_extent argument or
 given values
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+cropGiottoLargeImage(g, largeImage_name = "image")
+}

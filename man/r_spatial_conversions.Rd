@@ -94,6 +94,11 @@ sf, sp, stars or terra
 \description{
 R spatial conversions
 }
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPoints")
+
+as.sf(g)
+}
 \seealso{
 Other As coercion functions: 
 \code{\link{as.data.table}()},

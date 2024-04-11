@@ -61,5 +61,4 @@ g <- annotateGiotto(g,
     annotation_vector = annotation,
     cluster_column = "leiden_clus"
 )
-
 }

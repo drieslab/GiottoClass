@@ -27,6 +27,10 @@ NULL
 #' @param ... additional parameters to pass
 #' @returns spatIDs and featIDs
 #' @include classes.R
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPoints")
+#' 
+#' featIDs(g)
 NULL
 
 

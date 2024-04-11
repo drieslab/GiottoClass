@@ -32,3 +32,8 @@ dimObj
 \description{
 read dimension reduction results from list
 }
+\examples{
+x <- GiottoData::loadSubObjectMini("dimObj")
+
+readDimReducData(x)
+}

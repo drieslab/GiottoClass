@@ -281,6 +281,10 @@ setClass("featData",
 #' methods use the misc slot to hold additional information specific to each
 #' method. Information may be stored within as S3 structures.
 #' @returns slot for miscellaneous information
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("dimObj")
+#' 
+#' slot(g, "misc")
 setClass("miscData",
     contains = "VIRTUAL",
     slots = list(misc = "ANY"),
@@ -360,8 +364,8 @@ setClass("spatFeatData",
 #' @returns giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
+#' 
 #' g <- updateGiottoObject(g)
-#'
 #' @export
 updateGiottoObject <- function(gobject) {
     if (!inherits(gobject, "giotto")) {
@@ -475,6 +479,8 @@ updateGiottoObject <- function(gobject) {
 #'    existing information is consistent across slots.
 #' 7. Object validity checking
 #' @returns giotto object
+#' @examples
+#' giotto()
 #' @export giotto
 #' @exportClass giotto
 giotto <- setClass(
@@ -661,6 +667,8 @@ setClass(
 #' @slot provenance origin data of expression information (if applicable)
 #' @slot misc misc
 #' @returns exprObj
+#' @examples
+#' exprObj()
 #' @exportClass exprObj
 exprObj <- setClass("exprObj",
     contains = c(
@@ -722,6 +730,8 @@ exprObj <- setClass("exprObj",
 #' @slot provenance origin data of aggregated expression
 #' information (if applicable)
 #' @returns cellMetaObj
+#' @examples
+#' cellMetaObj()
 #' @exportClass cellMetaObj
 cellMetaObj <- setClass("cellMetaObj",
     contains = c("metaData", "spatFeatData", "giottoSubobject"),
@@ -770,6 +780,8 @@ cellMetaObj <- setClass("cellMetaObj",
 #' @slot provenance origin data of aggregated expression
 #' information (if applicable)
 #' @returns featMetaObj
+#' @examples
+#' featMetaObj()
 #' @exportClass featMetaObj
 featMetaObj <- setClass("featMetaObj",
     contains = c("metaData", "spatFeatData", "giottoSubobject"),
@@ -843,6 +855,8 @@ featMetaObj <- setClass("featMetaObj",
 #' @slot coordinates embedding coordinates
 #' @slot misc method-specific additional outputs
 #' @returns dimObj
+#' @examples
+#' dimObj()
 #' @exportClass dimObj
 dimObj <- setClass("dimObj",
     contains = c("nameData", "spatFeatData", "giottoSubobject"),
@@ -908,6 +922,8 @@ S3toS4dimObj <- function(object) {
 #' @slot provenance origin of aggregated information (if applicable)
 #' @slot misc misc
 #' @returns nnNetObj
+#' @examples
+#' nnNetObj()
 #' @exportClass nnNetObj
 nnNetObj <- setClass("nnNetObj",
     contains = c(
@@ -980,6 +996,8 @@ nnNetObj <- setClass("nnNetObj",
 #' @slot spat_unit spatial unit tag
 #' @slot provenance origin of aggregated information (if applicable)
 #' @returns spatLocsObj
+#' @examples
+#' spatLocsObj()
 #' @exportClass spatLocsObj
 spatLocsObj <- setClass("spatLocsObj",
     contains = c(
@@ -1060,6 +1078,8 @@ spatLocsObj <- setClass("spatLocsObj",
 #' the \code{networkDT}
 #' slot (filtered).
 #' @returns spatialNetworkObj
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("spatialNetworkObj")
 #' @export
 setClass("spatialNetworkObj",
     contains = c(
@@ -1179,6 +1199,8 @@ S3toS4spatNetObj <- function(
 #' names for each of the spatial axis locations that make up the cell.
 #' Grids can be annotated with both spatial and feature information
 #' @returns spatialGridObj
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("spatialGridObj")
 #' @export
 setClass("spatialGridObj",
     contains = c(
@@ -1235,6 +1257,8 @@ S3toS4spatialGridObj <- function(object) {
 #' @slot provenance provenance information
 #' @slot misc misc
 #' @returns spatEnrObj
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("spatEnrObj")
 #' @export
 setClass("spatEnrObj",
     contains = c(
@@ -1265,6 +1289,8 @@ setClass("spatEnrObj",
 #' spatVector slot
 #' @details holds polygon data
 #' @returns giottoPolygon
+#' @examples
+#' giottoPolygon()
 #' @export
 giottoPolygon <- setClass(
     Class = "giottoPolygon",
@@ -1288,6 +1314,10 @@ giottoPolygon <- setClass(
 #' @name updateGiottoPolygonObject
 #' @param gpoly giotto polygon object
 #' @returns GiottoPolygonObject
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPolygon")
+#' 
+#' updateGiottoPolygonObject(g)
 #' @export
 updateGiottoPolygonObject <- function(gpoly) {
     if (!inherits(gpoly, "giottoPolygon")) {
@@ -1347,6 +1377,8 @@ setClass("packedGiottoPolygon",
 #' spatVector slot
 #' @details Contains vector-type feature data
 #' @returns giottoPoints
+#' @examples
+#' giottoPoints()
 #' @export
 giottoPoints <- setClass(
     Class = "giottoPoints",
@@ -1368,6 +1400,10 @@ giottoPoints <- setClass(
 #' @name updateGiottoPointsObject
 #' @param gpoints giotto points object
 #' @returns GiottoPointsObject
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPoints")
+#' 
+#' updateGiottoPointsObject(g)
 #' @export
 updateGiottoPointsObject <- function(gpoints) {
     if (!inherits(gpoints, "giottoPoints")) {
@@ -1436,6 +1472,8 @@ setClass(
 #' @slot full fully connected network
 #' @details contains feature network information
 #' @returns featureNetwork
+#' @examples
+#' featureNetwork()
 #' @export
 featureNetwork <- setClass(
     Class = "featureNetwork",
@@ -1480,6 +1518,8 @@ featureNetwork <- setClass(
 #' automatically through a script adjust the image with the spatial data.
 #'
 #' @returns giottoImage
+#' @examples
+#' giottoImage()
 #' @export
 giottoImage <- setClass(
     Class = "giottoImage",
@@ -1536,6 +1576,9 @@ giottoImage <- setClass(
 #' @slot file_path file path to the image if given
 #' @slot OS_platform Operating System to run Giotto analysis on
 #' @returns giottoLargeImage
+#' @examples
+#' giottoLargeImage()
+#' 
 #' @export giottoLargeImage
 #' @exportClass giottoLargeImage
 giottoLargeImage <- setClass(

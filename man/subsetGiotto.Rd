@@ -58,3 +58,8 @@ information, use \link{subsetGiottoLocsSubcellular}
 \details{
 Subsets a Giotto object for a specific spatial unit and feature type
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+subsetGiotto(g, cell_ids = c("AACTCGATGGCGCAGT-1", "GGCTGGCTAGCTTAAA-1"))
+}

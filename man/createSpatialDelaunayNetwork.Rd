@@ -83,3 +83,8 @@ Creates a spatial Delaunay network as explained
 in \code{\link[geometry]{delaunayn}} (default), \code{\link[deldir]{deldir}},
 or \code{\link[RTriangle]{triangulate}}.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+createSpatialDelaunayNetwork(g)
+}

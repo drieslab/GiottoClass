@@ -44,4 +44,8 @@ image}
 \item{\code{OS_platform}}{Operating System to run Giotto analysis on}
 }}
 
+\examples{
+giottoLargeImage()
+
+}
 \concept{giotto object image}
