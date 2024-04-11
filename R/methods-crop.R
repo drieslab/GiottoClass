@@ -73,7 +73,7 @@ setMethod(
 
             # 2. convert to DT
             sv <- x@spatVector
-            spatDT <- as.data.table(sv, geom = "XY")
+            spatDT <- data.table::as.data.table(sv, geom = "XY")
 
             # 3. spatial subset then vect() to SpatVector again
             sub_idx <- spatDT[
@@ -196,8 +196,12 @@ setMethod(
 # returns a numeric vector of the 4 bounds in the order of:
 #   xmin, xmax, ymin, ymax
 .determine_crop_bounds <- function(x, y, missing_y, n_single_bounds,
-    xmin, xmax, ymin, ymax) {
+    xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL,
+    output = c("numeric", "extent")) {
+
     # check cropping params
+    output <- match.arg(tolower(output), choices = c("numeric", "extent"))
+
     # ONLY y OR the single spat bounds can be used at any one time
     if ((missing_y && n_single_bounds == 0) ||
         (!missing_y && n_single_bounds > 0)) {
@@ -209,28 +213,20 @@ setMethod(
 
     # Get full set of cropping bounds
     if (!missing_y) {
-        # if y is available, use y values directly.
-        # only the extent of y is usable for the DT method
-        if (!inherits(y, "SpatExtent")) {
-            warning(wrap_txt("Only the extent of y is used when cropping with
-                            DT = TRUE"))
-            y <- ext(y)
-        }
-
-        xmin <- terra::xmin(y)
-        xmax <- terra::xmax(y)
-        ymin <- terra::ymin(y)
-        ymax <- terra::ymax(y)
+        # if y is provided, use y extent directly.
+        e <- ext(y)
     } else {
-        # otherwise, fill in any spatial subset bounds that may not have been
-        # supplied with the current extent value(s)
-        current_ext <- ext(x)
-        if (is.null(xmin)) xmin <- terra::xmin(current_ext)
-        if (is.null(xmax)) xmax <- terra::xmax(current_ext)
-        if (is.null(ymin)) ymin <- terra::ymin(current_ext)
-        if (is.null(ymax)) ymax <- terra::ymax(current_ext)
+        # otherwise, replace values in x extent with any provided values
+        e <- ext(x)
+        if (!is.null(xmin)) e$xmin <- xmin
+        if (!is.null(xmax)) e$xmax <- xmax
+        if (!is.null(ymin)) e$ymin <- ymin
+        if (!is.null(ymax)) e$ymax <- ymax
     }
 
-    # return crop bounds as numeric vector
-    c(xmin, xmax, ymin, ymax)
+    # return bounds
+    switch(output,
+        "numeric" = .ext_to_num_vec(e),
+        "extent" = e
+    )
 }
