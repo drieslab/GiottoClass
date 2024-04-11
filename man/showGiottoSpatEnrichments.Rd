@@ -21,7 +21,6 @@ shows the available spatial enrichment results
 g <- GiottoData::loadGiottoMini("vizgen")
 
 showGiottoSpatEnrichments(g)
-
 }
 \seealso{
 Other functions to show data in giotto object: 

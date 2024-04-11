@@ -19,7 +19,6 @@
 #' spat_net <- getSpatialNetwork(g, output = "networkDT")
 #' 
 #' spat_net_full <- convert_to_full_spatial_network(spat_net)
-#' 
 #' @export
 convert_to_full_spatial_network <- function(reduced_spatial_network_DT) {
     # data.table variables
@@ -106,7 +105,6 @@ convert_to_full_spatial_network <- function(reduced_spatial_network_DT) {
 #' spat_net_full <- convert_to_full_spatial_network(spat_net)
 #' 
 #' convert_to_reduced_spatial_network(spat_net_full)
-#' 
 #' @export
 convert_to_reduced_spatial_network <- function(full_spatial_network_DT) {
     # data.table variables
@@ -255,7 +253,6 @@ convert_to_reduced_spatial_network <- function(full_spatial_network_DT) {
 #' spat_net <- getSpatialNetwork(g, output = "networkDT")
 #' 
 #' get_distance(spat_net, method = "mean")
-#' 
 #' @export
 get_distance <- function(
         networkDT,
@@ -322,7 +319,6 @@ get_distance <- function(
 #' expr_m <- getExpression(g)
 #' 
 #' compatible_spatial_network(spat_net, expr_m)
-#' 
 #' @export
 compatible_spatial_network <- function(
         spatial_network,
@@ -367,9 +363,9 @@ compatible_spatial_network <- function(
 #'
 #' # view other column info besides to and from cols
 #' head(sn[], 1)
+#' 
 #' # include distance and weight col info
 #' g <- spat_net_to_igraph(sn, attr = c("distance", "weight"))
-#' 
 #' @export
 spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
     net_list <- as.list(spatialNetworkObj[])
@@ -1091,7 +1087,6 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' createSpatialDelaunayNetwork(g)
-#' 
 #' @export
 createSpatialDelaunayNetwork <- function(
         gobject,
@@ -1616,7 +1611,6 @@ createSpatialKNNnetwork <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' createSpatialNetwork(g)
-#' 
 #' @export
 createSpatialNetwork <- function(
         gobject,
@@ -1718,7 +1712,6 @@ createSpatialNetwork <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' annotateSpatialNetwork(g, cluster_column = "leiden_clus")
-#' 
 #' @export
 annotateSpatialNetwork <- function(
         gobject,
@@ -1860,7 +1853,6 @@ annotateSpatialNetwork <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' createSpatialWeightMatrix(g, spatial_network_to_use = "spatial_network")
-#' 
 #' @export
 createSpatialWeightMatrix <- function(
         gobject,
@@ -2227,7 +2219,6 @@ createSpatialWeightMatrix <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' createSpatialDefaultGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
-#' 
 #' @export
 createSpatialDefaultGrid <- function(
         gobject,
@@ -2432,7 +2423,6 @@ createSpatialGrid <- function(
 #' 
 #' annotate_spatlocs_with_spatgrid_2D(spatloc = g_spatloc, 
 #' spatgrid = g_spatgrid)
-#' 
 #' @export
 annotate_spatlocs_with_spatgrid_2D <- function(
         spatloc,
@@ -2489,7 +2479,6 @@ annotate_spatlocs_with_spatgrid_2D <- function(
 #' 
 #' annotate_spatlocs_with_spatgrid_3D(spatloc = g_spatloc, 
 #' spatgrid = g_spatgrid)
-#' 
 #' @export
 annotate_spatlocs_with_spatgrid_3D <- function(
         spatloc,
@@ -2566,7 +2555,6 @@ annotate_spatlocs_with_spatgrid_3D <- function(
 #' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
 #' 
 #' annotateSpatialGrid(g)
-#' 
 #' @export
 annotateSpatialGrid <- function(
         gobject,

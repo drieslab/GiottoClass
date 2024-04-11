@@ -199,10 +199,10 @@
 #'     group_ID = sort(rep(LETTERS[seq_len(5)], length.out = nrow(gpoly)))
 #'     # make 5 groups
 #' )
+#' 
 #' multi_gp <- combineToMultiPolygon(gpoly, groups)
 #'
 #' plot(multi_gp["A"])
-#'
 #' @export
 combineToMultiPolygon <- function(x, groups, name = NULL) {
     # DT vars
@@ -323,7 +323,6 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 #' gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
 #' 
 #' smoothGiottoPolygons(gpolygon = gpoly)
-#' 
 #' @export
 smoothGiottoPolygons <- function(
         gpolygon,
@@ -695,7 +694,6 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' createSpatialFeaturesKNNnetwork(g)
-#' 
 #' @export
 createSpatialFeaturesKNNnetwork <- function(
         gobject,
@@ -787,7 +785,6 @@ createSpatialFeaturesKNNnetwork <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' addSpatialCentroidLocationsLayer(g, poly_info = "aggregate")
-#' 
 #' @export
 addSpatialCentroidLocationsLayer <- function(
         gobject,
@@ -913,7 +910,6 @@ addSpatialCentroidLocationsLayer <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' addSpatialCentroidLocations(g, poly_info = "aggregate")
-#' 
 #' @export
 addSpatialCentroidLocations <- function(
         gobject,

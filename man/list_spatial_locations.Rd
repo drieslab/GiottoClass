@@ -23,5 +23,4 @@ shows the available spatial locations
 g <- GiottoData::loadGiottoMini("visium")
 
 list_spatial_locations(g)
-
 }

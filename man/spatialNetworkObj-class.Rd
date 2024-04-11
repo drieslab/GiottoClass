@@ -43,3 +43,6 @@ distances, and weightings}
 \item{\code{misc}}{misc}
 }}
 
+\examples{
+g <- GiottoData::loadSubObjectMini("spatialNetworkObj")
+}

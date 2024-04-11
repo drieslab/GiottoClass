@@ -33,5 +33,4 @@ read nearest network results from list
 x <- GiottoData::loadSubObjectMini("nnNetObj")
 
 readNearestNetData(x)
-
 }

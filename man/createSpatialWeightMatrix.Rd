@@ -50,5 +50,4 @@ they are not.}
 g <- GiottoData::loadGiottoMini("visium")
 
 createSpatialWeightMatrix(g, spatial_network_to_use = "spatial_network")
-
 }

@@ -27,6 +27,5 @@ g <- GiottoData::loadGiottoMini("visium")
 spat_net <- getSpatialNetwork(g, output = "networkDT")
 
 spat_net_full <- convert_to_full_spatial_network(spat_net)
-
 }
 \keyword{internal}

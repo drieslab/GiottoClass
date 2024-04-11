@@ -33,7 +33,6 @@
 #' x <- GiottoData::loadSubObjectMini("exprObj", 1)
 #' 
 #' evaluate_input(type = "expression", x)
-#' 
 #' @export
 evaluate_input <- function(type, x, ...) {
     type <- match.arg(

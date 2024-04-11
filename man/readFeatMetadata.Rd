@@ -36,5 +36,4 @@ temporal_dir <- tempdir()
 write.csv(df, paste0(temporal_dir,"/metadata.csv"), row.names = FALSE)
 
 readFeatMetadata(paste0(temporal_dir,"/metadata.csv"))
-
 }

@@ -37,5 +37,4 @@ if \code{return_gobject = FALSE}, it will return the gene metadata
 g <- GiottoData::loadGiottoMini("visium")
 
 g <- removeFeatAnnotation(g, columns = "hvf")
-
 }

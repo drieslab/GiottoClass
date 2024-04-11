@@ -25,5 +25,4 @@ the Giotto object
 g <- GiottoData::loadGiottoMini("vizgen")
 
 list_spatial_networks(g)
-
 }

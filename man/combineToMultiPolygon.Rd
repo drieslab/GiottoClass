@@ -28,8 +28,8 @@ groups <- data.table::data.table(
     group_ID = sort(rep(LETTERS[seq_len(5)], length.out = nrow(gpoly)))
     # make 5 groups
 )
+
 multi_gp <- combineToMultiPolygon(gpoly, groups)
 
 plot(multi_gp["A"])
-
 }

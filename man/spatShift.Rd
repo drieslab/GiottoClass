@@ -66,3 +66,8 @@ Shift the spatial locations of an object
 \item \code{spatShift(spatialNetworkObj)}: Shift the locations of a spatialNetworkObj
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("spatLocsObj")
+
+spatShift(g)
+}

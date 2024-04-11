@@ -60,7 +60,6 @@ Function to set global instructions for giotto functions
 }
 \examples{
 createGiottoInstructions()
-
 }
 \seealso{
 More online information can be found

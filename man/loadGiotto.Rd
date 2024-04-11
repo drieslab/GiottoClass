@@ -49,5 +49,4 @@ td <- tempdir()
 saveGiotto(gobject = g, dir = td)
 
 loadGiotto(path_to_folder = fs::path(td, "saveGiottoDir"))
-
 }

@@ -21,7 +21,6 @@ shows the available feature metadata
 g <- GiottoData::loadGiottoMini("vizgen")
 
 showGiottoFeatMetadata(g)
-
 }
 \seealso{
 Other functions to show data in giotto object: 

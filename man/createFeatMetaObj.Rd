@@ -42,5 +42,4 @@ x <- data.frame(
 )
 
 createFeatMetaObj(metadata = x)
-
 }

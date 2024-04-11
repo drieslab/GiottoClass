@@ -21,7 +21,6 @@ shows the available cell metadata
 g <- GiottoData::loadGiottoMini("visium")
 
 showGiottoCellMetadata(g)
-
 }
 \seealso{
 Other functions to show data in giotto object: 

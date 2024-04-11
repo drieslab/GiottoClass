@@ -70,3 +70,10 @@ to a \code{giotto} object if both \code{gobject} and \code{image_name}
 params are given. Alternatively can directly accept and return
 as \code{image}
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g_image <- convertGiottoLargeImageToMG(g, largeImage_name = "image", 
+return_gobject = FALSE)
+
+updateGiottoImageMG(g, giottoImage = g_image)
+}

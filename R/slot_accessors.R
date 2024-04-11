@@ -649,7 +649,6 @@ get_cell_metadata <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' getCellMetadata(g)
-#' 
 #' @export
 getCellMetadata <- function(
         gobject,
@@ -690,7 +689,6 @@ getCellMetadata <- function(
 #' new_column = sample(letters, 624, replace = TRUE))
 #' 
 #' setCellMetadata(gobject = g, x = createCellMetaObj(m2))
-#' 
 #' @export
 setCellMetadata <- function(
         gobject,
@@ -1040,6 +1038,7 @@ set_cell_metadata <- function(
 #' @returns a data.table or featMetaObj
 #' @seealso fDataDT
 #' @keywords internal
+#' @export
 get_feature_metadata <- function(
         gobject,
         spat_unit = NULL,
@@ -1096,7 +1095,6 @@ get_feature_metadata <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' getFeatureMetadata(g)
-#' 
 #' @export
 getFeatureMetadata <- function(
         gobject,
@@ -1137,7 +1135,6 @@ getFeatureMetadata <- function(
 #' new_column = paste0("gene_", m1$feat_ID))
 #' 
 #' setFeatureMetadata(gobject = g, x = createFeatMetaObj(m2))
-#' 
 #' @export
 setFeatureMetadata <- function(
         gobject,
@@ -1462,7 +1459,6 @@ set_feature_metadata <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' getExpression(g)
-#' 
 #' @export
 getExpression <- function(
         gobject,
@@ -1695,7 +1691,6 @@ get_expression_values_list <- function(
 #' rownames(m) <- paste0("feat_", seq_len(10))
 #' 
 #' g <- setExpression(gobject = g, x = createExprObj(m, name = "raw"))
-#' 
 #' @export
 setExpression <- function(
         gobject,
@@ -1985,7 +1980,6 @@ set_expression_values <- function(
 #' 
 #' set_multiomics(gobject = g, result = matrix(rnorm(100), nrow = 10), 
 #' spat_unit = "cell", feat_type = "rna_protein")
-#' 
 #' @export
 set_multiomics <- function(
         gobject,
@@ -2063,7 +2057,6 @@ set_multiomics <- function(
 #' 
 #' setMultiomics(gobject = g, result = matrix(rnorm(100), nrow = 10), 
 #' spat_unit = "cell", feat_type = "rna_protein")
-#' 
 #' @export
 setMultiomics <- function(
         gobject = NULL,
@@ -2112,7 +2105,6 @@ setMultiomics <- function(
 #' spat_unit = "cell", feat_type = "rna_protein")
 #' 
 #' get_multiomics(gobject = g, spat_unit = "cell", feat_type = "rna_protein")
-#' 
 #' @export
 get_multiomics <- function(
         gobject,
@@ -2184,7 +2176,6 @@ get_multiomics <- function(
 #' spat_unit = "cell", feat_type = "rna_protein")
 #' 
 #' getMultiomics(gobject = g, spat_unit = "cell", feat_type = "rna_protein")
-#' 
 #' @export
 getMultiomics <- function(
         gobject = NULL,
@@ -2238,7 +2229,6 @@ getMultiomics <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' getSpatialLocations(g)
-#' 
 #' @export
 getSpatialLocations <- function(
         gobject,
@@ -2500,7 +2490,6 @@ get_spatial_locations_list <- function(
 #' sl <- data.frame(cell_ID = x$cell_ID, sdimx = rnorm(624), sdimy = rnorm(624))
 #' 
 #' setSpatialLocations(gobject = g, x = createSpatLocsObj(sl, name = "raw"))
-#' 
 #' @export
 setSpatialLocations <- function(
         gobject,
@@ -2835,7 +2824,6 @@ get_dimReduction <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' getDimReduction(g)
-#' 
 #' @export
 getDimReduction <- function(
         gobject,
@@ -2942,7 +2930,6 @@ get_dim_reduction_list <- function(
 #' dimred <- getDimReduction(g)
 #' 
 #' setDimReduction(gobject = g, x = dimred)
-#' 
 #' @export
 setDimReduction <- function(
         gobject,
@@ -3346,7 +3333,6 @@ get_NearestNetwork <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' getNearestNetwork(gobject = g)
-#' 
 #' @export
 getNearestNetwork <- function(
         gobject,
@@ -3446,7 +3432,6 @@ get_nearest_network_list <- function(
 #' dimred <- getNearestNetwork(gobject = g)
 #' 
 #' setNearestNetwork(gobject = g, x = dimred)
-#' 
 #' @export
 setNearestNetwork <- function(
         gobject,
@@ -3814,7 +3799,6 @@ get_spatialNetwork <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' getSpatialNetwork(g)
-#' 
 #' @export
 getSpatialNetwork <- function(
         gobject,
@@ -3930,7 +3914,6 @@ get_spatial_network_list <- function(
 #' spatnet <- getSpatialNetwork(g)
 #' 
 #' setSpatialNetwork(gobject = g, x = spatnet)
-#' 
 #' @export
 setSpatialNetwork <- function(
         gobject,
@@ -4277,7 +4260,6 @@ get_spatialGrid <- function(
 #' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
 #' 
 #' getSpatialGrid(g)
-#' 
 #' @export
 getSpatialGrid <- function(
         gobject,
@@ -4419,7 +4401,6 @@ set_spatialGrid <- function(
 #' sg <- getSpatialGrid(g, return_grid_Obj = TRUE)
 #' 
 #' setSpatialGrid(gobject = g, spatial_grid = sg)
-#' 
 #' @export
 setSpatialGrid <- function(
         gobject,
@@ -4539,7 +4520,6 @@ get_polygon_info <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' getPolygonInfo(g)
-#' 
 #' @export
 getPolygonInfo <- function(
         gobject = NULL,
@@ -4620,7 +4600,6 @@ get_polygon_info_list <- function(
 #' polyinfo <- getPolygonInfo(g, return_giottoPolygon = TRUE)
 #' 
 #' setPolygonInfo(gobject = g, x = polyinfo)
-#' 
 #' @export
 setPolygonInfo <- function(
         gobject,
@@ -4946,7 +4925,6 @@ set_polygon_info <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' getFeatureInfo(g)
-#' 
 #' @export
 getFeatureInfo <- function(
         gobject = gobject,
@@ -5059,7 +5037,6 @@ get_feature_info_list <- function(
 #' featinfo <- getFeatureInfo(g, return_giottoPoints = TRUE)
 #' 
 #' setFeatureInfo(gobject = g, x = featinfo)
-#' 
 #' @export
 setFeatureInfo <- function(
         gobject,
@@ -5406,7 +5383,6 @@ get_spatial_enrichment <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' getSpatialEnrichment(g, spat_unit = "aggregate", name = "cluster_metagene")
-#' 
 #' @export
 getSpatialEnrichment <- function(
         gobject,
@@ -5497,8 +5473,8 @@ get_spatial_enrichment_list <- function(
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' spatenrich <- GiottoData::loadSubObjectMini("spatEnrObj")
-#' g <- setSpatialEnrichment(g, spatenrich)
 #' 
+#' g <- setSpatialEnrichment(g, spatenrich)
 #' @export
 setSpatialEnrichment <- function(
         gobject,
@@ -5951,7 +5927,6 @@ get_giottoImage <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' getGiottoImage(gobject = g, image_type = "largeImage")
-#' 
 #' @export
 getGiottoImage <- function(
         gobject = NULL,
@@ -6086,7 +6061,6 @@ set_giottoImage <- function(
 #' gimage <- getGiottoImage(gobject = g, image_type = "largeImage")
 #' 
 #' setGiottoImage(gobject = g, image = gimage, image_type = "largeImage")
-#' 
 #' @export
 setGiottoImage <- function(
         gobject = NULL,

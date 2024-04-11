@@ -30,5 +30,4 @@ lists the available feature metadata
 g <- GiottoData::loadGiottoMini("visium")
 
 list_feat_metadata(g)
-
 }

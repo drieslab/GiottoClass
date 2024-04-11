@@ -74,3 +74,8 @@ spun object
 \description{
 Spin (rotate) an object spatially (limited to xy rotations)
 }
+\examples{
+g <- GiottoData::loadSubObjectMini("spatLocsObj")
+
+spin(g)
+}

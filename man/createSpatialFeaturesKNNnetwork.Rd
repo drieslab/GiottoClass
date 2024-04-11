@@ -57,6 +57,5 @@ Calculates the centroid locations for the giotto polygons
 g <- GiottoData::loadGiottoMini("vizgen")
 
 createSpatialFeaturesKNNnetwork(g)
-
 }
 \concept{feature}

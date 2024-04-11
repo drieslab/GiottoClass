@@ -49,5 +49,4 @@ createSpatEnrObj(
     enrichment_data = slot(x, "enrichDT"),
     name = "cluster_metagene"
 )
-
 }

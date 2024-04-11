@@ -63,3 +63,8 @@ re-scaled object
 Rescale an object spatially. Z dimension scaling is supported
 for some types of subobjects.
 }
+\examples{
+g <- GiottoData::loadSubObjectMini("spatLocsObj")
+
+rescale(g)
+}

@@ -52,5 +52,4 @@ The dimension units are based on the provided spatial location units.
 g <- GiottoData::loadGiottoMini("visium")
 
 createSpatialDefaultGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
-
 }

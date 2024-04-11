@@ -27,5 +27,4 @@ g <- GiottoData::loadGiottoMini("visium")
 
 replaceGiottoInstructions(gobject = g, 
 instructions = createGiottoInstructions())
-
 }

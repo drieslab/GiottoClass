@@ -23,6 +23,11 @@ SpatVector points
 \description{
 Coversion to a SpatVector of points.
 }
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPoints")
+
+as.points(slot(g, "spatVector"))
+}
 \seealso{
 \code{\link[terra:as.points]{terra::as.points()}}
 

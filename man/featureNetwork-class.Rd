@@ -27,4 +27,7 @@ feature numerical IDs}
 \item{\code{full}}{fully connected network}
 }}
 
+\examples{
+featureNetwork()
+}
 \concept{giotto points network class}

@@ -14,7 +14,6 @@
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' pDataDT(g)
-#'
 #' @export
 pDataDT <- function(
         gobject,
@@ -68,7 +67,6 @@ pDataDT <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' fDataDT(g)
-#'
 #' @export
 fDataDT <- function(
         gobject,
@@ -152,7 +150,6 @@ fDataDT <- function(
 #'     annotation_vector = annotation,
 #'     cluster_column = "leiden_clus"
 #' )
-#'
 #' @export
 annotateGiotto <- function(
         gobject,
@@ -276,7 +273,6 @@ annotateGiotto <- function(
 #' )
 #'
 #' g <- removeCellAnnotation(g, columns = "cell_types")
-#'
 #' @export
 removeCellAnnotation <- function(
         gobject,
@@ -341,7 +337,6 @@ removeCellAnnotation <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' g <- removeFeatAnnotation(g, columns = "hvf")
-#'
 #' @export
 removeFeatAnnotation <- function(
         gobject,
@@ -621,7 +616,6 @@ addCellMetadata <- function(
 #' )
 #'
 #' fDataDT(g)
-#'
 #' @export
 addFeatMetadata <- function(
         gobject,
@@ -784,7 +778,6 @@ addFeatMetadata <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' create_average_DT(g, meta_data_name = "leiden_clus")
-#'
 #' @export
 create_average_DT <- function(
         gobject,
@@ -856,7 +849,6 @@ create_average_DT <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' create_average_detection_DT(g, meta_data_name = "leiden_clus")
-#'
 #' @export
 create_average_detection_DT <- function(
         gobject,
@@ -939,7 +931,6 @@ create_average_detection_DT <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' create_cluster_matrix(g, cluster_column = "leiden_clus")
-#'
 #' @export
 create_cluster_matrix <- function(
         gobject,
@@ -1038,7 +1029,6 @@ create_cluster_matrix <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' calculateMetaTable(g, metadata_cols = "leiden_clus")
-#'
 #' @export
 calculateMetaTable <- function(
         gobject,
@@ -1159,9 +1149,7 @@ calculateMetaTable <- function(
 #'
 #' calculateMetaTableCells(g,
 #'     metadata_cols = "cell_ID",
-#'     value_cols = "leiden_clus"
-#' )
-#'
+#'     value_cols = "leiden_clus")
 #' @export
 calculateMetaTableCells <- function(
         gobject,
@@ -1267,7 +1255,6 @@ calculateMetaTableCells <- function(
 #'     feat_clusters = clust_to_use,
 #'     name = "new_metagene"
 #' )
-#'
 #' @seealso [GiottoVisuals::spatCellPlot()]
 #' @export
 createMetafeats <- function(

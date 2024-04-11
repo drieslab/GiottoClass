@@ -22,6 +22,11 @@ copies of certain subobjects that usually return referenced information.
 \item \code{copy(coordDataDT)}: Copy \emph{data.table}-based spatial locations object.
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("exprObj")
+
+copy(g)
+}
 \seealso{
 \code{\link[data.table]{copy}} \code{\link[terra]{deepcopy}}
 }

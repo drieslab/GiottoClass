@@ -19,6 +19,5 @@ rowSums_flex
 m <- matrix(rnorm(100), nrow = 10)
 
 rowSums_flex(m)
-
 }
 \keyword{internal}

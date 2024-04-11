@@ -39,3 +39,6 @@ grid generation}
 \item{\code{misc}}{misc}
 }}
 
+\examples{
+g <- GiottoData::loadSubObjectMini("spatialGridObj")
+}

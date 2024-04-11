@@ -39,6 +39,5 @@ creates aggregated matrix for a given clustering column
 g <- GiottoData::loadGiottoMini("visium")
 
 create_cluster_matrix(g, cluster_column = "leiden_clus")
-
 }
 \keyword{internal}

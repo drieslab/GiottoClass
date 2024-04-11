@@ -47,5 +47,4 @@ will be made other than updating the \code{name} slot if the list is named.
 x <- GiottoData::loadSubObjectMini("giottoPolygon")
 
 readPolygonData(x)
-
 }

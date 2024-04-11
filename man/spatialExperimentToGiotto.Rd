@@ -35,9 +35,7 @@ Giotto object
 Utility function to convert a SpatialExperiment object to a Giotto object
 }
 \examples{
-\dontrun{
-library(SpatialExperiment)
-example(read10xVisium, echo = FALSE)
-spatialExperimentToGiotto(spe)
-}
+spe <- STexampleData::Visium_humanDLPFC()
+
+spatialExperimentToGiotto(spe, python_path = NULL)
 }

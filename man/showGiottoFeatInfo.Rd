@@ -19,7 +19,6 @@ show the available giotto spatial feature information
 g <- GiottoData::loadGiottoMini("vizgen")
 
 showGiottoFeatInfo(g)
-
 }
 \seealso{
 Other functions to show data in giotto object: 

@@ -52,5 +52,4 @@ This provides an alternative to tSNE or UMAP based visualizations.
 g <- GiottoData::loadGiottoMini("visium")
 
 addNetworkLayout(g)
-
 }

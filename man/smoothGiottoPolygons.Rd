@@ -33,7 +33,6 @@ Smooths Giotto polygon object
 gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
 
 smoothGiottoPolygons(gpolygon = gpoly)
-
 }
 \seealso{
 \code{\link[stats]{spline}}

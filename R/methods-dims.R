@@ -7,6 +7,10 @@ NULL
 #' @description Find the dimensions of an object
 #' @param x object to check dimensions of
 #' @returns numeric
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPoints")
+#' 
+#' nrow(g)
 NULL
 # ---------------------------------------------------------------- #
 

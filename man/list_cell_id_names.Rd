@@ -20,5 +20,4 @@ the spat_units and poly info in the gobject
 g <- GiottoData::loadGiottoMini("visium")
 
 list_cell_id_names(g)
-
 }

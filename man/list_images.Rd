@@ -22,5 +22,4 @@ Giotto object
 g <- GiottoData::loadGiottoMini("vizgen")
 
 list_images(g, img_type = "largeImage")
-
 }

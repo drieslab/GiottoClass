@@ -15,6 +15,10 @@ NULL
 #' @docType methods
 #' @returns giotto object or subobject
 #' @rdname show-methods
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("exprObj")
+#' 
+#' show_spat(g)
 setMethod(
     f = "show",
     signature = "giotto",

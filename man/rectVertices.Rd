@@ -20,7 +20,6 @@ given through \code{dims} param.
 }
 \examples{
 rectVertices(c(x = 1, y = 2))
-
 }
 \seealso{
 \link{generate_grid}

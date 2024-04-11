@@ -12,6 +12,10 @@
 #' to flip over the extent
 #' @param ... additional args to pass
 #' @returns flipped object
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("spatLocsObj")
+#' 
+#' flip(g)
 NULL
 # ---------------------------------------------------------------- #
 

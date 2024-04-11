@@ -24,5 +24,4 @@ and feature type
 g <- GiottoData::loadGiottoMini("visium")
 
 list_expression_names(g, spat_unit = "cell", feat_type = "rna")
-
 }

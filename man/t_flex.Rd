@@ -19,6 +19,5 @@ t_flex
 m <- matrix(rnorm(100), nrow = 10)
 
 t_flex(m)
-
 }
 \keyword{internal}

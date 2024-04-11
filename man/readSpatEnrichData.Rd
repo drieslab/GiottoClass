@@ -33,5 +33,4 @@ read spatial enrichment results from list
 x <- GiottoData::loadSubObjectMini("spatEnrObj")
 
 readSpatEnrichData(x)
-
 }

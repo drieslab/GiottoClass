@@ -7,6 +7,10 @@
 #' be passed over a connection (e.g. nodes on a computer cluster)
 #' @param x giottoPolygon or giottoPoints
 #' @returns wrapped giottoPolygon or giottoPoints
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPoints")
+#' 
+#' wrap(g)
 NULL
 # ---------------------------------------------------------------- #
 

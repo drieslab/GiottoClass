@@ -60,5 +60,4 @@ temporal_dir <- tempdir()
 write.csv(x, paste0(temporal_dir,"/mymatrix.csv"))
 
 readExprData(paste0(temporal_dir,"/mymatrix.csv"))
-
 }

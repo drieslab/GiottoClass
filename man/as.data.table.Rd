@@ -39,6 +39,11 @@ data.table
 \description{
 Coerce to data.table if possible
 }
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPolygon")
+
+as.data.table(g)
+}
 \seealso{
 Other As coercion functions: 
 \code{\link{as.points}()},

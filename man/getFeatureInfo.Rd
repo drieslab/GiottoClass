@@ -31,7 +31,6 @@ Get giotto points spatVector
 g <- GiottoData::loadGiottoMini("vizgen")
 
 getFeatureInfo(g)
-
 }
 \seealso{
 Other feature info data accessor functions: 

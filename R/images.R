@@ -6,6 +6,12 @@
 #' @param mg_object magick image or Giotto image object
 #' @keywords internal
 #' @returns data.table with image pixel information
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g_image <- convertGiottoLargeImageToMG(g, largeImage_name = "image", 
+#' return_gobject = FALSE)
+#' 
+#' convert_mgImage_to_array_DT(g_image)
 #' @export
 convert_mgImage_to_array_DT <- function(mg_object) {
     if (inherits(mg_object, "giottoImage")) {
@@ -23,7 +29,7 @@ convert_mgImage_to_array_DT <- function(mg_object) {
         num_res_m,
         value.var = "color", formula = "x+y~c"
     )
-    colnames(array_dt) <- c("x", "y", "c.1", "c.2", "c.3")
+    colnames(array_dt)[seq_len(5)] <- c("x", "y", "c.1", "c.2", "c.3")
     array_dt[, RGB := grDevices::rgb(c.1, c.2, c.3)]
 
     return(array_dt)
@@ -37,6 +43,12 @@ convert_mgImage_to_array_DT <- function(mg_object) {
 #' @param mg_object magick image or Giotto image object
 #' @param top_color_range top possible background colors to return
 #' @returns vector of pixel color frequencies and an associated barplot
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g_image <- convertGiottoLargeImageToMG(g, largeImage_name = "image", 
+#' return_gobject = FALSE)
+#' 
+#' estimateImageBg(g_image)
 #' @export
 estimateImageBg <- function(mg_object, top_color_range = seq_len(50)) {
     if (inherits(mg_object, "giottoImage")) {
@@ -65,6 +77,12 @@ estimateImageBg <- function(mg_object, top_color_range = seq_len(50)) {
 #' @param new_color new background color
 #' @param new_name change name of Giotto image
 #' @returns magick image or giotto image object with updated background color
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g_image <- convertGiottoLargeImageToMG(g, largeImage_name = "image", 
+#' return_gobject = FALSE)
+#' 
+#' changeImageBg(mg_object = g_image, bg_color = "white")
 #' @export
 changeImageBg <- function(
         mg_object,
@@ -165,6 +183,12 @@ changeImageBg <- function(
 #' left.
 #' @keywords internal
 #' @returns numeric
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g_image <- convertGiottoLargeImageToMG(g, largeImage_name = "image", 
+#' return_gobject = FALSE)
+#' 
+#' get_img_minmax(slot(g_image, "mg_object"))
 #' @export
 get_img_minmax <- function(
         mg_img,
@@ -196,6 +220,14 @@ get_img_minmax <- function(
 #' @title get_adj_rescale_img
 #' @keywords internal
 #' @returns numeric
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g_spatlocs <- getSpatialLocations(g)
+#' g_image <- convertGiottoLargeImageToMG(g, largeImage_name = "image", 
+#' return_gobject = FALSE)
+#' minmax <- get_img_minmax(slot(g_image, "mg_object"))
+#' 
+#' get_adj_rescale_img(img_minmax = minmax, spatial_locs = g_spatlocs)
 #' @export
 get_adj_rescale_img <- function(
         img_minmax,
@@ -251,6 +283,11 @@ get_adj_rescale_img <- function(
 #' automatic alignment. Meaning that origin is in upper left instead of lower
 #' left.
 #' @returns an updated Giotto object with access to the list of images
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g_image <- getGiottoImage(g, image_type = "largeImage")
+#' 
+#' addGiottoImageMG(g, images = list(g_image))
 #' @export
 addGiottoImageMG <- function(
         gobject,
@@ -419,6 +456,12 @@ addGiottoImageMG <- function(
 #' giotto \code{image} object if \code{FALSE}
 #' @returns a \code{giotto} object or an updated giotto \code{image} object
 #' if \code{return_gobject = FALSe}
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g_image <- convertGiottoLargeImageToMG(g, largeImage_name = "image", 
+#' return_gobject = FALSE)
+#' 
+#' updateGiottoImageMG(g, giottoImage = g_image)
 #' @export
 updateGiottoImageMG <- function(
         gobject = NULL,
@@ -672,6 +715,10 @@ reconnect_giottoImage_MG <- function(giottoImage,
 #' decreased resolution when cropping after sampling
 #' @returns a \code{giottoLargeImage} cropped and resampled properly for plotting
 #' @seealso \code{\link[terra]{spatSample}}
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' plot_auto_largeImage_resample(g)
 #' @export
 plot_auto_largeImage_resample <- function(
         gobject,
@@ -968,6 +1015,10 @@ plot_auto_largeImage_resample <- function(
 #' @param ... additional params to pass
 #' @returns density or histogram plot
 #' @keywords internal
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' .dist_giottolargeimage(g, image_name = "image")
 .dist_giottolargeimage <- function(gobject = NULL,
     image_name = NULL,
     giottoLargeImage = NULL,
@@ -1072,6 +1123,11 @@ plot_auto_largeImage_resample <- function(
 #' exists. Defaults to TRUE
 #' @param verbose boolean. Be verbose
 #' @returns \code{largeGiottoImage} object with pointer to stitched image
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g_image <- getGiottoImage(g, image_type = "largeImage")
+#' 
+#' stitchGiottoLargeImage(largeImage_list = list(g_image))
 #' @export
 stitchGiottoLargeImage <- function(
         largeImage_list = NULL,
@@ -1300,6 +1356,10 @@ stitchGiottoLargeImage <- function(
 #' @param crop_extent terra extent object used to crop the giottoLargeImage
 #' @param xmax_crop,xmin_crop,ymax_crop,ymin_crop crop min/max x and y bounds
 #' @returns a giottoLargeImage object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' cropGiottoLargeImage(g, largeImage_name = "image")
 #' @export
 cropGiottoLargeImage <- function(
         gobject = NULL,
@@ -1397,6 +1457,10 @@ cropGiottoLargeImage <- function(
 #' @param verbose be verbose
 #' @returns a giotto object if \code{return_gobject = TRUE} or an updated giotto
 #' image object if \code{return_gobject = FALSE}
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' convertGiottoLargeImageToMG(g, largeImage_name = "image")
 #' @export
 convertGiottoLargeImageToMG <- function(
         gobject = NULL,
@@ -1732,6 +1796,11 @@ convertGiottoLargeImageToMG <- function(
 #' @param overwrite Overwrite if \code{filename} is already existing
 #' @param verbose be verbose
 #' @returns image local file
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' writeGiottoLargeImage(gobject = g, largeImage_name = "image", 
+#' filename = paste0("tempfile()", ".png"))
 #' @export
 writeGiottoLargeImage <- function(
         giottoLargeImage = NULL,
@@ -1842,6 +1911,10 @@ writeGiottoLargeImage <- function(
 #' \code{largeImage} object if \code{FALSE}
 #' @returns a \code{giotto} object or an updated giotto \code{largeImage} object
 #' if \code{return_gobject = FALSE}
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' updateGiottoLargeImage(g, largeImage_name = "image")
 #' @export
 updateGiottoLargeImage <- function(
         gobject = NULL,
@@ -2019,6 +2092,11 @@ updateGiottoLargeImage <- function(
 #' left.
 #' @param verbose be verbose
 #' @returns an updated Giotto object with access to the list of images
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g_image <- getGiottoImage(g, image_type = "largeImage")
+#' 
+#' addGiottoLargeImage(g, largeImages = list(g_image))
 #' @export
 addGiottoLargeImage <- function(
         gobject = NULL,
@@ -2221,6 +2299,11 @@ reconnect_giottoLargeImage <- function(giottoLargeImage,
 #'     color scaling is desired.
 #' @family basic image functions
 #' @returns image
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' plotGiottoImage(g, image_type = "largeImage", image_name = "dapi_z0", 
+#' largeImage_max_intensity = 200)
 #' @export
 plotGiottoImage <- function(
         gobject = NULL,
@@ -2239,7 +2322,7 @@ plotGiottoImage <- function(
 
     # Get image object
     if (!is.null(gobject)) {
-        img_obj <- get_giottoImage(
+        img_obj <- getGiottoImage(
             gobject = gobject,
             image_type = image_type,
             name = image_name
@@ -2293,6 +2376,11 @@ plotGiottoImage <- function(
 #' left.
 #' @returns an updated Giotto object with access to the list of images
 #' @family basic image functions
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g_image <- getGiottoImage(g, image_type = "largeImage")
+#' 
+#' addGiottoImage(g, largeImages = list(g_image))
 #' @export
 addGiottoImage <- function(
         gobject = NULL,
@@ -2350,6 +2438,10 @@ addGiottoImage <- function(
 #' @returns a giotto object or an updated giotto image object if
 #' return_gobject = FALSE
 #' @family basic image functions
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' updateGiottoImage(g, largeImage_name = "image")
 #' @export
 updateGiottoImage <- function(
         gobject = NULL,
@@ -2469,6 +2561,10 @@ reconnect_image_object <- function(image_object,
 #' @description selects and (possibly resamples) giotto images for plotting
 #' @keywords internal
 #' @returns giotto image
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' select_gimage(g, largeImage_name = "image")
 #' @export
 select_gimage <- function(
         gobject,
@@ -2566,6 +2662,10 @@ select_gimage <- function(
 #' @param verbose be verbose
 #' @returns a giotto object with updated image pointer
 #' @family basic image functions
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' reconnectGiottoImage(g, reconnect_type = "largeImage")
 #' @export
 reconnectGiottoImage <- function(
         gobject,
@@ -2852,6 +2952,10 @@ reconnectGiottoImage <- function(
 #' @param show_max logical. Plot the set max intensity as a vertical red line
 #' @param ... additional params to pass to [terra::hist()] or [terra::density()]
 #' @returns density or histogram plot
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' distGiottoImage(g, image_name = "image")
 #' @export
 distGiottoImage <- function(gobject = NULL,
     image_type = "largeImage",
@@ -2898,6 +3002,7 @@ distGiottoImage <- function(gobject = NULL,
 #' @examples
 #' f <- system.file(package = "GiottoClass", "extdata/toy_intensity.tif")
 #' gimg <- createGiottoLargeImage(f, use_rast_ext = TRUE)
+#' 
 #' density(gimg)
 #' @export
 setMethod(
@@ -2930,6 +3035,7 @@ setMethod(
 #' @examples
 #' f <- system.file(package = "GiottoClass", "extdata/toy_intensity.tif")
 #' gimg <- createGiottoLargeImage(f, use_rast_ext = TRUE, verbose = FALSE)
+#' 
 #' hist(gimg)
 #' @export
 setMethod(
@@ -2957,6 +3063,10 @@ setMethod(
 #' @param alpha global alpha value to use. Numeric. Scales from 0 to 1, with 0
 #' being fully transparent and 1 being fully visible
 #' @returns image array with 4th channel for transparency
+#' @examples
+#' x <- matrix(rnorm(4), nrow = 2)
+#' 
+#' add_img_array_alpha(x, alpha = 0.1)
 #' @export
 add_img_array_alpha <- function(
         x,
@@ -3048,12 +3158,6 @@ ometif_to_tif <- function(
 #' of a .ome.tif file. The R package XML is then used to parse the metadata
 #' as a list.
 #' @param path character. filepath to .ome.tif image
-#' @examples
-#' \dontrun{
-#' path <- file.path("[path_to_data]")
-#' meta <- ometif_metadata(path)
-#' force(meta)
-#' }
 #' @returns list of image metadata information
 #' @export
 ometif_metadata <- function(path) {

@@ -40,7 +40,6 @@ Function to get expression values from giotto object
 g <- GiottoData::loadGiottoMini("visium")
 
 getExpression(g)
-
 }
 \seealso{
 Other expression accessor functions: 

@@ -22,6 +22,5 @@ methods-instructions.R for a way to manually assign this default
 g <- createGiottoObject()
 
 set_default_spat_unit(gobject = g, spat_unit = "cell")
-
 }
 \keyword{internal}

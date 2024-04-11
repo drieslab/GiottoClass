@@ -8,6 +8,10 @@
 #' @param ... additional params to pass to methods
 #' @returns object with shifted spatial locations
 #' @description Shift the spatial locations of an object
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("spatLocsObj")
+#' 
+#' spatShift(g)
 NULL
 
 

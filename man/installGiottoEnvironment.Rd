@@ -80,3 +80,6 @@ Python  v3.6
   - scikit-learn==0.24.2
 }
 }
+\examples{
+installGiottoEnvironment()
+}

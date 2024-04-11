@@ -89,5 +89,4 @@ image_test <- system.file("extdata/toy_intensity.tif",
 package = "GiottoClass")
 
 createGiottoImage(mg_object = image_test)
-
 }

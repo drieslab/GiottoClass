@@ -31,6 +31,11 @@ SpatVector polygons
 \description{
 Coversion to a SpatVector of polygons.
 }
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPolygon")
+
+as.polygons(slot(g, "spatVector"))
+}
 \seealso{
 \code{\link[terra:as.polygons]{terra::as.polygons()}}
 

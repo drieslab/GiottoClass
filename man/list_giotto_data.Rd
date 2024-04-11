@@ -24,6 +24,5 @@ list the available data within specified giotto object slot
 g <- GiottoData::loadGiottoMini("visium")
 
 list_giotto_data(gobject = g, slot = "expression")
-
 }
 \keyword{internal}

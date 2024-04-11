@@ -20,5 +20,4 @@ information
 g <- GiottoData::loadGiottoMini("vizgen")
 
 list_spatial_info_names(g)
-
 }

@@ -50,3 +50,8 @@ access and set name slot fo S4 subobject
 \item \code{objName(giottoPoints) <- value}: Set name giottoPoints
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("exprObj")
+
+objName(g)
+}

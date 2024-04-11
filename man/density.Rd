@@ -27,6 +27,7 @@ around \code{\link[terra:density]{terra::density()}}.
 \examples{
 f <- system.file(package = "GiottoClass", "extdata/toy_intensity.tif")
 gimg <- createGiottoLargeImage(f, use_rast_ext = TRUE)
+
 density(gimg)
 }
 \seealso{

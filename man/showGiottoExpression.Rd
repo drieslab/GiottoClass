@@ -25,7 +25,6 @@ shows the available matrices
 g <- GiottoData::loadGiottoMini("visium")
 
 showGiottoExpression(g)
-
 }
 \seealso{
 Other functions to show data in giotto object: 

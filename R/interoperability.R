@@ -187,6 +187,13 @@ check_py_for_scanpy <- function() {
 #' See \code{\link{changeGiottoInstructions}} to modify instructions after
 #' creation.
 #' @returns Giotto object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' temp_directory <- tempdir()
+#' giottoToAnnData(g, save_directory = paste0(temp_directory,"/"))
+#' 
+#' anndataToGiotto(anndata_path = paste0(temp_directory,
+#' "/cell_rna_converted_gobject.h5ad"))
 #' @export
 anndataToGiotto <- function(
         anndata_path = NULL,
@@ -593,6 +600,10 @@ anndataToGiotto <- function(
 #' The save_directory will be created if it does not already exist.
 #' The default save_directory is the working directory.
 #' @returns vector containing .h5ad file path(s)
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' giottoToAnnData(g, save_directory = paste0(tempdir(),"/"))
 #' @export
 giottoToAnnData <- function(
         gobject = NULL,
@@ -1457,6 +1468,10 @@ giottoToSeuratV4 <- function(
 #' @param ... additional params to pass to \code{\link{get_spatial_locations}}
 #' @returns Seurat object
 #' @keywords seurat interoperability
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' giottoToSeuratV5(g)
 #' @export
 giottoToSeuratV5 <- function(
         gobject,
@@ -2084,6 +2099,11 @@ seuratToGiottoV4 <- function(
 #' @returns A Giotto object converted from Seurat object with all computations
 #' stored in it.
 #' @keywords seurat interoperability
+#' @examples
+#' m_expression <- Matrix::Matrix(rnorm(100), nrow = 10, sparse = TRUE)
+#' s <- Seurat::CreateSeuratObject(counts = m_expression)
+#' 
+#' seuratToGiottoV5(s, spatial_assay = "RNA")
 #' @export
 seuratToGiottoV5 <- function(
         sobject,
@@ -2476,11 +2496,6 @@ seuratToGiottoV5 <- function(
 #'
 #' @returns A SpatialExperiment object that contains data from the input Giotto
 #' object.
-#' @examples
-#' \dontrun{
-#' mini_gobject <- GiottoData::loadGiottoMini("vizgen")
-#' giottoToSpatialExperiment(mini_gobject)
-#' }
 #' @export
 giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
     spat_unit <- NULL
@@ -2810,11 +2825,9 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
 #' be displayed or not. Default \code{TRUE}.
 #' @returns Giotto object
 #' @examples
-#' \dontrun{
-#' library(SpatialExperiment)
-#' example(read10xVisium, echo = FALSE)
-#' spatialExperimentToGiotto(spe)
-#' }
+#' spe <- STexampleData::Visium_humanDLPFC()
+#' 
+#' spatialExperimentToGiotto(spe, python_path = NULL)
 #' @export
 spatialExperimentToGiotto <- function(
         spe,
@@ -3061,7 +3074,6 @@ if (requireNamespace("SpatialExperiment", quietly = TRUE)) {
 #'
 #' @returns A Giotto object compatible with suite version
 #' @export
-#'
 giottoMasterToSuite <- function(
         gobject,
         expression_feat = "rna") {

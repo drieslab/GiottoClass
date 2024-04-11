@@ -22,5 +22,4 @@ are attached to the Giotto object
 g <- GiottoData::loadGiottoMini("vizgen")
 
 list_images_names(g, img_type = "largeImage")
-
 }

@@ -24,6 +24,5 @@ methods-instructions.R for a way to manually assign this default
 g <- createGiottoObject()
 
 set_default_feat_type(gobject = g, spat_unit = "cell", feat_type = "rna")
-
 }
 \keyword{internal}

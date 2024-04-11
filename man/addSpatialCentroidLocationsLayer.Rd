@@ -41,6 +41,5 @@ selected layer
 g <- GiottoData::loadGiottoMini("vizgen")
 
 addSpatialCentroidLocationsLayer(g, poly_info = "aggregate")
-
 }
 \concept{centroid}

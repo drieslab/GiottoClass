@@ -23,5 +23,4 @@ return the available spatial enrichment results
 g <- GiottoData::loadGiottoMini("vizgen")
 
 list_spatial_enrichments(g)
-
 }

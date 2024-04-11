@@ -10,6 +10,10 @@
 #' @param y0 numeric. y-coordinate of the center of rotation. Defaults to
 #' center y val if not given.
 #' @returns spun object
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("spatLocsObj")
+#' 
+#' spin(g)
 NULL
 
 

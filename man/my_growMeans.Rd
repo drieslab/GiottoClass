@@ -21,6 +21,5 @@ my_growMeans
 m <- matrix(rnorm(100), nrow = 10)
 
 my_growMeans(abs(m))
-
 }
 \keyword{internal}

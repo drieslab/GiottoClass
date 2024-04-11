@@ -17,6 +17,6 @@ Print and return giotto object history
 }
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
-objHistory(g)
 
+objHistory(g)
 }

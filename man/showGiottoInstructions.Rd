@@ -19,5 +19,4 @@ Function to display all instructions from giotto object
 g <- GiottoData::loadGiottoMini("visium")
 
 showGiottoInstructions(g)
-
 }

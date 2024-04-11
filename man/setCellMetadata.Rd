@@ -44,7 +44,6 @@ m2 <- data.frame(cell_ID = m1$cell_ID,
 new_column = sample(letters, 624, replace = TRUE))
 
 setCellMetadata(gobject = g, x = createCellMetaObj(m2))
-
 }
 \seealso{
 Other functions to set data in giotto object: 

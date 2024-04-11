@@ -25,7 +25,6 @@
 #' here \url{http://giottosuite.com}
 #' @examples
 #' createGiottoInstructions()
-#' 
 #' @export
 createGiottoInstructions <- function(
         python_path = NULL,
@@ -186,7 +185,6 @@ create_giotto_instructions <- function(
 #' @examples
 #' readGiottoInstructions(giotto_instructions = createGiottoInstructions(),
 #' param = "show_plot")
-#' 
 #' @export
 readGiottoInstructions <- function(
         giotto_instructions,
@@ -221,7 +219,6 @@ readGiottoInstructions <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' showGiottoInstructions(g)
-#' 
 #' @export
 showGiottoInstructions <- function(gobject) {
     instrs <- gobject@instructions
@@ -245,7 +242,6 @@ showGiottoInstructions <- function(gobject) {
 #' 
 #' changeGiottoInstructions(gobject = g, params = "save_plot", 
 #' new_values = TRUE)
-#' 
 #' @export
 changeGiottoInstructions <- function(
         gobject,
@@ -318,7 +314,6 @@ changeGiottoInstructions <- function(
 #' 
 #' replaceGiottoInstructions(gobject = g, 
 #' instructions = createGiottoInstructions())
-#' 
 #' @export
 replaceGiottoInstructions <- function(
         gobject,

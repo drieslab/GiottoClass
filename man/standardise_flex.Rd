@@ -23,6 +23,5 @@ standardizes a matrix
 m <- matrix(rnorm(100), nrow = 10)
 
 standardise_flex(m)
-
 }
 \keyword{internal}

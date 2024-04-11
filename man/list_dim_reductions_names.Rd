@@ -37,5 +37,4 @@ g <- GiottoData::loadGiottoMini("visium")
 
 list_dim_reductions_names(g, spat_unit = "cell", feat_type = "rna", 
 dim_type = "pca")
-
 }

@@ -37,5 +37,4 @@ Annotate spatial network with cell metadata information.
 g <- GiottoData::loadGiottoMini("visium")
 
 annotateSpatialNetwork(g, cluster_column = "leiden_clus")
-
 }

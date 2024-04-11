@@ -15,7 +15,6 @@
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' showGiottoExpression(g)
-#' 
 #' @export
 showGiottoExpression <- function(gobject, nrows = 4, ncols = 4) {
     # import print styling
@@ -122,7 +121,6 @@ showGiottoExpression <- function(gobject, nrows = 4, ncols = 4) {
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' showGiottoCellMetadata(g)
-#' 
 #' @export
 showGiottoCellMetadata <- function(
         gobject,
@@ -213,7 +211,6 @@ showGiottoCellMetadata <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' showGiottoFeatMetadata(g)
-#' 
 #' @export
 showGiottoFeatMetadata <- function(
         gobject,
@@ -305,7 +302,6 @@ showGiottoFeatMetadata <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' showGiottoSpatLocs(g)
-#' 
 #' @export
 showGiottoSpatLocs <- function(
         gobject,
@@ -428,7 +424,6 @@ showGiottoSpatLocs <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' showGiottoSpatEnrichments(g)
-#' 
 #' @export
 showGiottoSpatEnrichments <- function(
         gobject,
@@ -480,7 +475,6 @@ showGiottoSpatEnrichments <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' showGiottoDimRed(g)
-#' 
 #' @export
 showGiottoDimRed <- function(
         gobject,
@@ -637,7 +631,6 @@ showGiottoDimRed <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' showGiottoNearestNetworks(g)
-#' 
 #' @export
 showGiottoNearestNetworks <- function(
         gobject,
@@ -759,7 +752,6 @@ showGiottoNearestNetworks <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' showGiottoSpatialInfo(g)
-#'
 #' @export
 showGiottoSpatialInfo <- function(gobject) {
     if (is.null(gobject)) stop("A giotto object needs to be provided \n")
@@ -787,7 +779,6 @@ showGiottoSpatialInfo <- function(gobject) {
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' showGiottoFeatInfo(g)
-#'
 #' @export
 showGiottoFeatInfo <- function(gobject) {
     if (is.null(gobject)) stop("A giotto object needs to be provided \n")
@@ -819,7 +810,6 @@ showGiottoFeatInfo <- function(gobject) {
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' showGiottoSpatNetworks(g)
-#' 
 #' @export
 showGiottoSpatNetworks <- function(
         gobject,
@@ -929,7 +919,6 @@ showNetworks <- function(...) {
 #' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
 #' 
 #' showGiottoSpatGrids(g)
-#' 
 #' @export
 showGiottoSpatGrids <- function(
         gobject,
@@ -1041,7 +1030,6 @@ showGrids <- function(...) {
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' showGiottoImageNames(g)
-#' 
 #' @export
 showGiottoImageNames <- function(gobject) {
     if (is.null(gobject)) stop("A giotto object needs to be provided \n")

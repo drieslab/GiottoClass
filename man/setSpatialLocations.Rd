@@ -48,7 +48,6 @@ x <- getSpatialLocations(g, output = "data.table")
 sl <- data.frame(cell_ID = x$cell_ID, sdimx = rnorm(624), sdimy = rnorm(624))
 
 setSpatialLocations(gobject = g, x = createSpatLocsObj(sl, name = "raw"))
-
 }
 \seealso{
 Other spatial location data accessor functions: 

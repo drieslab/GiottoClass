@@ -19,5 +19,4 @@ return the available names for giotto feature information
 g <- GiottoData::loadGiottoMini("vizgen")
 
 list_feature_info_names(g)
-
 }

@@ -24,5 +24,4 @@ lists the available matrices
 g <- GiottoData::loadGiottoMini("visium")
 
 list_expression(g)
-
 }

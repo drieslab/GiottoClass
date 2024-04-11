@@ -19,5 +19,4 @@ return the available giotto spatial polygon information
 g <- GiottoData::loadGiottoMini("vizgen")
 
 list_spatial_info(g)
-
 }

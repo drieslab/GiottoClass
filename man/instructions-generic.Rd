@@ -43,3 +43,8 @@ be replaced using the \code{field} param. Additionally, when using
 instructions<-, \code{initialize()} will be called on the giotto object if
 initialize param is TRUE
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+showGiottoInstructions(g)
+}

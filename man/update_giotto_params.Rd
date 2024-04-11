@@ -27,3 +27,8 @@ giotto object or list of parameters
 \description{
 Update giotto parameters
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+update_giotto_params(g, toplevel = 1)
+}

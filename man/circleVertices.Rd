@@ -20,7 +20,6 @@ given radius. Modified from \pkg{packcircles}.
 }
 \examples{
 circleVertices(radius = 10)
-
 }
 \seealso{
 \link{generate_grid}

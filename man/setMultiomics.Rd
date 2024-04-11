@@ -41,7 +41,6 @@ g <- GiottoData::loadGiottoMini("visium")
 
 setMultiomics(gobject = g, result = matrix(rnorm(100), nrow = 10), 
 spat_unit = "cell", feat_type = "rna_protein")
-
 }
 \seealso{
 Other multiomics accessor functions: 

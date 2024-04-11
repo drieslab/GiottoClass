@@ -43,7 +43,6 @@ Function to get a spatial location data.table
 g <- GiottoData::loadGiottoMini("vizgen")
 
 getSpatialLocations(g)
-
 }
 \seealso{
 Other spatial location data accessor functions: 

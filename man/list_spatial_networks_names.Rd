@@ -21,5 +21,4 @@ return the available names for giotto feature information
 g <- GiottoData::loadGiottoMini("visium")
 
 list_spatial_networks_names(g, spat_unit = "cell")
-
 }

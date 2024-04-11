@@ -37,7 +37,6 @@ Get feature metadata from giotto object
 g <- GiottoData::loadGiottoMini("vizgen")
 
 getFeatureMetadata(g)
-
 }
 \seealso{
 fDataDT

@@ -109,5 +109,4 @@ dimensions to use, e.g. c("sdimx', "sdimy") or a numerical vector, e.g. 2:3
 g <- GiottoData::loadGiottoMini("visium")
 
 createSpatialNetwork(g)
-
 }

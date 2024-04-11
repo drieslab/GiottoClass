@@ -24,5 +24,4 @@ spatial unit
 g <- GiottoData::loadGiottoMini("vizgen")
 
 list_spatial_enrichments_names(g, spat_unit = "aggregate", feat_type = "rna")
-
 }

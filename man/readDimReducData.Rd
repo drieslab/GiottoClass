@@ -36,5 +36,4 @@ read dimension reduction results from list
 x <- GiottoData::loadSubObjectMini("dimObj")
 
 readDimReducData(x)
-
 }

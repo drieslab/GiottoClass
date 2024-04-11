@@ -49,5 +49,4 @@ createNearestNetObj(
     network = slot(x, "igraph"), name = "sNN",
     nn_type = "sNN"
 )
-
 }

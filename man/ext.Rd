@@ -49,3 +49,8 @@ SpatExtent
 Get a SpatExtent of an object. This is the spatial minmax x
 and y that the object is mapped to.
 }
+\examples{
+g <- GiottoData::loadSubObjectMini("spatLocsObj")
+
+ext(g)
+}

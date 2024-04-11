@@ -30,5 +30,4 @@ Can be installed with \code{\link{installGiottoEnvironment}}.
 }
 \examples{
 checkGiottoEnvironment()
-
 }

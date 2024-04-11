@@ -24,5 +24,4 @@ Retrieves the instruction associated with the provided parameter
 \examples{
 readGiottoInstructions(giotto_instructions = createGiottoInstructions(),
 param = "show_plot")
-
 }

@@ -64,5 +64,4 @@ image_test <- system.file("extdata/toy_intensity.tif",
 package = "GiottoClass")
 
 createGiottoLargeImageList(raster_objects = image_test)
-
 }

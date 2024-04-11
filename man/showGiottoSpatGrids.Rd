@@ -23,7 +23,6 @@ g <- GiottoData::loadGiottoMini("visium")
 g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
 
 showGiottoSpatGrids(g)
-
 }
 \seealso{
 Other functions to show data in giotto object: 

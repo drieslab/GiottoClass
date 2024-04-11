@@ -1421,7 +1421,6 @@
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' subsetGiotto(g, cell_ids = c("AACTCGATGGCGCAGT-1", "GGCTGGCTAGCTTAAA-1"))
-#' 
 #' @export
 subsetGiotto <- function(
         gobject,
@@ -1522,7 +1521,6 @@ subsetGiotto <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' subsetGiottoLocs(g, x_max = 4000, y_max = -1000)
-#' 
 #' @export
 subsetGiottoLocs <- function(
         gobject,

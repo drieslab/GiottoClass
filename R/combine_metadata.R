@@ -19,8 +19,8 @@
 #' @returns Extended cell metadata in data.table format.
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
+#' 
 #' combineMetadata(g)
-#'
 #' @export
 combineMetadata <- function(
         gobject,
@@ -189,8 +189,8 @@ combineSpatialCellFeatureInfo <- function(
 #' @returns list of data.table(s)
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
 #' combineSpatialCellMetadataInfo(g, spat_unit = "aggregate", feat_type = "rna")
-#'
 #' @export
 combineSpatialCellMetadataInfo <- function(
         gobject,
@@ -262,8 +262,8 @@ combineSpatialCellMetadataInfo <- function(
 #' @returns data.table with combined spatial information
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
 #' combineCellData(g, poly_info = "aggregate")
-#'
 #' @export
 combineCellData <- function(
         gobject,
@@ -397,8 +397,8 @@ combineCellData <- function(
 #' @returns data.table with combined spatial feature information
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
 #' combineFeatureData(g, spat_unit = "aggregate", feat_type = "rna")
-#'
 #' @export
 combineFeatureData <- function(
         gobject,
@@ -478,8 +478,8 @@ combineFeatureData <- function(
 #' @returns data.table with combined spatial polygon information
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
 #' combineFeatureOverlapData(g, poly_info = "aggregate")
-#'
 #' @export
 combineFeatureOverlapData <- function(
         gobject,
@@ -579,10 +579,9 @@ combineFeatureOverlapData <- function(
 #' return_gobject = FALSE
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
+#' 
 #' calculateSpatCellMetadataProportions(g,
-#'     spat_network = "Delaunay_network", metadata_column = "leiden_clus"
-#' )
-#'
+#' spat_network = "Delaunay_network", metadata_column = "leiden_clus")
 #' @export
 calculateSpatCellMetadataProportions <- function(
         gobject,

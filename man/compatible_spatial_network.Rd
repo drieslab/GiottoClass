@@ -24,6 +24,5 @@ spat_net <- getSpatialNetwork(g, output = "networkDT")
 expr_m <- getExpression(g)
 
 compatible_spatial_network(spat_net, expr_m)
-
 }
 \keyword{internal}

@@ -16,6 +16,10 @@ NULL
 #' @param \dots additional arguments to pass
 #' @family As coercion functions
 #' @returns data.table
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPolygon")
+#' 
+#' as.data.table(g)
 NULL
 
 
@@ -27,6 +31,10 @@ NULL
 #' @returns SpatVector polygons
 #' @seealso [terra::as.polygons()]
 #' @family As coercion functions
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPolygon")
+#' 
+#' as.polygons(slot(g, "spatVector"))
 NULL
 
 #' @title Coerce to SpatVector points
@@ -37,6 +45,10 @@ NULL
 #' @returns SpatVector points
 #' @seealso [terra::as.points()]
 #' @family As coercion functions
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPoints")
+#' 
+#' as.points(slot(g, "spatVector"))
 NULL
 
 
@@ -48,6 +60,10 @@ NULL
 #' instead of wrapped in a `giottoPoints` or `giottoPolygon` object
 #' @returns  sf, sp, stars or terra
 #' @family As coercion functions
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPoints")
+#' 
+#' as.sf(g)
 NULL
 
 

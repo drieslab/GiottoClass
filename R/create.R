@@ -99,7 +99,6 @@ NULL
 #' ))
 #'
 #' createGiottoObject(expression = expr_matrix)
-#'
 #' @export
 createGiottoObject <- function(
         expression,
@@ -669,9 +668,7 @@ createGiottoObject <- function(
 #'
 #' createGiottoObjectSubcellular(
 #'     gpolygons = x_gpolygons,
-#'     gpoints = x_gpoints
-#' )
-#'
+#'     gpoints = x_gpoints)
 #' @export
 createGiottoObjectSubcellular <- function(gpolygons = NULL,
     polygon_mask_list_params = NULL,
@@ -1250,7 +1247,6 @@ createGiottoObjectSubcellular <- function(gpolygons = NULL,
 #' ))
 #'
 #' createExprObj(expression_data = x_expr)
-#'
 #' @export
 createExprObj <- function(
         expression_data,
@@ -1334,7 +1330,6 @@ create_expr_obj <- function(
 #' df <- data.frame(cell_ID = c("cell_1", "cell_2", "cell_3"))
 #'
 #' createCellMetaObj(metadata = df)
-#'
 #' @export
 createCellMetaObj <- function(
         metadata,
@@ -1416,7 +1411,6 @@ create_cell_meta_obj <- function(
 #' )
 #'
 #' createFeatMetaObj(metadata = x)
-#'
 #' @export
 createFeatMetaObj <- function(
         metadata,
@@ -1500,7 +1494,6 @@ create_feat_meta_obj <- function(
 #' colnames(x) <- c("Dim.1", "Dim.2")
 #'
 #' createDimObj(coordinates = x, name = "pca", method = "pca")
-#'
 #' @export
 createDimObj <- function(
         coordinates,
@@ -1599,7 +1592,6 @@ create_dim_obj <- function(
 #'     network = slot(x, "igraph"), name = "sNN",
 #'     nn_type = "sNN"
 #' )
-#'
 #' @export
 createNearestNetObj <- function(
         name = "test",
@@ -1685,7 +1677,6 @@ create_nn_net_obj <- function(
 #' )
 #'
 #' createSpatLocsObj(coordinates = x, name = "raw")
-#'
 #' @export
 createSpatLocsObj <- function(
         coordinates,
@@ -1782,7 +1773,6 @@ create_spat_locs_obj <- function(
 #' x <- GiottoData::loadSubObjectMini("spatialNetworkObj")
 #'
 #' createSpatNetObj(network = slot(x, "networkDT"), name = "Delaunay_network")
-#'
 #' @export
 createSpatNetObj <- function(
         network,
@@ -1880,7 +1870,6 @@ create_spat_net_obj <- function(
 #'     enrichment_data = slot(x, "enrichDT"),
 #'     name = "cluster_metagene"
 #' )
-#'
 #' @export
 createSpatEnrObj <- function(
         enrichment_data,
@@ -1959,13 +1948,12 @@ create_spat_enr_obj <- function(
 #' @param feat_type feature type
 #' @param provenance origin of aggregated information (if applicable)
 #' @param misc misc
-#' @keywords internal
 #' @returns spatialGridObj
+#' @keywords internal
 #' @examples
 #' x <- GiottoData::loadSubObjectMini("spatialGridObj")
 #' 
 #' create_spat_grid_obj(name = "test", gridDT = x)
-#' 
 #' @export
 create_spat_grid_obj <- function(
         name = "test",
@@ -2943,7 +2931,6 @@ create_giotto_polygon_object <- function(
 #' package = "GiottoClass")
 #' 
 #' createGiottoImage(mg_object = image_test)
-#' 
 #' @export
 createGiottoImage <- function(
         gobject = NULL,
@@ -3205,7 +3192,6 @@ createGiottoImage <- function(
 #' package = "GiottoClass")
 #' 
 #' createGiottoLargeImage(raster_object = image_test)
-#' 
 #' @export
 createGiottoLargeImage <- function(
         raster_object,
@@ -3420,7 +3406,6 @@ createGiottoLargeImage <- function(
 #' package = "GiottoClass")
 #' 
 #' createGiottoLargeImageList(raster_objects = image_test)
-#' 
 #' @export
 createGiottoLargeImageList <- function(
         raster_objects,

@@ -25,5 +25,4 @@ g_spatgrid <- getSpatialGrid(g)
 
 annotate_spatlocs_with_spatgrid_2D(spatloc = g_spatloc, 
 spatgrid = g_spatgrid)
-
 }

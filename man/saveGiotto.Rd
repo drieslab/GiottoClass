@@ -52,5 +52,4 @@ and will go to \code{\link[base]{saveRDS}} or \code{\link[qs]{qsave}}
 g <- GiottoData::loadGiottoMini("visium")
 
 saveGiotto(gobject = g, dir = tempdir())
-
 }

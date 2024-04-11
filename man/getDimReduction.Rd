@@ -44,7 +44,6 @@ Function to get a dimension reduction object
 g <- GiottoData::loadGiottoMini("visium")
 
 getDimReduction(g)
-
 }
 \seealso{
 Other dimensional reduction data accessor functions: 

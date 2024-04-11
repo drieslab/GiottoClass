@@ -21,7 +21,6 @@ shows the available spatial locations
 g <- GiottoData::loadGiottoMini("visium")
 
 showGiottoSpatLocs(g)
-
 }
 \seealso{
 Other functions to show data in giotto object: 

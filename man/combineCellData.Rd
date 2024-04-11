@@ -40,7 +40,7 @@ combine cell data information
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
-combineCellData(g, poly_info = "aggregate")
 
+combineCellData(g, poly_info = "aggregate")
 }
 \concept{combine cell metadata}

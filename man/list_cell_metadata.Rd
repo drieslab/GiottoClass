@@ -30,5 +30,4 @@ lists the available cell metadata.
 g <- GiottoData::loadGiottoMini("visium")
 
 list_cell_metadata(g)
-
 }

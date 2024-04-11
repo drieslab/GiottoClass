@@ -22,6 +22,6 @@ convert polygon to raster
 df <- data.frame(x = 1:5, y = c(1, 4, 4, 3, 1))
 d <- data.frame(id = 1, name = "polygon_1")
 my_polygon <- terra::vect(as.matrix(df), type = "polygons", atts = d)
-polygon_to_raster(my_polygon)
 
+polygon_to_raster(my_polygon)
 }

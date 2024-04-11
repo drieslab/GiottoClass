@@ -22,5 +22,4 @@ a list of generated giottoPoints objects
 x <- GiottoData::loadSubObjectMini("giottoPoints")
 
 readFeatData(list(x))
-
 }

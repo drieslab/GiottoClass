@@ -34,6 +34,5 @@ rownames(x_expression) <- unique(x_points$feat_ID)
 g <- createGiottoObject(expression = x_expression)
 
 g <- addGiottoPoints(gobject = g, gpoints = list(x_points))
-
 }
 \concept{polygon}

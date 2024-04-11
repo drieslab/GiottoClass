@@ -20,7 +20,6 @@ Giotto object
 g <- GiottoData::loadGiottoMini("vizgen")
 
 showGiottoImageNames(g)
-
 }
 \seealso{
 Other functions to show data in giotto object: 

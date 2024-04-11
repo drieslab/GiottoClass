@@ -51,8 +51,8 @@ Serial overlapping function.
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
-calculateOverlapRaster(g)
 
+calculateOverlapRaster(g)
 }
 \seealso{
 \code{\link[=.calculate_overlap_raster]{.calculate_overlap_raster()}}

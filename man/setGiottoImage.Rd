@@ -43,7 +43,6 @@ g <- GiottoData::loadGiottoMini("vizgen")
 gimage <- getGiottoImage(gobject = g, image_type = "largeImage")
 
 setGiottoImage(gobject = g, image = gimage, image_type = "largeImage")
-
 }
 \seealso{
 \code{\link{addGiottoImage}}

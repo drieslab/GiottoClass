@@ -22,7 +22,6 @@
 #' write.csv(x, paste0(temporal_dir,"/mymatrix.csv"))
 #' 
 #' readExprMatrix(paste0(temporal_dir,"/mymatrix.csv"))
-#' 
 #' @export
 readExprMatrix <- function(
         path,
@@ -99,7 +98,6 @@ readExprMatrix <- function(
 #' write.csv(x, paste0(temporal_dir,"/mymatrix.csv"))
 #' 
 #' readExprData(paste0(temporal_dir,"/mymatrix.csv"))
-#'
 #' @export
 readExprData <- function(
         data_list,
@@ -362,7 +360,6 @@ readExprData <- function(
 #' write.csv(df, paste0(temporal_dir,"/metadata.csv"), row.names = FALSE)
 #' 
 #' readCellMetadata(paste0(temporal_dir,"/metadata.csv"))
-#' 
 #' @export
 readCellMetadata <- function(
         data_list,
@@ -551,7 +548,6 @@ readCellMetadata <- function(
 #' write.csv(df, paste0(temporal_dir,"/metadata.csv"), row.names = FALSE)
 #' 
 #' readFeatMetadata(paste0(temporal_dir,"/metadata.csv"))
-#' 
 #' @export
 readFeatMetadata <- function(
         data_list,
@@ -742,7 +738,6 @@ readFeatMetadata <- function(
 #' write.csv(df, paste0(temporal_dir,"/spatlocs.csv"), row.names = FALSE)
 #' 
 #' readSpatLocsData(paste0(temporal_dir,"/spatlocs.csv"))
-#' 
 #' @export
 readSpatLocsData <- function(
         data_list,
@@ -950,7 +945,6 @@ readSpatLocsData <- function(
 #' x <- GiottoData::loadSubObjectMini("spatialNetworkObj", idx = 2)
 #' 
 #' readSpatNetData(x)
-#' 
 #' @export
 readSpatNetData <- function(
         data_list,
@@ -1134,7 +1128,6 @@ readSpatNetData <- function(
 #' x <- GiottoData::loadSubObjectMini("spatEnrObj")
 #' 
 #' readSpatEnrichData(x)
-#' 
 #' @export
 readSpatEnrichData <- function(
         data_list,
@@ -1436,7 +1429,6 @@ readSpatEnrichData <- function(
 #' x <- GiottoData::loadSubObjectMini("dimObj")
 #' 
 #' readDimReducData(x)
-#' 
 #' @export
 readDimReducData <- function(
         data_list,
@@ -1749,7 +1741,6 @@ readDimReducData <- function(
 #' x <- GiottoData::loadSubObjectMini("nnNetObj")
 #' 
 #' readNearestNetData(x)
-#' 
 #' @export
 readNearestNetData <- function(
         data_list,
@@ -2061,7 +2052,6 @@ readNearestNetData <- function(
 #' x <- GiottoData::loadSubObjectMini("giottoPolygon")
 #' 
 #' readPolygonData(x)
-#' 
 #' @export
 readPolygonData <- function(
         data_list,
@@ -2272,7 +2262,6 @@ readPolygonData <- function(
 #' g <- createGiottoObject()
 #' 
 #' g <- addGiottoPolygons(gobject = g, gpolygons = list(x))
-#' 
 #' @export
 addGiottoPolygons <- function(
         gobject,
@@ -2331,7 +2320,6 @@ addGiottoPolygons <- function(
 #' x <- GiottoData::loadSubObjectMini("giottoPoints")
 #' 
 #' readFeatData(list(x))
-#' 
 #' @export
 readFeatData <- function(
         data_list,
@@ -2473,7 +2461,6 @@ NULL
 #' g <- createGiottoObject(expression = x_expression)
 #' 
 #' g <- addGiottoPoints(gobject = g, gpoints = list(x_points))
-#' 
 #' @export
 addGiottoPoints <- function(
         gobject,

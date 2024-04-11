@@ -36,5 +36,4 @@ g <- GiottoData::loadGiottoMini("visium")
 
 changeGiottoInstructions(gobject = g, params = "save_plot", 
 new_values = TRUE)
-
 }

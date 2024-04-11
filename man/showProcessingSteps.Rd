@@ -18,6 +18,6 @@ on a Giotto object in a summarized format
 }
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
-showProcessingSteps(g)
 
+showProcessingSteps(g)
 }

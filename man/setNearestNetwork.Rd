@@ -49,7 +49,6 @@ g <- GiottoData::loadGiottoMini("visium")
 dimred <- getNearestNetwork(gobject = g)
 
 setNearestNetwork(gobject = g, x = dimred)
-
 }
 \seealso{
 Other expression space nearest network accessor functions: 

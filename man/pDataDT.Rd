@@ -25,5 +25,4 @@ show cell metadata
 g <- GiottoData::loadGiottoMini("visium")
 
 pDataDT(g)
-
 }

@@ -44,7 +44,6 @@ m2 <- data.frame(feat_ID = m1$feat_ID,
 new_column = paste0("gene_", m1$feat_ID))
 
 setFeatureMetadata(gobject = g, x = createFeatMetaObj(m2))
-
 }
 \seealso{
 Other functions to set data in giotto object: 

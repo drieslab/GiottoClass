@@ -33,5 +33,4 @@ g <- GiottoData::loadGiottoMini("visium")
 g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
 
 list_spatial_grids_names(g, spat_unit = "cell", feat_type = "rna")
-
 }

@@ -33,5 +33,4 @@ return the available dimension reductions
 g <- GiottoData::loadGiottoMini("visium")
 
 list_dim_reductions(g)
-
 }

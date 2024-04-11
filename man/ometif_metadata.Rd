@@ -17,10 +17,3 @@ Use the python package tifffile to get the the XML metadata
 of a .ome.tif file. The R package XML is then used to parse the metadata
 as a list.
 }
-\examples{
-\dontrun{
-path <- file.path("[path_to_data]")
-meta <- ometif_metadata(path)
-force(meta)
-}
-}

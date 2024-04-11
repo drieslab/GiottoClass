@@ -24,7 +24,6 @@ shows the available dimension reductions
 g <- GiottoData::loadGiottoMini("visium")
 
 showGiottoDimRed(g)
-
 }
 \seealso{
 Other functions to show data in giotto object: 

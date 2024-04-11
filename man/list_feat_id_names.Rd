@@ -20,5 +20,4 @@ feat_types and feature info in the gobject
 g <- GiottoData::loadGiottoMini("visium")
 
 list_feat_id_names(g)
-
 }

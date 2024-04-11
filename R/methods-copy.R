@@ -9,6 +9,10 @@ NULL
 #' @seealso \code{\link[data.table]{copy}} \code{\link[terra]{deepcopy}}
 #' @aliases copy
 #' @returns giotto subobjects
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("exprObj")
+#' 
+#' copy(g)
 NULL
 
 #' @describeIn copy Copy \emph{data.table}-based spatial locations object.

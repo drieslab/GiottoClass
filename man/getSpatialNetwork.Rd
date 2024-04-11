@@ -43,7 +43,6 @@ Function to get a spatial network
 g <- GiottoData::loadGiottoMini("visium")
 
 getSpatialNetwork(g)
-
 }
 \seealso{
 Other spatial network data accessor functions: 

@@ -52,7 +52,6 @@ g <- GiottoData::loadGiottoMini("visium")
 dimred <- getDimReduction(g)
 
 setDimReduction(gobject = g, x = dimred)
-
 }
 \seealso{
 Other dimensional reduction data accessor functions: 

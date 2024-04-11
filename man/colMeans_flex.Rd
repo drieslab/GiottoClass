@@ -19,6 +19,5 @@ colMeans_flex
 m <- matrix(rnorm(100), nrow = 10)
 
 colMeans_flex(m)
-
 }
 \keyword{internal}

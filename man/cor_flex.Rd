@@ -21,6 +21,5 @@ cor_flex
 m <- matrix(rnorm(100), nrow = 10)
 
 cor_flex(m)
-
 }
 \keyword{internal}

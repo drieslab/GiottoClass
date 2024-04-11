@@ -22,7 +22,6 @@
 #' m <- matrix(rnorm(100), nrow = 10)
 #' 
 #' mean_flex(m)
-#' 
 #' @export
 mean_flex <- function(x, ...) {
     if (inherits(x, "HDF5Matrix")) {
@@ -47,7 +46,6 @@ mean_flex <- function(x, ...) {
 #' m <- matrix(rnorm(100), nrow = 10)
 #' 
 #' rowSums_flex(m)
-#' 
 #' @export
 rowSums_flex <- function(mymatrix) {
     if (inherits(mymatrix, "DelayedArray")) {
@@ -77,7 +75,6 @@ rowSums_flex <- function(mymatrix) {
 #' m <- matrix(rnorm(100), nrow = 10)
 #' 
 #' rowMeans_flex(m)
-#' 
 #' @export
 rowMeans_flex <- function(mymatrix) {
     # replace by MatrixGenerics?
@@ -108,7 +105,6 @@ rowMeans_flex <- function(mymatrix) {
 #' m <- matrix(rnorm(100), nrow = 10)
 #' 
 #' colSums_flex(m)
-#' 
 #' @export
 colSums_flex <- function(mymatrix) {
     if (inherits(mymatrix, "DelayedArray")) {
@@ -138,7 +134,6 @@ colSums_flex <- function(mymatrix) {
 #' m <- matrix(rnorm(100), nrow = 10)
 #' 
 #' colMeans_flex(m)
-#' 
 #' @export
 colMeans_flex <- function(mymatrix) {
     if (inherits(mymatrix, "DelayedArray")) {
@@ -168,7 +163,6 @@ colMeans_flex <- function(mymatrix) {
 #' m <- matrix(rnorm(100), nrow = 10)
 #' 
 #' t_flex(m)
-#' 
 #' @export
 t_flex <- function(mymatrix) {
     if (inherits(mymatrix, "DelayedArray")) {
@@ -201,7 +195,6 @@ t_flex <- function(mymatrix) {
 #' m <- matrix(rnorm(100), nrow = 10)
 #' 
 #' cor_flex(m)
-#' 
 #' @export
 cor_flex <- function(x, ...) {
     x <- as.matrix(x)
@@ -222,7 +215,6 @@ cor_flex <- function(x, ...) {
 #' m <- matrix(rnorm(100), nrow = 10)
 #' 
 #' my_arowMeans(m)
-#' 
 #' @export
 my_arowMeans <- function(x) {
     if (is.null(nrow(x))) {
@@ -245,7 +237,6 @@ my_arowMeans <- function(x) {
 #' m <- matrix(rnorm(100), nrow = 10)
 #' 
 #' my_growMeans(abs(m))
-#' 
 #' @export
 my_growMeans <- function(x, offset = 0.1) {
     if (is.null(nrow(x))) {
@@ -267,7 +258,6 @@ my_growMeans <- function(x, offset = 0.1) {
 #' m <- matrix(rnorm(100), nrow = 10)
 #' 
 #' my_rowMeans(m)
-#' 
 #' @export
 my_rowMeans <- function(x, method = c("arithmic", "geometric"), offset = 0.1) {
     method <- match.arg(method, c("arithmic", "geometric"))
@@ -293,7 +283,6 @@ my_rowMeans <- function(x, method = c("arithmic", "geometric"), offset = 0.1) {
 #' m <- matrix(rnorm(100), nrow = 10)
 #' 
 #' standardise_flex(m)
-#' 
 #' @export
 standardise_flex <- function(x, center = TRUE, scale = TRUE) {
     if (inherits(x, "DelayedArray")) {

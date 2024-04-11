@@ -13,6 +13,10 @@
 #' @param toplevel expected relative stackframe where call that is being
 #' recorded was made
 #' @returns giotto object or list of parameters
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' update_giotto_params(g, toplevel = 1)
 #' @export
 update_giotto_params <- function(
         gobject,
@@ -42,8 +46,8 @@ update_giotto_params <- function(
 #' @returns list
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
+#' 
 #' objHistory(g)
-#'
 #' @export
 objHistory <- function(object) {
     cat("Steps and parameters used: \n \n")
@@ -62,8 +66,8 @@ objHistory <- function(object) {
 #' @returns list of processing steps and names
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
+#' 
 #' showProcessingSteps(g)
-#'
 #' @export
 showProcessingSteps <- function(gobject) {
     parameters <- gobject@parameters

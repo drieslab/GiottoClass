@@ -13,7 +13,6 @@
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' list_giotto_data(gobject = g, slot = "expression")
-#' 
 #' @export
 list_giotto_data <- function(
         gobject = NULL,
@@ -71,7 +70,6 @@ list_giotto_data <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' list_expression(g)
-#' 
 #' @export
 list_expression <- function(
         gobject,
@@ -130,7 +128,6 @@ list_expression <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' list_expression_names(g, spat_unit = "cell", feat_type = "rna")
-#' 
 #' @export
 list_expression_names <- function(
         gobject,
@@ -156,7 +153,6 @@ list_expression_names <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' list_cell_id_names(g)
-#' 
 #' @export
 list_cell_id_names <- function(gobject) {
     return(names(gobject@cell_ID))
@@ -173,7 +169,6 @@ list_cell_id_names <- function(gobject) {
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' list_feat_id_names(g)
-#' 
 #' @export
 list_feat_id_names <- function(gobject) {
     return(names(gobject@feat_ID))
@@ -189,7 +184,6 @@ list_feat_id_names <- function(gobject) {
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' list_cell_metadata(g)
-#' 
 #' @export
 list_cell_metadata <- function(
         gobject,
@@ -251,7 +245,6 @@ list_cell_metadata <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' list_feat_metadata(g)
-#' 
 #' @export
 list_feat_metadata <- function(
         gobject,
@@ -313,7 +306,6 @@ list_feat_metadata <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' list_spatial_locations(g)
-#' 
 #' @export
 list_spatial_locations <- function(
         gobject,
@@ -374,7 +366,6 @@ list_spatial_locations <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' list_spatial_locations_names(g, spat_unit = "cell")
-#' 
 #' @export
 list_spatial_locations_names <- function(
         gobject,
@@ -397,7 +388,6 @@ list_spatial_locations_names <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' list_spatial_enrichments(g)
-#' 
 #' @export
 list_spatial_enrichments <- function(
         gobject,
@@ -461,7 +451,6 @@ list_spatial_enrichments <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' list_spatial_enrichments_names(g, spat_unit = "aggregate", feat_type = "rna")
-#' 
 #' @export
 list_spatial_enrichments_names <- function(
         gobject,
@@ -490,7 +479,6 @@ list_spatial_enrichments_names <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' list_dim_reductions(g)
-#' 
 #' @export
 list_dim_reductions <- function(
         gobject,
@@ -577,7 +565,6 @@ list_dim_reductions <- function(
 #' 
 #' list_dim_reductions_names(g, spat_unit = "cell", feat_type = "rna", 
 #' dim_type = "pca")
-#' 
 #' @export
 list_dim_reductions_names <- function(
         gobject,
@@ -606,7 +593,6 @@ list_dim_reductions_names <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' list_nearest_networks(g)
-#' 
 #' @export
 list_nearest_networks <- function(
         gobject,
@@ -694,7 +680,6 @@ list_nearest_networks <- function(
 #' 
 #' list_nearest_networks_names(g, spat_unit = "cell", feat_type = "rna", 
 #' nn_type = "sNN")
-#' 
 #' @export
 list_nearest_networks_names <- function(
         gobject,
@@ -723,7 +708,6 @@ list_nearest_networks_names <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' list_spatial_info(g)
-#' 
 #' @export
 list_spatial_info <- function(gobject) {
     availableSpatInfo <- data.table()
@@ -754,7 +738,6 @@ list_spatial_info <- function(gobject) {
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' list_spatial_info_names(g)
-#' 
 #' @export
 list_spatial_info_names <- function(gobject) {
     spat_info_names <- names(gobject@spatial_info)
@@ -773,7 +756,6 @@ list_spatial_info_names <- function(gobject) {
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' list_feature_info(g)
-#' 
 #' @export
 list_feature_info <- function(gobject) {
     availableFeatInfo <- data.table()
@@ -801,7 +783,6 @@ list_feature_info <- function(gobject) {
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' list_feature_info_names(g)
-#' 
 #' @export
 list_feature_info_names <- function(gobject) {
     feat_info_names <- names(gobject@feat_info)
@@ -822,7 +803,6 @@ list_feature_info_names <- function(gobject) {
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' list_spatial_networks(g)
-#' 
 #' @export
 list_spatial_networks <- function(
         gobject,
@@ -880,7 +860,6 @@ list_spatial_networks <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' list_spatial_networks_names(g, spat_unit = "cell")
-#' 
 #' @export
 list_spatial_networks_names <- function(
         gobject,
@@ -907,7 +886,6 @@ list_spatial_networks_names <- function(
 #' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
 #' 
 #' list_spatial_grids(g)
-#' 
 #' @export
 list_spatial_grids <- function(
         gobject,
@@ -984,7 +962,6 @@ list_spatial_grids <- function(
 #' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
 #' 
 #' list_spatial_grids_names(g, spat_unit = "cell", feat_type = "rna")
-#' 
 #' @export
 list_spatial_grids_names <- function(
         gobject,
@@ -1011,7 +988,6 @@ list_spatial_grids_names <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' list_images(g, img_type = "largeImage")
-#' 
 #' @export
 list_images <- function(
         gobject,
@@ -1077,7 +1053,6 @@ list_images <- function(
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
 #' list_images_names(g, img_type = "largeImage")
-#' 
 #' @export
 list_images_names <- function(
         gobject,

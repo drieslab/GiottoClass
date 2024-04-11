@@ -30,5 +30,4 @@ read spatial networks data from list
 x <- GiottoData::loadSubObjectMini("spatialNetworkObj", idx = 2)
 
 readSpatNetData(x)
-
 }

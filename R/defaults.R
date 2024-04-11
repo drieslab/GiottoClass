@@ -13,7 +13,6 @@
 #' g <- createGiottoObject()
 #' 
 #' set_default_spat_unit(gobject = g, spat_unit = "cell")
-#' 
 #' @export
 set_default_spat_unit <- function(
         gobject,
@@ -57,7 +56,6 @@ set_default_spat_unit <- function(
 #' g <- createGiottoObject()
 #' 
 #' set_default_feat_type(gobject = g, spat_unit = "cell", feat_type = "rna")
-#' 
 #' @export
 set_default_feat_type <- function(
         gobject,

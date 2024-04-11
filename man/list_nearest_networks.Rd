@@ -33,5 +33,4 @@ return the available nearest neighbor network information
 g <- GiottoData::loadGiottoMini("visium")
 
 list_nearest_networks(g)
-
 }

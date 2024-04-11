@@ -144,6 +144,5 @@ expr_matrix <- readRDS(system.file("extdata/toy_matrix.RDS",
 ))
 
 createGiottoObject(expression = expr_matrix)
-
 }
 \concept{giotto}

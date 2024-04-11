@@ -23,5 +23,4 @@ g <- GiottoData::loadGiottoMini("visium")
 spat_net <- getSpatialNetwork(g, output = "networkDT")
 
 get_distance(spat_net, method = "mean")
-
 }

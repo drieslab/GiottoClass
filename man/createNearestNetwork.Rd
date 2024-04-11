@@ -100,5 +100,4 @@ irrespective of minimum_shared setting}
 g <- GiottoData::loadGiottoMini("visium")
 
 createNearestNetwork(g)
-
 }

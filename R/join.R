@@ -153,7 +153,6 @@
 #' g2 <- createGiottoObject(expression = m2)
 #' 
 #' joinGiottoObjects(gobject_list = list(g1, g2), gobject_names = c("g1", "g2"))
-#' 
 #' @export
 joinGiottoObjects <- function(
         gobject_list,

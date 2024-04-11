@@ -40,7 +40,6 @@ Get a NN-network from a Giotto object
 g <- GiottoData::loadGiottoMini("visium")
 
 getNearestNetwork(gobject = g)
-
 }
 \seealso{
 Other expression space nearest network accessor functions: 

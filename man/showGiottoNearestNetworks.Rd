@@ -22,7 +22,6 @@ shows the available nearest neighbor networks
 g <- GiottoData::loadGiottoMini("visium")
 
 showGiottoNearestNetworks(g)
-
 }
 \seealso{
 Other functions to show data in giotto object: 

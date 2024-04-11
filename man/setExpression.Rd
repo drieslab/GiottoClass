@@ -48,7 +48,6 @@ colnames(m) <- paste0("cell_", seq_len(10))
 rownames(m) <- paste0("feat_", seq_len(10))
 
 g <- setExpression(gobject = g, x = createExprObj(m, name = "raw"))
-
 }
 \seealso{
 Other expression accessor functions: 

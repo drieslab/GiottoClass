@@ -28,5 +28,6 @@ edges <- data.table::data.table(
     from = c(1, 1),
     to = c(2, 3)
 )
+
 edge_distances(m, edges)
 }

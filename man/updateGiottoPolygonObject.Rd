@@ -15,3 +15,8 @@ GiottoPolygonObject
 \description{
 Update giotto polygon object
 }
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPolygon")
+
+updateGiottoPolygonObject(g)
+}

@@ -23,6 +23,5 @@ my_rowMeans
 m <- matrix(rnorm(100), nrow = 10)
 
 my_rowMeans(m)
-
 }
 \keyword{internal}

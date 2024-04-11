@@ -27,6 +27,7 @@ Create a histogram of the pixel values of a giottoLargeImage. Wrapper around
 \examples{
 f <- system.file(package = "GiottoClass", "extdata/toy_intensity.tif")
 gimg <- createGiottoLargeImage(f, use_rast_ext = TRUE, verbose = FALSE)
+
 hist(gimg)
 }
 \seealso{

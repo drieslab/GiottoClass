@@ -476,6 +476,7 @@ createNetwork <- function(x,
 #'     from = c(1, 1),
 #'     to = c(2, 3)
 #' )
+#' 
 #' edge_distances(m, edges)
 #' @export
 edge_distances <- function(x, y, x_node_ids = NULL) {
@@ -607,7 +608,6 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' createNearestNetwork(g)
-#' 
 #' @export
 createNearestNetwork <- function(gobject,
     spat_unit = NULL,
@@ -860,7 +860,6 @@ createNearestNetwork <- function(gobject,
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
 #' addNetworkLayout(g)
-#' 
 #' @export
 addNetworkLayout <- function(
         gobject,
@@ -943,6 +942,11 @@ addNetworkLayout <- function(
 #' @param nnDT nearest neighbor network in data.table format
 #' @keywords internal
 #' @returns kNN object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g_nn <- getNearestNetwork(g, output = "data.table", name = "custom_NN")
+#' 
+#' nnDT_to_kNN(g_nn)
 #' @export
 nnDT_to_kNN <- function(nnDT) {
     # data.table variable

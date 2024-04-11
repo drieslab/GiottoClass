@@ -99,3 +99,8 @@ based \code{exprMat} slots
 based \code{metaDT} slots
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPoints")
+
+nrow(g)
+}

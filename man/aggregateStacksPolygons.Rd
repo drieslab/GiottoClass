@@ -31,8 +31,8 @@ aggregate polygons from different z-stacks
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
-aggregateStacksPolygons(g, spat_units = c("z0", "z1"))
 
+aggregateStacksPolygons(g, spat_units = c("z0", "z1"))
 }
 \seealso{
 Other aggregate stacks: 

@@ -34,7 +34,6 @@ Get giotto polygon spatVector
 g <- GiottoData::loadGiottoMini("vizgen")
 
 getPolygonInfo(g)
-
 }
 \seealso{
 Other polygon info data accessor functions: 

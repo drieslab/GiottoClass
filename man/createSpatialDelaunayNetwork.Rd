@@ -87,5 +87,4 @@ or \code{\link[RTriangle]{triangulate}}.
 g <- GiottoData::loadGiottoMini("visium")
 
 createSpatialDelaunayNetwork(g)
-
 }

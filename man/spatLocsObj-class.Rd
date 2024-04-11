@@ -23,3 +23,6 @@ Framework to store spatial location information
 \item{\code{provenance}}{origin of aggregated information (if applicable)}
 }}
 
+\examples{
+spatLocsObj()
+}

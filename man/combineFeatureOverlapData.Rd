@@ -28,7 +28,7 @@ combine feature data information
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
-combineFeatureOverlapData(g, poly_info = "aggregate")
 
+combineFeatureOverlapData(g, poly_info = "aggregate")
 }
 \concept{combine feature metadata}

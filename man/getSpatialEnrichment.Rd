@@ -40,7 +40,6 @@ Function to get a spatial enrichment data.table
 g <- GiottoData::loadGiottoMini("vizgen")
 
 getSpatialEnrichment(g, spat_unit = "aggregate", name = "cluster_metagene")
-
 }
 \seealso{
 Other spatial enrichment data accessor functions: 

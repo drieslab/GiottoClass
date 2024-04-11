@@ -22,5 +22,4 @@ unit
 g <- GiottoData::loadGiottoMini("visium")
 
 list_spatial_locations_names(g, spat_unit = "cell")
-
 }

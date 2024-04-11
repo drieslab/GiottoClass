@@ -53,5 +53,4 @@ Create S4 spatialNetworkObj
 x <- GiottoData::loadSubObjectMini("spatialNetworkObj")
 
 createSpatNetObj(network = slot(x, "networkDT"), name = "Delaunay_network")
-
 }

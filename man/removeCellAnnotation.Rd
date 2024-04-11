@@ -53,5 +53,4 @@ g <- annotateGiotto(g,
 )
 
 g <- removeCellAnnotation(g, columns = "cell_types")
-
 }

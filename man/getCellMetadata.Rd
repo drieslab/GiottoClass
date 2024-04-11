@@ -37,7 +37,6 @@ Get cell metadata from giotto object
 g <- GiottoData::loadGiottoMini("visium")
 
 getCellMetadata(g)
-
 }
 \seealso{
 pDataDT

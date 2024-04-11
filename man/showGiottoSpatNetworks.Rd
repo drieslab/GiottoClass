@@ -22,7 +22,6 @@ Giotto object
 g <- GiottoData::loadGiottoMini("visium")
 
 showGiottoSpatNetworks(g)
-
 }
 \seealso{
 Other functions to show data in giotto object: 

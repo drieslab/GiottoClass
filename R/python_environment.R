@@ -14,7 +14,6 @@
 #' @returns logical
 #' @examples
 #' checkGiottoEnvironment()
-#' 
 #' @export
 checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
     ## get operating system
@@ -392,7 +391,8 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 #'   - python.app==2 # macOS only
 #'   - scikit-learn==0.24.2
 #' }
-#'
+#' @examples
+#' installGiottoEnvironment()
 #' @export
 installGiottoEnvironment <- function(
         packages_to_install = c(
@@ -554,7 +554,6 @@ removeGiottoEnvironment <- function(mini_path = NULL, verbose = TRUE) {
 #' @keywords internal
 #' @examples
 #' set_giotto_python_path()
-#' 
 #' @export
 set_giotto_python_path <- function(
         python_path = NULL,

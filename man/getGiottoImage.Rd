@@ -27,7 +27,6 @@ Get giotto image object from gobject
 g <- GiottoData::loadGiottoMini("vizgen")
 
 getGiottoImage(gobject = g, image_type = "largeImage")
-
 }
 \seealso{
 Other image data accessor functions: 

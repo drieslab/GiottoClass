@@ -29,3 +29,6 @@ Framework to store nearest neighbor network information
 \item{\code{misc}}{misc}
 }}
 
+\examples{
+nnNetObj()
+}

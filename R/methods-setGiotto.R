@@ -4,6 +4,11 @@
 #' @param x giottoSubobject to set
 #' @param \dots additional params to pass to specific Giotto setter functions
 #' @returns giottoSubobject
+#' @examples
+#' g <- createGiottoObject()
+#' g_expression <- GiottoData::loadSubObjectMini("exprObj")
+#' 
+#' setGiotto(gobject = g, x = g_expression)
 NULL
 
 

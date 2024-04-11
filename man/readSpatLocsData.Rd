@@ -37,5 +37,4 @@ temporal_dir <- tempdir()
 write.csv(df, paste0(temporal_dir,"/spatlocs.csv"), row.names = FALSE)
 
 readSpatLocsData(paste0(temporal_dir,"/spatlocs.csv"))
-
 }

@@ -25,5 +25,4 @@ show feature metadata
 g <- GiottoData::loadGiottoMini("visium")
 
 fDataDT(g)
-
 }

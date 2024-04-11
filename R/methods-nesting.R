@@ -10,6 +10,10 @@ NULL
 #' @param value value to set as spatial unit
 #' @aliases spatUnit spatUnit<-
 #' @returns spat_unit
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("featMetaObj")
+#' 
+#' spatUnit(g)
 NULL
 
 #' @title Feature type information
@@ -19,6 +23,10 @@ NULL
 #' @param value value to set as feature type
 #' @aliases featType featType<-
 #' @returns feat_type
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("featMetaObj")
+#' 
+#' featType(g)
 NULL
 
 #' @title Giotto object name information
@@ -28,6 +36,10 @@ NULL
 #' @param value value to set as object name
 #' @aliases objName objName<-
 #' @returns name slot
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("exprObj")
+#' 
+#' objName(g)
 NULL
 
 #' @title Provenance information
@@ -37,6 +49,10 @@ NULL
 #' @param value value to set as provenance
 #' @aliases prov prov<-
 #' @returns provenance slot
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("exprObj")
+#' 
+#' prov(g)
 NULL
 
 # ---------------------------------------------------------------- #
