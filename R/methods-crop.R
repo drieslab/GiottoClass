@@ -27,7 +27,7 @@ NULL
 
 
 
-#' @describeIn crop Crop a giottoLargeImage
+#' @rdname crop
 #' @export
 setMethod("crop", signature("giottoLargeImage"), function(x, y, ...) {
     if (is.null(terra::intersect(terra::ext(x), terra::ext(y)))) {
@@ -43,7 +43,20 @@ setMethod("crop", signature("giottoLargeImage"), function(x, y, ...) {
 })
 
 
-#' @describeIn crop Crop a giottoPoints
+#' @rdname crop
+#' @export
+setMethod("crop", signature("spatLocsObj"), function(x, y, ...) {
+    e <- ext(y)
+    if (is.null(terra::intersect(terra::ext(x), e))) {
+        warning("crop region is empty", call. = FALSE)
+    }
+    b <- .ext_to_num_vec(e) # bounds as a numerical vector
+    x[] <- x[][sdimx >= b[1] & sdimx <= b[2] & sdimy >= b[3] & sdimy <= b[4]]
+    return(x)
+})
+
+
+#' @rdname crop
 #' @param DT logical. Use alternative DT subsetting for crop operation
 #' @param xmin,xmax,ymin,ymax only used if DT = TRUE. Set extent bounds
 #' independently
@@ -100,7 +113,7 @@ setMethod(
 
 
 
-#' @describeIn crop Crop a giottoPoints
+#' @rdname crop
 #' @param DT logical. Use alternative DT subsetting for crop operation
 #' @param xmin,xmax,ymin,ymax only used if DT = TRUE. Set extent bounds
 #' independently
