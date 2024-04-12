@@ -374,7 +374,7 @@ loadGiotto <- function(
         )
 
         for (feat_i in seq_len(length(feat_names))) {
-            if (verbose) print(feat_paths[feat_i])
+            if (verbose) wrap_msg(feat_paths[feat_i])
             spatVector <- terra::vect(x = feat_paths[feat_i])
 
             # read in original column names and assign to spatVector
@@ -385,7 +385,7 @@ loadGiotto <- function(
             names(spatVector) <- spatVector_names
 
             feat_name <- feat_names[feat_i]
-            if (verbose) print(feat_name)
+            if (verbose) wrap_msg(feat_name)
             gobject@feat_info[[feat_name]]@spatVector <- spatVector
         }
     }
@@ -410,8 +410,8 @@ loadGiotto <- function(
     if (length(spat_files) != 0) {
         ## 3.1. shapes
         if (isTRUE(verbose)) {
-            wrap_msg("\n3.1 read Giotto spatial shape information \n")
-            print(spat_files)
+            wrap_msg("3.1 read Giotto spatial shape information")
+            wrap_msg(spat_files)
         }
 
         spat_names <- gsub(spat_files,
@@ -513,10 +513,10 @@ loadGiotto <- function(
         if (length(overlap_files) == 0) {
             if (verbose) {
                 wrap_msg("No overlaps were found, overlap loading will be
-                        skipped \n")
+                        skipped")
             }
         } else {
-            print(overlap_files)
+            wrap_msg(overlap_files)
 
             # find overlaps per spatVector
             for (sv_i in seq_along(overlap_search_term)) {
@@ -544,7 +544,7 @@ loadGiotto <- function(
                         input = overlap_paths_colnames[spat_i],
                         header = FALSE
                     )[["V1"]]
-                    if (verbose) print(spatVector_names)
+                    if (verbose) wrap_msg(spatVector_names)
                     names(spatVector) <- spatVector_names
 
                     feat_name <- gsub(overlap_filenames[spat_i],

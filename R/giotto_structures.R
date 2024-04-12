@@ -347,7 +347,7 @@ smoothGiottoPolygons <- function(
         # adjust k to maximum value
         max_k <- nrow(polygMat)
         if (k >= max_k) {
-            cat("k will be set to ", max_k)
+            wrap_msg("k will be set to ", max_k)
             k <- max_k
         }
 
@@ -578,7 +578,7 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(
     }
 
     ## 2. get spatial feature info and convert to matrix
-    if (verbose == TRUE) cat("Convert feature spatial info to matrix \n")
+    if (verbose == TRUE) wrap_msg("Convert feature spatial info to matrix")
     featDT <- .spatvector_to_dt(gobject@feat_info[[feat_type]]@spatVector)
     spatial_locations_matrix <- as.matrix(
         featDT[, c("x", "y", NULL), with = FALSE]
@@ -593,7 +593,7 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(
     )
 
     ## 3. create kNN network
-    if (verbose == TRUE) cat("Create kNN network with dbscan \n")
+    if (verbose == TRUE) wrap_msg("Create kNN network with dbscan")
     knn_spatial <- dbscan::kNN(
         x = spatial_locations_matrix,
         k = k,
@@ -609,7 +609,7 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(
 
     ## 3. keep minimum and filter
     if (verbose == TRUE) {
-        cat("Filter output for distance and minimum neighbours \n")
+        wrap_msg("Filter output for distance and minimum neighbours")
     }
     knn_sptial.norm[, rank := seq_len(.N), by = "from"]
 
@@ -632,7 +632,7 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(
 
     ## 3. add feature information and sort
     if (add_feat_ids == TRUE) {
-        if (verbose == TRUE) cat("Add feat IDs and sort output \n")
+        if (verbose == TRUE) wrap_msg("Add feat IDs and sort output")
 
         featDT_vec <- featDT$feat_ID
         names(featDT_vec) <- featDT$feat_ID_uniq
@@ -731,7 +731,7 @@ createSpatialFeaturesKNNnetwork <- function(
         network_names <- names(gobject@feat_info[[feat_type]]@networks)
 
         if (name %in% network_names) {
-            cat("\n ", name, " has already been used, will be overwritten \n")
+            wrap_msg(name, " has already been used, will be overwritten")
         }
 
         gobject@feat_info[[feat_type]]@networks[[name]] <- knn_feat_network_obj

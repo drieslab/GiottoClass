@@ -805,7 +805,7 @@ createNearestNetwork <- function(gobject,
         nn_names <- names(gobject@nn_network[[spat_unit]][[type]])
 
         if (name %in% nn_names) {
-            cat("\n ", name, " has already been used, will be overwritten \n")
+            wrap_msg(name, " has already been used, will be overwritten")
         }
 
         nnObj <- create_nn_net_obj(
@@ -915,10 +915,7 @@ addNetworkLayout <- function(
     if (return_gobject == TRUE) {
         nn_names <- names(gobject@nn_network[[spat_unit]][[nn_network_to_use]])
         if (layout_name %in% nn_names) {
-            cat(
-                "\n ", layout_name,
-                " has already been used, will be overwritten \n"
-            )
+            wrap_msg(layout_name," has already been used, will be overwritten")
         }
 
         gobject@nn_network[[spat_unit]][[

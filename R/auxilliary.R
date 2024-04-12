@@ -197,14 +197,11 @@ annotateGiotto <- function(
     no_matching_annotations <- uniq_names[!uniq_names %in% uniq_clusters]
 
     if (length(missing_annotations) > 0) {
-        cat(
-            "Not all clusters have an accompanying annotation in the
-            annotation_vector: \n",
-            "These names are missing: ", as.character(missing_annotations),
-            "\n",
-            "These annotations have no match: ",
-            as.character(no_matching_annotations), "\n"
-        )
+      wrap_msg("Not all clusters have an accompanying annotation in the
+          annotation_vector: \n", "These names are missing: ", 
+          as.character(missing_annotations), "\n",
+          "These annotations have no match: ", 
+          as.character(no_matching_annotations))
         stop("Annotation interrupted \n")
     }
 
@@ -1186,14 +1183,15 @@ calculateMetaTableCells <- function(
 
     if (!all(value_cols %in% cell_metadata_cols)) {
         missing_value_cols <- value_cols[!value_cols %in% cell_metadata_cols]
-        cat("These value columns were not found: ", missing_value_cols)
+        wrap_msg("These value columns were not found: ", missing_value_cols)
     }
     value_cols <- value_cols[value_cols %in% cell_metadata_cols]
 
     if (!all(metadata_cols %in% cell_metadata_cols)) {
         missing_metadata_cols <- metadata_cols[!metadata_cols %in%
             cell_metadata_cols]
-        cat("These metadata columns were not found: ", missing_metadata_cols)
+        wrap_msg("These metadata columns were not found: ", 
+                missing_metadata_cols)
     }
     metadata_cols <- metadata_cols[metadata_cols %in% cell_metadata_cols]
 
@@ -1340,7 +1338,7 @@ createMetafeats <- function(
         )
 
         if (name %in% spenr_names) {
-            cat("\n ", name, " has already been used, will be overwritten \n")
+          wrap_msg(name, " has already been used, will be overwritten")
         }
 
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###

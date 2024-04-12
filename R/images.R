@@ -61,8 +61,8 @@ estimateImageBg <- function(mg_object, top_color_range = seq_len(50)) {
         col = names(sort_table[top_color_range])
     )
 
-    cat("Most abundant pixel colors: \n")
-    print(sort_table[top_color_range])
+    wrap_msg("Most abundant pixel colors:")
+    wrap_msg(sort_table[top_color_range])
 }
 
 
@@ -312,7 +312,7 @@ addGiottoImageMG <- function(
             )[1, ]
         } else {
             spat_loc_name <- NULL
-            cat("No spatial locations have been found \n")
+            wrap_msg("No spatial locations have been found")
         }
     }
 
@@ -324,8 +324,6 @@ addGiottoImageMG <- function(
 
         if ((length(scale_factor) == length(images)) ||
             length(scale_factor) == 1) {
-            # cat('scale_factor(s) external to giottoImage have been given and
-            # will be used')
             ext_scale_factor <- TRUE
         } else {
             stop("if scale_factor is given, it must be a numeric with either
@@ -352,8 +350,7 @@ addGiottoImageMG <- function(
             all_im_names <- names(gobject@images)
 
             if (im_name %in% all_im_names) {
-                cat("\n ", im_name, " has already been used, will be
-                    overwritten \n")
+                wrap_msg(im_name, " has already been used, will be overwritten")
             }
 
             # 3. Update boundaries if not already done during
@@ -491,7 +488,7 @@ updateGiottoImageMG <- function(
                 OR giottoImage argument(s) \n")
         }
         if (verbose == TRUE) {
-            cat("gobject argument not given \n return_gobject set to FALSE \n")
+            wrap_msg("gobject argument not given, return_gobject set to FALSE")
         }
         return_gobject <- FALSE
     }
@@ -505,8 +502,8 @@ updateGiottoImageMG <- function(
             stop("giottoImage argument only accepts giottoImage objects \n")
         }
         if (verbose == TRUE && !is.null(gobject)) {
-            cat("giottoImage argument is given and will take priority \n
-                return_gobject set to FALSE \n")
+            wrap_msg("giottoImage argument is given and will take priority \n
+                return_gobject set to FALSE")
         }
         return_gobject <- FALSE
     }
@@ -1168,17 +1165,12 @@ stitchGiottoLargeImage <- function(
     if (file.exists(filename)) {
         if (verbose == TRUE) {
             if (overwrite == TRUE) {
-                cat(
-                    "File at", filename,
-                    "exists.\n (overwrite == TRUE) Image will be overwritten"
-                )
+                wrap_msg("File at", filename,
+                    "exists.\n (overwrite == TRUE) Image will be overwritten")
             }
             if (overwrite == FALSE) {
-                cat(
-                    "File at", filename,
-                    "exists.\n (overwrite == FALSE) Image will not be
-                    overwritten"
-                )
+                wrap_msg("File at", filename, "exists.\n 
+                    (overwrite == FALSE) Image will not be overwritten")
             }
         }
     }
@@ -1255,8 +1247,8 @@ stitchGiottoLargeImage <- function(
     # integer extents)
     if (round_positions == TRUE) {
         if (verbose == TRUE) {
-            cat("round_positions == TRUE \n Image spatial positions will be
-                rounded to integers. \n")
+            wrap_msg("round_positions == TRUE \n Image spatial positions will be
+                rounded to integers.")
         }
         for (rast_i in seq_len(length(raster_list))) {
             terra::ext(raster_list[[rast_i]]) <- round(
@@ -1564,8 +1556,7 @@ convertGiottoLargeImageToMG <- function(
     if (return_gobject == TRUE) {
         if (verbose == TRUE) {
             if (mg_name %in% names(gobject@images)) {
-                cat("\n ", mg_name, " has already been used, will be
-                    overwritten \n")
+                wrap_msg(mg_name, " has already been used, will be overwritten")
             }
         }
         gobject@images[[mg_name]] <- g_image
@@ -1697,7 +1688,7 @@ convertGiottoLargeImageToMG <- function(
         }
     } else if (!is.null(quick_INTS_maxval)) {
         if (isTRUE(verbose)) {
-            cat("Selecting compatible datatype for given maximum value \n")
+            wrap_msg("Selecting compatible datatype for given maximum value")
         }
         bitDepth <- .bitdepth(quick_INTS_maxval)
     }
@@ -1805,11 +1796,11 @@ writeGiottoLargeImage <- function(
         if (file.exists(filename)) {
             if (verbose == TRUE) {
                 if (overwrite == TRUE) {
-                    cat("File at", filename, "exists.\n (overwrite == TRUE)
+                    wrap_msg("File at", filename, "exists.\n (overwrite == TRUE)
                         Image will be overwritten")
                 }
                 if (overwrite == FALSE) {
-                    cat("File at", filename, "exists.\n (overwrite == FALSE)
+                    wrap_msg("File at", filename, "exists.\n (overwrite == FALSE)
                         Image will not be overwritten")
                 }
             }
@@ -1860,7 +1851,7 @@ writeGiottoLargeImage <- function(
 
 
     ## 3. Write to disk
-    if (verbose == TRUE) cat(paste0("Writing image to disk as ", dataType))
+    if (verbose == TRUE) wrap_msg("Writing image to disk as ", dataType)
     terra::writeRaster(
         x = raster_object,
         filename = filename,
@@ -1919,7 +1910,7 @@ updateGiottoLargeImage <- function(
                 largeImage_name OR giottoLargeImage argument(s) \n")
         }
         if (verbose == TRUE) {
-            cat("gobject argument not given \n return_gobject set to FALSE \n")
+            wrap_msg("gobject argument not given, return_gobject set to FALSE")
         }
         return_gobject <- FALSE
     }
@@ -1934,8 +1925,8 @@ updateGiottoLargeImage <- function(
                 objects \n")
         }
         if (verbose == TRUE && !is.null(gobject)) {
-            cat("giottoLargeImage argument is given and will take priority
-                \n return_gobject set to FALSE \n")
+            wrap_msg("giottoLargeImage argument is given and will take priority
+                \n return_gobject set to FALSE")
         }
         return_gobject <- FALSE
     }
@@ -2097,8 +2088,6 @@ addGiottoLargeImage <- function(
 
         if ((length(scale_factor) == length(largeImages)) ||
             length(scale_factor) == 1) {
-            # cat('scale_factor(s) external to giottoImage have been given and
-            # will be used')
             ext_scale_factor <- TRUE
         } else {
             stop("if scale_factor is given, it must be a numeric with either
@@ -2125,10 +2114,8 @@ addGiottoLargeImage <- function(
             all_im_names <- names(gobject@largeImages)
 
             if (im_name %in% all_im_names) {
-                cat(
-                    "\n ", im_name,
-                    " has already been used, will be overwritten \n"
-                )
+                wrap_msg("\n ", im_name,
+                    " has already been used, will be overwritten")
             }
 
             # Deep copy the raster_object
@@ -2314,7 +2301,6 @@ plotGiottoImage <- function(
     }
 
     # Select plotting function
-    # cat('Plotting ', image_type, ': "', image_name, '" ... \n', sep = '')
 
     if (image_type == "image") {
         .plot_giottoimage_mg(giottoImage = img_obj)
@@ -2691,7 +2677,7 @@ reconnectGiottoImage <- function(
 
     #### Auto Workflow
     if (auto_reconnect == TRUE) {
-        if (verbose == TRUE) cat("Attempting automatic reconnection...\n\n")
+        if (verbose == TRUE) wrap_msg("Attempting automatic reconnection...")
 
         # Find image_types to reconnect
         image_type_list <- unique(availableImgs$img_type)
@@ -2724,36 +2710,32 @@ reconnectGiottoImage <- function(
             # print discovered images and paths
             # additionally, set path to NULL if file.exists() == FALSE
             if (verbose == TRUE) {
-                cat(image_type, "(s) discovered...\n", sep = "")
+                wrap_msg(image_type, "(s) discovered...", sep = "")
             }
 
             for (image_i in seq_len(length(img_path[[image_type]]))) {
                 if (!is.null(img_path[[image_type]][[image_i]])) {
                     if (verbose == TRUE) {
-                        cat(
-                            "-->", name_list[[image_type]][[image_i]],
-                            ": filepath found"
-                        )
+                        wrap_msg("-->", name_list[[image_type]][[image_i]],
+                            ": filepath found")
                     }
                     if (!file.exists(img_path[[image_type]][[image_i]])) {
-                        if (verbose == TRUE) cat("but file is missing\n")
+                        if (verbose == TRUE) wrap_msg("but file is missing")
                         img_path[[image_type]][[image_i]] <- NULL
-                    } else if (verbose == TRUE) cat("\n")
+                    } else if (verbose == TRUE) wrap_msg("\n")
                 } else if (verbose == TRUE) {
-                    cat(
-                        "-->", name_list[[image_type]][[image_i]],
-                        ": filepath NOT found\n"
-                    )
+                    wrap_msg("-->", name_list[[image_type]][[image_i]],
+                        ": filepath NOT found")
                 }
             }
-            if (verbose == TRUE) cat("\n")
+            if (verbose == TRUE) wrap_msg("\n")
         } # image_type end loop
 
 
 
         #### Manual Workflow
     } else {
-        if (verbose == TRUE) cat("Reconnecting with manual input...\n\n")
+        if (verbose == TRUE) wrap_msg("Reconnecting with manual input...")
 
         # Check params
         # filepath list(s) must be given as input
@@ -2845,20 +2827,17 @@ reconnectGiottoImage <- function(
                 img_path[[image_type]]
             )) {
                 if (verbose == TRUE) {
-                    cat(image_type, ": no filepaths found. Skipping. \n")
+                    wrap_msg(image_type, ": no filepaths found. Skipping.")
                 }
                 next
             }
 
             if (verbose == TRUE) {
-                cat("\n Skipping ", image_type,
-                    "s with missing filepaths: \n",
-                    sep = ""
-                )
-                for (image_NULL_i in seq_len(sum(image_path_NULL[[image_type]]))) {
-                    cat(name_list[[image_type]][[which(
-                        image_path_NULL[[image_type]]
-                    )[[image_NULL_i]]]], "\n")
+                wrap_msg("Skipping ", image_type, "s with missing filepaths:")
+                for (image_NULL_i in 
+                    seq_len(sum(image_path_NULL[[image_type]]))) {
+                    wrap_msg(name_list[[image_type]][[which(
+                        image_path_NULL[[image_type]])[[image_NULL_i]]]])
                 }
             }
 
@@ -2899,7 +2878,7 @@ reconnectGiottoImage <- function(
             )
         }
 
-        if (verbose == TRUE) cat("done \n")
+        if (verbose == TRUE) wrap_msg("done")
     } # image_type end loop
     return(gobject)
 }

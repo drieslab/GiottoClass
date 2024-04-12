@@ -128,8 +128,8 @@ check_py_for_scanpy <- function() {
             \n
             ", errWidth = TRUE))
     } else if (module_test == FALSE && genv_in_use) {
-        cat("Python module scanpy is required for conversion.
-          Installing scanpy now in the Giotto Miniconda Environment.\n")
+        wrap_msg("Python module scanpy is required for conversion.
+          Installing scanpy now in the Giotto Miniconda Environment.")
 
         conda_path <- reticulate::miniconda_path()
         py_ver <- reticulate::py_config()$version_string
@@ -147,8 +147,8 @@ check_py_for_scanpy <- function() {
             python_version = py_ver
         )
     } else {
-        cat("Required Python module scanpy has been previously installed.
-            Proceeding with conversion.\n")
+        wrap_msg("Required Python module scanpy has been previously installed.
+            Proceeding with conversion.")
     }
 }
 
@@ -631,10 +631,10 @@ giottoToAnnData <- function(
     } else if (!dir.exists(save_directory)) {
         warning(wrap_msg("Provided save directory not found. Creating save
                         directory at location:"))
-        cat(save_directory)
+        wrap_msg(save_directory)
         dir.create(save_directory, recursive = TRUE)
         if (dir.exists(save_directory)) {
-            cat("Created directory", save_directory)
+            wrap_msg("Created directory", save_directory)
         } else {
             stop(wrap_msg("Unable to create directory. Please change the
                         provided path and try again."))

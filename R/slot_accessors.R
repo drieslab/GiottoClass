@@ -979,35 +979,6 @@ set_cell_metadata <- function(
     }
 
 
-    # old_meta = data.table::copy(
-    # gobject@cell_metadata[[spat_unit]][[feat_type]])
-    #
-    # new_cols = NULL
-    # if(!is.null(old_meta) && inherits(old_meta, "data.table")){
-    #   old_cols = colnames(old_meta)
-    #   new_cols = colnames(meta_dt)
-    #   cat("\nWarning: The following columns will be overwritten:",
-    #   old_cols, "\nThey will be replaced with:", new_cols,"\n")
-    #
-    #   old_meta[, (old_cols) := NULL]
-    #
-    # } else {
-    #   new_cols = colnames(meta_dt)
-    #   cat("\nWriting data within columns:", new_cols,
-    #   "\nto cell metadata\n")
-    # }
-
-    # suppressWarnings({
-    #   gobject <- removeCellAnnotation(gobject = gobject,
-    #                                   spat_unit = spat_unit,
-    #                                   feat_type = feat_type,
-    #                                   columns = old_cols,
-    #                                   return_gobject = TRUE)
-    #   gobject@cell_metadata[[spat_unit]][[feat_type]] = meta_dt
-    # })
-    # message("\nCell Metadata slot '",spat_unit, feat_type, "' set.\n")
-    #
-
     # 6. set and return gobject
     gobject@cell_metadata[[spat_unit]][[feat_type]] <- metadata
 
@@ -2317,11 +2288,9 @@ get_spatial_locations <- function(
             spat_loc_name <- names(
                 slot(gobject, "spatial_locs")[[spat_unit]]
             )[[1]]
-            # cat('No spatial locations have been selected, the first
-            # one -',spat_loc_name, '- will be used \n')
         } else {
             spat_loc_name <- NULL
-            cat("No spatial locations have been found \n")
+            wrap_msg("No spatial locations have been found")
             return(NULL)
         }
     }
@@ -5329,11 +5298,9 @@ get_spatial_enrichment <- function(
                 spat_unit = spat_unit,
                 feat_type = feat_type
             )[[1]]
-            # cat('No spatial locations have been selected, the first
-            # one -',spat_loc_name, '- will be used \n')
         } else {
             enrichm_name <- NULL
-            cat("No spatial enrichment results have been found \n")
+            wrap_msg("No spatial enrichment results have been found")
             return(NULL)
         }
     }
