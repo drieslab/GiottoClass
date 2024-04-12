@@ -566,16 +566,14 @@
     res_list <- list()
     # iterate through all spatial info entries...
     for (spat_info in names(spatial_info)) {
-        if (verbose) cat("for ", spat_info, "\n")
+        if (verbose) wrap_msg("for ", spat_info)
         si <- spatial_info[[spat_info]]
 
         # if the spatial info is one selected in poly_info:
         if (spat_info %in% poly_info) {
             if (verbose) {
-                cat(
-                    "--> ", spat_info, " found back in polygon layer: ",
-                    poly_info, "\n"
-                )
+                wrap_msg("--> ", spat_info, " found back in polygon layer: ",
+                    poly_info)
             }
 
             # # whitelist check
@@ -583,14 +581,6 @@
             # # that no spatial locations
             # # or expression info was discovered for the selected
             # # spat_unit
-            # if (!is.null(poly_whitelist)) {
-            #   if (!objName(si) %in% poly_whitelist) {
-            #     warning(wrap_txt(
-            #       'poly', objName(si), 'not in spat_unit or provenance of
-            # .      aggregate spatial locations or expression'
-            #     ))
-            #   }
-            # }
 
             # check if cell_ids to keep and poly_ids of polygon have any overlap
             # warn if none
@@ -669,7 +659,7 @@
     res_list <- list()
     for (feat in names(feat_info)) {
         if (isTRUE(feat %in% feat_type)) {
-            if (verbose) cat("subset feature info:", feat)
+            if (verbose) wrap_msg("subset feature info:", feat)
 
             feat_subset <- .subset_giotto_points_object(
                 gpoints = feat_info[[feat]],
@@ -801,7 +791,7 @@
 
 
 
-    if (verbose) cat("completed 1: preparation \n")
+    if (verbose) wrap_msg("completed 1: preparation")
 
 
     ## FILTER ##
@@ -816,7 +806,7 @@
         feat_type_ssub = feat_type_ssub
     )
 
-    if (verbose) cat("completed 2: subset expression data \n")
+    if (verbose) wrap_msg("completed 2: subset expression data")
 
 
     # filter spatial locations
@@ -827,7 +817,7 @@
         spat_unit = spat_unit
     )
 
-    if (verbose) cat("completed 3: subset spatial locations \n")
+    if (verbose) wrap_msg("completed 3: subset spatial locations")
 
 
 
@@ -840,7 +830,7 @@
         cell_ids = cell_ids
     )
 
-    if (verbose) cat("completed 4: subset cell metadata \n")
+    if (verbose) wrap_msg("completed 4: subset cell metadata")
 
     # feature metadata
     gobject <- .subset_feature_metadata(
@@ -850,7 +840,7 @@
         feat_ids = feat_ids
     )
 
-    if (verbose) cat("completed 5: subset feature metadata \n")
+    if (verbose) wrap_msg("completed 5: subset feature metadata")
 
 
     ## spatial network & grid ##
@@ -862,7 +852,7 @@
     )
 
 
-    if (verbose) cat("completed 6: subset spatial network(s) \n")
+    if (verbose) wrap_msg("completed 6: subset spatial network(s)")
 
     # spatial grid
     # need to be recomputed
@@ -881,7 +871,7 @@
     )
     # likely also needs to be recomputed
 
-    if (verbose) cat("completed 7: subsetted dimension reductions \n")
+    if (verbose) wrap_msg("completed 7: subsetted dimension reductions")
 
 
     ## nn network ##
@@ -892,7 +882,7 @@
         cell_ids = cell_ids
     )
 
-    if (verbose) cat("completed 8: subsetted nearest network(s) \n")
+    if (verbose) wrap_msg("completed 8: subsetted nearest network(s)")
 
 
     ## spatial enrichment ##
@@ -903,7 +893,7 @@
         cell_ids = cell_ids
     )
 
-    if (verbose) cat("completed 9: subsetted spatial enrichment results \n")
+    if (verbose) wrap_msg("completed 9: subsetted spatial enrichment results")
 
     ## spatial info
     if (!is.null(gobject@spatial_info)) {
@@ -912,10 +902,6 @@
         # # aggregate spatial locations and expression information
         # #
         # # Should only be checked for cell_ids subsets
-        # poly_whitelist = poly_provenance_whitelist(
-        #   gobject = gobject,
-        #   spat_unit = spat_unit
-        # )
 
         for (select_poly_info in poly_info) {
             # For each entry entry in poly_info, subset using cell_ids.
@@ -937,7 +923,8 @@
             )
         }
 
-        if (verbose) cat("completed 10: subsetted spatial information data \n")
+        if (verbose) 
+            wrap_msg("completed 10: subsetted spatial information data")
     }
 
 
@@ -954,7 +941,7 @@
             verbose = verbose
         )
 
-        if (verbose) cat("completed 11: subsetted spatial feature data \n")
+        if (verbose) wrap_msg("completed 11: subsetted spatial feature data")
     }
 
 
@@ -1112,8 +1099,6 @@
                 gobject = gobject,
                 spat_unit = spat_unit
             )[[1]]
-            # cat('No spatial locations have been selected, the first
-            # one -',spat_loc_name, '- will be used \n')
 
             # if spatlocs missing, use alternate method with spatial_info
         } else if (!is.null(slot(gobject, "spatial_info"))) {

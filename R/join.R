@@ -437,14 +437,13 @@ joinGiottoObjects <- function(
                     }
 
                     if (verbose) {
-                        cat(
-                            "Image: for ", imname, " add_to_x = ",
-                            add_to_x, "\n"
-                        )
+                        wrap_msg("Image: for ", imname, " add_to_x = ",
+                            add_to_x)
                     }
 
                     gobj@images[[imname]]@minmax[c("xmax_sloc", "xmin_sloc")] <-
-                        gobj@images[[imname]]@minmax[c("xmax_sloc", "xmin_sloc")] + add_to_x
+                        gobj@images[[imname]]@minmax[c(
+                            "xmax_sloc", "xmin_sloc")] + add_to_x
                     xshift_list[[gobj_i]] <- add_to_x
 
 
@@ -454,16 +453,14 @@ joinGiottoObjects <- function(
                         add_to_y <- y_shift_i + (y_padding * (gobj_i - 1))
 
                         if (verbose) {
-                            cat(
-                                "Image: for ", imname, " add_to_y = ",
-                                add_to_y, "\n"
-                            )
+                            wrap_msg("Image: for ", imname, " add_to_y = ",
+                                add_to_y)
                         }
 
-                        gobj@images[[imname]]@minmax[c("ymax_sloc", "ymin_sloc")] <- gobj@images[[imname]]@minmax[c(
-                            "ymax_sloc",
-                            "ymin_sloc"
-                        )] + add_to_y
+                        gobj@images[[imname]]@minmax[
+                            c("ymax_sloc", "ymin_sloc")] <- gobj@images[[
+                                imname]]@minmax[c("ymax_sloc","ymin_sloc")] + 
+                            add_to_y
                         yshift_list[[gobj_i]] <- add_to_y
                     }
                 }
@@ -516,10 +513,8 @@ joinGiottoObjects <- function(
 
 
                     if (verbose) {
-                        cat(
-                            "largeImage: for ", imname, " add_to_x = ",
-                            add_to_x, "\n"
-                        )
+                        wrap_msg("largeImage: for ", imname, " add_to_x = ",
+                            add_to_x)
                     }
 
 
@@ -542,10 +537,8 @@ joinGiottoObjects <- function(
 
 
                         if (verbose) {
-                            cat(
-                                "largeImage: for ", imname, " add_to_y = ",
-                                add_to_y, "\n"
-                            )
+                            wrap_msg("largeImage: for ", imname, " add_to_y = ",
+                                add_to_y)
                         }
 
 
@@ -611,10 +604,8 @@ joinGiottoObjects <- function(
                     }
 
                     if (verbose) {
-                        cat(
-                            "Spatial locations: for ", locs_i,
-                            " add_to_x = ", add_to_x, "\n"
-                        )
+                        wrap_msg("Spatial locations: for ", locs_i,
+                            " add_to_x = ", add_to_x)
                     }
 
 
@@ -630,10 +621,8 @@ joinGiottoObjects <- function(
                     add_to_y <- y_shift_i + (y_padding * (gobj_i - 1))
 
                     if (verbose) {
-                        cat(
-                            "Spatial locations: for ", locs_i,
-                            " add_to_y = ", add_to_y, "\n"
-                        )
+                        wrap_msg("Spatial locations: for ", locs_i,
+                            " add_to_y = ", add_to_y)
                     }
 
                     myspatlocs[, sdimy := sdimy + add_to_y]
@@ -721,16 +710,12 @@ joinGiottoObjects <- function(
                 }
 
                 if (verbose) {
-                    cat(
-                        "Spatial info: for ", spat_info, " add_to_x = ",
-                        add_to_x, "\n"
-                    )
+                    wrap_msg("Spatial info: for ", spat_info, " add_to_x = ",
+                        add_to_x)
                 }
                 if (verbose) {
-                    cat(
-                        "Spatial info: for ", spat_info, " add_to_y = ",
-                        add_to_y, "\n"
-                    )
+                    wrap_msg("Spatial info: for ", spat_info, " add_to_y = ",
+                        add_to_y)
                 }
 
                 gobj@spatial_info[[spat_info]]@spatVector <- terra::shift(
@@ -786,16 +771,12 @@ joinGiottoObjects <- function(
                 }
 
                 if (verbose) {
-                    cat(
-                        "Feature info: for ", feat_info, " add_to_x = ",
-                        add_to_x, "\n"
-                    )
+                    wrap_msg("Feature info: for ", feat_info, " add_to_x = ",
+                        add_to_x)
                 }
                 if (verbose) {
-                    cat(
-                        "Feature info: for ", feat_info, " add_to_y = ",
-                        add_to_y, "\n"
-                    )
+                    wrap_msg("Feature info: for ", feat_info, " add_to_y = ",
+                        add_to_y)
                 }
 
                 gobj@feat_info[[feat_info]]@spatVector <- terra::shift(
@@ -1045,7 +1026,7 @@ joinGiottoObjects <- function(
 
     if (isTRUE(verbose)) {
         wrap_msg("available_spat_info: \n")
-        print(available_spat_info)
+        wrap_msg(available_spat_info)
     }
 
     for (spat_info in available_spat_info) {

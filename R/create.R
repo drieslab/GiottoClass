@@ -761,7 +761,7 @@ createGiottoObjectSubcellular <- function(gpolygons = NULL,
         polygon_dfr_list_params <- list(calc_centroids = FALSE)
     }
 
-    if (verbose) cat("1. Start extracting polygon information \n")
+    if (verbose) wrap_msg("1. Start extracting polygon information")
 
     polygon_res <- .extract_polygon_list(
         polygonlist = gpolygons,
@@ -770,18 +770,16 @@ createGiottoObjectSubcellular <- function(gpolygons = NULL,
     )
     gobject@spatial_info <- polygon_res
 
-    if (verbose) cat("2. Finished extracting polygon information \n")
+    if (verbose) wrap_msg("2. Finished extracting polygon information")
 
 
-    if (verbose) cat("3. Add centroid / spatial locations if available \n")
+    if (verbose) wrap_msg("3. Add centroid / spatial locations if available")
     for (polygon_info in list_spatial_info_names(gobject)) {
         centroidsDT <- gobject@spatial_info[[polygon_info]]@spatVectorCentroids
         if (!is.null(centroidsDT)) {
             if (verbose) {
-                cat(
-                    " - Add centroid / spatial locations for ",
-                    polygon_info, " \n"
-                )
+                wrap_msg(" - Add centroid / spatial locations for ",
+                    polygon_info)
             }
 
             centroidsDT <- .spatvector_to_dt(centroidsDT)
@@ -801,7 +799,7 @@ createGiottoObjectSubcellular <- function(gpolygons = NULL,
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
     }
-    if (verbose) cat("3. Finish adding centroid / spatial locations \n")
+    if (verbose) wrap_msg("3. Finish adding centroid / spatial locations")
 
     ## cell ID ##
     ## ------- ##
@@ -818,13 +816,13 @@ createGiottoObjectSubcellular <- function(gpolygons = NULL,
 
 
     if (!is.null(gpoints)) {
-        if (verbose) cat("3. Start extracting spatial feature information \n")
+        if (verbose) wrap_msg("3. Start extracting spatial feature information")
 
         points_res <- .extract_points_list(pointslist = gpoints)
         gobject@feat_info <- points_res
 
         if (verbose) {
-            cat("4. Finished extracting spatial feature information \n")
+            wrap_msg("4. Finished extracting spatial feature information")
         }
 
         ## expression features ##
@@ -1160,7 +1158,7 @@ createGiottoObjectSubcellular <- function(gpolygons = NULL,
     ## largeImages ##
     # expect a list of giotto largeImages or file paths to such images
     if (!is.null(largeImages)) {
-        if (verbose) cat("3. Start loading large images \n")
+        if (verbose) wrap_msg("3. Start loading large images")
 
 
 
@@ -1214,7 +1212,7 @@ createGiottoObjectSubcellular <- function(gpolygons = NULL,
             }
         }
 
-        if (verbose) cat("4. Finished loading large images \n")
+        if (verbose) wrap_msg("4. Finished loading large images")
     }
 
     return(gobject)
@@ -3004,8 +3002,8 @@ createGiottoImage <- function(
             } else if (transf == "flip_y_axis") {
                 mg_object <- magick::image_flop(mg_object)
             } else {
-                cat(transf, " is not a supported transformation, see
-                    details \n")
+                wrap_msg(transf, " is not a supported transformation, see
+                    details")
             }
         }
     }
@@ -3015,11 +3013,8 @@ createGiottoImage <- function(
     ## 2. spatial minmax and adjustments -- manual OR by image dimensions (auto)
     if (verbose == TRUE) {
         if (do_manual_adj == TRUE) {
-            cat(
-                "do_manual_adj == TRUE \n",
-                "Boundaries will be adjusted by given
-                                    values.\n"
-            )
+            wrap_msg("do_manual_adj == TRUE \n",
+                    "Boundaries will be adjusted by given values.")
         }
     }
     # If spatlocs or gobject supplied, minmax values will always be generated
@@ -3252,7 +3247,7 @@ createGiottoLargeImage <- function(
     if (use_rast_ext == TRUE) {
         extent <- terra::ext(raster_object)
         if (verbose == TRUE) {
-            cat("use_rast_ext == TRUE, extent from input raster_object will
+            wrap_msg("use_rast_ext == TRUE, extent from input raster_object will
                 be used.")
         }
     }
@@ -3341,7 +3336,8 @@ createGiottoLargeImage <- function(
 
     if (nrow(sample_values) == 0) {
         if (verbose == TRUE) {
-            cat("No values discovered when sampling for image characteristics")
+            wrap_msg("No values discovered when sampling for image 
+                    characteristics")
         }
     } else {
         # find estimated intensity range

@@ -703,7 +703,7 @@ calculateSpatCellMetadataProportions <- function(
 
 
         if (name %in% spenr_names) {
-            cat("\n ", name, " has already been used, will be overwritten \n")
+            wrap_msg(name, " has already been used, will be overwritten")
         }
 
         ## update parameters used ##

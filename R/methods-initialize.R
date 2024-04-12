@@ -207,7 +207,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
             exp_list_names <- lapply(exp_list, spatIDs)
             list_match <- sapply(exp_list_names, setequal, exp_list_names[[1L]])
             if (!all(list_match)) {
-                print(list_match)
+                wrap_msg(list_match)
                 warning(wrap_txt(
                     "spat_unit:", unique_expr_sets$spat_unit[[set_i]], "/",
                     "feat_type:", unique_expr_sets$feat_type[[set_i]],

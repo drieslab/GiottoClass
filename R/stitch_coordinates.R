@@ -112,13 +112,13 @@ stitchTileCoordinates <- function(
     Xcoord <- X.X <- XtileIndex <- Ycoord <- Y.Y <- YtileIndex <- NULL
 
     if (is.null(location_file$X.X)) {
-        print("X coordinates missing in input file.")
+        wrap_msg("X coordinates missing in input file.")
     } else if (is.null(location_file$Y.Y)) {
-        print("Y coordinates missing in input file.")
+        wrap_msg("Y coordinates missing in input file.")
     } else if (is.null(location_file$XtileIndex)) {
-        print("X tile index missing in input file.")
+        wrap_msg("X tile index missing in input file.")
     } else if (is.null(location_file$YtileIndex)) {
-        print("Y tile index missing in input file.")
+        wrap_msg("Y tile index missing in input file.")
     } else {
         copy_loc_file <- data.table::copy(location_file)
         copy_loc_file[, Xcoord := X.X + Xtilespan * (XtileIndex - 1)]

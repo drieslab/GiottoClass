@@ -824,7 +824,7 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
             spat_unit = spat_unit
         )
         if (name %in% spn_names) {
-            cat("\n ", name, " has already been used, will be overwritten \n")
+            wrap_msg(name, " has already been used, will be overwritten")
         }
         parameters_list <- slot(gobject, "parameters")
         number_of_rounds <- length(parameters_list)
@@ -997,10 +997,7 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
             spat_unit = "cell"
         )
         if (name %in% spn_names) {
-            cat(
-                "\n ", name,
-                " has already been used, will be overwritten \n"
-            )
+            wrap_msg(name, " has already been used, will be overwritten")
         }
         parameters_list <- gobject@parameters
         number_of_rounds <- length(parameters_list)
@@ -1508,7 +1505,7 @@ createSpatialKNNnetwork <- function(
         )
 
         if (name %in% spn_names) {
-            cat("\n ", name, " has already been used, will be overwritten \n")
+            wrap_msg(name, " has already been used, will be overwritten")
         }
         parameters_list <- slot(gobject, "parameters")
         number_of_rounds <- length(parameters_list)
@@ -2283,7 +2280,7 @@ createSpatialDefaultGrid <- function(
         )
 
         if (name %in% spg_names) {
-            cat("\n ", name, " has already been used, will be overwritten \n")
+            wrap_msg(name, " has already been used, will be overwritten")
         }
 
         # 2. create spatial grid object
@@ -2321,8 +2318,6 @@ createSpatialDefaultGrid <- function(
         # parent function name
         cl <- sys.call(-1)
 
-        # print('cl = ')
-        # print(cl)
 
         if (is.null(cl)) {
             gobject <- update_giotto_params(gobject, description = "_grid")
@@ -2602,11 +2597,8 @@ annotateSpatialGrid <- function(
         missing_annotation <- annotation_vector[!annotation_vector %in%
             possible_annotations]
         if (length(missing_annotation) > 0) {
-            cat(
-                "These annotations were not found back in the cell metadata
-                (pDataDT): \n",
-                missing_annotation, "\n"
-            )
+            wrap_msg("These annotations were not found back in the cell metadata
+                (pDataDT): \n", missing_annotation)
         }
 
         annotation_vector_found <- annotation_vector[annotation_vector %in%
