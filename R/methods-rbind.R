@@ -69,10 +69,6 @@ setMethod("rbind", "giottoPolygon", function(..., deparse.level = 1) {
 #' @param y \code{giottoPolygon} 2
 #' @returns giottoPolygon
 #' @keywords internal
-#' @examples
-#' g <- GiottoData::loadSubObjectMini("giottoPolygon")
-#' 
-#' rbind2_giotto_polygon_homo(x = g, y = g)
 rbind2_giotto_polygon_homo <- function(x, y) {
     if (is.null(slot(x, "spatVector"))) {
         slot(x, "spatVector") <- slot(y, "spatVector")
@@ -117,10 +113,6 @@ rbind2_giotto_polygon_homo <- function(x, y) {
 #' origin \code{giottoPolygons} as a new 'list_ID' attribute
 #' @returns giottoPolygon
 #' @keywords internal
-#' @examples
-#' g <- GiottoData::loadSubObjectMini("giottoPolygon")
-#' 
-#' rbind2_giotto_polygon_hetero(x = g, y = g, new_name = "new_poly")
 rbind2_giotto_polygon_hetero <- function(x, y, new_name, add_list_ID = TRUE) {
     # handle as homo but different name if add_list_ID = FALSE
     if (!isTRUE(add_list_ID)) {

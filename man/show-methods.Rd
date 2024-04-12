@@ -61,8 +61,3 @@ show method for giottoImage class
 
 show method for giottoLargeImage class
 }
-\examples{
-g <- GiottoData::loadSubObjectMini("exprObj")
-
-show_spat(g)
-}

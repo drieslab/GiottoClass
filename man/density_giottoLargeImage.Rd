@@ -31,9 +31,4 @@ density or histogram plot
 \description{
 Plot smoothed curve of giotto largeImage intensity values
 }
-\examples{
-g <- GiottoData::loadGiottoMini("visium")
-
-.dist_giottolargeimage(g, image_name = "image")
-}
 \keyword{internal}

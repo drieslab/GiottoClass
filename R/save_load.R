@@ -21,7 +21,7 @@
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' 
-#' saveGiotto(gobject = g, dir = tempdir())
+#' saveGiotto(gobject = g, dir = tempdir(), overwrite = TRUE)
 #' @export
 saveGiotto <- function(gobject,
     foldername = "saveGiottoDir",
@@ -293,7 +293,7 @@ saveGiotto <- function(gobject,
 #' td <- tempdir()
 #' saveGiotto(gobject = g, dir = td)
 #' 
-#' loadGiotto(path_to_folder = fs::path(td, "saveGiottoDir"))
+#' loadGiotto(path_to_folder = paste0(td, "/saveGiottoDir"))
 #' @export
 loadGiotto <- function(
         path_to_folder,

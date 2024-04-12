@@ -48,5 +48,5 @@ g <- GiottoData::loadGiottoMini("visium")
 td <- tempdir()
 saveGiotto(gobject = g, dir = td)
 
-loadGiotto(path_to_folder = fs::path(td, "saveGiottoDir"))
+loadGiotto(path_to_folder = paste0(td, "/saveGiottoDir"))
 }

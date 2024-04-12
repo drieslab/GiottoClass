@@ -18,9 +18,4 @@ giottoPolygon
 Append two giotto polygons together of the same name.
 Performed recursively through \code{rbind2} and \code{rbind}
 }
-\examples{
-g <- GiottoData::loadSubObjectMini("giottoPolygon")
-
-rbind2_giotto_polygon_homo(x = g, y = g)
-}
 \keyword{internal}

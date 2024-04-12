@@ -25,12 +25,4 @@ that were generated as part of the same FOV. This is because the individual
 polygons are compared against the overall extent which is assumed to be
 roughly that of the original mask image.
 }
-\examples{
-sv <- GiottoData::loadSubObjectMini("giottoPolygon")[]
-
-# should not find anything
-.identify_background_range_polygons(sv, threshold = 0.9)
-
-.identify_background_range_polygons(sv, threshold = 0.03)
-}
 \keyword{internal}

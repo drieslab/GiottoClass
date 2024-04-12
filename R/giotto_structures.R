@@ -60,13 +60,6 @@
 #' only either length 0 i.e. no background poly to remove, or 1, being the
 #' background poly to remove) if used with a correct threshold.
 #' @keywords internal
-#' @examples
-#' sv <- GiottoData::loadSubObjectMini("giottoPolygon")[]
-#'
-#' # should not find anything
-#' .identify_background_range_polygons(sv, threshold = 0.9)
-#'
-#' .identify_background_range_polygons(sv, threshold = 0.03)
 .identify_background_range_polygons <- function(spatVector, threshold = 0.9) {
     # define for data.table
     x <- y <- geom <- V1 <- NULL
