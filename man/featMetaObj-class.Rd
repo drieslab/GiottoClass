@@ -27,5 +27,5 @@ information (if applicable)}
 }}
 
 \examples{
-featMetaObj()
+GiottoData::loadSubObjectMini("featMetaObj")
 }

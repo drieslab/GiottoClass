@@ -1015,10 +1015,6 @@ plot_auto_largeImage_resample <- function(
 #' @param ... additional params to pass
 #' @returns density or histogram plot
 #' @keywords internal
-#' @examples
-#' g <- GiottoData::loadGiottoMini("visium")
-#' 
-#' .dist_giottolargeimage(g, image_name = "image")
 .dist_giottolargeimage <- function(gobject = NULL,
     image_name = NULL,
     giottoLargeImage = NULL,

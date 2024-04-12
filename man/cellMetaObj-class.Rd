@@ -27,5 +27,5 @@ information (if applicable)}
 }}
 
 \examples{
-cellMetaObj()
+GiottoData::loadSubObjectMini("cellMetaObj")
 }

@@ -19,7 +19,7 @@ NULL
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("giottoPolygon")
 #' 
-#' as.data.table(g)
+#' data.table::as.data.table(g)
 NULL
 
 

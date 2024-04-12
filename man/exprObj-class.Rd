@@ -28,5 +28,5 @@ Framework to store aggregated expression information
 }}
 
 \examples{
-exprObj()
+GiottoData::loadSubObjectMini("exprObj")
 }

@@ -32,5 +32,5 @@ Framework to store dimension reduction information
 }}
 
 \examples{
-dimObj()
+GiottoData::loadSubObjectMini("dimObj")
 }

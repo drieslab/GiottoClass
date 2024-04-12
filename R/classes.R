@@ -668,7 +668,7 @@ setClass(
 #' @slot misc misc
 #' @returns exprObj
 #' @examples
-#' exprObj()
+#' GiottoData::loadSubObjectMini("exprObj")
 #' @exportClass exprObj
 exprObj <- setClass("exprObj",
     contains = c(
@@ -731,7 +731,7 @@ exprObj <- setClass("exprObj",
 #' information (if applicable)
 #' @returns cellMetaObj
 #' @examples
-#' cellMetaObj()
+#' GiottoData::loadSubObjectMini("cellMetaObj")
 #' @exportClass cellMetaObj
 cellMetaObj <- setClass("cellMetaObj",
     contains = c("metaData", "spatFeatData", "giottoSubobject"),
@@ -781,7 +781,7 @@ cellMetaObj <- setClass("cellMetaObj",
 #' information (if applicable)
 #' @returns featMetaObj
 #' @examples
-#' featMetaObj()
+#' GiottoData::loadSubObjectMini("featMetaObj")
 #' @exportClass featMetaObj
 featMetaObj <- setClass("featMetaObj",
     contains = c("metaData", "spatFeatData", "giottoSubobject"),
@@ -856,7 +856,7 @@ featMetaObj <- setClass("featMetaObj",
 #' @slot misc method-specific additional outputs
 #' @returns dimObj
 #' @examples
-#' dimObj()
+#' GiottoData::loadSubObjectMini("dimObj")
 #' @exportClass dimObj
 dimObj <- setClass("dimObj",
     contains = c("nameData", "spatFeatData", "giottoSubobject"),
@@ -923,7 +923,7 @@ S3toS4dimObj <- function(object) {
 #' @slot misc misc
 #' @returns nnNetObj
 #' @examples
-#' nnNetObj()
+#' GiottoData::loadSubObjectMini("nnNetObj")
 #' @exportClass nnNetObj
 nnNetObj <- setClass("nnNetObj",
     contains = c(
@@ -997,7 +997,7 @@ nnNetObj <- setClass("nnNetObj",
 #' @slot provenance origin of aggregated information (if applicable)
 #' @returns spatLocsObj
 #' @examples
-#' spatLocsObj()
+#' GiottoData::loadSubObjectMini("spatLocsObj")
 #' @exportClass spatLocsObj
 spatLocsObj <- setClass("spatLocsObj",
     contains = c(

@@ -30,7 +30,8 @@ plot. When passing a \code{SpatExtent} without drawing, no pre-existing plot
 is needed.
 }
 \examples{
-gimg <- GiottoData::loadSubObjectMini("giottoLargeImage")
+g <- GiottoData::loadGiottoMini("vizgen")
+gimg <- getGiottoImage(g, image_type = "largeImage")
 gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
 gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
 e <- ext(6400, 6800, -4860, -4750) # arbitrary
@@ -40,18 +41,4 @@ zoom(gimg, e)
 zoom(gpoly, e)
 zoom(gpoints, e)
 
-\dontrun{
-# Examples that use manual drawing - can't be automatically run
-plot(gimg)
-zoom(gimg)
-
-plot(gpoly)
-zoom(gpoly)
-
-# starting plot for points currently must be raster = FALSE for
-# drawn extent to be accurate.
-plot(gpoints, raster = FALSE)
-# raster param passed to plot through zoom() CAN be TRUE or FALSE.
-zoom(gpoints, raster = FALSE)
-}
 }

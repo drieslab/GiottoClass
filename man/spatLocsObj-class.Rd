@@ -24,5 +24,5 @@ Framework to store spatial location information
 }}
 
 \examples{
-spatLocsObj()
+GiottoData::loadSubObjectMini("spatLocsObj")
 }
