@@ -2609,22 +2609,21 @@ seuratToGiottoV5 <- function(sobject,
             }
             if ("segmentation" %in% names(sobject@images[[i]])) {
               polygon_list <- list()
-              
               for (j in seq(sobject@images[[i]]@boundaries$segmentation@polygons)) {
                 polygon_info <- sobject@images[[i]]@boundaries$segmentation@polygons[[j]]
-                
+              for (j in seq(sobject@images$hippo@boundaries$segmentation@polygons)) {
+                polygon_info <- sobject@images$hippo@boundaries$segmentation@polygons[[j]]
+
                 # Get coordinates from segmentation
                 seg_coords <- polygon_info@Polygons[[1]]@coords
-                
                 # Fetch cell_Id from polygon information
                 cell_ID <- polygon_info@ID
-                
                 # Convert it to SpatVector
                 seg_coords <- vect(seg_coords)
-                
                 # Create giotto_polygon_object
-                gpolygon <- create_giotto_polygon_object(name = "cell", spatVector = centroids_coords, spatVectorCentroids = seg_coords)
-                
+                gpolygon <- create_giotto_polygon_object(name = "cell", 
+                                              spatVector = centroids_coords,
+                                              spatVectorCentroids = seg_coords)
                 # Add the cell_ID to the list of polygon names
                 polygon_list[[cell_ID]] <- gpolygon
               }
