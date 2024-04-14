@@ -2609,10 +2609,9 @@ seuratToGiottoV5 <- function(sobject,
             }
             if ("segmentation" %in% names(sobject@images[[i]])) {
               polygon_list <- list()
+              
               for (j in seq(sobject@images[[i]]@boundaries$segmentation@polygons)) {
                 polygon_info <- sobject@images[[i]]@boundaries$segmentation@polygons[[j]]
-              for (j in seq(sobject@images$hippo@boundaries$segmentation@polygons)) {
-                polygon_info <- sobject@images$hippo@boundaries$segmentation@polygons[[j]]
 
                 # Get coordinates from segmentation
                 seg_coords <- polygon_info@Polygons[[1]]@coords
