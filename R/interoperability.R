@@ -2660,30 +2660,7 @@ seuratToGiottoV5 <- function(sobject,
       }
     }
   }
-  
-  # # Function to create Giotto LargeImage
-  # create_giotto_largeimage <- function(sobject, image_name) {
-  #   image <- SeuratObject::GetImage(sobject, mode = "raster", name = image_name)
-  #   raster_matrix <- as.matrix(image)
-  #   raster_obj<- terra::rast(raster_matrix )
-  #   gImg <- createGiottoLargeImage(raster_object = raster_obj,
-  #                                  name = image_name,
-  #                                  scale_factor = sobject@images[[image_name]]@scale.factors$spot)
-  #   return(gImg)
-  # }
-  # 
-  # # Apply function to all images in Seurat object
-  # largeimage_list <- list()
-  # for (image_name in names(sobject@images)) {
-  #   if ("image" %in% slotNames(sobject@images[[image_name]])) {
-  #     if (!is.null(sobject@images[[image_name]]@image)) {
-  #       gImg <- create_giotto_largeimage(sobject, image_name)
-  #       largeimage_list[[image_name]] <- gImg
-  #     }
-  #   }
-  # }
-  
-  
+ 
   gobject <- createGiottoObject(exp,
                                 spatial_locs = spat_loc,
                                 dimension_reduction = dimReduc_list
