@@ -5,6 +5,9 @@
 \alias{exprObj-class}
 \alias{exprObj}
 \title{S4 exprObj}
+\value{
+exprObj
+}
 \description{
 Framework to store aggregated expression information
 }
@@ -24,3 +27,6 @@ Framework to store aggregated expression information
 \item{\code{misc}}{misc}
 }}
 
+\examples{
+GiottoData::loadSubObjectMini("exprObj")
+}

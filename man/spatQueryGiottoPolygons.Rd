@@ -15,15 +15,15 @@ spatQueryGiottoPolygons(
 \arguments{
 \item{gobject}{Giotto object}
 
-\item{filters}{list of characters. Named list of IDs to query on as spatial filters
-where the names designate the spatial unit to use and the character values
-should either be 'all' or a vector of cell_IDs to use.}
+\item{filters}{list of characters. Named list of IDs to query on as spatial
+filters where the names designate the spatial unit to use and the character
+values should either be 'all' or a vector of cell_IDs to use.}
 
-\item{name}{(optional) character. If not NULL, a new spatial unit of this name
-will be generated from the results}
+\item{name}{(optional) character. If not NULL, a new spatial unit of this
+name will be generated from the results}
 
-\item{feat_type}{(optional) May be changed in future. Determines which feature
-type metadata in which hierarchical selection information is stored.}
+\item{feat_type}{(optional) May be changed in future. Determines which
+feature type metadata in which hierarchical selection information is stored.}
 
 \item{clip}{boolean. Default = FALSE. Whether final round of querying should
 return polygons clipped by the polygons used to select them. If TRUE, a value
@@ -35,6 +35,9 @@ giottoPolygon
 \description{
 Recursively select polygons based on a list of spatial filters.
 Results will be returned as a new polygon-based spatial unit with selection
-information recorded in the associated cell metadata. The final item in provided
-in param \code{filters} is the layer of information being queried.
+information recorded in the associated cell metadata. The final item in
+provided in param \code{filters} is the layer of information being queried.
+}
+\seealso{
+[spatQueryGiottoSpatLocs()
 }

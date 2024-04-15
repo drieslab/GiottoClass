@@ -7,11 +7,14 @@
 checkGiottoEnvironment(mini_install_path = NULL, verbose = TRUE)
 }
 \arguments{
-\item{mini_install_path}{(optional) path to miniconda or conda directory within which the giotto environment lives
+\item{mini_install_path}{(optional) path to miniconda or conda directory
+within which the giotto environment lives
 If not provided, automatically determined by reticulate::miniconda_path()
 Note the required input format:
-Correct format --> mini_install_path = "C:/my/conda/lives/here" OR "C:\\my\\conda\\lives\\here"
-INCORRECT formats --> mini_install_path = "C:/my/conda/lives/here/" AND "C:\\my\\conda\\lives\\here\\"}
+Correct format --> mini_install_path = "C:/my/conda/lives/here"
+OR "C:\\my\\conda\\lives\\here"
+INCORRECT formats --> mini_install_path = "C:/my/conda/lives/here/"
+AND "C:\\my\\conda\\lives\\here\\"}
 
 \item{verbose}{be verbose}
 }
@@ -24,4 +27,7 @@ checkGiottoEnvironment
 \details{
 Checks if a miniconda giotto environment can be found.
 Can be installed with \code{\link{installGiottoEnvironment}}.
+}
+\examples{
+checkGiottoEnvironment()
 }

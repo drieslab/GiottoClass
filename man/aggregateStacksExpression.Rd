@@ -35,6 +35,11 @@ giotto object
 \description{
 aggregate expression matrices from different z-stacks
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+aggregateStacksExpression(g, spat_units = c("z0", "z1"), feat_type = "rna")
+}
 \seealso{
 Other aggregate stacks: 
 \code{\link{aggregateStacks}()},

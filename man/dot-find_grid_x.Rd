@@ -6,6 +6,9 @@
 \usage{
 .find_grid_x(grid_DT, x_loc)
 }
+\value{
+character
+}
 \description{
 find grid location on x-axis
 }

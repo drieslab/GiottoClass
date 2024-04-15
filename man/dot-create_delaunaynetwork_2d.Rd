@@ -18,11 +18,14 @@
   Y = TRUE,
   j = TRUE,
   S = 0,
-  verbose = T,
+  verbose = TRUE,
   return_gobject = TRUE,
   output = c("spatialNetworkObj", "data.table"),
   ...
 )
+}
+\value{
+spatial 2D Delaunay network
 }
 \description{
 Create a spatial 2D Delaunay network.

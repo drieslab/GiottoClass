@@ -9,6 +9,9 @@
 \arguments{
 \item{gobject}{giotto object}
 }
+\value{
+giotto object
+}
 \description{
 Finds DT based objects, overallocates the data.tables, then sets
 the objects back in the giotto object

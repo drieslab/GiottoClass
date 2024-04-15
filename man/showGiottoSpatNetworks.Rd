@@ -15,7 +15,13 @@ showGiottoSpatNetworks(gobject, nrows = 4)
 prints names and small subset of available spatial network info
 }
 \description{
-Prints the available spatial networks that are attached to the Giotto object
+Prints the available spatial networks that are attached to the
+Giotto object
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+showGiottoSpatNetworks(g)
 }
 \seealso{
 Other functions to show data in giotto object: 

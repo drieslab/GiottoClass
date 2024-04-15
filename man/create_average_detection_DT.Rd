@@ -30,6 +30,12 @@ create_average_detection_DT(
 data.table with average gene epression values for each factor
 }
 \description{
-calculates average gene detection for a cell metadata factor (e.g. cluster)
+calculates average gene detection for a cell metadata
+factor (e.g. cluster)
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+create_average_detection_DT(g, meta_data_name = "leiden_clus")
 }
 \keyword{internal}

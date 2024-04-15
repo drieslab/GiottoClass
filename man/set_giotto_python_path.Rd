@@ -18,4 +18,7 @@ path to python executable
 detects and sets the python path. Exits without doing anything
 if getOption('giotto.use_conda') is FALSE.
 }
+\examples{
+set_giotto_python_path()
+}
 \keyword{internal}

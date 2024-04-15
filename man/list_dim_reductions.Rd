@@ -29,3 +29,8 @@ names and locations of dimension reduction as a data.table
 \description{
 return the available dimension reductions
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+list_dim_reductions(g)
+}

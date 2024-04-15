@@ -12,6 +12,9 @@ create_feat_meta_obj(
   provenance = NULL
 )
 }
+\value{
+feat_meta_obj
+}
 \description{
 create_feat_meta_obj
 }

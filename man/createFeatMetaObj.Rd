@@ -18,14 +18,28 @@ createFeatMetaObj(
 
 \item{spat_unit}{spatial unit of aggregated expression (e.g. 'cell')}
 
-\item{feat_type}{feature type of aggregated expression (e.g. 'rna', 'protein')}
+\item{feat_type}{feature type of aggregated
+expression (e.g. 'rna', 'protein')}
 
-\item{provenance}{origin data of aggregated expression information (if applicable)}
+\item{provenance}{origin data of aggregated expression
+information (if applicable)}
 
-\item{col_desc}{(optional) character vector describing columns of the metadata}
+\item{col_desc}{(optional) character vector describing columns of the
+metadata}
 
 \item{verbose}{be verbose}
 }
+\value{
+featMetaObj
+}
 \description{
 Create an S4 featMetaObj
+}
+\examples{
+x <- data.frame(
+    feat_ID = c("Mlc1", "Gprc5b", "Gfap"),
+    nr_cells = c(80, 138, 151)
+)
+
+createFeatMetaObj(metadata = x)
 }

@@ -6,6 +6,9 @@
 \usage{
 .abbrev_spatlocs(spatLocsObj, nrows)
 }
+\value{
+abbreviated spatLocsObj
+}
 \description{
 print abbreviated spatLocsObj
 }

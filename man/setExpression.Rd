@@ -41,6 +41,14 @@ giotto object
 \description{
 Function to set expression values for giotto object.
 }
+\examples{
+g <- createGiottoObject()
+m <- matrix(rnorm(100), nrow = 10)
+colnames(m) <- paste0("cell_", seq_len(10))
+rownames(m) <- paste0("feat_", seq_len(10))
+
+g <- setExpression(gobject = g, x = createExprObj(m, name = "raw"))
+}
 \seealso{
 Other expression accessor functions: 
 \code{\link{getExpression}()},

@@ -23,18 +23,30 @@ createDimObj(
 
 \item{spat_unit}{spatial unit of aggregated expression (e.g. 'cell')}
 
-\item{feat_type}{feature type of aggregated expression (e.g. 'rna', 'protein')}
+\item{feat_type}{feature type of aggregated
+expression (e.g. 'rna', 'protein')}
 
 \item{method}{method used to generate dimension reduction}
 
 \item{reduction}{reduction on columns (e.g. cells) or rows (e.g. features)}
 
-\item{provenance}{origin data of aggregated expression information (if applicable)}
+\item{provenance}{origin data of aggregated expression
+information (if applicable)}
 
 \item{misc}{misc}
 
 \item{my_rownames}{(optional) if needed, set coordinates rowname values here}
 }
+\value{
+dimObj
+}
 \description{
 Create an S4 dimObj
+}
+\examples{
+x <- matrix(c(2.81, 5.59, 10.54, 2.25, 5.12, 2.79), nrow = 3)
+rownames(x) <- c("cell_1", "cell_2", "cell_3")
+colnames(x) <- c("Dim.1", "Dim.2")
+
+createDimObj(coordinates = x, name = "pca", method = "pca")
 }

@@ -36,6 +36,13 @@ giotto object
 \description{
 Function to set a spatial grid
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
+sg <- getSpatialGrid(g, return_grid_Obj = TRUE)
+
+setSpatialGrid(gobject = g, spatial_grid = sg)
+}
 \seealso{
 Other spatial grid data accessor functions: 
 \code{\link{getSpatialGrid}()},

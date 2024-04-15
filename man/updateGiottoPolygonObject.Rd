@@ -9,6 +9,14 @@ updateGiottoPolygonObject(gpoly)
 \arguments{
 \item{gpoly}{giotto polygon object}
 }
+\value{
+GiottoPolygonObject
+}
 \description{
 Update giotto polygon object
+}
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPolygon")
+
+updateGiottoPolygonObject(g)
 }

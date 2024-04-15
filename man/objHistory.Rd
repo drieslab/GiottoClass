@@ -9,6 +9,14 @@ objHistory(object)
 \arguments{
 \item{object}{giotto object}
 }
+\value{
+list
+}
 \description{
 Print and return giotto object history
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+objHistory(g)
 }

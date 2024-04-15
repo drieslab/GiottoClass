@@ -22,7 +22,8 @@ annotateSpatialGrid(
 
 \item{spat_loc_name}{name of spatial locations}
 
-\item{spatial_grid_name}{name of spatial grid, see \code{\link{showGiottoSpatGrids}}}
+\item{spatial_grid_name}{name of spatial grid,
+see \code{\link{showGiottoSpatGrids}}}
 
 \item{cluster_columns}{names of cell metadata, see \code{\link{pDataDT}}}
 }
@@ -31,4 +32,10 @@ annotated spatial grid data.table
 }
 \description{
 annotate spatial grid with cell ID and cell metadata (optional)
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
+
+annotateSpatialGrid(g)
 }

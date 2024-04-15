@@ -15,7 +15,15 @@ select_gimage(
   polygon_feat_type = NULL
 )
 }
+\value{
+giotto image
+}
 \description{
 selects and (possibly resamples) giotto images for plotting
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+select_gimage(g, largeImage_name = "image")
 }
 \keyword{internal}

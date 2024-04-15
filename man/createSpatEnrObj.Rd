@@ -16,23 +16,37 @@ createSpatEnrObj(
 )
 }
 \arguments{
-\item{enrichment_data}{spatial enrichment results, provided a dataframe-like object}
+\item{enrichment_data}{spatial enrichment results, provided a
+dataframe-like object}
 
 \item{name}{name of S4 spatEnrObj}
 
 \item{spat_unit}{spatial unit of aggregated expression (e.g. 'cell')}
 
-\item{feat_type}{feature type of aggregated expression (e.g. 'rna', 'protein')}
+\item{feat_type}{feature type of aggregated
+expression (e.g. 'rna', 'protein')}
 
 \item{method}{method used to generate spatial enrichment information}
 
-\item{provenance}{origin data of aggregated expression information (if applicable)}
+\item{provenance}{origin data of aggregated expression
+information (if applicable)}
 
-\item{misc}{misc additional information about the spatial enrichment or how it
-was generated}
+\item{misc}{misc additional information about the spatial enrichment or
+how it was generated}
 
 \item{verbose}{be verbose}
 }
+\value{
+spatEnrObj
+}
 \description{
 Create S4 spatEnrObj
+}
+\examples{
+x <- GiottoData::loadSubObjectMini("spatEnrObj")
+
+createSpatEnrObj(
+    enrichment_data = slot(x, "enrichDT"),
+    name = "cluster_metagene"
+)
 }

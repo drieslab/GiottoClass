@@ -9,6 +9,9 @@
 \arguments{
 \item{object}{S4 spatialGridObj to check}
 }
+\value{
+character or TRUE
+}
 \description{
 Check function for S4 spatialGridObj
 }

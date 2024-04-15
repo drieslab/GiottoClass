@@ -35,4 +35,9 @@ giotto object
 \description{
 Rescale individual polygons by a x and y factor
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+rescalePolygons(g, poly_info = "aggregate")
+}
 \concept{polygon scaling}

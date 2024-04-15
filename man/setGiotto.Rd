@@ -47,6 +47,15 @@
 
 \item{\dots}{additional params to pass to specific Giotto setter functions}
 }
+\value{
+giottoSubobject
+}
 \description{
 Set giotto subobjects into giotto object
+}
+\examples{
+g <- createGiottoObject()
+g_expression <- GiottoData::loadSubObjectMini("exprObj")
+
+setGiotto(gobject = g, x = g_expression)
 }

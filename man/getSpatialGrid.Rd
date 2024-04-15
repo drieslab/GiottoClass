@@ -27,8 +27,17 @@ getSpatialGrid(
 \item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
 expression and spat_info are not expected to exist.}
 }
+\value{
+spatialGridObj
+}
 \description{
 Function to get spatial grid
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
+
+getSpatialGrid(g)
 }
 \seealso{
 Other spatial grid data accessor functions: 

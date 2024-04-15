@@ -28,6 +28,8 @@
 \alias{[,coordDataDT,ANY,missing,missing-method}
 \alias{[,coordDataDT,missing,missing,missing-method}
 \alias{[<-,coordDataDT,missing,missing,ANY-method}
+\alias{[<-,coordDataDT,missing,missing,}
+\alias{ANY-method}
 \alias{[<-,coordDataDT,missing,missing-method}
 \alias{[,giottoPoints,gIndex,missing,missing-method}
 \alias{[,metaData,missing,ANY,missing-method}
@@ -35,36 +37,44 @@
 \alias{[,metaData,ANY,missing,missing-method}
 \alias{[,metaData,missing,missing,missing-method}
 \alias{[<-,metaData,missing,missing,ANY-method}
+\alias{[<-,metaData,missing,missing,}
 \alias{[<-,metaData,missing,missing-method}
 \alias{[,dimObj,ANY,ANY,missing-method}
 \alias{[,dimObj,missing,missing,missing-method}
 \alias{[<-,dimObj,missing,missing,ANY-method}
+\alias{[<-,dimObj,missing,missing,}
 \alias{[<-,dimObj,missing,missing-method}
 \alias{[,exprData,missing,ANY,missing-method}
 \alias{[,exprData,ANY,missing,missing-method}
 \alias{[,exprData,ANY,ANY,missing-method}
 \alias{[,exprData,missing,missing,missing-method}
 \alias{[<-,exprData,missing,missing,ANY-method}
+\alias{[<-,exprData,missing,missing,}
 \alias{[<-,exprData,missing,missing-method}
 \alias{[,spatNetData,missing,missing,missing-method}
 \alias{[<-,spatNetData,missing,missing,ANY-method}
+\alias{[<-,spatNetData,missing,missing,}
 \alias{[<-,spatNetData,missing,missing-method}
 \alias{[,nnData,missing,missing,missing-method}
 \alias{[<-,nnData,missing,missing,ANY-method}
+\alias{[<-,nnData,missing,missing,}
 \alias{[<-,nnData,missing,missing-method}
 \alias{[,enrData,missing,missing,missing-method}
 \alias{[,enrData,ANY,missing,missing-method}
 \alias{[,enrData,missing,ANY,missing-method}
 \alias{[,enrData,missing,character,missing-method}
 \alias{[<-,enrData,missing,missing,ANY-method}
+\alias{[<-,enrData,missing,missing,}
 \alias{[<-,enrData,missing,missing-method}
 \alias{[,spatGridData,missing,missing,missing-method}
 \alias{[<-,spatGridData,missing,missing,ANY-method}
+\alias{[<-,spatGridData,missing,missing,}
 \alias{[<-,spatGridData,missing,missing-method}
 \alias{[,giottoPoints,missing,missing,missing-method}
 \alias{[,giottoPoints,character,missing,missing-method}
 \alias{[,giottoPoints,missing,gIndex,missing-method}
 \alias{[<-,giottoPoints,missing,missing,ANY-method}
+\alias{[<-,giottoPoints,missing,missing,}
 \alias{[<-,giottoPoints,missing,missing-method}
 \alias{[,giottoPolygon,missing,missing,missing-method}
 \alias{[,giottoPolygon,gIndex,missing,missing-method}
@@ -72,6 +82,7 @@
 \alias{[,giottoPolygon,missing,gIndex,missing-method}
 \alias{[,terraVectData,gIndex,gIndex,missing-method}
 \alias{[<-,giottoPolygon,missing,missing,ANY-method}
+\alias{[<-,giottoPolygon,missing,missing,}
 \alias{[<-,giottoPolygon,missing,missing-method}
 \title{Extract or replace parts of an object}
 \usage{
@@ -195,10 +206,14 @@
 \item{name}{A literal character string (possibly backtick quoted).}
 
 \item{value}{value(s) to set
-This is normally matched to the colnames of the data.table object within the S4.}
+This is normally matched to the colnames of the data.table object within
+the S4.}
 
 \item{i, j}{indices specifying elements to extract or replace. Indices are
 numeric or character vectors or empty}
+}
+\value{
+columns or values from a data.table
 }
 \description{
 Operators Giotto S4 internal data.tables to extract
@@ -318,3 +333,8 @@ Assign to \code{spatVector} slot in giotto S4
 Assign to \code{spatVector} slot in giottoPolygon
 }
 
+\examples{
+g <- GiottoData::loadSubObjectMini("spatEnrObj")
+
+g$cell_ID
+}

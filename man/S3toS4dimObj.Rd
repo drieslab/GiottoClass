@@ -9,6 +9,9 @@ S3toS4dimObj(object)
 \arguments{
 \item{object}{S3 dimObj}
 }
+\value{
+S4 dimObj
+}
 \description{
 Convert S3 dimObj to S4
 }

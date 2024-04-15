@@ -5,6 +5,9 @@
 \alias{spatLocsObj-class}
 \alias{spatLocsObj}
 \title{S4 spatLocsObj Class}
+\value{
+spatLocsObj
+}
 \description{
 Framework to store spatial location information
 }
@@ -20,3 +23,6 @@ Framework to store spatial location information
 \item{\code{provenance}}{origin of aggregated information (if applicable)}
 }}
 
+\examples{
+GiottoData::loadSubObjectMini("spatLocsObj")
+}

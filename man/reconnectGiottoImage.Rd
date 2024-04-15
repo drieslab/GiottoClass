@@ -28,7 +28,8 @@ reconnectGiottoImage(
 
 \item{image_path}{named list of paths to images to reconnect to giottoImages}
 
-\item{largeImage_path}{named list of paths to images to reconnect to giottoLargeImages}
+\item{largeImage_path}{named list of paths to images to reconnect to
+giottoLargeImages}
 
 \item{verbose}{be verbose}
 }
@@ -40,16 +41,23 @@ reconnect a gobject's dead image pointers using filepaths to
 the original source image files
 }
 \details{
-Inputs can either be given as both image name (\code{image_name}/\code{largeImage_name})
-and filepath (\code{image_path}/\code{largeImage_path}) args or as only a
-a named list through a filepath argument alone.
-If \code{auto_reconnect = TRUE} then no additional params need to be supplied.
-As long as giotto image objects were directly created using filepaths, those
-filepaths are stored within the image objects and will be referenced during
-reconnection. Issues will only arise if giotto image objects were created directly
-from the underlying image handling package objects (\emph{magick} or \emph{raster objects}) or
-if image files have been moved since the the giotto image object was generated.
-In such cases, use manual reconnection by setting \code{auto_reconnect = FALSE}.
+Inputs can either be given as both image
+name (\code{image_name}/\code{largeImage_name}) and
+filepath (\code{image_path}/\code{largeImage_path}) args or as only a named
+list through a filepath argument alone. If \code{auto_reconnect = TRUE} then
+no additional params need to be supplied. As long as giotto image objects
+were directly created using filepaths, those filepaths are stored within
+the image objects and will be referenced during reconnection. Issues will
+only arise if giotto image objects were created directly from the underlying
+image handling package objects (\emph{magick} or \emph{raster objects}) or
+if image files have been moved since the the giotto image object was
+generated. In such cases, use manual reconnection by
+setting \code{auto_reconnect = FALSE}.
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+reconnectGiottoImage(g, reconnect_type = "largeImage")
 }
 \seealso{
 Other basic image functions: 

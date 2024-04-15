@@ -31,11 +31,18 @@ giotto object
 Directly attach a giotto image to giotto object
 }
 \details{
-\emph{\strong{Use with care!}} This function directly attaches giotto image
-objects to the gobject without further modifications of spatial positioning values
-within the image object that are generally needed in order for them to
-plot in the correct location relative to the other modalities of spatial data. \cr
-For the more general-purpose method of attaching image objects, see \code{\link{addGiottoImage}}
+\emph{\strong{Use with care!}} This function directly attaches
+giotto image objects to the gobject without further modifications of
+spatial positioning values within the image object that are generally
+needed in order for them to plot in the correct location relative to the
+other modalities of spatial data. \cr For the more general-purpose method
+of attaching image objects, see \code{\link{addGiottoImage}}
+}
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+gimage <- getGiottoImage(gobject = g, image_type = "largeImage")
+
+setGiottoImage(gobject = g, image = gimage, image_type = "largeImage")
 }
 \seealso{
 \code{\link{addGiottoImage}}

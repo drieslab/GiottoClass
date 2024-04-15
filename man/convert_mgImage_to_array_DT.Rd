@@ -15,4 +15,11 @@ data.table with image pixel information
 \description{
 converts a magick image object to a data.table
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g_image <- convertGiottoLargeImageToMG(g, largeImage_name = "image", 
+return_gobject = FALSE)
+
+convert_mgImage_to_array_DT(g_image)
+}
 \keyword{internal}

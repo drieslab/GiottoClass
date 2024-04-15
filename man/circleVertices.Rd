@@ -18,6 +18,9 @@ a data.table of circle vertices
 Generates vertex coordinates for a circle around (0,0) with the
 given radius. Modified from \pkg{packcircles}.
 }
+\examples{
+circleVertices(radius = 10)
+}
 \seealso{
 \link{generate_grid}
 

@@ -27,8 +27,16 @@ getCellMetadata(
 \item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
 expression and spat_info are not expected to exist.}
 }
+\value{
+a data.table or cellMetaObj
+}
 \description{
 Get cell metadata from giotto object
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+getCellMetadata(g)
 }
 \seealso{
 pDataDT

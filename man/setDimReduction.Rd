@@ -20,8 +20,8 @@ setDimReduction(
 \arguments{
 \item{gobject}{giotto object}
 
-\item{x}{dimObj or list of dimObj to set. Passing NULL will remove a specified
-set of dimension reduction information from the gobject}
+\item{x}{dimObj or list of dimObj to set. Passing NULL will remove a
+specified set of dimension reduction information from the gobject}
 
 \item{spat_unit}{spatial unit (e.g. "cell")}
 
@@ -46,6 +46,12 @@ giotto object
 \description{
 Function to dimension reduction information into the Giotto
 object.
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+dimred <- getDimReduction(g)
+
+setDimReduction(gobject = g, x = dimred)
 }
 \seealso{
 Other dimensional reduction data accessor functions: 

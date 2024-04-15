@@ -5,6 +5,9 @@
 \alias{cellMetaObj-class}
 \alias{cellMetaObj}
 \title{S4 cellMetaObj}
+\value{
+cellMetaObj
+}
 \description{
 Framework to store cell metadata
 }
@@ -19,6 +22,10 @@ Framework to store cell metadata
 
 \item{\code{feat_type}}{feature type of aggregated expression (e.g. 'rna', 'protein')}
 
-\item{\code{provenance}}{origin data of aggregated expression information (if applicable)}
+\item{\code{provenance}}{origin data of aggregated expression
+information (if applicable)}
 }}
 
+\examples{
+GiottoData::loadSubObjectMini("cellMetaObj")
+}

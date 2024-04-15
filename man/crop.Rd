@@ -3,11 +3,14 @@
 \name{crop}
 \alias{crop}
 \alias{crop,giottoLargeImage-method}
+\alias{crop,spatLocsObj-method}
 \alias{crop,giottoPoints-method}
 \alias{crop,giottoPolygon-method}
 \title{Crop to a spatial subset}
 \usage{
 \S4method{crop}{giottoLargeImage}(x, y, ...)
+
+\S4method{crop}{spatLocsObj}(x, y, ...)
 
 \S4method{crop}{giottoPoints}(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL, ...)
 
@@ -25,6 +28,9 @@
 \item{xmin, xmax, ymin, ymax}{only used if DT = TRUE. Set extent bounds
 independently}
 }
+\value{
+SpatRaster
+}
 \description{
 Spatially subset an object x using object y. Giotto spatial
 subobjects respond to \link[terra:crop]{terra::crop}. For \code{giottoPoints} and \code{giottoPolygon},
@@ -37,12 +43,8 @@ the polygon that does fall within the selected crop region.
 Set \code{DT = FALSE} in order to use the default style of terra::crop behavior
 that also allows usage of additional params through ...
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{crop(giottoLargeImage)}: Crop a giottoLargeImage
-
-\item \code{crop(giottoPoints)}: Crop a giottoPoints
-
-\item \code{crop(giottoPolygon)}: Crop a giottoPoints
-
-}}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g_image <- getGiottoImage(g, image_type = "largeImage")
+crop(g_image, g_image)
+}

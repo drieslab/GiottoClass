@@ -11,6 +11,9 @@
 
 \item{env}{environment into which package will be installed}
 }
+\value{
+numeric
+}
 \description{
 prompts user to install a package
 }

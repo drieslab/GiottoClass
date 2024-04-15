@@ -7,7 +7,11 @@
 .create_terra_spatraster(image_path)
 }
 \arguments{
-\item{image_path}{existing full filepath to image to be loaded as a terra spatRaster}
+\item{image_path}{existing full filepath to image to be loaded as a terra
+spatRaster}
+}
+\value{
+spatRaster object
 }
 \description{
 Load image as a terra spatRaster object

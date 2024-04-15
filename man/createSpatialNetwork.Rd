@@ -22,7 +22,7 @@ createSpatialNetwork(
   knn_method = "dbscan",
   k = 4,
   maximum_distance_knn = NULL,
-  verbose = F,
+  verbose = FALSE,
   return_gobject = TRUE,
   output = c("spatialNetworkObj", "data.table"),
   ...
@@ -41,7 +41,8 @@ createSpatialNetwork(
 
 \item{dimensions}{which spatial dimensions to use (default = all)}
 
-\item{method}{which method to use to create a spatial network. (default = Delaunay)}
+\item{method}{which method to use to create a spatial
+network. (default = Delaunay)}
 
 \item{delaunay_method}{method to use to generate Delaunay network}
 
@@ -55,9 +56,11 @@ underlying Qhull command; see the
 \href{http://www.qhull.org/html/qdelaun.htm}{Qhull documentation} for the
 available options. (default = 'Pp', do not report precision problems)}
 
-\item{Y}{(RTriangle) If TRUE prohibits the insertion of Steiner points on the mesh boundary.}
+\item{Y}{(RTriangle) If TRUE prohibits the insertion of Steiner points on
+the mesh boundary.}
 
-\item{j}{(RTriangle) If TRUE jettisons vertices that are not part of the final triangulation from the output.}
+\item{j}{(RTriangle) If TRUE jettisons vertices that are not part of the
+final triangulation from the output.}
 
 \item{S}{(RTriangle) Specifies the maximum number of added Steiner points.}
 
@@ -84,7 +87,8 @@ giotto object with updated spatial network slot
 }
 \description{
 Create a spatial network based on cell centroids. These networks
-are often used when determining cell-cell connectivities and spatial relationships.
+are often used when determining cell-cell connectivities and spatial
+relationships.
 There are several types of spatial networks and multiple methods to generate
 them. Method-specific params are labeled with the name of the method within
 parentheses in their descriptions.
@@ -100,4 +104,9 @@ setting a minimum k for each cell.
 **dimensions: ** default = 'all' which takes all possible dimensions.
 Alternatively you can provide a character vector that specifies the spatial
 dimensions to use, e.g. c("sdimx', "sdimy") or a numerical vector, e.g. 2:3
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+createSpatialNetwork(g)
 }

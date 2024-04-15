@@ -15,7 +15,7 @@ createSpatialKNNnetwork(
   k = 4,
   maximum_distance = NULL,
   minimum_k = 0,
-  verbose = F,
+  verbose = FALSE,
   return_gobject = TRUE,
   output = c("spatialNetworkObj", "data.table"),
   ...
@@ -38,7 +38,8 @@ createSpatialKNNnetwork(
 
 \item{k}{number of nearest neighbors based on physical distance}
 
-\item{maximum_distance}{distance cuttof for nearest neighbors to consider for kNN network}
+\item{maximum_distance}{distance cuttof for nearest neighbors to consider
+for kNN network}
 
 \item{minimum_k}{minimum nearest neigbhours if maximum_distance != NULL}
 
@@ -55,11 +56,19 @@ createSpatialKNNnetwork(
 giotto object with updated spatial network slot
 
 \strong{dimensions: } default = 'all' which takes all possible dimensions.
-Alternatively you can provide a character vector that specififies the spatial dimensions to use, e.g. c("sdimx', "sdimy")
+Alternatively you can provide a character vector that specififies the
+spatial dimensions to use, e.g. c("sdimx', "sdimy")
 or a numerical vector, e.g. 2:3
 
-\strong{maximum_distance: } to create a network based on maximum distance only, you also need to set k to a very high value, e.g. k = 100
+\strong{maximum_distance: } to create a network based on maximum distance
+only, you also need to set k to a very high value, e.g. k = 100
 }
 \description{
 Create a spatial knn network.
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+createSpatialKNNnetwork(g)
+
 }

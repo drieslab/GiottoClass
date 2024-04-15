@@ -8,7 +8,7 @@ combineFeatureOverlapData(
   gobject,
   feat_type = "rna",
   sel_feats = NULL,
-  poly_info = c("cell")
+  poly_info = "cell"
 )
 }
 \arguments{
@@ -25,5 +25,10 @@ data.table with combined spatial polygon information
 }
 \description{
 combine feature data information
+}
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+combineFeatureOverlapData(g, poly_info = "aggregate")
 }
 \concept{combine feature metadata}

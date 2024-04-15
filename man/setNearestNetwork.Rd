@@ -44,6 +44,12 @@ giotto object
 \description{
 Set a NN-network for a Giotto object
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+dimred <- getNearestNetwork(gobject = g)
+
+setNearestNetwork(gobject = g, x = dimred)
+}
 \seealso{
 Other expression space nearest network accessor functions: 
 \code{\link{getNearestNetwork}()},

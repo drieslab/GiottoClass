@@ -17,12 +17,12 @@ reconnect_image_object(image_object, image_type, image_path)
 reconnected image_object
 }
 \description{
-Reconnect giotto image object with dead image pointer using a filepath
-to the original image source
+Reconnect giotto image object with dead image pointer using
+a filepath to the original image source
 }
 \details{
-This is a simple wrapper function for image object-specific reconnection
-functions and does not include other functionality to find the specific image
-objects in the giotto object.
+This is a simple wrapper function for image object-specific
+reconnection functions and does not include other functionality to find the
+specific image objects in the giotto object.
 }
 \keyword{internal}

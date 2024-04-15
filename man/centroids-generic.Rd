@@ -14,6 +14,9 @@
 \item{append_gpolygon}{whether to append the centroids results to the
 \code{giottoPolygon} instead of returning bare \code{SpatVector}. Defaults to FALSE}
 }
+\value{
+spatVectorCentroids or spatVector
+}
 \description{
 Access centroids information from polygon objects
 }
@@ -21,4 +24,9 @@ Access centroids information from polygon objects
 For giottoPolygon, if centroids already exist, pulls from
 \code{spatVectorCentroids} slot. Otherwise, generates from
 \code{spatVector} slot de novo
+}
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPolygon")
+
+centroids(g)
 }
