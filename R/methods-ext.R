@@ -11,6 +11,7 @@
 #' @returns SpatExtent
 NULL
 
+
 #' @rdname ext
 #' @export
 setMethod("ext", signature("spatLocsObj"), function(x, ...) {
@@ -51,6 +52,89 @@ setMethod("ext", signature("giottoLargeImage"), function(x, ...) {
 setMethod("ext", signature("giottoImage"), function(x, ...) {
     terra::ext((x@boundaries + x@minmax)[c(2, 1, 4, 3)])
 })
+
+#' @rdname ext
+#' @param spat_unit character. spatial unit (optional)
+#' @param feat_type character. feature type (optional)
+#' @param prefer character vector. Order of preferred data to get extent from.
+#' allowed terms are "polygon", "spatlocs", "points". This is also the default
+#' ordering.
+#' @export
+setMethod("ext", signature("giotto"), function(
+        x,
+        spat_unit = NULL,
+        feat_type = NULL,
+        prefer = c("polygon", "spatlocs", "points"),
+        ...
+) {
+    spat_unit = set_default_spat_unit(
+        gobject = x,
+        spat_unit = spat_unit
+    )
+    feat_type <- set_default_feat_type(
+        gobject = x,
+        spat_unit = spat_unit,
+        feat_type = feat_type
+    )
+
+    has_poly <- spat_unit %in% list_spatial_info_names(x)
+    has_ctrs <- spat_unit %in% list_spatial_locations(x)[, spat_unit]
+    has_pnts <- feat_type %in% list_feature_info(x)[, feat_info]
+
+    if (sum(has_poly, has_ctrs, has_pnts) == 0) {
+        wrap_msg("No spatial info in gobject")
+    }
+
+    # find first available type of info in gobject according to `prefer`
+    pref_order <- c()
+    for (ptype in prefer) {
+        pref_order <- c(
+            pref_order,
+            switch(ptype,
+                "polygon" = c(polygon = has_poly),
+                "spatlocs" = c(spatlocs = has_ctrs),
+                "points" = c(points = has_pnts)
+            )
+        )
+    }
+    use_type <- names(which(pref_order)[1L])
+
+    spat_obj <- switch(use_type,
+        "polygon" = getPolygonInfo(
+            gobject = x,
+            polygon_name = spat_unit,
+            return_giottoPolygon = TRUE,
+            ...
+        ),
+        "spatlocs" = getSpatialLocations(
+            gobject = x,
+            spat_unit = spat_unit,
+            output = "spatLocsObj",
+            copy_obj = FALSE,
+            set_defaults = TRUE,
+            ...
+        ),
+        "points" = getFeatureInfo(
+            gobject = x,
+            feat_type = feat_type,
+            return_giottoPoints = TRUE,
+            ...
+        )
+    )
+
+    e <- ext(spat_obj)
+    return(e)
+})
+
+
+
+
+
+
+
+
+
+
 
 #' @rdname ext
 #' @export
