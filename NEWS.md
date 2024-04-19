@@ -13,6 +13,7 @@
 - `plot()` `giottoPoints` method now plots density when `dens = TRUE`
 - `show_max` param `density()` and `hist()` to show the image object's `max_window` setting
 - `.identify_background_range_polygons()` now finds any polygons larger than a threshold percentage than the overall extent of the `SpatVector` input.
+- `ext()` can now be used with the `giotto` object
 
 ## new
 - new `spatValues()` to get specific values from a `giotto` object in `data.table` format
