@@ -31,7 +31,7 @@ NULL
 #' df <- data.frame(x = 1:5, y = c(1, 4, 4, 3, 1))
 #' d <- data.frame(id = 1, name = "polygon_1")
 #' my_polygon <- terra::vect(as.matrix(df), type = "polygons", atts = d)
-#' 
+#'
 #' polygon_to_raster(my_polygon)
 #' @export
 polygon_to_raster <- function(polygon, field = NULL) {
@@ -543,7 +543,7 @@ setMethod(
 #' @seealso [.calculate_overlap_raster()]
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' calculateOverlapRaster(g)
 #' @export
 calculateOverlapRaster <- function(gobject,
@@ -756,7 +756,7 @@ calculateOverlapRaster <- function(gobject,
 #' @returns giotto object or data.table with overlapping information
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' calculateOverlapPolygonImages(g,
 #'     spatial_info = "z0",
 #'     image_names = "dapi_z0")
@@ -967,7 +967,7 @@ calculateOverlapPolygonImages <- function(
 #' @concept overlap
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' calculateOverlapSerial(g, spatial_info = "z1")
 #' @export
 calculateOverlapSerial <- function(
@@ -1091,7 +1091,7 @@ calculateOverlapSerial <- function(
 #' @concept overlap
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' calculateOverlapParallel(g, spatial_info = "z1")
 #' @export
 calculateOverlapParallel <- function(
@@ -1200,7 +1200,7 @@ calculateOverlapParallel <- function(
 #'
 #' # calculate all transcripts overlapped
 #' out_all <- calculateOverlap(gpoly, gpoints)
-#' 
+#'
 #' overlapToMatrix(out_all)
 NULL
 
@@ -1363,9 +1363,12 @@ setMethod(
             ...
         )
 
-        # this arg not accepted by method
+        # remove args not accepted by specific method
         if (type == "intensity") {
             argslist$count_info_column <- NULL
+            argslist$col_names <- NULL
+            argslist$row_names <- NULL
+            argslist$verbose <- NULL
         }
 
         # pass to SpatVector method
@@ -1555,7 +1558,7 @@ setMethod(
 #' @returns giotto object or count matrix
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' overlapToMatrixMultiPoly(g, poly_info = "z0")
 #' @export
 overlapToMatrixMultiPoly <- function(
@@ -1900,7 +1903,7 @@ overlapImagesToMatrix <- function(
 #' @returns giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' aggregateStacksExpression(g, spat_units = c("z0", "z1"), feat_type = "rna")
 #' @export
 aggregateStacksExpression <- function(
@@ -2026,7 +2029,7 @@ aggregateStacksExpression <- function(
 #' @family aggregate stacks
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' aggregateStacksLocations(g, spat_units = c("z0", "z1"))
 #' @export
 aggregateStacksLocations <- function(
@@ -2190,7 +2193,7 @@ aggregateStacksLocations <- function(
 #' @family aggregate stacks
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' aggregateStacksPolygons(g, spat_units = c("z0", "z1"))
 #' @export
 aggregateStacksPolygons <- function(
@@ -2237,7 +2240,7 @@ aggregateStacksPolygons <- function(
 #' @family aggregate stacks
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' aggregateStacksPolygonOverlaps(g,
 #'     spat_units = c("z0", "z1"),
 #'     feat_type = "rna")
@@ -2294,7 +2297,7 @@ aggregateStacksPolygonOverlaps <- function(
 #' @family aggregate stacks
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' aggregateStacks(g,
 #'     spat_units = c("z0", "z1"), feat_type = "rna",
 #'     values = "raw")
