@@ -589,6 +589,7 @@ set_feat_id <- function(
 #' @description Get cell metadata from giotto object
 #' @returns a data.table or cellMetaObj
 #' @seealso pDataDT
+#' @export
 get_cell_metadata <- function(
         gobject,
         spat_unit = NULL,
@@ -780,6 +781,7 @@ setCellMetadata <- function(
 #' @returns giotto object
 #' @family functions to set data in giotto object
 #' @keywords internal
+#' @export
 set_cell_metadata <- function(
         gobject,
         metadata,
