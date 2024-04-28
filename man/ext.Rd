@@ -9,6 +9,7 @@
 \alias{ext,spatialNetworkObj-method}
 \alias{ext,giottoLargeImage-method}
 \alias{ext,giottoImage-method}
+\alias{ext,giotto-method}
 \alias{ext<-,giottoPoints,SpatExtent-method}
 \alias{ext<-,giottoPolygon,SpatExtent-method}
 \alias{ext<-,giottoLargeImage,SpatExtent-method}
@@ -27,6 +28,14 @@
 
 \S4method{ext}{giottoImage}(x, ...)
 
+\S4method{ext}{giotto}(
+  x,
+  spat_unit = NULL,
+  feat_type = NULL,
+  prefer = c("polygon", "spatlocs", "points"),
+  ...
+)
+
 \S4method{ext}{giottoPoints,SpatExtent}(x) <- value
 
 \S4method{ext}{giottoPolygon,SpatExtent}(x) <- value
@@ -40,6 +49,14 @@
 
 \item{...}{additional params to pass}
 
+\item{spat_unit}{character. spatial unit (optional)}
+
+\item{feat_type}{character. feature type (optional)}
+
+\item{prefer}{character vector. Order of preferred data to get extent from.
+allowed terms are "polygon", "spatlocs", "points". This is also the default
+ordering.}
+
 \item{value}{value to set. Accepts any object that \code{ext()} will work on}
 }
 \value{
@@ -50,7 +67,31 @@ Get a SpatExtent of an object. This is the spatial minmax x
 and y that the object is mapped to.
 }
 \examples{
-g <- GiottoData::loadSubObjectMini("spatLocsObj")
-
+g <- GiottoData::loadGiottoMini("vizgen")
+# giotto \%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%
 ext(g)
+
+# spatLocsObj \%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%
+sl <- getSpatialLocations(g)
+ext(sl)
+
+# giottoPolygon \%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%
+# get extent
+#' gpoly <- getPolygonInfo(g, return_giottoPolygon = TRUE)
+ext(gpoly)
+
+# set extent
+plot(gpoly) # before
+ext(gpoly) <- ext(0, 20, 30, 60)
+plot(gpoly) # after
+
+# giottoPoints \%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%
+# get extent
+gpoints <- getFeatureInfo(g, return_giottoPoints = TRUE)
+ext(gpoints)
+
+# set extent
+plot(gpoints) # before
+ext(gpoints) <- ext(0, 2000, 3000, 6000)
+plot(gpoints) # after
 }

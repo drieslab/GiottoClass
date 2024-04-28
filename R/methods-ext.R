@@ -10,9 +10,33 @@
 #' @param ... additional params to pass
 #' @returns SpatExtent
 #' @examples
-#' g <- GiottoData::loadSubObjectMini("spatLocsObj")
-#' 
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' # giotto %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #' ext(g)
+#'
+#' # spatLocsObj %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#' sl <- getSpatialLocations(g)
+#' ext(sl)
+#'
+#' # giottoPolygon %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#' # get extent
+#' #' gpoly <- getPolygonInfo(g, return_giottoPolygon = TRUE)
+#' ext(gpoly)
+#'
+#' # set extent
+#' plot(gpoly) # before
+#' ext(gpoly) <- ext(0, 20, 30, 60)
+#' plot(gpoly) # after
+#'
+#' # giottoPoints %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#' # get extent
+#' gpoints <- getFeatureInfo(g, return_giottoPoints = TRUE)
+#' ext(gpoints)
+#'
+#' # set extent
+#' plot(gpoints) # before
+#' ext(gpoints) <- ext(0, 2000, 3000, 6000)
+#' plot(gpoints) # after
 NULL
 
 
