@@ -93,8 +93,11 @@ setMethod("ext", signature("giotto"), function(
         spat_unit = NULL,
         feat_type = NULL,
         prefer = c("polygon", "spatlocs", "points"),
+        verbose = NULL,
         ...
 ) {
+    dots <- list(...)
+
     spat_unit = set_default_spat_unit(
         gobject = x,
         spat_unit = spat_unit
@@ -110,7 +113,8 @@ setMethod("ext", signature("giotto"), function(
     has_pnts <- feat_type %in% list_feature_info(x)[, feat_info]
 
     if (sum(has_poly, has_ctrs, has_pnts) == 0) {
-        wrap_msg("No spatial info in gobject")
+        vmsg(.v = verbose, "No spatial info in giotto object")
+        return(invisible())
     }
 
     # find first available type of info in gobject according to `prefer`
@@ -132,7 +136,7 @@ setMethod("ext", signature("giotto"), function(
             gobject = x,
             polygon_name = spat_unit,
             return_giottoPolygon = TRUE,
-            ...
+            verbose = verbose
         ),
         "spatlocs" = getSpatialLocations(
             gobject = x,
@@ -140,13 +144,14 @@ setMethod("ext", signature("giotto"), function(
             output = "spatLocsObj",
             copy_obj = FALSE,
             set_defaults = TRUE,
-            ...
+            name = dots$name,
+            verbose = verbose
         ),
         "points" = getFeatureInfo(
             gobject = x,
             feat_type = feat_type,
             return_giottoPoints = TRUE,
-            ...
+            verbose = verbose
         )
     )
 

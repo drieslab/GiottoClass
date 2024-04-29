@@ -33,6 +33,7 @@
   spat_unit = NULL,
   feat_type = NULL,
   prefer = c("polygon", "spatlocs", "points"),
+  verbose = NULL,
   ...
 )
 
