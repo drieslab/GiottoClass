@@ -4,13 +4,7 @@
 \alias{setGiottoImage}
 \title{Set giotto image object}
 \usage{
-setGiottoImage(
-  gobject = NULL,
-  image = NULL,
-  image_type = NULL,
-  name = NULL,
-  verbose = TRUE
-)
+setGiottoImage(gobject, image, image_type = NULL, name = NULL, verbose = NULL)
 }
 \arguments{
 \item{gobject}{giotto object}
@@ -18,7 +12,7 @@ setGiottoImage(
 \item{image}{giotto image object to be attached without modification to the
 giotto object}
 
-\item{image_type}{type of giotto image object. Either "image" or "largeImage"}
+\item{image_type}{deprecated}
 
 \item{name}{name of giotto image object}
 
@@ -40,9 +34,10 @@ of attaching image objects, see \code{\link{addGiottoImage}}
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
-gimage <- getGiottoImage(gobject = g, image_type = "largeImage")
+gimg <- getGiottoImage(gobject = g)
 
-setGiottoImage(gobject = g, image = gimage, image_type = "largeImage")
+setGiottoImage(g, NULL, name = objName(gimg))
+setGiottoImage(gobject = g, image = gimg)
 }
 \seealso{
 \code{\link{addGiottoImage}}

@@ -283,7 +283,7 @@ setClass("featData",
 #' @returns slot for miscellaneous information
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("dimObj")
-#' 
+#'
 #' slot(g, "misc")
 setClass("miscData",
     contains = "VIRTUAL",
@@ -364,7 +364,7 @@ setClass("spatFeatData",
 #' @returns giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' g <- updateGiottoObject(g)
 #' @export
 updateGiottoObject <- function(gobject) {
@@ -387,19 +387,18 @@ updateGiottoObject <- function(gobject) {
 
     # [Switch to GiottoClass versioning] --------------------------------------#
     # GiottoClass 0.1.2 adds max_window and colors slots to giottoLargeImage
-    if (!is.null(gobject@largeImages)) {
-        gobject@largeImages <- lapply(gobject@largeImages, .update_giotto_image)
-    }
+    # this update function has been moved to .update_image_slot() below
 
     # GiottoClass 0.1.4 supercedes @OS_platform with @versions slot
     if (!is.null(attr(gobject, "OS_platform"))) {
         attr(gobject, "OS_platform") <- NULL
     }
-    if (is.null(attr(gobject, "versions"))) {
+    if (is.null(attr(gobject, "versions"))) { # apply default version 0
         attr(gobject, "versions") <- .versions_info()
         gobject@versions$gclass <- 0 # untracked
     }
 
+    # warn if gobject newer than package
     if (.gversion(gobject) > packageVersion("GiottoClass")) {
         warning(
             call. = FALSE,
@@ -413,6 +412,14 @@ updateGiottoObject <- function(gobject) {
 
     # [version-based updates] -------------------------------------------------#
 
+    # GiottoClass 0.3.0 removes @largeImages slot
+    if (.gversion(gobject) < "0.3.0") {
+        gobject <- .update_image_slot(gobject)
+    }
+
+    # GiottoClass 0.1.2 image updates moved here
+    # TODO remove in future update
+    gobject@images <- lapply(gobject@images, .update_giotto_image)
 
     # -------------------------------------------------------------------------#
 
@@ -421,6 +428,40 @@ updateGiottoObject <- function(gobject) {
 
     return(gobject)
 }
+
+# for updating pre-v0.3.0 objects
+.update_image_slot <- function(x) {
+    checkmate::assert_class(x, "giotto")
+    if (methods::.hasSlot(x, "largeImages")) {
+        lgimg_list <- attr(x, "largeImages")
+
+        # remove slot
+        attr(x, "largeImages") <- NULL
+
+        # deal with same image names
+        lgnames <- names(lgimg_list)
+        imgnames <- names(x@images)
+
+        samename_bool <- imgnames %in% lgnames
+        if (any(samename_bool)) {
+            samenames <- imgnames[samename_bool]
+            warning(wrap_txt(
+                "GiottoClass v0.3.0 merges @images and @largeImages slots.
+                image name(s):", paste(samenames, collapse = ", "),
+                "\nare found in both slots.
+                largeImages will be prioritized."
+            ), call. = FALSE)
+
+            # remove images with overlapped names
+            x@images[samename_bool] <- NULL
+        }
+
+        x@images <- c(x@images, lgimg_list)
+    }
+    return(x)
+}
+
+
 
 
 
@@ -447,8 +488,7 @@ updateGiottoObject <- function(gobject) {
 #' @slot spatial_enrichment slot to save spatial enrichment-like results
 #' @slot dimension_reduction slot to save dimension reduction coordinates
 #' @slot nn_network nearest neighbor network in igraph format
-#' @slot images slot to store giotto images
-#' @slot largeImages slot to store giottoLargeImage objects
+#' @slot images slot to store giotto image objects
 #' @slot parameters slot to save parameters that have been used
 #' @slot instructions slot for global function instructions
 #' @slot offset_file offset file used to stitch together image fields
@@ -501,7 +541,6 @@ giotto <- setClass(
         dimension_reduction = "ANY",
         nn_network = "ANY",
         images = "ANY",
-        largeImages = "ANY",
         parameters = "ANY",
         instructions = "ANY",
         offset_file = "ANY",
@@ -527,7 +566,6 @@ giotto <- setClass(
         dimension_reduction = NULL,
         nn_network = NULL,
         images = NULL,
-        largeImages = NULL,
         parameters = list(),
         instructions = NULL,
         offset_file = NULL,
@@ -579,7 +617,6 @@ setClass(
         dimension_reduction = "ANY",
         nn_network = "ANY",
         images = "ANY",
-        largeImages = "ANY",
         parameters = "ANY",
         instructions = "ANY",
         offset_file = "ANY",
@@ -604,7 +641,6 @@ setClass(
         dimension_reduction = NULL,
         nn_network = NULL,
         images = NULL,
-        largeImages = NULL,
         parameters = NULL,
         instructions = NULL,
         offset_file = NULL,
@@ -1316,7 +1352,7 @@ giottoPolygon <- setClass(
 #' @returns GiottoPolygonObject
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("giottoPolygon")
-#' 
+#'
 #' updateGiottoPolygonObject(g)
 #' @export
 updateGiottoPolygonObject <- function(gpoly) {
@@ -1402,7 +1438,7 @@ giottoPoints <- setClass(
 #' @returns GiottoPointsObject
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("giottoPoints")
-#' 
+#'
 #' updateGiottoPointsObject(g)
 #' @export
 updateGiottoPointsObject <- function(gpoints) {
@@ -1578,7 +1614,7 @@ giottoImage <- setClass(
 #' @returns giottoLargeImage
 #' @examples
 #' giottoLargeImage()
-#' 
+#'
 #' @export giottoLargeImage
 #' @exportClass giottoLargeImage
 giottoLargeImage <- setClass(
@@ -1617,27 +1653,32 @@ giottoLargeImage <- setClass(
 
 # function for updating image objects if structure definitions have changed
 .update_giotto_image <- function(x) {
-    # 0.1.2 release adds colors & max_window slots
-    if (is.null(attr(x, "colors"))) {
-        attr(x, "colors") <- grDevices::grey.colors(
-            n = 256, start = 0,
-            end = 1, gamma = 1
-        )
-    }
-    if (is.null(attr(x, "max_window"))) {
-        # get a max intensity value
-        if (!is.null(x@max_intensity)) {
-            x@max_intensity <- .spatraster_intensity_range(
-                x@raster_object
-            )[["max"]]
+
+    if (inherits(x, "giottoLargeImage")) {
+        # 0.1.2 release adds colors & max_window slots
+        if (is.null(attr(x, "colors"))) {
+            attr(x, "colors") <- grDevices::grey.colors(
+                n = 256, start = 0,
+                end = 1, gamma = 1
+            )
+        }
+        if (is.null(attr(x, "max_window"))) {
+            # get a max intensity value
+            if (!is.null(x@max_intensity)) {
+                x@max_intensity <- .spatraster_intensity_range(
+                    x@raster_object
+                )[["max"]]
+            }
+
+            attr(x, "max_window") <- .bitdepth(
+                x@max_intensity, return_max = TRUE
+            )
         }
 
-        attr(x, "max_window") <- .bitdepth(x@max_intensity, return_max = TRUE)
+        # 0.1.x release adds giottoImageStack
+        # deprecate
+
     }
-
-    # 0.1.x release adds giottoImageStack
-    # deprecate
-
     return(x)
 }
 

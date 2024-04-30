@@ -38,7 +38,7 @@ NULL
 #' @param dimension_reduction list of dimension reduction(s)
 #' @param nn_network list of nearest neighbor network(s)
 #' @param images list of images
-#' @param largeImages list of large images
+#' @param largeImages deprecated
 #' @param offset_file file used to stitch fields together (optional)
 #' @param instructions list of instructions or output result
 #' from \code{\link{createGiottoInstructions}}
@@ -127,6 +127,18 @@ createGiottoObject <- function(
         verbose = FALSE) {
     debug_msg <- FALSE # for reading debug help
     initialize_per_step <- FALSE
+
+    if (!is.null(largeImages)) {
+        deprecate_warn(
+            "0.3.0",
+            "createGiottoObject(largeImages)",
+            details = c(
+                "All images should be supplied to `images` instead",
+                "Names of images may not overlap"
+            )
+        )
+        images <- c(images, largeImages)
+    }
 
     # create minimum giotto
     gobject <- giotto(
@@ -275,36 +287,6 @@ createGiottoObject <- function(
     }
 
 
-
-
-
-
-
-    ## parameters ##
-    ## ---------- ##
-    # gobject@parameters = list()
-    # now automatically done
-
-
-    ## set instructions ##
-    ## ---------------- ##
-    # if(is.null(instructions)) {
-    #   # create all default instructions
-    #   gobject@instructions = createGiottoInstructions()
-    # }
-    # now automatically done
-
-
-    ## test if python modules are available
-    # python_modules = c('pandas', 'igraph', 'leidenalg', 'community',
-    # 'networkx', 'sklearn')
-    # my_python_path = gobject@instructions$python_path
-    # for(module in python_modules) {
-    #   if(reticulate::py_module_available(module) == FALSE) {
-    #     warning('module: ', module, ' was not found with python path: ',
-    # my_python_path, '\n')
-    #   }
-    # }
 
 
     ## spatial locations ##
@@ -585,29 +567,31 @@ createGiottoObject <- function(
     # expect a list of giotto object images
     # prefer to make giottoImage creation separate from this function
     if (!is.null(images)) {
-        if (is.null(names(images))) {
-            names(images) <- paste0("image.", seq_len(length(images)))
-        }
 
-        for (image_i in seq_len(length(images))) {
-            im <- images[[image_i]]
-            im_name <- names(images)[[image_i]]
+        # handle no names
+        default_base <- "image"
 
-            if (methods::is(im, "giottoImage")) {
-                gobject@images[[im_name]] <- im
-            } else {
-                warning("image: ", im, " is not a giotto image object")
-            }
-        }
-    }
+        # prefer list names since they are more likely intentional
+        # assign object names from @names slot to list IF list has no names
+        images <- assign_objnames_2_list(images, force_replace = FALSE)
+        obj_names <- names(images)
 
+        # assign defaults for any names still missing
+        if (is.null(obj_names)) obj_names <- rep(length(images), default_base)
+        missing_name <- is.na(obj_names) | obj_names == ""
+        obj_names[missing_name] <- default_base
 
-    if (!is.null(largeImages)) {
-        if (isTRUE(verbose)) wrap_msg("attaching largeImages")
-        gobject <- addGiottoImage(
-            gobject = gobject,
-            largeImages = largeImages
+        # handle naming overlaps
+        obj_names <- .uniquify_dups(
+            x, what = "image name", sep = ".", verbose = verbose
         )
+
+        # assign final names
+        names(images) <- obj_names
+        images <- assign_listnames_2_obj(images)
+
+        # set image list
+        gobject <- setGiotto(gobject, images, verbose = FALSE)
     }
 
 
@@ -647,7 +631,7 @@ createGiottoObject <- function(
 #' @param dimension_reduction list of dimension reduction(s)
 #' @param nn_network list of nearest neighbor network(s)
 #' @param images list of images
-#' @param largeImages list of large images
+#' @param largeImages deprecated
 #' @param largeImages_list_params image params when loading largeImages as list
 #' @param instructions list of instructions or output result
 #' from \code{\link{createGiottoInstructions}}
@@ -723,16 +707,26 @@ createGiottoObjectSubcellular <- function(gpolygons = NULL,
     cores <- determine_cores(cores)
     data.table::setDTthreads(threads = cores)
 
+    if (!is.null(largeImages)) {
+        deprecate_warn(
+            "0.3.0",
+            "createGiottoObjectSubcellular(largeImages)",
+            details = c(
+                "All images should be supplied to `images` instead",
+                "Names of images may not overlap"
+            )
+        )
+        images <- c(images, largeImages)
+    }
 
-
-    # gpolygons and gpoints need to be provided
+    # gpolygons and features need to be provided
     if (is.null(gpolygons)) {
         stop("gpolygons = NULL, spatial polygon information needs to be
             given (e.g. cell boundary, nucleus, ...)")
     }
 
-    if (is.null(gpoints) & is.null(largeImages)) {
-        stop("both gpoints = NULL and largeImages = NULL: \n
+    if (is.null(gpoints) & is.null(images)) {
+        stop("both gpoints = NULL and images = NULL: \n
         Some kind of feature information needs to be provided (e.g.
         transcript location or protein intensities)")
     }
@@ -1137,82 +1131,74 @@ createGiottoObjectSubcellular <- function(gpolygons = NULL,
     }
 
     ## images ##
-    # expect a list of giotto object images
+    # expect a list of inputs
     if (!is.null(images)) {
-        if (is.null(names(images))) {
-            names(images) <- paste0("image.", seq_len(length(images)))
-        }
 
-        for (image_i in seq_len(length(images))) {
-            im <- images[[image_i]]
-            im_name <- names(images)[[image_i]]
+        vmsg(.v = verbose, "3. Start loading large images")
 
-            if (methods::is(im, "giottoImage")) {
-                gobject@images[[im_name]] <- im
-            } else {
-                warning("image: ", im, " is not a giotto image object")
-            }
-        }
-    }
-
-    ## largeImages ##
-    # expect a list of giotto largeImages or file paths to such images
-    if (!is.null(largeImages)) {
-        if (verbose) wrap_msg("3. Start loading large images")
-
-
-
-        if (is.null(names(largeImages))) {
-            names(largeImages) <- paste0(
-                "largeImage.", seq_len(length(largeImages))
+        if (is.null(largeImages_list_params)) {
+            largeImages_list_params <- list(
+                negative_y = TRUE,
+                extent = NULL,
+                use_rast_ext = FALSE,
+                image_transformations = NULL,
+                xmax_bound = NULL,
+                xmin_bound = NULL,
+                ymax_bound = NULL,
+                ymin_bound = NULL,
+                scale_factor = 1,
+                verbose = TRUE
             )
         }
 
+        default_base <- "image"
+        images <- lapply(images, function(im) {
+            # already in giotto format
+            if (inherits(im, c("giottoImage", "giottoLargeImage"))) {
+                return(im)
+            }
 
-        for (largeImage_i in seq_len(length(largeImages))) {
-            im <- largeImages[[largeImage_i]]
-            im_name <- names(largeImages)[[largeImage_i]]
-
-            if (inherits(im, "giottoLargeImage")) { # giotto largeImage
-                gobject@largeImages[[im_name]] <- im
-            } else if (inherits(im, "character") & file.exists(im)) { # filepath
-
-
-                if (is.null(largeImages_list_params)) {
-                    largeImages_list_params <- list(
-                        negative_y = TRUE,
-                        extent = NULL,
-                        use_rast_ext = FALSE,
-                        image_transformations = NULL,
-                        xmax_bound = NULL,
-                        xmin_bound = NULL,
-                        ymax_bound = NULL,
-                        ymin_bound = NULL,
-                        scale_factor = 1,
-                        verbose = TRUE
-                    )
-                }
-
-                glargeImage <- do.call("createGiottoLargeImage", c(
+            # read into giotto format
+            if (inherits(im, "character") && file.exists(im)) {
+                gimg <- do.call("createGiottoLargeImage", c(
                     raster_object = im,
-                    name = im_name,
+                    name = default_base,
                     largeImages_list_params
                 ))
-
-                gobject <- addGiottoImage(
-                    gobject = gobject,
-                    largeImages = list(glargeImage)
-                )
-            } else {
-                warning(
-                    "large image: ", im,
-                    " is not an existing file path or a giotto largeImage
-                        object"
-                )
             }
-        }
 
-        if (verbose) wrap_msg("4. Finished loading large images")
+            # all others, raise warning and ignore
+            warning(sprintf(
+                "`image` item: %d %s",
+                img_i,
+                "\n is not an existing file path or a giotto image. ignored."
+            ))
+            return(NULL)
+        })
+
+        # prefer list names since they are more likely intentional
+        # assign objct names from @names slot to list IF list has no names
+        images <- assign_objnames_2_list(images, force_replace = FALSE)
+        obj_names <- names(images)
+
+        # assign defaults for any names still missing
+        if (is.null(obj_names)) obj_names <- rep(length(images), default_base)
+        missing_name <- is.na(obj_names) | obj_names == ""
+        obj_names[missing_name] <- default_base
+
+        # handle naming overlaps
+        obj_names <- .uniquify_dups(
+            x, what = "image name", sep = ".", verbose = verbose
+        )
+
+        # assign final names
+        names(images) <- obj_names
+        images <- assign_listnames_2_obj(images)
+
+        # set image list
+        gobject <- setGiotto(gobject, images, verbose = FALSE)
+
+        vmsg(.v = verbose, "4. Finished loading large images")
     }
 
     return(gobject)
@@ -1950,7 +1936,7 @@ create_spat_enr_obj <- function(
 #' @keywords internal
 #' @examples
 #' x <- GiottoData::loadSubObjectMini("spatialGridObj")
-#' 
+#'
 #' create_spat_grid_obj(name = "test", gridDT = x)
 #' @export
 create_spat_grid_obj <- function(
@@ -2927,7 +2913,7 @@ create_giotto_polygon_object <- function(
 #' @examples
 #' image_test <- system.file("extdata/toy_intensity.tif",
 #' package = "GiottoClass")
-#' 
+#'
 #' createGiottoImage(mg_object = image_test)
 #' @export
 createGiottoImage <- function(
@@ -3185,7 +3171,7 @@ createGiottoImage <- function(
 #' @examples
 #' image_test <- system.file("extdata/toy_intensity.tif",
 #' package = "GiottoClass")
-#' 
+#'
 #' createGiottoLargeImage(raster_object = image_test)
 #' @export
 createGiottoLargeImage <- function(
@@ -3336,7 +3322,7 @@ createGiottoLargeImage <- function(
 
     if (nrow(sample_values) == 0) {
         if (verbose == TRUE) {
-            wrap_msg("No values discovered when sampling for image 
+            wrap_msg("No values discovered when sampling for image
                     characteristics")
         }
     } else {
@@ -3400,7 +3386,7 @@ createGiottoLargeImage <- function(
 #' @examples
 #' image_test <- system.file("extdata/toy_intensity.tif",
 #' package = "GiottoClass")
-#' 
+#'
 #' createGiottoLargeImageList(raster_objects = image_test)
 #' @export
 createGiottoLargeImageList <- function(

@@ -4,16 +4,12 @@
 \alias{get_giottoImage}
 \title{Get giotto image object}
 \usage{
-get_giottoImage(
-  gobject = NULL,
-  image_type = c("image", "largeImage"),
-  name = NULL
-)
+get_giottoImage(gobject = NULL, image_type = NULL, name = NULL)
 }
 \arguments{
 \item{gobject}{giotto object}
 
-\item{image_type}{type of giotto image object. Either "image" or "largeImage"}
+\item{image_type}{deprecated}
 
 \item{name}{name of a giotto image object \code{\link{showGiottoImageNames}}}
 }

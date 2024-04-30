@@ -12,7 +12,7 @@ NULL
 #' @returns spat_unit
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("featMetaObj")
-#' 
+#'
 #' spatUnit(g)
 NULL
 
@@ -25,7 +25,7 @@ NULL
 #' @returns feat_type
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("featMetaObj")
-#' 
+#'
 #' featType(g)
 NULL
 
@@ -38,7 +38,7 @@ NULL
 #' @returns name slot
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("exprObj")
-#' 
+#'
 #' objName(g)
 NULL
 
@@ -51,7 +51,7 @@ NULL
 #' @returns provenance slot
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("exprObj")
-#' 
+#'
 #' prov(g)
 NULL
 
@@ -200,24 +200,35 @@ setMethod("prov<-", signature = "provData", function(x, value) {
 
 
 # internals ####
-#' @noRd
-#' @name assign_objnames_2_list
-#' @title Assign object names to list names
-#' @param obj_list list including giotto S4 objects
-#' @param force_replace boolean, default = FALSE. Whether to replace the
-#' names of objects for which the name already has a name for
+
+#' @name objectlist_name_utils
+#' @title Name wrangling for subobject lists
+#' @param obj_list list containing giotto subobjects
 #' @examples
-#' \dontrun{
 #' e <- new("exprObj")
-#' t_l <- replicate(3L, e)
+#' a <- replicate(3L, e)
 #' # name the object
-#' t_l <- lapply(seq_along(t_l), function(i) {
+#' a <- lapply(seq_along(t_l), function(i) {
 #'     objName(t_l[[i]]) <- c("a", "b", "c")[[i]]
 #'     return(t_l[[i]])
 #' })
-#' # assign the names to the listnames
-#' t_l <- assign_objnames_2_list(t_l)
-#' }
+#'
+#' # assign the object stored names to the list
+#' a <- assign_objnames_2_list(t_l)
+#'
+#' # assign list names to the object
+#' b <- list("name_to_set" = new("exprObj"))
+#' b <- assign_listnames_2_obj(t_l)
+#'
+#' # ensure that character values are unique
+#' input <- c("a", "b", "b", "c", "a", "a", "a")
+#' .uniquify_dups(input, verbose = FALSE)
+#'
+NULL
+
+#' @rdname objectlist_name_utils
+#' @param force_replace logical. default = FALSE. Whether to replace the
+#' names of objects for which the name already has a name for
 #' @keywords internal
 assign_objnames_2_list <- function(obj_list, force_replace = FALSE) {
     if (is.null(obj_list)) {
@@ -251,19 +262,13 @@ assign_objnames_2_list <- function(obj_list, force_replace = FALSE) {
 }
 
 
-#' @noRd
-#' @name assign_listnames_2_obj
-#' @title Assign list names to objects
-#' @param obj_list list including giotto S4 objects
-#' @examples
-#' \dontrun{
-#' t_l <- list("name_to_set" = new("exprObj"))
-#' t_l <- assign_listnames_2_obj(t_l)
-#' }
+#' @name objectlist_name_utils
 #' @keywords internal
 assign_listnames_2_obj <- function(obj_list) {
     list_names <- names(obj_list)
-    if (is.null(list_names)) stop("List has no names\n")
+    if (is.null(list_names)) {
+        stop("<assign_listnames_2_obj> List has no names\n")
+    }
     obj_index <- which(sapply(obj_list, inherits, "nameData"))
     list_obj_names <- list_names[obj_index]
 
@@ -272,4 +277,30 @@ assign_listnames_2_obj <- function(obj_list) {
     }
 
     return(obj_list)
+}
+
+#' @name objectlist_name_utils
+#' @param x character vector
+#' @param sep character. Separator used when making names unique. Default is "."
+#' @param what character (optional). Description of character vector input
+#' used when printing verbose messages about what was made unique
+#' @param verbose be verbose
+#' @keywords internal
+.uniquify_dups <- function(x, sep = ".", what = "", verbose = NULL) {
+    changed <- vector(mode = "character")
+    for (y in x) {
+        dup <- x == y
+        if (sum(dup) > 1) {
+            changed <- c(changed, y)
+            x[dup] <- paste(x[dup], seq_len(sum(dup)), sep = sep)
+        }
+    }
+    if (length(changed) > 0) {
+        vmsg(.v = verbose, sprintf(
+            "%s duplicates found and made unique for:\n %s",
+            what,
+            paste0(changed, collapse = ", ")
+        ))
+    }
+    return(x)
 }

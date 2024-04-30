@@ -118,31 +118,11 @@ setMethod(
         avail_im <- list_images(object)
         if (!is.null(avail_im)) {
             cat("attached images ------------------\n")
-            if ("image" %in% avail_im$img_type) {
-                if (sum(avail_im$img_type == "image") > 3) {
-                    cat(
-                        "giottoImage      :",
-                        sum(avail_im$img_type == "image"), "items...\n"
-                    )
+            if (!is.null(avail_im)) {
+                if (nrow(avail_im) > 3L) {
+                    cat("images      :", nrow(avail_im), "items...\n")
                 } else {
-                    cat(
-                        "giottoImage      :",
-                        wrap_txt(avail_im[img_type == "image", name]), "\n"
-                    )
-                }
-            }
-            if ("largeImage" %in% avail_im$img_type) {
-                if (sum(avail_im$img_type == "largeImage") > 3) {
-                    cat(
-                        "giottoLargeImage :",
-                        sum(avail_im$img_type == "largeImage"), "items...\n"
-                    )
-                } else {
-                    cat(
-                        "giottoLargeImage :",
-                        wrap_txt(avail_im[img_type == "largeImage", name]),
-                        "\n"
-                    )
+                    cat("images      :", wrap_txt(avail_im[, name]), "\n")
                 }
             }
         }

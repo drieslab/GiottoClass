@@ -21,7 +21,7 @@ get_img_minmax
 }
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
-g_image <- convertGiottoLargeImageToMG(g, largeImage_name = "image", 
+g_image <- convertGiottoLargeImageToMG(g, largeImage_name = "image",
 return_gobject = FALSE)
 
 get_img_minmax(slot(g_image, "mg_object"))

@@ -31,7 +31,7 @@ Get a multiomics integration result from a Giotto object
 }
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
-g <- setMultiomics(gobject = g, result = matrix(rnorm(100), nrow = 10), 
+g <- setMultiomics(gobject = g, result = matrix(rnorm(100), nrow = 10),
 spat_unit = "cell", feat_type = "rna_protein")
 
 getMultiomics(gobject = g, spat_unit = "cell", feat_type = "rna_protein")

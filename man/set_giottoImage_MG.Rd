@@ -4,7 +4,7 @@
 \alias{set_giottoImage_MG}
 \title{Set \emph{magick}-based giotto \code{image}}
 \usage{
-set_giottoImage_MG(gobject, image_object, name = NULL, verbose = TRUE)
+set_giottoImage_MG(gobject, image_object, name = NULL, verbose = NULL)
 }
 \arguments{
 \item{gobject}{giotto object}

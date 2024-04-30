@@ -4,7 +4,7 @@
 \alias{set_giottoLargeImage}
 \title{Set \emph{terra}-based giotto \code{largeImage}}
 \usage{
-set_giottoLargeImage(gobject, largeImage_object, name = NULL, verbose = TRUE)
+set_giottoLargeImage(gobject, largeImage_object, name = NULL, verbose = NULL)
 }
 \arguments{
 \item{gobject}{giotto object}

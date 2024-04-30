@@ -68,9 +68,7 @@ protein, metabolites, ... that are provided in the expression slot.}
 
 \item{\code{nn_network}}{nearest neighbor network in igraph format}
 
-\item{\code{images}}{slot to store giotto images}
-
-\item{\code{largeImages}}{slot to store giottoLargeImage objects}
+\item{\code{images}}{slot to store giotto image objects}
 
 \item{\code{parameters}}{slot to save parameters that have been used}
 

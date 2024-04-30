@@ -20,7 +20,7 @@
 #' and will go to \code{\link[base]{saveRDS}} or \code{\link[qs]{qsave}}
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' saveGiotto(gobject = g, dir = tempdir(), overwrite = TRUE)
 #' @export
 saveGiotto <- function(gobject,
@@ -208,6 +208,7 @@ saveGiotto <- function(gobject,
 
     ## save images
     vmsg(.v = verbose, "3. Start writing image information")
+    # only `giottoLargeImages` need to be saved separately
     image_names <- list_images_names(gobject, img_type = "largeImage")
 
     if (!is.null(image_names)) {
@@ -216,16 +217,16 @@ saveGiotto <- function(gobject,
         for (image in image_names) {
             vmsg(.v = verbose, "For image information: ", image)
 
-            if (!is.null(gobject@largeImages[[image]]@raster_object)) {
+            r <- gobject@images[[image]]@raster_object
+
+            if (!is.null(r)) {
                 # save extent info just in case
-                gobject@largeImages[[image]]@extent <- terra::ext(
-                    gobject@largeImages[[image]]@raster_object
-                )[]
+                gobject@images[[image]]@extent <- terra::ext(r)[]
 
                 # save raster
                 filename <- paste0(image_dir, "/", image, "_spatRaster")
                 terra::writeRaster(
-                    x = gobject@largeImages[[image]]@raster_object,
+                    x = r,
                     filename = filename,
                     filetype = image_filetype,
                     NAflag = NA,
@@ -292,7 +293,7 @@ saveGiotto <- function(gobject,
 #' g <- GiottoData::loadGiottoMini("visium")
 #' td <- tempdir()
 #' saveGiotto(gobject = g, dir = td)
-#' 
+#'
 #' loadGiotto(path_to_folder = paste0(td, "/saveGiottoDir"))
 #' @export
 loadGiotto <- function(
@@ -573,6 +574,10 @@ loadGiotto <- function(
 
     ## 4. images
     vmsg(.v = verbose, "\n4. read Giotto image information")
+
+    # compatibility for pre-v0.3.0
+    gobject <- .update_image_slot(gobject)
+
     image_files <- list.files(path = paste0(path_to_folder, "/Images"))
     if (length(image_files) != 0) {
         image_names <- unique(gsub(image_files,
@@ -587,8 +592,9 @@ loadGiotto <- function(
                 "_spatRaster"
             )
             spatRaster <- terra::rast(x = new_path)
-            gobject@largeImages[[image_name]]@raster_object <- spatRaster
-            gobject@largeImages[[image_name]]@file_path <- new_path
+
+            gobject@images[[image_name]]@raster_object <- spatRaster
+            gobject@images[[image_name]]@file_path <- new_path
         }
     }
 

@@ -20,6 +20,6 @@ Giotto object
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
-
+list_images(g)
 list_images(g, img_type = "largeImage")
 }

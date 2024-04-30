@@ -424,7 +424,6 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 
 
 
-# TODO link this up to plot_auto_largeImage_resample() ?
 
 #' @title .plot_giottolargeimage
 #' @name .plot_giottolargeimage

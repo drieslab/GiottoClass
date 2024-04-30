@@ -4,16 +4,12 @@
 \alias{getGiottoImage}
 \title{Get giotto image object}
 \usage{
-getGiottoImage(
-  gobject = NULL,
-  image_type = c("image", "largeImage"),
-  name = NULL
-)
+getGiottoImage(gobject, image_type = NULL, name = NULL)
 }
 \arguments{
 \item{gobject}{giotto object}
 
-\item{image_type}{type of giotto image object. Either "image" or "largeImage"}
+\item{image_type}{deprecated}
 
 \item{name}{name of a giotto image object \code{\link{showGiottoImageNames}}}
 }
@@ -26,7 +22,7 @@ Get giotto image object from gobject
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
 
-getGiottoImage(gobject = g, image_type = "largeImage")
+getGiottoImage(gobject = g)
 }
 \seealso{
 Other image data accessor functions: 

@@ -61,7 +61,6 @@ giotto_slot_depths <- function() {
             "dimension_reduction",
             "nn_network",
             "images",
-            "largeImages"
             # 'spatial_grid',
             # 'parameters',
             # 'instructions',
@@ -71,7 +70,7 @@ giotto_slot_depths <- function() {
             # 'multiomics'
         ),
         depth = c(
-            3L, 0L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 2L, 3L, 5L, 4L, 1L, 1L
+            3L, 0L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 2L, 3L, 5L, 4L, 1L
         )
     )
 }
@@ -648,7 +647,7 @@ get_cell_metadata <- function(
 #' @seealso pDataDT
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' getCellMetadata(g)
 #' @export
 getCellMetadata <- function(
@@ -688,7 +687,7 @@ getCellMetadata <- function(
 #' m1 <- getCellMetadata(g, output = "data.table")
 #' m2 <- data.frame(cell_ID = m1$cell_ID,
 #' new_column = sample(letters, 624, replace = TRUE))
-#' 
+#'
 #' setCellMetadata(gobject = g, x = createCellMetaObj(m2))
 #' @export
 setCellMetadata <- function(
@@ -1066,7 +1065,7 @@ get_feature_metadata <- function(
 #' @seealso fDataDT
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' getFeatureMetadata(g)
 #' @export
 getFeatureMetadata <- function(
@@ -1104,9 +1103,9 @@ getFeatureMetadata <- function(
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' m1 <- getFeatureMetadata(g, output = "data.table")
-#' m2 <- data.frame(feat_ID = m1$feat_ID, 
+#' m2 <- data.frame(feat_ID = m1$feat_ID,
 #' new_column = paste0("gene_", m1$feat_ID))
-#' 
+#'
 #' setFeatureMetadata(gobject = g, x = createFeatMetaObj(m2))
 #' @export
 setFeatureMetadata <- function(
@@ -1430,7 +1429,7 @@ set_feature_metadata <- function(
 #' @family functions to get data from giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' getExpression(g)
 #' @export
 getExpression <- function(
@@ -1662,7 +1661,7 @@ get_expression_values_list <- function(
 #' m <- matrix(rnorm(100), nrow = 10)
 #' colnames(m) <- paste0("cell_", seq_len(10))
 #' rownames(m) <- paste0("feat_", seq_len(10))
-#' 
+#'
 #' g <- setExpression(gobject = g, x = createExprObj(m, name = "raw"))
 #' @export
 setExpression <- function(
@@ -1950,8 +1949,8 @@ set_expression_values <- function(
 #' @family functions to set data in giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
-#' set_multiomics(gobject = g, result = matrix(rnorm(100), nrow = 10), 
+#'
+#' set_multiomics(gobject = g, result = matrix(rnorm(100), nrow = 10),
 #' spat_unit = "cell", feat_type = "rna_protein")
 #' @export
 set_multiomics <- function(
@@ -2027,8 +2026,8 @@ set_multiomics <- function(
 #' @family functions to set data in giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
-#' setMultiomics(gobject = g, result = matrix(rnorm(100), nrow = 10), 
+#'
+#' setMultiomics(gobject = g, result = matrix(rnorm(100), nrow = 10),
 #' spat_unit = "cell", feat_type = "rna_protein")
 #' @export
 setMultiomics <- function(
@@ -2074,9 +2073,9 @@ setMultiomics <- function(
 #' @family functions to get data from giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' g <- setMultiomics(gobject = g, result = matrix(rnorm(100), nrow = 10), 
+#' g <- setMultiomics(gobject = g, result = matrix(rnorm(100), nrow = 10),
 #' spat_unit = "cell", feat_type = "rna_protein")
-#' 
+#'
 #' get_multiomics(gobject = g, spat_unit = "cell", feat_type = "rna_protein")
 #' @export
 get_multiomics <- function(
@@ -2145,9 +2144,9 @@ get_multiomics <- function(
 #' @family functions to get data from giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' g <- setMultiomics(gobject = g, result = matrix(rnorm(100), nrow = 10), 
+#' g <- setMultiomics(gobject = g, result = matrix(rnorm(100), nrow = 10),
 #' spat_unit = "cell", feat_type = "rna_protein")
-#' 
+#'
 #' getMultiomics(gobject = g, spat_unit = "cell", feat_type = "rna_protein")
 #' @export
 getMultiomics <- function(
@@ -2200,7 +2199,7 @@ getMultiomics <- function(
 #' @family functions to get data from giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' getSpatialLocations(g)
 #' @export
 getSpatialLocations <- function(
@@ -2459,7 +2458,7 @@ get_spatial_locations_list <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' x <- getSpatialLocations(g, output = "data.table")
 #' sl <- data.frame(cell_ID = x$cell_ID, sdimx = rnorm(624), sdimy = rnorm(624))
-#' 
+#'
 #' setSpatialLocations(gobject = g, x = createSpatLocsObj(sl, name = "raw"))
 #' @export
 setSpatialLocations <- function(
@@ -2793,7 +2792,7 @@ get_dimReduction <- function(
 #' @family functions to get data from giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' getDimReduction(g)
 #' @export
 getDimReduction <- function(
@@ -2899,7 +2898,7 @@ get_dim_reduction_list <- function(
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' dimred <- getDimReduction(g)
-#' 
+#'
 #' setDimReduction(gobject = g, x = dimred)
 #' @export
 setDimReduction <- function(
@@ -3302,7 +3301,7 @@ get_NearestNetwork <- function(
 #' @family functions to get data from giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' getNearestNetwork(gobject = g)
 #' @export
 getNearestNetwork <- function(
@@ -3401,7 +3400,7 @@ get_nearest_network_list <- function(
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' dimred <- getNearestNetwork(gobject = g)
-#' 
+#'
 #' setNearestNetwork(gobject = g, x = dimred)
 #' @export
 setNearestNetwork <- function(
@@ -3443,7 +3442,7 @@ setNearestNetwork <- function(
 
     # NATIVE INPUT TYPES
     # 3. If input is nnNetObj or NULL, pass to internal
-    if (is.null(x) | inherits(x, "nnNetObj")) {
+    if (is.null(x) || inherits(x, "nnNetObj")) {
         # pass to internal
         gobject <- set_NearestNetwork(
             gobject = gobject,
@@ -3768,7 +3767,7 @@ get_spatialNetwork <- function(
 #' @family functions to get data from giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' getSpatialNetwork(g)
 #' @export
 getSpatialNetwork <- function(
@@ -3883,7 +3882,7 @@ get_spatial_network_list <- function(
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' spatnet <- getSpatialNetwork(g)
-#' 
+#'
 #' setSpatialNetwork(gobject = g, x = spatnet)
 #' @export
 setSpatialNetwork <- function(
@@ -4229,7 +4228,7 @@ get_spatialGrid <- function(
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
-#' 
+#'
 #' getSpatialGrid(g)
 #' @export
 getSpatialGrid <- function(
@@ -4370,7 +4369,7 @@ set_spatialGrid <- function(
 #' g <- GiottoData::loadGiottoMini("visium")
 #' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
 #' sg <- getSpatialGrid(g, return_grid_Obj = TRUE)
-#' 
+#'
 #' setSpatialGrid(gobject = g, spatial_grid = sg)
 #' @export
 setSpatialGrid <- function(
@@ -4489,7 +4488,7 @@ get_polygon_info <- function(
 #' @family functions to get data from giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' getPolygonInfo(g)
 #' @export
 getPolygonInfo <- function(
@@ -4569,7 +4568,7 @@ get_polygon_info_list <- function(
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' polyinfo <- getPolygonInfo(g, return_giottoPolygon = TRUE)
-#' 
+#'
 #' setPolygonInfo(gobject = g, x = polyinfo)
 #' @export
 setPolygonInfo <- function(
@@ -4894,7 +4893,7 @@ set_polygon_info <- function(
 #' @family functions to get data from giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' getFeatureInfo(g)
 #' @export
 getFeatureInfo <- function(
@@ -5006,7 +5005,7 @@ get_feature_info_list <- function(
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' featinfo <- getFeatureInfo(g, return_giottoPoints = TRUE)
-#' 
+#'
 #' setFeatureInfo(gobject = g, x = featinfo)
 #' @export
 setFeatureInfo <- function(
@@ -5350,7 +5349,7 @@ get_spatial_enrichment <- function(
 #' @family functions to get data from giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' getSpatialEnrichment(g, spat_unit = "aggregate", name = "cluster_metagene")
 #' @export
 getSpatialEnrichment <- function(
@@ -5442,7 +5441,7 @@ get_spatial_enrichment_list <- function(
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' spatenrich <- GiottoData::loadSubObjectMini("spatEnrObj")
-#' 
+#'
 #' g <- setSpatialEnrichment(g, spatenrich)
 #' @export
 setSpatialEnrichment <- function(
@@ -5685,29 +5684,25 @@ set_spatial_enrichment <- function(
 #' @returns a giottoImage
 #' @keywords internal
 get_giottoImage_MG <- function(
-        gobject = NULL,
+        gobject,
         name = NULL) {
-    if (is.null(gobject)) {
-        stop("The giotto object holding the giottoImage needs to be
-            provided \n")
-    }
-    g_image_names <- names(gobject@images)
+    g_image_names <- list_images(gobject, img_type = "image")
     if (is.null(g_image_names)) stop("No giottoImages have been found \n")
 
     if (is.null(name)) {
-        name <- g_image_names[1]
+        name <- g_image_names[1L]
     }
 
     if (!name %in% g_image_names) {
         stop(
-            name,
-            " was not found among the image names, see showGiottoImageNames()"
+            name, " was not found among the image names.
+            See showGiottoImageNames()\n",
+            call. = FALSE
         )
     }
 
-    g_image <- gobject@images[[name]]
-
-    return(g_image)
+    img <- gobject@images[[name]]
+    return(img)
 }
 
 
@@ -5726,30 +5721,26 @@ set_giottoImage_MG <- function(
         gobject,
         image_object,
         name = NULL,
-        verbose = TRUE) {
+        verbose = NULL) {
     # Check params
-    if (is.null(gobject)) stop("gobject must be given \n")
     if (is.null(image_object)) {
-        stop("image_object to be attached must be given \n")
+        stop("`image_object` to be attached must be given \n", call. = FALSE)
     }
 
     # Default to name present in image object name slot
-    if (is.null(name)) name <- image_object@name
+    if (is.null(name)) name <- objName(image_object)
 
     # Find existing names
-    potential_names <- list_images_names(gobject = gobject, img_type = "image")
+    potential_names <- list_images_names(gobject = gobject)
 
-    if (verbose == TRUE) {
-        if (name %in% potential_names) {
-            wrap_msg(
-                '> "', name,
-                '" already exists and will be replaced with new image object \n'
-            )
-        }
+    if (name %in% potential_names) {
+        vmsg(
+            .v = verbose,
+            sprintf("> image '%s' already exists and will be replaced", name)
+        )
     }
 
     gobject@images[[name]] <- image_object
-
     return(gobject)
 }
 
@@ -5767,19 +5758,15 @@ set_giottoImage_MG <- function(
 #' @returns a giottoLargeImage
 #' @keywords internal
 get_giottoLargeImage <- function(
-        gobject = NULL,
+        gobject,
         name = NULL) {
-    if (is.null(gobject)) {
-        stop("The giotto object holding the giottoLargeImage needs to be
-            provided \n")
-    }
-    g_image_names <- names(gobject@largeImages)
+    g_image_names <- list_images(gobject, img_type = "largeImage")
     if (is.null(g_image_names)) {
         stop("No giottoLargeImages have been found \n")
     }
 
     if (is.null(name)) {
-        name <- g_image_names[1]
+        name <- g_image_names[1L]
     }
 
     if (!name %in% g_image_names) {
@@ -5787,9 +5774,8 @@ get_giottoLargeImage <- function(
             See showGiottoImageNames() \n")
     }
 
-    g_imageL <- gobject@largeImages[[name]]
-
-    return(g_imageL)
+    img <- gobject@images[[name]]
+    return(img)
 }
 
 
@@ -5809,32 +5795,27 @@ set_giottoLargeImage <- function(
         gobject,
         largeImage_object,
         name = NULL,
-        verbose = TRUE) {
+        verbose = NULL) {
     # Check params
-    if (is.null(gobject)) stop("gobject must be given \n")
     if (is.null(largeImage_object)) {
-        stop("largeImage_object to be attached must be given \n")
+        stop("largeImage_object to be attached must be given\n")
     }
 
-    # Default to name present in image object name slot
-    if (is.null(name)) name <- largeImage_object@name
+    # Default to name stored in object
+    if (is.null(name)) name <- objName(largeImage_object)
 
     # Find existing names
-    potential_names <- list_images_names(
-        gobject = gobject,
-        img_type = "largeImage"
-    )
+    potential_names <- list_images_names(gobject = gobject)
 
-    if (verbose == TRUE) {
-        if (name %in% potential_names) {
-            wrap_msg(
-                '> "', name,
-                '" already exists and will be replaced with new image object \n'
-            )
-        }
+
+    if (name %in% potential_names) {
+        vmsg(
+            .v = verbose,
+            sprintf("> image '%s' already exists and will be replaced", name)
+        )
     }
 
-    gobject@largeImages[[name]] <- largeImage_object
+    gobject@images[[name]] <- largeImage_object
 
     return(gobject)
 }
@@ -5844,12 +5825,12 @@ set_giottoLargeImage <- function(
 ## all image slots ####
 
 
-
+# TODO remove in future
 #' @title Get giotto image object
 #' @name get_giottoImage
 #' @description Get giotto image object from gobject
 #' @param gobject giotto object
-#' @param image_type type of giotto image object. Either "image" or "largeImage"
+#' @param image_type deprecated
 #' @param name name of a giotto image object \code{\link{showGiottoImageNames}}
 #' @returns a giotto image object
 #' @family image data accessor functions
@@ -5857,49 +5838,35 @@ set_giottoLargeImage <- function(
 #' @export
 get_giottoImage <- function(
         gobject = NULL,
-        image_type = c("image", "largeImage"),
+        image_type = NULL,
         name = NULL) {
     deprecate_soft("3.3.0",
         what = "get_giottoImage()",
         with = "getGiottoImage()"
     )
 
-    # Check image type
-    image_type <- match.arg(image_type, choices = c("image", "largeImage"))
+    gimg <- getGiottoImage(gobject = gobject, name = name)
 
-    # Select get function
-    if (image_type == "image") {
-        g_img <- get_giottoImage_MG(
-            gobject = gobject,
-            name = name
-        )
-    }
-    if (image_type == "largeImage") {
-        g_img <- get_giottoLargeImage(
-            gobject = gobject,
-            name = name
-        )
-    }
-    return(g_img)
+    return(gimg)
 }
 
 #' @title Get giotto image object
 #' @name getGiottoImage
 #' @description Get giotto image object from gobject
 #' @param gobject giotto object
-#' @param image_type type of giotto image object. Either "image" or "largeImage"
+#' @param image_type deprecated
 #' @param name name of a giotto image object \code{\link{showGiottoImageNames}}
 #' @returns a giotto image object
 #' @family image data accessor functions
 #' @family functions to get data from giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
-#' getGiottoImage(gobject = g, image_type = "largeImage")
+#'
+#' getGiottoImage(gobject = g)
 #' @export
 getGiottoImage <- function(
-        gobject = NULL,
-        image_type = c("image", "largeImage"),
+        gobject,
+        image_type = NULL,
         name = NULL) {
     if (!inherits(gobject, "giotto")) {
         wrap_msg("Unable to get Giotto Image from non-Giotto object.")
@@ -5908,11 +5875,21 @@ getGiottoImage <- function(
         ))
     }
 
-    g_img <- get_giottoImage(
-        gobject = gobject,
-        image_type = image_type,
-        name = name
-    )
+    g_image_names <- list_images(gobject)$name
+    if (is.null(g_image_names)) {
+        stop("No images have been found \n")
+    }
+
+    if (is.null(name)) {
+        name <- g_image_names[1L]
+    }
+
+    if (!name %in% g_image_names) {
+        stop(name, " was not found among the images.
+            See showGiottoImageNames() \n")
+    }
+
+    g_img <- gobject@images[[name]]
 
     return(g_img)
 }
@@ -5921,28 +5898,18 @@ getGiottoImage <- function(
 
 
 
-
+# TODO cleanup image_type param
 #' @description Get list of all giottoImages
 #' @keywords internal
 #' @noRd
 get_giotto_image_list <- function(
         gobject,
-        image_type = c("image", "largeImage")) {
-    assert_giotto(gobject)
+        image_type = NULL) {
+    checkmate::assert_class(gobject, "giotto")
 
-    image_type <- match.arg(image_type, choices = c("image", "largeImage"))
-
-    # return object
-    if (image_type == "image") {
-        return(
-            slot(gobject, "images")
-        )
-    }
-    if (image_type == "largeImage") {
-        return(
-            slot(gobject, "largeImages")
-        )
-    }
+    return(
+        slot(gobject, "images")
+    )
 }
 
 
@@ -5951,7 +5918,7 @@ get_giotto_image_list <- function(
 
 
 
-
+# TODO remove in the future
 #' @title Set giotto image object
 #' @name set_giottoImage
 #' @description Directly attach a giotto image to giotto object
@@ -5964,7 +5931,7 @@ get_giotto_image_list <- function(
 #' @param gobject giotto object
 #' @param image giotto image object to be attached without modification to the
 #'  giotto object
-#' @param image_type type of giotto image object. Either "image" or "largeImage"
+#' @param image_type deprecated
 #' @param name name of giotto image object
 #' @param verbose be verbose
 #' @returns giotto object
@@ -5983,27 +5950,12 @@ set_giottoImage <- function(
         with = "setGiottoImage()"
     )
 
-    # Check image type
-    image_type <- match.arg(image_type, choices = c("image", "largeImage"))
-
-    # Select set function
-    if (image_type == "image") {
-        gobject <- set_giottoImage_MG(
-            gobject = gobject,
-            image_object = image,
-            name = name,
-            verbose = verbose
-        )
-    }
-    if (image_type == "largeImage") {
-        gobject <- set_giottoLargeImage(
-            gobject = gobject,
-            largeImage_object = image,
-            name = name,
-            verbose = verbose
-        )
-    }
-    return(gobject)
+    setGiottoImage(
+        gobject = gobject,
+        image = image,
+        name = name,
+        verbose = verbose
+    )
 }
 
 #' @title Set giotto image object
@@ -6018,7 +5970,7 @@ set_giottoImage <- function(
 #' @param gobject giotto object
 #' @param image giotto image object to be attached without modification to the
 #' giotto object
-#' @param image_type type of giotto image object. Either "image" or "largeImage"
+#' @param image_type deprecated
 #' @param name name of giotto image object
 #' @param verbose be verbose
 #' @returns giotto object
@@ -6027,47 +5979,58 @@ set_giottoImage <- function(
 #' @seealso \code{\link{addGiottoImage}}
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' gimage <- getGiottoImage(gobject = g, image_type = "largeImage")
-#' 
-#' setGiottoImage(gobject = g, image = gimage, image_type = "largeImage")
+#' gimg <- getGiottoImage(gobject = g)
+#'
+#' setGiottoImage(g, NULL, name = objName(gimg))
+#' setGiottoImage(gobject = g, image = gimg)
 #' @export
 setGiottoImage <- function(
-        gobject = NULL,
-        image = NULL,
+        gobject,
+        image,
         image_type = NULL,
         name = NULL,
-        verbose = TRUE) {
+        verbose = NULL) {
     if (!inherits(gobject, "giotto")) {
         wrap_msg("Unable to set Giotto Image to non-Giotto object.")
         stop(wrap_txt("Please provide a Giotto object to the gobject argument.",
             errWidth = TRUE
         ))
-    } else if (is.null(image)) {
-        wrap_msg("Warning: image argument set to NULL. Replacing current image
-                slot with NULL will remove the image.")
-    } else if (!inherits(image, c("giottoImage", "giottoLargeImage"))) {
-        wrap_msg("Unable to set non-giottoImage objects. Please ensure a
-                giottoImage or giottoLargeImage is provided to this function.")
-        wrap_msg("See createGiottoImage or createGiottoLargeImage for
-                more details.")
-        stop(wrap_txt("Unable to set non-giottoImage object.",
+    }
+
+    if (is.null(image)) {
+        if (!is.null(name)) { # image removal
+            vmsg(.v = verbose, "NULL passed to `image` param
+                 removing specified image")
+            gobject@images[[name]] <- image
+            return(gobject)
+        } else {
+            stop("NULL passed to `image` param, but no specified `name`\n",
+                 call. = FALSE)
+        }
+    }
+
+    if (!inherits(image, c("giottoImage", "giottoLargeImage"))) {
+        stop(wrap_txt(
+            "Unable to set non-giottoImage objects. Please ensure a
+            giottoImage or giottoLargeImage is provided to this function.",
             errWidth = TRUE
         ))
     }
 
-    image_type <- switch(as.character(class(image)),
-        "giottoImage" = "image",
-        "giottoLargeImage" = "largeImage"
-    )
+    # Default to name stored in object
+    if (is.null(name)) name <- objName(image)
 
-    gobject <- set_giottoImage(
-        gobject = gobject,
-        image = image,
-        image_type = image_type,
-        name = name,
-        verbose = verbose
-    )
+    # Find existing names
+    potential_names <- list_images_names(gobject = gobject)
 
+    if (name %in% potential_names) {
+        vmsg(
+            .v = verbose,
+            sprintf("> image '%s' already exists and will be replaced", name)
+        )
+    }
+
+    gobject@images[[name]] <- image
     return(gobject)
 }
 
