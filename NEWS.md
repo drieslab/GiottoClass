@@ -19,7 +19,6 @@
 - new `spatValues()` to get specific values from a `giotto` object in `data.table` format
 - new `ometif_to_tif` to convert between .ome.tif and .tif
 - new `terra::density()` and `terra::hist()` wrappers for `giottoLargeImage`
-- new `zoom()` generic that works like terra's for `giottoLargeImage`, `giottoPolygon`, `giottoPoints`
 
 
 
