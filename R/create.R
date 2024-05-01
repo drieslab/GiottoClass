@@ -583,7 +583,7 @@ createGiottoObject <- function(
 
         # handle naming overlaps
         obj_names <- .uniquify_dups(
-            x, what = "image name", sep = ".", verbose = verbose
+            obj_names, what = "image name", sep = ".", verbose = verbose
         )
 
         # assign final names
@@ -1187,7 +1187,7 @@ createGiottoObjectSubcellular <- function(gpolygons = NULL,
 
         # handle naming overlaps
         obj_names <- .uniquify_dups(
-            x, what = "image name", sep = ".", verbose = verbose
+            obj_names, what = "image name", sep = ".", verbose = verbose
         )
 
         # assign final names
