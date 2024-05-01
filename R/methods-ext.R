@@ -97,7 +97,7 @@ setMethod("ext", signature("giotto"), function(
         ...
 ) {
     dots <- list(...)
-browser()
+
     spat_unit = set_default_spat_unit(
         gobject = x,
         spat_unit = spat_unit
