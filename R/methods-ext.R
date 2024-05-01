@@ -97,7 +97,7 @@ setMethod("ext", signature("giotto"), function(
         ...
 ) {
     dots <- list(...)
-
+browser()
     spat_unit = set_default_spat_unit(
         gobject = x,
         spat_unit = spat_unit
@@ -109,8 +109,8 @@ setMethod("ext", signature("giotto"), function(
     )
 
     has_poly <- spat_unit %in% list_spatial_info_names(x)
-    has_ctrs <- spat_unit %in% list_spatial_locations(x)[, spat_unit]
-    has_pnts <- feat_type %in% list_feature_info(x)[, feat_info]
+    has_ctrs <- spat_unit %in% list_spatial_locations(x)$spat_unit
+    has_pnts <- feat_type %in% list_feature_info(x)$feat_info
 
     if (sum(has_poly, has_ctrs, has_pnts) == 0) {
         vmsg(.v = verbose, "No spatial info in giotto object")
