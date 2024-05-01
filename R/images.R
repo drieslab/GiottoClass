@@ -1853,6 +1853,7 @@ addGiottoLargeImage <- function(
         scale_factor = NULL,
         negative_y = TRUE,
         verbose = TRUE) {
+
     # 0. check params
     if (is.null(gobject)) {
         stop("The giotto object that will be updated needs to be provided")
@@ -1865,9 +1866,7 @@ addGiottoLargeImage <- function(
 
     ext_scale_factor <- FALSE
     if (!is.null(scale_factor)) {
-        if (!is.numeric(scale_factor)) {
-            stop("Given scale_factor(s) must be numeric")
-        }
+        checkmate::assert_numeric(scale_factor)
 
         if ((length(scale_factor) == length(largeImages)) ||
             length(scale_factor) == 1) {
@@ -1885,6 +1884,8 @@ addGiottoLargeImage <- function(
             scale_factor <- rep(scale_factor, length(largeImages))
         }
     }
+
+
 
 
     # 2. Add image with for loop
@@ -2041,8 +2042,8 @@ plotGiottoImage <- function(
 #' @name addGiottoImage
 #' @description Adds lists of giottoImages and giottoLargeImages to gobjects
 #' @param gobject gobject to add images objects to
-#' @param images list of giottoImages to add
-#' @param largeImages list of giottoLargeImages to add
+#' @param images list of giotto images to add
+#' @param largeImages deprecated
 #' @param spat_loc_name provide spatial location slot in Giotto to align
 #' giottoImages. Defaults to first one
 #' @param scale_factor provide scale of image pixel dimensions relative to
@@ -2065,21 +2066,39 @@ addGiottoImage <- function(
         spat_loc_name = NULL,
         scale_factor = NULL,
         negative_y = TRUE) {
-    if (!is.null(images) && !is.null(largeImages)) {
-        stop("Can only add one type of image to giotto object at a time")
+    if (!is.null(largeImages)) {
+        deprecate_warn(
+            when = "0.3.0",
+            what = "addGiottoImage(largeImages)",
+            with = "addGiottoImage(images)",
+            details = c(
+                "All images should be supplied to `images` instead",
+                "Names of images may not overlap\n"
+            )
+        )
+        images <- c(largeImages, images)
     }
-    if (!is.null(images)) {
+
+    is_lg <- vapply(images, function(im) {
+        inherits(im, "giottoLargeImage")
+    }, FUN.VALUE = logical(1))
+    gimg <- images[!is_lg]
+    gimg_lg <- images[is_lg]
+
+
+
+    if (length(gimg) > 0) {
         addGiottoImageMG(
             gobject = gobject,
-            images = images,
+            images = gimg,
             spat_loc_name = spat_loc_name,
             scale_factor = scale_factor,
             negative_y = negative_y
         )
-    } else if (!is.null(largeImages)) {
+    } else if (length(gimg_lg) > 0) {
         addGiottoLargeImage(
             gobject = gobject,
-            largeImages = largeImages,
+            largeImages = gimg_lg,
             spat_loc_name = spat_loc_name,
             scale_factor = scale_factor,
             negative_y = negative_y
