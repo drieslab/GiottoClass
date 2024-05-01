@@ -41,11 +41,16 @@ a <- lapply(seq_along(t_l), function(i) {
 })
 
 # assign the object stored names to the list
+names(a)
 a <- assign_objnames_2_list(t_l)
+names(a)
 
 # assign list names to the object
 b <- list("name_to_set" = new("exprObj"))
-b <- assign_listnames_2_obj(t_l)
+lapply(b, objName)
+b <- assign_listnames_2_obj(b)
+lapply(b, objName)
+
 
 # ensure that character values are unique
 input <- c("a", "b", "b", "c", "a", "a", "a")
