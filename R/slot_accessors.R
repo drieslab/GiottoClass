@@ -5852,10 +5852,11 @@ get_giottoImage <- function(
 
 #' @title Get giotto image object
 #' @name getGiottoImage
-#' @description Get giotto image object from gobject
+#' @description Get giotto one or more image objects from gobject
 #' @param gobject giotto object
 #' @param image_type deprecated
-#' @param name name of a giotto image object \code{\link{showGiottoImageNames}}
+#' @param name character vector. Names giotto image object(s)
+#' \code{\link{showGiottoImageNames}} to get
 #' @returns a giotto image object
 #' @family image data accessor functions
 #' @family functions to get data from giotto object
@@ -5875,6 +5876,12 @@ getGiottoImage <- function(
         ))
     }
 
+    if (identical(name, ":all:")) {
+        all_imgs <- gobject@images
+        if (length(all_imgs) == 0L) all_imgs <- NULL
+        return(all_imgs)
+    }
+
     g_image_names <- list_images(gobject)$name
     if (is.null(g_image_names)) {
         stop("No images have been found \n")
@@ -5884,12 +5891,14 @@ getGiottoImage <- function(
         name <- g_image_names[1L]
     }
 
-    if (!name %in% g_image_names) {
-        stop(name, " was not found among the images.
+    missing_names <- name[!name %in% g_image_names]
+    if (length(missing_names) > 0) {
+        stop(paste(missing_names, collapse = ", "), " not found in images.
             See showGiottoImageNames() \n")
     }
 
-    g_img <- gobject@images[[name]]
+    g_img <- gobject@images[name]
+    if (length(g_img) == 1) g_img <- g_img[[1L]]
 
     return(g_img)
 }
