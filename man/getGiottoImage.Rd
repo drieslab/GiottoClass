@@ -11,13 +11,14 @@ getGiottoImage(gobject, image_type = NULL, name = NULL)
 
 \item{image_type}{deprecated}
 
-\item{name}{name of a giotto image object \code{\link{showGiottoImageNames}}}
+\item{name}{character vector. Names giotto image object(s)
+\code{\link{showGiottoImageNames}} to get}
 }
 \value{
 a giotto image object
 }
 \description{
-Get giotto image object from gobject
+Get giotto one or more image objects from gobject
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
