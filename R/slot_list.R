@@ -1002,13 +1002,14 @@ list_images <- function(
     avail_imgs <- data.table::rbindlist(img_info)
 
     # change to shortnames for img_type
-    avail_imgs[img_type == "giottoLargeImage", img_type := "largeImage"]
-    avail_imgs[img_type == "giottoImage", img_type := "image"]
+    if (nrow(avail_imgs) > 0) {
+        avail_imgs[img_type == "giottoLargeImage", img_type := "largeImage"]
+        avail_imgs[img_type == "giottoImage", img_type := "image"]
+    }
 
     # check if a specific category is desired
     if (!is.null(img_type)) {
-        img_type_subset <- avail_imgs$img_type %in%
-            img_type
+        img_type_subset <- avail_imgs$img_type %in% img_type
     } else {
         img_type_subset <- TRUE
     }
