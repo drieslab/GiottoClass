@@ -214,8 +214,8 @@
         cm[] <- cm[][filter_bool_cells]
 
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        gobject <<- setCellMetadata(gobject, 
-                                    x = cm, 
+        gobject <<- setCellMetadata(gobject,
+                                    x = cm,
                                     verbose = FALSE,
                                     initialize = FALSE)
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -923,7 +923,7 @@
             )
         }
 
-        if (verbose) 
+        if (verbose)
             wrap_msg("completed 10: subsetted spatial information data")
     }
 
@@ -1027,7 +1027,7 @@
         y_min = NULL,
         z_max = NULL,
         z_min = NULL,
-        poly_info = spat_unit,
+        poly_info = NULL,
         return_gobject = TRUE,
         verbose = FALSE,
         toplevel_params = 5L) {
@@ -1079,6 +1079,10 @@
     # performed in .subset_spatial_info_data()
     if (isTRUE(poly_info == ":all:")) {
         poly_info <- list_spatial_info_names(gobject)
+    }
+    if (is.null(poly_info)) {
+        # if no value supplied, default to spat unit
+        poly_info <- spat_unit
     }
 
 
@@ -1404,7 +1408,7 @@
 #' @details Subsets a Giotto object for a specific spatial unit and feature type
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' subsetGiotto(g, cell_ids = c("AACTCGATGGCGCAGT-1", "GGCTGGCTAGCTTAAA-1"))
 #' @export
 subsetGiotto <- function(
@@ -1504,7 +1508,7 @@ subsetGiotto <- function(
 #' data.table will be returned
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' subsetGiottoLocs(g, x_max = 4000, y_max = -1000)
 #' @export
 subsetGiottoLocs <- function(
@@ -1778,21 +1782,22 @@ subsetGiottoLocsSubcellular <- function(
 # This is part of the spatial subsetting pipeline and thus has no need for
 # most of the feature subsetting-related params
 #   feat_type is used in case combined_metadata needs to be generated
-#   feat_tyep_ssub allows finer control over which aggregate information is
+#   feat_type_ssub allows finer control over which aggregate information is
 #     also subset for cell_ids within the spatial subset.
 .subset_giotto_polygons_workflow <- function(
-        gobject = gobject,
-        return_gobject = return_gobject,
-        spat_unit = spat_unit,
-        feat_type = feat_type,
-        poly_info = poly_info,
-        feat_type_ssub = feat_type_ssub,
-        x_min = x_min,
-        x_max = x_max,
-        y_min = y_min,
-        y_max = y_max,
-        verbose = verbose,
-        toplevel_params = 4L) {
+        gobject,
+        return_gobject,
+        spat_unit,
+        feat_type,
+        poly_info,
+        feat_type_ssub,
+        x_min,
+        x_max,
+        y_min,
+        y_max,
+        verbose,
+        toplevel_params = 4L
+) {
     checkmate::assert_character(spat_unit, len = 1L)
     if (isTRUE(spat_unit == ":all:")) {
         stop(wrap_txt(
