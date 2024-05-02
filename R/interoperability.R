@@ -2206,7 +2206,10 @@ seuratToGiottoV5 <- function(
                 object = sobject,
                 assay = spatial_assay
             ))) {
-                spat_coord <- Seurat::GetTissueCoordinates(sobject)
+                spat_coord <- Seurat::GetTissueCoordinates(sobject, 
+                                                           scale = NULL,
+                                                           cols = c("imagerow",
+                                                                    "imagecol"))
                 # spat_coord = cbind(rownames(spat_coord),
                 # data.frame(spat_coord, row.names=NULL))
 
@@ -2336,7 +2339,10 @@ seuratToGiottoV5 <- function(
                 # Create Giotto LargeImage
                 gImg <- createGiottoLargeImage(
                     raster_object = terra::rast(list(r, g, b)),
-                    name = names(sobject@images)
+                    name = names(sobject@images),
+                    scale_factor = sobject@images[[
+                      i
+                      ]]@scale.factors$lowres
                 )
             }
         }
