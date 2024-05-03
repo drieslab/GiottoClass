@@ -18,7 +18,7 @@ NULL
 #' @returns data.table
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("giottoPolygon")
-#' 
+#'
 #' data.table::as.data.table(g)
 NULL
 
@@ -33,7 +33,7 @@ NULL
 #' @family As coercion functions
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("giottoPolygon")
-#' 
+#'
 #' as.polygons(slot(g, "spatVector"))
 NULL
 
@@ -47,7 +47,7 @@ NULL
 #' @family As coercion functions
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("giottoPoints")
-#' 
+#'
 #' as.points(slot(g, "spatVector"))
 NULL
 
@@ -62,7 +62,7 @@ NULL
 #' @family As coercion functions
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("giottoPoints")
-#' 
+#'
 #' as.sf(g)
 NULL
 
@@ -102,6 +102,41 @@ as.data.table.giottoPolygon <- function(x, ...) {
 as.data.table.giottoPoints <- function(x, ...) {
     as.data.table(x[], ...)
 }
+
+
+
+
+# image types ####
+
+methods::setAs("giottoLargeImage", "giottoImage", function(from) {
+    mgobj <- .spatraster_sample_values(
+        raster_object = from,
+        size = getOption("giotto.plot_img_max_crop", 1e8),
+        output = "magick",
+        verbose = TRUE
+    )
+
+    # Create giottoImage
+    mImg <- createGiottoImage(
+        name = objName(from),
+        mg_object = mgobj,
+        verbose = FALSE
+    )
+
+    ext(mImg) <- ext(from)
+
+    # # Set scalefactor
+    im_dims <- magick::image_info(mImg@mg_object)
+    x_scalefactor <- im_dims[["width"]] / dim(from)[2]
+    y_scalefactor <- im_dims[["height"]] / dim(from)[1]
+
+    mImg@scale_factor <- c("x" = x_scalefactor, "y" = y_scalefactor)
+    mImg@resolution <- 1 / mImg@scale_factor
+
+    return(mImg)
+})
+
+
 
 
 # to SpatVector ####
