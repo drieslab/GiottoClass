@@ -14,6 +14,7 @@
 \alias{ext<-,giottoPolygon,SpatExtent-method}
 \alias{ext<-,giottoLargeImage,SpatExtent-method}
 \alias{ext<-,ANY,ANY-method}
+\alias{ext<-,giottoImage,SpatExtent-method}
 \title{Get a SpatExtent}
 \usage{
 \S4method{ext}{spatLocsObj}(x, ...)
@@ -32,7 +33,9 @@
   x,
   spat_unit = NULL,
   feat_type = NULL,
-  prefer = c("polygon", "spatlocs", "points"),
+  all_data = FALSE,
+  prefer = c("polygon", "spatlocs", "points", "images"),
+  name = NULL,
   verbose = NULL,
   ...
 )
@@ -44,19 +47,34 @@
 \S4method{ext}{giottoLargeImage,SpatExtent}(x) <- value
 
 \S4method{ext}{ANY,ANY}(x) <- value
+
+\S4method{ext}{giottoImage,SpatExtent}(x) <- value
 }
 \arguments{
 \item{x}{spatial object}
 
 \item{...}{additional params to pass}
 
-\item{spat_unit}{character. spatial unit (optional)}
+\item{spat_unit}{character. Spatial unit to limit search to. If not provided,
+a default will be set.}
 
-\item{feat_type}{character. feature type (optional)}
+\item{feat_type}{character. Feature type to limit search to for "points"
+information. If not provided, a default will be set.}
+
+\item{all_data}{logical. When TRUE (default), all spatial information
+designated by \code{prefer} will be searched and a combined \code{SpatExtent} will be
+returned. When FALSE, only the \code{SpatExtent} of the first existing data as
+ordered by \code{prefer} will be returned.}
 
 \item{prefer}{character vector. Order of preferred data to get extent from.
-allowed terms are "polygon", "spatlocs", "points". This is also the default
-ordering.}
+allowed terms are "polygon", "spatlocs", "points", "images". This is also the
+default ordering. Omitting terms removes them from the search.}
+
+\item{name}{named list. Specific object names to check. List names should
+correspond to allowed terms in \code{prefer}. More than one name is allowed for
+only "images" at the moment, which produces a combined \code{SpatExtent}}
+
+\item{verbose}{be verbose}
 
 \item{value}{value to set. Accepts any object that \code{ext()} will work on}
 }
@@ -70,7 +88,25 @@ and y that the object is mapped to.
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
 # giotto \%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%
-ext(g)
+ext(g) # defaults to checking first giottoPolygon extent
+ext(g, prefer = "spatlocs") # check first spatLocsObj extent
+# first spatLocsObj from a different spat_unit
+ext(g, spat_unit = "aggregate", prefer = "spatlocs")
+
+# from first image object
+ext(g, prefer = "image")
+
+# add a dummy image with different spatial extent
+r <- terra::rast(array(seq(25), dim = c(5,5)))
+test <- createGiottoLargeImage(r)
+ext(test) <- c(1e5, 1.1e5, 0, 10)
+g <- setGiotto(g, test) # add image
+
+# combined from all image objects
+ext(g, prefer = "image", name = list(images = list_images_names(g)))
+
+# combined from all spatial data types in giotto object
+ext(g, all_data = TRUE, name = list(images = list_images_names(g)))
 
 # spatLocsObj \%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%
 sl <- getSpatialLocations(g)

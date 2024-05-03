@@ -12,7 +12,25 @@
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' # giotto %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#' ext(g)
+#' ext(g) # defaults to checking first giottoPolygon extent
+#' ext(g, prefer = "spatlocs") # check first spatLocsObj extent
+#' # first spatLocsObj from a different spat_unit
+#' ext(g, spat_unit = "aggregate", prefer = "spatlocs")
+#'
+#' # from first image object
+#' ext(g, prefer = "image")
+#'
+#' # add a dummy image with different spatial extent
+#' r <- terra::rast(array(seq(25), dim = c(5,5)))
+#' test <- createGiottoLargeImage(r)
+#' ext(test) <- c(1e5, 1.1e5, 0, 10)
+#' g <- setGiotto(g, test) # add image
+#'
+#' # combined from all image objects
+#' ext(g, prefer = "image", name = list(images = list_images_names(g)))
+#'
+#' # combined from all spatial data types in giotto object
+#' ext(g, all_data = TRUE, name = list(images = list_images_names(g)))
 #'
 #' # spatLocsObj %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #' sl <- getSpatialLocations(g)
@@ -85,21 +103,44 @@ setMethod("ext", signature("giottoImage"), function(x, ...) {
 })
 
 #' @rdname ext
-#' @param spat_unit character. spatial unit (optional)
-#' @param feat_type character. feature type (optional)
+#' @param spat_unit character. Spatial unit to limit search to. If not provided,
+#' a default will be set.
+#' @param feat_type character. Feature type to limit search to for "points"
+#' information. If not provided, a default will be set.
+#' @param all_data logical. When TRUE (default), all spatial information
+#' designated by `prefer` will be searched and a combined `SpatExtent` will be
+#' returned. When FALSE, only the `SpatExtent` of the first existing data as
+#' ordered by `prefer` will be returned.
 #' @param prefer character vector. Order of preferred data to get extent from.
-#' allowed terms are "polygon", "spatlocs", "points". This is also the default
-#' ordering.
+#' allowed terms are "polygon", "spatlocs", "points", "images". This is also the
+#' default ordering. Omitting terms removes them from the search.
+#' @param name named list. Specific object names to check. List names should
+#' correspond to allowed terms in `prefer`. More than one name is allowed for
+#' only "images" at the moment, which produces a combined `SpatExtent`
+#' @param verbose be verbose
 #' @export
 setMethod("ext", signature("giotto"), function(
         x,
         spat_unit = NULL,
         feat_type = NULL,
+        all_data = FALSE,
         prefer = c("polygon", "spatlocs", "points", "images"),
-        images = NULL,
+        name = NULL,
         verbose = NULL,
         ...
 ) {
+    data_types <- c("polygon", "spatlocs", "points", "images")
+
+    if (!is.null(name)) {
+        checkmate::assert_list(name)
+        checkmate::assert_subset(names(name), choices = data_types)
+    }
+
+    prefer <- match.arg(
+        prefer, choices = data_types,
+        several.ok = TRUE
+    )
+
     spat_unit = set_default_spat_unit(
         gobject = x,
         spat_unit = spat_unit
@@ -113,13 +154,14 @@ setMethod("ext", signature("giotto"), function(
     has_poly <- spat_unit %in% list_spatial_info_names(x)
     has_ctrs <- spat_unit %in% list_spatial_locations(x)$spat_unit
     has_pnts <- feat_type %in% list_feature_info(x)$feat_info
+    has_imgs <- length(list_images_names(x)) > 0
 
     if (sum(has_poly, has_ctrs, has_pnts) == 0) {
         vmsg(.v = verbose, "No spatial info in giotto object")
         return(invisible())
     }
 
-    # find first available type of info in gobject according to `prefer`
+    # iterate through gobject available data types according to `prefer`
     pref_order <- c()
     for (ptype in prefer) {
         pref_order <- c(
@@ -127,37 +169,60 @@ setMethod("ext", signature("giotto"), function(
             switch(ptype,
                 "polygon" = c(polygon = has_poly),
                 "spatlocs" = c(spatlocs = has_ctrs),
-                "points" = c(points = has_pnts)
+                "points" = c(points = has_pnts),
+                "images" = c(images = has_imgs)
             )
         )
     }
-    use_type <- names(which(pref_order)[1L])
 
-    spat_obj <- switch(use_type,
-        "polygon" = getPolygonInfo(
-            gobject = x,
-            polygon_name = spat_unit,
-            return_giottoPolygon = TRUE,
-            verbose = verbose
-        ),
-        "spatlocs" = getSpatialLocations(
-            gobject = x,
-            spat_unit = spat_unit,
-            output = "spatLocsObj",
-            copy_obj = FALSE,
-            set_defaults = TRUE,
-            name = dots$name,
-            verbose = verbose
-        ),
-        "points" = getFeatureInfo(
-            gobject = x,
-            feat_type = feat_type,
-            return_giottoPoints = TRUE,
-            verbose = verbose
+    # find datatype(s) with available data
+    use_type <- names(which(pref_order))
+    if (!all_data) { # if not all data_types, select first (ordered by pref)
+        use_type <- use_type[1L]
+    }
+
+    # get the object(s)
+    elist2 <- lapply(use_type, function(type) {
+        spat_obj <- switch(type,
+           "polygon" = getPolygonInfo(
+               gobject = x,
+               polygon_name = spat_unit,
+               return_giottoPolygon = TRUE,
+               verbose = verbose
+           ),
+           "spatlocs" = getSpatialLocations(
+               gobject = x,
+               spat_unit = spat_unit,
+               output = "spatLocsObj",
+               copy_obj = FALSE,
+               set_defaults = TRUE,
+               name = name$spatlocs,
+               verbose = verbose
+           ),
+           "points" = getFeatureInfo(
+               gobject = x,
+               feat_type = feat_type,
+               return_giottoPoints = TRUE
+           ),
+           "images" = getGiottoImage(
+               gobject = x,
+               name = name$images # more than one element is accepted
+           )
         )
-    )
 
-    e <- ext(spat_obj)
+        # catch multiple object inputs (images)
+        if (inherits(spat_obj, "list")) {
+            elist <- lapply(spat_obj, ext)
+            e <- Reduce(`+`, elist)
+        } else {
+            e <- ext(spat_obj)
+        }
+        return(e)
+    })
+
+    # reduce when more than one data_type is queried
+    e <- Reduce(`+`, elist2)
+
     return(e)
 })
 

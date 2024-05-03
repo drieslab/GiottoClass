@@ -36,9 +36,9 @@ aggregateStacksPolygons(g, spat_units = c("z0", "z1"))
 }
 \seealso{
 Other aggregate stacks: 
+\code{\link{aggregateStacks}()},
 \code{\link{aggregateStacksExpression}()},
 \code{\link{aggregateStacksLocations}()},
-\code{\link{aggregateStacksPolygonOverlaps}()},
-\code{\link{aggregateStacks}()}
+\code{\link{aggregateStacksPolygonOverlaps}()}
 }
 \concept{aggregate stacks}

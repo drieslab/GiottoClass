@@ -35,9 +35,9 @@ aggregateStacksPolygonOverlaps(g,
 }
 \seealso{
 Other aggregate stacks: 
+\code{\link{aggregateStacks}()},
 \code{\link{aggregateStacksExpression}()},
 \code{\link{aggregateStacksLocations}()},
-\code{\link{aggregateStacksPolygons}()},
-\code{\link{aggregateStacks}()}
+\code{\link{aggregateStacksPolygons}()}
 }
 \concept{aggregate stacks}
