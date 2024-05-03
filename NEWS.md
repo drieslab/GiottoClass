@@ -1,12 +1,14 @@
 
 
-# GiottoClass 0.2.4
+# GiottoClass 0.3.0
 
 ## breaking changes
 - deprecation of `reconnect_image_object()`, `reconnect_giottoImage_MG()` and `reconnect_giottoLargeImage()` internals in favor of simpler `reconnect()` generic
+- `giotto` `@largeImage` slot is removed. All images now exist in `@images` slot.
 
 ## bug fixes
 - fix `plot()` params passing for `giottoPolygon` when `type = "centroid"`
+- fix `ext()` output for `giottoImage`
 
 ## enhancements
 - use faster `terra::rasterize()` and `terra::plot()` instead of `scattermore::scattermoreplot()` for `giottoPoints` `plot()` method
@@ -14,6 +16,8 @@
 - `show_max` param `density()` and `hist()` to show the image object's `max_window` setting
 - `.identify_background_range_polygons()` now finds any polygons larger than a threshold percentage than the overall extent of the `SpatVector` input.
 - `ext()` can now be used with `giotto` objects
+- `ext()<-` can now be used with `giottoImage`
+- `as` conversion from `giottoLargeImage` to `giottoImage`
 
 ## new
 - new `spatValues()` to get specific values from a `giotto` object in `data.table` format
