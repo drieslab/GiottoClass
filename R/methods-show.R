@@ -725,7 +725,10 @@ setMethod(
     }
 )
 
-
+# internal
+setMethod("as.character", signature("giottoImage"), function(x, ...) {
+    sprintf("<%s> %s", class(x), objName(x))
+})
 
 
 
@@ -779,7 +782,10 @@ setMethod(
     }
 )
 
-
+# internal
+setMethod("as.character", signature("giottoLargeImage"), function(x, ...) {
+    sprintf("<%s> %s", class(x), objName(x))
+})
 
 
 
