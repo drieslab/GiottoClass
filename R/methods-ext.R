@@ -78,7 +78,10 @@ setMethod("ext", signature("giottoLargeImage"), function(x, ...) {
 #' @rdname ext
 #' @export
 setMethod("ext", signature("giottoImage"), function(x, ...) {
-    terra::ext((x@boundaries + x@minmax)[c(2, 1, 4, 3)])
+    # invert negative adjustments
+    adj <- x@boundaries
+    adj[c(2, 4)] <- -adj[c(2, 4)]
+    terra::ext((adj + x@minmax)[c(2, 1, 4, 3)])
 })
 
 #' @rdname ext
@@ -92,12 +95,11 @@ setMethod("ext", signature("giotto"), function(
         x,
         spat_unit = NULL,
         feat_type = NULL,
-        prefer = c("polygon", "spatlocs", "points"),
+        prefer = c("polygon", "spatlocs", "points", "images"),
+        images = NULL,
         verbose = NULL,
         ...
 ) {
-    dots <- list(...)
-
     spat_unit = set_default_spat_unit(
         gobject = x,
         spat_unit = spat_unit
@@ -243,3 +245,23 @@ setMethod("ext<-", signature(x = "ANY", value = "ANY"), function(x, value) {
     names(out) <- NULL
     out
 }
+
+#' @rdname ext
+#' @export
+setMethod("ext<-", signature(
+    x = "giottoImage",
+    value = "SpatExtent"
+), function(x, value) {
+    v <- ext(value)
+    bnames <- names(x@boundaries)
+    mm <- x@minmax
+    extnum <- .ext_to_num_vec(v)[c(2, 1, 4, 3)]
+
+    adj <- extnum - mm
+    adj[c(2, 4)] <- -adj[c(2, 4)]
+    names(adj) <- bnames
+
+    x@boundaries <- adj
+
+    return(x)
+})
