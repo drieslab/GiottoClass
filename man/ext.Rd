@@ -33,7 +33,7 @@
   x,
   spat_unit = NULL,
   feat_type = NULL,
-  all_data = FALSE,
+  all_data = TRUE,
   prefer = c("polygon", "spatlocs", "points", "images"),
   name = NULL,
   verbose = NULL,
