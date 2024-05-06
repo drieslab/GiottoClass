@@ -399,7 +399,7 @@ updateGiottoObject <- function(gobject) {
     }
 
     # warn if gobject newer than package
-    if (.gversion(gobject) > packageVersion("GiottoClass")) {
+    if (as.character(.gversion(gobject)) > as.character(packageVersion("GiottoClass"))) {
         warning(
             call. = FALSE,
             sprintf(
