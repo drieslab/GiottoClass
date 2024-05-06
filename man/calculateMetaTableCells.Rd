@@ -38,5 +38,6 @@ g <- GiottoData::loadGiottoMini("visium")
 
 calculateMetaTableCells(g,
     metadata_cols = "cell_ID",
-    value_cols = "leiden_clus")
+    value_cols = "leiden_clus"
+)
 }

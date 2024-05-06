@@ -9,7 +9,7 @@ NULL
 #' @returns numeric
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("giottoPoints")
-#' 
+#'
 #' nrow(g)
 NULL
 # ---------------------------------------------------------------- #

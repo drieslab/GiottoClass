@@ -18,7 +18,7 @@ NULL
 #' @returns giotto instructions
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' showGiottoInstructions(g)
 NULL
 

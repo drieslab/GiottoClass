@@ -34,6 +34,8 @@ a vector of values. Does not call \code{initialize} on the giotto object
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
 
-changeGiottoInstructions(gobject = g, params = "save_plot", 
-new_values = TRUE)
+changeGiottoInstructions(
+    gobject = g, params = "save_plot",
+    new_values = TRUE
+)
 }

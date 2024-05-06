@@ -29,16 +29,15 @@
 #'   to \code{\link{createGiottoObject}}}
 #' }
 #' @export
-stitchFieldCoordinates <- function(
-        location_file,
-        offset_file,
-        cumulate_offset_x = FALSE,
-        cumulate_offset_y = FALSE,
-        field_col = "Field of View",
-        X_coord_col = "X",
-        Y_coord_col = "Y",
-        reverse_final_x = FALSE,
-        reverse_final_y = TRUE) {
+stitchFieldCoordinates <- function(location_file,
+    offset_file,
+    cumulate_offset_x = FALSE,
+    cumulate_offset_y = FALSE,
+    field_col = "Field of View",
+    X_coord_col = "X",
+    Y_coord_col = "Y",
+    reverse_final_x = FALSE,
+    reverse_final_y = TRUE) {
     # data.table variables
     x_offset_final <- x_offset <- y_offset_final <- y_offset <- field <- NULL
 
@@ -98,16 +97,17 @@ stitchFieldCoordinates <- function(
 #' @param Ytilespan numerical value specifying the height of each tile
 #' @returns data.table
 #' @examples
-#' location_file <- data.table::data.table(field = rep(c(1,2),5), 
-#' X.X = rnorm(10), Y.Y = rnorm(10), XtileIndex = seq_len(10), 
-#' YtileIndex = seq_len(10))
-#' 
+#' location_file <- data.table::data.table(
+#'     field = rep(c(1, 2), 5),
+#'     X.X = rnorm(10), Y.Y = rnorm(10), XtileIndex = seq_len(10),
+#'     YtileIndex = seq_len(10)
+#' )
+#'
 #' stitchTileCoordinates(location_file, Xtilespan = 0.5, Ytilespan = 0.5)
 #' @export
-stitchTileCoordinates <- function(
-        location_file,
-        Xtilespan,
-        Ytilespan) {
+stitchTileCoordinates <- function(location_file,
+    Xtilespan,
+    Ytilespan) {
     # data.table variables
     Xcoord <- X.X <- XtileIndex <- Ycoord <- Y.Y <- YtileIndex <- NULL
 

@@ -50,6 +50,8 @@ space needed if image is very large.
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
 
-writeGiottoLargeImage(gobject = g, largeImage_name = "image",
-filename = paste0("tempfile()", ".png"))
+writeGiottoLargeImage(
+    gobject = g, largeImage_name = "image",
+    filename = paste0("tempfile()", ".png")
+)
 }

@@ -15,14 +15,13 @@
 #' @returns giotto object or list of parameters
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' update_giotto_params(g, toplevel = 1)
 #' @export
-update_giotto_params <- function(
-        gobject,
-        description = "_test",
-        return_gobject = TRUE,
-        toplevel = 2) {
+update_giotto_params <- function(gobject,
+    description = "_test",
+    return_gobject = TRUE,
+    toplevel = 2) {
     parameters_list <- gobject@parameters
     number_of_rounds <- length(parameters_list)
     update_name <- paste0(number_of_rounds, description)
@@ -46,13 +45,12 @@ update_giotto_params <- function(
 #' @returns list
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' objHistory(g)
 #' @export
 objHistory <- function(object) {
-    cat("Steps and parameters used: \n \n")
-    print(object@parameters)
-    cat("\n\n")
+    message("Steps and parameters used:")
+    message(object@parameters)
     invisible(x = object@parameters)
 }
 
@@ -66,22 +64,22 @@ objHistory <- function(object) {
 #' @returns list of processing steps and names
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' showProcessingSteps(g)
 #' @export
 showProcessingSteps <- function(gobject) {
     parameters <- gobject@parameters
 
-    cat("Processing steps: \n \n")
+    message("Processing steps:")
 
     for (step in names(parameters)) {
-        cat("\n", step, "\n")
+        message(step)
 
         sub_step <- parameters[[step]]
 
         if (any(grepl("name", names(sub_step)) == TRUE)) {
             selected_names <- grep("name", names(sub_step), value = TRUE)
-            cat("\t name info: ", sub_step[selected_names], "\n")
+            wrap_msg("\t name info: ", sub_step[selected_names])
         }
     }
 }
