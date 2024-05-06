@@ -9,15 +9,16 @@
 ## bug fixes
 - fix `plot()` params passing for `giottoPolygon` when `type = "centroid"`
 - fix `ext()` output for `giottoImage`
+- `spatShift()` and `rescale()` now also affect attached images [#865](https://github.com/drieslab/Giotto/issues/865) by rbutleriii
 
 ## enhancements
 - use faster `terra::rasterize()` and `terra::plot()` instead of `scattermore::scattermoreplot()` for `giottoPoints` `plot()` method
 - `plot()` `giottoPoints` method now plots density when `dens = TRUE`
-- `show_max` param `density()` and `hist()` to show the image object's `max_window` setting
+- `show_max` param in `density()` and `hist()` to plot the image object's `max_window` setting
 - `.identify_background_range_polygons()` now finds any polygons larger than a threshold percentage than the overall extent of the `SpatVector` input.
-- `ext()` can now be used with `giotto` objects
+- `ext()` can now be used with `giotto` objects [#865](https://github.com/drieslab/Giotto/issues/865) by rbutleriii
 - `ext()<-` can now be used with `giottoImage`
-- `as` conversion from `giottoLargeImage` to `giottoImage`
+- `as` conversion from `giottoLargeImage` to `giottoImage` (`giottoImage` is sampled)
 
 ## new
 - new `spatValues()` to get specific values from a `giotto` object in `data.table` format
