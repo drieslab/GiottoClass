@@ -21,8 +21,9 @@
 #' See SAW pipeline for additional information about the gef file.
 #' @returns giotto object
 #' @export
-gefToGiotto <- function(gef_file, bin_size = "bin100", verbose = FALSE,
-    h5_file = NULL) {
+gefToGiotto <- function(
+        gef_file, bin_size = "bin100", verbose = FALSE,
+        h5_file = NULL) {
     # data.table vars
     genes <- gene_idx <- x <- y <- sdimx <- sdimy <- cell_ID <- bin_ID <-
         count <- i.bin_ID <- NULL
@@ -190,21 +191,22 @@ check_py_for_scanpy <- function() {
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' temp_directory <- tempdir()
-#' giottoToAnnData(g, save_directory = paste0(temp_directory,"/"))
-#' 
-#' anndataToGiotto(anndata_path = paste0(temp_directory,
-#' "/cell_rna_converted_gobject.h5ad"))
+#' giottoToAnnData(g, save_directory = paste0(temp_directory, "/"))
+#'
+#' anndataToGiotto(anndata_path = paste0(
+#'     temp_directory,
+#'     "/cell_rna_converted_gobject.h5ad"
+#' ))
 #' @export
-anndataToGiotto <- function(
-        anndata_path = NULL,
-        n_key_added = NULL,
-        spatial_n_key_added = NULL,
-        deluanay_spat_net = TRUE,
-        spat_unit = NULL,
-        feat_type = NULL,
-        h5_file = NULL,
-        python_path = NULL,
-        env_name = "giotto_env") {
+anndataToGiotto <- function(anndata_path = NULL,
+    n_key_added = NULL,
+    spatial_n_key_added = NULL,
+    deluanay_spat_net = TRUE,
+    spat_unit = NULL,
+    feat_type = NULL,
+    h5_file = NULL,
+    python_path = NULL,
+    env_name = "giotto_env") {
     # Preliminary file checks and guard clauses
     if (is.null(anndata_path)) {
         stop("Please provide a path to an AnnData .h5ad file for conversion.\n")
@@ -602,16 +604,15 @@ anndataToGiotto <- function(
 #' @returns vector containing .h5ad file path(s)
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
-#' giottoToAnnData(g, save_directory = paste0(tempdir(),"/"))
+#'
+#' giottoToAnnData(g, save_directory = paste0(tempdir(), "/"))
 #' @export
-giottoToAnnData <- function(
-        gobject = NULL,
-        spat_unit = NULL,
-        feat_type = NULL,
-        python_path = NULL,
-        env_name = "giotto_env",
-        save_directory = NULL) {
+giottoToAnnData <- function(gobject = NULL,
+    spat_unit = NULL,
+    feat_type = NULL,
+    python_path = NULL,
+    env_name = "giotto_env",
+    save_directory = NULL) {
     # Check gobject
     invalid_obj <- !("giotto" %in% class(gobject))
     if (is.null(gobject) || invalid_obj) {
@@ -800,15 +801,14 @@ giottoToAnnData <- function(
     # Dimension Reductions
 
     # error hanldling wrapper to get_dimReduction
-    try_get_dimReduction <- function(
-        gobject,
-        spat_unit,
-        feat_type,
-        reduction,
-        reduction_method,
-        name,
-        output,
-        set_defaults) {
+    try_get_dimReduction <- function(gobject,
+    spat_unit,
+    feat_type,
+    reduction,
+    reduction_method,
+    name,
+    output,
+    set_defaults) {
         tryCatch(
             {
                 dim_red <- get_dimReduction(
@@ -956,14 +956,13 @@ giottoToAnnData <- function(
     # Nearest Neighbor Network
 
     # error hanldling wrapper to get_NearestNetwork
-    try_get_NN <- function(
-        gobject,
-        spat_unit,
-        feat_type,
-        nn_network_to_use,
-        network_name,
-        output,
-        set_defaults) {
+    try_get_NN <- function(gobject,
+    spat_unit,
+    feat_type,
+    nn_network_to_use,
+    network_name,
+    output,
+    set_defaults) {
         tryCatch(
             {
                 nearest_net <- get_NearestNetwork(
@@ -1043,13 +1042,12 @@ giottoToAnnData <- function(
     # Reset indexing variable
     adata_pos <- 1
 
-    try_get_SN <- function(
-        gobject,
-        spat_unit,
-        name,
-        output,
-        set_defaults,
-        verbose) {
+    try_get_SN <- function(gobject,
+    spat_unit,
+    name,
+    output,
+    set_defaults,
+    verbose) {
         tryCatch(
             {
                 spatial_net <- get_spatialNetwork(
@@ -1172,11 +1170,10 @@ giottoToAnnData <- function(
 #' @param ... additional params to pass to \code{\link{get_spatial_locations}}
 #' @returns Seurat object
 #' @export
-giottoToSeurat <- function(
-        gobject,
-        spat_unit = NULL,
-        obj_use = NULL,
-        ...) {
+giottoToSeurat <- function(gobject,
+    spat_unit = NULL,
+    obj_use = NULL,
+    ...) {
     stop(wrap_txt(
         "Deprecated. Please use either giottoToSeuratV4() or giottoToSeuratV5()"
     ))
@@ -1196,10 +1193,9 @@ giottoToSeurat <- function(
 #' @returns Seurat object
 #' @keywords seurat interoperability
 #' @export
-giottoToSeuratV4 <- function(
-        gobject,
-        spat_unit = NULL,
-        ...) {
+giottoToSeuratV4 <- function(gobject,
+    spat_unit = NULL,
+    ...) {
     # data.table vars
     feat_type <- name <- dim_type <- nn_type <- NULL
     # set default spat_unit and feat_type to be extracted as a Seurat assay
@@ -1470,13 +1466,12 @@ giottoToSeuratV4 <- function(
 #' @keywords seurat interoperability
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' giottoToSeuratV5(g)
 #' @export
-giottoToSeuratV5 <- function(
-        gobject,
-        spat_unit = NULL,
-        ...) {
+giottoToSeuratV5 <- function(gobject,
+    spat_unit = NULL,
+    ...) {
     # data.table vars
     feat_type <- name <- dim_type <- nn_type <- NULL
 
@@ -1805,11 +1800,10 @@ giottoToSeuratV5 <- function(
 #' object. Default is \code{"Vizgen"}.
 #' @returns giotto object
 #' @export
-seuratToGiotto <- function(
-        sobject,
-        spatial_assay = "Spatial",
-        dim_reduction = c("pca", "umap"),
-        subcellular_assay = "Vizgen") {
+seuratToGiotto <- function(sobject,
+    spatial_assay = "Spatial",
+    dim_reduction = c("pca", "umap"),
+    subcellular_assay = "Vizgen") {
     stop(wrap_txt(
         "Deprecated. Please use either seuratToGiottoV4() or seuratToGiottoV5()"
     ))
@@ -1835,14 +1829,13 @@ seuratToGiotto <- function(
 #' stored in it.
 #' @keywords seurat interoperability
 #' @export
-seuratToGiottoV4 <- function(
-        sobject,
-        spatial_assay = "Spatial",
-        dim_reduction = c("pca", "umap"),
-        subcellular_assay = "Vizgen",
-        sp_network = NULL,
-        nn_network = NULL,
-        verbose = TRUE) {
+seuratToGiottoV4 <- function(sobject,
+    spatial_assay = "Spatial",
+    dim_reduction = c("pca", "umap"),
+    subcellular_assay = "Vizgen",
+    sp_network = NULL,
+    nn_network = NULL,
+    verbose = TRUE) {
     package_check("Seurat")
     if (is.null(Seurat::GetAssayData(
         object = sobject, slot = "counts",
@@ -2102,17 +2095,16 @@ seuratToGiottoV4 <- function(
 #' @examples
 #' m_expression <- Matrix::Matrix(rnorm(100), nrow = 10, sparse = TRUE)
 #' s <- Seurat::CreateSeuratObject(counts = m_expression)
-#' 
+#'
 #' seuratToGiottoV5(s, spatial_assay = "RNA")
 #' @export
-seuratToGiottoV5 <- function(
-        sobject,
-        spatial_assay = "Spatial",
-        dim_reduction = c("pca", "umap"),
-        subcellular_assay = "Vizgen",
-        sp_network = NULL,
-        nn_network = NULL,
-        verbose = TRUE) {
+seuratToGiottoV5 <- function(sobject,
+    spatial_assay = "Spatial",
+    dim_reduction = c("pca", "umap"),
+    subcellular_assay = "Vizgen",
+    sp_network = NULL,
+    nn_network = NULL,
+    verbose = TRUE) {
     package_check("Seurat")
 
     if (is.null(Seurat::GetAssayData(
@@ -2206,10 +2198,13 @@ seuratToGiottoV5 <- function(
                 object = sobject,
                 assay = spatial_assay
             ))) {
-                spat_coord <- Seurat::GetTissueCoordinates(sobject, 
-                                                           scale = NULL,
-                                                           cols = c("imagerow",
-                                                                    "imagecol"))
+                spat_coord <- Seurat::GetTissueCoordinates(sobject,
+                    scale = NULL,
+                    cols = c(
+                        "imagerow",
+                        "imagecol"
+                    )
+                )
                 # spat_coord = cbind(rownames(spat_coord),
                 # data.frame(spat_coord, row.names=NULL))
 
@@ -2341,8 +2336,8 @@ seuratToGiottoV5 <- function(
                     raster_object = terra::rast(list(r, g, b)),
                     name = names(sobject@images),
                     scale_factor = sobject@images[[
-                      i
-                      ]]@scale.factors$lowres
+                        i
+                    ]]@scale.factors$lowres
                 )
             }
         }
@@ -2832,15 +2827,14 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
 #' @returns Giotto object
 #' @examples
 #' spe <- STexampleData::Visium_humanDLPFC()
-#' 
+#'
 #' spatialExperimentToGiotto(spe, python_path = NULL)
 #' @export
-spatialExperimentToGiotto <- function(
-        spe,
-        python_path,
-        nn_network = NULL,
-        sp_network = NULL,
-        verbose = TRUE) {
+spatialExperimentToGiotto <- function(spe,
+    python_path,
+    nn_network = NULL,
+    sp_network = NULL,
+    verbose = TRUE) {
     # Create giotto instructions and set python path
     instrs <- createGiottoInstructions(python_path = python_path)
 
@@ -3080,9 +3074,8 @@ if (requireNamespace("SpatialExperiment", quietly = TRUE)) {
 #'
 #' @returns A Giotto object compatible with suite version
 #' @export
-giottoMasterToSuite <- function(
-        gobject,
-        expression_feat = "rna") {
+giottoMasterToSuite <- function(gobject,
+    expression_feat = "rna") {
     master_object <- gobject
 
     spatial_locs <- cell_metadata <- feat_metadata <- instructions <- NULL

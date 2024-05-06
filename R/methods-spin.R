@@ -12,7 +12,7 @@
 #' @returns spun object
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("spatLocsObj")
-#' 
+#'
 #' spin(g)
 NULL
 
@@ -24,8 +24,9 @@ NULL
 #' @export
 setMethod(
     "spin", signature(x = "giotto"),
-    function(x, angle, x0 = NULL, y0 = NULL, spat_unit = ":all:",
-    feat_type = ":all:") {
+    function(
+        x, angle, x0 = NULL, y0 = NULL, spat_unit = ":all:",
+        feat_type = ":all:") {
         a <- list(angle = angle, x0 = x0, y0 = y0)
 
         checkmate::assert_character(spat_unit)
@@ -150,9 +151,8 @@ setMethod(
 #' @export
 setMethod(
     "spin", signature(x = "spatLocsObj"),
-    function(
-        x, angle = NULL, x0 = NULL, y0 = NULL, z0 = NULL,
-        xy_angle = NULL, zy_angle = NULL, xz_angle = NULL) {
+    function(x, angle = NULL, x0 = NULL, y0 = NULL, z0 = NULL,
+    xy_angle = NULL, zy_angle = NULL, xz_angle = NULL) {
         argslist <- get_args_list()
         argslist$x <- x[]
 
@@ -172,10 +172,9 @@ setMethod(
 setMethod(
     "spin",
     signature(x = "data.frame"),
-    function(
-        x, angle = NULL, x0 = NULL, y0 = NULL, z0 = NULL,
-        xy_angle = NULL, zy_angle = NULL, xz_angle = NULL,
-        geom = c("sdimx", "sdimy", "sdimz")) {
+    function(x, angle = NULL, x0 = NULL, y0 = NULL, z0 = NULL,
+    xy_angle = NULL, zy_angle = NULL, xz_angle = NULL,
+    geom = c("sdimx", "sdimy", "sdimz")) {
         x <- data.table::as.data.table(x)
 
         if (!is.null(angle)) xy_angle <- angle
@@ -217,8 +216,9 @@ setMethod(
 # values are provided through the xy param.
 # Either rotate_rad or rotate_deg may be provided. Internally, the function
 # converts everything to radians.
-.rotate_2d <- function(DT, xy = c("x", "y"), rotate_rad = NULL,
-    rotate_deg = NULL) {
+.rotate_2d <- function(
+        DT, xy = c("x", "y"), rotate_rad = NULL,
+        rotate_deg = NULL) {
     # send error if both angle inputs exist or both are missing
     if (is.null(rotate_rad) && is.null(rotate_deg) ||
         !is.null(rotate_rad) && !is.null(rotate_deg)) {
@@ -254,11 +254,10 @@ setMethod(
 #' @details Radians are provided through \code{rotateradians} param as a named
 #' vector with values for \code{xy} (yaw), \code{zy} (pitch), \code{xz} (roll)
 #' @keywords internal
-.rotate_spatial_locations <- function(
-        spatlocs,
-        rotateradians = c(xy = 0, zy = 0, xz = 0),
-        rcenter = c(0, 0, 0),
-        geom = c("sdimx", "sdimy", "sdimz")) {
+.rotate_spatial_locations <- function(spatlocs,
+    rotateradians = c(xy = 0, zy = 0, xz = 0),
+    rcenter = c(0, 0, 0),
+    geom = c("sdimx", "sdimy", "sdimz")) {
     checkmate::assert_data_table(spatlocs)
 
     xyz <- c("x", "y", "z")

@@ -25,6 +25,8 @@ not call \code{initialize} on the giotto object
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
 
-replaceGiottoInstructions(gobject = g, 
-instructions = createGiottoInstructions())
+replaceGiottoInstructions(
+    gobject = g,
+    instructions = createGiottoInstructions()
+)
 }

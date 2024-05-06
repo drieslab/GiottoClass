@@ -86,7 +86,8 @@ x-axis and then y-axis
 }
 \examples{
 image_test <- system.file("extdata/toy_intensity.tif",
-package = "GiottoClass")
+    package = "GiottoClass"
+)
 
 createGiottoImage(mg_object = image_test)
 }

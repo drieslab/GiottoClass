@@ -40,8 +40,10 @@ Function to set cell metadata into giotto object
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
 m1 <- getCellMetadata(g, output = "data.table")
-m2 <- data.frame(cell_ID = m1$cell_ID,
-new_column = sample(letters, 624, replace = TRUE))
+m2 <- data.frame(
+    cell_ID = m1$cell_ID,
+    new_column = sample(letters, 624, replace = TRUE)
+)
 
 setCellMetadata(gobject = g, x = createCellMetaObj(m2))
 }

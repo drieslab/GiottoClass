@@ -16,7 +16,7 @@ NULL
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' g_image <- getGiottoImage(g, image_type = "largeImage")
-#' 
+#'
 #' reconnect(g_image)
 #' @export
 setMethod("reconnect", signature("giottoLargeImage"), function(x, path = NULL, ...) {

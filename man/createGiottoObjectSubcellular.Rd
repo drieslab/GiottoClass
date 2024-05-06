@@ -96,6 +96,7 @@ x_gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
 
 createGiottoObjectSubcellular(
     gpolygons = x_gpolygons,
-    gpoints = x_gpoints)
+    gpoints = x_gpoints
+)
 }
 \concept{giotto}

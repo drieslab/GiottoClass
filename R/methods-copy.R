@@ -11,7 +11,7 @@ NULL
 #' @returns giotto subobjects
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("exprObj")
-#' 
+#'
 #' copy(g)
 NULL
 

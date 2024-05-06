@@ -67,8 +67,10 @@ color scaling is desired.
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
 
-plotGiottoImage(g, image_type = "largeImage", image_name = "dapi_z0",
-largeImage_max_intensity = 200)
+plotGiottoImage(g,
+    image_type = "largeImage", image_name = "dapi_z0",
+    largeImage_max_intensity = 200
+)
 }
 \seealso{
 Other basic image functions: 

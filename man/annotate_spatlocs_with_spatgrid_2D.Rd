@@ -23,6 +23,8 @@ g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
 g_spatloc <- getSpatialLocations(g, output = "data.table")
 g_spatgrid <- getSpatialGrid(g)
 
-annotate_spatlocs_with_spatgrid_2D(spatloc = g_spatloc, 
-spatgrid = g_spatgrid)
+annotate_spatlocs_with_spatgrid_2D(
+    spatloc = g_spatloc,
+    spatgrid = g_spatgrid
+)
 }

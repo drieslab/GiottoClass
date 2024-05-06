@@ -97,7 +97,7 @@ ext(g, spat_unit = "aggregate", prefer = "spatlocs")
 ext(g, prefer = "image")
 
 # add a dummy image with different spatial extent
-r <- terra::rast(array(seq(25), dim = c(5,5)))
+r <- terra::rast(array(seq(25), dim = c(5, 5)))
 test <- createGiottoLargeImage(r)
 ext(test) <- c(1e5, 1.1e5, 0, 10)
 g <- setGiotto(g, test) # add image

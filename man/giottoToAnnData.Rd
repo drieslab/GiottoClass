@@ -55,5 +55,5 @@ The default save_directory is the working directory.
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
 
-giottoToAnnData(g, save_directory = paste0(tempdir(),"/"))
+giottoToAnnData(g, save_directory = paste0(tempdir(), "/"))
 }
