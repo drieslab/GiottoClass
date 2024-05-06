@@ -399,7 +399,7 @@ updateGiottoObject <- function(gobject) {
     }
 
     # warn if gobject newer than package
-    if (.gversion(gobject) > packageVersion("GiottoClass")) {
+    if (as.character(.gversion(gobject)) > as.character(packageVersion("GiottoClass"))) {
         warning(
             call. = FALSE,
             sprintf(
@@ -1144,9 +1144,8 @@ setClass("spatialNetworkObj",
 #' @param spat_unit spatial unit metadata to append
 #' @keywords internal
 #' @returns S4 spatNetObj
-S3toS4spatNetObj <- function(
-        object,
-        spat_unit = NULL) {
+S3toS4spatNetObj <- function(object,
+    spat_unit = NULL) {
     if (!isS4(object)) {
         object <- new("spatialNetworkObj",
             name = object$name,
@@ -1653,7 +1652,6 @@ giottoLargeImage <- setClass(
 
 # function for updating image objects if structure definitions have changed
 .update_giotto_image <- function(x) {
-
     if (inherits(x, "giottoLargeImage")) {
         # 0.1.2 release adds colors & max_window slots
         if (is.null(attr(x, "colors"))) {
@@ -1671,13 +1669,13 @@ giottoLargeImage <- setClass(
             }
 
             attr(x, "max_window") <- .bitdepth(
-                x@max_intensity, return_max = TRUE
+                x@max_intensity,
+                return_max = TRUE
             )
         }
 
         # 0.1.x release adds giottoImageStack
         # deprecate
-
     }
     return(x)
 }

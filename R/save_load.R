@@ -23,15 +23,16 @@
 #'
 #' saveGiotto(gobject = g, dir = tempdir(), overwrite = TRUE)
 #' @export
-saveGiotto <- function(gobject,
-    foldername = "saveGiottoDir",
-    dir = getwd(),
-    method = c("RDS", "qs"),
-    method_params = list(),
-    overwrite = FALSE,
-    image_filetype = "PNG",
-    verbose = TRUE,
-    ...) {
+saveGiotto <- function(
+        gobject,
+        foldername = "saveGiottoDir",
+        dir = getwd(),
+        method = c("RDS", "qs"),
+        method_params = list(),
+        overwrite = FALSE,
+        image_filetype = "PNG",
+        verbose = TRUE,
+        ...) {
     # check params
     checkmate::assert_character(foldername)
     checkmate::assert_character(dir)
@@ -296,13 +297,12 @@ saveGiotto <- function(gobject,
 #'
 #' loadGiotto(path_to_folder = paste0(td, "/saveGiottoDir"))
 #' @export
-loadGiotto <- function(
-        path_to_folder,
-        load_params = list(),
-        reconnect_giottoImage = TRUE,
-        python_path = NULL,
-        init_gobject = TRUE,
-        verbose = TRUE) {
+loadGiotto <- function(path_to_folder,
+    load_params = list(),
+    reconnect_giottoImage = TRUE,
+    python_path = NULL,
+    init_gobject = TRUE,
+    verbose = TRUE) {
     # data.table vars
     img_type <- NULL
 
@@ -444,12 +444,16 @@ loadGiotto <- function(
             pattern = "_spatInfo_spatVector.shp",
             replacement = "_spatInfo_spatVectorCentroids.shp"
         )
-        centroid_paths <- sapply(centroid_search_term, function(gp_centroid) {
-            list.files(
-                path = paste0(path_to_folder, "/SpatialInfo"),
-                pattern = gp_centroid, full.names = TRUE
-            )
-        }, USE.NAMES = FALSE)
+        centroid_paths <- vapply(
+            centroid_search_term,
+            function(gp_centroid) {
+                list.files(
+                    path = paste0(path_to_folder, "/SpatialInfo"),
+                    pattern = gp_centroid, full.names = TRUE
+                )
+            },
+            FUN.VALUE = character(1L),
+            USE.NAMES = FALSE)
 
         # check if centroid are provided for spatvector polygons
         test_missing <- unlist(lapply(centroid_paths,

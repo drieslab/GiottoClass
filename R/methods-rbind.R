@@ -13,8 +13,8 @@ NULL
 #' @returns object with appended rows
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("giottoPolygon")
-#' 
-#' rbind2(g,g)
+#'
+#' rbind2(g, g)
 NULL
 # ---------------------------------------------------------------- #
 

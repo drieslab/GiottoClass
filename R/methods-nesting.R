@@ -249,7 +249,7 @@ assign_objnames_2_list <- function(obj_list, force_replace = FALSE) {
     }
 
     # find and subset to list items that can contain nameData
-    is_obj <- sapply(obj_list, inherits, "nameData")
+    is_obj <- vapply(obj_list, inherits, "nameData", FUN.VALUE = logical(1L))
 
     if (isTRUE(force_replace)) {
         obj_missing_names <- is_obj
@@ -274,7 +274,9 @@ assign_listnames_2_obj <- function(obj_list) {
     if (is.null(list_names)) {
         stop("<assign_listnames_2_obj> List has no names\n")
     }
-    obj_index <- which(sapply(obj_list, inherits, "nameData"))
+    obj_index <- which(vapply(
+        obj_list, inherits, "nameData", FUN.VALUE = logical(1L)
+    ))
     list_obj_names <- list_names[obj_index]
 
     for (obj_i in seq_along(obj_index)) {

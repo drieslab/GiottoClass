@@ -35,6 +35,8 @@ function that can be used to find which names have been used
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
 
-list_dim_reductions_names(g, spat_unit = "cell", feat_type = "rna",
-dim_type = "pca")
+list_dim_reductions_names(g,
+    spat_unit = "cell", feat_type = "rna",
+    dim_type = "pca"
+)
 }

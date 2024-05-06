@@ -9,7 +9,7 @@ NULL
 #' @return A character vector of row or col names
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("exprObj")
-#' 
+#'
 #' colnames(g)
 NULL
 
@@ -21,7 +21,7 @@ NULL
 #' @returns character
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("exprObj")
-#' 
+#'
 #' dimnames(g)
 NULL
 

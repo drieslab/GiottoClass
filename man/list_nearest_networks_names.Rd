@@ -32,6 +32,8 @@ function that can be used to find which names have been used
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
 
-list_nearest_networks_names(g, spat_unit = "cell", feat_type = "rna",
-nn_type = "sNN")
+list_nearest_networks_names(g,
+    spat_unit = "cell", feat_type = "rna",
+    nn_type = "sNN"
+)
 }

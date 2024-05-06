@@ -366,9 +366,10 @@ setMethod(
         coord_cols <- col_names[col_names %in% c("sdimx", "sdimy", "sdimz")]
 
         try(
-            expr = print(sapply(
+            expr = print(vapply(
                 slot(object, "coordinates")[, c(coord_cols), with = FALSE],
-                range
+                range,
+                FUN.VALUE = numeric(2L)
             )),
             silent = TRUE
         )

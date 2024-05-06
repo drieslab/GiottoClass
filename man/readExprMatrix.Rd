@@ -37,7 +37,7 @@ row names
 \examples{
 x <- matrix(seq_len(100), nrow = 10)
 temporal_dir <- tempdir()
-write.csv(x, paste0(temporal_dir,"/mymatrix.csv"))
+write.csv(x, paste0(temporal_dir, "/mymatrix.csv"))
 
-readExprMatrix(paste0(temporal_dir,"/mymatrix.csv"))
+readExprMatrix(paste0(temporal_dir, "/mymatrix.csv"))
 }

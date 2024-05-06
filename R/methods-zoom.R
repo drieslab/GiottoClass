@@ -35,7 +35,8 @@ setMethod(
     function(x, e = terra::draw(), ...) {
         plot(x, ext = e, ...)
         return(invisible(e))
-    })
+    }
+)
 
 #' @rdname zoom
 #' @export
@@ -44,7 +45,8 @@ setMethod(
     function(x, e = terra::draw(), ...) {
         plot(x, ext = e, ...)
         return(invisible(e))
-    })
+    }
+)
 
 # TODO does not work properly when rasterized
 #' @rdname zoom
@@ -54,4 +56,5 @@ setMethod(
     function(x, e = terra::draw(), ...) {
         plot(x, ext = e, ...)
         return(invisible(e))
-    })
+    }
+)

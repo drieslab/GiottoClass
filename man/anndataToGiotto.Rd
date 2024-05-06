@@ -65,8 +65,10 @@ creation.
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
 temp_directory <- tempdir()
-giottoToAnnData(g, save_directory = paste0(temp_directory,"/"))
+giottoToAnnData(g, save_directory = paste0(temp_directory, "/"))
 
-anndataToGiotto(anndata_path = paste0(temp_directory,
-"/cell_rna_converted_gobject.h5ad"))
+anndataToGiotto(anndata_path = paste0(
+    temp_directory,
+    "/cell_rna_converted_gobject.h5ad"
+))
 }

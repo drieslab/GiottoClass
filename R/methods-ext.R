@@ -21,7 +21,7 @@
 #' ext(g, prefer = "image")
 #'
 #' # add a dummy image with different spatial extent
-#' r <- terra::rast(array(seq(25), dim = c(5,5)))
+#' r <- terra::rast(array(seq(25), dim = c(5, 5)))
 #' test <- createGiottoLargeImage(r)
 #' ext(test) <- c(1e5, 1.1e5, 0, 10)
 #' g <- setGiotto(g, test) # add image
@@ -119,16 +119,14 @@ setMethod("ext", signature("giottoImage"), function(x, ...) {
 #' only "images" at the moment, which produces a combined `SpatExtent`
 #' @param verbose be verbose
 #' @export
-setMethod("ext", signature("giotto"), function(
-        x,
-        spat_unit = NULL,
-        feat_type = NULL,
-        all_data = TRUE,
-        prefer = c("polygon", "spatlocs", "points", "images"),
-        name = NULL,
-        verbose = NULL,
-        ...
-) {
+setMethod("ext", signature("giotto"), function(x,
+    spat_unit = NULL,
+    feat_type = NULL,
+    all_data = TRUE,
+    prefer = c("polygon", "spatlocs", "points", "images"),
+    name = NULL,
+    verbose = NULL,
+    ...) {
     data_types <- c("polygon", "spatlocs", "points", "images")
 
     if (!is.null(name)) {
@@ -137,11 +135,12 @@ setMethod("ext", signature("giotto"), function(
     }
 
     prefer <- match.arg(
-        prefer, choices = data_types,
+        prefer,
+        choices = data_types,
         several.ok = TRUE
     )
 
-    spat_unit = set_default_spat_unit(
+    spat_unit <- set_default_spat_unit(
         gobject = x,
         spat_unit = spat_unit
     )
@@ -184,30 +183,30 @@ setMethod("ext", signature("giotto"), function(
     # get the object(s)
     elist2 <- lapply(use_type, function(type) {
         spat_obj <- switch(type,
-           "polygon" = getPolygonInfo(
-               gobject = x,
-               polygon_name = spat_unit,
-               return_giottoPolygon = TRUE,
-               verbose = verbose
-           ),
-           "spatlocs" = getSpatialLocations(
-               gobject = x,
-               spat_unit = spat_unit,
-               output = "spatLocsObj",
-               copy_obj = FALSE,
-               set_defaults = TRUE,
-               name = name$spatlocs,
-               verbose = verbose
-           ),
-           "points" = getFeatureInfo(
-               gobject = x,
-               feat_type = feat_type,
-               return_giottoPoints = TRUE
-           ),
-           "images" = getGiottoImage(
-               gobject = x,
-               name = name$images # more than one element is accepted
-           )
+            "polygon" = getPolygonInfo(
+                gobject = x,
+                polygon_name = spat_unit,
+                return_giottoPolygon = TRUE,
+                verbose = verbose
+            ),
+            "spatlocs" = getSpatialLocations(
+                gobject = x,
+                spat_unit = spat_unit,
+                output = "spatLocsObj",
+                copy_obj = FALSE,
+                set_defaults = TRUE,
+                name = name$spatlocs,
+                verbose = verbose
+            ),
+            "points" = getFeatureInfo(
+                gobject = x,
+                feat_type = feat_type,
+                return_giottoPoints = TRUE
+            ),
+            "images" = getGiottoImage(
+                gobject = x,
+                name = name$images # more than one element is accepted
+            )
         )
 
         # catch multiple object inputs (images)

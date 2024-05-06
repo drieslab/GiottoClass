@@ -10,7 +10,16 @@
 \alias{rescale,giottoLargeImage-method}
 \title{Rescale an object}
 \usage{
-\S4method{rescale}{giotto}(x, fx = 1, fy = fx, x0, y0, spat_unit = ":all:", feat_type = ":all:")
+\S4method{rescale}{giotto}(
+  x,
+  fx = 1,
+  fy = fx,
+  x0,
+  y0,
+  spat_unit = ":all:",
+  feat_type = ":all:",
+  images = ":all:"
+)
 
 \S4method{rescale}{spatLocsObj}(x, fx = 1, fy = fx, fz = fx, x0, y0, z0)
 
@@ -48,6 +57,8 @@ the center of the extent of x is used}
 
 \item{feat_type}{character vector. feature types to affect}
 
+\item{images}{character vector. Images to affect}
+
 \item{fz}{numeric > 0. The z scaling factor (only for supported objects)}
 
 \item{z0}{numeric. z-coordinate of the center of rescaling. If missing,
@@ -62,6 +73,10 @@ re-scaled object
 \description{
 Rescale an object spatially. Z dimension scaling is supported
 for some types of subobjects.
+}
+\details{
+With the \code{giotto} object, the ":all:" token can be passed to \code{spat_unit},
+\code{feat_type}, and \code{images} arguments to affect all available items.
 }
 \examples{
 g <- GiottoData::loadSubObjectMini("spatLocsObj")

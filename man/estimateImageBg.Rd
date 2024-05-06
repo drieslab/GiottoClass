@@ -20,8 +20,10 @@ plot
 }
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
-g_image <- convertGiottoLargeImageToMG(g, largeImage_name = "image",
-return_gobject = FALSE)
+g_image <- convertGiottoLargeImageToMG(g,
+    largeImage_name = "image",
+    return_gobject = FALSE
+)
 
 estimateImageBg(g_image)
 }

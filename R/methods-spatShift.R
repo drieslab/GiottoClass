@@ -154,8 +154,9 @@ setMethod(
 #' @export
 setMethod(
     "spatShift", signature("data.frame"),
-    function(x, dx = 0, dy = 0, dz = 0, copy_obj = TRUE,
-    geom = c("sdimx", "sdimy", "sdimz"), ...) {
+    function(
+        x, dx = 0, dy = 0, dz = 0, copy_obj = TRUE,
+        geom = c("sdimx", "sdimy", "sdimz"), ...) {
         x <- data.table::as.data.table(x)
         x <- .shift_spatial_locations(
             spatlocs = x,
@@ -175,7 +176,8 @@ setMethod(
     "spatShift", signature("spatialNetworkObj"),
     function(
         x, dx = 0, dy = 0, dz = 0,
-        copy_obj = TRUE, ...) {
+        copy_obj = TRUE, ...
+    ) {
         x@networkDT <- .shift_spatial_network(
             spatnet = x@networkDT,
             dx = dx, dy = dy, dz = dz, ...
@@ -247,13 +249,12 @@ setMethod(
 #' @param copy_obj copy/duplicate object (default = TRUE)
 #' @returns spatial locations
 #' @keywords internal
-.shift_spatial_locations <- function(
-        spatlocs,
-        dx = 0,
-        dy = 0,
-        dz = 0,
-        geom = c("sdimx", "sdimy", "sdimz"),
-        copy_obj = TRUE) {
+.shift_spatial_locations <- function(spatlocs,
+    dx = 0,
+    dy = 0,
+    dz = 0,
+    geom = c("sdimx", "sdimy", "sdimz"),
+    copy_obj = TRUE) {
     if (copy_obj) spatlocs <- data.table::copy(spatlocs)
 
     xyz <- c("x", "y", "z")
@@ -289,8 +290,9 @@ setMethod(
 #' @param copy_obj copy/duplicate object (default = TRUE)
 #' @returns spatial network
 #' @keywords internal
-.shift_spatial_network <- function(spatnet, dx = 0, dy = 0, dz = 0,
-    copy_obj = TRUE) {
+.shift_spatial_network <- function(
+        spatnet, dx = 0, dy = 0, dz = 0, copy_obj = TRUE
+) {
     sdimx_begin <- sdimx_end <- sdimy_begin <- sdimy_end <- sdimz_begin <-
         sdimz_end <- NULL
 
@@ -328,7 +330,8 @@ setMethod(
         dx = 0,
         dy = 0,
         copy_obj = FALSE,
-        ...) {
+        ...
+) {
     if (copy_obj) image@raster_object <- terra::deepcopy(image@raster_object)
 
     if (all(dx == 0, dy == 0)) return(image)
@@ -366,7 +369,8 @@ setMethod(
         dx = 0,
         dy = 0,
         copy_obj = FALSE,
-        ...) {
+        ...
+) {
     if (copy_obj) gpoints@spatVector <- terra::deepcopy(gpoints@spatVector)
 
     if (!all(dx == 0, dy == 0)) {
@@ -386,17 +390,18 @@ setMethod(
         dx = 0,
         dy = 0,
         copy_obj = FALSE,
-        ...) {
+        ...
+) {
     if (copy_obj) gpoly@spatVector <- terra::deepcopy(gpoly@spatVector)
 
     if (!all(dx == 0, dy == 0)) {
         gpoly <- .do_gpoly(gpoly,
-            what = terra::shift,
-            args = list(
-                dx = dx,
-                dy = dy,
-                ...
-            )
+                           what = terra::shift,
+                           args = list(
+                               dx = dx,
+                               dy = dy,
+                               ...
+                           )
         )
     }
     gpoly

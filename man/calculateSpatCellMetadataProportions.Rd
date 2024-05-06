@@ -43,5 +43,6 @@ for each cell.
 g <- GiottoData::loadGiottoMini("visium")
 
 calculateSpatCellMetadataProportions(g,
-spat_network = "Delaunay_network", metadata_column = "leiden_clus")
+    spat_network = "Delaunay_network", metadata_column = "leiden_clus"
+)
 }

@@ -90,10 +90,9 @@
 #' @description calculates centroids from selected polygons
 #' @keywords internal
 #' @returns SpatVector or giotto polygon
-.calculate_centroids_polygons <- function(
-        gpolygon,
-        name = "centroids",
-        append_gpolygon = TRUE) {
+.calculate_centroids_polygons <- function(gpolygon,
+    name = "centroids",
+    append_gpolygon = TRUE) {
     terra_polygon_centroids <- terra::centroids(slot(gpolygon, "spatVector"))
 
     if (isTRUE(append_gpolygon)) {
@@ -192,7 +191,7 @@
 #'     group_ID = sort(rep(LETTERS[seq_len(5)], length.out = nrow(gpoly)))
 #'     # make 5 groups
 #' )
-#' 
+#'
 #' multi_gp <- combineToMultiPolygon(gpoly, groups)
 #'
 #' plot(multi_gp["A"])
@@ -314,15 +313,14 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 #' @seealso \code{\link[stats]{spline}}
 #' @examples
 #' gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
-#' 
+#'
 #' smoothGiottoPolygons(gpolygon = gpoly)
 #' @export
-smoothGiottoPolygons <- function(
-        gpolygon,
-        vertices = 20,
-        k = 3,
-        set_neg_to_zero = TRUE,
-        ...) {
+smoothGiottoPolygons <- function(gpolygon,
+    vertices = 20,
+    k = 3,
+    set_neg_to_zero = TRUE,
+    ...) {
     # NSE vars
     x <- NULL
     y <- NULL
@@ -416,11 +414,12 @@ smoothGiottoPolygons <- function(
 #' @param verbose be verbose
 #' @returns SpatVector
 #' @keywords internal
-.create_spatvector_object_from_dfr <- function(x,
-    x_colname = NULL,
-    y_colname = NULL,
-    feat_ID_colname = NULL,
-    verbose = TRUE) {
+.create_spatvector_object_from_dfr <- function(
+        x,
+        x_colname = NULL,
+        y_colname = NULL,
+        feat_ID_colname = NULL,
+        verbose = TRUE) {
     x <- data.table::as.data.table(x)
 
     # MANUAL OPTION
@@ -451,7 +450,7 @@ smoothGiottoPolygons <- function(
         # at least one other column as the feat_ID
         if (ncol(x) < 3) stop("At minimum, columns for xy coordinates and
                             feature ID are needed.\n")
-        col_classes <- sapply(x, class)
+        col_classes <- vapply(x, class, FUN.VALUE = character(1L))
         ## find feat_ID as either first character col or named column
         ## if not detected, select 3rd column
         if ("feat_ID" %in% colnames(x)) {
@@ -559,16 +558,15 @@ smoothGiottoPolygons <- function(
 #' @param ... additional parameters to pass to \code{\link[dbscan]{kNN}}
 #' @returns kNN spatial feature network
 #' @keywords internal
-createSpatialFeaturesKNNnetwork_dbscan <- function(
-        gobject,
-        feat_type = NULL,
-        name = "knn_feats_network",
-        k = 4,
-        maximum_distance = NULL,
-        minimum_k = 0,
-        add_feat_ids = FALSE,
-        verbose = TRUE,
-        ...) {
+createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
+    feat_type = NULL,
+    name = "knn_feats_network",
+    k = 4,
+    maximum_distance = NULL,
+    minimum_k = 0,
+    add_feat_ids = FALSE,
+    verbose = TRUE,
+    ...) {
     # define for data.table
     from_feat <- from <- to_feat <- to <- from_to_feat <- NULL
 
@@ -685,22 +683,21 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(
 #' @concept feature
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' createSpatialFeaturesKNNnetwork(g)
 #' @export
-createSpatialFeaturesKNNnetwork <- function(
-        gobject,
-        method = "dbscan",
-        feat_type = NULL,
-        name = "knn_feats_network",
-        k = 4,
-        maximum_distance = NULL,
-        minimum_k = 0,
-        add_feat_ids = FALSE,
-        verbose = TRUE,
-        return_gobject = TRUE,
-        toplevel_params = 2,
-        ...) {
+createSpatialFeaturesKNNnetwork <- function(gobject,
+    method = "dbscan",
+    feat_type = NULL,
+    name = "knn_feats_network",
+    k = 4,
+    maximum_distance = NULL,
+    minimum_k = 0,
+    add_feat_ids = FALSE,
+    verbose = TRUE,
+    return_gobject = TRUE,
+    toplevel_params = 2,
+    ...) {
     # 1. select feat_type
     if (is.null(feat_type)) {
         feat_type <- gobject@expression_feat[[1]]
@@ -776,16 +773,15 @@ createSpatialFeaturesKNNnetwork <- function(
 #' @concept centroid
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' addSpatialCentroidLocationsLayer(g, poly_info = "aggregate")
 #' @export
-addSpatialCentroidLocationsLayer <- function(
-        gobject,
-        poly_info = "cell",
-        feat_type = NULL,
-        provenance = poly_info,
-        spat_loc_name = "raw",
-        return_gobject = TRUE) {
+addSpatialCentroidLocationsLayer <- function(gobject,
+    poly_info = "cell",
+    feat_type = NULL,
+    provenance = poly_info,
+    spat_loc_name = "raw",
+    return_gobject = TRUE) {
     # data.table vars
     x <- y <- poly_ID <- NULL
 
@@ -901,17 +897,16 @@ addSpatialCentroidLocationsLayer <- function(
 #' @concept centroid
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' addSpatialCentroidLocations(g, poly_info = "aggregate")
 #' @export
-addSpatialCentroidLocations <- function(
-        gobject,
-        poly_info = "cell",
-        feat_type = NULL,
-        spat_loc_name = "raw",
-        provenance = poly_info,
-        return_gobject = TRUE,
-        verbose = TRUE) {
+addSpatialCentroidLocations <- function(gobject,
+    poly_info = "cell",
+    feat_type = NULL,
+    spat_loc_name = "raw",
+    provenance = poly_info,
+    return_gobject = TRUE,
+    verbose = TRUE) {
     # provenance setup #
     # Require that provenance is a user-provided named list if length of
     # poly_info is greater than 1.
