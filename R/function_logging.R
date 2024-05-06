@@ -50,9 +50,8 @@ update_giotto_params <- function(
 #' objHistory(g)
 #' @export
 objHistory <- function(object) {
-    cat("Steps and parameters used: \n \n")
-    print(object@parameters)
-    cat("\n\n")
+    message("Steps and parameters used:")
+    message(object@parameters)
     invisible(x = object@parameters)
 }
 
@@ -72,16 +71,16 @@ objHistory <- function(object) {
 showProcessingSteps <- function(gobject) {
     parameters <- gobject@parameters
 
-    cat("Processing steps: \n \n")
+    message("Processing steps:")
 
     for (step in names(parameters)) {
-        cat("\n", step, "\n")
+        message(step)
 
         sub_step <- parameters[[step]]
 
         if (any(grepl("name", names(sub_step)) == TRUE)) {
             selected_names <- grep("name", names(sub_step), value = TRUE)
-            cat("\t name info: ", sub_step[selected_names], "\n")
+            wrap_msg("\t name info: ", sub_step[selected_names])
         }
     }
 }
