@@ -13,10 +13,14 @@
 #' the center of the extent of x is used
 #' @param z0 numeric. z-coordinate of the center of rescaling. If missing,
 #' the center of the extent of x is used (only for supported objects)
+#' @details
+#' With the `giotto` object, the ":all:" token can be passed to `spat_unit`,
+#' `feat_type`, and `images` arguments to affect all available items.
+#'
 #' @returns re-scaled object
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("spatLocsObj")
-#' 
+#'
 #' rescale(g)
 NULL
 # ------------------------------------------------------------------- #
@@ -25,17 +29,23 @@ NULL
 #' @rdname rescale
 #' @param spat_unit character vector. spatial units to affect
 #' @param feat_type character vector. feature types to affect
+#' @param images character vector. Images to affect
 #' @export
 setMethod(
     "rescale", signature("giotto"),
     function(x, fx = 1, fy = fx, x0, y0, spat_unit = ":all:",
-    feat_type = ":all:") {
+    feat_type = ":all:", images = ":all:") {
         a <- list(fx = fx, fy = fy)
         if (!missing(x0)) a$x0 <- x0
         if (!missing(y0)) a$y0 <- y0
 
-        checkmate::assert_character(spat_unit)
-        checkmate::assert_character(feat_type)
+        spat_unit <- set_default_spat_unit(
+            gobject = gobject, spat_unit = spat_unit
+        )
+        feat_type <- set_default_feat_type(
+            gobject = gobject, spat_unit = spat_unit, feat_type = feat_type
+        )
+
         all_su <- spat_unit == ":all:"
         all_ft <- feat_type == ":all:"
 
@@ -104,6 +114,17 @@ setMethod(
                 x <- setFeatureInfo(x, pt, verbose = FALSE, initialize = FALSE)
             }
         }
+
+        # images ----------------------------------------------------------- #
+        imgs <- getGiottoImage(x, name = images)
+        if (!inherits(imgs, "list")) imgs <- list(imgs)
+        if (!is.null(imgs)) {
+            for(img in imgs) {
+                img <- do.call(rescale, args = c(list(x = img), a))
+                x <- setGiottoImage(x, img, verbose = FALSE)
+            }
+        }
+
         return(initialize(x)) # init not necessarily needed
     }
 )
@@ -327,7 +348,7 @@ setMethod("rescale", signature("giottoLargeImage"), function(x, fx = 1, fy = fx,
 #' @concept polygon scaling
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' rescalePolygons(g, poly_info = "aggregate")
 #' @export
 rescalePolygons <- function(

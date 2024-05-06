@@ -6,11 +6,15 @@
 #' @param dz numeric. The shift on the z axis
 #' @param copy_obj Default = TRUE
 #' @param ... additional params to pass to methods
+#' @details
+#' With the `giotto` object, the ":all:" token can be passed to `spat_unit`,
+#' `feat_type`, and `images` arguments to affect all available items.
+#'
 #' @returns object with shifted spatial locations
 #' @description Shift the spatial locations of an object
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("spatLocsObj")
-#' 
+#'
 #' spatShift(g)
 NULL
 
@@ -23,15 +27,24 @@ NULL
 #' @rdname spatShift
 #' @param spat_unit character vector. spatial units to affect
 #' @param feat_type character vector. feature types to affect
+#' @param images character vector. Images to affect.
 #' @export
 setMethod(
     "spatShift",
     signature = "giotto",
-    function(x, dx = 0, dy = 0, spat_unit = ":all:", feat_type = ":all:") {
+    function(
+        x, dx = 0, dy = 0,
+        spat_unit = ":all:", feat_type = ":all:", images = ":all:"
+    ) {
         a <- list(dx = dx, dy = dy)
 
-        checkmate::assert_character(spat_unit)
-        checkmate::assert_character(feat_type)
+        spat_unit <- set_default_spat_unit(
+            gobject = gobject, spat_unit = spat_unit
+        )
+        feat_type <- set_default_feat_type(
+            gobject = gobject, spat_unit = spat_unit, feat_type = feat_type
+        )
+
         all_su <- spat_unit == ":all:"
         all_ft <- feat_type == ":all:"
 
@@ -97,12 +110,30 @@ setMethod(
                 x <- setFeatureInfo(x, pt, verbose = FALSE, initialize = FALSE)
             }
         }
+
+        # images ----------------------------------------------------------- #
+        imgs <- getGiottoImage(x, name = images)
+        if (!inherits(imgs, "list")) imgs <- list(imgs)
+        if (!is.null(imgs)) {
+            for(img in imgs) {
+                img <- do.call(spatShift, args = c(list(x = img), a))
+                x <- setGiottoImage(x, img, verbose = FALSE)
+            }
+        }
+
         return(initialize(x)) # init not necessarily needed
     }
 )
 
+#' @rdname spatShift
+#' @export
+setMethod("spatShift", signature("SpatExtent"),
+          function(x, dx = 0, dy = 0) {
+              terra::shift(x, dx = dx, dy = dy)
+          })
 
-#' @describeIn spatShift Shift the locations of a spatLocsObj
+
+#' @rdname spatShift
 #' @export
 setMethod(
     "spatShift", signature("spatLocsObj"),
@@ -145,12 +176,12 @@ setMethod(
     function(
         x, dx = 0, dy = 0, dz = 0,
         copy_obj = TRUE, ...) {
-        x@networkDT <- shift_spatial_network(
+        x@networkDT <- .shift_spatial_network(
             spatnet = x@networkDT,
             dx = dx, dy = dy, dz = dz, ...
         )
         if (!is.null(x@networkDT_before_filter)) {
-            x@networkDT_before_filter <- shift_spatial_network(
+            x@networkDT_before_filter <- .shift_spatial_network(
                 spatnet = x@networkDT_before_filter,
                 dx = dx, dy = dy, dz = dz, ...
             )
@@ -164,7 +195,7 @@ setMethod(
 setMethod(
     "spatShift", signature("giottoPolygon"),
     function(x, dx = 0, dy = 0, copy_obj = FALSE, ...) {
-        shift_gpoly(gpoly = x, dx = dx, dy = dy, copy_obj = copy_obj, ...)
+        .shift_gpoly(gpoly = x, dx = dx, dy = dy, copy_obj = copy_obj, ...)
     }
 )
 
@@ -173,7 +204,9 @@ setMethod(
 setMethod(
     "spatShift", signature("giottoPoints"),
     function(x, dx = 0, dy = 0, copy_obj = FALSE, ...) {
-        shift_gpoints(gpoints = x, dx = dx, dy = dy, copy_obj = copy_obj, ...)
+        .shift_gpoints(
+            gpoints = x, dx = dx, dy = dy, copy_obj = copy_obj, ...
+        )
     }
 )
 
@@ -182,10 +215,20 @@ setMethod(
 setMethod(
     "spatShift", signature("giottoLargeImage"),
     function(x, dx = 0, dy = 0, copy_obj = FALSE, ...) {
-        shift_large_image(image = x, dx = dx, dy = dy, copy_obj = copy_obj, ...)
+        .shift_large_image(
+            image = x, dx = dx, dy = dy, copy_obj = copy_obj, ...
+        )
     }
 )
 
+#' @rdname spatShift
+#' @export
+setMethod(
+    "spatShift", signature("giottoImage"),
+    function(x, dx = 0, dy = 0, ...) {
+        .shift_image(image = x, dx = dx, dy = dy, ...)
+    }
+)
 
 
 
@@ -236,7 +279,7 @@ setMethod(
 
 
 # See function spatShift in generics.R
-#' @name shift_spatial_network
+#' @name .shift_spatial_network
 #' @title Shift spatial network
 #' @description Shift spatial network coordinates
 #' @param spatnet spatial network data.table
@@ -246,7 +289,7 @@ setMethod(
 #' @param copy_obj copy/duplicate object (default = TRUE)
 #' @returns spatial network
 #' @keywords internal
-shift_spatial_network <- function(spatnet, dx = 0, dy = 0, dz = 0,
+.shift_spatial_network <- function(spatnet, dx = 0, dy = 0, dz = 0,
     copy_obj = TRUE) {
     sdimx_begin <- sdimx_end <- sdimy_begin <- sdimy_end <- sdimz_begin <-
         sdimz_end <- NULL
@@ -280,7 +323,7 @@ shift_spatial_network <- function(spatnet, dx = 0, dy = 0, dz = 0,
 #' @param ... additional params to pass
 #' @keywords internal
 #' @noRd
-shift_large_image <- function(
+.shift_large_image <- function(
         image,
         dx = 0,
         dy = 0,
@@ -288,19 +331,37 @@ shift_large_image <- function(
         ...) {
     if (copy_obj) image@raster_object <- terra::deepcopy(image@raster_object)
 
-    if (!all(dx == 0, dy == 0)) {
-        image@raster_object <- terra::shift(
-            image@raster_object,
-            dx = dx, dy = dy, ...
-        )
-    }
-    image
+    if (all(dx == 0, dy == 0)) return(image)
+
+    image@raster_object <- terra::shift(
+        image@raster_object,
+        dx = dx, dy = dy, ...
+    )
+
+    return(image)
+}
+
+#' @rdname spatShift
+#' @param ... additional params to pass
+#' @keywords internal
+#' @noRd
+.shift_image <- function(
+        image,
+        dx = 0,
+        dy = 0,
+        ...
+) {
+    if (all(dx == 0, dy == 0)) return(image)
+    e <- ext(image)
+    e_shift <- terra::shift(e, dx = dx, dy = dy)
+    ext(image) <- e_shift
+    return(image)
 }
 
 #' @rdname spatShift
 #' @keywords internal
 #' @noRd
-shift_gpoints <- function(
+.shift_gpoints <- function(
         gpoints,
         dx = 0,
         dy = 0,
@@ -320,7 +381,7 @@ shift_gpoints <- function(
 #' @rdname spatShift
 #' @keywords internal
 #' @noRd
-shift_gpoly <- function(
+.shift_gpoly <- function(
         gpoly,
         dx = 0,
         dy = 0,
