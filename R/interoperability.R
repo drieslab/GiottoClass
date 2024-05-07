@@ -2637,7 +2637,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
                 )
             }
             SpatialExperiment::spatialCoords(spe) <- data.matrix(
-                spatialLocs[, seq_len(2)]
+              spatialLocs[, c("sdimx", "sdimy")]
             )
         } else {
             if (verbose) {
