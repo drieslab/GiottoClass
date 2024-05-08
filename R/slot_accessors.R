@@ -2238,145 +2238,103 @@ getSpatialLocations <- function(gobject,
 #' @param copy_obj whether to copy/duplicate when getting the
 #' object (default = TRUE)
 #' @param verbose be verbose
+#' @param simplify logical. Whether or not to take object out of a list when
+#' there is a length of 1.
 #' @returns data.table with coordinates or spatLocsObj depending on \code{output}
 #' @family spatial location data accessor functions
 #' @family functions to get data from giotto object
 #' @export
-get_spatial_locations <- function(gobject,
+get_spatial_locations <- function(
+    gobject,
     spat_unit = NULL,
     spat_loc_name = NULL,
     output = c("spatLocsObj", "data.table"),
     copy_obj = TRUE,
     verbose = TRUE,
-    set_defaults = TRUE) {
+    set_defaults = TRUE,
+    simplify = TRUE
+) {
     deprecate_soft("3.3.0",
         what = "get_spatial_locations()",
         with = "getSpatialLocations()"
     )
 
     output <- match.arg(output, choices = c("spatLocsObj", "data.table"))
+    all_su <- identical(spat_unit, ":all:")
 
-    if (!is.null(spat_unit)) {
-        potential_spat_unit <- names(slot(gobject, "spatial_locs"))
-        if (!spat_unit %in% potential_spat_unit) {
-            stop(wrap_txt(
-                'No spatial locations for spatial unit "',
-                spat_unit, '" exist in spatial_locs slot.'
-            ))
-        }
-    }
-
-    # spatial locations
+    # spatial unit defaults
     if (isTRUE(set_defaults)) {
         spat_unit <- set_default_spat_unit(
-            gobject = gobject,
-            spat_unit = spat_unit
+            gobject = gobject, spat_unit = spat_unit
         )
     }
 
+    data_type <- "spatial locations/centroids"
+    slotdata <- slot(gobject, "spatial_locs")
+    # empty slot
+    if (is.null(slotdata) || length(slotdata) == 0L) {
+        stop(wrap_txt(sprintf(
+            "No %s in giotto object", data_type
+        ), errWidth = TRUE), call. = FALSE)
+    }
+    # filter out length 0 spat_units
+    slotdata <- slotdata[lengths(slotdata) > 0L]
 
-    # if NULL (not given) and spatial locations have been added, then use first
-    # one
-    # if NULL (not given) and spatial locations have NOT been added, then keep
-    # NULL
-    if (is.null(spat_loc_name)) {
-        if (!is.null(slot(gobject, "spatial_locs"))) {
-            spat_loc_name <- names(
-                slot(gobject, "spatial_locs")[[spat_unit]]
-            )[[1]]
-        } else {
-            spat_loc_name <- NULL
-            wrap_msg("No spatial locations have been found")
-            return(NULL)
-        }
+    avail_su <- names(slotdata)
+    # nonexistent spat_units
+    missing_su <- spat_unit[!spat_unit %in% avail_su]
+    if (length(missing_su) > 0L && !all_su) {
+        stop(wrap_txt(sprintf(
+            "No %s for spat_unit(s): '%s'", data_type,
+            paste(missing_su, collapse = "', ")
+        ), errWidth = TRUE), call. = FALSE)
     }
 
-    potential_names <- names(slot(gobject, "spatial_locs")[[spat_unit]])
-
-    # get object to return in desired format
-    if (spat_loc_name %in% potential_names) { # case if found
-        if (output == "data.table") { # case if return as data.table
-            if (inherits(slot(
-                gobject,
-                "spatial_locs"
-            )[[spat_unit]][[spat_loc_name]], "spatLocsObj")) { # if is spatLocsObj
-                if (isTRUE(copy_obj)) {
-                    spatloc <- data.table::copy(slot(
-                        slot(
-                            gobject,
-                            "spatial_locs"
-                        )[[spat_unit]][[spat_loc_name]],
-                        "coordinates"
-                    ))
-                } # copy
-                else {
-                    spatloc <- slot(slot(gobject, "spatial_locs")[[spat_unit]][[spat_loc_name]], "coordinates")
-                } # no copy
-            } else { # to be deprecated | if is data.table
-                if (isTRUE(copy_obj)) {
-                    spatloc <- data.table::copy(slot(
-                        gobject, "spatial_locs"
-                    )[[spat_unit]][[spat_loc_name]])
-                } # copy
-                else {
-                    spatloc <- slot(
-                        gobject, "spatial_locs"
-                    )[[spat_unit]][[spat_loc_name]]
-                } # no copy
-            }
-        } else if (output == "spatLocsObj") { # case if return as spatLocsObj
-            if (inherits(
-                slot(
-                    gobject, "spatial_locs"
-                )[[spat_unit]][[spat_loc_name]],
-                "spatLocsObj"
-            )) { # if is spatLocsObj
-                if (isTRUE(copy_obj)) {
-                    spatloc <- copy(slot(
-                        gobject,
-                        "spatial_locs"
-                    )[[spat_unit]][[spat_loc_name]])
-                } # copy
-                else {
-                    spatloc <- slot(
-                        gobject, "spatial_locs"
-                    )[[spat_unit]][[spat_loc_name]]
-                } # no copy
-            } else { # to be deprecated | if is data.table
-                if (isTRUE(copy_obj)) { # copy
-                    spatloc <- new("spatLocsObj",
-                        name = spat_loc_name,
-                        spat_unit = spat_unit,
-                        coordinates = data.table::copy(slot(
-                            gobject,
-                            "spatial_locs"
-                        )[[spat_unit]][[spat_loc_name]]),
-                        provenance = spat_unit
-                    ) # assume
-                } else { # no copy
-                    spatloc <- new("spatLocsObj",
-                        name = spat_loc_name,
-                        spat_unit = spat_unit,
-                        coordinates = slot(
-                            gobject,
-                            "spatial_locs"
-                        )[[spat_unit]][[spat_loc_name]],
-                        provenance = spat_unit
-                    ) # assume
-                }
-            }
-        } else {
-            if (isTRUE(verbose)) {
-                wrap_msg("Other spatial locations outputs not yet supported")
-            }
-        }
-        return(spatloc)
-    } else { # case if not found
-        stop(wrap_txt(
-            "The spatial locations with name ", "'", spat_loc_name,
-            "'", " can not be found \n"
-        ))
+    # subset to requested spat_units
+    if (!all_su) {
+        slotdata <- slotdata[spat_unit]
     }
+    # list depth should be 2: 1. spat_unit(s), 2. spatLocsObj
+    su_names <- names(slotdata) # get surviving spat_unit names
+
+    # select final data
+    out_list <- lapply(su_names, function(su) {
+        su_data <- slotdata[[su]]
+
+        # if spat_loc_name not given return first available
+        if (is.null(spat_loc_name)) return(su_data[[1]])
+
+        # directly return if all requested
+        if (identical(spat_loc_name, ":all:")) return(su_data)
+
+        # catch non-existing spat_loc_names requested
+        missing_sln <- spat_loc_name[!spat_loc_name %in% objName(su_data)]
+        if (length(missing_sln) > 0L) {
+            stop(wrap_txt(sprintf(
+                "No %s with name '%s' and spat_unit '%s'\n", data_type,
+                paste(missing_sln, collapse = "', '"), su
+            ), errWidth = TRUE), call. = FALSE)
+        }
+
+        # select specific
+        su_data <- su_data[spat_loc_name]
+        return(su_data)
+    })
+    out <- Reduce("c", out_list) # combine to single depth 1 list
+    if (!inherits(out, "list")) out <- list(out)
+    names(out) <- NULL # remove names
+
+    # process for output
+    out <- lapply(out, function(x) {
+        if (isTRUE(copy_obj)) x[] <- data.table::copy(x[])
+        res <- switch(output,
+            "spatLocsObj" = x,
+            "data.table" = x[]
+        )
+        return(res)
+    })
+    if (isTRUE(simplify)) out <- .simplify_list(out)
+    return(out)
 }
 
 
@@ -3649,6 +3607,8 @@ set_NearestNetwork <- function(gobject,
 #' @param copy_obj whether to copy/duplicate when getting the
 #' object (default = TRUE)
 #' @param verbose be verbose
+#' @param simplify logical. Whether or not to take object out of a list when
+#' there is a length of 1.
 #' @returns spatialNetworkObj of data.table
 #' @family spatial network data accessor functions
 #' @family functions to get data from giotto object
@@ -3664,7 +3624,9 @@ get_spatialNetwork <- function(gobject,
     ),
     set_defaults = TRUE,
     copy_obj = TRUE,
-    verbose = TRUE) {
+    verbose = TRUE,
+    simplify = TRUE
+) {
     deprecate_soft("3.3.0",
         what = "get_spatialNetwork()",
         with = "getSpatialNetwork()"
@@ -3676,63 +3638,93 @@ get_spatialNetwork <- function(gobject,
         "networkDT_before_filter",
         "outputObj"
     ))
+    all_su <- identical(spat_unit, ":all:")
 
-
-    # Set spat_unit
+    # spatial unit defaults
     if (isTRUE(set_defaults)) {
         spat_unit <- set_default_spat_unit(
-            gobject = gobject,
-            spat_unit = spat_unit
+            gobject = gobject, spat_unit = spat_unit
         )
     }
 
-    # set name to get if missing
-    if (is.null(name)) {
-        name <- names(
-            slot(gobject, "spatial_network")[[spat_unit]]
-        )[[1]]
+    data_type <- "spatial network"
+    slotdata <- slot(gobject, "spatial_network")
+    # catch empty slot
+    if (is.null(slotdata) || length(slotdata) == 0L) {
+        stop(wrap_txt(sprintf(
+            "No %ss in giotto object", data_type
+        ), errWidth = TRUE), call. = FALSE)
     }
 
-    # check if given name is present
-    if (!is.element(name, names(
-        slot(gobject, "spatial_network")[[spat_unit]]
-    ))) {
-        if (isTRUE(verbose)) {
-            msg <- wrap_txt(
-                "spatial network", name,
-                "has not been created. Returning NULL. check which
-                            spatial networks exist with
-                            showGiottoSpatNetworks()"
-            )
+    # filter out length 0 spat_units
+    slotdata <- slotdata[lengths(slotdata) > 0L]
+
+    avail_su <- names(slotdata)
+    # nonexistent spat_units
+    missing_su <- spat_unit[!spat_unit %in% avail_su]
+    if (length(missing_su) > 0L && !all_su) {
+        stop(wrap_txt(sprintf(
+            "No %ss for spat_unit(s): '%s'", data_type,
+            paste(missing_su, collapse = "', '")
+        ), errWidth = TRUE),call. = FALSE)
+    }
+
+    # subset to requested spat_units
+    if (!all_su) {
+        slotdata <- slotdata[spat_unit]
+    }
+    # list depth should be 2: 1. spat_unit(s), 2. spatialNetworkObj
+    su_names <- names(slotdata) # get surviving spat_unit names
+
+    # select final data
+    out_list <- lapply(su_names, function(su) {
+        su_data <- slotdata[[su]]
+
+        # if name not given, return first available
+        if (is.null(name)) return(su_data[[1L]])
+
+        # directly return if all requested
+        if (identical(name, ":all:")) return(su_data)
+
+        # catch non-existing names requested
+        missing_snn <- name[!name %in% objName(su_data)]
+        if (length(missing_snn) > 0L) {
+            stop(wrap_txt(sprintf(
+                "No %ss with name '%s' and spat_unit '%s'\n",
+                data_type, paste(missing_snn, collapse = "', '"), su
+            ), errWidth = TRUE), call. = FALSE)
         }
-        warning(msg)
-        return(NULL)
-    } else {
-        networkObj <- slot(gobject, "spatial_network")[[spat_unit]][[name]]
 
-        # S3 backwards compatibility
-        if (!isS4(networkObj)) networkObj <- S3toS4spatNetObj(networkObj)
-        silent <- validObject(networkObj) # Variable used to hide TRUE print
-    }
+        # select specific
+        su_data <- su_data[name]
+        return(su_data)
+    })
 
-    if (copy_obj) {
-        networkObj@networkDT <- data.table::copy(networkObj@networkDT)
-        if (!is.null(networkObj@networkDT_before_filter)) {
-            networkObj@networkDT_before_filter <- data.table::copy(
-                networkObj@networkDT_before_filter
-            )
+    out <- Reduce("c", out_list) # combine to single depth 1 list
+    if (!inherits(out, "list")) out <- list(out)
+    names(out) <- NULL # remove names
+
+    # process for output
+    out <- lapply(out, function(x) {
+        if (isTRUE(copy_obj)) {
+            x[] <- data.table::copy(x[])
+            if (!is.null(x@networkDT_before_filter)) {
+                x@networkDT_before_filter <- data.table::copy(
+                    x@networkDT_before_filter
+                )
+            }
         }
-    }
 
-    if (output == "spatialNetworkObj") {
-        return(networkObj)
-    } else if (output == "networkDT") {
-        return(slot(networkObj, "networkDT"))
-    } else if (output == "networkDT_before_filter") {
-        return(slot(networkObj, "networkDT_before_filter"))
-    } else if (output == "outputObj") {
-        return(slot(networkObj, "outputObj"))
-    }
+        res <- switch(output,
+            "spatialNetworkObj" = x,
+            "networkDT" = x[],
+            "networkDT_before_filter" = x@networkDT_before_filter,
+            "outputObj" = x@outputObj
+        )
+        return(res)
+    })
+    if (isTRUE(simplify)) out <- .simplify_list(out)
+    return(out)
 }
 
 
@@ -3802,7 +3794,7 @@ get_spatial_network_list <- function(gobject,
     ),
     set_defaults = TRUE,
     copy_obj = TRUE) {
-    assert_giotto(gobject)
+    checkmate::assert_class(gobject, "giotto")
 
     output <- match.arg(output, choices = c(
         "spatialNetworkObj",
@@ -3835,7 +3827,6 @@ get_spatial_network_list <- function(gobject,
 
     # copy object
     if (isTRUE(copy_obj)) data_list <- lapply(data_list, copy)
-
 
     # return object list
     switch(output,
@@ -6295,3 +6286,17 @@ spatValues <- function(gobject, spat_unit = NULL, feat_type = NULL, feats,
 
     return(vals)
 }
+
+
+
+# internals ####
+
+.simplify_list <- function(x) {
+    if (length(x) == 1L && inherits(x, "list")) {
+        # if list of length 1, unlist
+        return(x[[1L]])
+    }
+    return(x)
+}
+
+
