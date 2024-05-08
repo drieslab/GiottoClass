@@ -1133,37 +1133,6 @@ setClass("spatialNetworkObj",
 
 
 ### * Additional functions ####
-# spatialNetworkObj Class
-
-# S3 to S4 backwards compatibility
-
-#' @title Spatial Networks
-#' @name S3toS4spatNetObj
-#' @description convert S3 spatialNetworkObj to S4
-#' @param object S3 spatNetworkObj
-#' @param spat_unit spatial unit metadata to append
-#' @keywords internal
-#' @returns S4 spatNetObj
-S3toS4spatNetObj <- function(object,
-    spat_unit = NULL) {
-    if (!isS4(object)) {
-        object <- new("spatialNetworkObj",
-            name = object$name,
-            method = object$method,
-            parameters = object$parameters,
-            outputObj = object$outputObj,
-            networkDT = object$networkDT,
-            networkDT_before_filter = object$networkDT_before_filter,
-            cellShapeObj = object$cellShapeObj,
-            crossSectionObjects = object$crossSectionObjects,
-            spat_unit = spat_unit,
-            misc = object$misc
-        )
-    }
-    object
-}
-
-
 
 
 ## crossSectionObj class ####
