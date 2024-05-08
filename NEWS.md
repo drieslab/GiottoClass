@@ -5,6 +5,9 @@
 ## breaking changes
 - deprecation of `reconnect_image_object()`, `reconnect_giottoImage_MG()` and `reconnect_giottoLargeImage()` internals in favor of simpler `reconnect()` generic
 - `giotto` `@largeImage` slot is removed. All images now exist in `@images` slot.
+- backwards compatibility for S3 `spatialNetworkObj` removed
+- Not finding a specific `spatialNetworkObj` with `getSpatialNetwork()` is now upgraded to an error instead of returning `NULL` to be in line with other accessors.
+- backwards compatibility for bare `data.table` spatial coordinates information is removed
 
 ## bug fixes
 - fix `plot()` params passing for `giottoPolygon` when `type = "centroid"`
