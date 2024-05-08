@@ -128,6 +128,11 @@ setMethod("featType<-", signature = "featData", function(x, value) {
 
 # objName ####
 
+#' @rdname objName-generic
+#' @export
+setMethod("objName", signature = "list", function(x) {
+    vapply(x, objName, FUN.VALUE = character(1L), USE.NAMES = FALSE)
+})
 
 #' @describeIn objName-generic Get name information
 #' @export
@@ -144,6 +149,20 @@ setMethod("objName", signature("giottoLargeImage"), function(x) x@name)
 #' @rdname objName-generic
 #' @export
 setMethod("objName", signature("giottoImage"), function(x) x@name)
+
+#' @rdname objName-generic
+#' @export
+setMethod("objName<-", signature = "list", function(x, value) {
+    if (length(x) != length(value)) {
+        stop("Number of names to set must be the same as the length of list",
+             call. = FALSE)
+    }
+    lapply(seq_along(x), function(i) {
+        y <- x[[i]]
+        objName(y) <- value[[i]]
+        return(y)
+    })
+})
 
 #' @rdname objName-generic
 #' @export
