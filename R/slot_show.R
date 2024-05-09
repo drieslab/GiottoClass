@@ -439,7 +439,7 @@ showGiottoSpatEnrichments <- function(gobject,
 
         for (feature_type in
             available_data[spat_unit == spatial_unit, unique(feat_type)]) {
-            cat("--> Feature type: ", feature_type, " \n\n")
+            cat("--> Feature type: ", feature_type, " \n")
 
             for (spatenrichname in
                 available_data[
@@ -447,7 +447,7 @@ showGiottoSpatEnrichments <- function(gobject,
                 ][
                     feat_type == feature_type, unique(name)
                 ]) {
-                cat("----> Name ", spatenrichname, ": \n\n")
+                cat("\n----> Name ", spatenrichname, ": \n")
 
                 print(gobject@spatial_enrichment[[spatial_unit]][[
                     feature_type
