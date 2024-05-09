@@ -128,14 +128,24 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
         "pandas", "igraph", "leidenalg", "community",
         "networkx", "sklearn"
     )
+
+    missing_modules <- vector(mode = "character")
     for (module in python_modules) {
         if (reticulate::py_module_available(module) == FALSE) {
-            warning(
-                "module: ", module, " was not found with python path: ",
-                my_python_path, "\n"
-            )
+            missing_modules <- c(missing_modules, module)
         }
     }
+
+    if (length(missing_modules) > 0L) {
+        warning(wrap_txt(sprintf(
+            "Some of Giotto's expected python module(s) were not found:
+            %s\n\n** Python path used: \"%s\"
+            (This is fine if python-based functions are not needed)",
+            paste(missing_modules, collapse = ", "),
+            my_python_path
+        ), .prefix = ""), call. = FALSE)
+    }
+    return(invisible())
 }
 
 
