@@ -1497,7 +1497,9 @@ createMetafeats <- function(gobject,
         vmsg(.v = verbose, "calculating metafeature: ", clus_id)
         # subset to features requested for cluster
         selected_feats <- names(x[x == clus_id])
-        sub_mat <- expr_values[rownames(expr_values) %in% selected_feats, ]
+        sub_mat <- expr_values[
+            rownames(expr_values) %in% selected_feats, , drop = FALSE
+        ]
 
         # calculate score
         score <- stat_fun(sub_mat)
@@ -1530,7 +1532,9 @@ createMetafeats <- function(gobject,
         vmsg(.v = verbose, "calculating metafeature: ", clus_id)
         # subset to features requested for cluster
         selected_feats <- x[clus == clus_id, feat]
-        sub_mat <- expr_values[rownames(expr_values) %in% selected_feats, ]
+        sub_mat <- expr_values[
+            rownames(expr_values) %in% selected_feats, , drop = FALSE
+        ]
         expr_feats <- rownames(sub_mat) # subset of `selected_feats` from `x`
 
         # apply weights if any
