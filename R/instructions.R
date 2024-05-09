@@ -55,7 +55,8 @@ createGiottoInstructions <- function(python_path = NULL,
 
     if ((is.null(python_path) | inherits(python_path, "try-error")) &
         !no_python_warn) {
-        warning(wrap_txt("Python is required for full Giotto functionality."))
+        warning(wrap_txt("Python is required for full Giotto functionality."),
+                call. = FALSE)
         options("giotto.has_conda" = FALSE)
     }
 

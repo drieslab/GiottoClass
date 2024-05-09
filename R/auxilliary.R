@@ -1214,8 +1214,20 @@ calculateMetaTableCells <- function(gobject,
 #' @param feat_type feature type
 #' @param expression_values expression values to use
 #' @param feat_clusters numerical vector with features as names
+#' @param stat statistical transformation to calculate across the cluster
+#' features per cell to get the metafeature value. Provided defaults are
+#' "mean", 'sum', "max", and "min". If a function  is supplied instead,
+#' it will be run via `apply(MARGIN = 2)` across the expression matrix to
+#' calculate  the metafeature value.
+#' @param rescale_to numeric vector of length 2. (optional) New maximum and
+#' minimum to rescale all features to before calculating the metafeature score
+#' using `stat`. Values are first zeroed by setting the minimum value to 0,
+#' then they are rescaled. In cases where all values are the same across a
+#' feature, the rescale produces the middle point of the range specified by
+#' `rescale_to`
 #' @param name name of the metagene results
 #' @param return_gobject return giotto object
+#' @param verbose be verbose
 #' @returns giotto object
 #' @details An example for the 'gene_clusters' could be like this:
 #' cluster_vector = c(1, 1, 2, 2)
@@ -1226,26 +1238,99 @@ calculateMetaTableCells <- function(gobject,
 #' # set a spat unit to use
 #' activeSpatUnit(g) <- "aggregate"
 #'
-#' # create the metafeats
-#' # We do this by making an annotation vector which is a numerical vector
-#' # of cluster assignments where each number is named by the feature it
-#' # describes.
-#' #
-#' # Here we create an example annotation vector by arbitrarily using the
-#' # first 6 features and putting 3 in cluster 1 and the other 3 in cluster 2.
+#' # define the metafeats
+#' # We do this by making a set of annotations. These annotations can be
+#' # made as either a vector or data.frame
 #'
+#' # 1.1 annotation vector (numeric)
 #' feats_to_use <- featIDs(g)[seq_len(6)]
-#' clust_to_use <- c(1, 1, 1, 2, 2, 2)
-#' names(clust_to_use) <- feats_to_use
-#'
-#' # show
-#' clust_to_use
+#' clust_to_use1 <- c(1, 1, 1, 2, 2, 2)
+#' names(clust_to_use1) <- feats_to_use
+#' force(clust_to_use1)
 #'
 #' g <- createMetafeats(
 #'     gobject = g,
-#'     feat_clusters = clust_to_use,
-#'     name = "new_metagene"
+#'     feat_clusters = clust_to_use1,
+#'     name = "metagene_1"
 #' )
+#'
+#' # 1.2 annotation vector (character)
+#' clust_to_use2 <- c(rep("sig_a", 3), rep("sig_b", 3))
+#' names(clust_to_use2) <- feats_to_use
+#' force(clust_to_use2)
+#'
+#' g <- createMetafeats(
+#'     gobject = g,
+#'     feat_clusters = clust_to_use2,
+#'     name = "metagene_2"
+#' )
+#'
+#' # 2.1 annotation data.frame (no weights)
+#' # Cols must be:
+#' # `clus` - which metafeature
+#' # `feat` - features to assign to this metafeature
+#' # `w` - (optional) weight to assign the feature before metafeature score
+#' #       calculation
+#' clust_to_use3 <- data.frame(
+#'     clus = c(rep("sig_a", 3), rep("sig_b", 3)),
+#'     feat = feats_to_use
+#' )
+#' force(clust_to_use3)
+#' g <- createMetafeats(
+#'     gobject = g,
+#'     feat_clusters = clust_to_use3,
+#'     name = "metagene_3"
+#' )
+#'
+#' # 2.1 annotation data.frame (weights)
+#' clust_to_use4 <- data.frame(
+#'     clus = c(rep("sig_a", 3), rep("sig_b", 3)),
+#'     feat = feats_to_use,
+#'     w = c(1, 1, 1, 2, 3, 4)
+#' )
+#' force(clust_to_use4)
+#' g <- createMetafeats(
+#'     gobject = g,
+#'     feat_clusters = clust_to_use4,
+#'     name = "weighted_metagene"
+#' )
+#'
+#' # 3. Other statistic transforms can be calculated
+#' # The default and what has been used so far is just finding the mean
+#' g <- createMetafeats(
+#'     gobject = g,
+#'     feat_clusters = clust_to_use4,
+#'     stat = "sum",
+#'     expression_values = "raw", # find summed raw expr for these feats
+#'     name = "raw_sums"
+#' )
+#'
+#' # 4. A custom stat function can also be supplied
+#' # These custom functions must be summary functions, as in, they must
+#' # produce only a single numeric output from many
+#' custom_stat <- function(x) {
+#'     if (max(x) == 0) return(0)
+#'     return(mean(x/max(x)))
+#' }
+#' g <- createMetafeats(
+#'     gobject = g,
+#'     feat_clusters = clust_to_use4,
+#'     stat = custom_stat,
+#'     expression_values = "raw",
+#'     name = "raw_custom"
+#' )
+#'
+#' # 5. A rescale of the values to a specified numeric range can be applied
+#' # before the stat score calculation.
+#' g <- createMetafeats(
+#'     gobject = g,
+#'     feat_clusters = clust_to_use4,
+#'     stat = "mean",
+#'     expression_values = "normalized",
+#'     rescale_to = c(0, 1),
+#'     name = "norm_scaled_mean_metafeat"
+#' )
+#' showGiottoSpatEnrichments(g)
 #' @seealso [GiottoVisuals::spatCellPlot()]
 #' @export
 createMetafeats <- function(gobject,
@@ -1253,18 +1338,55 @@ createMetafeats <- function(gobject,
     feat_type = NULL,
     expression_values = c("normalized", "scaled", "custom"),
     feat_clusters,
-    name = "metafeat",
-    return_gobject = TRUE) {
+    stat = c("mean", "sum", "max", "min"),
+    rescale_to = NULL,
+    name = paste0("metafeat_", ifelse(is.function(stat), "custom", stat)),
+    return_gobject = TRUE,
+    verbose = NULL
+) {
+
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
-        gobject = gobject,
-        spat_unit = spat_unit
+        gobject = gobject, spat_unit = spat_unit
     )
     feat_type <- set_default_feat_type(
-        gobject = gobject,
-        spat_unit = spat_unit,
-        feat_type = feat_type
+        gobject = gobject, spat_unit = spat_unit, feat_type = feat_type
     )
+
+    if (!is.null(rescale_to)) {
+        if (!is.numeric(rescale_to) || length(rescale_to) != 2L) {
+            stop(wrap_txt(
+                "`rescale_to` must be a numeric vector with length of 2
+                Example input: `c(0, 1)`",
+                errWidth = TRUE
+            ), call. = FALSE)
+        }
+    }
+
+    preset_stats <- c("mean", "sum", "max", "min")
+    if (is.character(stat)) {
+        # preset stat_fun
+        stat <- match.arg(stat, choices = preset_stats)
+        stat_fun <- switch(stat,
+            "mean" = colMeans_flex,
+            "sum" = colSums_flex,
+            "max" = function(x) apply(x, MARGIN = 2L, FUN = max),
+            "min" = function(x) apply(x, MARGIN = 2L, FUN = min),
+        )
+    } else {
+        # custom stat_fun
+        if (!inherits(stat, "function")) {
+            stop(wrap_txtf(
+                "%s or %s:\n '%s'",
+                "`stat` is not a custom function",
+                "one of the preset stats",
+                paste(preset_stats, collapse = "', '"),
+                errWidth = TRUE
+            ), call. = FALSE)
+        }
+        # apply() the stat function on cols
+        stat_fun <- function(x) apply(x, MARGIN = 2L, FUN = stat)
+    }
 
     # expression values to be used
     values <- match.arg(
@@ -1274,7 +1396,7 @@ createMetafeats <- function(gobject,
             expression_values
         ))
     )
-    expr_values <- get_expression_values(
+    exprobj <- get_expression_values(
         gobject = gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
@@ -1282,33 +1404,40 @@ createMetafeats <- function(gobject,
         output = "exprObj"
     )
 
+    # drop to matrix representation
+    expr_values <- exprobj[]
 
-    ## calculate metafeat ##
-    res_list <- list()
-
-    for (id in sort(unique(feat_clusters))) {
-        clus_id <- id
-
-        selected_feats <- names(feat_clusters[feat_clusters == clus_id])
-        sub_mat <- expr_values[][rownames(expr_values[]) %in% selected_feats, ]
-
-        # calculate mean
-        if (length(selected_feats) == 1) {
-            mean_score <- sub_mat
-        } else {
-            mean_score <- colMeans_flex(sub_mat)
-        }
-
-        res_list[[id]] <- mean_score
+    # apply features rescale (rowwise) if needed
+    if (!is.null(rescale_to)) {
+        expr_values <- apply(expr_values, MARGIN = 1, function(feat) {
+            .rescalev(feat, rmin = min(rescale_to), rmax = max(rescale_to))
+        }) %>%
+            t_flex()
     }
 
-    res_final <- data.table::as.data.table(t(do.call("rbind", res_list)))
-    colnames(res_final) <- as.character(sort(unique(feat_clusters)))
+    calc_args <- list(
+        x = feat_clusters,
+        stat_fun = stat_fun,
+        expr_values = expr_values,
+        verbose = verbose
+    )
 
-    # data.table variables
+    ## calculate metafeat ##
+    res_final <- if (is.vector(feat_clusters)) {
+        do.call(.calc_metafeat_vec, args = calc_args)
+    } else if (inherits(feat_clusters, "data.frame")) {
+        do.call(.calc_metafeat_dt, args = calc_args)
+    } else {
+        stop(wrap_txtf(
+            "`feat_clusters` is neither a vector nor a data.frame-like input",
+            errWidth = TRUE
+        ), call. = FALSE)
+    }
+
+    # NSE variables
     cell_ID <- NULL
 
-    res_final[, cell_ID := colnames(expr_values[])]
+    res_final[, cell_ID := colnames(expr_values)]
 
     # create spatial enrichment object
     enrObj <- create_spat_enr_obj(
@@ -1317,7 +1446,7 @@ createMetafeats <- function(gobject,
         enrichDT = res_final,
         spat_unit = spat_unit,
         feat_type = feat_type,
-        provenance = expr_values@provenance,
+        provenance = exprobj@provenance,
         misc = list(expr_values_used = expression_values)
     )
 
@@ -1351,6 +1480,103 @@ createMetafeats <- function(gobject,
 }
 
 
+# `x` should be a vector (numeric or character) with names.
+# The metafeatures/clusters are defined by the numerical values
+# The features to use are given by the names.
+# Which metafeature/cluster to assign the feature(s) to is encoded by which
+# numbers are named that feature.
+# `expr_values` should be a matrix-like
+.calc_metafeat_vec <- function(
+        x, expr_values, stat_fun, verbose = NULL
+) {
+    res_list <- list()
+    clusters <- mixedsort(unique(x))
+
+    # iterate through clusters
+    for (clus_id in clusters) {
+        vmsg(.v = verbose, "calculating metafeature: ", clus_id)
+        # subset to features requested for cluster
+        selected_feats <- names(x[x == clus_id])
+        sub_mat <- expr_values[rownames(expr_values) %in% selected_feats, ]
+
+        # calculate score
+        score <- stat_fun(sub_mat)
+
+        res_list[[clus_id]] <- score
+    }
+
+    res_final <- data.table::as.data.table(t(do.call("rbind", res_list)))
+    colnames(res_final) <- as.character(clusters)
+
+    return(res_final)
+}
+
+# `x` is a data.table with at least cols `clus` and `feat` for
+# cluster/metafeature and feature to assign respectively. A third `w` numeric
+# col can be provided which is a weight to apply to the values before
+# performing the stat_fun score calculation.
+.calc_metafeat_dt <- function(
+        x, expr_values, stat_fun, verbose = NULL
+) {
+    # NSE vars
+    clus <- feat <- w <- NULL
+
+    x <- data.table::as.data.table(x)
+    res_list <- list()
+    clusters <- x[, mixedsort(unique(clus))]
+
+    # iterate through clusters
+    for (clus_id in clusters) {
+        vmsg(.v = verbose, "calculating metafeature: ", clus_id)
+        # subset to features requested for cluster
+        selected_feats <- x[clus == clus_id, feat]
+        sub_mat <- expr_values[rownames(expr_values) %in% selected_feats, ]
+        expr_feats <- rownames(sub_mat) # subset of `selected_feats` from `x`
+
+        # apply weights if any
+        if ("w" %in% names(x)) {
+            w <- x[clus == clus_id, c("feat", "w")][match(expr_feats, feat), w]
+            sub_mat <- w * sub_mat
+        }
+
+        # calculate score
+        score <- stat_fun(sub_mat)
+
+        res_list[[clus_id]] <- score
+    }
+
+    res_final <- data.table::as.data.table(t(do.call("rbind", res_list)))
+    colnames(res_final) <- as.character(clusters)
+
+    return(res_final)
+}
+
+# rescale a numeric vector input to a new min and max
+# values are zeroed before scaling
+.rescalev <- function(x, rmin, rmax) {
+    rx <- range(x)
+    xmin <- rx[1L]
+    xmax <- rx[2L]
+    if (xmax == xmin) {
+        return(mean(rmin, rmax)) # return midpoint of rescaled range
+    }
+
+    # zero values
+    x <- x - xmin
+    xmax <- xmax - xmin # update xmax
+
+    # rescale
+    rrange <- rmax - rmin
+    scalef <- rrange / xmax
+
+    # pad values with new min val
+    res <- x * scalef
+    if (rmin != 0) {
+        res <- res + rmin
+    }
+
+    return(res)
+}
 
 
 
