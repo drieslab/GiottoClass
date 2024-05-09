@@ -173,7 +173,7 @@ check_py_for_scanpy <- function() {
 #' generated in that function,
 #' i.e. {spat_unit}_{feat_type}_spatial_network_keys_added.txt
 #' Cannot be the same as n_key_added.
-#' @param deluanay_spat_net binary parameter for spatial network. If TRUE, the
+#' @param delaunay_spat_net binary parameter for spatial network. If TRUE, the
 #' spatial network is a deluanay network.
 #' @param spat_unit desired spatial unit for conversion, default NULL
 #' @param feat_type desired feature type for conversion, default NULL
@@ -201,7 +201,7 @@ check_py_for_scanpy <- function() {
 anndataToGiotto <- function(anndata_path = NULL,
     n_key_added = NULL,
     spatial_n_key_added = NULL,
-    deluanay_spat_net = TRUE,
+    delaunay_spat_net = TRUE,
     spat_unit = NULL,
     feat_type = NULL,
     h5_file = NULL,
@@ -517,7 +517,7 @@ anndataToGiotto <- function(anndata_path = NULL,
 
             # TODO filter network?
             # TODO 3D handling?
-            if (deluanay_spat_net) {
+            if (delaunay_spat_net) {
                 spatObj <- create_spat_net_obj(
                     name = "Spat_Net_from_AnnData",
                     method = "delaunay",
