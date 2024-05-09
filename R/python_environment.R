@@ -123,6 +123,10 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
     if (isFALSE(getOption("giotto.use_conda", TRUE))) {
         return(invisible(NULL))
     }
+    if (getOption("giotto.checked_py_modules", FALSE)) {
+        # only do this check once per session
+        return(invisible(NULL))
+    }
 
     python_modules <- c(
         "pandas", "igraph", "leidenalg", "community",
@@ -145,6 +149,7 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
             my_python_path
         ), .prefix = ""), call. = FALSE)
     }
+    options("giotto.checked_py_modules" = TRUE)
     return(invisible())
 }
 
