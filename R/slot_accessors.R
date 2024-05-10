@@ -4373,10 +4373,13 @@ setSpatialGrid <- function(gobject,
 #' @description Get giotto polygon spatVector
 #' @param gobject giotto object
 #' @param polygon_name name of polygons. Default "cell"
-#' @param polygon_overlap include polygon overlap information
+#' @param polygon_overlap if not NULL, return specified polygon overlap
+#' information
 #' @param return_giottoPolygon (Defaults to FALSE) Return as giottoPolygon S4
 #' object
 #' @param verbose be verbose
+#' @param simplify logical. Whether or not to take object out of a list when
+#' there is a length of 1.
 #' @returns spatVector
 #' @family polygon info data accessor functions
 #' @family functions to get data from giotto object
@@ -4385,13 +4388,17 @@ get_polygon_info <- function(gobject,
     polygon_name = NULL,
     polygon_overlap = NULL,
     return_giottoPolygon = FALSE,
-    verbose = TRUE) {
+    verbose = TRUE,
+    simplify = TRUE
+) {
     deprecate_soft("3.3.0",
         what = "get_polygon_info()",
         with = "getPolygonInfo()"
     )
 
-    potential_names <- names(slot(gobject, "spatial_info"))
+    slotdata <- slot(gobject, "spatial_info")
+    potential_names <- names(slotdata)
+
     if (is.null(potential_names)) {
         stop("Giotto object contains no polygon information")
     }
@@ -4405,39 +4412,52 @@ get_polygon_info <- function(gobject,
             polygon_name <- potential_names[1]
             # Select 1st available name if 'cell' is missing
             if (isTRUE(verbose)) {
-                wrap_msg('No polygon information named "cell" discovered.
-                 Selecting first available ("', polygon_name, '")')
+                wrap_txtf("No polygon information named 'cell' discovered.
+                Selecting first available ('%s')", polygon_name)
             }
         }
     }
 
-    if (isTRUE(return_giottoPolygon)) {
-        return(slot(gobject, "spatial_info")[[polygon_name]])
+    all_p <- identical(polygon_name, ":all:")
+    # nonexistent polys
+    missing_p <- polygon_name[!polygon_name %in% potential_names]
+    if (length(missing_p) > 0L && !all_p) {
+        stop(wrap_txtf(
+            "No polygon information with name(s): '%s'",
+            paste(missing_p, collapse = "', '"), errWidth = TRUE
+        ), call. = FALSE)
     }
 
-    if (!polygon_name %in% potential_names) {
-        stop("There is no polygon information with name ", polygon_name, "\n")
-    } else {
-        if (is.null(polygon_overlap)) {
-            poly_info <- gobject@spatial_info[[polygon_name]]@spatVector
-        } else {
-            potential_overlaps <- names(
-                gobject@spatial_info[[polygon_name]]@overlaps
-            )
+    # subset to requested spat_units
+    if (!all_p) {
+        slotdata <- slotdata[polygon_name]
+    }
+
+    # process for output
+    names(slotdata) <- NULL # remove names
+    out <- lapply(slotdata, function(x) {
+        if (isTRUE(return_giottoPolygon)) {
+            return(x)
+        }
+
+        if (!is.null(polygon_overlap)) {
+            ovlp_data <- slot(x, "overlaps")
+            potential_overlaps <- names(ovlp_data)
 
             if (!polygon_overlap %in% potential_overlaps) {
-                stop(
-                    "There is no polygon overlap information with name ",
-                    polygon_overlap, "\n"
-                )
-            } else {
-                poly_info <- gobject@spatial_info[[
-                    polygon_name
-                ]]@overlaps[[polygon_overlap]]
+                stop(wrap_txtf(
+                    "There is no polygon overlap information with name",
+                    polygon_overlap, errWidth = TRUE
+                ), call. = FALSE)
             }
+            return(ovlp_data[[polygon_overlap]])
         }
-        return(poly_info)
-    }
+
+        # return poly geom object
+        return(x[])
+    })
+    if (isTRUE(simplify)) out <- .simplify_list(out)
+    return(out)
 }
 
 
@@ -4890,6 +4910,8 @@ getFeatureInfo <- function(gobject = gobject,
 #' @title Get feature info
 #' @name get_feature_info
 #' @param return_giottoPoints return as a giottoPoints object
+#' @param simplify logical. Whether or not to take object out of a list when
+#' there is a length of 1.
 #' @inheritParams data_access_params
 #' @description Get giotto points spatVector
 #' @returns a SpatVector (default) or giottoPoints object depending on value of
@@ -4900,13 +4922,13 @@ getFeatureInfo <- function(gobject = gobject,
 get_feature_info <- function(gobject,
     feat_type = NULL,
     set_defaults = TRUE,
-    return_giottoPoints = FALSE) {
+    return_giottoPoints = FALSE,
+    simplify = TRUE) {
     deprecate_soft("3.3.0",
         what = "get_feature_info()",
         with = "getFeatureInfo()"
     )
-
-    assert_giotto(gobject)
+    checkmate::assert_class(gobject, "giotto")
 
     # specify feat_type
     if (isTRUE(set_defaults)) {
@@ -4917,18 +4939,40 @@ get_feature_info <- function(gobject,
         )
     }
 
-    potential_names <- names(gobject@feat_info)
+    slotdata <- slot(gobject, "feat_info")
+    potential_names <- names(slotdata)
 
-    if (!feat_type %in% potential_names) {
-        stop("There is no feature information with name ", feat_type, "\n")
-    } else {
-        feat_info <- gobject@feat_info[[feat_type]]
-        if (return_giottoPoints) {
-            return(feat_info)
-        } else {
-            return(feat_info@spatVector)
-        }
+    if (is.null(potential_names)) {
+        stop("Giotto object contains no feature point information",
+             call. = FALSE)
     }
+
+    all_fi <- identical(feat_type, ":all:")
+    # nonexistent points
+    missing_p <- feat_type[!feat_type %in% potential_names]
+    if (length(missing_p) > 0L && !all_fi) {
+        stop(wrap_txtf(
+            "No feature point information with name '%s'",
+            paste(missing_p, collapse = "', '"), errWidth = TRUE
+        ), call. = FALSE)
+    }
+
+    # subset to requested feat_type
+    if (!all_fi) {
+        slotdata <- slotdata[feat_type]
+    }
+
+    # process for output
+    names(slotdata) <- NULL # remove names
+    out <- lapply(slotdata, function(x) {
+        if (isTRUE(return_giottoPoints)) {
+            return(x)
+        }
+        # return point geom object
+        return(x[])
+    })
+    if (isTRUE(simplify)) out <- .simplify_list(out)
+    return(out)
 }
 
 
