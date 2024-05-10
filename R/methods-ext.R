@@ -120,11 +120,13 @@ setMethod("ext", signature("giottoImage"), function(x, ...) {
 #' @param verbose be verbose
 #' @export
 setMethod("ext", signature("giotto"), function(x,
-    spat_unit = NULL,
-    feat_type = NULL,
+    spat_unit = ":all:",
+    feat_type = ":all:",
     all_data = TRUE,
     prefer = c("polygon", "spatlocs", "points", "images"),
-    name = NULL,
+    name = list(
+        spatlocs = ":all:"
+    ),
     verbose = NULL,
     ...) {
     data_types <- c("polygon", "spatlocs", "points", "images")
@@ -134,25 +136,24 @@ setMethod("ext", signature("giotto"), function(x,
         checkmate::assert_subset(names(name), choices = data_types)
     }
 
-    prefer <- match.arg(
-        prefer,
-        choices = data_types,
-        several.ok = TRUE
-    )
+    prefer <- match.arg(prefer, choices = data_types, several.ok = TRUE)
 
     spat_unit <- set_default_spat_unit(
-        gobject = x,
-        spat_unit = spat_unit
+        gobject = x, spat_unit = spat_unit
     )
     feat_type <- set_default_feat_type(
-        gobject = x,
-        spat_unit = spat_unit,
-        feat_type = feat_type
+        gobject = x, spat_unit = spat_unit, feat_type = feat_type
     )
 
-    has_poly <- spat_unit %in% list_spatial_info_names(x)
-    has_ctrs <- spat_unit %in% list_spatial_locations(x)$spat_unit
-    has_pnts <- feat_type %in% list_feature_info(x)$feat_info
+    if (identical(spat_unit, ":all:")) {
+        has_poly <- length(list_spatial_info_names(x)) > 0
+        has_ctrs <- length(list_spatial_locations(x)$spat_unit) > 0
+        has_pnts <- length(list_feature_info(x)$feat_info) > 0
+    } else {
+        has_poly <- spat_unit %in% list_spatial_info_names(x)
+        has_ctrs <- spat_unit %in% list_spatial_locations(x)$spat_unit
+        has_pnts <- feat_type %in% list_feature_info(x)$feat_info
+    }
     has_imgs <- length(list_images_names(x)) > 0
 
     if (sum(has_poly, has_ctrs, has_pnts) == 0) {
@@ -181,6 +182,7 @@ setMethod("ext", signature("giotto"), function(x,
     }
 
     # get the object(s)
+    # for each type of data, get all
     elist2 <- lapply(use_type, function(type) {
         spat_obj <- switch(type,
             "polygon" = getPolygonInfo(
