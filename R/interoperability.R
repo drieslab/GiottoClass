@@ -174,9 +174,9 @@ check_py_for_scanpy <- function() {
 #' i.e. {spat_unit}_{feat_type}_spatial_network_keys_added.txt
 #' Cannot be the same as n_key_added.
 #' @param delaunay_spat_net binary parameter for spatial network. If TRUE, the
-#' spatial network is a deluanay network.
-#' @param spat_unit desired spatial unit for conversion, default NULL
-#' @param feat_type desired feature type for conversion, default NULL
+#' spatial network is a delaunay network.
+#' @param spat_unit desired spatial unit to use for conversion, default NULL
+#' @param feat_type desired feature type to use for conversion, default NULL
 #' @param h5_file name to create and on-disk HDF5 file
 #' @param python_path path to python executable within a conda/miniconda
 #' environment
@@ -190,6 +190,7 @@ check_py_for_scanpy <- function() {
 #' @returns Giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
+#' # create saved object to test
 #' temp_directory <- tempdir()
 #' giottoToAnnData(g, save_directory = paste0(temp_directory, "/"))
 #'
@@ -198,15 +199,17 @@ check_py_for_scanpy <- function() {
 #'     "/cell_rna_converted_gobject.h5ad"
 #' ))
 #' @export
-anndataToGiotto <- function(anndata_path = NULL,
-    n_key_added = NULL,
-    spatial_n_key_added = NULL,
-    delaunay_spat_net = TRUE,
-    spat_unit = NULL,
-    feat_type = NULL,
-    h5_file = NULL,
-    python_path = NULL,
-    env_name = "giotto_env") {
+anndataToGiotto <- function(
+        anndata_path = NULL,
+        n_key_added = NULL,
+        spatial_n_key_added = NULL,
+        delaunay_spat_net = TRUE,
+        spat_unit = NULL,
+        feat_type = NULL,
+        h5_file = NULL,
+        python_path = NULL,
+        env_name = "giotto_env"
+) {
     # Preliminary file checks and guard clauses
     if (is.null(anndata_path)) {
         stop("Please provide a path to an AnnData .h5ad file for conversion.\n")
@@ -622,7 +625,7 @@ giottoToAnnData <- function(gobject = NULL,
     scanpy_installed <- checkPythonPackage("scanpy", env_to_use = env_name)
 
     # Python module import
-    g2ad_path <- system.file("python", "g2ad.py", package = "Giotto")
+    g2ad_path <- system.file("python", "g2ad.py", package = "GiottoClass")
     reticulate::source_python(g2ad_path)
     if (!is.null(save_directory)) dir_guard(save_directory)
 
