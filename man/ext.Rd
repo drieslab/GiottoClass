@@ -31,11 +31,11 @@
 
 \S4method{ext}{giotto}(
   x,
-  spat_unit = NULL,
-  feat_type = NULL,
+  spat_unit = ":all:",
+  feat_type = ":all:",
   all_data = TRUE,
   prefer = c("polygon", "spatlocs", "points", "images"),
-  name = NULL,
+  name = list(spatlocs = ":all:"),
   verbose = NULL,
   ...
 )

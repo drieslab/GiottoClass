@@ -8,7 +8,7 @@ anndataToGiotto(
   anndata_path = NULL,
   n_key_added = NULL,
   spatial_n_key_added = NULL,
-  deluanay_spat_net = TRUE,
+  delaunay_spat_net = TRUE,
   spat_unit = NULL,
   feat_type = NULL,
   h5_file = NULL,
@@ -34,12 +34,12 @@ generated in that function,
 i.e. {spat_unit}_{feat_type}_spatial_network_keys_added.txt
 Cannot be the same as n_key_added.}
 
-\item{deluanay_spat_net}{binary parameter for spatial network. If TRUE, the
-spatial network is a deluanay network.}
+\item{delaunay_spat_net}{binary parameter for spatial network. If TRUE, the
+spatial network is a delaunay network.}
 
-\item{spat_unit}{desired spatial unit for conversion, default NULL}
+\item{spat_unit}{desired spatial unit to use for conversion, default NULL}
 
-\item{feat_type}{desired feature type for conversion, default NULL}
+\item{feat_type}{desired feature type to use for conversion, default NULL}
 
 \item{h5_file}{name to create and on-disk HDF5 file}
 
@@ -64,6 +64,7 @@ creation.
 }
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
+# create saved object to test
 temp_directory <- tempdir()
 giottoToAnnData(g, save_directory = paste0(temp_directory, "/"))
 
