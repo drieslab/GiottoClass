@@ -36,7 +36,9 @@ setMethod(
     function(x, fx = 1, fy = fx, x0, y0, spat_unit = ":all:",
              feat_type = ":all:", images = ":all:"
     ) {
+        # scalefactor settings
         a <- list(fx = fx, fy = fy)
+
         if (!missing(x0)) a$x0 <- x0
         if (!missing(y0)) a$y0 <- y0
 
@@ -46,6 +48,22 @@ setMethod(
         feat_type <- set_default_feat_type(
             gobject = gobject, spat_unit = spat_unit, feat_type = feat_type
         )
+
+        # if no rescale center provided, use center of gobject data to use
+        if (is.null(a$x0) || is.null(a$y0)) {
+            # find center
+            centroid <- ext(x,
+                spat_unit = spat_unit,
+                feat_type = feat_type,
+                all_data = TRUE
+            ) %>%
+                as.polygons() %>%
+                centroids() %>%
+                data.table::as.data.table(geom = "XY")
+
+            if (is.null(a$x0)) a$x0 <- centroid$x
+            if (is.null(a$y0)) a$y0 <- centroid$y
+        }
 
         all_su <- spat_unit == ":all:"
         all_ft <- feat_type == ":all:"
