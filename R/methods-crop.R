@@ -30,7 +30,7 @@ NULL
 # methods ####
 
 
-
+# * giottoLargeImage ####
 #' @rdname crop
 #' @export
 setMethod("crop", signature("giottoLargeImage"), function(x, y, ...) {
@@ -46,7 +46,7 @@ setMethod("crop", signature("giottoLargeImage"), function(x, y, ...) {
     x
 })
 
-
+# * spatLocsObj ####
 #' @rdname crop
 #' @export
 setMethod("crop", signature("spatLocsObj"), function(x, y, ...) {
@@ -59,7 +59,24 @@ setMethod("crop", signature("spatLocsObj"), function(x, y, ...) {
     return(x)
 })
 
+# should only be used with spatial networks that contain spatial information
+# * spatialNetworkObj ####
+#' @rdname crop
+#' @export
+setMethod("crop", signature("spatialNetworkObj"), function(x, y, ...) {
+    e <- ext(y)
+    if (is.null(terra::intersect(terra::ext(x), e))) {
+        warning("crop region is empty", call. = FALSE)
+    }
+    b <- .ext_to_num_vec(e) # bounds as a numerical vector
+    x[] <- x[][sdimx_begin >= b[1] & sdimx_begin <= b[2] &
+               sdimy_begin >= b[3] & sdimy_begin <= b[4]]
+    x[] <- x[][sdimx_end >= b[1] & sdimx_end <= b[2] &
+               sdimy_end >= b[3] & sdimy_end <= b[4]]
+    return(x)
+})
 
+# * giottoPoints ####
 #' @rdname crop
 #' @param DT logical. Use alternative DT subsetting for crop operation
 #' @param xmin,xmax,ymin,ymax only used if DT = TRUE. Set extent bounds
@@ -117,7 +134,7 @@ setMethod(
 )
 
 
-
+# * giottoPolygon ####
 #' @rdname crop
 #' @param DT logical. Use alternative DT subsetting for crop operation
 #' @param xmin,xmax,ymin,ymax only used if DT = TRUE. Set extent bounds
@@ -197,6 +214,8 @@ setMethod(
         x
     }
 )
+
+
 
 
 
