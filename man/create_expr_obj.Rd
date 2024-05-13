@@ -16,7 +16,18 @@ create_expr_obj(
 \arguments{
 \item{exprMat}{matrix of expression information}
 }
+\value{
+expr_obj
+}
 \description{
 create_expr_obj
+}
+\examples{
+x_expr <- readRDS(system.file("extdata/toy_matrix.RDS",
+    package = "GiottoClass"
+))
+
+create_expr_obj(exprMat = x_expr)
+
 }
 \keyword{internal}

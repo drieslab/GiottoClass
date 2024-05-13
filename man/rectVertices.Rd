@@ -7,15 +7,19 @@
 rectVertices(dims)
 }
 \arguments{
-\item{dims}{named vector in the style of c(x = \code{numeric}, y = \code{numeric})
-that defines the width (x) and height (y) of the generated rectangle polygon.}
+\item{dims}{named vector in the style of c(x = \code{numeric},
+y = \code{numeric}) that defines the width (x) and height (y) of the
+generated rectangle polygon.}
 }
 \value{
 a data.table of rectangle vertices
 }
 \description{
-Generates vertex coordinates for a rectangle with dimensions given
-through \code{dims} param.
+Generates vertex coordinates for a rectangle with dimensions
+given through \code{dims} param.
+}
+\examples{
+rectVertices(c(x = 1, y = 2))
 }
 \seealso{
 \link{generate_grid}

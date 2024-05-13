@@ -19,12 +19,21 @@ getPolygonInfo(
 
 \item{polygon_overlap}{include polygon overlap information}
 
-\item{return_giottoPolygon}{(Defaults to FALSE) Return as giottoPolygon S4 object}
+\item{return_giottoPolygon}{(Defaults to FALSE) Return as giottoPolygon
+S4 object}
 
 \item{verbose}{be verbose}
 }
+\value{
+spatVector
+}
 \description{
 Get giotto polygon spatVector
+}
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+getPolygonInfo(g)
 }
 \seealso{
 Other polygon info data accessor functions: 

@@ -15,5 +15,11 @@ list_images(gobject, img_type = NULL)
 data.table of giotto image names attached to the giotto object
 }
 \description{
-Prints the available giotto images that are attached to the Giotto object
+Prints the available giotto images that are attached to the
+Giotto object
+}
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+list_images(g)
+list_images(g, img_type = "largeImage")
 }

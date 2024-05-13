@@ -5,6 +5,9 @@
 \alias{giottoPolygon-class}
 \alias{giottoPolygon}
 \title{S4 giotto polygon Class}
+\value{
+giottoPolygon
+}
 \description{
 Giotto class to store and operate on polygon-like data
 }
@@ -22,7 +25,11 @@ holds polygon data
 
 \item{\code{overlaps}}{information about overlapping points and polygons}
 
-\item{\code{unique_ID_cache}}{cached unique spatial IDs that should match the spatVector slot}
+\item{\code{unique_ID_cache}}{cached unique spatial IDs that should match the
+spatVector slot}
 }}
 
+\examples{
+giottoPolygon()
+}
 \concept{giotto polygon class}

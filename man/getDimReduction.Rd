@@ -40,6 +40,11 @@ dim reduction object (default) or dim reduction coordinates
 \description{
 Function to get a dimension reduction object
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+getDimReduction(g)
+}
 \seealso{
 Other dimensional reduction data accessor functions: 
 \code{\link{get_dimReduction}()},

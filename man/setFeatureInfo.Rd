@@ -25,6 +25,12 @@ giotto object
 \description{
 Set giotto polygon spatVector for features
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+featinfo <- getFeatureInfo(g, return_giottoPoints = TRUE)
+
+setFeatureInfo(gobject = g, x = featinfo)
+}
 \seealso{
 Other feature info data accessor functions: 
 \code{\link{getFeatureInfo}()},

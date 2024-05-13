@@ -14,8 +14,14 @@ list_expression(gobject, spat_unit = NULL, feat_type = NULL)
 \item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
 }
 \value{
-names and locations of available matrices as data.table. col order matters.
+names and locations of available matrices as data.table.
+col order matters.
 }
 \description{
 lists the available matrices
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+list_expression(g)
 }

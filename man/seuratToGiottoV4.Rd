@@ -17,16 +17,24 @@ seuratToGiottoV4(
 \arguments{
 \item{sobject}{Input Seurat object to convert to Giotto object}
 
-\item{spatial_assay}{Specify name of the spatial assay slot in Seurat. Default is \code{"Spatial"}.}
+\item{spatial_assay}{Specify name of the spatial assay slot in Seurat.
+Default is \code{"Spatial"}.}
 
-\item{dim_reduction}{Specify which dimensional reduction computations to fetch from
-input Seurat object. Default is \code{"c('pca', 'umap')"}.}
+\item{dim_reduction}{Specify which dimensional reduction computations to
+fetch from input Seurat object. Default is \code{"c('pca', 'umap')"}.}
 
-\item{subcellular_assay}{Specify name of the subcellular assay in input object.
-Default is \code{"Vizgen"}.}
+\item{subcellular_assay}{Specify name of the subcellular assay in input}
+
+\item{sp_network}{sp_network}
+
+\item{nn_network}{nn_network}
+
+\item{verbose}{logical. Default to TRUE
+object. Default is \code{"Vizgen"}.}
 }
 \value{
-A Giotto object converted from Seurat object with all computations stored in it.
+A Giotto object converted from Seurat object with all computations
+stored in it.
 }
 \description{
 Convert a Seurat V4 object to a Giotto object

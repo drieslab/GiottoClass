@@ -34,9 +34,17 @@ creation}
 
 \item{verbose}{be verbose}
 }
+\value{
+giottoPolygon
+}
 \description{
 Function extract list of polygons when given raw input as either
-mask or tabular data. Calls the respective createGiottoPolygons functions. \cr
-If a \code{giottoPolygon} object is passed then no edits will be made other
-than updating the \code{name} slot if the list is named.
+mask or tabular data. Calls the respective createGiottoPolygons
+functions. \cr If a \code{giottoPolygon} object is passed then no edits
+will be made other than updating the \code{name} slot if the list is named.
+}
+\examples{
+x <- GiottoData::loadSubObjectMini("giottoPolygon")
+
+readPolygonData(x)
 }

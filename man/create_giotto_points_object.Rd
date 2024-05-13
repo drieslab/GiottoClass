@@ -20,6 +20,9 @@ create_giotto_points_object(
 
 \item{unique_IDs}{(optional) unique IDs in spatVector for cacheing}
 }
+\value{
+giotto_points_object
+}
 \description{
 Create giotto points object
 }

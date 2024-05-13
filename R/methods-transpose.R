@@ -5,6 +5,11 @@
 #' @name transpose-generic
 #' @param x object to be transposed
 #' @aliases t
+#' @returns transposed object
+#' @examples
+#' m <- matrix(rnorm(10), nrow = 5)
+#'
+#' t(m)
 NULL
 
 
@@ -14,7 +19,8 @@ NULL
 setMethod(
     "t", signature("giotto"),
     function(x) {
-        # spat_unit and feat_type params are not allowed since t() has no ... param
+        # spat_unit and feat_type params are not allowed since t() has no ...
+        # param
 
         # polygons --------------------------------------------------------- #
         poly <- get_polygon_info_list(
@@ -37,10 +43,14 @@ setMethod(
         if (!is.null(sls)) {
             for (sl in sls) {
                 sl <- do.call(t, args = list(x = sl))
-                x <- setSpatialLocations(x, sl, verbose = FALSE, initialize = FALSE)
+                x <- setSpatialLocations(x, sl,
+                    verbose = FALSE,
+                    initialize = FALSE
+                )
             }
 
-            # TODO remove this after spatial info is removed from spatialNetwork objs
+            # TODO remove this after spatial info is removed from
+            # spatialNetwork objs
             sn_list <- get_spatial_network_list(
                 gobject = x,
                 spat_unit = ":all:",
@@ -89,7 +99,13 @@ setMethod("t", signature("spatialNetworkObj"), function(x) {
     x <- data.table::copy(x)
     x@networkDT[, c("sdimx_begin", "sdimy_begin", "sdimx_end", "sdimy_end") := .(sdimy_begin, sdimx_begin, sdimy_end, sdimx_end)]
     if (!is.null(x@networkDT_before_filter)) {
-        x@networkDT_before_filter[, c("sdimx_begin", "sdimy_begin", "sdimx_end", "sdimy_end") := .(sdimy_begin, sdimx_begin, sdimy_end, sdimx_end)]
+        x@networkDT_before_filter[, c(
+            "sdimx_begin", "sdimy_begin",
+            "sdimx_end", "sdimy_end"
+        ) := .(
+            sdimy_begin, sdimx_begin, sdimy_end,
+            sdimx_end
+        )]
     }
     return(x)
 })
@@ -126,7 +142,13 @@ t.spatialNetworkObj <- function(x) {
     x <- data.table::copy(x)
     x@networkDT[, c("sdimx_begin", "sdimy_begin", "sdimx_end", "sdimy_end") := .(sdimy_begin, sdimx_begin, sdimy_end, sdimx_end)]
     if (!is.null(x@networkDT_before_filter)) {
-        x@networkDT_before_filter[, c("sdimx_begin", "sdimy_begin", "sdimx_end", "sdimy_end") := .(sdimy_begin, sdimx_begin, sdimy_end, sdimx_end)]
+        x@networkDT_before_filter[, c(
+            "sdimx_begin", "sdimy_begin",
+            "sdimx_end", "sdimy_end"
+        ) := .(
+            sdimy_begin, sdimx_begin, sdimy_end,
+            sdimx_end
+        )]
     }
     return(x)
 }

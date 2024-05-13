@@ -5,6 +5,9 @@
 \alias{nnNetObj-class}
 \alias{nnNetObj}
 \title{S4 nnNetObj}
+\value{
+nnNetObj
+}
 \description{
 Framework to store nearest neighbor network information
 }
@@ -26,3 +29,6 @@ Framework to store nearest neighbor network information
 \item{\code{misc}}{misc}
 }}
 
+\examples{
+GiottoData::loadSubObjectMini("nnNetObj")
+}

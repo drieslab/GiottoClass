@@ -39,3 +39,8 @@ A character vector of row or col names
 \description{
 Retrieve or set the row or column names of an object
 }
+\examples{
+g <- GiottoData::loadSubObjectMini("exprObj")
+
+colnames(g)
+}

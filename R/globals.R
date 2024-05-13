@@ -15,6 +15,6 @@ utils::globalVariables(
         "extract_layered_data", "set_adg_nn", "find_NN_keys",
         "extract_NN_connectivities", "extract_NN_distances",
         "extract_NN_info", "align_network_data", "extract_SN_connectivities",
-        "extract_SN_distances", "set_adg_sn", "create_AnnData"
+        "extract_SN_distances", "set_adg_sn", "create_AnnData", "ometif_2_tif"
     )
 )

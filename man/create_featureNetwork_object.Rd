@@ -20,6 +20,9 @@ create_featureNetwork_object(
 
 \item{full}{fully connected status}
 }
+\value{
+featureNetwork_object
+}
 \description{
 Create feature network object
 }

@@ -33,35 +33,43 @@ updateGiottoImage(
 
 \item{largeImage_name}{name of giotto \code{largeImage} object}
 
-\item{xmax_adj, xmin_adj, ymax_adj, ymin_adj}{adjust image boundaries by increasing
-maximum and decreasing minimum bounds respectively of xy bounds}
+\item{xmax_adj, xmin_adj, ymax_adj, ymin_adj}{adjust image boundaries by
+increasing maximum and decreasing minimum bounds respectively of xy bounds}
 
 \item{x_shift, y_shift}{shift entire image along xy axes}
 
-\item{scale_factor}{set \code{scale_x} and \code{scale_y} params at the same time}
+\item{scale_factor}{set \code{scale_x} and \code{scale_y} params at the
+same time}
 
-\item{scale_x, scale_y}{independently scale x or y axis image mapping from coordinate origin}
+\item{scale_x, scale_y}{independently scale x or y axis image mapping from
+coordinate origin}
 
-\item{order}{order of operations between fine adjustments (adjustment and shift
-parameters) and scaling}
+\item{order}{order of operations between fine
+adjustments (adjustment and shift parameters) and scaling}
 
 \item{xmin_set, xmax_set, ymin_set, ymax_set}{directly set xy image boundaries.
 Overrides minmax values as spatial anchor.}
 
-\item{return_gobject}{return a giotto object if \code{TRUE}, a giotto image object
-if \code{FALSE}}
+\item{return_gobject}{return a giotto object if \code{TRUE}, a giotto image
+object if \code{FALSE}}
 
 \item{verbose}{be verbose}
 }
 \value{
-a giotto object or an updated giotto image object if return_gobject = F
+a giotto object or an updated giotto image object if
+return_gobject = FALSE
 }
 \description{
-Updates the spatial positioning and sizing of a giotto \code{image} or
-\code{largeImage} attached to a giotto object.
+Updates the spatial positioning and sizing of a
+giotto \code{image} or \code{largeImage} attached to a giotto object.
 }
 \details{
 This function works for all image objects associated with Giotto.
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+updateGiottoImage(g, largeImage_name = "image")
 }
 \seealso{
 Other basic image functions: 

@@ -11,11 +11,14 @@ rbind2_giotto_polygon_hetero(x, y, new_name, add_list_ID = TRUE)
 
 \item{y}{\code{giottoPolygon} 2}
 
-\item{add_list_ID}{whether to include the name of the origin \code{giottoPolygons}
-as a new 'list_ID' attribute}
+\item{add_list_ID}{whether to include the name of the
+origin \code{giottoPolygons} as a new 'list_ID' attribute}
 
-\item{poly_names}{sorted polygon names to be used in the combined \code{giottoPolygon}
-object}
+\item{poly_names}{sorted polygon names to be used in the
+combined \code{giottoPolygon} object}
+}
+\value{
+giottoPolygon
 }
 \description{
 Append two giotto polygons together of different names

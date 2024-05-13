@@ -5,6 +5,9 @@
 \alias{giottoPoints-class}
 \alias{giottoPoints}
 \title{S4 giotto points Class}
+\value{
+giottoPoints
+}
 \description{
 Giotto class to store and operate on points data
 }
@@ -20,7 +23,11 @@ Contains vector-type feature data
 
 \item{\code{networks}}{feature networks}
 
-\item{\code{unique_ID_cache}}{cached unique feature IDs that should match the spatVector slot}
+\item{\code{unique_ID_cache}}{cached unique feature IDs that should match the
+spatVector slot}
 }}
 
+\examples{
+giottoPoints()
+}
 \concept{giotto points class}

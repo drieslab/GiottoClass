@@ -17,22 +17,26 @@
 \item{scale_factor}{scaling factor to apply to coordinates. Default is
 \code{c(1, 1, 1)}}
 
-\item{scenter}{center from which to scale spatial coordinates. Given as vector
-of xy(z) coordinates. Default is \code{c(0, 0, 0)}}
+\item{scenter}{center from which to scale spatial coordinates. Given as
+vector of xy(z) coordinates. Default is \code{c(0, 0, 0)}}
 
-\item{geom}{character. Named vector of colnames of x, y, (z) coordinate columns.
-Default is \code{c("sdimx", "sdimy", "sdimz")}}
+\item{geom}{character. Named vector of colnames of x, y, (z) coordinate
+columns. Default is \code{c("sdimx", "sdimy", "sdimz")}}
+}
+\value{
+spatial locations
 }
 \description{
-Simple scaling of spatial locations by given \code{scale_factor}.
-Values will be scaled from the coordinate origin or coordinates provided through
-\code{scenter} param. Default values supply values for z axis, but these
-values will only be applied if input \code{data.table} has z information as
-detected by the third item in the \code{geom} param.
+Simple scaling of spatial locations by
+given \code{scale_factor}. Values will be scaled from the coordinate origin
+or coordinates provided through \code{scenter} param. Default values supply
+values for z axis, but these values will only be applied if
+input \code{data.table} has z information as detected by the third item in
+the \code{geom} param.
 }
 \details{
-\code{scale_factor} either given as a single value where it will be applied to
-x, y, and z (if available) dimensions or as a vector of named values for 'x',
-'y', (and 'z').
+\code{scale_factor} either given as a single value where it will
+be applied to x, y, and z (if available) dimensions or as a vector of named
+values for 'x', y', (and 'z').
 }
 \keyword{internal}

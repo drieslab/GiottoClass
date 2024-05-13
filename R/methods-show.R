@@ -13,6 +13,7 @@ NULL
 #' @param object giotto object
 #' @aliases show,giotto-method
 #' @docType methods
+#' @returns giotto object or subobject
 #' @rdname show-methods
 setMethod(
     f = "show",
@@ -24,8 +25,12 @@ setMethod(
 
 
         # active spat_unit and feat_type
-        active_su <- try(instructions(object, "active_spat_unit"), silent = TRUE)
-        active_ft <- try(instructions(object, "active_feat_type"), silent = TRUE)
+        active_su <- try(instructions(object, "active_spat_unit"),
+            silent = TRUE
+        )
+        active_ft <- try(instructions(object, "active_feat_type"),
+            silent = TRUE
+        )
         if (!inherits(active_su, "try-error")) {
             cat(">Active spat_unit: ", active_su, "\n")
         }
@@ -35,8 +40,18 @@ setMethod(
 
 
         cat("[SUBCELLULAR INFO]\n")
-        if (!is.null(object@spatial_info)) cat("polygons      :", wrap_txt(list_spatial_info_names(object)), "\n")
-        if (!is.null(object@feat_info)) cat("features      :", wrap_txt(list_feature_info_names(object)), "\n")
+        if (!is.null(object@spatial_info)) {
+            cat(
+                "polygons      :",
+                wrap_txt(list_spatial_info_names(object)), "\n"
+            )
+        }
+        if (!is.null(object@feat_info)) {
+            cat(
+                "features      :",
+                wrap_txt(list_feature_info_names(object)), "\n"
+            )
+        }
 
 
         mini_avail_print <- function(avail_dt) {
@@ -54,7 +69,11 @@ setMethod(
 
             unique_entry <- avail_dt[, unique(prints)]
             for (entry in unique_entry) {
-                cat("  ", entry, paste0(" ", wrap_txt(avail_dt[prints == entry, name])), "\n", sep = "")
+                cat("  ", entry,
+                    paste0(" ", wrap_txt(avail_dt[prints == entry, name])),
+                    "\n",
+                    sep = ""
+                )
             }
         }
 
@@ -99,18 +118,11 @@ setMethod(
         avail_im <- list_images(object)
         if (!is.null(avail_im)) {
             cat("attached images ------------------\n")
-            if ("image" %in% avail_im$img_type) {
-                if (sum(avail_im$img_type == "image") > 3) {
-                    cat("giottoImage      :", sum(avail_im$img_type == "image"), "items...\n")
+            if (!is.null(avail_im)) {
+                if (nrow(avail_im) > 3L) {
+                    cat("images      :", nrow(avail_im), "items...\n")
                 } else {
-                    cat("giottoImage      :", wrap_txt(avail_im[img_type == "image", name]), "\n")
-                }
-            }
-            if ("largeImage" %in% avail_im$img_type) {
-                if (sum(avail_im$img_type == "largeImage") > 3) {
-                    cat("giottoLargeImage :", sum(avail_im$img_type == "largeImage"), "items...\n")
-                } else {
-                    cat("giottoLargeImage :", wrap_txt(avail_im[img_type == "largeImage", name]), "\n")
+                    cat("images      :", wrap_txt(avail_im[, name]), "\n")
                 }
             }
         }
@@ -127,7 +139,10 @@ setMethod(
 setMethod(
     "show", signature(object = "packedGiotto"),
     function(object) {
-        print(paste("This is a", class(object), "object. Use 'GiottoClass::vect()' to unpack it"))
+        print(paste(
+            "This is a", class(object),
+            "object. Use 'GiottoClass::vect()' to unpack it"
+        ))
     }
 )
 
@@ -171,10 +186,21 @@ setMethod(
                 maxp = 80
             ))
 
-            print_cap <- print_cap[-which(print_cap == " ..............................")] %none% print_cap
-            writeLines(gsub(pattern = "in show(.*?))'", replacement = "", x = print_cap))
+            print_cap <- print_cap[-which(
+                print_cap == " .............................."
+            )] %none%
+                print_cap
+            writeLines(gsub(
+                pattern = "in show(.*?))'", replacement = "",
+                x = print_cap
+            ))
             cat("\n First four colnames:")
-            cat("\n", wrap_txt(head(colnames(slot(object, "exprMat")), 4), strWidth = 40), "\n")
+            cat(
+                "\n",
+                wrap_txt(head(colnames(slot(object, "exprMat")), 4),
+                    strWidth = 40
+                ), "\n"
+            )
         } else if (inherits(slot(object, "exprMat"), "denseMatrix")) {
             .abbrev_mat(object, nrows = 10, ncols = 10, header = FALSE)
         } else {
@@ -236,13 +262,23 @@ setMethod("show", signature("featMetaObj"), function(object) {
 setMethod(
     f = "show", signature("dimObj"), function(object) {
         show_class_and_name(object)
-        if (!is.null(object@reduction_method)) cat("--| Contains dimension reduction generated with:", object@reduction_method, "\n")
+        if (!is.null(object@reduction_method)) {
+            cat(
+                "--| Contains dimension reduction generated with:",
+                object@reduction_method, "\n"
+            )
+        }
         if (!is.null(object@feat_type) & !is.null(object@spat_unit)) {
             cat("----| for feat_type:", object@feat_type, "\n")
             cat("----|     spat_unit:", object@spat_unit, "\n\n")
         }
 
-        if (!is.null(object@coordinates)) cat("  ", ncol(object@coordinates), "dimensions for", nrow(object@coordinates), "data points\n\n")
+        if (!is.null(object@coordinates)) {
+            cat(
+                "  ", ncol(object@coordinates), "dimensions for",
+                nrow(object@coordinates), "data points\n\n"
+            )
+        }
 
         if (!is.null(object@misc)) {
             cat("Additional included info:\n")
@@ -270,12 +306,19 @@ setMethod(
 setMethod(
     f = "show", signature("nnNetObj"), function(object) {
         show_class_and_name(object)
-        if (!is.null(object@nn_type)) cat("--| Contains nearest neighbor network generated with:", object@nn_type, "\n")
+        if (!is.null(object@nn_type)) {
+            cat(
+                "--| Contains nearest neighbor network generated with:",
+                object@nn_type, "\n"
+            )
+        }
         if (!is.null(object@feat_type) & !is.null(object@spat_unit)) {
             cat("----| for feat_type:", object@feat_type, "\n")
             cat("----|     spat_unit:", object@spat_unit, "\n")
         }
-        if (!is.null(object@provenance)) cat("----|     provenance:", object@provenance, "\n\n")
+        if (!is.null(object@provenance)) {
+            cat("----|     provenance:", object@provenance, "\n\n")
+        }
 
         if (!is.null(object@igraph)) {
             print(object@igraph)
@@ -313,7 +356,9 @@ setMethod(
         show_prov(object)
 
         cat("   ------------------------\n\npreview:\n")
-        if (!is.null(slot(object, "coordinates"))) show(head(slot(object, "coordinates"), 3L))
+        if (!is.null(slot(object, "coordinates"))) {
+            show(head(slot(object, "coordinates"), 3L))
+        }
 
         cat("\nranges:\n")
 
@@ -321,7 +366,11 @@ setMethod(
         coord_cols <- col_names[col_names %in% c("sdimx", "sdimy", "sdimz")]
 
         try(
-            expr = print(sapply(slot(object, "coordinates")[, c(coord_cols), with = FALSE], range)),
+            expr = print(vapply(
+                slot(object, "coordinates")[, c(coord_cols), with = FALSE],
+                range,
+                FUN.VALUE = numeric(2L)
+            )),
             silent = TRUE
         )
 
@@ -348,12 +397,21 @@ setMethod(
 setMethod(
     f = "show", signature("spatialNetworkObj"), function(object) {
         show_class_and_name(object)
-        if (!is.na(object@method)) cat("Contains spatial network generated with:", object@method, "\n")
+        if (!is.na(object@method)) {
+            cat("Contains spatial network generated with:", object@method, "\n")
+        }
         show_spat(object)
         show_prov(object)
 
-        if (!is.null(object@networkDT)) cat("  ", nrow(object@networkDT), "connections (filtered)\n")
-        if (!is.null(object@networkDT_before_filter)) cat("  ", nrow(object@networkDT_before_filter), "connections (before filter)\n\n")
+        if (!is.null(object@networkDT)) {
+            cat("  ", nrow(object@networkDT), "connections (filtered)\n")
+        }
+        if (!is.null(object@networkDT_before_filter)) {
+            cat(
+                "  ", nrow(object@networkDT_before_filter),
+                "connections (before filter)\n\n"
+            )
+        }
     }
 )
 
@@ -382,9 +440,15 @@ setMethod(
         x_start <- x_end <- y_start <- y_end <- z_start <- z_end <- NULL
 
         show_class_and_name(object)
-        cat('Contains annotations for spatial unit: "', slot(object, "spat_unit"), '"', sep = "")
+        cat('Contains annotations for spatial unit: "',
+            slot(object, "spat_unit"), '"',
+            sep = ""
+        )
         if (!is.na(slot(object, "feat_type"))) {
-            cat(' and feature type: "', slot(object, "feat_type"), '"\n', sep = "")
+            cat(' and feature type: "',
+                slot(object, "feat_type"), '"\n',
+                sep = ""
+            )
         } else {
             cat("\n")
         }
@@ -398,25 +462,38 @@ setMethod(
         sdimx_uniques <- slot(object, "gridDT")[, length(unique(x_start))]
         sdimy_uniques <- slot(object, "gridDT")[, length(unique(y_start))]
         cat(
-            "Contains spatial grid defined for:\n  ", sdimx_uniques, "intervals from x range:",
-            sdimx_min, "to", sdimx_max, "\n  ", sdimy_uniques, "intervals from y range:",
+            "Contains spatial grid defined for:\n  ",
+            sdimx_uniques, "intervals from x range:",
+            sdimx_min, "to", sdimx_max, "\n  ", sdimy_uniques,
+            "intervals from y range:",
             sdimy_min, "to", sdimy_max
         )
         if ("z_start" %in% gridNames & "z_end" %in% gridNames) {
             sdimz_max <- slot(object, "gridDT")[, max(z_start, z_end)]
             sdimz_min <- slot(object, "gridDT")[, min(z_start, z_end)]
             sdimz_uniques <- slot(object, "gridDT")[, length(unique(z_start))]
-            cat("\n  ", sdimz_uniques, "intervals from z range:", sdimz_min, "to", sdimz_max, "\n\n")
+            cat(
+                "\n  ", sdimz_uniques, "intervals from z range:",
+                sdimz_min, "to", sdimz_max, "\n\n"
+            )
         } else {
             cat("\n\n")
         }
 
-        if (!is.null(slot(object, "method"))) cat("Contains spatial grid generated with:", slot(object, "method"), "\n\n")
+        if (!is.null(slot(object, "method"))) {
+            cat(
+                "Contains spatial grid generated with:",
+                slot(object, "method"), "\n\n"
+            )
+        }
 
         if (!is.null(slot(object, "parameters"))) {
             cat("Parameters used:\n")
             for (param in names(slot(object, "parameters"))) {
-                cat(paste0("  ", param, ": ", slot(object, "parameters")[[param]], "\n"))
+                cat(paste0(
+                    "  ", param, ": ",
+                    slot(object, "parameters")[[param]], "\n"
+                ))
             }
             cat("\n")
         }
@@ -457,17 +534,25 @@ setMethod(
         if (!is.null(slot(object, "enrichDT"))) {
             enr_cols <- ncol(slot(object, "enrichDT"))
             if (enr_cols > 10L) {
-                show(slot(object, "enrichDT")[1:3, 1:10])
-                cat(rep(" ", times = getOption("width") / 2.5 - 10L), rep(".", 20L), "\n", sep = "")
-                show(slot(object, "enrichDT")[1:3, "cell_ID"])
+                show(slot(object, "enrichDT")[seq_len(3), seq_len(10)])
+                cat(rep(" ", times = getOption("width") / 2.5 - 10L),
+                    rep(".", 20L), "\n",
+                    sep = ""
+                )
+                show(slot(object, "enrichDT")[seq_len(3), "cell_ID"])
                 cat("...", enr_cols - 11L, " cols omitted\n", sep = "")
             } else {
-                show(slot(object, "enrichDT")[1:3])
+                show(slot(object, "enrichDT")[seq_len(3)])
             }
         }
 
         cat("\n...first 20 remaining colnames:\n")
-        cat("\n", wrap_txt(head(colnames(slot(object, "enrichDT"))[-c(1:10)], 20L), strWidth = 40L), "\n")
+        cat(
+            "\n", wrap_txt(head(colnames(
+                slot(object, "enrichDT")
+            )[-seq_len(10)], 20L), strWidth = 40L),
+            "\n"
+        )
 
         cat("\n\n")
     }
@@ -521,7 +606,10 @@ setMethod("show", signature = "giottoPolygon", function(object) {
 setMethod(
     "show", signature(object = "packedGiottoPolygon"),
     function(object) {
-        print(paste("This is a", class(object), "object. Use 'GiottoClass::vect()' to unpack it"))
+        print(paste(
+            "This is a", class(object),
+            "object. Use 'GiottoClass::vect()' to unpack it"
+        ))
     }
 )
 
@@ -557,7 +645,10 @@ setMethod("show", signature = "giottoPoints", function(object) {
 setMethod(
     "show", signature(object = "packedGiottoPoints"),
     function(object) {
-        print(paste("This is a", class(object), "object. Use 'GiottoClass::vect()' to unpack it"))
+        print(paste(
+            "This is a", class(object),
+            "object. Use 'GiottoClass::vect()' to unpack it"
+        ))
     }
 )
 
@@ -582,7 +673,10 @@ setMethod(
     f = "show",
     signature = "giottoImage",
     definition = function(object) {
-        cat("An object of class '", class(object), "' with name ", object@name, "\n \n")
+        cat(
+            "An object of class '", class(object),
+            "' with name ", object@name, "\n \n"
+        )
 
         cat(
             "Min and max values are: \n",
@@ -604,10 +698,18 @@ setMethod(
 
         cat(
             "Boundaries are: \n",
-            "Image x-axis max boundary: ", object@minmax[["xmax_sloc"]] + object@boundaries[["xmax_adj"]], "\n",
-            "Image x-axis min boundary: ", object@minmax[["xmin_sloc"]] - object@boundaries[["xmin_adj"]], "\n",
-            "Image y-axis max boundary: ", object@minmax[["ymax_sloc"]] + object@boundaries[["ymax_adj"]], "\n",
-            "Image y-axis min boundary: ", object@minmax[["ymin_sloc"]] - object@boundaries[["ymin_adj"]], "\n",
+            "Image x-axis max boundary: ",
+            object@minmax[["xmax_sloc"]] + object@boundaries[["xmax_adj"]],
+            "\n",
+            "Image x-axis min boundary: ",
+            object@minmax[["xmin_sloc"]] - object@boundaries[["xmin_adj"]],
+            "\n",
+            "Image y-axis max boundary: ",
+            object@minmax[["ymax_sloc"]] + object@boundaries[["ymax_adj"]],
+            "\n",
+            "Image y-axis min boundary: ",
+            object@minmax[["ymin_sloc"]] - object@boundaries[["ymin_adj"]],
+            "\n",
             "\n"
         )
 
@@ -624,7 +726,10 @@ setMethod(
     }
 )
 
-
+# internal
+setMethod("as.character", signature("giottoImage"), function(x, ...) {
+    sprintf("<%s> %s", class(x), objName(x))
+})
 
 
 
@@ -655,19 +760,33 @@ setMethod(
             show_class_and_name(object)
             cat("Image extent            :", show_ext(object))
             cat("Original image extent   :", show_ext(object@overall_extent))
-            cat("Scale factor            :", paste(x_scalefactor, y_scalefactor, sep = ", "), "(x, y)\n")
-            cat("Resolution              :", paste(1 / x_scalefactor, 1 / y_scalefactor, sep = ", "), "(x, y)\n")
+            cat(
+                "Scale factor            :",
+                paste(x_scalefactor, y_scalefactor, sep = ", "), "(x, y)\n"
+            )
+            cat(
+                "Resolution              :",
+                paste(1 / x_scalefactor, 1 / y_scalefactor, sep = ", "),
+                "(x, y)\n"
+            )
             cat("Layers                  :", img_dim[3], "\n")
             cat("Estimated max intensity :", object@max_intensity, "\n")
             cat("Estimated min intensity :", object@min_intensity, "\n")
-            if (object@is_int == TRUE) cat("Values                  : integers\n")
-            if (object@is_int == FALSE) cat("Values                  : floating point\n")
+            if (object@is_int == TRUE) {
+                cat("Values                  : integers\n")
+            }
+            if (object@is_int == FALSE) {
+                cat("Values                  : floating point\n")
+            }
             cat(paste0("File path               : '", object@file_path, "'\n"))
         }
     }
 )
 
-
+# internal
+setMethod("as.character", signature("giottoLargeImage"), function(x, ...) {
+    sprintf("<%s> %s", class(x), objName(x))
+})
 
 
 
@@ -678,14 +797,18 @@ setMethod(
 
 #' @noRd
 show_class_and_name <- function(object) {
-    cat("An object of class ", class(object), ' : \"', objName(object), '\"\n', sep = "")
+    cat("An object of class ", class(object), ' : \"',
+        objName(object), '\"\n',
+        sep = ""
+    )
 }
 
 #' @noRd
 show_spat_and_feat <- function(object) {
     show_spat(object)
     show_feat(object)
-    # cat(paste0('for spatial unit: "', spatUnit(object), '" and feature type: "', featType(object),'" \n'))
+    # cat(paste0('for spatial unit: "', spatUnit(object),
+    # '" and feature type: "', featType(object),'" \n'))
 }
 
 #' @noRd
@@ -700,10 +823,15 @@ show_feat <- function(object) {
 
 #' @noRd
 show_prov <- function(object) {
-    if (!is.null(object@provenance)) cat("provenance:", object@provenance, "\n")
+    if (!is.null(object@provenance)) {
+        cat("provenance:", object@provenance, "\n")
+    }
 }
 
 #' @noRd
 show_ext <- function(object) {
-    paste0(paste0(ext(object)[], collapse = (", ")), " (xmin, xmax, ymin, ymax)\n")
+    paste0(
+        paste0(ext(object)[], collapse = (", ")),
+        " (xmin, xmax, ymin, ymax)\n"
+    )
 }

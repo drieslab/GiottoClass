@@ -17,3 +17,13 @@ annotated spatial location data.table
 \description{
 annotate spatial locations with 3D spatial grid information
 }
+\examples{
+g <- GiottoData::loadGiottoMini("starmap")
+g_spatloc <- getSpatialLocations(g, output = "data.table")
+g_spatgrid <- getSpatialGrid(g)
+
+annotate_spatlocs_with_spatgrid_3D(
+    spatloc = g_spatloc,
+    spatgrid = g_spatgrid
+)
+}

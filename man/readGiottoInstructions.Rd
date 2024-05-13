@@ -7,7 +7,8 @@
 readGiottoInstructions(giotto_instructions, param = NULL, default)
 }
 \arguments{
-\item{giotto_instructions}{giotto object or result from createGiottoInstructions()}
+\item{giotto_instructions}{giotto object or result from
+createGiottoInstructions()}
 
 \item{param}{parameter to retrieve}
 
@@ -19,4 +20,10 @@ specific parameter
 }
 \description{
 Retrieves the instruction associated with the provided parameter
+}
+\examples{
+readGiottoInstructions(
+    giotto_instructions = createGiottoInstructions(),
+    param = "show_plot"
+)
 }

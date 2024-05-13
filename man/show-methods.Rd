@@ -37,6 +37,9 @@
 \arguments{
 \item{object}{giottoLargeImage object}
 }
+\value{
+giotto object or subobject
+}
 \description{
 show method for giotto class
 

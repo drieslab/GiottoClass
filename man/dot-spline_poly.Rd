@@ -15,6 +15,9 @@
 
 \item{...}{additional params to pass}
 }
+\value{
+polygon
+}
 \description{
 spline polynomial to smooth polygon
 }

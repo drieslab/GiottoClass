@@ -4,10 +4,12 @@ NULL
 # docs ----------------------------------------------------------- #
 #' @title Preview a Giotto spatial object
 #' @name plot-generic
-#' @description S4 generic for previewing Giotto's image and subcellular objects.
+#' @description S4 generic for previewing Giotto's image and subcellular
+#' objects.
 #' @param x giotto image, giottoPolygon, or giottoPoints object
 #' @param y Not used.
 #' @param \dots additional parameters to pass
+#' @returns plot
 #' @aliases plot
 #' @family plot
 NULL
@@ -31,13 +33,22 @@ setMethod("plot", signature(x = "giottoImage", y = "missing"), function(x, y, ..
 #' @param axes logical. Draw axes?
 #' @param maxcell positive integer. Maximum number of cells to use for the plot
 #' @param smooth logical. If TRUE the cell values are smoothed
+#' @examples
+#' ######### giottoLargeImage plotting #########
+#' \dontrun{
+#' gimg <- GiottoData::loadSubObjectMini("giottoLargeImage")
+#' gimg <- GiottoClass:::.update_giotto_image(gimg) # only needed if out of date
+#' plot(gimg)
+#' plot(gimg, col = grDevices::hcl.colors(256))
+#' plot(gimg, max_intensity = 100)
+#' }
+#'
 #' @export
 setMethod(
     "plot",
     signature(x = "giottoLargeImage", y = "missing"),
-    function(
-        x, y, col, max_intensity, mar, asRGB = FALSE, legend = FALSE, axes = TRUE,
-        maxcell = 5e5, smooth = TRUE, ...) {
+    function(x, y, col, max_intensity, mar, asRGB = FALSE, legend = FALSE, axes = TRUE,
+    maxcell = 5e5, smooth = TRUE, ...) {
         arglist <- list(
             giottoLargeImage = x,
             asRGB = asRGB,
@@ -81,14 +92,21 @@ setMethod(
 #' @param max_poly numeric. If `type` is not specified, maximum number of
 #' polygons to plot before automatically switching to centroids plotting.
 #' Default is 1e4. This value is settable using options("giotto.plot_max_poly")
+#' @examples
+#' ######### giottoPolygon plotting #########
+#' gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
+#' plot(gpoly)
+#' plot(gpoly, type = "centroid")
+#'
 #' @export
 setMethod(
     "plot", signature(x = "giottoPolygon", y = "missing"),
-    function(x,
-    point_size = 0.6,
-    type = c("poly", "centroid"),
-    max_poly = getOption("giotto.plot_max_poly", 1e4),
-    ...) {
+    function(
+        x,
+        point_size = 0.6,
+        type = c("poly", "centroid"),
+        max_poly = getOption("giotto.plot_max_poly", 1e4),
+        ...) {
         if (length(x@unique_ID_cache) == 0) {
             stop(wrap_txt("No geometries to plot"), call. = FALSE)
         }
@@ -105,10 +123,65 @@ setMethod(
 
 #' @describeIn plot-generic \emph{terra}-based giottoPoint object. ... param passes to \code{\link[terra]{plot}}
 #' @param point_size size of points when plotting giottoPoints
-#' @param feats specific features to plot within giottoPoints object (defaults to NULL, meaning all available features)
+#' @param feats specific features to plot within giottoPoints object
+#' (defaults to NULL, meaning all available features)
 #' @param raster default = TRUE, whether to plot points as rasterized plot with
-#' size based on \code{size} param
+#' size based on \code{raster_size} param. See details. When `FALSE`, plots via
+#' [terra::plot()]
 #' @param raster_size Default is 600. Only used when \code{raster} is TRUE
+#' @details
+#' *\[giottoPoints raster plotting\]*
+#' Fast plotting of points information by rasterizing the information using
+#' [terra::rasterize()]. For \pkg{terra} `SpatVectors`, this is faster than
+#' \pkg{scattermore} plotting. When plotting as a raster, `col` colors map on
+#' whole image level, as opposed to mapping to individual points, as it does
+#' when `raster = FALSE`
+#' Allows the following additional params when
+#' plotting with no specific `feats` input:
+#' \itemize{
+#'   \item{**force_size** }{logical. `raster_size` param caps at 1:1 with the
+#'   spatial extent, but also with a minimum resulting px dim of 100. To ignore
+#'   these constraints, set `force_size = FALSE`}
+#'   \item{**dens** }{logical. Show point density using `count` statistic per
+#'   rasterized cell. (Default = FALSE). This param affects `col` param is
+#'   defaults. When TRUE, `col` is `grDevices::hcl.colors(256)`. When `FALSE`,
+#'   "black" and "white" are used.}
+#'   \item{**background** }{(optional) background color. Usually not used when a
+#'   `col` color mapping is sufficient.}
+#' }
+#' Note that `col` param and other [base::plot()] graphical params are available
+#' through `...`
+#' @examples
+#' ######### giottoPoints plotting #########
+#' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
+#'
+#' # ----- rasterized plotting ----- #
+#' # plot points binary
+#' plot(gpoints)
+#' # plotting all features maps colors on an image level
+#' plot(gpoints, col = grDevices::hcl.colors(n = 256)) # only 2 colors are used
+#' plot(gpoints, col = "green", background = "purple")
+#'
+#' # plot points density (by count)
+#' plot(gpoints, dens = TRUE, raster_size = 300)
+#'
+#' # force_size = TRUE to ignore default constraints on too big or too small
+#' # (see details)
+#' plot(gpoints, dens = TRUE, raster_size = 80, force_size = TRUE)
+#'
+#' # plot specific feature(s)
+#' plot(gpoints, feats = featIDs(gpoints)[seq_len(4)])
+#'
+#' # ----- vector plotting ----- #
+#' # non-rasterized plotting (slower, but higher quality)
+#' plot(gpoints, raster = FALSE)
+#'
+#' # vector plotting maps colors to transcripts
+#' plot(gpoints, raster = FALSE, col = grDevices::rainbow(nrow(gpoints)))
+#'
+#' # plot specific feature(s)
+#' plot(gpoints, feats = featIDs(gpoints)[seq_len(4)], raster = FALSE)
+#'
 #' @export
 setMethod(
     "plot", signature(x = "giottoPoints", y = "missing"),
@@ -125,8 +198,18 @@ setMethod(
 
 
 #' @describeIn plot-generic Plot a spatLocsObj
+#' @examples
+#' ######### spatLocsObj plotting #########
+#' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
+#' plot(sl)
+#'
 #' @export
 setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) {
+    if (nrow(x) == 0L) {
+        message("No locations to plot")
+        return(invisible(NULL))
+    }
+
     if ("sdimz" %in% colnames(x)) {
         .plot_spatlocs_3d(x, ...)
     } else {
@@ -138,6 +221,12 @@ setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) 
 
 #' @describeIn plot-generic Plot a dimObj
 #' @param dims dimensions to plot
+#' @examples
+#' ######### dimObj plotting #########
+#' d <- GiottoData::loadSubObjectMini("dimObj")
+#' plot(d)
+#' plot(d, dims = c(3, 5))
+#'
 #' @export
 setMethod(
     "plot", signature(x = "dimObj", y = "missing"),
@@ -314,10 +403,9 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @param giottoImage giottoImage object
 #' @return plot
 #' @keywords internal
-.plot_giottoimage_mg <- function(
-        gobject = NULL,
-        image_name = NULL,
-        giottoImage = NULL) {
+.plot_giottoimage_mg <- function(gobject = NULL,
+    image_name = NULL,
+    giottoImage = NULL) {
     if (!is.null(giottoImage)) {
         graphics::plot(giottoImage@mg_object)
     } else {
@@ -335,7 +423,6 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 
 
 
-# TODO link this up to plot_auto_largeImage_resample() ?
 
 #' @title .plot_giottolargeimage
 #' @name .plot_giottolargeimage
@@ -364,26 +451,25 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' depending on image type
 #' @return plot
 #' @keywords internal
-.plot_giottolargeimage <- function(
-        gobject = NULL,
-        largeImage_name = NULL,
-        giottoLargeImage = NULL,
-        crop_extent = NULL,
-        xmax_crop = NULL,
-        xmin_crop = NULL,
-        ymax_crop = NULL,
-        ymin_crop = NULL,
-        max_intensity = NULL,
-        asRGB = FALSE,
-        stretch = NULL,
-        axes = TRUE,
-        smooth = TRUE,
-        mar = c(3, 5, 1.5, 1),
-        legend = FALSE,
-        maxcell = 5e5,
-        col = grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1),
-        asp = 1,
-        ...) {
+.plot_giottolargeimage <- function(gobject = NULL,
+    largeImage_name = NULL,
+    giottoLargeImage = NULL,
+    crop_extent = NULL,
+    xmax_crop = NULL,
+    xmin_crop = NULL,
+    ymax_crop = NULL,
+    ymin_crop = NULL,
+    max_intensity = NULL,
+    asRGB = FALSE,
+    stretch = NULL,
+    axes = TRUE,
+    smooth = TRUE,
+    mar = c(3, 5, 1.5, 1),
+    legend = FALSE,
+    maxcell = 5e5,
+    col = grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1),
+    asp = 1,
+    ...) {
     a <- c(get_args_list(), list(...))
 
     # Get giottoLargeImage and check and perform crop if needed
@@ -454,13 +540,12 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @param ... additional params to pass to plot functions
 #' @keywords internal
 #' @noRd
-.plot_giotto_points <- function(
-        x,
-        point_size = 0,
-        feats = NULL,
-        raster = TRUE,
-        raster_size = 600L,
-        ...) {
+.plot_giotto_points <- function(x,
+    point_size = 0,
+    feats = NULL,
+    raster = TRUE,
+    raster_size = 600L,
+    ...) {
     args_list <- list(feats, asp = 1L, ...)
 
     # point size
@@ -528,10 +613,7 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 
 
     if (length(feats) == 0L) {
-        .plot_giotto_points_all(
-            dataDT = dataDT,
-            args_list = args_list
-        )
+        do.call(.plot_giotto_points_all, args = c(list(x = data), args_list))
     } else if (length(feats) == 1L) {
         .plot_giotto_points_one(
             dataDT = dataDT,
@@ -548,20 +630,75 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 }
 
 
+#' @description
+#' Quick plotting of SpatVector points information via terra::rasterize(). For
+#' terra `SpatVectors`, this is faster than scattermore plotting.
+#' @param x input `SpatVector` or `giottoPoints`
+#' @param size numeric. Rasterization major axis pixel length. Automatically
+#' caps at the original extent size AKA full res, but with a minimum px dim
+#' of 100. To ignore these constraints, use `force_size = TRUE`
+#' @param force_size logical. Whether to ignore constrains on `size` param
+#' @param col character vector. Colors to map. Default is
+#' `grDevices::hcl.colors(256)` for `dens = TRUE`, and black and white when
+#' `dens = FALSE`
+#' @param background (optional) background color. Usually not used when a `col`
+#' color mapping is sufficient.
+#' @param dens logical. Show point density using `count` statistic per
+#' rasterized cell. (Default = FALSE)
+#' @param ... additonal params to pass to terra::plot()
+#' @keywords internal
+#' @noRd
+.plot_giotto_points_all <- function(x, size = 600, force_size = FALSE, dens = FALSE, col = NULL, background, ...) {
+    pargs <- list(...)
+    rargs <- list()
+    if (!is.null(pargs$ext)) {
+        e <- ext(pargs$ext)
+    } else {
+        e <- ext(x)
+    }
+    e_r <- range(e)
 
-.plot_giotto_points_all <- function(dataDT, args_list) {
-    par(mar = c(2.7, 3.5, 2, 2))
+    # decide rasterization resolution
+    # Select res that results in a major axis with length equal to size param,
+    # up to a maximum resolution of 1 (1:1 with extent dims),
+    # but with a min dim px of 100 (to help with cases where extent is small)
+    res <- max(e_r / size[1L])
+    if (!isTRUE(force_size)) {
+        res <- max(res, 1)
+        res <- min(res, c(e_r / 100))
+    }
 
-    args_list$x <- dataDT$x
-    args_list$y <- dataDT$y
-    args_list$col <- "white"
+    # rasterization
+    r <- terra::rast(e, res = res)
+    if (isTRUE(dens)) rargs$fun <- "count"
+    rargs$y <- r
+    rargs$x <- x[]
+    r2 <- do.call(terra::rasterize, args = rargs)
 
-    plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
-    u <- par("usr") # coordinates of the plot area
-    rect(u[1], u[3], u[2], u[4], col = "black", border = NA)
-    par(new = TRUE)
+    # plotting
+    pargs$x <- r2
+    pargs$legend <- pargs$legend %null% FALSE
+    if (is.null(col)) {
+        if (isTRUE(dens)) {
+            pal <- grDevices::hcl.colors(n = 256)
+        } else {
+            pal <- c("black", "white")
+        }
+        pargs$col <- pal[2L:length(pal)]
+        pargs$background <- pal[1L]
+        # replace background col if specifically provided
+        if (!missing(background)) pargs$background <- background
+    } else {
+        if (missing(background)) {
+            pargs$col <- col[2L:length(col)]
+            pargs$background <- col[1L]
+        } else {
+            pargs$col <- col
+            pargs$background <- background
+        }
+    }
 
-    do.call(scattermore::scattermoreplot, args_list)
+    do.call(terra::plot, args = pargs)
 }
 
 
@@ -606,7 +743,12 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
     data.table::setkey(dataDT, "feat_ID")
     dataDT <- dataDT[feat_ID %in% feats]
     dataDT[, feat_color_idx :=
-        sapply(feat_ID, function(feat_i) which(feats == feat_i))]
+        vapply(
+            feat_ID,
+            function(feat_i) which(feats == feat_i),
+            FUN.VALUE = integer(1L)
+        )
+    ]
 
     args_list$x <- dataDT$x
     args_list$y <- dataDT$y
@@ -653,12 +795,12 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 
     if (is.null(feats)) {
         args_list$x <- data
-        args_list$col <- "white"
+        args_list$col <- args_list$col %null% "white"
         do.call(terra::plot, args_list)
     } else {
         args_list$x <- terra::subset(data, terra::values(data)$feat_ID %in% feats)
         if (length(feats) == 1L) {
-            args_list$col <- "white"
+            args_list$col <- args_list$col %null% "white"
         }
         if (length(feats) > 1L) {
             args_list$y <- "feat_ID"
@@ -675,22 +817,23 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @title Plot a giotto polygon object
 #' @param x giottoPolygon object
 #' @param point_size (default = 0.6) size of plotted points when plotting centroids
-#' @param type (default is poly) plot the 'polygon' or its 'centroid'
+#' @param type (default is poly) plot the 'poly' or its 'centroid'
 #' @param ... additional params to pass to plot function
 #' @keywords internal
 #' @noRd
 .plot_giotto_polygon <- function(
         x, point_size = 0.6,
         type = c("poly", "centroid"), ...) {
+    a <- list(...)
+
     type <- match.arg(type, choices = c("poly", "centroid"))
-    if (type == "poly") {
-        terra::plot(x = x@spatVector, ...)
-    }
-    if (type == "centroid") {
-        if (!is.null(x@spatVectorCentroids)) {
-            terra::plot(x = x@spatVectorCentroids, cex = point_size, ...)
-        } else {
-            cat("no centroids calculated\n")
+
+    switch(type,
+        "poly" = do.call(terra::plot, args = c(list(x = x@spatVector), a)),
+        "centroid" = {
+            a$cex <- point_size
+            a$x <- centroids(x)
+            do.call(terra::plot, args = a)
         }
-    }
+    )
 }

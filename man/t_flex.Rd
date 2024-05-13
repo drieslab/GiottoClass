@@ -9,7 +9,15 @@ t_flex(mymatrix)
 \arguments{
 \item{mymatrix}{matrix to use}
 }
+\value{
+matrix
+}
 \description{
 t_flex
+}
+\examples{
+m <- matrix(rnorm(100), nrow = 10)
+
+t_flex(m)
 }
 \keyword{internal}

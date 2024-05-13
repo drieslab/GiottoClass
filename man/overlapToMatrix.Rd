@@ -78,4 +78,17 @@ giotto object or count matrix
 create a count matrix based on overlap results from
 \code{\link{calculateOverlap}}
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+gpoly <- getPolygonInfo(g,
+    polygon_name = "aggregate",
+    return_giottoPolygon = TRUE
+)
+gpoints <- getFeatureInfo(g, return_giottoPoints = TRUE)
+
+# calculate all transcripts overlapped
+out_all <- calculateOverlap(gpoly, gpoints)
+
+overlapToMatrix(out_all)
+}
 \concept{overlap}

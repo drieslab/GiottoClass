@@ -21,8 +21,16 @@ list_spatial_grids(
 \item{return_uniques}{return unique nesting names (ignores if final object exists/is correct class)}
 }
 \value{
-data.table of names and locations of available spatial grids. col order matters
+data.table of names and locations of available spatial grids.
+col order matters
 }
 \description{
-return the available spatial grids that are attached to the Giotto object
+return the available spatial grids that are attached to the
+Giotto object
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
+
+list_spatial_grids(g)
 }

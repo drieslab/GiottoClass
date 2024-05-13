@@ -6,7 +6,21 @@
 \usage{
 get_adj_rescale_img(img_minmax, spatial_locs, scale_factor = 1)
 }
+\value{
+numeric
+}
 \description{
 get_adj_rescale_img
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g_spatlocs <- getSpatialLocations(g)
+g_image <- convertGiottoLargeImageToMG(g,
+    largeImage_name = "image",
+    return_gobject = FALSE
+)
+minmax <- get_img_minmax(slot(g_image, "mg_object"))
+
+get_adj_rescale_img(img_minmax = minmax, spatial_locs = g_spatlocs)
 }
 \keyword{internal}

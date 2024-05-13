@@ -9,9 +9,11 @@ replaceGiottoInstructions(gobject, instructions = NULL, init_gobject = TRUE)
 \arguments{
 \item{gobject}{giotto object}
 
-\item{instructions}{new instructions (e.g. result from createGiottoInstructions)}
+\item{instructions}{new
+instructions (e.g. result from createGiottoInstructions)}
 
-\item{init_gobject}{(boolean, default = TRUE) initialize gobject when returning}
+\item{init_gobject}{(boolean, default = TRUE) initialize gobject when
+returning}
 }
 \value{
 giotto object with replaces instructions
@@ -19,4 +21,12 @@ giotto object with replaces instructions
 \description{
 Function to replace all instructions from giotto object. Does
 not call \code{initialize} on the giotto object
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+replaceGiottoInstructions(
+    gobject = g,
+    instructions = createGiottoInstructions()
+)
 }

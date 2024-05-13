@@ -26,6 +26,9 @@
 \arguments{
 \item{x}{giottoPolygon or giottoPoints}
 }
+\value{
+wrapped giottoPolygon or giottoPoints
+}
 \description{
 Extension of wrap methods from terra for Giotto's terra-based S4
 objects. Allows pointer information to be packaged into memory so that it can
@@ -46,3 +49,8 @@ be passed over a connection (e.g. nodes on a computer cluster)
 \item \code{vect(packedGiotto)}: Unwrap giotto
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPoints")
+
+wrap(g)
+}

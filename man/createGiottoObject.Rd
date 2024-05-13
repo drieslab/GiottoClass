@@ -36,15 +36,18 @@ createGiottoObject(
 
 \item{expression_feat}{available features (e.g. rna, protein, ...)}
 
-\item{spatial_locs}{data.table or data.frame with coordinates for cell centroids}
+\item{spatial_locs}{data.table or data.frame with coordinates for cell
+centroids}
 
 \item{spatial_info}{list of giotto polygon objects with spatial information,
-see \code{\link{createGiottoPolygonsFromMask}} and \code{\link{createGiottoPolygonsFromDfr}}}
+see \code{\link{createGiottoPolygonsFromMask}}
+and \code{\link{createGiottoPolygonsFromDfr}}}
 
-\item{calc_poly_centroids}{if spatial_info is provided, whether to also calculate centroids}
+\item{calc_poly_centroids}{if spatial_info is provided, whether to also
+calculate centroids}
 
-\item{centroids_to_spatlocs}{if spatial_info is provided, whether to also convert
-centroids to spatial locations}
+\item{centroids_to_spatlocs}{if spatial_info is provided, whether to also
+convert centroids to spatial locations}
 
 \item{feat_info}{list of giotto point objects with feature info,
 see \code{\link{createGiottoPoints}}}
@@ -59,7 +62,8 @@ see \code{\link{createGiottoPoints}}}
 
 \item{spatial_grid_name}{list of spatial grid name(s)}
 
-\item{spatial_enrichment}{list of spatial enrichment score(s) for each spatial region}
+\item{spatial_enrichment}{list of spatial enrichment score(s) for each
+spatial region}
 
 \item{dimension_reduction}{list of dimension reduction(s)}
 
@@ -67,17 +71,20 @@ see \code{\link{createGiottoPoints}}}
 
 \item{images}{list of images}
 
-\item{largeImages}{list of large images}
+\item{largeImages}{deprecated}
 
 \item{offset_file}{file used to stitch fields together (optional)}
 
-\item{instructions}{list of instructions or output result from \code{\link{createGiottoInstructions}}}
+\item{instructions}{list of instructions or output result
+from \code{\link{createGiottoInstructions}}}
 
-\item{cores}{how many cores or threads to use to read data if paths are provided}
+\item{cores}{how many cores or threads to use to read data if paths are
+provided}
 
 \item{raw_exprs}{deprecated, use expression}
 
-\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'DelayedArray')}
+\item{expression_matrix_class}{class of expression matrix to
+use (e.g. 'dgCMatrix', 'DelayedArray')}
 
 \item{h5_file}{path to h5 file}
 
@@ -90,30 +97,38 @@ giotto object
 Function to create a giotto object
 }
 \details{
-See \url{http://giottosuite.com/articles/getting_started_gobject.html} for more details
+See \url{http://giottosuite.com/articles/getting_started_gobject.html} for
+more details
 
-[\strong{Requirements}] To create a giotto object you need to provide at least a matrix with genes as
-row names and cells as column names. This matrix can be provided as a base matrix, sparse Matrix, data.frame,
-data.table or as a path to any of those.
-To include spatial information about cells (or regions) you need to provide a matrix, data.table or data.frame (or path to them)
-with coordinates for all spatial dimensions. This can be 2D (x and y) or 3D (x, y, x).
-The row order for the cell coordinates should be the same as the column order for the provided expression data.
+[\strong{Requirements}] To create a giotto object you need to provide at least
+a matrix with genes as row names and cells as column names. This matrix can
+be provided as a base matrix, sparse Matrix, data.frame, data.table or as a
+path to any of those. To include spatial information about
+cells (or regions) you need to provide a matrix, data.table or
+data.frame (or path to them) with coordinates for all spatial dimensions.
+This can be 2D (x and y) or 3D (x, y, x).
+The row order for the cell coordinates should be the same as the column
+order for the provided expression data.
 
-[\strong{Instructions}] Additionally an instruction file, generated manually or with \code{\link{createGiottoInstructions}}
-can be provided to instructions, if not a default instruction file will be created
-for the Giotto object.
+[\strong{Instructions}] Additionally an instruction file, generated manually or
+with \code{\link{createGiottoInstructions}} can be provided to instructions,
+if not a default instruction file will be created for the Giotto object.
 
-[\strong{Multiple fields}] In case a dataset consists of multiple fields, like seqFISH+ for example,
-an offset file can be provided to stitch the different fields together. \code{\link{stitchFieldCoordinates}}
-can be used to generate such an offset file.
+[\strong{Multiple fields}] In case a dataset consists of multiple fields, like
+seqFISH+ for example, an offset file can be provided to stitch the different
+fields together. \code{\link{stitchFieldCoordinates}} can be used to
+generate such an offset file.
 
-[\strong{Processed data}] Processed count data, such as normalized data, can be provided using
-one of the different expression slots (norm_expr, norm_scaled_expr, custom_expr).
+[\strong{Processed data}] Processed count data, such as normalized data, can
+be provided using one of the different expression
+slots (norm_expr, norm_scaled_expr, custom_expr).
 
-[\strong{Metadata}] Cell and gene metadata can be provided using the cell and gene metadata slots.
-This data can also be added afterwards using the \code{\link{addFeatMetadata}} or \code{\link{addCellMetadata}} functions.
+[\strong{Metadata}] Cell and gene metadata can be provided using the cell and
+gene metadata slots. This data can also be added afterwards using
+the \code{\link{addFeatMetadata}} or \code{\link{addCellMetadata}} functions.
 
-[\strong{Other information}] Additional information can be provided through the appropriate slots:
+[\strong{Other information}] Additional information can be provided through
+the appropriate slots:
 \itemize{
 \item{spatial networks}
 \item{spatial grids}
@@ -122,5 +137,12 @@ This data can also be added afterwards using the \code{\link{addFeatMetadata}} o
 \item{nearest neighbours networks}
 \item{images}
 }
+}
+\examples{
+expr_matrix <- readRDS(system.file("extdata/toy_matrix.RDS",
+    package = "GiottoClass"
+))
+
+createGiottoObject(expression = expr_matrix)
 }
 \concept{giotto}

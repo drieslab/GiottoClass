@@ -14,10 +14,16 @@ showGiottoDimRed(gobject, nrows = 3, ncols = 2)
 \item{ncols}{number of coordinates columns to print}
 }
 \value{
-prints the name and small subset of available dimension reduction coordinates
+prints the name and small subset of available dimension reduction
+coordinates
 }
 \description{
 shows the available dimension reductions
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+showGiottoDimRed(g)
 }
 \seealso{
 Other functions to show data in giotto object: 

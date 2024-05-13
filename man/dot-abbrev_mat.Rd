@@ -6,6 +6,9 @@
 \usage{
 .abbrev_mat(exprObj, nrows, ncols, header = TRUE)
 }
+\value{
+abbreviated matrix exprObj
+}
 \description{
 print abbreviated matrix exprObj. Works for Matrix pkg denseMatrix,
 matrix, data.frame and classes that inherit them.

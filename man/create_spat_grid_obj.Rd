@@ -20,7 +20,8 @@ create_spat_grid_obj(
 
 \item{method}{method used to generate spatial grid}
 
-\item{parameters}{additional method-specific parameters used during spatial grid generation}
+\item{parameters}{additional method-specific parameters used during
+spatial grid generation}
 
 \item{gridDT}{data.table holding the spatial grid information}
 
@@ -32,7 +33,15 @@ create_spat_grid_obj(
 
 \item{misc}{misc}
 }
+\value{
+spatialGridObj
+}
 \description{
 Create S4 spatialGridObj
+}
+\examples{
+x <- GiottoData::loadSubObjectMini("spatialGridObj")
+
+create_spat_grid_obj(name = "test", gridDT = x)
 }
 \keyword{internal}

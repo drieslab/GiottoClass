@@ -19,7 +19,8 @@ calculateOverlapPolygonImages(
 \arguments{
 \item{gobject}{giotto object}
 
-\item{name_overlap}{name for the overlap results (default to feat_info parameter)}
+\item{name_overlap}{name for the overlap
+results (default to feat_info parameter)}
 
 \item{spatial_info}{polygon information}
 
@@ -39,6 +40,15 @@ calculateOverlapPolygonImages(
 giotto object or data.table with overlapping information
 }
 \description{
-calculate overlap between cellular structures (polygons) and images (intensities)
+calculate overlap between cellular structures (polygons)
+and images (intensities)
+}
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+calculateOverlapPolygonImages(g,
+    spatial_info = "z0",
+    image_names = "dapi_z0"
+)
 }
 \concept{overlap}

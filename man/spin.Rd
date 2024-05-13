@@ -43,17 +43,20 @@
 
 \item{angle}{numeric. Angle of rotation in degrees}
 
-\item{x0}{numeric. x-coordinate of the center of rotation. Defaults to center x val if not given.}
+\item{x0}{numeric. x-coordinate of the center of rotation. Defaults to
+center x val if not given.}
 
-\item{y0}{numeric. y-coordinate of the center of rotation. Defaults to center y val if not given.}
+\item{y0}{numeric. y-coordinate of the center of rotation. Defaults to
+center y val if not given.}
 
 \item{spat_unit}{character vector. spatial units to affect}
 
 \item{feat_type}{character vector. feature types to affect
 (giottoPoints only).}
 
-\item{z0}{spatLocsObj specific. Numeric. z-coordinate of the center of rotation.
-Depending on if z data is present, defaults to either 0 or center z val if not given.}
+\item{z0}{spatLocsObj specific. Numeric. z-coordinate of the center of
+rotation. Depending on if z data is present, defaults to either 0 or
+center z val if not given.}
 
 \item{xy_angle}{spatLocsObj specific. xy plane rotation in degrees.
 Overrides angle param}
@@ -62,9 +65,17 @@ Overrides angle param}
 
 \item{xz_angle}{spatLocsObj specific. xz plane rotation}
 
-\item{geom}{character. Named vector of colnames of x, y, (z) coordinate columns.
-Default is \code{c("sdimx", "sdimy", "sdimz")}}
+\item{geom}{character. Named vector of colnames of x, y, (z) coordinate
+columns. Default is \code{c("sdimx", "sdimy", "sdimz")}}
+}
+\value{
+spun object
 }
 \description{
 Spin (rotate) an object spatially (limited to xy rotations)
+}
+\examples{
+g <- GiottoData::loadSubObjectMini("spatLocsObj")
+
+spin(g)
 }

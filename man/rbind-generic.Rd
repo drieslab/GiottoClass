@@ -17,6 +17,9 @@ to append have different names}
 
 \item{\dots}{additional params to pass to methods}
 }
+\value{
+object with appended rows
+}
 \description{
 row bind two objects
 }
@@ -25,3 +28,8 @@ row bind two objects
 \item \code{rbind2(x = giottoPolygon, y = giottoPolygon)}: Append giottoPolygon objects
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPolygon")
+
+rbind2(g, g)
+}

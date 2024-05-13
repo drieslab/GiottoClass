@@ -21,8 +21,16 @@ getFeatureInfo(
 \item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
 expression and spat_info are not expected to exist.}
 }
+\value{
+giotto points spatVector
+}
 \description{
 Get giotto points spatVector
+}
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+getFeatureInfo(g)
 }
 \seealso{
 Other feature info data accessor functions: 

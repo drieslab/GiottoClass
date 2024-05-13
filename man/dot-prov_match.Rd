@@ -11,6 +11,9 @@
 
 \item{verbose}{print discovered provenance info}
 }
+\value{
+logical or NULL
+}
 \description{
 Check provenance info matches across list of S4 subobjects
 }

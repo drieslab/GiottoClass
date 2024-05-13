@@ -9,8 +9,16 @@ showGiottoFeatInfo(gobject)
 \arguments{
 \item{gobject}{giotto object}
 }
+\value{
+SpatVector
+}
 \description{
 show the available giotto spatial feature information
+}
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+showGiottoFeatInfo(g)
 }
 \seealso{
 Other functions to show data in giotto object: 

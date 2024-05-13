@@ -15,15 +15,19 @@ installGiottoEnvironment(
 )
 }
 \arguments{
-\item{packages_to_install}{all python modules (packages) that should be installed for Giotto to work}
+\item{packages_to_install}{all python modules (packages) that should be
+installed for Giotto to work}
 
-\item{python_version}{python version to use within the giotto conda environment}
+\item{python_version}{python version to use within the giotto conda
+environment}
 
 \item{mini_install_path}{(optional) desired location miniconda installation.
 If not provided, it is chosen by reticulate::install_miniconda()
 Note the required input format:
-Correct format --> mini_install_path = "C:/my/conda/lives/here" OR "C:\\my\\conda\\lives\\here"
-INCORRECT formats --> mini_install_path = "C:/my/conda/lives/here/" AND "C:\\my\\conda\\lives\\here\\"}
+Correct format --> mini_install_path = "C:/my/conda/lives/here"
+OR "C:\\my\\conda\\lives\\here"
+INCORRECT formats --> mini_install_path = "C:/my/conda/lives/here/"
+AND "C:\\my\\conda\\lives\\here\\"}
 
 \item{force_miniconda}{force reinstallation of miniconda}
 
@@ -39,10 +43,13 @@ Installs a giotto environment
 }
 \details{
 This function will install a local giotto environment using
-the miniconda system as implemented by reticulate. Once this giotto environment is
-installed it will be automatically detected when you run the Giotto toolbox. If you want to use
-your own python path then you can set the python_path in the \code{\link{createGiottoInstructions}}
-and provide the instructions to the \code{\link{createGiottoObject}} function.
+the miniconda system as implemented by reticulate. Once this giotto
+environment is installed it will be automatically detected when you run the
+Giotto toolbox. If you want to use
+your own python path then you can set the python_path in
+the \code{\link{createGiottoInstructions}}
+and provide the instructions to the \code{\link{createGiottoObject}}
+function.
 
 By default, Python v3.10.2 will be used with the following python modules
 for Giotto Suite implementations:
@@ -74,10 +81,5 @@ Python  v3.6
 }
 }
 \examples{
-\dontrun{
-
-# this command will install r-miniconda
-# and a giotto environment with all necessary python modules
 installGiottoEnvironment()
-}
 }

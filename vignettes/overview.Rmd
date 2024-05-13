@@ -1,0 +1,197 @@
+---
+title: "Overview"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Spatial unit and feature type
+
+```{r}
+library(GiottoClass)
+
+vizmini <- GiottoData::loadGiottoMini("vizgen")
+vizmini
+```
+
+## Show and list functions
+
+Show and list functions are also provided for determining what information exists within each of these slots and its nesting.
+
+- show functions print a preview of all the data within the slot, but do not return information
+
+```{r}
+showGiottoSpatLocs(vizmini)
+```
+
+```{r}
+list_expression(vizmini)
+```
+
+```{r}
+# Find specific spat_unit objects #
+list_expression(vizmini, spat_unit = "z0")
+```
+
+```{r}
+list_expression_names(vizmini, spat_unit = "z1", feat_type = "rna")
+```
+
+## Provenance
+
+Going further, sometimes different sources of information can be used when aggregating to a particular spatial unit. This is most easily shown with the subcellular datasets from the Vizgen MERSCOPE platform which provide both feature polygon information for multiple confocal planes within a tissue. The aggregated information produced then could be drawn from different z-planes or combinations thereof. Giotto tracks this provenance information for each set of aggregated data.
+
+```{r}
+expr_mat <- getExpression(vizmini, spat_unit = "aggregate")
+prov(expr_mat)
+```
+
+## Giotto subobjects
+
+Giotto 3.0 update introduced S4 subobjects that are used within the giotto  object and its processing. These subobjects provide more formalized definitions  for what information and formatting is needed in each of the giotto object slots in order for it to be functional. These objects are standalone and extensible and commonly used spatial manipulation and plotting methods are being implemented for them.
+
+In addition, these subobjects carry several pieces of metadata in additional slots alongside the main information (e.g. also slots for spat_unit and feat_type alongside the exprDT slot for the exprObj S4). This makes it so that nesting information is retained when they are taken out of the giotto object and that nesting information does not need to be supplied anymore when interacting with the setter functions.
+
+getter functions now have an output param that defaults to extracting the information from the giotto object as the S4 subobject. When extracting information that will be modified and then returned to the giotto object, it is preferred that the information is extracted as the S4 both so that tagged information is not lost, and because it is convenient to work with the S4’s main data slot through the [ and [<- generics.
+
+
+## Constructors
+
+For directly creating a subobject, constructor functions can be used.
+
+constructors
+
+createExprObj() createCellMetaObj() createFeatMetaObj() createDimObj() createNearestNetObj() createSpatLocsObj() createSpatNetObj() createSpatEnrObj() createSpatialGrid() createGiottoPoints() createGiottoPolygonsFromDfr() createGiottoPolygonsFromMask() createGiottoImage() createGiottoLargeImage()
+
+```{r}
+coords <- data.table::data.table(
+    sdimx = c(1, 2, 3),
+    sdimy = c(1, 2, 3),
+    cell_ID = c("A", "B", "C")
+)
+
+st <- createSpatLocsObj(
+    name = "test",
+    spat_unit = "cell",
+    coordinates = coords,
+    provenance = "cell"
+)
+```
+
+There are non numeric or integer columns for the spatial location input at column position(s): 3 The first non-numeric column will be considered as a cell ID to test for consistency with the expression matrix. Other non numeric columns will be removed
+
+```{r}
+print(st)
+```
+
+## Readers
+
+Alternatively, read functions can be used to take named nested lists of raw data input and convert them to lists of subobjects which are directly usable by the setter functions.
+
+readers
+
+readPolygonData() readFeatData() readExprData() readCellMetadata() readFeatMetadata() readSpatLocsData() readSpatNetData() readSpatEnrichData() readDimReducData() readNearestNetData()
+
+```{r}
+st2 <- readSpatLocsData(list(cell2 = list(
+    test1 = coords,
+    test2 = coords
+)))
+```
+
+There are non numeric or integer columns for the spatial location input at column position(s): 3. The first non-numeric column will be considered as a cell ID to test for consistency with the expression matrix. Other non numeric columns will be removed
+
+There are non numeric or integer columns for the spatial location input at column position(s): 3. The first non-numeric column will be considered as a cell ID to test for consistency with the expression matrix. Other non numeric columns will be removed
+
+```{r}
+print(st2)
+```
+
+## Giotto Accessors
+
+Giotto provides getter and setter functions for manually accessing the information contained within the giotto object. Note that the setters require that the data be provided as compatible S4 subobjects or lists thereof. External data can read into the appropriate formats using the above reader functions. The getter functions return S4 subobjects by default.
+
+getters
+
+getExpression() getCellMetadata() getFeatMetadata() getSpatialLocations() getDimReduction() getNearestNetwork() getSpatialNetwork() getPolygonInfo() getFeatureInfo() getSpatialEnrichment() getGiottoImage()
+
+setters
+
+setExpression() setCellMetadata() setFeatureMetadata() setSpatialLocations() setDimReduction() setNearestNetwork() setSpatialNetwork() setPolygonInfo() setFeatureInfo() setSpatialEnrichment() setGiottoImage()
+
+```{r}
+expval <- getExpression(vizmini)
+print(expval)
+```
+
+## Get and set S4 spat_unit, feat_type, provenance
+
+spatUnit(), featType(), and prov() are replacement functions for tagged spatial unit, feature type, and provenance information respectively.
+
+```{r}
+# spat_unit
+spatUnit(expval) <- "new_spat"
+spatUnit(expval)
+```
+
+```{r}
+# feat_type
+featType(expval) <- "new_feat"
+featType(expval)
+```
+
+```{r}
+# provenance
+prov(expval) <- "cell"
+prov(expval)
+```
+
+## Setting an S4 subobject
+
+The spat_unit, feat_type, and name params no longer need to be given when setting an S4 subobject with tagged information into a giottoObject. However, if input is given to the set function parameters then it is prioritized over the tagged information and the tagged information is updated.
+
+```{r}
+# set exprObj to tagged nesting location
+vizmini <- setExpression(vizmini, expval)
+```
+
+```{r}
+list_expression(vizmini)
+```
+
+## Working with S4 subobjects
+
+Giotto’s S4 subobjects each wrap one main data object. The empty [] and []<- operators are defined as shorthand for directly accessing this slot that contains the data. For example, with a spatLocsObj:
+
+class(spatLocsObj[]) is equivalent to class(spatLocsObj@coordinates)
+
+In this way, the S4 subobjects can be used in contexts that the wrapped objects could be.
+
+```{r}
+st <- getSpatialLocations(vizmini)
+class(st)
+```
+
+```{r}
+# With empty brackets
+class(st[])
+```
+
+### Setting information
+
+```{r}
+print(st)
+```
+
+```{r}
+st[] <- coords
+print(st)
+```
+
+
+```{r}
+sessionInfo()
+```
+

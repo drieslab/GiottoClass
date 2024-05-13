@@ -18,11 +18,15 @@ addGiottoLargeImage(
 
 \item{largeImages}{list of giottoLargeImage objects}
 
-\item{spat_loc_name}{provide spatial location slot in Giotto to align images. (optional)}
+\item{spat_loc_name}{provide spatial location slot in Giotto to align
+images. (optional)}
 
-\item{scale_factor}{provide scale of image pixel dimensions relative to spatial coordinates.}
+\item{scale_factor}{provide scale of image pixel dimensions relative to
+spatial coordinates.}
 
-\item{negative_y}{map image to negative y spatial values if TRUE during automatic alignment. Meaning that origin is in upper left instead of lower left.}
+\item{negative_y}{map image to negative y spatial values if TRUE during
+automatic alignment. Meaning that origin is in upper left instead of lower
+left.}
 
 \item{verbose}{be verbose}
 }
@@ -30,5 +34,11 @@ addGiottoLargeImage(
 an updated Giotto object with access to the list of images
 }
 \description{
-Adds giotto image objects to your giotto object
+Add giotto image objects to \code{giotto} object
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g_image <- getGiottoImage(g, image_type = "largeImage")
+
+addGiottoLargeImage(g, largeImages = list(g_image))
 }

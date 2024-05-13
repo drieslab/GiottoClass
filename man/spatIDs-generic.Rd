@@ -57,24 +57,35 @@
 
 \item{use_cache}{use cached IDs if available (gpoly and gpoints only)}
 
-\item{uniques}{return unique ID values only (currently gpoly and gpoints only)}
+\item{uniques}{return unique ID values
+only (currently gpoly and gpoints only)}
 
 \item{feat_type}{(optional) specify which feature type}
 }
+\value{
+spatIDs and featIDs
+}
 \description{
-Get the cell IDs (termed spatial IDs to better reflect when not at
-the single-cell level) and feature IDs of a giotto object or subobject.
+Get the cell
+IDs (termed spatial IDs to better reflect when not at the single-cell level)
+and feature IDs of a giotto object or subobject.
 
 [\strong{\code{giotto} object specific}]
-When applied on a \code{giotto} object, these functions pull from the \code{cell_ID} and
-\code{feat_ID} slots. The values within these slots are updated whenever the object
-is data is changed and, importantly, whenever the active spat_unit and
+When applied on a \code{giotto} object, these functions pull from the \code{cell_ID}
+and \code{feat_ID} slots. The values within these slots are updated whenever the
+object is data is changed and, importantly, whenever the active spat_unit and
 feat_type is set (see \code{\link[=activeSpatUnit]{activeSpatUnit()}} and \code{\link[=activeFeatType]{activeFeatType()}}). New values
 for these slots are specific to the active spat_unit and feat_type and are
-detected from either the \emph{subcellular} level (\code{giottoPolygon} and \code{giottoPoints})
-or the \emph{aggregate} level (expression matrix) data, with a preference for the
-latter if it exists.
-Be aware that with this current behavior, values returned by\code{spatIDs()} and
-\code{featIDs()} should be regarded as the minimal set of expected IDs within
-all \code{giotto} slots, and not always the exact set or ordering.
+detected from either the \emph{subcellular}
+level (\code{giottoPolygon} and \code{giottoPoints}) or the \emph{aggregate}
+level (expression matrix) data, with a preference for the latter if it
+exists. Be aware that with this current behavior, values returned
+by\code{spatIDs()} and \code{featIDs()} should be regarded as the minimal set of
+expected IDs within all \code{giotto} slots, and not always the exact set or
+ordering.
+}
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPoints")
+
+featIDs(g)
 }

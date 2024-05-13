@@ -21,3 +21,8 @@ data.table with feature metadata
 \description{
 show feature metadata
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+fDataDT(g)
+}

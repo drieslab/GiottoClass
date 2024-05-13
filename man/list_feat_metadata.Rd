@@ -26,3 +26,8 @@ names and locations of available feature metadata as data.table
 \description{
 lists the available feature metadata
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+list_feat_metadata(g)
+}

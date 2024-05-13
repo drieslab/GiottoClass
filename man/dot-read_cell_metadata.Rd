@@ -19,6 +19,9 @@
 
 \item{verbose}{be verbose}
 }
+\value{
+cell metadata
+}
 \description{
 read cell metadata from list
 }

@@ -26,26 +26,31 @@ plotGiottoImage(
 
 \item{giottoLargeImage}{giottoLargeImage object to plot directly}
 
-\item{largeImage_crop_params_list}{(optional) named list of params for focusing
-on a specified region of a giottoLargeImage.}
+\item{largeImage_crop_params_list}{(optional) named list of params for
+focusing on a specified region of a giottoLargeImage.}
 
 \item{largeImage_max_intensity}{(optional) assign override value to treat as
 maximum intensity in color scale when plotting giottoLargeImage}
 
-\item{...}{additional params to pass to image object specific plotting functions}
+\item{...}{additional params to pass to image object specific plotting
+functions}
+}
+\value{
+image
 }
 \description{
 Display a giotto image in the viewer panel. Image object to plot
-can be specified by providing the giotto object containing the image (\code{gobject}),
-the image object name (\code{image_name}), and the image object type (\code{image_type}).
-Alternatively, image objects can be directly plotted through their respective
-associated params.
+can be specified by providing the giotto object containing the
+image (\code{gobject}), the image object name (\code{image_name}), and the
+image object type (\code{image_type}). Alternatively, image objects can be
+directly plotted through their respective associated params.
 }
 \section{largeImage-specific additional params}{
 
 \code{largeImage_crop_params_list} accepts a named list of the following
-possible params to define a region of interest (ROI) to plot through either
-a terra extent object OR x and y min and max bounds given as numerics:
+possible params to define a region of interest (ROI) to plot through
+either a terra extent object OR x and y min and max bounds given as
+numerics:
 \itemize{
 \item{\code{crop_extent} -- terra extent object to define crop ROI}
 \item{\code{xmax_crop} -- x max of ROI}
@@ -59,6 +64,14 @@ outlier intensity values in the image and a preview with alternative
 color scaling is desired.
 }
 
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+plotGiottoImage(g,
+    image_type = "largeImage", image_name = "dapi_z0",
+    largeImage_max_intensity = 200
+)
+}
 \seealso{
 Other basic image functions: 
 \code{\link{addGiottoImage}()},

@@ -40,6 +40,12 @@ giotto object
 \description{
 Function to set a spatial enrichment slot
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+spatenrich <- GiottoData::loadSubObjectMini("spatEnrObj")
+
+g <- setSpatialEnrichment(g, spatenrich)
+}
 \seealso{
 Other spatial enrichment data accessor functions: 
 \code{\link{getSpatialEnrichment}()},

@@ -11,7 +11,15 @@ readFeatData(data_list, verbose = TRUE)
 
 \item{verbose}{be verbose}
 }
+\value{
+list of giottoPoints
+}
 \description{
 Function to read lists of feature information data and output
 a list of generated giottoPoints objects
+}
+\examples{
+x <- GiottoData::loadSubObjectMini("giottoPoints")
+
+readFeatData(list(x))
 }

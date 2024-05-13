@@ -6,6 +6,11 @@
 #' objects. Allows pointer information to be packaged into memory so that it can
 #' be passed over a connection (e.g. nodes on a computer cluster)
 #' @param x giottoPolygon or giottoPoints
+#' @returns wrapped giottoPolygon or giottoPoints
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPoints")
+#'
+#' wrap(g)
 NULL
 # ---------------------------------------------------------------- #
 

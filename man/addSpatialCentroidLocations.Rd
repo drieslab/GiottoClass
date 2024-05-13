@@ -23,19 +23,26 @@ addSpatialCentroidLocations(
 
 \item{spat_loc_name}{name to give to the created spatial locations}
 
-\item{provenance}{(optional) provenance to assign to generated spatLocsObj. If
-not provided, provenance will default to \code{poly_info}}
+\item{provenance}{(optional) provenance to assign to generated spatLocsObj.
+If not provided, provenance will default to \code{poly_info}}
 
 \item{return_gobject}{return giotto object (default: TRUE)}
 
 \item{verbose}{be verbose}
 }
 \value{
-If \code{return_gobject = TRUE} the giotto object containing the calculated
-polygon centroids will be returned. If \code{return_gobject = FALSE} only the
-generated polygon centroids will be returned as \code{spatLocObj}.
+If \code{return_gobject = TRUE} the giotto object containing the
+calculated polygon centroids will be returned.
+If \code{return_gobject = FALSE} only the generated polygon centroids
+will be returned as \code{spatLocObj}.
 }
 \description{
-Calculates the centroid locations for the polygons within one or more selected layers
+Calculates the centroid locations for the polygons within one
+or more selected layers
+}
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+addSpatialCentroidLocations(g, poly_info = "aggregate")
 }
 \concept{centroid}

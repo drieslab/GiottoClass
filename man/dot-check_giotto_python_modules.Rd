@@ -9,6 +9,9 @@
 \arguments{
 \item{my_python_path}{path to python environment}
 }
+\value{
+character or NULL
+}
 \description{
 Check if Giotto python modules are in python environment
 }

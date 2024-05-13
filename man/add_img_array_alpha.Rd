@@ -21,3 +21,8 @@ Add alpha channel to image array
 \details{
 Add 4th alpha channel to 3 channel RGB image arrays
 }
+\examples{
+x <- matrix(rnorm(4), nrow = 2)
+
+add_img_array_alpha(x, alpha = 0.1)
+}

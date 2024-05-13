@@ -10,13 +10,27 @@ setGeneric("featIDs", function(x, ...) standardGeneric("featIDs"))
 
 ## instructions ####
 # Methods and documentations found in methods-instructions.R
-setGeneric("instructions", function(gobject, param, ...) standardGeneric("instructions"))
-setGeneric("instructions<-", function(gobject, param, initialize, ..., value) standardGeneric("instructions<-"))
+setGeneric(
+    "instructions",
+    function(gobject, param, ...) standardGeneric("instructions")
+)
+setGeneric(
+    "instructions<-",
+    function(gobject, param, initialize, ..., value) {
+        standardGeneric("instructions<-")
+    }
+)
 
 ## set defaults ####
 # Methods and documentations found in methods-instructions.R
-setGeneric("activeSpatUnit", function(gobject, ...) standardGeneric("activeSpatUnit"))
-setGeneric("activeSpatUnit<-", function(gobject, ..., value) standardGeneric("activeSpatUnit<-"))
+setGeneric(
+    "activeSpatUnit",
+    function(gobject, ...) standardGeneric("activeSpatUnit")
+)
+setGeneric(
+    "activeSpatUnit<-",
+    function(gobject, ..., value) standardGeneric("activeSpatUnit<-")
+)
 
 
 # Methods and documentations found in methods-spatShift.R
@@ -27,8 +41,19 @@ setGeneric("overlaps", function(x, ...) standardGeneric("overlaps"))
 
 
 # Object creation ####
-setGeneric("createGiottoPoints", function(x, ...) standardGeneric("createGiottoPoints"))
-setGeneric("createGiottoPolygon", function(x, ...) standardGeneric("createGiottoPolygon"))
+setGeneric(
+    "createGiottoPoints",
+    function(x, ...) standardGeneric("createGiottoPoints")
+)
+setGeneric(
+    "createGiottoPolygon",
+    function(x, ...) standardGeneric("createGiottoPolygon")
+)
+
+
+# Object reconnection ####
+# Some objects may operate base on on-disk files.
+setGeneric("reconnect", function(x, ...) standardGeneric("reconnect"))
 
 
 # Object Characteristics ####
@@ -45,12 +70,21 @@ if (!isGeneric("rownames")) setOldClass("rownames")
 
 
 # copy() S4 generic ####
-setGeneric("copy", function(x) standardGeneric("copy"), useAsDefault = data.table::copy)
+setGeneric("copy",
+    function(x) standardGeneric("copy"),
+    useAsDefault = data.table::copy
+)
 
 
 # spatial operations ####
-setGeneric("calculateOverlap", function(x, y, ...) standardGeneric("calculateOverlap"))
-setGeneric("overlapToMatrix", function(x, ...) standardGeneric("overlapToMatrix"))
+setGeneric(
+    "calculateOverlap",
+    function(x, y, ...) standardGeneric("calculateOverlap")
+)
+setGeneric(
+    "overlapToMatrix",
+    function(x, ...) standardGeneric("overlapToMatrix")
+)
 
 
 # Giotto subnesting ####

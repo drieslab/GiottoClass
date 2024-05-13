@@ -31,7 +31,8 @@ overlapImagesToMatrix(
 
 \item{image_names}{names of images you used}
 
-\item{spat_locs_name}{name for spatial centroids / locations associated with matrix}
+\item{spat_locs_name}{name for spatial centroids / locations associated
+with matrix}
 
 \item{return_gobject}{return giotto object (default: TRUE)}
 }
@@ -39,6 +40,7 @@ overlapImagesToMatrix(
 giotto object or data.table with aggregated information
 }
 \description{
-create a count matrix based on overlap results from \code{\link{calculateOverlapPolygonImages}}
+create a count matrix based on overlap results
+from \code{\link{calculateOverlapPolygonImages}}
 }
 \concept{overlap}

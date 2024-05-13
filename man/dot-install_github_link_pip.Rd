@@ -12,6 +12,9 @@ e.g. \verb{git+https://github.com/TencentAILabHealthcare/pysodb.git}}
 
 \item{env}{conda environment to which \code{link} will be installed via pip}
 }
+\value{
+character or NULL
+}
 \description{
 Installs \code{link} to python \code{env}
 }
