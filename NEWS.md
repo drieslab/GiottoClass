@@ -1,6 +1,6 @@
 
 
-# GiottoClass 0.3.0
+# GiottoClass 0.3.0 (2024/05/13)
 
 ## breaking changes
 - deprecation of `reconnect_image_object()`, `reconnect_giottoImage_MG()` and `reconnect_giottoLargeImage()` internals in favor of simpler `reconnect()` generic
