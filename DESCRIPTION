@@ -80,6 +80,7 @@ Suggests:
     testthat (>= 3.0.0),
     qs,
     XML
+Remotes: drieslab/GiottoUtils
 Config/testthat/edition: 3
 Collate: 
     'package_imports.R'
