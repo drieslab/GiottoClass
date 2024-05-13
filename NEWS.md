@@ -22,6 +22,7 @@
 - `ext()` can now be used with `giotto` objects [#865](https://github.com/drieslab/Giotto/issues/865) by rbutleriii
 - `ext()<-` can now be used with `giottoImage`
 - `as` conversion from `giottoLargeImage` to `giottoImage` (`giottoImage` is sampled)
+- `crop()` works for `spatialNetworkObj`
 
 ## new
 - new `spatValues()` to get specific values from a `giotto` object in `data.table` format
