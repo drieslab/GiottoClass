@@ -260,7 +260,7 @@ joinGiottoObjects <- function(gobject_list,
                 (x_padding * (gobj_idx - 1))
         } else {
             # when x_shift is explicit, include the first x_shift
-            final_x_shift <- xshift + (x_padding * (gobj_idx - 1))
+            final_x_shift <- x_shift + (x_padding * (gobj_idx - 1))
         }
 
 
