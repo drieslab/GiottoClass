@@ -20,9 +20,9 @@ NULL
 #' @export
 setMethod(
     "setGiotto", signature("giotto", "list"),
-    function(gobject, x, verbose = TRUE) {
+    function(gobject, x, verbose = TRUE, ...) {
         for (item in x) {
-            gobject <- setGiotto(gobject, item, verbose = verbose)
+            gobject <- setGiotto(gobject, item, verbose = verbose, ...)
         }
         return(gobject)
     }
