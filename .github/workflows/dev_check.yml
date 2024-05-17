@@ -10,7 +10,7 @@
 name: Dev Workflow - Test and check
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "dev2" ]
 
 permissions:
   contents: read
