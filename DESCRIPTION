@@ -39,7 +39,7 @@ Imports:
     grDevices,
     igraph (>= 1.2.4.1),
     magick,
-    Matrix (>= 1.6.2),
+    Matrix (>= 1.6-2),
     matrixStats (>= 0.55.0),
     methods,
     reticulate (>= 1.25),
