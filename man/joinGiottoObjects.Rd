@@ -13,6 +13,7 @@ joinGiottoObjects(
   y_shift = NULL,
   x_padding = NULL,
   y_padding = NULL,
+  dry_run = FALSE,
   verbose = FALSE
 )
 }
@@ -26,13 +27,18 @@ joinGiottoObjects(
 \item{z_vals}{distance(s) along z-axis if method is
 z-stack (default is step of 1000)}
 
-\item{x_shift}{list of values to shift along x-axis if method is shift}
+\item{x_shift}{numeric vector of values to shift along x-axis if method is
+"shift"}
 
-\item{y_shift}{list of values to shift along y-axis if method is shift}
+\item{y_shift}{numeric vector of values to shift along y-axis if method is
+"shift"}
 
 \item{x_padding}{padding between datasets/images if method is shift}
 
 \item{y_padding}{padding between datasets/images if method is shift}
+
+\item{dry_run}{logical. Plot expected object locations after join, but
+do not actually perform it.}
 
 \item{verbose}{be verbose
 Preview where each gobject will be in space with bounding polygons}

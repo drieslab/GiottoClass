@@ -2340,9 +2340,8 @@ createSpatialDefaultGrid <- function(gobject,
 #' @returns giotto object with updated spatial grid slot
 #' @details Creates a spatial grid with defined x, y (and z) dimensions.
 #' The dimension units are based on the provided spatial location units.
-#' \itemize{
-#'   \item{default method: }{\code{\link{createSpatialDefaultGrid}}}
-#' }
+#'   * **default method:** \code{\link{createSpatialDefaultGrid}}
+#' 
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
