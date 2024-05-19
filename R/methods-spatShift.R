@@ -39,10 +39,10 @@ setMethod(
         a <- list(dx = dx, dy = dy)
 
         spat_unit <- set_default_spat_unit(
-            gobject = gobject, spat_unit = spat_unit
+            gobject = x, spat_unit = spat_unit
         )
         feat_type <- set_default_feat_type(
-            gobject = gobject, spat_unit = spat_unit, feat_type = feat_type
+            gobject = x, spat_unit = spat_unit, feat_type = feat_type
         )
 
         all_su <- spat_unit == ":all:"

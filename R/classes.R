@@ -432,32 +432,43 @@ updateGiottoObject <- function(gobject) {
 # for updating pre-v0.3.0 objects
 .update_image_slot <- function(x) {
     checkmate::assert_class(x, "giotto")
-    if (methods::.hasSlot(x, "largeImages")) {
-        lgimg_list <- attr(x, "largeImages")
-
-        # remove slot
-        attr(x, "largeImages") <- NULL
-
-        # deal with same image names
-        lgnames <- names(lgimg_list)
-        imgnames <- names(x@images)
-
-        samename_bool <- imgnames %in% lgnames
-        if (any(samename_bool)) {
-            samenames <- imgnames[samename_bool]
-            warning(wrap_txt(
-                "GiottoClass v0.3.0 merges @images and @largeImages slots.
-                image name(s):", paste(samenames, collapse = ", "),
-                "\nare found in both slots.
-                largeImages will be prioritized."
-            ), call. = FALSE)
-
-            # remove images with overlapped names
-            x@images[samename_bool] <- NULL
-        }
-
-        x@images <- c(x@images, lgimg_list)
+    # return early if no largeImages
+    if (!methods::.hasSlot(x, "largeImages")) {
+        return(x)
     }
+    
+    # transfer largeImages slot contents to images slot
+    lgimg_list <- attr(x, "largeImages")
+
+    # remove slot
+    attr(x, "largeImages") <- NULL
+    
+    # if @largeImages was empty, expect `\001NULL\001` of class `name`
+    # the object can be returned early now that @largeImages is stripped
+    if (inherits(lgimg_list, "name")) {
+        return(x)
+    }
+
+    # deal with same image and largeImage names
+    lgnames <- names(lgimg_list)
+    imgnames <- names(x@images)
+
+    samename_bool <- imgnames %in% lgnames
+    if (any(samename_bool)) {
+        samenames <- imgnames[samename_bool]
+        warning(wrap_txt(
+            "GiottoClass v0.3.0 merges @images and @largeImages slots.
+            image name(s):", paste(samenames, collapse = ", "),
+            "\nare found in both slots.
+            largeImages will be prioritized."
+        ), call. = FALSE)
+
+        # remove images with overlapped names
+        x@images[samename_bool] <- NULL
+    }
+
+    x@images <- c(x@images, lgimg_list)
+        
     return(x)
 }
 
