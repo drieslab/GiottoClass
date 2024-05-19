@@ -13,6 +13,7 @@ joinGiottoObjects(
   y_shift = NULL,
   x_padding = NULL,
   y_padding = NULL,
+  dry_run = FALSE,
   verbose = FALSE
 )
 }
@@ -26,13 +27,19 @@ joinGiottoObjects(
 \item{z_vals}{distance(s) along z-axis if method is
 z-stack (default is step of 1000)}
 
-\item{x_shift}{list of values to shift along x-axis if method is shift}
+\item{x_shift}{numeric vector of values to shift along x-axis if method is
+"shift"}
 
-\item{y_shift}{list of values to shift along y-axis if method is shift}
+\item{y_shift}{numeric vector of values to shift along y-axis if method is
+"shift"}
 
-\item{x_padding}{padding between datasets/images if method is shift}
+\item{x_padding}{x padding between datasets if method is shift}
 
-\item{y_padding}{padding between datasets/images if method is shift}
+\item{y_padding}{y padding between datasets if method is shift. Only applied
+when y shifts are given.}
+
+\item{dry_run}{logical. Plot expected object locations after join, but
+do not actually perform it.}
 
 \item{verbose}{be verbose
 Preview where each gobject will be in space with bounding polygons}
@@ -47,46 +54,37 @@ Function to join multiple giotto objects together
 This function joins both the expression and spatial information of
 multiple giotto objects into a single one. Giotto supports multiple ways of
 joining spatial information as selected through param \code{join_method}:
-
 \itemize{
-\item{\strong{\code{"shift"}}} {
+\item \strong{"shift"}
 (default) Spatial locations of different datasets are shifted
 by numeric vectors of values supplied through \code{x_shift},
-\code{y_shift}, \code{x_padding}, and \code{y_padding}. This is
-particularly useful for data
-that is provided as tiles or ROIs or when analyzing multiple spatial
-datasets together and keeping their spatial data separate.
+\code{y_shift}, \code{x_padding}, and \code{y_padding}. This is particularly useful
+for data that is provided as tiles or ROIs or when analyzing multiple
+spatial datasets together and keeping their spatial data separate.
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{\\strong\{If shift values are given then a value is needed for each giotto
-object to be joined in \code{gobject_list}. Order matters.\}
+\strong{If shift values are given then a value is needed for each giotto
+object to be joined in \code{gobject_list}. Order matters.}
 
 If a regular step value is desired instead of a specific list of values,
 use \code{x_padding} and \code{y_padding}. Both shift and padding values
 can be used at the same time.
 
-Leaving \code{x_shift} and \code{y_shift} values as \code{NULL} will
-have Giotto estimate an appropriate \code{x_shift} value based on the
-x dimension of available image objects. If no image objects are
-available, a default behavior of \code{x_padding = 1000} will be applied.
-}\if{html}{\out{</div>}}
-
-}
-\item{\strong{\code{"z_stack"}}} {
+When \code{x_shift} is \code{NULL}, it defaults to the x range of gobjects in the
+list so that datasets are xshifted exactly next to each other with no
+overlaps. An additional default \code{x_padding = 1000} is applied if
+\code{x_shift}, \code{x_padding}, \code{y_shift}, \code{y_padding} are all \code{NULL}.
+\item \strong{"z_stack"}
 Datasets are spatially combined with no change to x and y
 spatial locations, but a z value is incorporated for each dataset based
 on input supplied through param \code{z_vals}. To specify a z value for
 each dataset to join, a numeric vector must be given with a value for
 each element in \code{gobject_list}. Order matters.
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{Alternatively, a single numeric value can be supplied to \code{z_vals}
+Alternatively, a single numeric value can be supplied to \code{z_vals}
 in which case this input will be treated as a z step value.
-}\if{html}{\out{</div>}}
-
-}
-\item{\strong{\code{"no_change"}}} {
+\item \strong{"no_change"}
 No changes are applied to the spatial locations of the datasets when
 joining.
-}
 }
 }
 \examples{

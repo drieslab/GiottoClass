@@ -1159,7 +1159,9 @@ createGiottoObjectSubcellular <- function(
         }
 
         default_base <- "image"
-        images <- lapply(images, function(im) {
+        images <- lapply(seq_along(images), function(img_i) {
+            im <- images[[img_i]]
+            
             # already in giotto format
             if (inherits(im, c("giottoImage", "giottoLargeImage"))) {
                 return(im)
@@ -1184,7 +1186,7 @@ createGiottoObjectSubcellular <- function(
         })
 
         # prefer list names since they are more likely intentional
-        # assign objct names from @names slot to list IF list has no names
+        # assign object names from @names slot to list IF list has no names
         images <- assign_objnames_2_list(images, force_replace = FALSE)
         obj_names <- names(images)
 

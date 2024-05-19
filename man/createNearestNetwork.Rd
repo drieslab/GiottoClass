@@ -74,26 +74,27 @@ information about how the networks are created.
 
 Output for kNN:
 \itemize{
-\item{from: }{cell_ID for source cell}
-\item{to: }{cell_ID for target cell}
-\item{distance: }{distance between cells}
-\item{weight: }{weight = 1/(1 + distance)}
+\item \strong{from:} cell_ID for source cell
+\item \strong{to:} cell_ID for target cell
+\item \strong{distance:} distance between cells
+\item \strong{weight:} \eqn{1/(1 + distance)}
 }
 
 Output for sNN:
 \itemize{
-\item{from: }{cell_ID for source cell}
-\item{to: }{cell_ID for target cell}
-\item{distance: }{distance between cells}
-\item{weight: }{1/(1 + distance)}
-\item{shared: }{number of shared neighbours}
-\item{rank: }{ranking of pairwise cell neighbours}
+\item \strong{from:} cell_ID for source cell
+\item \strong{to:} cell_ID for target cell
+\item \strong{distance:} distance between cells
+\item \strong{weight:} \eqn{1/(1 + distance)}
+\item \strong{shared:} number of shared neighbours
+\item \strong{rank:} ranking of pairwise cell neighbours
 }
+
 For sNN networks two additional parameters can be set:
 \itemize{
-\item{minimum_shared: }{minimum number of shared neighbours needed}
-\item{top_shared: }{keep this number of the top shared neighbours,
-irrespective of minimum_shared setting}
+\item \strong{minimum_shared:} minimum number of shared neighbours needed
+\item \strong{top_shared:} keep this number of the top shared neighbours,
+irrespective of minimum_shared setting
 }
 }
 \examples{

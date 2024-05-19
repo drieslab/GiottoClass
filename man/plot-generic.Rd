@@ -103,16 +103,17 @@ when \code{raster = FALSE}
 Allows the following additional params when
 plotting with no specific \code{feats} input:
 \itemize{
-\item{\strong{force_size} }{logical. \code{raster_size} param caps at 1:1 with the
+\item \strong{force_size} logical. \code{raster_size} param caps at 1:1 with the
 spatial extent, but also with a minimum resulting px dim of 100. To ignore
-these constraints, set \code{force_size = FALSE}}
-\item{\strong{dens} }{logical. Show point density using \code{count} statistic per
+these constraints, set \code{force_size = FALSE}
+\item \strong{dens} logical. Show point density using \code{count} statistic per
 rasterized cell. (Default = FALSE). This param affects \code{col} param is
 defaults. When TRUE, \code{col} is \code{grDevices::hcl.colors(256)}. When \code{FALSE},
-"black" and "white" are used.}
-\item{\strong{background} }{(optional) background color. Usually not used when a
-\code{col} color mapping is sufficient.}
+"black" and "white" are used.
+\item \strong{background} (optional) background color. Usually not used when a
+\code{col} color mapping is sufficient.
 }
+
 Note that \code{col} param and other \code{\link[base:plot]{base::plot()}} graphical params are available
 through \code{...}
 }

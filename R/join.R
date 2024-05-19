@@ -98,8 +98,9 @@
 #' "shift"
 #' @param y_shift numeric vector of values to shift along y-axis if method is
 #' "shift"
-#' @param x_padding padding between datasets/images if method is shift
-#' @param y_padding padding between datasets/images if method is shift
+#' @param x_padding x padding between datasets if method is shift
+#' @param y_padding y padding between datasets if method is shift. Only applied
+#' when y shifts are given.
 #' @param dry_run logical. Plot expected object locations after join, but
 #' do not actually perform it.
 #' @param verbose be verbose
@@ -107,44 +108,38 @@
 #' @returns giotto object
 #' @details This function joins both the expression and spatial information of
 #' multiple giotto objects into a single one. Giotto supports multiple ways of
-#' joining spatial information as selected through param \code{join_method}:
+#' joining spatial information as selected through param `join_method`:
 #'
-#' \itemize{
-#'   \item{\strong{\code{"shift"}}} {
+#'   * **"shift"** 
 #'      (default) Spatial locations of different datasets are shifted
-#'      by numeric vectors of values supplied through \code{x_shift},
-#'      \code{y_shift}, \code{x_padding}, and \code{y_padding}. This is
-#'      particularly useful for data
-#'      that is provided as tiles or ROIs or when analyzing multiple spatial
-#'      datasets together and keeping their spatial data separate.
+#'      by numeric vectors of values supplied through `x_shift`,
+#'      `y_shift`, `x_padding`, and `y_padding`. This is particularly useful 
+#'      for data that is provided as tiles or ROIs or when analyzing multiple 
+#'      spatial datasets together and keeping their spatial data separate.
 #'
-#'     \strong{If shift values are given then a value is needed for each giotto
-#'     object to be joined in \code{gobject_list}. Order matters.}
+#'     **If shift values are given then a value is needed for each giotto
+#'     object to be joined in `gobject_list`. Order matters.**
 #'
 #'     If a regular step value is desired instead of a specific list of values,
-#'     use \code{x_padding} and \code{y_padding}. Both shift and padding values
+#'     use `x_padding` and `y_padding`. Both shift and padding values
 #'     can be used at the same time.
 #'
-#'     Leaving \code{x_shift} and \code{y_shift} values as \code{NULL} will
-#'     have Giotto estimate an appropriate \code{x_shift} value based on the
-#'     x dimension of available image objects. If no image objects are
-#'     available, a default behavior of \code{x_padding = 1000} will be applied.
-#'   }
-#'   \item{\strong{\code{"z_stack"}}} {
+#'     When `x_shift` is `NULL`, it defaults to the x range of gobjects in the 
+#'     list so that datasets are xshifted exactly next to each other with no 
+#'     overlaps. An additional default `x_padding = 1000` is applied if
+#'     `x_shift`, `x_padding`, `y_shift`, `y_padding` are all `NULL`.
+#'   * **"z_stack"**
 #'     Datasets are spatially combined with no change to x and y
 #'     spatial locations, but a z value is incorporated for each dataset based
-#'     on input supplied through param \code{z_vals}. To specify a z value for
+#'     on input supplied through param `z_vals`. To specify a z value for
 #'     each dataset to join, a numeric vector must be given with a value for
-#'     each element in \code{gobject_list}. Order matters.
+#'     each element in `gobject_list`. Order matters.
 #'
-#'     Alternatively, a single numeric value can be supplied to \code{z_vals}
+#'     Alternatively, a single numeric value can be supplied to `z_vals`
 #'     in which case this input will be treated as a z step value.
-#'   }
-#'   \item{\strong{\code{"no_change"}}} {
+#'   * **"no_change"**
 #'     No changes are applied to the spatial locations of the datasets when
 #'     joining.
-#'   }
-#' }
 #'
 #' @concept giotto
 #' @examples
@@ -909,7 +904,7 @@ joinGiottoObjects <- function(gobject_list,
         stop("replacement ids must be the same length as nrow of spatLocsObj")
     }
     # update cell_ids
-    x[][, cell_ID := as.character(ids)]
+    x[][, "cell_ID" := as.character(ids)]
     return(x)
 }
 

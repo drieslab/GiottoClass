@@ -19,15 +19,14 @@
 #' @returns Updated location dataframe with new X \['X_final'\] and
 #' Y \['Y_final'\] coordinates
 #' @details Stitching of fields:
-#' \itemize{
-#'   \item{1. have cell locations: }{at least 3 columns: field, X, Y}
-#'   \item{2. create offset file: }{offset file has 3 columns: field,
-#'   x_offset, y_offset}
-#'   \item{3. create new cell location file by stitching original cell
-#'   locations with stitchFieldCoordinates}
-#'   \item{4. provide new cell location file
-#'   to \code{\link{createGiottoObject}}}
-#' }
+#'   1. **have cell locations:** at least 3 columns: field, X, Y
+#'   2. **create offset file:** offset file has 3 columns: field,
+#'   x_offset, y_offset
+#'   3. create new cell location file by stitching original cell
+#'   locations with stitchFieldCoordinates
+#'   4. provide new cell location file
+#'   to \code{\link{createGiottoObject}}
+#' 
 #' @export
 stitchFieldCoordinates <- function(location_file,
     offset_file,
