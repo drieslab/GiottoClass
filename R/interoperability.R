@@ -1464,6 +1464,7 @@ giottoToSeuratV4 <- function(gobject,
 #' The default values are 'cell' and 'rna' respectively.
 #' @param gobject Giotto object
 #' @param spat_unit spatial unit (e.g. 'cell')
+#' @param res_type type of 10x image output resolution
 #' @param ... additional params to pass to \code{\link{get_spatial_locations}}
 #' @returns Seurat object
 #' @keywords seurat interoperability
@@ -1474,9 +1475,12 @@ giottoToSeuratV4 <- function(gobject,
 #' @export
 giottoToSeuratV5 <- function(gobject,
     spat_unit = NULL,
+    res_type = c("hires", "lowres", "fullres"),
     ...) {
     # data.table vars
     feat_type <- name <- dim_type <- nn_type <- NULL
+    
+    res_type <- match.arg(res_type, choices = c("hires", "lowres", "fullres"))
 
     # set default spat_unit and feat_type to be extracted as a Seurat assay
     spat_unit <- set_default_spat_unit(
@@ -1697,15 +1701,18 @@ giottoToSeuratV5 <- function(gobject,
     }
 
     # spatial coordinates
-    loc_use <- data.table::setDF(
-        get_spatial_locations(
-            gobject = gobject,
-            spat_unit = spat_unit,
-            output = "data.table",
-            copy_obj = TRUE,
-            ... # allow setting of spat_loc_name through additional params
-        )
+    loc_use <- getSpatialLocations(
+        gobject = gobject,
+        spat_unit = spat_unit,
+        output = "spatLocsObj",
+        copy_obj = TRUE,
+        ... # allow setting of spat_loc_name through additional params
     )
+    
+    # flip y vals
+    loc_use <- flip(loc_use)[] %>%
+        data.table::setDF()
+    
     rownames(loc_use) <- loc_use$cell_ID
     sobj <- Seurat::AddMetaData(sobj, metadata = loc_use)
     # add spatial coordinates as new dim reduct object
@@ -1750,35 +1757,53 @@ giottoToSeuratV5 <- function(gobject,
 
     all_x <- NULL
     all_y <- NULL
+    
+    gimgs <- getGiottoImage(gobject, name = ":all:")
 
-    if (length(gobject@largeImages) > 0) {
-        for (i in seq_along(gobject@largeImages)) {
-            # spatVec <- terra::as.points(
-            # gobject@largeImages[[i]]@raster_object)
-            # geomSpatVec <- terra::geom(spatVec)
-            # x <- geomSpatVec[,"x"]
-            # y <- geomSpatVec[,"y"]
-            imagerow <- gobject@spatial_locs$cell$raw$sdimy
-            imagecol <- gobject@spatial_locs$cell$raw$sdimx
-            img <- terra::as.array(gobject@largeImages[[i]]@raster_object)
-            img[, , seq_len(3)] <- img[, , seq_len(3)] / 255
-            coord <- data.frame(imagerow = imagerow, imagecol = imagecol)
-
-            scalefactors <- Seurat::scalefactors(
-                spot = gobject@largeImages[[i]]@scale_factor,
-                fiducial = gobject@largeImages[[i]]@resolution,
-                hires = max(img),
-                lowres = min(img)
+    if (length(gimgs) > 0) {
+        for (i in seq_along(gimgs)) {
+            gimg <- gimgs[[i]]
+            key <- objName(gimg)
+            imagerow <- loc_use$sdimy
+            imagecol <- loc_use$sdimx
+            img_array <- as(gimg, "array")
+            img_array[, , seq_len(3)] <- img_array[, , seq_len(3)] / 255
+            coord <- data.frame(
+                imagerow = imagerow, imagecol = imagecol, 
+                row.names = loc_use$cell_ID
+            )
+            
+            scalef <- .estimate_scalefactors(
+                gimg,
+                res_type = res_type,
+                spatlocs = loc_use
             )
 
+            # There does not seem to be a way to tell seurat which image type
+            # you are using. The lowres scalefactor seems to be the important
+            # one in mapping the image
+            scalefactors <- Seurat::scalefactors(
+                spot = scalef$spot,
+                fiducial = scalef$fiducial,
+                hires = scalef$hires,
+                lowres = scalef[res_type] # this looks like the main one
+                # so instead of strictly supplying lowres scalef, we use
+                # the scalef belonging to whichever image was used in Giotto
+                # since we allow use non-lowres images
+            )
+
+            # see https://github.com/satijalab/seurat/issues/3595
             newV1 <- new(
                 Class = "VisiumV1",
-                image = img,
+                image = img_array,
                 scale.factors = scalefactors,
-                coordinates = coord
+                coordinates = coord,
+                spot.radius = 
+                    scalef$fiducial * scalef$lowres / max(dim(img_array)),
+                key = paste0(key, "_")
             )
 
-            sobj@images[[gobject@largeImages[[i]]@name]] <- newV1
+            sobj@images[[key]] <- newV1
         }
     }
 
@@ -1787,6 +1812,79 @@ giottoToSeuratV5 <- function(gobject,
     return(sobj)
 }
 
+
+#' @param x image object
+#' @param res_type type of 10x image output resolution
+#' @param spatlocs a data.frame of spatial locations coordinates
+.estimate_scalefactors <- function(
+        x, res_type = c("hires", "lowres", "fullres"), spatlocs
+) {
+    res_type <- match.arg(res_type, choices = c("hires", "lowres", "fullres"))
+    
+    pxdims <- dim(x)[1:2]
+    edims <- range(ext(x))
+    
+    scalef <- mean(pxdims / edims)
+    
+    # assume that lowres and hires follow a general ratio
+    # may not be that important since the scalefactor should theoretically
+    # only matter for the image res that we are using
+    
+    # this ratio is roughly 3.333334 based on Visium BreastCancerA1 dataset
+    res_ratio <- 3.333334
+    
+    # fullres should have a scalef of roughly 1.
+    # No way to guess hires or lowres scalefs so use arbitrary values.
+    
+    hres_scalef <- switch(res_type,
+        "hires" = scalef,
+        "lowres" = scalef * res_ratio, 
+        "fullres" = 0.08250825 # arbitrary
+    )
+    
+    lres_scalef <- switch(res_type,
+        "hires" = scalef / res_ratio,
+        "lowres" = scalef,
+        "fullres" = 0.02475247 # arbitrary
+    )
+    
+    # spot diameter and fid diameter are variable based on how spatial info was
+    # mapped to the image. Estimate this by getting the center to center
+    # px distance vs fullsize px dims ratio.
+    # ! fullsize px dims is the same as edims !
+    
+    coords <- data.table::as.data.table(spatlocs)
+    # create a delaunay
+    dnet <- createNetwork(
+        as.matrix(coords[, c("sdimx", "sdimy")]), 
+        type = "delaunay",
+        method = "geometry",
+        include_distance = TRUE, 
+        as.igraph = FALSE, 
+        include_weight = TRUE, 
+        verbose = FALSE
+    )
+    
+    # expect center to center be most common edge distance
+    # this gives CC dist as fullres px distance
+    distances <- sort(unique(dnet$distance))
+    cc_px <- distances[which.max(table(dnet$distance))]
+    
+    # assume constant ratios between diameters and cc_px
+    fid_cc_ratio <- 1.045909
+    fid_diam <- cc_px * fid_cc_ratio
+    
+    spot_cc_ratio <- 0.6474675
+    spot_diam <- cc_px * spot_cc_ratio
+    
+    scalef_list <- list(
+        spot = spot_diam,
+        fiducial = fid_diam,
+        hires = hres_scalef,
+        lowres = lres_scalef
+    )
+    return(scalef_list)
+}
 
 
 
