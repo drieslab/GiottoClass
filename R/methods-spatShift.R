@@ -113,8 +113,8 @@ setMethod(
 
         # images ----------------------------------------------------------- #
         imgs <- getGiottoImage(x, name = images)
-        if (!inherits(imgs, "list")) imgs <- list(imgs)
         if (!is.null(imgs)) {
+            if (!inherits(imgs, "list")) imgs <- list(imgs)
             for(img in imgs) {
                 img <- do.call(spatShift, args = c(list(x = img), a))
                 x <- setGiottoImage(x, img, verbose = FALSE)

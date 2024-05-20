@@ -1816,6 +1816,7 @@ giottoToSeuratV5 <- function(gobject,
 #' @param x image object
 #' @param res_type type of 10x image output resolution
 #' @param spatlocs a data.frame of spatial locations coordinates
+#' @noRd
 .estimate_scalefactors <- function(
         x, res_type = c("hires", "lowres", "fullres"), spatlocs
 ) {
