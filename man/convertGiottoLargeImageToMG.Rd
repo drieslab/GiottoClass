@@ -67,5 +67,5 @@ magick based giottoImage
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
 
-convertGiottoLargeImageToMG(g, largeImage_name = "image")
+convertGiottoLargeImageToMG(g, largeImage_name = "he")
 }

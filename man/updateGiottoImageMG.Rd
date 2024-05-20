@@ -73,7 +73,7 @@ as \code{image}
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
 g_image <- convertGiottoLargeImageToMG(g,
-    largeImage_name = "image",
+    largeImage_name = "he",
     return_gobject = FALSE
 )
 
