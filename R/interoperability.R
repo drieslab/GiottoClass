@@ -2209,6 +2209,9 @@ seuratToGiottoV5 <- function(sobject,
     nn_network = NULL,
     verbose = TRUE) {
     package_check("Seurat")
+    
+    # NSE vars
+    sdimy <- NULL
 
     if (is.null(Seurat::GetAssayData(
         object = sobject, slot = "counts",

@@ -88,14 +88,45 @@ joining.
 }
 }
 \examples{
+# joining objects with no spatial information
 m1 <- matrix(rnorm(100), nrow = 10)
 m2 <- matrix(rnorm(100), nrow = 10)
 colnames(m1) <- paste0("cell_", seq_len(10))
 colnames(m2) <- paste0("cell_", seq_len(10))
+rownames(m1) <- rownames(m2) <- paste0("feat_", seq_len(10))
 
 g1 <- createGiottoObject(expression = m1)
 g2 <- createGiottoObject(expression = m2)
 
-joinGiottoObjects(gobject_list = list(g1, g2), gobject_names = c("g1", "g2"))
+joinGiottoObjects(
+    gobject_list = list(g1, g2), 
+    gobject_names = c("g1", "g2")
+)
+
+# dry run joining objects with spatial information
+# a default x_padding of 1000 is applied
+viz <- GiottoData::loadGiottoMini("viz")
+joinGiottoObjects(
+    list(viz, viz),
+    gobject_names = c("v1", "v2"),
+    dry_run = TRUE
+)
+
+# place them right next to each other
+# note that this means generated spatial networks will be more likely to 
+# link across the datasets
+joinGiottoObjects(
+    list(viz, viz),
+    gobject_names = c("v1", "v2"),
+    dry_run = TRUE,
+    x_padding = 0
+)
+
+# join the spatial objects
+joined_viz <- joinGiottoObjects(
+    list(viz, viz),
+    gobject_names = c("v1", "v2")
+)
+
 }
 \concept{giotto}
