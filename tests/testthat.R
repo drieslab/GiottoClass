@@ -9,4 +9,10 @@
 library(testthat)
 library(GiottoClass)
 
+# setup giotto environment
+installGiottoEnvironment()
+reticulate::conda_install(
+    envname = 'giotto_env',packages = 'scanpy', pip = TRUE
+)
+
 test_check("GiottoClass")

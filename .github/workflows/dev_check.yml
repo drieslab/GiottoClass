@@ -67,29 +67,6 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: setup giotto_env
-        shell: Rscript {0}
-        run: |
-          path_to_python <- reticulate::virtualenv_create(
-            envname = "giotto_env",
-            python = Sys.which("python"), # placed on PATH by the setup-python action
-            packages = c(
-              "pandas==1.5.1",
-              "networkx==2.8.8",
-              "python-igraph==0.10.2",
-              "leidenalg==0.9.0", 
-              "python-louvain==0.16", 
-              "python.app==1.4", 
-              "scikit-learn==1.1.3",
-              "scipy==1.13.0",
-              "scanpy",
-              "smfishhmrf"
-            )
-          )
-
-          writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
-                     Sys.getenv("GITHUB_ENV"))
-
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2
         with:
