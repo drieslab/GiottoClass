@@ -60,7 +60,7 @@ giotto_slot_depths <- function() {
             "spatial_enrichment",
             "dimension_reduction",
             "nn_network",
-            "images",
+            "images"
             # 'spatial_grid',
             # 'parameters',
             # 'instructions',
