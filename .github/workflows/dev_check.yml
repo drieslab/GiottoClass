@@ -70,8 +70,10 @@ jobs:
       - name: setup giotto_env
         shell: Rscript {0}
         run: |
-          installGiottoEnvironment(
-            packages_to_install = c(
+          path_to_python <- reticulate::virtualenv_create(
+            envname = "giotto_env",
+            python = Sys.which("python"), # placed on PATH by the setup-python action
+            packages = c(
               "pandas==1.5.1",
               "networkx==2.8.8",
               "python-igraph==0.10.2",
@@ -84,6 +86,9 @@ jobs:
               "smfishhmrf"
             )
           )
+
+          writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
+                     Sys.getenv("GITHUB_ENV"))
 
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2
