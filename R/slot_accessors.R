@@ -60,7 +60,7 @@ giotto_slot_depths <- function() {
             "spatial_enrichment",
             "dimension_reduction",
             "nn_network",
-            "images",
+            "images"
             # 'spatial_grid',
             # 'parameters',
             # 'instructions',
@@ -5716,10 +5716,10 @@ get_giottoImage_MG <- function(gobject,
     if (is.null(g_image_names)) stop("No giottoImages have been found \n")
 
     if (is.null(name)) {
-        name <- g_image_names[1L]
+        name <- g_image_names$name[1L]
     }
 
-    if (!name %in% g_image_names) {
+    if (!name %in% g_image_names$name) {
         stop(
             name, " was not found among the image names.
             See showGiottoImageNames()\n",
@@ -5790,10 +5790,10 @@ get_giottoLargeImage <- function(gobject,
     }
 
     if (is.null(name)) {
-        name <- g_image_names[1L]
+        name <- g_image_names$name[1L]
     }
 
-    if (!name %in% g_image_names) {
+    if (!name %in% g_image_names$name) {
         stop(name, " was not found among the largeImage names.
             See showGiottoImageNames() \n")
     }

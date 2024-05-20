@@ -424,9 +424,8 @@ showGiottoSpatLocs <- function(gobject,
 #' @export
 showGiottoSpatEnrichments <- function(gobject,
     nrows = 4) {
-    # define for data.table [] subsetting
-    spat_unit <- NULL
-    feat_type <- NULL
+    # NSE vars
+    spat_unit <- feat_type <- name <- NULL
 
     if (is.null(gobject)) stop("A giotto object needs to be provided \n")
 

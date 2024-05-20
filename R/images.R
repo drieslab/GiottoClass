@@ -8,12 +8,11 @@
 #' @returns data.table with image pixel information
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' g_image <- convertGiottoLargeImageToMG(g,
-#'     largeImage_name = "image",
-#'     return_gobject = FALSE
-#' )
+#' g_image <- getGiottoImage(g, name = "image")
+#' mgimg <- as(g_image, "giottoImage")
 #'
-#' convert_mgImage_to_array_DT(g_image)
+#' a <- convert_mgImage_to_array_DT(mgimg)
+#' force(a);force(a)
 #' @export
 convert_mgImage_to_array_DT <- function(mg_object) {
     if (inherits(mg_object, "giottoImage")) {
@@ -47,12 +46,10 @@ convert_mgImage_to_array_DT <- function(mg_object) {
 #' @returns vector of pixel color frequencies and an associated barplot
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' g_image <- convertGiottoLargeImageToMG(g,
-#'     largeImage_name = "image",
-#'     return_gobject = FALSE
-#' )
+#' g_image <- getGiottoImage(g, name = "image")
+#' mgimg <- as(g_image, "giottoImage")
 #'
-#' estimateImageBg(g_image)
+#' estimateImageBg(mgimg)
 #' @export
 estimateImageBg <- function(mg_object, top_color_range = seq_len(50)) {
     if (inherits(mg_object, "giottoImage")) {
@@ -179,7 +176,7 @@ changeImageBg <- function(mg_object,
 
 
 
-# TODO Check if this is still the best way to do things
+# TODO remove in next version
 #' @name get_img_minmax
 #' @title get_img_minmax
 #' @param mg_img magick object
@@ -190,15 +187,15 @@ changeImageBg <- function(mg_object,
 #' @returns numeric
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' g_image <- convertGiottoLargeImageToMG(g,
-#'     largeImage_name = "image",
-#'     return_gobject = FALSE
-#' )
+#' g_image <- getGiottoImage(g, name = "image")
+#' mgimg <- as(g_image, "giottoImage")
 #'
-#' get_img_minmax(slot(g_image, "mg_object"))
+#' get_img_minmax(slot(mgimg, "mg_object"))
 #' @export
 get_img_minmax <- function(mg_img,
     negative_y = TRUE) {
+    deprecate_soft(what = "get_img_minmax()", with = "ext()", when = "0.3.1")
+    
     # Get magick object dimensions. xmin and ymax assumed to be 0.
     info <- magick::image_info(mg_img)
     img_xmax <- info$width # width
@@ -221,7 +218,7 @@ get_img_minmax <- function(mg_img,
 
 
 
-# TODO Check if this is still the best way to do things
+# TODO remove in next version
 #' @name get_adj_rescale_img
 #' @title get_adj_rescale_img
 #' @keywords internal
@@ -229,17 +226,23 @@ get_img_minmax <- function(mg_img,
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' g_spatlocs <- getSpatialLocations(g)
-#' g_image <- convertGiottoLargeImageToMG(g,
-#'     largeImage_name = "image",
-#'     return_gobject = FALSE
-#' )
-#' minmax <- get_img_minmax(slot(g_image, "mg_object"))
+#' g_image <- getGiottoImage(g, name = "image")
+#' mgimg <- as(g_image, "giottoImage")
+#' minmax <- get_img_minmax(slot(mgimg, "mg_object"))
 #'
 #' get_adj_rescale_img(img_minmax = minmax, spatial_locs = g_spatlocs)
 #' @export
 get_adj_rescale_img <- function(img_minmax,
     spatial_locs,
     scale_factor = 1) {
+    deprecate_warn(
+        "0.3.1", what = "get_adj_rescale_img()",
+        details = c(
+            "this is too specific to the inner workings of `giottoImage`",
+            "We can simply use `ext<-` to set a new extent instead of this."
+        )
+    )
+    
     # Expand scale_factor if needed
     if (length(scale_factor) == 1) {
         scale_factor <- c(x = scale_factor, y = scale_factor)
@@ -796,8 +799,6 @@ reconnect_giottoImage_MG <- function(
 #' @title Plot smoothed curve of giotto largeImage intensity values
 #' @name density_giottoLargeImage
 #' @param gobject giotto object
-#' @param image_type image object type (only supports largeImage and is set as
-#' default)
 #' @param giottoLargeImage giotto large image object
 #' @param method method of plotting image distribution
 #' @param ... additional params to pass
@@ -1391,7 +1392,7 @@ convertGiottoLargeImageToMG <- function(gobject = NULL,
 #' giottoLargeImage metadata
 #' @param giottoLargeImage giottoLargeImage object to determine max_intensity,
 #' min_intensity, is_int settings from
-#' @param quick_INTU_maxval Treat as maximum intensity to find compatible
+#' @param quick_INTS_maxval Treat as maximum intensity to find compatible
 #' unsigned integer settings
 #' @param max_intensity,min_intensity value given as image maximum/minimum
 #' intensity

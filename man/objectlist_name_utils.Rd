@@ -32,29 +32,27 @@ used when printing verbose messages about what was made unique}
 Name wrangling for subobject lists
 }
 \examples{
+\dontrun{
 e <- new("exprObj")
 a <- replicate(3L, e)
-# name the object
-a <- lapply(seq_along(t_l), function(i) {
-    objName(t_l[[i]]) <- c("a", "b", "c")[[i]]
-    return(t_l[[i]])
-})
+# name the objects
+objName(a) <- letters[1:3]
 
 # assign the object stored names to the list
 names(a)
-a <- assign_objnames_2_list(t_l)
+a <- assign_objnames_2_list(a)
 names(a)
 
 # assign list names to the object
-b <- list("name_to_set" = new("exprObj"))
-lapply(b, objName)
+b <- list("name_to_set" = new("exprObj"), "name2" = new("exprObj"))
+objName(b)
 b <- assign_listnames_2_obj(b)
-lapply(b, objName)
+objName(b)
 
 
 # ensure that character values are unique
 input <- c("a", "b", "b", "c", "a", "a", "a")
 .uniquify_dups(input, verbose = FALSE)
-
+}
 }
 \keyword{internal}

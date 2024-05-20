@@ -68,7 +68,7 @@ setMethod("crop", signature("spatLocsObj"), function(x, y, ...) {
 #' @export
 setMethod("crop", signature("spatialNetworkObj"), function(x, y, ...) {
     # NSE vars
-    sdimx_being <- sdimy_begin <- sdimx_end <- sdimy_end <- NULL
+    sdimx_begin <- sdimy_begin <- sdimx_end <- sdimy_end <- NULL
     
     e <- ext(y)
     if (is.null(terra::intersect(terra::ext(x), e))) {
