@@ -84,7 +84,7 @@ estimateImageBg <- function(mg_object, top_color_range = seq_len(50)) {
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' g_image <- convertGiottoLargeImageToMG(g,
-#'     largeImage_name = "image",
+#'     largeImage_name = "he",
 #'     return_gobject = FALSE
 #' )
 #'
@@ -796,8 +796,6 @@ reconnect_giottoImage_MG <- function(
 #' @title Plot smoothed curve of giotto largeImage intensity values
 #' @name density_giottoLargeImage
 #' @param gobject giotto object
-#' @param image_type image object type (only supports largeImage and is set as
-#' default)
 #' @param giottoLargeImage giotto large image object
 #' @param method method of plotting image distribution
 #' @param ... additional params to pass
@@ -1391,7 +1389,7 @@ convertGiottoLargeImageToMG <- function(gobject = NULL,
 #' giottoLargeImage metadata
 #' @param giottoLargeImage giottoLargeImage object to determine max_intensity,
 #' min_intensity, is_int settings from
-#' @param quick_INTU_maxval Treat as maximum intensity to find compatible
+#' @param quick_INTS_maxval Treat as maximum intensity to find compatible
 #' unsigned integer settings
 #' @param max_intensity,min_intensity value given as image maximum/minimum
 #' intensity
