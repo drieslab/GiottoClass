@@ -446,7 +446,8 @@ joinGiottoObjects <- function(gobject_list,
         # get all spatLocsObj in the gobj
         available_locs <- getSpatialLocations(
             gobj, spat_unit = ":all:", name = ":all:", output = "spatLocsObj",
-            copy_obj = TRUE, verbose = FALSE, set_defaults = FALSE
+            copy_obj = TRUE, verbose = FALSE, set_defaults = FALSE,
+            simplify = FALSE
         )
 
         # update cell IDs to joined object cell IDs
