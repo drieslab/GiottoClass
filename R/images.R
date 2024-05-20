@@ -8,7 +8,7 @@
 #' @returns data.table with image pixel information
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' g_image <- getGiottoImage(g, name = "he")
+#' g_image <- getGiottoImage(g, name = "image")
 #' mgimg <- as(g_image, "giottoImage")
 #'
 #' a <- convert_mgImage_to_array_DT(mgimg)
@@ -46,7 +46,7 @@ convert_mgImage_to_array_DT <- function(mg_object) {
 #' @returns vector of pixel color frequencies and an associated barplot
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' g_image <- getGiottoImage(g, name = "he")
+#' g_image <- getGiottoImage(g, name = "image")
 #' mgimg <- as(g_image, "giottoImage")
 #'
 #' estimateImageBg(mgimg)
@@ -81,7 +81,7 @@ estimateImageBg <- function(mg_object, top_color_range = seq_len(50)) {
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' g_image <- convertGiottoLargeImageToMG(g,
-#'     largeImage_name = "he",
+#'     largeImage_name = "image",
 #'     return_gobject = FALSE
 #' )
 #'
@@ -187,7 +187,7 @@ changeImageBg <- function(mg_object,
 #' @returns numeric
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' g_image <- getGiottoImage(g, name = "he")
+#' g_image <- getGiottoImage(g, name = "image")
 #' mgimg <- as(g_image, "giottoImage")
 #'
 #' get_img_minmax(slot(mgimg, "mg_object"))
@@ -226,7 +226,7 @@ get_img_minmax <- function(mg_img,
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' g_spatlocs <- getSpatialLocations(g)
-#' g_image <- getGiottoImage(g, name = "he")
+#' g_image <- getGiottoImage(g, name = "image")
 #' mgimg <- as(g_image, "giottoImage")
 #' minmax <- get_img_minmax(slot(mgimg, "mg_object"))
 #'
@@ -465,7 +465,7 @@ addGiottoImageMG <- function(gobject,
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' g_image <- convertGiottoLargeImageToMG(g,
-#'     largeImage_name = "he",
+#'     largeImage_name = "image",
 #'     return_gobject = FALSE
 #' )
 #'
@@ -1219,7 +1219,7 @@ cropGiottoLargeImage <- function(gobject = NULL,
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
-#' convertGiottoLargeImageToMG(g, largeImage_name = "he")
+#' convertGiottoLargeImageToMG(g, largeImage_name = "image")
 #' @export
 convertGiottoLargeImageToMG <- function(gobject = NULL,
     largeImage_name = NULL,

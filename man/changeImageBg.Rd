@@ -34,7 +34,7 @@ plot to another color
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
 g_image <- convertGiottoLargeImageToMG(g,
-    largeImage_name = "he",
+    largeImage_name = "image",
     return_gobject = FALSE
 )
 

@@ -17,7 +17,7 @@ converts a magick image object to a data.table
 }
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
-g_image <- getGiottoImage(g, name = "he")
+g_image <- getGiottoImage(g, name = "image")
 mgimg <- as(g_image, "giottoImage")
 
 a <- convert_mgImage_to_array_DT(mgimg)
