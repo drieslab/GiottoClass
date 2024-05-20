@@ -2246,8 +2246,15 @@ seuratToGiottoV5 <- function(sobject,
 
         # Cell Metadata
         cell_metadata <- sobject@meta.data
+        cell_metadata <- data.table::as.data.table(
+            cell_metadata, keep.rownames = TRUE)
+        
         # Feat Metadata
         feat_metadata <- sobject[[]]
+        feat_metadata <- data.table::as.data.table(
+            feat_metadata, keep.rownames = TRUE)
+        
+        # rownames of both kept as `rn`
 
         # Dimension Reduction
         if (sum(vapply(
@@ -2308,34 +2315,21 @@ seuratToGiottoV5 <- function(sobject,
                         "imagecol"
                     )
                 )
-                # spat_coord = cbind(rownames(spat_coord),
-                # data.frame(spat_coord, row.names=NULL))
 
                 if (!("cell" %in% spat_coord)) {
                     spat_coord$cell_ID <- rownames(spat_coord)
-                    colnames(spat_coord) <- c("sdimx", "sdimy", "cell_ID")
+                    colnames(spat_coord) <- c("sdimy", "sdimx", "cell_ID")
                 } else {
-                    colnames(spat_coord) <- c("sdimx", "sdimy", "cell_ID")
+                    colnames(spat_coord) <- c("sdimy", "sdimx", "cell_ID")
                 }
 
-                spat_loc <- spat_coord
-                length_assay <- length(colnames(sobject))
-
-                spat_datatable <- data.table(
-                    cell_ID = character(length_assay),
-                    sdimx = rep(NA_real_, length_assay),
-                    sdimy = rep(NA_real_, length_assay)
-                )
-
-                spat_datatable$cell_ID <- colnames(sobject)
-                match_cell_ID <- match(spat_loc$cell_ID, spat_datatable$cell_ID)
-                matching_indices <- match_cell_ID
-                matching_indices <- matching_indices[!is.na(matching_indices)]
-                spat_datatable[
-                    matching_indices,
-                    c("sdimx", "sdimy") := list(spat_loc$sdimx, spat_loc$sdimy)
-                ]
-                spat_loc <- spat_datatable
+                spat_loc <- data.table::as.data.table(spat_coord)
+                
+                # seurat has coords following imaging conventions
+                # flip them for Giotto
+                spat_loc[, sdimy := -sdimy]
+                data.table::setcolorder(
+                    spat_loc, neworder = c("sdimx", "sdimy", "cell_ID"))
             } else {
                 message("Images for RNA assay not found in the data.
                         Skipping image processing.")
@@ -2414,33 +2408,20 @@ seuratToGiottoV5 <- function(sobject,
         }
     }
 
-    # Find SueratImages, extract them, and pass to create seuratobj
-
+    # Find SueratImages, extract them, and pass to create image
     for (i in names(sobject@images)) {
         # check if image slot has image in it
-        if ("image" %in% slotNames(sobject@images[[i]])) {
-            if (!is.null(sobject@images[[i]]@image)) {
-                # Extract the red (r), green (g), and blue (b) channels
-                r <- as.matrix(sobject@images[[i]]@image[, , 1])
-                g <- as.matrix(sobject@images[[i]]@image[, , 2])
-                b <- as.matrix(sobject@images[[i]]@image[, , 3])
-
-                r <- round(r * 255)
-                g <- round(g * 255)
-                b <- round(b * 255)
-
-                # Convert channels to rasters
-                r <- terra::rast(r)
-                g <- terra::rast(g)
-                b <- terra::rast(b)
-
-                # Create Giotto LargeImage
+        simg <- sobject[[i]]
+        if ("image" %in% slotNames(simg)) {
+            img_array <- slot(simg, "image")
+            if (!is.null(img_array)) {     
+                
+                scalef <- Seurat::ScaleFactors(simg)
+                
                 gImg <- createGiottoLargeImage(
-                    raster_object = terra::rast(list(r, g, b)),
-                    name = names(sobject@images),
-                    scale_factor = sobject@images[[
-                        i
-                    ]]@scale.factors$lowres
+                    raster_object = terra::rast(img_array) * 255,
+                    name = i,
+                    scale_factor = 1 / scalef$lowres
                 )
             }
         }
@@ -2558,25 +2539,30 @@ seuratToGiottoV5 <- function(sobject,
             )
         }
     }
-    gobject <- addCellMetadata(gobject = gobject, new_metadata = cell_metadata)
-    gobject <- addFeatMetadata(gobject = gobject, new_metadata = feat_metadata)
+
+    gobject <- addCellMetadata(
+        gobject = gobject, new_metadata = cell_metadata, 
+        by_column = TRUE, column_cell_ID = "rn")
+    gobject <- addFeatMetadata(
+        gobject = gobject, new_metadata = feat_metadata, 
+        by_column = TRUE, column_feat_ID = "rn")
 
 
-    if (exists("gpoints") == TRUE) {
+    if (exists("gpoints")) {
         gobject <- addGiottoPoints(
             gobject = gobject,
             gpoints = list(gpoints)
         )
     }
 
-    if (exists("gpolygon") == TRUE) {
+    if (exists("gpolygon")) {
         gobject <- addGiottoPolygons(
             gobject = gobject,
             gpolygons = polygon_list
         )
     }
 
-    if (exists("gImg") == TRUE) {
+    if (exists("gImg")) {
         gobject <- addGiottoLargeImage(
             gobject = gobject,
             largeImages = list(gImg)
