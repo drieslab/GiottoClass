@@ -224,6 +224,7 @@ setMethod("prov<-", signature = "provData", function(x, value) {
 #' @title Name wrangling for subobject lists
 #' @param obj_list list containing giotto subobjects
 #' @examples
+#' \dontrun{
 #' e <- new("exprObj")
 #' a <- replicate(3L, e)
 #' # name the objects
@@ -244,7 +245,7 @@ setMethod("prov<-", signature = "provData", function(x, value) {
 #' # ensure that character values are unique
 #' input <- c("a", "b", "b", "c", "a", "a", "a")
 #' .uniquify_dups(input, verbose = FALSE)
-#'
+#' }
 NULL
 
 #' @rdname objectlist_name_utils

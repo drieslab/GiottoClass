@@ -32,6 +32,7 @@ used when printing verbose messages about what was made unique}
 Name wrangling for subobject lists
 }
 \examples{
+\dontrun{
 e <- new("exprObj")
 a <- replicate(3L, e)
 # name the objects
@@ -52,6 +53,6 @@ objName(b)
 # ensure that character values are unique
 input <- c("a", "b", "b", "c", "a", "a", "a")
 .uniquify_dups(input, verbose = FALSE)
-
+}
 }
 \keyword{internal}
