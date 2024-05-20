@@ -100,11 +100,11 @@ jobs:
               "scipy==1.13.0",
               "scanpy",
               "smfishhmrf"
+             )
            )
-         )
               
-         writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
-                    Sys.getenv("GITHUB_ENV"))
+           writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
+                      Sys.getenv("GITHUB_ENV"))
 
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2
