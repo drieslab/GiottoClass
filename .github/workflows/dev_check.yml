@@ -61,6 +61,23 @@ jobs:
             any::geometry
             any::qs
             any::future.apply
+            any::Biobase
+            any::chihaya
+            any::DelayedArray
+            any::DelayedMatrixStats
+            any::HDF5Array
+            any::plotly
+            any::rgl
+            any::rhdf5
+            any::S4Vectors
+            any::ScaledMatrix
+            any::XML
+            any::Seurat
+            any::SeuratObject
+            any::SingleCellExperiment
+            any::SpatialExperiment
+            any::STexampleData
+            any::SummarizedExperiment
             github::drieslab/GiottoData
             
       - uses: actions/setup-python@v5
