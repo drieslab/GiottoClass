@@ -62,6 +62,24 @@ jobs:
             any::qs
             any::future.apply
             github::drieslab/GiottoData
+            
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: setup r-reticulate venv
+        shell: Rscript {0}
+        run: |
+          path_to_python <- reticulate::virtualenv_create(
+            envname = "r-reticulate",
+            python = Sys.which("python"), # placed on PATH by the setup-python action
+            packages = c(
+              "scipy"
+            )
+          )
+
+          writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
+                     Sys.getenv("GITHUB_ENV"))
 
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2
