@@ -12,6 +12,9 @@
 - `joinGiottoObjects()` extent detection and xshift defaults now depend on `ext()` of the gobject instead of any images (when available)
 - `joinGiottoObjects()` now has a `dry_run` param for previewing where datasets will be spatially located after the join
 
+## new
+- `as()` conversion from `giottoLargeImage` to `array`
+
 
 # GiottoClass 0.3.0 (2024/05/13)
 

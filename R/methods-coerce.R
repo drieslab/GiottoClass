@@ -137,6 +137,15 @@ methods::setAs("giottoLargeImage", "giottoImage", function(from) {
     return(mImg)
 })
 
+methods::setAs("giottoLargeImage", "array", function(from) {
+    .spatraster_sample_values(
+        raster_object = from,
+        size = getOption("giotto.plot_img_max_crop", 1e8),
+        output = "array",
+        verbose = FALSE
+    )
+})
+
 
 
 
