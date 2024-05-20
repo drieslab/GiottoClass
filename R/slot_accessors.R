@@ -2191,6 +2191,8 @@ getMultiomics <- function(gobject = NULL,
 #' @param copy_obj whether to copy/duplicate when getting the
 #' object (default = TRUE)
 #' @param verbose be verbose
+#' @param simplify logical. Whether or not to take object out of a list when
+#' there is a length of 1.
 #' @returns data.table with coordinates or spatLocsObj depending on \code{output}
 #' @family spatial location data accessor functions
 #' @family functions to get data from giotto object
@@ -2205,7 +2207,8 @@ getSpatialLocations <- function(gobject,
     output = c("spatLocsObj", "data.table"),
     copy_obj = TRUE,
     verbose = TRUE,
-    set_defaults = TRUE) {
+    set_defaults = TRUE,
+    simplify = TRUE) {
     # Pass to internal function
     spatloc <- get_spatial_locations(
         gobject = gobject,
@@ -2214,7 +2217,8 @@ getSpatialLocations <- function(gobject,
         output = output,
         copy_obj = copy_obj,
         verbose = verbose,
-        set_defaults = set_defaults
+        set_defaults = set_defaults,
+        simplify = simplify
     )
 
     return(spatloc)
@@ -2420,7 +2424,7 @@ setSpatialLocations <- function(gobject,
     provenance = NULL,
     verbose = TRUE,
     initialize = TRUE) {
-    assert_giotto(gobject)
+    checkmate::assert_class(gobject, "giotto")
     if (!methods::hasArg(x)) {
         stop(wrap_txt("x (data to set) param must be given"))
     }
@@ -3741,6 +3745,8 @@ get_spatialNetwork <- function(gobject,
 #' @param copy_obj whether to copy/duplicate when getting the
 #' object (default = TRUE)
 #' @param verbose be verbose
+#' @param simplify logical. Whether or not to take object out of a list when
+#' there is a length of 1.
 #' @returns spatialNetworkObj of data.table
 #' @family spatial network data accessor functions
 #' @family functions to get data from giotto object
@@ -3760,7 +3766,8 @@ getSpatialNetwork <- function(gobject,
     ),
     set_defaults = TRUE,
     copy_obj = TRUE,
-    verbose = TRUE) {
+    verbose = TRUE,
+    simplify = TRUE) {
     # Pass to internal function
     network <- get_spatialNetwork(
         gobject = gobject,
@@ -3769,7 +3776,8 @@ getSpatialNetwork <- function(gobject,
         output = output,
         set_defaults = set_defaults,
         copy_obj = copy_obj,
-        verbose = verbose
+        verbose = verbose,
+        simplify = simplify
     )
 
     return(network)
@@ -4474,6 +4482,8 @@ get_polygon_info <- function(gobject,
 #' @param return_giottoPolygon (Defaults to FALSE) Return as giottoPolygon
 #' S4 object
 #' @param verbose be verbose
+#' @param simplify logical. Whether or not to take object out of a list when
+#' there is a length of 1.
 #' @returns spatVector
 #' @family polygon info data accessor functions
 #' @family functions to get data from giotto object
@@ -4486,7 +4496,8 @@ getPolygonInfo <- function(gobject = NULL,
     polygon_name = NULL,
     polygon_overlap = NULL,
     return_giottoPolygon = FALSE,
-    verbose = TRUE) {
+    verbose = TRUE,
+    simplify = TRUE) {
     if (!inherits(gobject, "giotto")) {
         wrap_msg("Unable to get polygon spatVector from non-Giotto object.")
         stop(wrap_txt("Please provide a Giotto object to the gobject argument.",
@@ -4499,7 +4510,8 @@ getPolygonInfo <- function(gobject = NULL,
         polygon_name = polygon_name,
         polygon_overlap = polygon_overlap,
         return_giottoPolygon = return_giottoPolygon,
-        verbose = verbose
+        verbose = verbose,
+        simplify = simplify
     )
     return(poly_info)
 }
@@ -4879,6 +4891,8 @@ set_polygon_info <- function(gobject,
 #' @description Get giotto points spatVector
 #' @inheritParams data_access_params
 #' @param return_giottoPoints return as a giottoPoints object
+#' @param simplify logical. Whether or not to take object out of a list when
+#' there is a length of 1.
 #' @returns giotto points spatVector
 #' @family feature info data accessor functions
 #' @family functions to get data from giotto object
@@ -4890,7 +4904,8 @@ set_polygon_info <- function(gobject,
 getFeatureInfo <- function(gobject = gobject,
     feat_type = NULL,
     return_giottoPoints = FALSE,
-    set_defaults = TRUE) {
+    set_defaults = TRUE,
+    simplify = TRUE) {
     if (!inherits(gobject, "giotto")) {
         wrap_msg("Unable to get giotto points spatVector feature info from
                 non-Giotto object.")
@@ -4902,7 +4917,8 @@ getFeatureInfo <- function(gobject = gobject,
         gobject = gobject,
         feat_type = feat_type,
         return_giottoPoints = return_giottoPoints,
-        set_defaults = set_defaults
+        set_defaults = set_defaults,
+        simplify = simplify
     )
     return(feat_info)
 }
