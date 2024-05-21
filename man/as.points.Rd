@@ -33,6 +33,7 @@ as.points(slot(g, "spatVector"))
 
 Other As coercion functions: 
 \code{\link{as.data.table}()},
+\code{\link{as.matrix}()},
 \code{\link{as.polygons}()},
 \code{\link{r_spatial_conversions}}
 }

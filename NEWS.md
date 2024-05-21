@@ -14,6 +14,7 @@
 
 ## new
 - `as()` conversion from `giottoLargeImage` to `array`
+- `as.matrix()` method for `spatLocsObj()`
 
 
 # GiottoClass 0.3.0 (2024/05/13)
