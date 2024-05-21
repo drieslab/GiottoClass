@@ -102,6 +102,7 @@ as.sf(g)
 \seealso{
 Other As coercion functions: 
 \code{\link{as.data.table}()},
+\code{\link{as.matrix}()},
 \code{\link{as.points}()},
 \code{\link{as.polygons}()}
 }
