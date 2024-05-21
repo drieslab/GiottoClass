@@ -10,7 +10,7 @@
 name: Dev Workflow - Test and check
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "dev2" ]
 
 permissions:
   contents: read
@@ -61,7 +61,49 @@ jobs:
             any::geometry
             any::qs
             any::future.apply
+            any::Biobase
+            any::chihaya
+            any::DelayedArray
+            any::DelayedMatrixStats
+            any::HDF5Array
+            any::plotly
+            any::rgl
+            any::rhdf5
+            any::S4Vectors
+            any::ScaledMatrix
+            any::XML
+            any::Seurat
+            any::SeuratObject
+            any::SingleCellExperiment
+            any::SpatialExperiment
+            any::STexampleData
+            any::SummarizedExperiment
             github::drieslab/GiottoData
+            
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: setup giotto_env
+        shell: Rscript {0}
+        run: |
+          path_to_python <- reticulate::virtualenv_create(
+            envname = "giotto_env",
+            python = Sys.which("python"), # placed on PATH by the setup-python action
+            packages = c(
+              "pandas==1.5.1",
+              "networkx==2.8.8",
+              "python-igraph==0.10.2",
+              "leidenalg==0.9.0", 
+              "python-louvain==0.16",
+              "scikit-learn==1.1.3",
+              "scipy==1.13.0",
+              "scanpy"
+             )
+           )
+              
+           writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
+                      Sys.getenv("GITHUB_ENV"))
 
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2
