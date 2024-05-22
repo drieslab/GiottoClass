@@ -18,7 +18,7 @@ def read_anndata_from_path(ad_path = None):
         print("Please provide a path to a .h5ad file.")
         assert(False)
     try:
-        adata = ad.read(ad_path)
+        adata = ad.read_h5ad(ad_path)
     except (FileNotFoundError):
         print(f"File {ad_path} was not found.")
         print("Please try again.")
