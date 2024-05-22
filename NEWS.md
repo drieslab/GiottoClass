@@ -1,5 +1,5 @@
 
-# GiottoClass 0.3.1
+# GiottoClass 0.3.1 (2024/05/21)
 
 ## bug fixes
 - allow passing of additional params with `setGiotto()` with `...`
