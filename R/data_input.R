@@ -2188,7 +2188,7 @@ readPolygonData <- function(data_list,
                 ),
                 polygon_mask_list_params
             )
-            if (isTRUE(verbose)) wrap_msg(parameters)
+            if (isTRUE(verbose)) print(parameters)
 
             poly_results <- do.call(
                 what = "createGiottoPolygonsFromMask",
@@ -2203,7 +2203,7 @@ readPolygonData <- function(data_list,
                 ),
                 polygon_dfr_list_params
             )
-            if (isTRUE(verbose)) wrap_msg(parameters)
+            if (isTRUE(verbose)) print(parameters)
 
             poly_results <- do.call(
                 what = "createGiottoPolygonsFromDfr",

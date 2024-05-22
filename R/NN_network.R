@@ -589,28 +589,24 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
 #' information about how the networks are created.
 #'
 #' Output for kNN:
-#' \itemize{
-#'   \item{from: }{cell_ID for source cell}
-#'   \item{to: }{cell_ID for target cell}
-#'   \item{distance: }{distance between cells}
-#'   \item{weight: }{weight = 1/(1 + distance)}
-#' }
+#'   * **from:** cell_ID for source cell
+#'   * **to:** cell_ID for target cell
+#'   * **distance:** distance between cells
+#'   * **weight:** \eqn{1/(1 + distance)}
 #'
 #' Output for sNN:
-#' \itemize{
-#'   \item{from: }{cell_ID for source cell}
-#'   \item{to: }{cell_ID for target cell}
-#'   \item{distance: }{distance between cells}
-#'   \item{weight: }{1/(1 + distance)}
-#'   \item{shared: }{number of shared neighbours}
-#'   \item{rank: }{ranking of pairwise cell neighbours}
-#' }
+#'   * **from:** cell_ID for source cell
+#'   * **to:** cell_ID for target cell
+#'   * **distance:** distance between cells
+#'   * **weight:** \eqn{1/(1 + distance)}
+#'   * **shared:** number of shared neighbours
+#'   * **rank:** ranking of pairwise cell neighbours
+#' 
 #' For sNN networks two additional parameters can be set:
-#' \itemize{
-#'   \item{minimum_shared: }{minimum number of shared neighbours needed}
-#'   \item{top_shared: }{keep this number of the top shared neighbours,
-#'   irrespective of minimum_shared setting}
-#' }
+#'   * **minimum_shared:** minimum number of shared neighbours needed
+#'   * **top_shared:** keep this number of the top shared neighbours,
+#'   irrespective of minimum_shared setting
+#' 
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #'

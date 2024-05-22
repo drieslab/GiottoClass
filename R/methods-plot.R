@@ -138,17 +138,16 @@ setMethod(
 #' when `raster = FALSE`
 #' Allows the following additional params when
 #' plotting with no specific `feats` input:
-#' \itemize{
-#'   \item{**force_size** }{logical. `raster_size` param caps at 1:1 with the
+#'   * **force_size** logical. `raster_size` param caps at 1:1 with the
 #'   spatial extent, but also with a minimum resulting px dim of 100. To ignore
-#'   these constraints, set `force_size = FALSE`}
-#'   \item{**dens** }{logical. Show point density using `count` statistic per
+#'   these constraints, set `force_size = FALSE`
+#'   * **dens** logical. Show point density using `count` statistic per
 #'   rasterized cell. (Default = FALSE). This param affects `col` param is
 #'   defaults. When TRUE, `col` is `grDevices::hcl.colors(256)`. When `FALSE`,
-#'   "black" and "white" are used.}
-#'   \item{**background** }{(optional) background color. Usually not used when a
-#'   `col` color mapping is sufficient.}
-#' }
+#'   "black" and "white" are used.
+#'   * **background** (optional) background color. Usually not used when a
+#'   `col` color mapping is sufficient.
+#' 
 #' Note that `col` param and other [base::plot()] graphical params are available
 #' through `...`
 #' @examples

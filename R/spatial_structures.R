@@ -1052,7 +1052,7 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
 #' details. (default = all)
 #' @param maximum_distance distance cuttof for Delaunay neighbors to consider.
 #' If "auto", "upper whisker" value of the distance vector between neighbors
-#' is used; see the boxplot{graphics} documentation for more
+#' is used; see the [graphics::boxplot()] documentation for more
 #' details.(default = "auto")
 #' @param minimum_k minimum number of neighbours if maximum_distance != NULL
 #' @param options (geometry) String containing extra control options for the
@@ -2340,9 +2340,8 @@ createSpatialDefaultGrid <- function(gobject,
 #' @returns giotto object with updated spatial grid slot
 #' @details Creates a spatial grid with defined x, y (and z) dimensions.
 #' The dimension units are based on the provided spatial location units.
-#' \itemize{
-#'   \item{default method: }{\code{\link{createSpatialDefaultGrid}}}
-#' }
+#'   * **default method:** \code{\link{createSpatialDefaultGrid}}
+#' 
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #'

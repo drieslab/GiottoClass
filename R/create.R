@@ -755,7 +755,7 @@ createGiottoObjectSubcellular <- function(
         polygon_dfr_list_params <- list(calc_centroids = FALSE)
     }
 
-    if (verbose) wrap_msg("1. Start extracting polygon information")
+    if (verbose) message("1. Start extracting polygon information")
 
     polygon_res <- .extract_polygon_list(
         polygonlist = gpolygons,
@@ -764,18 +764,18 @@ createGiottoObjectSubcellular <- function(
     )
     gobject@spatial_info <- polygon_res
 
-    if (verbose) wrap_msg("2. Finished extracting polygon information")
+    if (verbose) message("2. Finished extracting polygon information")
 
 
-    if (verbose) wrap_msg("3. Add centroid / spatial locations if available")
+    if (verbose) message("3. Add centroid / spatial locations if available")
     for (polygon_info in list_spatial_info_names(gobject)) {
         centroidsDT <- gobject@spatial_info[[polygon_info]]@spatVectorCentroids
         if (!is.null(centroidsDT)) {
             if (verbose) {
-                wrap_msg(
+                print(paste0(
                     " - Add centroid / spatial locations for ",
                     polygon_info
-                )
+                ))
             }
 
             centroidsDT <- .spatvector_to_dt(centroidsDT)
@@ -795,7 +795,7 @@ createGiottoObjectSubcellular <- function(
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
     }
-    if (verbose) wrap_msg("3. Finish adding centroid / spatial locations")
+    if (verbose) message("3. Finish adding centroid / spatial locations")
 
     ## cell ID ##
     ## ------- ##
@@ -812,13 +812,13 @@ createGiottoObjectSubcellular <- function(
 
 
     if (!is.null(gpoints)) {
-        if (verbose) wrap_msg("3. Start extracting spatial feature information")
+        if (verbose) message("3. Start extracting spatial feature information")
 
         points_res <- .extract_points_list(pointslist = gpoints)
         gobject@feat_info <- points_res
 
         if (verbose) {
-            wrap_msg("4. Finished extracting spatial feature information")
+            message("4. Finished extracting spatial feature information")
         }
 
         ## expression features ##
@@ -925,7 +925,7 @@ createGiottoObjectSubcellular <- function(
     if (!is.null(spatial_network)) {
         if (is.null(spatial_network_name) |
             length(spatial_network) != length(spatial_network_name)) {
-            stop("\n each spatial network must be given a unique name \n")
+            stop("each spatial network must be given a unique name")
         } else {
             for (network_i in seq_len(length(spatial_network))) {
                 networkname <- spatial_network_name[[network_i]]
@@ -944,14 +944,16 @@ createGiottoObjectSubcellular <- function(
                             "spatial_network ", network_i,
                             ' provided as data.table/frame object. Provenance and
                         spat_unit will be assumed: "',
-                            names(slot(gobject, "spatial_info"))[[1]], '"\n'
+                            names(slot(gobject, "spatial_info"))[[1]]
                         )
 
                         spatial_network_Obj <- createSpatNetObj(
                             name = networkname,
                             network = network,
-                            spat_unit = names(slot(gobject, "spatial_info"))[[1]],
-                            provenance = names(slot(gobject, "spatial_info"))[[1]]
+                            spat_unit = names(
+                                slot(gobject, "spatial_info"))[[1]],
+                            provenance = names(
+                                slot(gobject, "spatial_info"))[[1]]
                         ) # assumed
 
                         ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -995,7 +997,9 @@ createGiottoObjectSubcellular <- function(
                 grid <- spatial_grid[[grid_i]]
 
                 if (inherits(grid, c("data.table", "data.frame"))) {
-                    if (all(c("x_start", "y_start", "x_end", "y_end", "gr_name") %in% colnames(grid))) {
+                    if (all(c(
+                        "x_start", "y_start", "x_end", "y_end", "gr_name") %in% 
+                        colnames(grid))) {
                         if (!inherits(grid, "data.table")) {
                             grid <- data.table::setDT(grid)
                         }
@@ -1078,7 +1082,9 @@ createGiottoObjectSubcellular <- function(
         for (dim_i in seq_len(length(dimension_reduction))) {
             dim_red <- dimension_reduction[[dim_i]]
 
-            if (all(c("type", "name", "reduction_method", "coordinates", "misc") %in% names(dim_red))) {
+            if (all(c(
+                "type", "name", "reduction_method", "coordinates", "misc") %in% 
+                names(dim_red))) {
                 coord_data <- dim_red[["coordinates"]]
 
                 if (all(rownames(coord_data) %in% gobject@cell_ID)) {
@@ -1153,7 +1159,9 @@ createGiottoObjectSubcellular <- function(
         }
 
         default_base <- "image"
-        images <- lapply(images, function(im) {
+        images <- lapply(seq_along(images), function(img_i) {
+            im <- images[[img_i]]
+            
             # already in giotto format
             if (inherits(im, c("giottoImage", "giottoLargeImage"))) {
                 return(im)
@@ -1178,7 +1186,7 @@ createGiottoObjectSubcellular <- function(
         })
 
         # prefer list names since they are more likely intentional
-        # assign objct names from @names slot to list IF list has no names
+        # assign object names from @names slot to list IF list has no names
         images <- assign_objnames_2_list(images, force_replace = FALSE)
         obj_names <- names(images)
 

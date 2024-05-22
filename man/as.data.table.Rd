@@ -46,6 +46,7 @@ data.table::as.data.table(g)
 }
 \seealso{
 Other As coercion functions: 
+\code{\link{as.matrix}()},
 \code{\link{as.points}()},
 \code{\link{as.polygons}()},
 \code{\link{r_spatial_conversions}}

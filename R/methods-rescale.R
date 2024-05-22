@@ -43,10 +43,10 @@ setMethod(
         if (!missing(y0)) a$y0 <- y0
 
         spat_unit <- set_default_spat_unit(
-            gobject = gobject, spat_unit = spat_unit
+            gobject = x, spat_unit = spat_unit
         )
         feat_type <- set_default_feat_type(
-            gobject = gobject, spat_unit = spat_unit, feat_type = feat_type
+            gobject = x, spat_unit = spat_unit, feat_type = feat_type
         )
 
         # if no rescale center provided, use center of gobject data to use
@@ -136,8 +136,8 @@ setMethod(
 
         # images ----------------------------------------------------------- #
         imgs <- getGiottoImage(x, name = images)
-        if (!inherits(imgs, "list")) imgs <- list(imgs)
         if (!is.null(imgs)) {
+            if (!inherits(imgs, "list")) imgs <- list(imgs)
             for(img in imgs) {
                 img <- do.call(rescale, args = c(list(x = img), a))
                 x <- setGiottoImage(x, img, verbose = FALSE)

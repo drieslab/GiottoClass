@@ -38,7 +38,7 @@
 #'
 #' # giottoPolygon %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #' # get extent
-#' #' gpoly <- getPolygonInfo(g, return_giottoPolygon = TRUE)
+#' gpoly <- getPolygonInfo(g, return_giottoPolygon = TRUE)
 #' ext(gpoly)
 #'
 #' # set extent

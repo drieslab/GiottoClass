@@ -22,6 +22,19 @@ NULL
 #' data.table::as.data.table(g)
 NULL
 
+#' @title Coerce to matrix
+#' @name as.matrix
+#' @description Coerce to matrix
+#' @param x object to coerce
+#' @param id_rownames logical. Retain the spatial IDs as the rownames
+#' @param \dots additional params to pass (none implemented)
+#' @examples
+#' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
+#' m <- as.matrix(sl)
+#' @family As coercion functions
+#' @returns matrix
+NULL
+
 
 #' @title Coerce to SpatVector polygons
 #' @name as.polygons
@@ -107,6 +120,30 @@ as.data.table.giottoPoints <- function(x, ...) {
 
 
 
+# to matrix ####
+
+
+#' @rdname as.matrix
+#' @export
+setMethod("as.matrix", signature("spatLocsObj"), function(
+        x, id_rownames = TRUE, ...) {
+
+    x <- x[] # drop to DT
+    spat_cols <- c("sdimx", "sdimy", "sdimz")
+    spat_cols <- spat_cols %in% colnames(x)
+    
+    m <- x[, spat_cols, with = FALSE] %>%
+        as.matrix()
+    
+    if (id_rownames) {
+        rownames(m) <- x$cell_ID
+    }
+    return(m)
+})
+
+
+
+
 # image types ####
 
 methods::setAs("giottoLargeImage", "giottoImage", function(from) {
@@ -135,6 +172,17 @@ methods::setAs("giottoLargeImage", "giottoImage", function(from) {
     mImg@resolution <- 1 / mImg@scale_factor
 
     return(mImg)
+})
+
+# TODO redo this as `as.array`. 
+# Careful: There are already usages of this `as()` method in the code
+methods::setAs("giottoLargeImage", "array", function(from) {
+    .spatraster_sample_values(
+        raster_object = from,
+        size = getOption("giotto.plot_img_max_crop", 1e8),
+        output = "array",
+        verbose = FALSE
+    )
 })
 
 

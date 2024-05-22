@@ -39,10 +39,10 @@ setMethod(
         a <- list(dx = dx, dy = dy)
 
         spat_unit <- set_default_spat_unit(
-            gobject = gobject, spat_unit = spat_unit
+            gobject = x, spat_unit = spat_unit
         )
         feat_type <- set_default_feat_type(
-            gobject = gobject, spat_unit = spat_unit, feat_type = feat_type
+            gobject = x, spat_unit = spat_unit, feat_type = feat_type
         )
 
         all_su <- spat_unit == ":all:"
@@ -113,8 +113,8 @@ setMethod(
 
         # images ----------------------------------------------------------- #
         imgs <- getGiottoImage(x, name = images)
-        if (!inherits(imgs, "list")) imgs <- list(imgs)
         if (!is.null(imgs)) {
+            if (!inherits(imgs, "list")) imgs <- list(imgs)
             for(img in imgs) {
                 img <- do.call(spatShift, args = c(list(x = img), a))
                 x <- setGiottoImage(x, img, verbose = FALSE)
@@ -246,7 +246,8 @@ setMethod(
 #' @param dx value to shift coordinates in the positive x direction
 #' @param dy value to shift coordinates in the positive y direction
 #' @param dz value to shift coordinates in the positive z direction
-#' @param copy_obj copy/duplicate object (default = TRUE)
+#' @param geom character vector. Expected colnames of x, y, z coords
+#' @param copy_obj logical. copy/duplicate object (default = TRUE)
 #' @returns spatial locations
 #' @keywords internal
 .shift_spatial_locations <- function(spatlocs,
@@ -255,6 +256,11 @@ setMethod(
     dz = 0,
     geom = c("sdimx", "sdimy", "sdimz"),
     copy_obj = TRUE) {
+    # catch NULL inputs
+    dx <- dx %null% 0
+    dy <- dy %null% 0
+    dz <- dz %null% 0
+
     if (copy_obj) spatlocs <- data.table::copy(spatlocs)
 
     xyz <- c("x", "y", "z")
@@ -264,9 +270,18 @@ setMethod(
 
     spatlocs[, (geom[["x"]]) := get(geom[["x"]]) + dx]
     spatlocs[, (geom[["y"]]) := get(geom[["y"]]) + dy]
+    if (dz == 0) return(spatlocs) # return early if no z shift
+
     if (geom[["z"]] %in% colnames(spatlocs)) {
+        # existing z info
         spatlocs[, (geom[["z"]]) := get(geom[["z"]]) + dz]
+    } else {
+        # initialize z info
+        spatlocs[, (geom[["z"]]) := dz]
     }
+
+    # fix col ordering
+    data.table::setcolorder(spatlocs, c(geom, "cell_ID"))
 
     return(spatlocs)
 }
@@ -293,12 +308,14 @@ setMethod(
 .shift_spatial_network <- function(
         spatnet, dx = 0, dy = 0, dz = 0, copy_obj = TRUE
 ) {
+    # NSE vars
     sdimx_begin <- sdimx_end <- sdimy_begin <- sdimy_end <- sdimz_begin <-
         sdimz_end <- NULL
 
-    # if 3D info present
-    is3D <- FALSE
-    if (all(c("sdimz_begin", "sdimz_end") %in% colnames(spatnet))) is3D <- TRUE
+    # catch NULL inputs
+    dx <- dx %null% 0
+    dy <- dy %null% 0
+    dz <- dz %null% 0
 
     if (copy_obj) spatnet <- data.table::copy(spatnet)
 
@@ -308,12 +325,28 @@ setMethod(
         sdimy_begin = sdimy_begin + dy,
         sdimy_end = sdimy_end + dy
     )]
-    if (is3D) {
-        spatnet[, `:=`(
-            sdimz_begin = sdimz_begin + dz,
-            sdimz_end = sdimz_end + dz
-        )]
+
+    if (dz == 0) return(spatnet) # return early if no zshift
+
+    if ("sdimz_begin" %in% colnames(spatnet)) {
+        spatnet[, sdimz_begin := sdimz_begin + dz]
+    } else {
+        spatnet[, sdimz_begin := dz]
     }
+
+    if ("sdimz_end" %in% colnames(spatnet)) {
+        spatnet[, sdimz_end := sdimz_end + dz]
+    } else {
+        spatnet[, sdimz_end := dz]
+    }
+
+    # fix col ordering
+    data.table::setcolorder(
+        spatnet,
+        c("from", "to", "sdimx_begin", "sdimy_begin", "sdimz_begin",
+          "sdimx_end", "sdimy_end", "sdimz_end")
+    )
+
     return(spatnet)
 }
 

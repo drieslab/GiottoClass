@@ -1,4 +1,21 @@
 
+# GiottoClass 0.3.1
+
+## bug fixes
+- allow passing of additional params with `setGiotto()` with `...`
+- `spatShift()` can now perform z shifts when start `spatLocsObj` has no z information
+- fix bug in `joinGiottoObjects()` after v0.3.0 where it looks for the now non-existent `@largeImages` slot
+- fix bug in `.update_image_slot()` after v0.3.0 where a NULL `@largeImages` slot will result in an error
+- fix bugs in `spatShift()` and `rescale()` methods for `giotto` when setting a default `spat_unit` and `feat_type`
+
+## enhancements
+- `joinGiottoObjects()` extent detection and xshift defaults now depend on `ext()` of the gobject instead of any images (when available)
+- `joinGiottoObjects()` now has a `dry_run` param for previewing where datasets will be spatially located after the join
+
+## new
+- `as()` conversion from `giottoLargeImage` to `array`
+- `as.matrix()` method for `spatLocsObj()`
+
 
 # GiottoClass 0.3.0 (2024/05/13)
 

@@ -94,65 +94,95 @@
 #' @param join_method method to join giotto objects, see details
 #' @param z_vals distance(s) along z-axis if method is
 #' z-stack (default is step of 1000)
-#' @param x_shift list of values to shift along x-axis if method is shift
-#' @param y_shift list of values to shift along y-axis if method is shift
-#' @param x_padding padding between datasets/images if method is shift
-#' @param y_padding padding between datasets/images if method is shift
+#' @param x_shift numeric vector of values to shift along x-axis if method is
+#' "shift"
+#' @param y_shift numeric vector of values to shift along y-axis if method is
+#' "shift"
+#' @param x_padding x padding between datasets if method is shift
+#' @param y_padding y padding between datasets if method is shift. Only applied
+#' when y shifts are given.
+#' @param dry_run logical. Plot expected object locations after join, but
+#' do not actually perform it.
 #' @param verbose be verbose
 #' Preview where each gobject will be in space with bounding polygons
 #' @returns giotto object
 #' @details This function joins both the expression and spatial information of
 #' multiple giotto objects into a single one. Giotto supports multiple ways of
-#' joining spatial information as selected through param \code{join_method}:
+#' joining spatial information as selected through param `join_method`:
 #'
-#' \itemize{
-#'   \item{\strong{\code{"shift"}}} {
+#'   * **"shift"** 
 #'      (default) Spatial locations of different datasets are shifted
-#'      by numeric vectors of values supplied through \code{x_shift},
-#'      \code{y_shift}, \code{x_padding}, and \code{y_padding}. This is
-#'      particularly useful for data
-#'      that is provided as tiles or ROIs or when analyzing multiple spatial
-#'      datasets together and keeping their spatial data separate.
+#'      by numeric vectors of values supplied through `x_shift`,
+#'      `y_shift`, `x_padding`, and `y_padding`. This is particularly useful 
+#'      for data that is provided as tiles or ROIs or when analyzing multiple 
+#'      spatial datasets together and keeping their spatial data separate.
 #'
-#'     \strong{If shift values are given then a value is needed for each giotto
-#'     object to be joined in \code{gobject_list}. Order matters.}
+#'     **If shift values are given then a value is needed for each giotto
+#'     object to be joined in `gobject_list`. Order matters.**
 #'
 #'     If a regular step value is desired instead of a specific list of values,
-#'     use \code{x_padding} and \code{y_padding}. Both shift and padding values
+#'     use `x_padding` and `y_padding`. Both shift and padding values
 #'     can be used at the same time.
 #'
-#'     Leaving \code{x_shift} and \code{y_shift} values as \code{NULL} will
-#'     have Giotto estimate an appropriate \code{x_shift} value based on the
-#'     x dimension of available image objects. If no image objects are
-#'     available, a default behavior of \code{x_padding = 1000} will be applied.
-#'   }
-#'   \item{\strong{\code{"z_stack"}}} {
+#'     When `x_shift` is `NULL`, it defaults to the x range of gobjects in the 
+#'     list so that datasets are xshifted exactly next to each other with no 
+#'     overlaps. An additional default `x_padding = 1000` is applied if
+#'     `x_shift`, `x_padding`, `y_shift`, `y_padding` are all `NULL`.
+#'   * **"z_stack"**
 #'     Datasets are spatially combined with no change to x and y
 #'     spatial locations, but a z value is incorporated for each dataset based
-#'     on input supplied through param \code{z_vals}. To specify a z value for
+#'     on input supplied through param `z_vals`. To specify a z value for
 #'     each dataset to join, a numeric vector must be given with a value for
-#'     each element in \code{gobject_list}. Order matters.
+#'     each element in `gobject_list`. Order matters.
 #'
-#'     Alternatively, a single numeric value can be supplied to \code{z_vals}
+#'     Alternatively, a single numeric value can be supplied to `z_vals`
 #'     in which case this input will be treated as a z step value.
-#'   }
-#'   \item{\strong{\code{"no_change"}}} {
+#'   * **"no_change"**
 #'     No changes are applied to the spatial locations of the datasets when
 #'     joining.
-#'   }
-#' }
 #'
 #' @concept giotto
 #' @examples
+#' # joining objects with no spatial information
 #' m1 <- matrix(rnorm(100), nrow = 10)
 #' m2 <- matrix(rnorm(100), nrow = 10)
 #' colnames(m1) <- paste0("cell_", seq_len(10))
 #' colnames(m2) <- paste0("cell_", seq_len(10))
+#' rownames(m1) <- rownames(m2) <- paste0("feat_", seq_len(10))
 #'
 #' g1 <- createGiottoObject(expression = m1)
 #' g2 <- createGiottoObject(expression = m2)
 #'
-#' joinGiottoObjects(gobject_list = list(g1, g2), gobject_names = c("g1", "g2"))
+#' joinGiottoObjects(
+#'     gobject_list = list(g1, g2), 
+#'     gobject_names = c("g1", "g2")
+#' )
+#' 
+#' # dry run joining objects with spatial information
+#' # a default x_padding of 1000 is applied
+#' viz <- GiottoData::loadGiottoMini("viz")
+#' joinGiottoObjects(
+#'     list(viz, viz),
+#'     gobject_names = c("v1", "v2"),
+#'     dry_run = TRUE
+#' )
+#' 
+#' # place them right next to each other
+#' # note that this means generated spatial networks will be more likely to 
+#' # link across the datasets
+#' joinGiottoObjects(
+#'     list(viz, viz),
+#'     gobject_names = c("v1", "v2"),
+#'     dry_run = TRUE,
+#'     x_padding = 0
+#' )
+#' 
+#' # join the spatial objects
+#' joined_viz <- joinGiottoObjects(
+#'     list(viz, viz),
+#'     gobject_names = c("v1", "v2")
+#' )
+#' 
 #' @export
 joinGiottoObjects <- function(gobject_list,
     gobject_names = NULL,
@@ -162,12 +192,13 @@ joinGiottoObjects <- function(gobject_list,
     y_shift = NULL,
     x_padding = NULL,
     y_padding = NULL,
-    # dry_run = FALSE,
+    dry_run = FALSE,
     verbose = FALSE) {
-    # define for data.table
+    # NSE vars
     sdimz <- cell_ID <- sdimx <- sdimy <- name <- NULL
 
     n_gobjects <- length(gobject_list)
+    gobj_idx <- seq_len(n_gobjects)
 
     ## check general input params
     if (n_gobjects == 0L) {
@@ -198,13 +229,13 @@ joinGiottoObjects <- function(gobject_list,
         arg = join_method,
         choices = c("shift", "z_stack", "no_change")
     )
-    if (isTRUE(verbose)) message("Join method:", join_method)
+    vmsg(.v = verbose, "Join method:", join_method)
 
 
     # **** For shift workflow ****
     if (join_method == "shift") {
-        # Make sure enough x_shift and y_shift values are given to cover
-        # all gobjects
+        # If provided, ensure enough x_shift and y_shift values are given
+        # to cover all gobjects
         if (!is.null(x_shift)) {
             if (length(x_shift) != n_gobjects) {
                 stop(wrap_txt("A numeric vector with an x_shift value for each
@@ -222,16 +253,50 @@ joinGiottoObjects <- function(gobject_list,
             }
         }
 
-        # Set defaults if no shift params are given
-        if (is.null(x_shift) & is.null(y_shift) & is.null(x_padding) &
-            is.null(y_padding)) {
-            wrap_msg("No xy shift or specific padding values given.
-                    Using defaults: x_padding = 1000")
+        # Set default x_padding = 1000 if no shift params are given
+        if (is.null(x_shift) && is.null(y_shift) &&
+            is.null(x_padding) && is.null(y_padding)) {
+            vmsg(.v = verbose,
+                 "No xy shift or specific padding values given.
+                 Using defaults: x_padding = 1000
+                 Set any padding value of 0 to avoid this behavior")
             x_padding <- 1000
         }
         # Assign default padding values if NULL
-        if (is.null(x_padding)) x_padding <- 0
-        if (is.null(y_padding)) y_padding <- 0
+        x_padding <- x_padding %null% 0
+        y_padding <- y_padding %null% 0
+
+        ## find object extents
+        gext <- lapply(gobject_list, function(g) ext(g, all_data = TRUE))
+
+        # x shift value is always necessary
+        # object extent can be used to provide a default for shift value
+
+        if (is.null(x_shift)) {
+            # if no x_shift provide default x_shift as object ext x range
+            x_shift <- vapply(
+                gobj_idx, FUN.VALUE = numeric(length = 1L),
+                function(g_i) {
+                    range(gext[[g_i]])[["x"]]
+                }
+            )
+            # when x_shift is the default based on xrange, skip the first
+            # x_shift since the first object can be at x0
+            final_x_shift <- (x_shift * (gobj_idx - 1)) +
+                (x_padding * (gobj_idx - 1))
+        } else {
+            # when x_shift is explicit, include the first x_shift
+            final_x_shift <- x_shift + (x_padding * (gobj_idx - 1))
+        }
+
+
+        # NO calculated defaults for y shifts with join_method = "shift"
+        # * any y shifting or padding only applied when y_shift is NOT NULL
+        if (!is.null(y_shift)) {
+            final_y_shift <- y_shift + (y_padding * (gobj_idx - 1))
+        } else {
+            final_y_shift <- rep(0, n_gobjects)
+        }
     }
 
 
@@ -239,10 +304,8 @@ joinGiottoObjects <- function(gobject_list,
     # **** For no_change workflow ****
     if (join_method == "no_change") {
         join_method <- "shift"
-        x_shift <- rep(0, n_gobjects)
-        y_shift <- rep(0, n_gobjects)
-        x_padding <- 0
-        y_padding <- 0
+        final_x_shift <- rep(0, n_gobjects)
+        final_y_shift <- rep(0, n_gobjects)
     }
 
 
@@ -272,43 +335,34 @@ joinGiottoObjects <- function(gobject_list,
     }
 
 
-    # TODO # **** dry run ****
-    # dry_run (experimental) Works best for join_method 'shift' or 'no_change'.
-    #
-    # if(isTRUE(dry_run)) {
-    #   if(isTRUE(verbose)) wrap_msg('dry_run = TRUE:
-    #                                Spatial preview of join operation.')
-    #   # Detect sources of bounds info
-    #   avail_bound_info = list(
-    #     avail_img = lapply(gobject_list, list_images),
-    #     avail_spat_info = lapply(gobject_list, list_spatial_info),
-    #     avail_feat_info = lapply(gobject_list, list_feature_info),
-    #     avail_spatlocs = lapply(gobject_list, list_spatial_locations)
-    #   )
-    #   avail_bound = lapply(avail_bound_info, function(avail) {
-    #     isTRUE(!is.null(unlist(avail)))
-    #   })
-    #   if(is.null(unlist(avail_bound)))
-    #   stop(wrap_txt('dry_run error: No shared sources of bounds info
-    #   Previewing from heterogenous sources not yet implemented'))
-    #
-    #   bound_to_use = avail_bound_info[names(avail_bound_info)[1]]
-    #
-    #   # get bound info
-    #   if(names(bound_to_use) == 'avail_img') {
-    #
-    #   }
-    #   if(names(bound_to_use) == 'avail_spat_info') {
-    #
-    #   }
-    #   if(names(bound_to_use) == 'avail_feat_info') {
-    #
-    #   }
-    #   if(names(bound_to_use) == 'avail_spatlocs') {
-    #
-    #   }
-    #
-    # }
+    # if dry run, plot expected final locations then return early
+    if (isTRUE(dry_run) && join_method %in% c("no_change", "shift")) {
+        gobj_polys <- lapply(seq_along(gext), function(ge_i) {
+            gp <- terra::as.polygons(gext[[ge_i]])
+            # perform transforms
+            gp <- terra::shift(
+                gp, dx = final_x_shift[[ge_i]], dy = final_y_shift[[ge_i]]
+            )
+            return(gp)
+        })
+        gobj_polys <- Reduce(f = "rbind", gobj_polys)
+        terra::plot(gobj_polys, border = getRainbowColors(n_gobjects))
+        return(invisible())
+    }
+
+
+    # perform xy shifts ("no_change" method can be ignored)
+    # "z_stack" method happens elsewhere
+    if (join_method == "shift") {
+        gobject_list <- lapply(gobj_idx, function(g_i) {
+            spatShift(
+                gobject_list[[g_i]],
+                dx = final_x_shift[[g_i]],
+                dy = final_y_shift[[g_i]]
+            )
+        })
+    }
+
 
 
     # keep instructions from first giotto object
@@ -324,8 +378,6 @@ joinGiottoObjects <- function(gobject_list,
 
 
 
-    updated_object_list <- list()
-
     ## 0. re-scale spatial locations ##
     ## ----------------------------- ##
 
@@ -336,29 +388,34 @@ joinGiottoObjects <- function(gobject_list,
 
     ## 1. update giotto objects ##
     ## ------------------------ ##
-    if (verbose == TRUE) wrap_msg("start updating objects")
+    vmsg(.v = verbose, "start updating objects")
 
+    # initialize data lists for collecting info from each gobject
     all_feat_ID_list <- list()
     all_cell_ID_list <- list()
     all_image_list <- list()
-    all_largeImage_list <- list()
-
-    xshift_list <- list()
-    yshift_list <- list()
-
     all_spatinfo_list <- list()
 
+    # initialize list of updated gobjects
+    updated_object_list <- list()
 
-    if (verbose) wrap_msg("A) Update giotto Objects \n")
 
+    vmsg(.v = verbose, "A) Update giotto Objects")
+
+    # update ids across all objects
+    # perform any remaining transforms
+    # use for loops so that items can be appended to running lists
     for (gobj_i in seq_len(n_gobjects)) {
         gobj <- gobject_list[[gobj_i]]
         gname <- gobject_names[[gobj_i]]
 
+        vmsg(.v = verbose, sprintf("giotto object [%s]", obj_i))
 
-        ## 0. update cell ID and feat ID
-        if (verbose) wrap_msg("0. Update cell and feature IDs \n")
 
+        ## 0. update cell ID and feat ID ##
+        ## ------------------------------ ##
+        if (verbose) wrap_msg("0. Update cell and feature IDs")
+        # spat ids
         for (spat_unit in names(gobj@cell_ID)) {
             old_cell_ID <- get_cell_id(gobject = gobj, spat_unit = spat_unit)
             new_cell_ID <- paste0(gname, "-", old_cell_ID)
@@ -371,8 +428,7 @@ joinGiottoObjects <- function(gobject_list,
                 set_defaults = FALSE
             )
         }
-
-
+        # feat ids
         # TODO this varies by active spat_unit and might no longer be needed....
         for (feat_type in names(gobj@feat_ID)) {
             all_feat_ID_list[[feat_type]][[gobj_i]] <- get_feat_id(
@@ -382,287 +438,78 @@ joinGiottoObjects <- function(gobject_list,
 
 
 
-        ## 1. update expression and all feature IDs
-        if (verbose) wrap_msg("1. Update expression IDs \n")
+
+
+        ## 1. update expression and all feature IDs ##
+        ## ---------------------------------------- ##
+        if (verbose) wrap_msg("1. Update expression IDs")
 
         # provide unique cell ID name
+        # TODO clean this code up with ":all:" compatible accessor
         for (spat_unit in names(gobj@expression)) {
             for (feat_type in names(gobj@expression[[spat_unit]])) {
                 for (matr in names(gobj@expression[[spat_unit]][[feat_type]])) {
                     colnames(gobj@expression[[spat_unit]][[feat_type]][[matr]][]) <- gobj@cell_ID[[spat_unit]]
                 }
-
-                # all_feat_ID_list[[feat_type]][[gobj_i
-                # ]] = gobj@feat_ID[[feat_type]]
             }
         }
 
 
-
-
-        ## 2. update images
+        ## 2. update images ##
+        ## ---------------- ##
         # change individual names
-        if (verbose) wrap_msg("2. Update images \n")
+        vmsg(.v = verbose, "2. Update images")
 
-        images_found <- !is.null(gobj@images)
-
-        if (images_found) {
-            names(gobj@images) <- paste0(gname, "-", names(gobj@images))
-            for (imname in names(gobj@images)) {
-                gobj@images[[imname]]@name <- paste0(
-                    gname, "-",
-                    gobj@images[[imname]]@name
-                )
-
-
-                if (join_method == "shift") {
-                    ## shift in x-direction
-                    if (is.null(x_shift)) {
-                        # estimate x_shift step directly from giotto image
-                        gimage <- gobj@images[[imname]]
-
-                        my_xmax <- gimage@minmax[1]
-                        my_xmin <- gimage@minmax[2]
-                        xmax_b <- gimage@boundaries[1]
-                        xmin_b <- gimage@boundaries[2]
-                        xmin <- my_xmin - xmin_b
-                        xmax <- my_xmax + xmax_b
-
-                        add_to_x <- ((gobj_i - 1) * (xmax - xmin)) + (
-                            (gobj_i - 1) * x_padding)
-                    } else {
-                        x_shift_i <- x_shift[[gobj_i]]
-                        add_to_x <- x_shift_i + (x_padding * (gobj_i - 1))
-                    }
-
-                    if (verbose) {
-                        wrap_msg(
-                            "Image: for ", imname, " add_to_x = ",
-                            add_to_x
-                        )
-                    }
-
-                    gobj@images[[imname]]@minmax[c("xmax_sloc", "xmin_sloc")] <-
-                        gobj@images[[imname]]@minmax[c(
-                            "xmax_sloc", "xmin_sloc"
-                        )] + add_to_x
-                    xshift_list[[gobj_i]] <- add_to_x
-
-
-                    ## shift in y-direction
-                    if (!is.null(y_shift)) {
-                        y_shift_i <- y_shift[[gobj_i]]
-                        add_to_y <- y_shift_i + (y_padding * (gobj_i - 1))
-
-                        if (verbose) {
-                            wrap_msg(
-                                "Image: for ", imname, " add_to_y = ",
-                                add_to_y
-                            )
-                        }
-
-                        gobj@images[[imname]]@minmax[
-                            c("ymax_sloc", "ymin_sloc")
-                        ] <- gobj@images[[
-                            imname
-                        ]]@minmax[c("ymax_sloc", "ymin_sloc")] +
-                            add_to_y
-                        yshift_list[[gobj_i]] <- add_to_y
-                    }
-                }
-
-                all_image_list[[imname]] <- gobj@images[[imname]]
-            }
+        avail_imgs <- getGiottoImage(gobj, name = ":all:")
+        if (!is.null(avail_imgs)) {
+            new_img_names <- paste0(gname, "-", objName(avail_imgs))
+            objName(avail_imgs) <- new_img_names
+            names(avail_imgs) <- new_img_names
         }
 
+        all_image_list <- c(all_image_list, avail_imgs)
 
-        ## 2.2 update largeImages
-        # change individual names
 
-        images_found <- !is.null(gobj@largeImages)
+        ## 3. update spatial location ##
+        ## -------------------------- ##
+        vmsg(.v = verbose, "3. Update spatial locations")
 
-        if (images_found) {
-            names(gobj@largeImages) <- paste0(
-                gname, "-",
-                names(gobj@largeImages)
+        # get all spatLocsObj in the gobj
+        available_locs <- getSpatialLocations(
+            gobj, spat_unit = ":all:", name = ":all:", output = "spatLocsObj",
+            copy_obj = TRUE, verbose = FALSE, set_defaults = FALSE,
+            simplify = FALSE
+        )
+
+        # update cell IDs to joined object cell IDs
+        # perform any spatShifts
+        available_locs <- lapply(available_locs, function(sl) {
+            # update cell_ids
+            sl <- .replace_spat_ids_spatlocsobj(sl,
+                ids = get_cell_id(gobj, spat_unit = spatUnit(sl))
             )
-            for (imname in names(gobj@largeImages)) {
-                gobj@largeImages[[imname]]@name <- paste0(
-                    gname, "-",
-                    gobj@largeImages[[imname]]@name
-                )
 
-
-                if (join_method == "shift") {
-                    ## shift in x-direction (always happens if not already
-                    ## defined during giottoImage section)
-                    if (!list_element_exists(xshift_list, gobj_i)) {
-                        if (is.null(x_shift)) {
-                            # estimate x_shift step directly from giotto image
-                            extent <- terra::ext(
-                                gobj@largeImages[[imname]]@raster_object
-                            )
-
-                            xmax <- extent$xmax[[1]]
-                            xmin <- extent$xmin[[1]]
-
-                            add_to_x <- ((gobj_i - 1) * (xmax - xmin)) +
-                                ((gobj_i - 1) * x_padding)
-                        } else {
-                            x_shift_i <- x_shift[[gobj_i]]
-                            add_to_x <- x_shift_i + (x_padding * (gobj_i - 1))
-                        }
-
-                        # record xshift (if not already done)
-                        xshift_list[[gobj_i]] <- add_to_x
-                    }
-
-
-                    if (verbose) {
-                        wrap_msg(
-                            "largeImage: for ", imname, " add_to_x = ",
-                            add_to_x
-                        )
-                    }
-
-
-
-                    gobj@largeImages[[imname]]@raster_object <-
-                        terra::shift(gobj@largeImages[[imname]]@raster_object,
-                            dx = xshift_list[[gobj_i]]
-                        )
-
-
-                    ## shift in y-direction (only happens when y_shift
-                    ## is provided)
-                    if (!is.null(y_shift)) {
-                        if (!list_element_exists(yshift_list, gobj_i)) {
-                            y_shift_i <- y_shift[[gobj_i]]
-                            add_to_y <- y_shift_i + (y_padding * (gobj_i - 1))
-
-                            yshift_list[[gobj_i]] <- add_to_y
-                        }
-
-
-                        if (verbose) {
-                            wrap_msg(
-                                "largeImage: for ", imname, " add_to_y = ",
-                                add_to_y
-                            )
-                        }
-
-
-                        gobj@largeImages[[imname]]@raster_object <-
-                            terra::shift(
-                                gobj@largeImages[[imname]]@raster_object,
-                                dy = yshift_list[[gobj_i]]
-                            )
-                    }
-
-                    # save extent info
-                    gobj@largeImages[[imname]]@extent <- terra::ext(
-                        gobj@largeImages[[imname]]@raster_object
-                    )[]
-                }
-
-                all_largeImage_list[[imname]] <- gobj@largeImages[[imname]]
+            # spatial shifts
+            if (join_method == "z_stack") {
+                spatShift(sl, dz = z_vals[gobj_i])
             }
-        }
+            return(sl)
+        })
+
+        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+        gobj <- setGiotto(
+            gobj, available_locs, verbose = FALSE, initialize = FALSE
+        )
+        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
 
 
-
-        ## 3. update spatial location
-        if (verbose) wrap_msg("3. Update spatial locations \n")
-
-        # add padding to x-axis
-        # update cell ID
-
-        # If no images were present
-        if (length(xshift_list) == 0) {
-            xshift_list <- (
-                (seq_along(gobject_list) - 1) * x_padding)
-        }
-
-        available_locs <- list_spatial_locations(gobj)
-
-        for (spat_unit_i in available_locs[["spat_unit"]]) {
-            for (locs_i in available_locs[spat_unit == spat_unit_i, name]) {
-                spat_obj <- get_spatial_locations(gobj,
-                    spat_unit = spat_unit_i,
-                    spat_loc_name = locs_i,
-                    output = "spatLocsObj",
-                    copy_obj = TRUE,
-                    set_defaults = FALSE
-                )
-                myspatlocs <- slot(spat_obj, "coordinates")
-
-                if (join_method == "z_stack") {
-                    myspatlocs[, sdimz := z_vals[gobj_i]]
-                    myspatlocs[
-                        ,
-                        cell_ID := get_cell_id(gobj, spat_unit = spat_unit_i)
-                    ]
-                    myspatlocs <- myspatlocs[, .(sdimx, sdimy, sdimz, cell_ID)]
-                } else if (join_method == "shift") {
-                    # shift for x-axis
-                    if (is.null(x_shift)) {
-                        add_to_x <- xshift_list[[gobj_i]]
-                    } else {
-                        x_shift_i <- x_shift[[gobj_i]]
-                        add_to_x <- x_shift_i + (x_padding * (gobj_i - 1))
-                    }
-
-                    if (verbose) {
-                        wrap_msg(
-                            "Spatial locations: for ", locs_i,
-                            " add_to_x = ", add_to_x
-                        )
-                    }
-
-
-                    myspatlocs[, sdimx := sdimx + add_to_x]
-                    myspatlocs[, cell_ID := get_cell_id(gobj,
-                        spat_unit = spat_unit_i
-                    )]
-                }
-
-                # shift for y-axis
-                if (!is.null(y_shift)) {
-                    y_shift_i <- y_shift[[gobj_i]]
-                    add_to_y <- y_shift_i + (y_padding * (gobj_i - 1))
-
-                    if (verbose) {
-                        wrap_msg(
-                            "Spatial locations: for ", locs_i,
-                            " add_to_y = ", add_to_y
-                        )
-                    }
-
-                    myspatlocs[, sdimy := sdimy + add_to_y]
-                }
-
-                slot(spat_obj, "coordinates") <- myspatlocs
-
-                ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-                gobj <- set_spatial_locations(
-                    gobject = gobj,
-                    spatlocs = spat_obj
-                )
-                ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-            }
-        }
-
-
-
-
-
-        ## 4. cell metadata
+        ## 4. cell metadata ##
+        ## ---------------- ##
         # * (feat metadata happens during joined object creation)
-        # rbind metadata
-        # create capture area specific names
-        if (verbose) wrap_msg("4. rbind cell metadata")
+        vmsg(.v = verbose, "4. Update cell metadata")
 
+        # update IDs
         for (spat_unit in names(gobj@cell_metadata)) {
             for (feat_type in names(gobj@cell_metadata[[spat_unit]])) {
                 gobj@cell_metadata[[spat_unit]][[feat_type]]@metaDT[[
@@ -676,20 +523,21 @@ joinGiottoObjects <- function(gobject_list,
 
 
 
-        ## 5. prepare spatial information
-        if (verbose) wrap_msg("5. prepare spatial information")
+        ## 5. prepare spatial information ##
+        ## ------------------------------ ##
+        vmsg(.v = verbose, "5. prepare spatial information")
 
         spatinfo_vector <- vector()
         for (spat_info in names(gobj@spatial_info)) {
             # spatVector
-            if (verbose) wrap_msg("-- 5.1. spatVector")
+            vmsg(.v = verbose, "-- 5.1. spatVector")
             poly_ids <- gobj@spatial_info[[spat_info]]@spatVector$poly_ID
             gobj@spatial_info[[spat_info]]@spatVector$poly_ID <- paste0(
                 gname, "-", poly_ids
             )
 
             # spatVectorCentroids
-            if (verbose) wrap_msg("-- 5.2. spatVectorCentroids")
+            vmsg(.v = verbose, "-- 5.2. spatVectorCentroids")
             if (!is.null(gobj@spatial_info[[spat_info]]@spatVectorCentroids)) {
                 poly_ids <- gobj@spatial_info[[
                     spat_info
@@ -700,57 +548,8 @@ joinGiottoObjects <- function(gobject_list,
 
 
             # overlaps??
-            if (verbose) wrap_msg("-- 5.3. overlaps")
+            vmsg(.v = verbose, "-- 5.3. overlaps")
             # TODO
-
-
-            if (join_method == "shift") {
-                if (verbose) wrap_msg("-- 5.4. shift")
-
-                ## for x-axis
-                if (is.null(x_shift)) {
-                    add_to_x <- xshift_list[[gobj_i]]
-                } else {
-                    x_shift_i <- x_shift[[gobj_i]]
-                    add_to_x <- x_shift_i + (x_padding * (gobj_i - 1))
-                }
-
-                ## for y-axis
-                if (!is.null(y_shift)) {
-                    y_shift_i <- y_shift[[gobj_i]]
-                    add_to_y <- y_shift_i + (y_padding * (gobj_i - 1))
-                } else {
-                    add_to_y <- 0
-                }
-
-                if (verbose) {
-                    wrap_msg(
-                        "Spatial info: for ", spat_info, " add_to_x = ",
-                        add_to_x
-                    )
-                }
-                if (verbose) {
-                    wrap_msg(
-                        "Spatial info: for ", spat_info, " add_to_y = ",
-                        add_to_y
-                    )
-                }
-
-                gobj@spatial_info[[spat_info]]@spatVector <- terra::shift(
-                    x = gobj@spatial_info[[spat_info]]@spatVector,
-                    dx = add_to_x,
-                    dy = add_to_y
-                )
-                if (!is.null(gobj@spatial_info[[spat_info]]@spatVectorCentroids)) {
-                    gobj@spatial_info[[spat_info]]@spatVectorCentroids <-
-                        terra::shift(
-                            x = gobj@spatial_info[[
-                                spat_info
-                            ]]@spatVectorCentroids,
-                            dx = add_to_x, dy = add_to_y
-                        )
-                }
-            }
 
             spatinfo_vector <- c(spatinfo_vector, spat_info)
             all_spatinfo_list[[gobj_i]] <- spatinfo_vector
@@ -758,7 +557,7 @@ joinGiottoObjects <- function(gobject_list,
 
 
         ## 6. prepare feature information
-        if (verbose) wrap_msg("6. prepare feature information \n")
+        vmsg(.v = verbose, "6. prepare feature information")
 
         for (feat_info in names(gobj@feat_info)) {
             # spatVector
@@ -770,56 +569,18 @@ joinGiottoObjects <- function(gobject_list,
             # networks??
             # TODO
 
-
-            if (join_method == "shift") {
-                ## for x-axis
-                if (is.null(x_shift)) {
-                    add_to_x <- xshift_list[[gobj_i]]
-                } else {
-                    x_shift_i <- x_shift[[gobj_i]]
-                    add_to_x <- x_shift_i + (x_padding * (gobj_i - 1))
-                }
-
-                ## for y-axis
-                if (!is.null(y_shift)) {
-                    y_shift_i <- y_shift[[gobj_i]]
-                    add_to_y <- y_shift_i + (y_padding * (gobj_i - 1))
-                } else {
-                    add_to_y <- 0
-                }
-
-                if (verbose) {
-                    wrap_msg(
-                        "Feature info: for ", feat_info, " add_to_x = ",
-                        add_to_x
-                    )
-                }
-                if (verbose) {
-                    wrap_msg(
-                        "Feature info: for ", feat_info, " add_to_y = ",
-                        add_to_y
-                    )
-                }
-
-                gobj@feat_info[[feat_info]]@spatVector <- terra::shift(
-                    x = gobj@feat_info[[feat_info]]@spatVector,
-                    dx = add_to_x, dy = add_to_y
-                )
-            }
         }
 
 
         updated_object_list[[gobj_i]] <- gobj
     }
 
-    # return(updated_object_list)
-
 
 
 
     ## 2. prepare for new giotto object ##
     ## -------------------------------- ##
-    if (verbose) wrap_msg("B) Prepare to create new Giotto object \n")
+    vmsg(.v = verbose, "B) Prepare to create new Giotto object")
 
     comb_gobject <- new("giotto",
         expression_feat = first_features,
@@ -834,11 +595,11 @@ joinGiottoObjects <- function(gobject_list,
 
     ## 3. merge updated data  ##
     ## ------------------------ ##
-    if (verbose) wrap_msg("C) Merge updated data \n")
+    vmsg(.v = verbose, "C) Merge updated data")
 
     first_obj <- updated_object_list[[1]]
 
-    if (verbose) wrap_msg("1. cell and feature IDs \n")
+    vmsg(.v = verbose, "1. cell and feature IDs")
     ## cell IDs
     for (spat_unit in names(all_cell_ID_list)) {
         combined_cell_ID <- unlist(all_cell_ID_list[[spat_unit]])
@@ -855,7 +616,7 @@ joinGiottoObjects <- function(gobject_list,
 
     ## expression and feat IDs
     ## if no expression matrices are provided, then just combine all feature IDs
-    if (verbose) wrap_msg("2. expression data \n")
+    vmsg(.v = verbose, "2. expression data")
 
     avail_expr <- list_expression(gobject = first_obj)
 
@@ -928,7 +689,7 @@ joinGiottoObjects <- function(gobject_list,
 
 
     ## spatial locations
-    if (verbose) wrap_msg("3. spatial locations \n")
+    vmsg(.v = verbose, "3. spatial locations")
 
     available_locs <- list_spatial_locations(first_obj)
 
@@ -966,7 +727,7 @@ joinGiottoObjects <- function(gobject_list,
 
 
     ## cell metadata
-    if (isTRUE(verbose)) wrap_msg("4. cell metadata \n")
+    vmsg(.v = verbose, "4. cell metadata")
 
     for (spat_unit in names(first_obj@cell_metadata)) {
         for (feat_type in names(first_obj@cell_metadata[[spat_unit]])) {
@@ -993,7 +754,8 @@ joinGiottoObjects <- function(gobject_list,
             comb_gobject <- setCellMetadata(
                 gobject = comb_gobject,
                 x = S4_cell_meta,
-                initialize = FALSE
+                initialize = FALSE,
+                verbose = FALSE
             )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
@@ -1005,7 +767,7 @@ joinGiottoObjects <- function(gobject_list,
     # otherwise, skip and generate feat_metadata de novo at end
     avail_featmeta <- list_feat_metadata(gobject = first_obj)
     if (!is.null(avail_featmeta)) {
-        if (isTRUE(verbose)) message("   feature metadata \n")
+        vmsg(.v = verbose, "   feature metadata")
         for (fmObj_i in seq(nrow(avail_featmeta))) {
             fm_list <- lapply(updated_object_list, function(gobj) {
                 getFeatureMetadata(
@@ -1031,7 +793,8 @@ joinGiottoObjects <- function(gobject_list,
             comb_gobject <- setFeatureMetadata(
                 gobject = comb_gobject,
                 x = fm_list[[1]],
-                initialize = FALSE
+                initialize = FALSE,
+                verbose = FALSE
             )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
@@ -1042,7 +805,7 @@ joinGiottoObjects <- function(gobject_list,
 
 
     ## spatial info
-    if (isTRUE(verbose)) wrap_msg("5. spatial polygon information \n")
+    vmsg(.v = verbose, "5. spatial polygon information")
 
     available_spat_info <- unique(unlist(all_spatinfo_list))
 
@@ -1087,7 +850,7 @@ joinGiottoObjects <- function(gobject_list,
 
 
     ## feature info
-    if (verbose) wrap_msg("6. spatial feature/points information \n")
+    vmsg(.v = verbose, "6. spatial feature/points information")
 
 
     for (feat in first_features) {
@@ -1134,14 +897,13 @@ joinGiottoObjects <- function(gobject_list,
 
 
     ## images
-    if (verbose) wrap_msg("7. images \n")
+    vmsg(.v = verbose, "7. images")
 
     # keep individual images
     # each individual image has updated x and y locations
     # so all images can be viewed together by plotting them one-by-one
     # but images can also be easily viewed separately by grouping them
     comb_gobject@images <- all_image_list
-    comb_gobject@largeImages <- all_largeImage_list
 
 
     ## TODO:
@@ -1163,3 +925,19 @@ joinGiottoObjects <- function(gobject_list,
 
     return(initialize(comb_gobject))
 }
+
+
+
+
+# internals ####
+
+.replace_spat_ids_spatlocsobj <- function(x, ids) {
+    if (length(ids) != nrow(x)) {
+        stop("replacement ids must be the same length as nrow of spatLocsObj")
+    }
+    # update cell_ids
+    x[][, "cell_ID" := as.character(ids)]
+    return(x)
+}
+
+

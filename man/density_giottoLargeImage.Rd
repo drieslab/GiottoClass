@@ -21,9 +21,6 @@
 \item{method}{method of plotting image distribution}
 
 \item{...}{additional params to pass}
-
-\item{image_type}{image object type (only supports largeImage and is set as
-default)}
 }
 \value{
 density or histogram plot

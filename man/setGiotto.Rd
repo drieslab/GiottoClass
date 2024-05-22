@@ -17,7 +17,7 @@
 \alias{setGiotto,giotto,giottoImage-method}
 \title{Set giotto subobjects into giotto object}
 \usage{
-\S4method{setGiotto}{giotto,list}(gobject, x, verbose = TRUE)
+\S4method{setGiotto}{giotto,list}(gobject, x, verbose = TRUE, ...)
 
 \S4method{setGiotto}{giotto,cellMetaObj}(gobject, x, ...)
 

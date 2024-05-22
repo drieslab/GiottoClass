@@ -50,6 +50,9 @@ setMethod("crop", signature("giottoLargeImage"), function(x, y, ...) {
 #' @rdname crop
 #' @export
 setMethod("crop", signature("spatLocsObj"), function(x, y, ...) {
+    # NSE vars
+    sdimx <- sdimy <- NULL
+    
     e <- ext(y)
     if (is.null(terra::intersect(terra::ext(x), e))) {
         warning("crop region is empty", call. = FALSE)
@@ -64,6 +67,9 @@ setMethod("crop", signature("spatLocsObj"), function(x, y, ...) {
 #' @rdname crop
 #' @export
 setMethod("crop", signature("spatialNetworkObj"), function(x, y, ...) {
+    # NSE vars
+    sdimx_begin <- sdimy_begin <- sdimx_end <- sdimy_end <- NULL
+    
     e <- ext(y)
     if (is.null(terra::intersect(terra::ext(x), e))) {
         warning("crop region is empty", call. = FALSE)

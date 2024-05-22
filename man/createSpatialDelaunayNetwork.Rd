@@ -44,7 +44,7 @@ details. (default = all)}
 
 \item{maximum_distance}{distance cuttof for Delaunay neighbors to consider.
 If "auto", "upper whisker" value of the distance vector between neighbors
-is used; see the boxplot{graphics} documentation for more
+is used; see the \code{\link[graphics:boxplot]{graphics::boxplot()}} documentation for more
 details.(default = "auto")}
 
 \item{minimum_k}{minimum number of neighbours if maximum_distance != NULL}
