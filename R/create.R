@@ -814,8 +814,11 @@ createGiottoObjectSubcellular <- function(
     if (!is.null(gpoints)) {
         vmsg(.v = verbose, "3. Start extracting spatial feature information")
 
+        # generate named list of giottoPoints objects
         points_res <- .extract_points_list(pointslist = gpoints)
-        gobject@feat_info <- points_res
+        gobject <- setGiotto(
+            gobject, points_res, verbose = FALSE, initalize = FALSE
+        )
 
         vmsg(.v = verbose, 
              "4. Finished extracting spatial feature information")
