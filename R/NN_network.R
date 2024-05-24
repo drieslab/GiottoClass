@@ -829,7 +829,8 @@ createNearestNetwork <- function(
             feat_type = feat_type,
             nn_network_to_use = type,
             network_name = name,
-            nn_network = nnObj
+            nn_network = nnObj,
+            verbose = verbose
         )
 
         ## update parameters used ##
