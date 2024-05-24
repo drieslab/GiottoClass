@@ -3247,8 +3247,9 @@ get_NearestNetwork <- function(gobject,
 #' @inheritParams data_access_params
 #' @param nn_type "kNN" or "sNN"
 #' @param name name of NN network to be used
-#' @param output return a igraph or data.table object. Default 'igraph'
-#' @returns igraph or data.table object
+#' @param output return a giotto `nnNetObj`, `igraph`, `data.table` object. 
+#' Default 'nnNetObj'
+#' @returns Giotto `nnNetObj`, `igraph` or `data.table` object
 #' @family expression space nearest network accessor functions
 #' @family functions to get data from giotto object
 #' @examples
