@@ -812,14 +812,13 @@ createGiottoObjectSubcellular <- function(
 
 
     if (!is.null(gpoints)) {
-        if (verbose) message("3. Start extracting spatial feature information")
+        vmsg(.v = verbose, "3. Start extracting spatial feature information")
 
         points_res <- .extract_points_list(pointslist = gpoints)
         gobject@feat_info <- points_res
 
-        if (verbose) {
-            message("4. Finished extracting spatial feature information")
-        }
+        vmsg(.v = verbose, 
+             "4. Finished extracting spatial feature information")
 
         ## expression features ##
         ## ------------------- ##
