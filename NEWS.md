@@ -1,4 +1,10 @@
 
+# GiottoClass 0.3.2
+
+## enhancements
+- `verbose` param for `createNearestNetwork()`
+
+
 # GiottoClass 0.3.1 (2024/05/21)
 
 ## bug fixes
