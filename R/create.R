@@ -152,30 +152,30 @@ createGiottoObject <- function(expression,
     ## data.table vars
     cell_ID <- feat_ID <- NULL
 
-    ## check if all optional packages are installed
-    # TODO: update at the end
-    # TODO: extract from suggest field of DESCRIPTION
-    extra_packages <- c(
-        "scran", "MAST", "png", "tiff", "biomaRt",
-        "trendsceek", "multinet", "RTriangle", "FactoMineR"
-    )
-
-    pack_index <- extra_packages %in% rownames(utils::installed.packages())
-    extra_installed_packages <- extra_packages[pack_index]
-    extra_not_installed_packages <- extra_packages[!pack_index]
-
-    if (any(pack_index == FALSE) == TRUE) {
-        wrap_msg(
-            "Consider to install these (optional) packages to run all possible",
-            "Giotto commands for spatial analyses: ",
-            extra_not_installed_packages
-        )
-        wrap_msg(
-            "Giotto does not automatically install all these packages as they",
-            "are not absolutely required and this reduces the number of
-            dependencies"
-        )
-    }
+    # ## check if all optional packages are installed
+    # # TODO: update at the end
+    # # TODO: extract from suggest field of DESCRIPTION
+    # extra_packages <- c(
+    #     "scran", "MAST", "png", "tiff", "biomaRt",
+    #     "trendsceek", "multinet", "RTriangle", "FactoMineR"
+    # )
+    # 
+    # pack_index <- extra_packages %in% rownames(utils::installed.packages())
+    # extra_installed_packages <- extra_packages[pack_index]
+    # extra_not_installed_packages <- extra_packages[!pack_index]
+    # 
+    # if (any(pack_index == FALSE) == TRUE) {
+    #     wrap_msg(
+    #         "Consider to install these (optional) packages to run all possible",
+    #         "Giotto commands for spatial analyses: ",
+    #         extra_not_installed_packages
+    #     )
+    #     wrap_msg(
+    #         "Giotto does not automatically install all these packages as they",
+    #         "are not absolutely required and this reduces the number of
+    #         dependencies"
+    #     )
+    # }
 
 
     ## if cores is not set, then set number of cores automatically, but with
@@ -812,14 +812,16 @@ createGiottoObjectSubcellular <- function(
 
 
     if (!is.null(gpoints)) {
-        if (verbose) message("3. Start extracting spatial feature information")
+        vmsg(.v = verbose, "3. Start extracting spatial feature information")
 
+        # generate named list of giottoPoints objects
         points_res <- .extract_points_list(pointslist = gpoints)
-        gobject@feat_info <- points_res
+        gobject <- setGiotto(
+            gobject, points_res, verbose = FALSE, initalize = FALSE
+        )
 
-        if (verbose) {
-            message("4. Finished extracting spatial feature information")
-        }
+        vmsg(.v = verbose, 
+             "4. Finished extracting spatial feature information")
 
         ## expression features ##
         ## ------------------- ##

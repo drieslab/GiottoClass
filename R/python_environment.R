@@ -143,9 +143,9 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
     if (length(missing_modules) > 0L) {
         warning(wrap_txt(sprintf(
             "Some of Giotto's expected python module(s) were not found:
-            %s\n\n** Python path used: \"%s\"
-            (This is fine if python-based functions are not needed)",
+            %s\n %s\n\n** Python path used: \"%s\"",
             paste(missing_modules, collapse = ", "),
+            "(This is fine if python-based functions are not needed)",
             my_python_path
         ), .prefix = ""), call. = FALSE)
     }

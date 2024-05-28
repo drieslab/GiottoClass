@@ -809,7 +809,8 @@ createNearestNetwork <- function(
         nn_names <- names(gobject@nn_network[[spat_unit]][[type]])
 
         if (name %in% nn_names) {
-            wrap_msg(name, " has already been used, will be overwritten")
+            vmsg(.v = verbose, 
+                 name, "has already been used, will be overwritten")
         }
 
         nnObj <- create_nn_net_obj(
@@ -828,7 +829,8 @@ createNearestNetwork <- function(
             feat_type = feat_type,
             nn_network_to_use = type,
             network_name = name,
-            nn_network = nnObj
+            nn_network = nnObj,
+            verbose = verbose
         )
 
         ## update parameters used ##
