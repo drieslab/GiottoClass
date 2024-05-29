@@ -4,7 +4,9 @@
 #' @title Create instructions for giotto functions
 #' @name createGiottoInstructions
 #' @description Function to set global instructions for giotto functions
-#' @param python_path path to python binary to use
+#' @param python_path path to python binary to use or directory one level
+#' up from the `env` directory (similar to output of 
+#' `reticulate::miniconda_path()`)
 #' @param show_plot print plot to console, default = TRUE
 #' @param return_plot return plot as object, default = TRUE
 #' @param save_plot automatically save plot, dafault = FALSE
@@ -27,7 +29,7 @@
 #' createGiottoInstructions()
 #' @export
 createGiottoInstructions <- function(
-    python_path = options("giotto.py_path"),
+    python_path = getOption("giotto.py_path"),
     show_plot = NULL,
     return_plot = NULL,
     save_plot = NULL,
