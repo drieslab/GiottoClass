@@ -26,7 +26,8 @@
 #' @examples
 #' createGiottoInstructions()
 #' @export
-createGiottoInstructions <- function(python_path = NULL,
+createGiottoInstructions <- function(
+    python_path = options("giotto.py_path"),
     show_plot = NULL,
     return_plot = NULL,
     save_plot = NULL,
@@ -53,7 +54,7 @@ createGiottoInstructions <- function(python_path = NULL,
         silent = TRUE
     )
 
-    if ((is.null(python_path) | inherits(python_path, "try-error")) &
+    if ((is.null(python_path) || inherits(python_path, "try-error")) &
         !no_python_warn) {
         warning(wrap_txt("Python is required for full Giotto functionality."),
                 call. = FALSE)
