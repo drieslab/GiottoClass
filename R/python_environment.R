@@ -565,7 +565,7 @@ removeGiottoEnvironment <- function(mini_path = NULL, verbose = TRUE) {
     )
 }
 
-.try_set_provided_py <- function(path) {
+.try_set_provided_py <- function(path, verbose = TRUE) {
     res <- NULL
     if (checkmate::test_file_exists(path)) {
         res <- path
@@ -605,7 +605,7 @@ set_giotto_python_path <- function(
     # If a path is provided by the user and it exists,
     # direct reticulate to said executable and exit immediately
     if (!is.null(python_path)) {
-        res <- .try_set_provided_py(path = python_path)
+        res <- .try_set_provided_py(path = python_path, verbose = verbose)
         if (is.null(res)) {
             vmsg(.v = verbose, sprintf(
                 "provided 'python_path': \n\"%s\"
