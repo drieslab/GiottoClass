@@ -194,10 +194,11 @@ check_py_for_scanpy <- function() {
 #' temp_directory <- tempdir()
 #' giottoToAnnData(g, save_directory = paste0(temp_directory, "/"))
 #'
-#' anndataToGiotto(anndata_path = paste0(
+#' g2 <- anndataToGiotto(anndata_path = file.path(
 #'     temp_directory,
 #'     "/cell_rna_converted_gobject.h5ad"
 #' ))
+#' force(g2)
 #' @export
 anndataToGiotto <- function(
         anndata_path = NULL,
