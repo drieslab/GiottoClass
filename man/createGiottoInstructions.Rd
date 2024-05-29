@@ -5,7 +5,7 @@
 \title{Create instructions for giotto functions}
 \usage{
 createGiottoInstructions(
-  python_path = NULL,
+  python_path = getOption("giotto.py_path"),
   show_plot = NULL,
   return_plot = NULL,
   save_plot = NULL,
@@ -22,7 +22,9 @@ createGiottoInstructions(
 )
 }
 \arguments{
-\item{python_path}{path to python binary to use}
+\item{python_path}{path to python binary to use or directory one level
+up from the \code{env} directory (similar to output of
+\code{reticulate::miniconda_path()})}
 
 \item{show_plot}{print plot to console, default = TRUE}
 
