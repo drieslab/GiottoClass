@@ -4,10 +4,14 @@
 \alias{set_giotto_python_path}
 \title{set_giotto_python_path}
 \usage{
-set_giotto_python_path(python_path = NULL, verbose = TRUE)
+set_giotto_python_path(
+  python_path = getOption("giotto.py_path"),
+  verbose = TRUE
+)
 }
 \arguments{
-\item{python_path}{character. Full path to python executable}
+\item{python_path}{character. Full path to python executable. Checks option
+\code{"giotto.py_path"}}
 
 \item{verbose}{be verbose}
 }
@@ -15,8 +19,9 @@ set_giotto_python_path(python_path = NULL, verbose = TRUE)
 path to python executable
 }
 \description{
-detects and sets the python path. Exits without doing anything
-if getOption('giotto.use_conda') is FALSE.
+Detect and set the python path when \code{python_path} is NULL
+(default). A default path to check can be set using the "giotto.py_path"
+option. Exits without doing anything if option "giotto.use_conda" is FALSE.
 }
 \examples{
 set_giotto_python_path()

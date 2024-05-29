@@ -558,17 +558,21 @@ removeGiottoEnvironment <- function(mini_path = NULL, verbose = TRUE) {
 
 #' @title set_giotto_python_path
 #' @name set_giotto_python_path
-#' @description detects and sets the python path. Exits without doing anything
-#' if getOption('giotto.use_conda') is FALSE.
-#' @param python_path character. Full path to python executable
+#' @description Detect and set the python path when `python_path` is NULL
+#' (default). A default path to check can be set using the "giotto.py_path"
+#' option. Exits without doing anything if option "giotto.use_conda" is FALSE.
+#' @param python_path character. Full path to python executable. Checks option
+#' `"giotto.py_path"`
 #' @param verbose be verbose
 #' @returns path to python executable
 #' @keywords internal
 #' @examples
 #' set_giotto_python_path()
 #' @export
-set_giotto_python_path <- function(python_path = NULL,
-    verbose = TRUE) {
+set_giotto_python_path <- function(
+        python_path = getOption("giotto.py_path"),
+        verbose = TRUE
+) {
     if (isFALSE(getOption("giotto.use_conda", TRUE))) {
         return(invisible(NULL)) # exit early
     }

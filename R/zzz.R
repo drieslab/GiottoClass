@@ -7,4 +7,6 @@
         GiottoUtils::check_github_suite_ver("GiottoClass")
         options("giotto.check_version" = FALSE)
     }
+    
+    init_option("giotto.py_path", NULL)
 }
