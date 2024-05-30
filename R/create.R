@@ -817,7 +817,7 @@ createGiottoObjectSubcellular <- function(
         # generate named list of giottoPoints objects
         points_res <- .extract_points_list(pointslist = gpoints)
         gobject <- setGiotto(
-            gobject, points_res, verbose = FALSE, initalize = FALSE
+            gobject, points_res, verbose = FALSE, initialize = FALSE
         )
 
         vmsg(.v = verbose, 
