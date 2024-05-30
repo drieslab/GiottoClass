@@ -154,48 +154,40 @@ checkGiottoEnvironment <- function(
     
     # environment
     if (is.null(mini_install_path)) {
-        # giotto environment path defaults
-        if (!is.null(envname)) {
-            mini_install_path <- envname
-        } else {
-            mini_install_path <- reticulate::miniconda_path()
-        }
-        # only the envname or default path should be used.
-    } else {
-        # checks if not following defaults
-        if (!is.character(mini_install_path)) {
-            stop(wrap_txt("`mini_install_path` input must be character"))
-        }
-        if (checkmate::test_file_exists(mini_install_path)) {
-            stop(wrap_txt(
-                "`mini_install_path` should be a path to a directory;
+        # default giotto environment path
+        mini_install_path <- reticulate::miniconda_path()
+    }
+    if (!is.character(mini_install_path)) {
+        stop(wrap_txt("`mini_install_path` input must be character"))
+    }
+    if (checkmate::test_file_exists(mini_install_path)) {
+        stop(wrap_txt(
+            "`mini_install_path` should be a path to a directory;
              not an executable."
-            ))
-        }
-        # complete path
-        mini_install_path <- file.path(mini_install_path, "envs", envname)
-        
-        # confirm location
-        vmsg(.v = verbose, sprintf(
-            "Installing env to directory:\n\"%s\"", mini_install_path
         ))
-        if (isTRUE(confirm)) {
-            # if not confirmed, return early
-            input <- readline("Is this the right location? [y/n] ")
-            if (!input %in% c("y", "Y", "n", "N")) {
-                stop("Invalid input. Please try again.")
-            }
-            if (!input %in% c("y", "Y")) stop("aborting")
+    }
+    
+    # complete path
+    mini_install_path <- file.path(mini_install_path, "envs", envname)
+    
+    # confirm location
+    vmsg(.v = verbose, sprintf(
+        "Installing env to directory:\n\"%s\"", mini_install_path
+    ))
+    if (isTRUE(confirm)) {
+        # if not confirmed, return early
+        input <- readline("Is this the right location? [y/n] ")
+        if (!input %in% c("y", "Y", "n", "N")) {
+            stop("Invalid input. Please try again.")
         }
-        
-        # create directory if not existing
-        if (!dir.exists(mini_install_path)) {
-            dir.create(mini_install_path, recursive = TRUE)
-        }
-        # user defined path will be used
+        if (!input %in% c("y", "Y")) stop("aborting")
+    }
+    
+    # create directory if not existing
+    if (!dir.exists(mini_install_path)) {
+        dir.create(mini_install_path, recursive = TRUE)
     }
 
-    
     ## identify operating system and adjust the necessary packages ##
     ## ----------------------------------------------------------- ##
     os_specific_system <- get_os()
