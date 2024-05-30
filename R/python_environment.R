@@ -168,7 +168,6 @@ checkGiottoEnvironment <- function(
     }
     
     # complete path
-    checkmate::assert_character(envname)
     mini_install_path <- file.path(mini_install_path, "envs", envname)
     
     # confirm location
