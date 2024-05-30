@@ -160,7 +160,7 @@ checkGiottoEnvironment <- function(
     if (!is.character(mini_install_path)) {
         stop(wrap_txt("`mini_install_path` input must be character"))
     }
-    if (file.exists(mini_install_path)) {
+    if (checkmate::test_file_exists(mini_install_path)) {
         stop(wrap_txt(
             "`mini_install_path` should be a path to a directory;
              not an executable."
