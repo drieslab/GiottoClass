@@ -133,7 +133,7 @@ def set_adg_pca(adata = None, pca_coord = None, loadings = None, eigenv = None, 
         adata.varm["PCs"] = pc_placehold
 
     elif loadings is not None:
-        adata.varm["PCs"] = loadings
+        adata.varm["PCs"] = loadings.to_numpy(dtype=float)
     if eigenv is not None:
         eigenv_shape = len(eigenv)
         eigenv = np.array(eigenv)

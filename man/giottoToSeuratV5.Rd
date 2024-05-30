@@ -4,19 +4,12 @@
 \alias{giottoToSeuratV5}
 \title{Convert Giotto to Seurat V5}
 \usage{
-giottoToSeuratV5(
-  gobject,
-  spat_unit = NULL,
-  res_type = c("hires", "lowres", "fullres"),
-  ...
-)
+giottoToSeuratV5(gobject, spat_unit = NULL, ...)
 }
 \arguments{
 \item{gobject}{Giotto object}
 
 \item{spat_unit}{spatial unit (e.g. 'cell')}
-
-\item{res_type}{type of 10x image output resolution}
 
 \item{...}{additional params to pass to \code{\link{get_spatial_locations}}}
 }
@@ -27,11 +20,6 @@ Seurat object
 Converts Giotto object into a Seurat object. This functions
 extracts specific sets of data belonging to specified spatial unit.
 The default values are 'cell' and 'rna' respectively.
-}
-\examples{
-g <- GiottoData::loadGiottoMini("visium")
-
-giottoToSeuratV5(g)
 }
 \keyword{interoperability}
 \keyword{seurat}
