@@ -271,7 +271,7 @@ checkGiottoEnvironment <- function(
     # first see if Giotto environment is already installed
     giotto_installed <- checkGiottoEnvironment(
         envname = mini_install_path,
-        verbose = verbose
+        verbose = FALSE
     )
 
     # already installed and no force: do nothing & return
