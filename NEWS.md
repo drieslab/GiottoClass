@@ -1,8 +1,14 @@
 
 # GiottoClass 0.3.2
 
+## breaking changes
+- python environment installation and how it relates to default settings such as .condarc may have changed.
+
 ## enhancements
 - `verbose` param for `createNearestNetwork()`
+- `checkGiottoEnvironment()` in addition to full filepaths, also now supports name of environment or installation directory
+- `installGiottoEnvironment()`, `removeGiottoEnvironment()` now have `conda` param for setting path to conda executable and `envname` param for specifying environment by name
+- `installGiottoEnvironment()` now has `confirm` param for skipping path input checks
 
 
 # GiottoClass 0.3.1 (2024/05/21)

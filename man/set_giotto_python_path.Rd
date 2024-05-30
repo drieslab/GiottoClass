@@ -6,7 +6,7 @@
 \usage{
 set_giotto_python_path(
   python_path = getOption("giotto.py_path"),
-  verbose = TRUE
+  verbose = NULL
 )
 }
 \arguments{
