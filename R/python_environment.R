@@ -44,6 +44,7 @@ checkGiottoEnvironment <- function(
             what = "checkGiottoEnvironment(mini_install_path)",
             with = "checkGiottoEnvironment(envname)"
         )
+        envname <- mini_install_path
     }
     
     py_path <- .full_miniconda_path(path = envname)
@@ -269,7 +270,7 @@ checkGiottoEnvironment <- function(
     
     # first see if Giotto environment is already installed
     giotto_installed <- checkGiottoEnvironment(
-        mini_install_path = mini_install_path,
+        envname = mini_install_path,
         verbose = verbose
     )
 
@@ -463,8 +464,8 @@ installGiottoEnvironment <- function(packages_to_install = c(
 #' See \code{\link{installGiottoEnvironment}}.
 #' @export
 removeGiottoEnvironment <- function(
-        mini_path = deprecated(), 
         envname = "giotto_env", 
+        mini_path = deprecated(), 
         conda = "auto", 
         verbose = TRUE
 ) {
