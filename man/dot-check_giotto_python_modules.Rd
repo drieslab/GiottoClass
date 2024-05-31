@@ -13,6 +13,7 @@
 character or NULL
 }
 \description{
-Check if Giotto python modules are in python environment
+Check for some core python packages that Giotto uses. This is an internal
+currently only called by the \code{giotto} \code{initialize()} method
 }
 \keyword{internal}

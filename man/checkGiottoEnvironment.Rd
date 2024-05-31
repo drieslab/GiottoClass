@@ -4,17 +4,18 @@
 \alias{checkGiottoEnvironment}
 \title{checkGiottoEnvironment}
 \usage{
-checkGiottoEnvironment(mini_install_path = NULL, verbose = TRUE)
+checkGiottoEnvironment(
+  envname = "giotto_env",
+  mini_install_path = deprecated(),
+  verbose = NULL
+)
 }
 \arguments{
-\item{mini_install_path}{(optional) path to miniconda or conda directory
-within which the giotto environment lives
-If not provided, automatically determined by reticulate::miniconda_path()
-Note the required input format:
-Correct format --> mini_install_path = "C:/my/conda/lives/here"
-OR "C:\\my\\conda\\lives\\here"
-INCORRECT formats --> mini_install_path = "C:/my/conda/lives/here/"
-AND "C:\\my\\conda\\lives\\here\\"}
+\item{envname}{character. (optional) The name of or path to a miniconda or
+conda environment directory or python executable. Default is
+\code{reticulate::miniconda_path()}.}
+
+\item{mini_install_path}{deprecated}
 
 \item{verbose}{be verbose}
 }
@@ -22,12 +23,27 @@ AND "C:\\my\\conda\\lives\\here\\"}
 logical
 }
 \description{
-checkGiottoEnvironment
+Based on \code{envname}, detect if there is a conda or miniconda installation.
+This is done by detecting if there is a python executable in the
+expected location. The default behavior is to only check for giotto's
+default environment called "giotto_env"
 }
 \details{
 Checks if a miniconda giotto environment can be found.
 Can be installed with \code{\link{installGiottoEnvironment}}.
 }
 \examples{
+# check default location
 checkGiottoEnvironment()
+
+# use environment name
+checkGiottoEnvironment("giotto_env")
+
+# full path 
+# (use this if a different install location specified with .condarc)
+if (FALSE) {
+checkGiottoEnvironment(
+    "/Users/example/Library/r-miniconda-arm64/envs/giotto_env/bin/pythonw"
+)
+}
 }
