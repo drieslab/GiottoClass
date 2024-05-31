@@ -51,7 +51,7 @@ Giotto object
 Converts a saved SpatialData object into a Giotto object
 }
 \details{
-Function in beta. Converts a .h5ad file into a Giotto object.
+Function in beta. Converts a structured SpatialData file into a Giotto object.
 The returned Giotto Object will take default insructions with the
 exception of the python path, which may be customized.
 See \code{\link{changeGiottoInstructions}} to modify instructions after creation.
