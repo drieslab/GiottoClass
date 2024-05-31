@@ -528,11 +528,21 @@ removeGiottoEnvironment <- function(
 
 #' @title set_giotto_python_path
 #' @name set_giotto_python_path
-#' @description Detect and set the python path when `python_path` is NULL
-#' (default). A default path to check can be set using the "giotto.py_path"
-#' option. Exits without doing anything if option "giotto.use_conda" is FALSE.
-#' @param python_path character. Full path to python executable. Checks option
-#' `"giotto.py_path"`
+#' @description Detect and activate a python path. The `python_path` param
+#' accepts both full filepaths to the python executable and envnames. The 
+#' final path to use is determined as follows in decreasing priority:
+#' 
+#'   1. User provided (when `python_path` is not `NULL`)
+#'   2. Any provided path or envname in option `"giotto.py_path"`
+#'   3. Default expected giotto environment location based on 
+#'   `reticulate::miniconda_path()`
+#'   4. Envname "giotto_env"
+#'   5. System default python environment
+#' 
+#' This function exits without doing anything if option 
+#' `"giotto.use_conda"` is `FALSE`.
+#' @param python_path character. Name of environment or full path to python 
+#' executable.
 #' @param verbose be verbose
 #' @returns path to python executable
 #' @keywords internal
@@ -540,85 +550,75 @@ removeGiottoEnvironment <- function(
 #' set_giotto_python_path()
 #' @export
 set_giotto_python_path <- function(
-        python_path = getOption("giotto.py_path"), # default is NULL
+        python_path = NULL,
         verbose = NULL
 ) {
     if (isFALSE(getOption("giotto.use_conda", TRUE))) {
         return(invisible(NULL)) # exit early
     }
-
-    # If a path is provided or found by option and it exists,
-    # direct reticulate to said executable and exit immediately
+    
+    # get path in order of DECREASING priority #
+    # ---------------------------------------- #
+    
+    # (1.) from user (when `python_path` != NULL)
     if (!is.null(python_path)) {
-        res <- .full_miniconda_path(path = python_path)
-        
-        if (!is.null(res)) { # found
-            vmsg(.v = verbose, " external python path provided and will be used")
-            reticulate::use_python(required = TRUE, python = res)
-        } else { # not found
-            vmsg(.v = verbose, sprintf(
-                "provided 'python_path': \n\"%s\"
-                is not a filepath to executable or miniconda env directory.
-                Continuing with default detection.",
-                python_path
-            ))
-        }
-        
+        vmsg(.v = verbose, "a python path has been provided")
+    }
+
+    # (2.) check option (default is null)
+    python_path <- python_path %null% getOption("giotto.py_path")
+    if (!is.null(python_path)) {
+        vmsg(.v = verbose, "found python path from option 'giotto.py_path'")
+    }
+    
+    # (3.) check default install path; if not existing, returns NULL
+    # will return NULL for .condarc alternate location "giotto_env" installs
+    python_path <- python_path %null% .os_py_path(must_exist = TRUE)
+    if (!is.null(python_path)) {
+        vmsg(.v = verbose, "a giotto python environment was found")
+    }
+    
+    # (4.) check default envname, relying on reticulate::conda_list()
+    # catches .condarc alternate location "giotto_env"
+    if (is.null(python_path)) {
+        python_path <- "giotto_env"
+        vmsg(.v = verbose, "checking default envname \'giotto_env\'")
+    }
+    
+    # if an envname was provided, convert to a full python path to test
+    # if no existing python path found, return the envname without changes
+    if (!.is_path(python_path)) {
+        python_path <- .envname_to_pypath(python_path, must_exist = FALSE)
+    }
+    # if python_path thus far is not completable to an existing path
+    # return NULL, otherwise return existing path
+    python_path <- .full_miniconda_path(path = python_path)
+    
+    # (5.) detect from system call; return NULL if not found
+    python_path <- python_path %null% .sys_detect_py()
+    if (!is.null(python_path)) {
+        vmsg(.v = verbose, "a system default python environment was found")
+    }
+
+    # if any working python path found; activate the environment and return #
+    # --------------------------------------------------------------------- #
+    if (!is.null(python_path)) { 
+        vmsg(.v = verbose, sprintf("Using python path:\n\"%s\"", res))
+        reticulate::use_python(required = TRUE, python = res)
         return(python_path)
     }
-
-    # Otherwise, check the OS and if a Giotto Environment exists
-    # use that executable
-    python_path <- .os_py_path() 
-
-    # check if giotto environment exists
-    giotto_environment_installed <- checkGiottoEnvironment(
-        envname = python_path,
-        verbose = FALSE
-    )
-
-    if (isTRUE(giotto_environment_installed)) {
-        vmsg(
-            .v = verbose,
-            "no external python path was provided,
-            but a giotto python environment was found and will be used"
-        )
-        # activate environment
-        reticulate::use_python(required = TRUE, python = python_path)
-    } else {
-        vmsg(.v = verbose,
-             "no external python path or giotto environment was specified, 
-             will check if a default python path is available"
-        )
-        # system calls to check py location
-        python_path <- .sys_detect_py()
-
-        if (inherits(python_path, "try-error")) {
-            vmsg("no default python path found.
-               For full functionality, install python and/or use
-               strategy 1 or 2:")
-            python_path <- NULL
-        } else {
-            python_path <- python_path
-            # activate environment
-            reticulate::use_python(required = TRUE, python = python_path)
-            vmsg(.v = verbose,
-                 sprintf(
-                     "a default python path was found: \n\"%s\"
-                     If this is not the correct python path, either",
-                     python_path))
-        }
-
-        vmsg("\n 1. use installGiottoEnvironment() to install
-            a local miniconda python environment along with required modules")
-        vmsg("\n 2. provide an existing python path to
-            python_path to use your own python path which has all modules
-            installed")
-        vmsg('Set options(\"giotto.use_conda\" = FALSE) if
-            python functionalities are not needed')
-    }
-
-    return(python_path)
+    
+    # otherwise, not found -- helpful prints
+    vmsg("no default python path found.
+        For full functionality, install python and/or use
+        strategy 1 or 2:")
+    vmsg("1. use installGiottoEnvironment() to install
+         a local miniconda python environment along with required modules")
+    vmsg("2. provide an existing python path to
+         python_path to use your own python path which has all modules
+         installed")
+    vmsg('Set options(\"giotto.use_conda\" = FALSE) if
+         python functionalities are not needed')
 }
 
 
@@ -1000,6 +1000,7 @@ checkPythonPackage <- function(package_name = NULL,
 }
 
 # system call to detect python location
+# if found, returns path, if not returns NULL
 .sys_detect_py <- function() {
     res <- try(
         {
@@ -1010,6 +1011,7 @@ checkPythonPackage <- function(package_name = NULL,
         },
         silent = TRUE
     )
+    if (inherits(res, "try-error")) res <- NULL
     return(res)
 }
 
