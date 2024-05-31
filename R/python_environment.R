@@ -47,6 +47,13 @@ checkGiottoEnvironment <- function(
         envname <- mini_install_path
     }
     
+    # check for envnames, if found, get the path
+    envs <- reticulate::conda_list()
+    enames <- envs$name
+    epaths <- envs$python
+    if (envname %in% enames) envname <- epaths[enames == envname]
+    
+    # complete any directory inputs
     py_path <- .full_miniconda_path(path = envname)
     
    if (is.null(py_path)) {
