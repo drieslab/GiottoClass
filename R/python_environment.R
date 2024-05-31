@@ -50,10 +50,13 @@ checkGiottoEnvironment <- function(
     
     # check for envnames, if found, get the path
     if (!.is_path(envname)) {
-        envname <- .envname_to_pypath(envname)
+        # if a condaenv matches envname, return fullpath
+        # otherwise return envname without modification
+        envname <- .envname_to_pypath(envname, must_exist = FALSE)
     }
     
     # complete any directory inputs
+    # if path does not exist, return NULL
     py_path <- .full_miniconda_path(path = envname)
     
    if (is.null(py_path)) {
@@ -506,8 +509,10 @@ removeGiottoEnvironment <- function(
     # if envname was provided, get pypath from conda_list, 
     # then convert to envpath
     if (!.is_path(envname)) {
-        envname <- .envname_to_pypath(envname) %>%
-            .pypath_to_envpath()
+        # if a condaenv matches envname, return fullpath
+        # otherwise throw error
+        envname <- .envname_to_pypath(envname, must_exist = TRUE) %>%
+            .pypath_to_envpath() # fullpath to envpath
     }
 
     reticulate::conda_remove(
@@ -953,13 +958,17 @@ checkPythonPackage <- function(package_name = NULL,
     gsub(remove, "", python_path)
 }
 
-.envname_to_pypath <- function(envname) {
+# if found, return the fullpath
+# if not, return without modification
+.envname_to_pypath <- function(envname, must_exist = TRUE) {
     envs <- reticulate::conda_list()
     enames <- envs$name
     epaths <- envs$python
     if (envname %in% enames) envname <- epaths[enames == envname]
-    else stop(sprintf("envname '%s' not found in reticulate::conda_list()",
-                      envname), call. = FALSE)
+    else if (isTRUE(must_exist)) {
+        stop(sprintf("envname '%s' not found in reticulate::conda_list()",
+                     envname), call. = FALSE)
+    }
     return(envname)
 }
 
