@@ -9,25 +9,32 @@ installGiottoEnvironment(
     "leidenalg==0.9.0", "python-louvain==0.16", "python.app==1.4", "scikit-learn==1.1.3"),
   python_version = "3.10.2",
   mini_install_path = NULL,
+  confirm = TRUE,
+  envname = "giotto_env",
+  conda = "auto",
   force_miniconda = FALSE,
   force_environment = FALSE,
-  verbose = TRUE
+  verbose = NULL
 )
 }
 \arguments{
-\item{packages_to_install}{all python modules (packages) that should be
-installed for Giotto to work}
+\item{packages_to_install}{python modules (packages) to install for Giotto.}
 
 \item{python_version}{python version to use within the giotto conda
-environment}
+environment. Default is v3.10.2}
 
-\item{mini_install_path}{(optional) desired location miniconda installation.
-If not provided, it is chosen by reticulate::install_miniconda()
-Note the required input format:
-Correct format --> mini_install_path = "C:/my/conda/lives/here"
-OR "C:\\my\\conda\\lives\\here"
-INCORRECT formats --> mini_install_path = "C:/my/conda/lives/here/"
-AND "C:\\my\\conda\\lives\\here\\"}
+\item{mini_install_path}{(optional) desired miniconda installation location.
+Default is chosen by \code{reticulate::install_miniconda()}}
+
+\item{confirm}{whether to pause for confirmation of conda environment
+install location (default = TRUE)}
+
+\item{envname}{name to assign environment. Default = "giotto_env"}
+
+\item{conda}{either "auto" (default) to allow reticulate to handle it, or
+the full filepath to the conda executable. You can also set the option
+"reticulate.conda_binary" or \code{Sys.setenv()} "RETICULATE_CONDA" to tell
+reticulate where to look.}
 
 \item{force_miniconda}{force reinstallation of miniconda}
 
@@ -39,18 +46,25 @@ AND "C:\\my\\conda\\lives\\here\\"}
 installs a giotto environment using the reticulate miniconda system
 }
 \description{
-Installs a giotto environment
+Installs a giotto python environment. This includes a
+miniconda installation and also a set of python packages that Giotto may
+often use. See details for further information on setting up an
+environment with a .yml
 }
 \details{
 This function will install a local giotto environment using
-the miniconda system as implemented by reticulate. Once this giotto
+the miniconda system as implemented by \pkg{reticulate}. Once this giotto
 environment is installed it will be automatically detected when you run the
-Giotto toolbox. If you want to use
-your own python path then you can set the python_path in
-the \code{\link{createGiottoInstructions}}
+Giotto toolbox. \cr
+}
+\section{custom python paths}{
+If you want to use your own python path then you can set the python_path in
+the  \code{"giotto.py_path"} option or \code{\link{createGiottoInstructions}}
 and provide the instructions to the \code{\link{createGiottoObject}}
 function.
+}
 
+\section{python versions}{
 By default, Python v3.10.2 will be used with the following python modules
 for Giotto Suite implementations:
 \preformatted{
@@ -80,6 +94,26 @@ Python  v3.6
   - scikit-learn==0.24.2
 }
 }
+
+\section{.yml installs}{
+Please note that multiple .yml files are provided in the
+repository for advanced installation and convenience. To install the most
+up-to-date Giotto environment using a .yml file, open a shell compatible
+with conda/miniconda and navigate to the directory specified by
+\code{system.file(package = "Giotto", "python/configuration")}. Once in this
+directory, run the following to create your environment in one step:
+
+\verb{conda env create -n giotto_env -f ./genv.yml}
+}
+
 \examples{
+if (FALSE) {
+# default install
 installGiottoEnvironment()
+
+# install to alternate location
+temp_env <- tempdir()
+installGiottoEnvironment(mini_install_path = temp_env)
+}
+
 }
