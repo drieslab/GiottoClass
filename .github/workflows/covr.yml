@@ -4,7 +4,7 @@ name: code coverage
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "dev2 " ]
   schedule:
     - cron: '16 20 * * 2'
 
