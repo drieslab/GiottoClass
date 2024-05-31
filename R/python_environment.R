@@ -8,7 +8,8 @@
 #' @description
 #' Based on `envname`, detect if there is a conda or miniconda installation.
 #' This is done by detecting if there is a python executable in the
-#' expected location.
+#' expected location. The default behavior is to only check for giotto's
+#' default environment called "giotto_env"
 #' @param envname character. (optional) The name of or path to a miniconda or
 #' conda environment directory or python executable. Default is 
 #' `reticulate::miniconda_path()`.
@@ -603,8 +604,8 @@ set_giotto_python_path <- function(
     # if any working python path found; activate the environment and return #
     # --------------------------------------------------------------------- #
     if (!is.null(python_path)) { 
-        vmsg(.v = verbose, sprintf("Using python path:\n\"%s\"", res))
-        reticulate::use_python(required = TRUE, python = res)
+        vmsg(.v = verbose, sprintf("Using python path:\n\"%s\"", python_path))
+        reticulate::use_python(required = TRUE, python = python_path)
         return(python_path)
     }
     
