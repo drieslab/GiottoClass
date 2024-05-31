@@ -25,7 +25,8 @@ logical
 \description{
 Based on \code{envname}, detect if there is a conda or miniconda installation.
 This is done by detecting if there is a python executable in the
-expected location.
+expected location. The default behavior is to only check for giotto's
+default environment called "giotto_env"
 }
 \details{
 Checks if a miniconda giotto environment can be found.

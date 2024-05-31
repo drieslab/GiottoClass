@@ -560,24 +560,26 @@ set_giotto_python_path <- function(
     
     # get path in order of DECREASING priority #
     # ---------------------------------------- #
+    found <- vector(mode = "numeric")
+    found_msg <- c(
+        "a python path has been provided",
+        "found python path from option 'giotto.py_path'",
+        "a giotto python environment was found", 
+        "", # skip 4 since it's always printed
+        "a system default python environment was found"
+    )
     
     # (1.) from user (when `python_path` != NULL)
-    if (!is.null(python_path)) {
-        vmsg(.v = verbose, "a python path has been provided")
-    }
+    if (!is.null(python_path)) found <- c(found, 1)
 
     # (2.) check option (default is null)
     python_path <- python_path %null% getOption("giotto.py_path")
-    if (!is.null(python_path)) {
-        vmsg(.v = verbose, "found python path from option 'giotto.py_path'")
-    }
+    if (!is.null(python_path)) found <- c(found, 2)
     
     # (3.) check default install path; if not existing, returns NULL
     # will return NULL for .condarc alternate location "giotto_env" installs
     python_path <- python_path %null% .os_py_path(must_exist = TRUE)
-    if (!is.null(python_path)) {
-        vmsg(.v = verbose, "a giotto python environment was found")
-    }
+    if (!is.null(python_path)) found <- c(found, 3)
     
     # (4.) check default envname, relying on reticulate::conda_list()
     # catches .condarc alternate location "giotto_env"
@@ -597,8 +599,13 @@ set_giotto_python_path <- function(
     
     # (5.) detect from system call; return NULL if not found
     python_path <- python_path %null% .sys_detect_py()
-    if (!is.null(python_path)) {
-        vmsg(.v = verbose, "a system default python environment was found")
+    if (!is.null(python_path)) found <- c(found, 5)
+    
+    # print any found messages #
+    # ------------------------ #
+    if (length(found) > 0) {
+        found_at <- min(found)
+        vmsg(.v = verbose, found_msg[found_at])
     }
 
     # if any working python path found; activate the environment and return #
