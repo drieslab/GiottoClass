@@ -26,9 +26,9 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Depends:
-    base (>= 4.4.0),
-    utils (>= 4.4.0),
-    R (>= 4.4.0),
+    base (>= 4.0.1),
+    utils (>= 4.0.1),
+    R (>= 4.0.1),
 Imports:
     checkmate,
     data.table (>= 1.12.2),
@@ -80,6 +80,7 @@ Suggests:
     testthat (>= 3.0.0),
     qs,
     XML
+Remotes: drieslab/GiottoUtils
 Config/testthat/edition: 3
 Collate: 
     'package_imports.R'
