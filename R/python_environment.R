@@ -46,6 +46,7 @@ checkGiottoEnvironment <- function(
         )
         envname <- mini_install_path
     }
+    envname <- envname %null% "giotto_env"
     
     # check for envnames, if found, get the path
     if (!.is_path(envname)) {
