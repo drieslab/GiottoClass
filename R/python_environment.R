@@ -48,7 +48,7 @@ checkGiottoEnvironment <- function(
     }
     
     # check for envnames, if found, get the path
-    if (!grepl("\\\\||/", envname)) {
+    if (!.is_path(envname)) {
         envname <- .envname_to_pypath(envname)
     }
     
@@ -504,7 +504,7 @@ removeGiottoEnvironment <- function(
     
     # if envname was provided, get pypath from conda_list, 
     # then convert to envpath
-    if (!grepl("\\\\||/", envname)) {
+    if (!.is_path(envname)) {
         envname <- .envname_to_pypath(envname) %>%
             .pypath_to_envpath()
     }
@@ -1001,4 +1001,10 @@ checkPythonPackage <- function(package_name = NULL,
         silent = TRUE
     )
     return(res)
+}
+
+# detect if something is likely a path based on slashes (forward and back)
+# also if a file exists (also covers directories)
+.is_path <- function(x) {
+    grepl("\\\\|/", x) || file.exists(x)
 }
