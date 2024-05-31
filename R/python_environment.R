@@ -100,7 +100,7 @@ checkGiottoEnvironment <- function(
 
     python_modules <- c(
         "pandas", "igraph", "leidenalg", "community",
-        "networkx", "scikit-learn"
+        "networkx", "sklearn"
     )
 
     missing_modules <- vector(mode = "character")
