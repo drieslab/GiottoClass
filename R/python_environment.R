@@ -49,10 +49,7 @@ checkGiottoEnvironment <- function(
     
     # check for envnames, if found, get the path
     if (!grepl("\\\\||/", envname)) {
-        envs <- reticulate::conda_list()
-        enames <- envs$name
-        epaths <- envs$python
-        if (envname %in% enames) envname <- epaths[enames == envname]
+        envname <- .envname_to_pypath(envname)
     }
     
     # complete any directory inputs
@@ -63,8 +60,7 @@ checkGiottoEnvironment <- function(
            .v = verbose,
            " Unable to find conda directory", envname,
            "\nPlease ensure the directory exists and is provided as",
-           "character. \nIf only the name of the environment was provided,
-           ensure it is a subdirectory of reticulate::miniconda_path()"
+           "character."
        )
        return(FALSE)
    }
@@ -505,6 +501,13 @@ removeGiottoEnvironment <- function(
             "Giotto environment is not found and probably never installed"
         )
     }
+    
+    # if envname was provided, get pypath from conda_list, 
+    # then convert to envpath
+    if (!grepl("\\\\||/", envname)) {
+        envname <- .envname_to_pypath(envname) %>%
+            .pypath_to_envpath()
+    }
 
     reticulate::conda_remove(
         envname = envname,
@@ -919,9 +922,9 @@ checkPythonPackage <- function(package_name = NULL,
     checkmate::assert_directory_exists(path)
     env_level <- file.path(path, "envs", envname)
     full_path <- switch(os,
-                        "osx" = file.path(env_level, "bin/pythonw"),
-                        "windows" = file.path(env_level, "python.exe"),
-                        "linux" = file.path(env_level, "bin/python")
+        "osx" = file.path(env_level, "bin/pythonw"),
+        "windows" = file.path(env_level, "python.exe"),
+        "linux" = file.path(env_level, "bin/python")
     )
     # if not must exist or the file exists, return
     if (!must_exist || file.exists(full_path)) {
@@ -938,29 +941,26 @@ checkPythonPackage <- function(package_name = NULL,
     return(NULL)
 }
 
-# run `os_py_path()` with defaults to get the default install location of
-# the `giotto_env`, based on OS.
-.giotto_environment_path_executable <- function() {
-    .os_py_path()
+# convert a full python executable path to the miniconda install directory
+.pypath_to_envpath <- function(python_path) {
+    os <- get_os()
+    remove <- switch(os,
+      "osx" = "bin/pythonw$|bin/python$",
+      "windows" = "python.exe",
+      "linux" = "bin/python"
+    )
+    gsub(remove, "", python_path)
 }
 
-# # build path to expected conda file location
-# .os_conda_path <- function(
-#         path = reticulate::miniconda_path(),
-#         must_exist = TRUE
-# ) {
-#     checkmate::assert_directory_exists(path)
-#     full_path <- switch(.Platform$OS.type,
-#         "windows" = file.path(path, "condabin", "conda.bat"),
-#         "unix" = file.path(path, "bin", "conda")
-#     )
-#     
-#     if (!must_exist || file.exists(full_path)) {
-#         return(full_path)
-#     } 
-#     # not found, return NULL
-#     return(NULL)
-# }
+.envname_to_pypath <- function(envname) {
+    envs <- reticulate::conda_list()
+    enames <- envs$name
+    epaths <- envs$python
+    if (envname %in% enames) envname <- epaths[enames == envname]
+    else stop(sprintf("envname '%s' not found in reticulate::conda_list()",
+                      envname), call. = FALSE)
+    return(envname)
+}
 
 # get full path to miniconda executable
 # if a full path to the executable is provided, it will be used

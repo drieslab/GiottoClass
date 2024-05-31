@@ -5,16 +5,16 @@
 \title{removeGiottoEnvironment}
 \usage{
 removeGiottoEnvironment(
-  mini_path = deprecated(),
   envname = "giotto_env",
+  mini_path = deprecated(),
   conda = "auto",
   verbose = TRUE
 )
 }
 \arguments{
-\item{mini_path}{deprecated}
-
 \item{envname}{name of environment to remove (e.g. "giotto_env")}
+
+\item{mini_path}{deprecated}
 
 \item{conda}{either "auto" (default) to allow reticulate to handle it, or
 the full filepath to the conda executable. You can also set the option
