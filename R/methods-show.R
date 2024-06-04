@@ -347,36 +347,31 @@ setMethod(
 #' @aliases show,spatLocsObj-method
 #' @docType methods
 #' @rdname show-methods
-setMethod(
-    f = "show", signature("spatLocsObj"), function(object) {
-        sdimx <- sdimy <- NULL
-
-        show_class_and_name(object)
-        show_spat(object)
-        show_prov(object)
-
-        cat("   ------------------------\n\npreview:\n")
-        if (!is.null(slot(object, "coordinates"))) {
-            show(head(slot(object, "coordinates"), 3L))
-        }
-
-        cat("\nranges:\n")
-
-        col_names <- colnames(object)
-        coord_cols <- col_names[col_names %in% c("sdimx", "sdimy", "sdimz")]
-
-        try(
-            expr = print(vapply(
-                slot(object, "coordinates")[, c(coord_cols), with = FALSE],
-                range,
-                FUN.VALUE = numeric(2L)
-            )),
-            silent = TRUE
-        )
-
-        cat("\n")
+setMethod("show", signature("spatLocsObj"), function(object) {
+    show_class_and_name(object)
+    show_spat(object)
+    show_prov(object)
+    
+    cat("   ------------------------\n\npreview:\n")
+    if (!is.null(slot(object, "coordinates"))) {
+        show(head(slot(object, "coordinates"), 3L))
     }
-)
+    
+    # print ranges if possible
+    cat("\nranges:\n")
+    col_names <- colnames(slot(object, "coordinates"))
+    coord_cols <- col_names[col_names %in% c("sdimx", "sdimy", "sdimz")]
+    
+    try(
+        expr = print(vapply(
+            slot(object, "coordinates")[, c(coord_cols), with = FALSE],
+            range,
+            FUN.VALUE = numeric(2L)
+        )),
+        silent = TRUE
+    )
+    cat("\n")
+})
 
 
 

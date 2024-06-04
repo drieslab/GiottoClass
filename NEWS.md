@@ -10,6 +10,9 @@
 - `installGiottoEnvironment()`, `removeGiottoEnvironment()` now have `conda` param for setting path to conda executable and `envname` param for specifying environment by name
 - `installGiottoEnvironment()` now has `confirm` param for skipping path input checks
 
+## new
+- `affine()` for `giottoPolygon`, `giottoPoints`, `spatLocsObj`
+
 
 # GiottoClass 0.3.1 (2024/05/21)
 
