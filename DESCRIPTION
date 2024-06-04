@@ -106,6 +106,7 @@ Collate:
     'interoperability.R'
     'join.R'
     'methods-IDs.R'
+    'methods-affine.R'
     'methods-centroids.R'
     'methods-coerce.R'
     'methods-copy.R'
