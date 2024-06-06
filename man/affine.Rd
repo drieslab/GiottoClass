@@ -8,19 +8,22 @@
 \alias{affine,spatLocsObj-method}
 \title{Apply an affine tranform}
 \usage{
-\S4method{affine}{SpatVector}(x, m, ...)
+\S4method{affine}{SpatVector}(x, m, inv = FALSE, ...)
 
-\S4method{affine}{giottoPoints}(x, m, ...)
+\S4method{affine}{giottoPoints}(x, m, inv = FALSE, ...)
 
-\S4method{affine}{giottoPolygon}(x, m, ...)
+\S4method{affine}{giottoPolygon}(x, m, inv = FALSE, ...)
 
-\S4method{affine}{spatLocsObj}(x, m, ...)
+\S4method{affine}{spatLocsObj}(x, m, inv = FALSE, ...)
 }
 \arguments{
 \item{x}{object}
 
 \item{m}{\code{matrix} or coercible to \code{matrix}. Should be a matrix with either
 2 or 3 columns (linear or affine).}
+
+\item{inv}{logical. Whether the inverse of the affine transform should
+be applied.}
 
 \item{...}{additional args to pass (none implemented)}
 }
@@ -35,7 +38,7 @@ Currently only works for 2D transforms.
 m <- diag(rep(1, 3))
 trans_m <- matrix(c(1, 0, 0, 0, 1, 0, 200, 300, 1), nrow = 3)
 scale_m <- matrix(c(2, 0, 0, 0, 3, 0, 0, 0, 1), nrow = 3)
-aff_m <- matrix(c(2, 3, 0.43, 0.2, 3, 0, 100, 29, 1), nrow = 3)
+aff_m <- matrix(c(2, 3, 0, 0.2, 3, 0, 100, 29, 1), nrow = 3)
 
 gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
 gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
@@ -45,17 +48,23 @@ sl <- GiottoData::loadSubObjectMini("spatLocsObj")
 plot(affine(gpoints, m))
 plot(affine(gpoints, trans_m))
 plot(affine(gpoints, scale_m))
-plot(affine(gpoints, aff_m))
+aff_gpoints <- affine(gpoints, aff_m)
+plot(aff_gpoints)
+plot(affine(aff_gpoints, aff_m, inv = TRUE))
 
 # giottoPolygon #############################################
 plot(affine(gpoly, m))
 plot(affine(gpoly, trans_m))
 plot(affine(gpoly, scale_m))
-plot(affine(gpoly, aff_m))
+aff_gpoly <- affine(gpoly, aff_m)
+plot(aff_gpoly)
+plot(affine(aff_gpoly, aff_m, inv = TRUE))
 
 # spatLocsObj ###############################################
 plot(affine(sl, m))
 plot(affine(sl, trans_m))
 plot(affine(sl, scale_m))
-plot(affine(sl, aff_m))
+aff_sl <- affine(sl, aff_m)
+plot(aff_sl)
+plot(affine(aff_sl, aff_m, inv = TRUE))
 }

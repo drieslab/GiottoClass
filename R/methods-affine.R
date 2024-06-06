@@ -146,12 +146,14 @@ setMethod(
 
 
 
-#' @name parse_affine
-#' @title Read affine matrix for linear transforms
+
+#' @name decomp_affine
+#' @title Decompose affine matrix into scale, rotation, and shear operations
 #' @description Affine transforms are linear transformations that cover scaling,
 #' rotation, shearing, and translations. They can be represented as matrices of
 #' 2x3 or 3x3 values. This function reads the matrix and extracts the values
-#' needed to perform them.
+#' needed to perform them as a list of class `affine`. Works only for 2D
+#' transforms. Logic from \url{https://math.stackexchange.com/a/3521141}
 #' @param x object coercible to matrix with a 2x3 or 3x3 affine matrix
 #' @returns a list of transforms information.
 #' @keywords internal
@@ -160,32 +162,62 @@ setMethod(
 #' trans_m <- matrix(c(1, 0, 0, 0, 1, 0, 200, 300, 1), nrow = 3)
 #' scale_m <- matrix(c(2, 0, 0, 0, 3, 0, 0, 0, 1), nrow = 3)
 #' 
-#' aff_m <- matrix(c(2, 3, 0.43, 0.2, 3, 0, 100, 29, 1), nrow = 3)
+#' aff_m <- matrix(c(
+#'     2, 0.5, 1000, 
+#'     -0.3, 3, 20, 
+#'     100, 29, 1
+#' ), nrow = 3, byrow = TRUE)
 #' 
-#' parse_affine(m)
-#' parse_affine(trans_m)
-#' parse_affine(scale_m)
-#' parse_affine(aff_m)
-parse_affine <- function(x) {
+#' decomp_affine(m)
+#' decomp_affine(trans_m)
+#' decomp_affine(scale_m)
+#' decomp_affine(aff_m)
+#' @export
+decomp_affine <- function(x) {
     # should be matrix or coercible to matrix
     x <- as.matrix(x)
     
-    scale_x <- x[[1, 1]]
-    shear_x <- x[[1, 2]]
-    translate_x <- x[[1, 3]]
-    scale_y <- x[[2, 2]]
-    shear_y <- x[[2, 1]]
-    translate_y <- x[[2, 3]]
+    a11 <- x[[1, 1]]
+    a21 <- x[[2, 1]]
+    a12 <- x[[1, 2]]
+    a22 <- x[[2, 2]]
+    
+    sx <- sqrt(a11^2 + a21^2) # scale x
+    r <- atan(a21 / a11) # rotation
+    msy <- a12 * cos(r) + a22 * sin(r)
+    if (sin(r) != 0) { # scale y
+        sy <- (msy * cos(r) - a12) / sin(r)
+    } else {
+        sy <- (a22 - msy * sin(r)) / cos(r)
+    }
+    m <- msy / sy # shear
+    
+    # translations
+    if (ncol(x) > 2) {
+        tx <- x[[1, 3]]
+        ty <- x[[2, 3]]
+    } else {
+        tx <- ty <- 0
+    }
     
     structure(
-        .Data =     list(
-            scale = c(x = scale_x, y = scale_y),
-            rotate = atan(shear_x / scale_x) + atan(shear_y / scale_y),
-            shear = c(x = shear_x, y = shear_y),
-            translate = c(x = translate_x, y = translate_y),
-            matrix = x
+        .Data = list(
+            scale = c(x = sx, y = sy),
+            rotate = r,
+            shear = m,
+            translate = c(x = tx, y = ty)
         ),
         class = "affine"
     )
 }
 
+#' @name print.affine
+#' @title affine print method
+#' @param x object to print
+#' @param \dots additional params to pass (none implemented)
+#' @keywords internal
+#' @export
+print.affine <- function(x, ...) {
+    cat("<affine>\n")
+    print_list(x)
+}
