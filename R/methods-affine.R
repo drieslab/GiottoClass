@@ -24,25 +24,18 @@
 #' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
 #'
 #' # giottoPoints ##############################################
-#' plot(affine(gpoints, m))
+#' plot(gpoints)
 #' plot(affine(gpoints, trans_m))
-#' plot(affine(gpoints, scale_m))
-#' aff_gpoints <- affine(gpoints, aff_m)
-#' plot(aff_gpoints)
-#' plot(affine(aff_gpoints, aff_m, inv = TRUE))
 #' 
 #' # giottoPolygon #############################################
-#' plot(affine(gpoly, m))
-#' plot(affine(gpoly, trans_m))
+#' plot(gpoly)
 #' plot(affine(gpoly, scale_m))
-#' aff_gpoly <- affine(gpoly, aff_m)
-#' plot(aff_gpoly)
-#' plot(affine(aff_gpoly, aff_m, inv = TRUE))
 #'
 #' # spatLocsObj ###############################################
 #' plot(affine(sl, m))
 #' plot(affine(sl, trans_m))
 #' plot(affine(sl, scale_m))
+#' # this transformation can be inverted
 #' aff_sl <- affine(sl, aff_m)
 #' plot(aff_sl)
 #' plot(affine(aff_sl, aff_m, inv = TRUE))
@@ -117,14 +110,15 @@ setMethod(
     xm <- as.matrix(x[, c(xcol, ycol), with = FALSE])
     
     # translations (if any)
-    trans <- NULL
+    translation <- NULL
     if (ncol(m) > 2) {
         translation <- m[seq(2), 3] # class: numeric
         if (isTRUE(inv)) translation <- -translation
+        if (all(translation == c(0, 0))) translation <- NULL
     }
     
     # inv translation
-    if (!is.null(trans) && isTRUE(inv)) {
+    if (!is.null(translation) && isTRUE(inv)) {
         xm <- t(t(xm) + translation)
     }
     
@@ -134,7 +128,7 @@ setMethod(
     xm <- xm %*% aff_m
 
     # normal translation
-    if (!is.null(trans) && !isTRUE(inv)) {
+    if (!is.null(translation) && !isTRUE(inv)) {
         xm <- t(t(xm) + translation)
     }
 
@@ -146,46 +140,209 @@ setMethod(
 
 
 
-#' @name parse_affine
-#' @title Read affine matrix for linear transforms
+
+
+#' @name decomp_affine
+#' @title Decompose affine matrix into scale, rotation, and shear operations
 #' @description Affine transforms are linear transformations that cover scaling,
 #' rotation, shearing, and translations. They can be represented as matrices of
 #' 2x3 or 3x3 values. This function reads the matrix and extracts the values
-#' needed to perform them.
+#' needed to perform them as a list of class `affine`. Works only for 2D
+#' transforms. Logic from \url{https://math.stackexchange.com/a/3521141}
 #' @param x object coercible to matrix with a 2x3 or 3x3 affine matrix
 #' @returns a list of transforms information.
 #' @keywords internal
 #' @examples
+#' # affine transform matrices
 #' m <- diag(rep(1, 3))
-#' trans_m <- matrix(c(1, 0, 0, 0, 1, 0, 200, 300, 1), nrow = 3)
-#' scale_m <- matrix(c(2, 0, 0, 0, 3, 0, 0, 0, 1), nrow = 3)
+#' shear_m <- trans_m <- m
+#' trans_m[seq(2), 3] <- c(200, 300)
+#' scale_m <- diag(c(2, 3, 1))
+#' shear_m[2, 1] <- 2
+#' aff_m <- matrix(c(
+#'     2, 0.5, 1000, 
+#'     -0.3, 3, 20,
+#'     100, 29, 1
+#' ), nrow = 3, byrow = TRUE)
 #' 
-#' aff_m <- matrix(c(2, 3, 0.43, 0.2, 3, 0, 100, 29, 1), nrow = 3)
+#' # show decomps
+#' # values are shown in order of operations
+#' decomp_affine(m)
+#' decomp_affine(trans_m)
+#' decomp_affine(scale_m)
+#' s <- decomp_affine(shear_m)
+#' a <- decomp_affine(aff_m)
+#' force(a)
 #' 
-#' parse_affine(m)
-#' parse_affine(trans_m)
-#' parse_affine(scale_m)
-#' parse_affine(aff_m)
-parse_affine <- function(x) {
+#' # perform piecewise transforms with decomp
+#' 
+#' sl_shear_piecewise <- sl %>%
+#'     spin(GiottoUtils::degrees(s$rotate), x0 = 0, y0 = 0) %>%
+#'     shear(fx = s$shear[["x"]], fy = s$shear[["y"]], x0 = 0, y0 = 0) %>%
+#'     rescale(fx = s$scale[["x"]], fy = s$scale[["y"]], x0 = 0, y0 = 0) %>%
+#'     spatShift(dx = s$translate[["x"]], dy = s$translate[["y"]])
+#' 
+#' sl_aff_piecewise <- sl %>%
+#'     spin(GiottoUtils::degrees(a$rotate), x0 = 0, y0 = 0) %>%
+#'     shear(fx = a$shear[["x"]], fy = a$shear[["y"]], x0 = 0, y0 = 0) %>%
+#'     rescale(fx = a$scale[["x"]], fy = a$scale[["y"]], x0 = 0, y0 = 0) %>%
+#'     spatShift(dx = a$translate[["x"]], dy = a$translate[["y"]])
+#'     
+#' plot(affine(sl, shear_m))
+#' plot(sl_shear_piecewise)
+#' plot(affine(sl, aff_m))
+#' plot(sl_aff_piecewise)
+#' 
+#' @export
+#' @seealso [solve.affine_decomp()]
+decomp_affine <- function(x) {
     # should be matrix or coercible to matrix
     x <- as.matrix(x)
+
+    a11 <- x[[1, 1]]
+    a21 <- x[[2, 1]]
+    a12 <- x[[1, 2]]
+    a22 <- x[[2, 2]]
     
-    scale_x <- x[[1, 1]]
-    shear_x <- x[[1, 2]]
-    translate_x <- x[[1, 3]]
-    scale_y <- x[[2, 2]]
-    shear_y <- x[[2, 1]]
-    translate_y <- x[[2, 3]]
+    res_x <- .decomp_affine_xshear(a11, a21, a12, a22)
+    res_y <- .decomp_affine_yshear(a11, a21, a12, a22)
+
+    res_x_s <- .decomp_affine_simplicity(res_x)
+    res_y_s <- .decomp_affine_simplicity(res_y)
     
-    structure(
-        .Data =     list(
-            scale = c(x = scale_x, y = scale_y),
-            rotate = atan(shear_x / scale_x) + atan(shear_y / scale_y),
-            shear = c(x = shear_x, y = shear_y),
-            translate = c(x = translate_x, y = translate_y),
-            matrix = x
-        ),
-        class = "affine"
+    if (res_y_s > res_x_s) {
+        res <- res_y
+    } else {
+        res <- res_x
+    }
+    
+    # apply xy translations
+    if (ncol(x) == 3) {
+        res$translate = res$translate + x[seq(2), 3]
+    }
+    
+    res <- structure(
+        .Data = c(res, list(matrix = x)), class = "affine_decomp"
+    )
+    
+    return(res)
+}
+
+# score decomp solutions based on how simple they are
+.decomp_affine_simplicity <- function(affine_res) {
+    a <- affine_res
+
+    score <- 0
+    score <- score + sum(a$scale == c(1, 1))
+    score <- score + sum(a$shear == c(0, 0))
+    score <- score + sum(a$rotate == 0)
+    
+    return(score)
+}
+
+.decomp_affine_yshear <- function(a11, a21, a12, a22) {
+    sx <- sqrt(a11^2 + a21^2) # scale x
+    r <- atan(a21 / a11) # rotation
+    msy <- a12 * cos(r) + a22 * sin(r)
+    if (sin(r) != 0) { # scale y
+        sy <- (msy * cos(r) - a12) / sin(r)
+    } else {
+        sy <- (a22 - msy * sin(r)) / cos(r)
+    }
+    m <- msy / sy # y shear (no x shear)
+    
+    list(
+        scale = c(x = sx, y = sy),
+        rotate = r,
+        shear = c(x = 0, y = m),
+        translate = c(x = 0, y = 0),
+        order = c("rotate", "shear", "scale", "translate")
     )
 }
+
+.decomp_affine_xshear <- function(a11, a21, a12, a22) {
+    sy <- sqrt(a12^2 + a22^2) # scale y
+    r <- atan(-(a12 / a22)) # rotation
+    msx <- a21 * cos(r) - a11 * sin(r)
+    if (sin(r) != 0) { # scale y
+        sx <- (a21 - msx * cos(r)) / sin(r)
+    } else {
+        sx <- (a11 + msx * sin(r)) / cos(r)
+    }
+    m <- msx / sx # y shear (no x shear)
+    
+    list(
+        scale = c(x = sx, y = sy),
+        rotate = r,
+        shear = c(x = m, y = 0),
+        translate = c(x = 0, y = 0),
+        order = c("rotate", "shear", "scale", "translate")
+    )
+}
+
+
+
+#' @name print.affine_decomp
+#' @title affine_decomp print method
+#' @param x object to print
+#' @param \dots additional params to pass (none implemented)
+#' @keywords internal
+#' @export
+print.affine_decomp <- function(x, ...) {
+    cat("<affine_decomp>\n")
+    # reorder in order of piecewise transforms
+    x <- x[x$order]
+    print_list(x)
+}
+
+#' @name solve.affine_decomp
+#' @title Solve for inverted 2D affine decomp
+#' @param a `affine_decomp` object
+#' @param b not used
+#' @param \dots additional params to pass (none implemented)
+#' @examples
+#' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
+#' 
+#' m <- matrix(c(
+#'     2, 0.5, 1000, 
+#'     -0.3, 3, 20,
+#'     100, 29, 1
+#' ), nrow = 3, byrow = TRUE)
+#' 
+#' a <- decomp_affine(m)
+#' i <- solve(decomp) # inverted
+#' 
+#' aff_sl <- affine(sl, aff_m)
+#' inv_sl <- aff_sl %>%
+#'     spatShift(dx = i$translate[["x"]], dy = i$translate[["y"]]) %>%
+#'     spin(GiottoUtils::degrees(i$rotate), x0 = 0, y0 = 0) %>%
+#'     shear(fx = i$shear[["x"]], fy = i$shear[["y"]], x0 = 0, y0 = 0) %>%
+#'     rescale(fx = i$scale[["x"]], fy = i$scale[["y"]], x0 = 0, y0 = 0)
+#' 
+#' plot(aff_sl)
+#' plot(sl)
+#' plot(inv_sl) # same as original
+#' 
+#' @export
+solve.affine_decomp <- function(a, b, ...) {
+    m <- a$matrix[seq(2), seq(2)]
+    m <- solve(m)
+    # translations <- NULL
+    translation <- -a$translate
+
+    inv_m <- rbind(m, c(0,0)) %>%
+        cbind(c(translation, 1))
+    
+    res <- decomp_affine(inv_m)
+    res$order <- c("translate", "rotate", "shear", "scale")
+    class(res) <- "affine_decomp"
+    return(res)
+}
+
+
+
+
+
+
+
 

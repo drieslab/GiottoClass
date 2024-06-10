@@ -126,6 +126,7 @@ Collate:
     'methods-reconnect.R'
     'methods-rescale.R'
     'methods-setGiotto.R'
+    'methods-shear.R'
     'methods-show.R'
     'methods-spatShift.R'
     'methods-spin.R'

@@ -36,6 +36,7 @@ setGeneric(
 # Methods and documentations found in methods-spatShift.R
 setGeneric("spatShift", function(x, ...) standardGeneric("spatShift"))
 setGeneric("affine", function(x, ...) standardGeneric("affine"))
+setGeneric("shear", function(x, ...) standardGeneric("shear"))
 
 # Methods and documentations found in methods-overlaps.R
 setGeneric("overlaps", function(x, ...) standardGeneric("overlaps"))
