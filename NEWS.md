@@ -13,6 +13,8 @@
 ## new
 - `affine()` for `giottoPolygon`, `giottoPoints`, `spatLocsObj`
 - `decomp_affine()` for decomposing affine matrix to simple transforms
+- `shear()` for `spatLocsObj`
+- `solve()` method for `affine_decomp`
 
 
 # GiottoClass 0.3.1 (2024/05/21)

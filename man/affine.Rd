@@ -45,25 +45,18 @@ gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
 sl <- GiottoData::loadSubObjectMini("spatLocsObj")
 
 # giottoPoints ##############################################
-plot(affine(gpoints, m))
+plot(gpoints)
 plot(affine(gpoints, trans_m))
-plot(affine(gpoints, scale_m))
-aff_gpoints <- affine(gpoints, aff_m)
-plot(aff_gpoints)
-plot(affine(aff_gpoints, aff_m, inv = TRUE))
 
 # giottoPolygon #############################################
-plot(affine(gpoly, m))
-plot(affine(gpoly, trans_m))
+plot(gpoly)
 plot(affine(gpoly, scale_m))
-aff_gpoly <- affine(gpoly, aff_m)
-plot(aff_gpoly)
-plot(affine(aff_gpoly, aff_m, inv = TRUE))
 
 # spatLocsObj ###############################################
 plot(affine(sl, m))
 plot(affine(sl, trans_m))
 plot(affine(sl, scale_m))
+# this transformation can be inverted
 aff_sl <- affine(sl, aff_m)
 plot(aff_sl)
 plot(affine(aff_sl, aff_m, inv = TRUE))

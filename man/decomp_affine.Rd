@@ -20,19 +20,48 @@ needed to perform them as a list of class \code{affine}. Works only for 2D
 transforms. Logic from \url{https://math.stackexchange.com/a/3521141}
 }
 \examples{
+# affine transform matrices
 m <- diag(rep(1, 3))
-trans_m <- matrix(c(1, 0, 0, 0, 1, 0, 200, 300, 1), nrow = 3)
-scale_m <- matrix(c(2, 0, 0, 0, 3, 0, 0, 0, 1), nrow = 3)
-
+shear_m <- trans_m <- m
+trans_m[seq(2), 3] <- c(200, 300)
+scale_m <- diag(c(2, 3, 1))
+shear_m[2, 1] <- 2
 aff_m <- matrix(c(
     2, 0.5, 1000, 
-    -0.3, 3, 20, 
+    -0.3, 3, 20,
     100, 29, 1
 ), nrow = 3, byrow = TRUE)
 
+# show decomps
+# values are shown in order of operations
 decomp_affine(m)
 decomp_affine(trans_m)
 decomp_affine(scale_m)
-decomp_affine(aff_m)
+s <- decomp_affine(shear_m)
+a <- decomp_affine(aff_m)
+force(a)
+
+# perform piecewise transforms with decomp
+
+sl_shear_piecewise <- sl \%>\%
+    spin(GiottoUtils::degrees(s$rotate), x0 = 0, y0 = 0) \%>\%
+    shear(fx = s$shear[["x"]], fy = s$shear[["y"]], x0 = 0, y0 = 0) \%>\%
+    rescale(fx = s$scale[["x"]], fy = s$scale[["y"]], x0 = 0, y0 = 0) \%>\%
+    spatShift(dx = s$translate[["x"]], dy = s$translate[["y"]])
+
+sl_aff_piecewise <- sl \%>\%
+    spin(GiottoUtils::degrees(a$rotate), x0 = 0, y0 = 0) \%>\%
+    shear(fx = a$shear[["x"]], fy = a$shear[["y"]], x0 = 0, y0 = 0) \%>\%
+    rescale(fx = a$scale[["x"]], fy = a$scale[["y"]], x0 = 0, y0 = 0) \%>\%
+    spatShift(dx = a$translate[["x"]], dy = a$translate[["y"]])
+    
+plot(affine(sl, shear_m))
+plot(sl_shear_piecewise)
+plot(affine(sl, aff_m))
+plot(sl_aff_piecewise)
+
+}
+\seealso{
+\code{\link[=solve.affine_decomp]{solve.affine_decomp()}}
 }
 \keyword{internal}
