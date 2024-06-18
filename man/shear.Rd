@@ -2,7 +2,20 @@
 % Please edit documentation in R/methods-shear.R
 \name{shear}
 \alias{shear}
+\alias{shear,spatLocsObj-method}
+\alias{shear,SpatVector-method}
+\alias{shear,giottoPoints-method}
+\alias{shear,giottoPolygon-method}
 \title{Apply a shear tranform}
+\usage{
+\S4method{shear}{spatLocsObj}(x, fx = 0, fy = 0, x0, y0, ...)
+
+\S4method{shear}{SpatVector}(x, fx = 0, fy = 0, x0, y0, ...)
+
+\S4method{shear}{giottoPoints}(x, fx = 0, fy = 0, x0, y0, ...)
+
+\S4method{shear}{giottoPolygon}(x, fx = 0, fy = 0, x0, y0, ...)
+}
 \arguments{
 \item{x}{object}
 

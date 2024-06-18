@@ -12,9 +12,13 @@
 
 ## new
 - `affine()` for `giottoPolygon`, `giottoPoints`, `spatLocsObj`
-- `decomp_affine()` for decomposing affine matrix to simple transforms
-- `shear()` for `spatLocsObj`
-- `solve()` method for `affine_decomp`
+- `shear()` for `giottoPoints`, `giottoPolygon`, `spatLocsObj`, `affine2d`
+- `affine2d` class for accumulating linear transforms to be used with `affine()`
+- `spin()`, `rescale`, `spatShift()` methods for `affine2d`
+- `initialize()`, `[`, `$`, `show()`, `plot()` methods for `affine2d`
+- `.get_centroid_xy()` internal for getting numeric centroid xy values of any object that responds to `ext()`
+- `.bound_poly()` internal for generating a dummy polygon from the extent of any object that responds to `ext()`
+- `.aff_shift_2d()`, `.aff_shift_2d<-()`, `.aff_linear_2d`, `.aff_linear_2d()<-` internals for accessing and manipulating affine matrices
 
 
 # GiottoClass 0.3.1 (2024/05/21)

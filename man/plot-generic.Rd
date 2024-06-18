@@ -10,6 +10,7 @@
 \alias{plot,spatLocsObj,missing-method}
 \alias{plot,dimObj,missing-method}
 \alias{plot,spatialNetworkObj,missing-method}
+\alias{plot,affine2d,missing-method}
 \title{Preview a Giotto spatial object}
 \usage{
 \S4method{plot}{giottoImage,missing}(x, y, ...)
@@ -43,6 +44,8 @@
 \S4method{plot}{dimObj,missing}(x, dims = c(1, 2), ...)
 
 \S4method{plot}{spatialNetworkObj,missing}(x, y, ...)
+
+\S4method{plot}{affine2d,missing}(x, y, ...)
 }
 \arguments{
 \item{x}{giotto image, giottoPolygon, or giottoPoints object}
@@ -132,6 +135,8 @@ through \code{...}
 \item \code{plot(x = dimObj, y = missing)}: Plot a dimObj
 
 \item \code{plot(x = spatialNetworkObj, y = missing)}: Plot a spatialNetworkObj
+
+\item \code{plot(x = affine2d, y = missing)}: Plot a affine2d. blue is start, red is end
 
 }}
 \examples{

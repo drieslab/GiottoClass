@@ -1630,6 +1630,34 @@ giottoLargeImage <- setClass(
     )
 )
 
+
+
+
+setClass(
+    Class = "affine2d",
+    slots = list(
+        anchor = "ANY",
+        affine = "matrix",
+        order = "character",
+        rotate = "numeric",
+        shear = "numeric",
+        scale = "numeric",
+        translate = "numeric"
+    ),
+    prototype = list(
+        anchor = c(-180, 180, -90, 90),
+        affine = diag(rep(1, 2L)),
+        order = c("rotate", "shear", "scale", "translate"),
+        rotate = 0,
+        shear = c(0, 0),
+        scale = c(1, 1),
+        translate = c(0, 0)
+    )
+)
+
+
+
+
 # function for updating image objects if structure definitions have changed
 .update_giotto_image <- function(x) {
     if (inherits(x, "giottoLargeImage")) {
