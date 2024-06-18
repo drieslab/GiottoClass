@@ -167,8 +167,8 @@ setMethod(
         .show_class_and_name(object)
 
         # print spat/feat and provenance info
-        show_spat_and_feat(object)
-        show_prov(object)
+        .show_spat_and_feat(object)
+        .show_prov(object)
 
         cat("\ncontains:\n")
         # preview matrix
@@ -224,8 +224,8 @@ setMethod(
 ## cellMetaObj ####
 setMethod("show", signature("cellMetaObj"), function(object) {
     cat("An object of class", class(object), "\n")
-    show_spat_and_feat(object)
-    show_prov(object)
+    .show_spat_and_feat(object)
+    .show_prov(object)
     cat("\n")
     if (!is.null(object[])) print(head(object[], 3L))
 })
@@ -236,8 +236,8 @@ setMethod("show", signature("cellMetaObj"), function(object) {
 ## featMetaObj ####
 setMethod("show", signature("featMetaObj"), function(object) {
     cat("An object of class", class(object), "\n")
-    show_spat_and_feat(object)
-    show_prov(object)
+    .show_spat_and_feat(object)
+    .show_prov(object)
     cat("\n")
     if (!is.null(object[])) print(head(object[], 3L))
 })
@@ -349,8 +349,8 @@ setMethod(
 #' @rdname show-methods
 setMethod("show", signature("spatLocsObj"), function(object) {
     .show_class_and_name(object)
-    show_spat(object)
-    show_prov(object)
+    .show_spat(object)
+    .show_prov(object)
     
     cat("   ------------------------\n\npreview:\n")
     if (!is.null(slot(object, "coordinates"))) {
@@ -395,8 +395,8 @@ setMethod(
         if (!is.na(object@method)) {
             cat("Contains spatial network generated with:", object@method, "\n")
         }
-        show_spat(object)
-        show_prov(object)
+        .show_spat(object)
+        .show_prov(object)
 
         if (!is.null(object@networkDT)) {
             cat("  ", nrow(object@networkDT), "connections (filtered)\n")
@@ -522,8 +522,8 @@ setMethod(
 setMethod(
     f = "show", signature("spatEnrObj"), function(object) {
         .show_class_and_name(object)
-        show_spat_and_feat(object)
-        show_prov(object)
+        .show_spat_and_feat(object)
+        .show_prov(object)
 
         cat("   ------------------------\n\npreview:\n")
         if (!is.null(slot(object, "enrichDT"))) {
@@ -567,7 +567,7 @@ setMethod(
 ## giottoPolygon ####
 setMethod("show", signature = "giottoPolygon", function(object) {
     cat("An object of class giottoPolygon\n")
-    show_spat(object)
+    .show_spat(object)
     cat("Spatial Information:\n")
     print(object@spatVector)
 
@@ -619,7 +619,7 @@ setMethod(
 ## giottoPoints ####
 setMethod("show", signature = "giottoPoints", function(object) {
     cat("An object of class giottoPoints\n")
-    show_feat(object)
+    .show_feat(object)
     cat("Feature Information:\n")
     print(object@spatVector)
 
@@ -753,8 +753,8 @@ setMethod(
             y_scalefactor <- diff(e[c(3, 4)]) / img_dim[2]
 
             .show_class_and_name(object)
-            cat("Image extent            :", show_ext(object))
-            cat("Original image extent   :", show_ext(object@overall_extent))
+            cat("Image extent            :", .show_ext(object))
+            cat("Original image extent   :", .show_ext(object@overall_extent))
             cat(
                 "Scale factor            :",
                 paste(x_scalefactor, y_scalefactor, sep = ", "), "(x, y)\n"
@@ -830,32 +830,32 @@ setMethod("as.character", signature("giottoLargeImage"), function(x, ...) {
 }
 
 #' @noRd
-show_spat_and_feat <- function(object) {
-    show_spat(object)
-    show_feat(object)
+.show_spat_and_feat <- function(object) {
+    .show_spat(object)
+    .show_feat(object)
     # cat(paste0('for spatial unit: "', spatUnit(object),
     # '" and feature type: "', featType(object),'" \n'))
 }
 
 #' @noRd
-show_spat <- function(object) {
+.show_spat <- function(object) {
     cat(paste0('spat_unit : "', spatUnit(object), '\"\n'))
 }
 
 #' @noRd
-show_feat <- function(object) {
+.show_feat <- function(object) {
     cat(paste0('feat_type : "', featType(object), '\"\n'))
 }
 
 #' @noRd
-show_prov <- function(object) {
+.show_prov <- function(object) {
     if (!is.null(object@provenance)) {
         cat("provenance:", object@provenance, "\n")
     }
 }
 
 #' @noRd
-show_ext <- function(object) {
+.show_ext <- function(object) {
     paste0(
         paste0(ext(object)[], collapse = (", ")),
         " (xmin, xmax, ymin, ymax)\n"
