@@ -230,6 +230,39 @@ setMethod("rescale", signature("giottoLargeImage"), function(x, fx = 1, fy = fx,
     return(x)
 })
 
+#' @rdname rescale
+#' @export
+setMethod("rescale", signature("affine2d"), function(x, fx = 1, fy = fx, x0, y0) {
+    a <- get_args_list()
+    
+    # update linear
+    scale_m <- diag(c(fx, fy))
+    old_aff <- new_aff <- x@affine
+    .aff_linear_2d(new_aff) <- .aff_linear_2d(new_aff) %*% scale_m
+
+    ## calc shifts ##
+    # create dummy
+    d <- .bound_poly(x@anchor)
+    # perform transforms so far
+    a$x <- affine(d, old_aff)
+    # perform new transform
+    post <- do.call(rescale, args = a)
+    
+    # perform affine & transform without shifts
+    b <- a
+    b$x0 <- b$y0 <- 0
+    b$x <- affine(d, .aff_linear_2d(old_aff))
+    pre <- do.call(rescale, args = b)
+    
+    # find xyshift by comparing tfs so far vs new tf
+    xyshift <- .get_centroid_xy(post) - .get_centroid_xy(pre)
+    
+    # update translate
+    .aff_shift_2d(new_aff) <- xyshift
+    
+    x@affine <- new_aff
+    return(initialize(x))
+})
 
 
 # TODO more methods for other objects

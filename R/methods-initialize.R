@@ -566,8 +566,22 @@ setMethod(
 )
 
 
+## transform_plan_2d
+setMethod("initialize", "affine2d", function(.Object, ...) {
+    .Object <- methods::callNextMethod()
+    .Object@anchor <- ext(.Object@anchor) %>%
+        .ext_to_num_vec()
+    
+    res <- .decomp_affine(.Object@affine)
+    
+    .Object@affine <- res$affine
+    .Object@rotate <- res$rotate
+    .Object@shear <- res$shear
+    .Object@scale <- res$scale
+    .Object@translate <- res$translate
 
-
+    return(.Object)
+})
 
 
 

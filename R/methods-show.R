@@ -778,6 +778,37 @@ setMethod(
     }
 )
 
+
+
+
+#' @rdname show-methods
+setMethod("show", signature("affine2d"), function(object) {
+    cat("<affine2d>\n")
+    .anchor_print <- function() {
+        paste(object@anchor, collapse = ", ") %>%
+            paste(" (xmin, xmax, ymin, ymax)")
+    }
+    .rad_val_show <- function() {
+        paste(object@rotate, " (rad)")
+    }
+    .xy_val_show <- function(x) {
+        paste(x, collapse = ", ") %>%
+            paste(" (x, y)")
+    }
+    
+    showlist <- list()
+    showlist$anchor <- .anchor_print()
+    for (tf in object@order) {
+        if (tf == "rotate") {
+            showlist$rotate <- .rad_val_show()
+            next
+        }
+        showlist[[tf]] <- .xy_val_show(slot(object, tf))
+    }
+    GiottoUtils::print_list(showlist)
+})
+
+
 # internal
 setMethod("as.character", signature("giottoLargeImage"), function(x, ...) {
     sprintf("<%s> %s", class(x), objName(x))

@@ -28,35 +28,137 @@
 NULL
 # ---------------------------------------------------------------- #
 
+#' @rdname shear
+#' @export
 setMethod("shear", signature("spatLocsObj"), function(
         x, fx = 0, fy = 0, x0, y0, ...
 ) {
-    x <- data.table::copy(x)
-    sdimx <- sdimy <- NULL
+    a <- get_args_list(...)
+    a$x <- x[]
+    x[] <- do.call(.shear_dt, args = a)
+    return(x)
+})
+
+#' @rdname shear
+#' @export
+setMethod("shear", signature("SpatVector"), function(
+        x, fx = 0, fy = 0, x0, y0, ...
+) {
+    a <- get_args_list(...)
+    do.call(.shear_sv, args = a)
+})
+
+#' @rdname shear
+#' @export
+setMethod("shear", signature("giottoPoints"), function(
+        x, fx = 0, fy = 0, x0, y0, ...
+) {
+    a <- get_args_list(...)
+    a$x <- x[]
+    res <- do.call(.shear_sv, args = a)
+    x[] <- res
+    return(x)
+})
+
+#' @rdname shear
+#' @export
+setMethod("shear", signature("giottoPolygon"), function(
+        x, fx = 0, fy = 0, x0, y0, ...
+) {
+    a <- get_args_list(...)
+    a$x <- NULL
+    .do_gpoly(x, what = .shear_sv, args = a)
+})
+
+
+
+setMethod("shear", signature("affine2d"), function(
+         x, fx = 0, fy = 0, x0, y0, ...
+    ) {
+    a <- get_args_list(...)
+ 
+    # update linear
+    shear_x <- matrix(c(1, fx, 0, 1), ncol = 2)
+    shear_y <- matrix(c(1, 0, fy, 1), ncol = 2)
+    old_aff <- new_aff <- x@affine
+    .aff_linear_2d(new_aff) <- .aff_linear_2d(new_aff) %*% shear_x %*% shear_y
     
+    ## calc shifts ##
+    # create dummy
+    d <- .bound_poly(x@anchor)
+    # perform transforms so far
+    a$x <- affine(d, old_aff)
+    # perform new transform
+    post <- do.call(shear, args = a)
+    
+    # perform affine & transform without shifts
+    b <- a
+    b$x0 <- b$y0 <- 0
+    b$x <- affine(d, .aff_linear_2d(old_aff))
+    pre <- do.call(shear, args = b)
+    
+    # find xyshift by comparing tfs so far vs new tf
+    xyshift <- .get_centroid_xy(post) - .get_centroid_xy(pre)
+    
+    # update translate
+    .aff_shift_2d(new_aff) <- xyshift
+    
+    x@affine <- new_aff
+    return(initialize(x))
+})
+
+
+
+# internals ####
+
+.shear_dt <- function(
+        x, fx = 0, fy = 0, x0, y0, geom = c("sdimx", "sdimy", "sdimz"), ...
+) {
+    x <- data.table::copy(x)
+    xyz <- tail(letters, 3L)
+    if (is.null(names(geom))) names(geom) <- xyz
+    if (!all(names(geom) %in% xyz)) stop("geom value names not recognized")
+    geom_col <- geom # avoid name collisions with terra "geom" ID column
+
     # find center
-    if (missing(x0)) x0 <- x[][, mean(range(sdimx))]
-    if (missing(y0)) y0 <- x[][, mean(range(sdimy))]
+    if (missing(x0)) x0 <- x[, mean(range(get(geom_col[["x"]])))]
+    if (missing(y0)) y0 <- x[, mean(range(get(geom_col[["y"]])))]
     scenter <- c(x0, y0)
     
     if (!all(scenter == c(0, 0))) {
         # center values
-        x <- spatShift(x, dx = -x0, dy = -y0)
+        x <- spatShift(x, dx = -x0, dy = -y0, geom = geom)
     }
     
     # perform shears
     if (fx != 0) {
-        x[][, sdimx := sdimy * fx + sdimx]
+        x[, (geom[["x"]]) := get(geom_col[["y"]]) * fx + get(geom_col[["x"]])]
     }
     if (fy != 0) {
-        x[][, sdimy := sdimx * fy + sdimy]
+        x[, (geom[["y"]]) := get(geom_col[["x"]]) * fy + get(geom_col[["y"]])]
     }
     
     if (!all(scenter == c(0, 0))) {
         # return values to original positions
-        x <- spatShift(x, dx = x0, dy = y0)
+        x <- spatShift(x, dx = x0, dy = y0, geom = geom)
     }
     
     return(x)
-})
+}
+
+.shear_sv <- function(
+        x, fx = 0, fy = 0, x0, y0, geom = tail(letters, 3L), ...
+) {
+    a <- get_args_list(...)
+    gtype <- terra::geomtype(x)
+    a$x <- data.table::as.data.table(x, geom = "XY")
+    res <- do.call(.shear_dt, args = a)
+    
+    res <- switch(gtype,
+        "points" = terra::vect(res, geom = c("x", "y")),
+        "polygons" = terra::as.polygons(res)
+    )
+    
+    return(res)
+}
 

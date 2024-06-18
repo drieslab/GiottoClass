@@ -2,7 +2,7 @@
 #' @include classes.R
 
 # docs ----------------------------------------------------------- #
-#' @title Apply an affine tranform
+#' @title Affine transformations
 #' @name affine
 #' @description Apply an affine transformation matrix to a spatial object.
 #' Currently only works for 2D transforms.
@@ -44,16 +44,35 @@ NULL
 
 #' @rdname affine
 #' @export
-setMethod("affine", signature("SpatVector"), function(x, m, inv = FALSE, ...) {
-    .affine_sv(x, m, inv, ...)
+setMethod("affine", signature(x = "ANY", y = "missing"), function(x) {
+    x <- as.matrix(x)
+    if (ncol(x) <= 3) {
+        res <- new("affine2d", affine = x)
+    }
+    return(res)
+})
+
+#' @rdname affine
+#' @export
+setMethod("affine", signature(x = "ANY", y = "affine2d"), function(x, y, ...) {
+    a <- get_args_list(...)
+    a$y <- y@affine
+    do.call(affine, args = a)
+})
+
+#' @rdname affine
+#' @export
+setMethod("affine", signature(x = "SpatVector", y = "matrix"), 
+          function(x, y, inv = FALSE, ...) {
+    .affine_sv(x, m = y, inv, ...)
 })
 
 #' @rdname affine
 #' @export
 setMethod(
-    "affine", signature("giottoPoints"),
-    function(x, m, inv = FALSE, ...) {
-        x[] <- .affine_sv(x = x[], m = m, inv = inv, ...)
+    "affine", signature(x = "giottoPoints", y = "matrix"),
+    function(x, y, inv = FALSE, ...) {
+        x[] <- .affine_sv(x = x[], m = y, inv = inv, ...)
         return(x)
     }
 )
@@ -61,19 +80,19 @@ setMethod(
 #' @rdname affine
 #' @export
 setMethod(
-    "affine", signature("giottoPolygon"),
-    function(x, m, inv = FALSE, ...) {
-        .do_gpoly(x, what = .affine_sv, args = list(m = m, inv = inv, ...))
+    "affine", signature(x = "giottoPolygon", y = "matrix"),
+    function(x, y, inv = FALSE, ...) {
+        .do_gpoly(x, what = .affine_sv, args = list(m = y, inv = inv, ...))
     }
 )
 
 #' @rdname affine
 #' @export
 setMethod(
-    "affine", signature("spatLocsObj"),
-    function(x, m, inv = FALSE, ...) {
+    "affine", signature("spatLocsObj", y = "matrix"),
+    function(x, y, inv = FALSE, ...) {
         x[] <- .affine_dt(
-            x = x[], m = m, xcol = "sdimx", ycol = "sdimy", inv = inv, ...
+            x = x[], m = y, xcol = "sdimx", ycol = "sdimy", inv = inv, ...
         )
         return(x)
     }
@@ -89,7 +108,6 @@ setMethod(
     m <- as.matrix(m)
     gtype <- terra::geomtype(x)
     xdt <- data.table::as.data.table(x, geom = "XY")
-    
     xdt <- .affine_dt(
         x = xdt, m = m, xcol = "x", ycol = "y", inv = inv, ...
     )
@@ -165,13 +183,13 @@ setMethod(
 #'     100, 29, 1
 #' ), nrow = 3, byrow = TRUE)
 #' 
-#' # show decomps
+#' # create affine objects
 #' # values are shown in order of operations
-#' decomp_affine(m)
-#' decomp_affine(trans_m)
-#' decomp_affine(scale_m)
-#' s <- decomp_affine(shear_m)
-#' a <- decomp_affine(aff_m)
+#' affine(m)
+#' affine(trans_m)
+#' affine(scale_m)
+#' s <- affine(shear_m)
+#' a <- affine(aff_m)
 #' force(a)
 #' 
 #' # perform piecewise transforms with decomp
@@ -193,9 +211,7 @@ setMethod(
 #' plot(affine(sl, aff_m))
 #' plot(sl_aff_piecewise)
 #' 
-#' @export
-#' @seealso [solve.affine_decomp()]
-decomp_affine <- function(x) {
+.decomp_affine <- function(x) {
     # should be matrix or coercible to matrix
     x <- as.matrix(x)
 
@@ -219,12 +235,13 @@ decomp_affine <- function(x) {
     # apply xy translations
     if (ncol(x) == 3) {
         res$translate = res$translate + x[seq(2), 3]
+    } else {
+        # append translations
+        x <- cbind(x, rep(0, 2L)) %>%
+            rbind(c(0, 0, 1))
     }
     
-    res <- structure(
-        .Data = c(res, list(matrix = x)), class = "affine_decomp"
-    )
-    
+    res$affine <- x
     return(res)
 }
 
@@ -280,68 +297,38 @@ decomp_affine <- function(x) {
     )
 }
 
-
-
-#' @name print.affine_decomp
-#' @title affine_decomp print method
-#' @param x object to print
-#' @param \dots additional params to pass (none implemented)
-#' @keywords internal
-#' @export
-print.affine_decomp <- function(x, ...) {
-    cat("<affine_decomp>\n")
-    # reorder in order of piecewise transforms
-    x <- x[x$order]
-    print_list(x)
+.aff_linear_2d <- function(x) {
+    if (inherits(x, "affine2d")) x <- x[]
+    x[][seq(2), seq(2)]
 }
 
-#' @name solve.affine_decomp
-#' @title Solve for inverted 2D affine decomp
-#' @param a `affine_decomp` object
-#' @param b not used
-#' @param \dots additional params to pass (none implemented)
-#' @examples
-#' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
-#' 
-#' m <- matrix(c(
-#'     2, 0.5, 1000, 
-#'     -0.3, 3, 20,
-#'     100, 29, 1
-#' ), nrow = 3, byrow = TRUE)
-#' 
-#' a <- decomp_affine(m)
-#' i <- solve(decomp) # inverted
-#' 
-#' aff_sl <- affine(sl, aff_m)
-#' inv_sl <- aff_sl %>%
-#'     spatShift(dx = i$translate[["x"]], dy = i$translate[["y"]]) %>%
-#'     spin(GiottoUtils::degrees(i$rotate), x0 = 0, y0 = 0) %>%
-#'     shear(fx = i$shear[["x"]], fy = i$shear[["y"]], x0 = 0, y0 = 0) %>%
-#'     rescale(fx = i$scale[["x"]], fy = i$scale[["y"]], x0 = 0, y0 = 0)
-#' 
-#' plot(aff_sl)
-#' plot(sl)
-#' plot(inv_sl) # same as original
-#' 
-#' @export
-solve.affine_decomp <- function(a, b, ...) {
-    m <- a$matrix[seq(2), seq(2)]
-    m <- solve(m)
-    # translations <- NULL
-    translation <- -a$translate
-
-    inv_m <- rbind(m, c(0,0)) %>%
-        cbind(c(translation, 1))
+`.aff_linear_2d<-` <- function(x, value) {
+    checkmate::assert_matrix(value, nrows = 2L, ncols = 2L)
+    if (inherits(x, "affine2d")) {
+        x[][seq(2), seq(2)] <- value
+        x <- initialize(x)
+    }
+    else x[seq(2), seq(2)] <- value
     
-    res <- decomp_affine(inv_m)
-    res$order <- c("translate", "rotate", "shear", "scale")
-    class(res) <- "affine_decomp"
-    return(res)
+    return(x)
 }
 
+.aff_shift_2d <- function(x) {
+    if (inherits(x, "affine2d")) x <- x[]
+    x[seq(2), 3]
+}
 
-
-
+`.aff_shift_2d<-` <- function(x, value) {
+    checkmate::assert_numeric(value, len = 2L)
+    if (inherits(x, "affine2d")) {
+        x[][seq(2), 3] <- value
+        x <- initialize(x)
+    } else {
+        x[seq(2), 3] <- value
+    }
+    
+    return(x)
+}
 
 
 

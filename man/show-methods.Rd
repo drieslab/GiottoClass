@@ -12,6 +12,7 @@
 \alias{show,spatEnrObj-method}
 \alias{show,giottoImage-method}
 \alias{show,giottoLargeImage-method}
+\alias{show,affine2d-method}
 \title{show method for giotto class}
 \usage{
 \S4method{show}{giotto}(object)
@@ -33,6 +34,8 @@
 \S4method{show}{giottoImage}(object)
 
 \S4method{show}{giottoLargeImage}(object)
+
+\S4method{show}{affine2d}(object)
 }
 \arguments{
 \item{object}{giottoLargeImage object}
