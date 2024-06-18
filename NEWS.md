@@ -18,7 +18,7 @@
 - `initialize()`, `[`, `$`, `show()`, `plot()` methods for `affine2d`
 - `.get_centroid_xy()` internal for getting numeric centroid xy values of any object that responds to `ext()`
 - `.bound_poly()` internal for generating a dummy polygon from the extent of any object that responds to `ext()`
-- `.aff_shift_2d()`, `.aff_shift_2d<-()`, `.aff_linear_2d`, `.aff_linear_2d()` internals for accessing and manipulating affine matrices
+- `.aff_shift_2d()`, `.aff_shift_2d<-()`, `.aff_linear_2d`, `.aff_linear_2d()<-` internals for accessing and manipulating affine matrices
 
 
 # GiottoClass 0.3.1 (2024/05/21)
