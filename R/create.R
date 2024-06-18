@@ -3198,7 +3198,7 @@ createGiottoLargeImage <- function(raster_object,
                 image_path = raster_object
             )
         } else {
-            stop("raster_object needs to be a'SpatRaster' object from the
+            stop("raster_object needs to be a 'SpatRaster' object from the
                 terra package or \n an existing path that can be read by
                 terra::rast()")
         }
