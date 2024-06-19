@@ -1767,7 +1767,8 @@ giottoToSeuratV5 <- function(gobject,
             imagerow <- loc_use$sdimy
             imagecol <- loc_use$sdimx
             img_array <- as(gimg, "array")
-            img_array[, , seq_len(3)] <- img_array[, , seq_len(3)] / 255
+            img_array <- img_array / 255
+            #img_array[, , seq_len(3)] <- img_array[, , seq_len(3)] / 255
             coord <- data.frame(
                 imagerow = imagerow, imagecol = imagecol, 
                 row.names = loc_use$cell_ID
