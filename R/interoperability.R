@@ -2242,7 +2242,7 @@ seuratToGiottoV5 <- function(
         feat_metadata <- sobject[[]]
         feat_metadata <- data.table::as.data.table(
         feat_metadata, keep.rownames = TRUE)
-        
+
         # rownames of both kept as `rn`
         # Dimension Reduction
         if (sum(vapply(
@@ -2311,7 +2311,7 @@ seuratToGiottoV5 <- function(
                 }
 
                 spat_loc <- data.table::as.data.table(spat_coord)
-                
+ 
                 # seurat has coords following imaging conventions
                 # flip them for Giotto
                 spat_loc[, sdimy := -sdimy]
