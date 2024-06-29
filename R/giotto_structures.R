@@ -166,9 +166,19 @@
 }
 
 
+# from a spatvector, get the centroid xy values as a numeric vector
+.get_centroid_xy <- function(x) {
+    res <- centroids(x) %>% ext() %>% .ext_to_num_vec()
+    res[c(1L, 3L)]
+}
 
-
-
+# create a polygon of the extent.
+# useful for plotting and figuring out how the full data will behave spatially
+.bound_poly <- function(x) {
+    res <- ext(x) %>% as.polygons()
+    res$id <- "bound"
+    return(res)
+}
 
 
 
