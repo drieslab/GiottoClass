@@ -2,30 +2,36 @@
 % Please edit documentation in R/methods-affine.R
 \name{affine}
 \alias{affine}
-\alias{affine,SpatVector-method}
-\alias{affine,giottoPoints-method}
-\alias{affine,giottoPolygon-method}
-\alias{affine,spatLocsObj-method}
-\title{Apply an affine tranform}
+\alias{affine,ANY,missing-method}
+\alias{affine,ANY,affine2d-method}
+\alias{affine,SpatVector,matrix-method}
+\alias{affine,giottoPoints,matrix-method}
+\alias{affine,giottoPolygon,matrix-method}
+\alias{affine,spatLocsObj,matrix-method}
+\title{Affine transformations}
 \usage{
-\S4method{affine}{SpatVector}(x, m, inv = FALSE, ...)
+\S4method{affine}{ANY,missing}(x)
 
-\S4method{affine}{giottoPoints}(x, m, inv = FALSE, ...)
+\S4method{affine}{ANY,affine2d}(x, y, ...)
 
-\S4method{affine}{giottoPolygon}(x, m, inv = FALSE, ...)
+\S4method{affine}{SpatVector,matrix}(x, y, inv = FALSE, ...)
 
-\S4method{affine}{spatLocsObj}(x, m, inv = FALSE, ...)
+\S4method{affine}{giottoPoints,matrix}(x, y, inv = FALSE, ...)
+
+\S4method{affine}{giottoPolygon,matrix}(x, y, inv = FALSE, ...)
+
+\S4method{affine}{spatLocsObj,matrix}(x, y, inv = FALSE, ...)
 }
 \arguments{
 \item{x}{object}
 
-\item{m}{\code{matrix} or coercible to \code{matrix}. Should be a matrix with either
-2 or 3 columns (linear or affine).}
+\item{...}{additional args to pass (none implemented)}
 
 \item{inv}{logical. Whether the inverse of the affine transform should
 be applied.}
 
-\item{...}{additional args to pass (none implemented)}
+\item{m}{\code{matrix} or coercible to \code{matrix}. Should be a matrix with either
+2 or 3 columns (linear or affine).}
 }
 \value{
 affine transformed object

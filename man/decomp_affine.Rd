@@ -2,9 +2,10 @@
 % Please edit documentation in R/methods-affine.R
 \name{decomp_affine}
 \alias{decomp_affine}
+\alias{.decomp_affine}
 \title{Decompose affine matrix into scale, rotation, and shear operations}
 \usage{
-decomp_affine(x)
+.decomp_affine(x)
 }
 \arguments{
 \item{x}{object coercible to matrix with a 2x3 or 3x3 affine matrix}
@@ -32,13 +33,13 @@ aff_m <- matrix(c(
     100, 29, 1
 ), nrow = 3, byrow = TRUE)
 
-# show decomps
+# create affine objects
 # values are shown in order of operations
-decomp_affine(m)
-decomp_affine(trans_m)
-decomp_affine(scale_m)
-s <- decomp_affine(shear_m)
-a <- decomp_affine(aff_m)
+affine(m)
+affine(trans_m)
+affine(scale_m)
+s <- affine(shear_m)
+a <- affine(aff_m)
 force(a)
 
 # perform piecewise transforms with decomp
@@ -60,8 +61,5 @@ plot(sl_shear_piecewise)
 plot(affine(sl, aff_m))
 plot(sl_aff_piecewise)
 
-}
-\seealso{
-\code{\link[=solve.affine_decomp]{solve.affine_decomp()}}
 }
 \keyword{internal}

@@ -291,9 +291,16 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 })
 
 
-
-
-
+#' @describeIn plot-generic Plot a affine2d. blue is start, red is end
+#' @export
+setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
+    a <- as.polygons(ext(x@anchor))
+    a$id <- "start"
+    b <- affine(a, x)
+    b$id <- "end"
+    res <- rbind(a, b)
+    terra::plot(res, border = c("blue", "red"), alpha = 0.5)
+})
 
 # internals ####
 

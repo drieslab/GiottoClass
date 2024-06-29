@@ -8,6 +8,7 @@
 \alias{rescale,giottoPolygon-method}
 \alias{rescale,giottoPoints-method}
 \alias{rescale,giottoLargeImage-method}
+\alias{rescale,affine2d-method}
 \title{Rescale an object}
 \usage{
 \S4method{rescale}{giotto}(
@@ -39,6 +40,8 @@
 \S4method{rescale}{giottoPoints}(x, fx = 1, fy = fx, x0, y0)
 
 \S4method{rescale}{giottoLargeImage}(x, fx = 1, fy = fx, x0, y0)
+
+\S4method{rescale}{affine2d}(x, fx = 1, fy = fx, x0, y0)
 }
 \arguments{
 \item{x}{object}

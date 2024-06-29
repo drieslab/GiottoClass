@@ -7,6 +7,7 @@
 \alias{spin,giottoPoints-method}
 \alias{spin,spatLocsObj-method}
 \alias{spin,data.frame-method}
+\alias{spin,affine2d-method}
 \title{Spin an object}
 \usage{
 \S4method{spin}{giotto}(x, angle, x0 = NULL, y0 = NULL, spat_unit = ":all:", feat_type = ":all:")
@@ -37,6 +38,8 @@
   xz_angle = NULL,
   geom = c("sdimx", "sdimy", "sdimz")
 )
+
+\S4method{spin}{affine2d}(x, angle = NULL, x0 = NULL, y0 = NULL)
 }
 \arguments{
 \item{x}{object}
