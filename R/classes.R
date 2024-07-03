@@ -1563,7 +1563,7 @@ featureNetwork <- setClass(
 giottoImage <- setClass(
     Class = "giottoImage",
     slots = c(
-        name = "ANY",
+        name = "character",
         mg_object = "ANY",
         minmax = "ANY",
         boundaries = "ANY",
@@ -1573,7 +1573,7 @@ giottoImage <- setClass(
         OS_platform = "ANY"
     ),
     prototype = list(
-        name = NULL,
+        name = "test",
         mg_object = NULL,
         minmax = NULL,
         boundaries = NULL,

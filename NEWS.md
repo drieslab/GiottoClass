@@ -3,6 +3,7 @@
 
 ## breaking changes
 - python environment installation and how it relates to default settings such as .condarc may have changed.
+- `giottoImage` `name` slot now requires `character` and will not accept `NULL`
 
 ## enhancements
 - `verbose` param for `createNearestNetwork()`
