@@ -630,9 +630,44 @@ setMethod("initialize", signature("giottoLargeImage"), function(.Object, ...) {
     return(.Object)
 })
 
-
-
-
+## giottoAffineImage ####
+setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
+    .Object <- methods::callNextMethod()
+    
+    # default name
+    if (is.null(objName(.Object))) {
+        objName(.Object) <- "test"
+    }
+    
+    # append associated functions
+    
+    
+    r <- .Object@raster_object
+    if (!is.null(r)) {
+        # apply the image extent as anchor for affine object plotting
+        .Object@affine@anchor <- ext(r)
+        .Object@affine <- initialize(.Object@affine)
+        
+        # compute & set extent slot as a numeric vector
+        d <- .bound_poly(r) %>%
+            affine(.Object@affine)
+        .Object@extent <- .ext_to_num_vec(ext(d))
+    }
+    
+    .Object@funs$realize_magick <- function(tempname = "preview", size = 5e5) {
+        mg <- .gaffine_realize_magick(.Object, size = size)
+        gimg <- .magick_preview(mg@mg_object, tempname = tempname) %>%
+            createGiottoLargeImage()
+        ext(gimg) <- ext(.Object)
+        return(gimg)
+        # TODO things to be implemented for this pipeline:
+        # col (the trip the magick-image flattened the image without applying col)
+        # max_intensity same as above
+        # the above options are also stripped when the fresh largeImage is created
+    }
+    
+    return(.Object)
+})
 
 
 
