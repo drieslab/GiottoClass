@@ -297,6 +297,8 @@ setMethod(
     )
 }
 
+## affine matrix manipulation ####
+# internal accessors for the relevant parts of 2D affine matrices
 .aff_linear_2d <- function(x) {
     if (inherits(x, "affine2d")) x <- x[]
     x[][seq(2), seq(2)]
