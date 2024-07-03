@@ -583,6 +583,52 @@ setMethod("initialize", "affine2d", function(.Object, ...) {
     return(.Object)
 })
 
+## giottoLargeImage ####
+setMethod("initialize", signature("giottoLargeImage"), function(.Object, ...) {
+    .Object <- methods::callNextMethod()
+    
+    # defaults
+    .Object@OS_platform <- .Object@OS_platform %null% .Platform[["OS.type"]]
+    objName(.Object) <- objName(.Object) %null% "image"
+    
+    r <- .Object@raster_object
+    if (is.null(r)) return(.Object) # return early if NULL
+    
+    # scale factor and res
+    .Object@resolution <- terra::res(r)
+    names(.Object@resolution) <- c("x", "y")
+    .Object@scale_factor <- 1 / .Object@resolution
+    
+    # sample for image characteristics
+    svals <- .spatraster_sample_values(r, size = 5000, verbose = FALSE)
+    
+    if (nrow(svals) != 0) {
+        intensity_range <- .spatraster_intensity_range(
+            raster_object = r,
+            sample_values = svals
+        )
+    }
+    .Object@min_intensity <- intensity_range[["min"]]
+    .Object@max_intensity <- intensity_range[["max"]]
+    
+    # find out if image is int or floating pt
+    is_int <- .spatraster_is_int(
+        raster_object = r,
+        sample_values = svals
+    )
+    .Object@is_int <- is_int
+    
+    # extent
+    .Object@extent <- as.vector(terra::ext(r))
+    .Object@overall_extent <- .Object@overall_extent %null%
+        as.vector(terra::ext(r))
+    
+    # max window
+    .Object@max_window <- .Object@max_window %na% 
+        .bitdepth(.Object@max_intensity, return_max = TRUE)
+    
+    return(.Object)
+})
 
 
 

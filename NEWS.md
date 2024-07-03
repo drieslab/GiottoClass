@@ -16,6 +16,7 @@
 - `shear()` for `giottoPoints`, `giottoPolygon`, `spatLocsObj`, `affine2d`
 - `affine2d` class for accumulating linear transforms to be used with `affine()`
 - `spin()`, `rescale`, `spatShift()` methods for `affine2d`
+- `initialize()`, method for `giottoLargeImage`
 - `initialize()`, `[`, `$`, `show()`, `plot()` methods for `affine2d`
 - `.get_centroid_xy()` internal for getting numeric centroid xy values of any object that responds to `ext()`
 - `.bound_poly()` internal for generating a dummy polygon from the extent of any object that responds to `ext()`

@@ -3179,15 +3179,7 @@ createGiottoLargeImage <- function(raster_object,
     scale_factor = 1,
     verbose = TRUE) {
     # create minimum giotto
-    g_imageL <- new("giottoLargeImage",
-        name = name,
-        raster_object = NULL,
-        overall_extent = NULL,
-        scale_factor = NULL,
-        resolution = NULL,
-        file_path = NULL,
-        OS_platform = .Platform[["OS.type"]]
-    )
+    g_imageL <- new("giottoLargeImage", name = name)
 
 
     ## 1. check raster object and load as SpatRaster if necessary
@@ -3288,61 +3280,11 @@ createGiottoLargeImage <- function(raster_object,
         raster_object <- terra::flip(raster_object, direction = "horizontal")
     }
 
-
-
     ## 3. Assign raster_object to giottoLargeImage
     g_imageL@raster_object <- raster_object
 
-    ## 4. scale factor and resolution values
-    g_imageL@resolution <- terra::res(g_imageL@raster_object) # (x,y)
-    names(g_imageL@resolution) <- c("x", "y")
-    g_imageL@scale_factor <- (1 / g_imageL@resolution)
-
-
-
-
-
-
-    ## 5. Get image characteristics by sampling
-    sample_values <- .spatraster_sample_values(raster_object,
-        size = 5000,
-        verbose = verbose
-    )
-
-    if (nrow(sample_values) == 0) {
-        if (verbose == TRUE) {
-            wrap_msg("No values discovered when sampling for image
-                    characteristics")
-        }
-    } else {
-        # find estimated intensity range
-        intensity_range <- .spatraster_intensity_range(
-            raster_object = raster_object,
-            sample_values = sample_values
-        )
-        g_imageL@min_intensity <- intensity_range[["min"]]
-        g_imageL@max_intensity <- intensity_range[["max"]]
-
-        # find out if image is int or floating point
-        is_int <- .spatraster_is_int(
-            raster_object = raster_object,
-            sample_values = sample_values
-        )
-        g_imageL@is_int <- is_int
-    }
-
-
-
-    ## 6. extent object
-    g_imageL@extent <- g_imageL@overall_extent <- as.vector(
-        terra::ext(raster_object)
-    )
-
-    ## 7. Assign discovered bitdepth max value as max window
-    g_imageL@max_window <- .bitdepth(g_imageL@max_intensity, return_max = TRUE)
-
-    ## 8. return image object
-    return(g_imageL)
+    ## 4. return image object
+    return(initialize(g_imageL))
 }
 
 
