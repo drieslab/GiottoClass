@@ -6,6 +6,8 @@
 \alias{shear,SpatVector-method}
 \alias{shear,giottoPoints-method}
 \alias{shear,giottoPolygon-method}
+\alias{shear,giottoLargeImage-method}
+\alias{shear,giottoAffineImage-method}
 \title{Apply a shear tranform}
 \usage{
 \S4method{shear}{spatLocsObj}(x, fx = 0, fy = 0, x0, y0, ...)
@@ -15,6 +17,10 @@
 \S4method{shear}{giottoPoints}(x, fx = 0, fy = 0, x0, y0, ...)
 
 \S4method{shear}{giottoPolygon}(x, fx = 0, fy = 0, x0, y0, ...)
+
+\S4method{shear}{giottoLargeImage}(x, fx = 0, fy = 0, x0, y0, ...)
+
+\S4method{shear}{giottoAffineImage}(x, fx = 0, fy = 0, x0, y0, ...)
 }
 \arguments{
 \item{x}{object}
