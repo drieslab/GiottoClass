@@ -22,7 +22,9 @@
 
 \item{dz}{value to shift coordinates in the positive z direction}
 
-\item{copy_obj}{copy/duplicate object (default = TRUE)}
+\item{geom}{character vector. Expected colnames of x, y, z coords}
+
+\item{copy_obj}{logical. copy/duplicate object (default = TRUE)}
 }
 \value{
 spatial locations

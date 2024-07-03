@@ -9,7 +9,8 @@ getPolygonInfo(
   polygon_name = NULL,
   polygon_overlap = NULL,
   return_giottoPolygon = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  simplify = TRUE
 )
 }
 \arguments{
@@ -23,6 +24,9 @@ getPolygonInfo(
 S4 object}
 
 \item{verbose}{be verbose}
+
+\item{simplify}{logical. Whether or not to take object out of a list when
+there is a length of 1.}
 }
 \value{
 spatVector

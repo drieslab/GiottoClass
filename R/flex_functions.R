@@ -20,7 +20,7 @@
 #' @keywords internal
 #' @examples
 #' m <- matrix(rnorm(100), nrow = 10)
-#' 
+#'
 #' mean_flex(m)
 #' @export
 mean_flex <- function(x, ...) {
@@ -44,7 +44,7 @@ mean_flex <- function(x, ...) {
 #' @keywords internal
 #' @examples
 #' m <- matrix(rnorm(100), nrow = 10)
-#' 
+#'
 #' rowSums_flex(m)
 #' @export
 rowSums_flex <- function(mymatrix) {
@@ -73,7 +73,7 @@ rowSums_flex <- function(mymatrix) {
 #' @keywords internal
 #' @examples
 #' m <- matrix(rnorm(100), nrow = 10)
-#' 
+#'
 #' rowMeans_flex(m)
 #' @export
 rowMeans_flex <- function(mymatrix) {
@@ -103,7 +103,7 @@ rowMeans_flex <- function(mymatrix) {
 #' @keywords internal
 #' @examples
 #' m <- matrix(rnorm(100), nrow = 10)
-#' 
+#'
 #' colSums_flex(m)
 #' @export
 colSums_flex <- function(mymatrix) {
@@ -132,7 +132,7 @@ colSums_flex <- function(mymatrix) {
 #' @keywords internal
 #' @examples
 #' m <- matrix(rnorm(100), nrow = 10)
-#' 
+#'
 #' colMeans_flex(m)
 #' @export
 colMeans_flex <- function(mymatrix) {
@@ -161,7 +161,7 @@ colMeans_flex <- function(mymatrix) {
 #' @keywords internal
 #' @examples
 #' m <- matrix(rnorm(100), nrow = 10)
-#' 
+#'
 #' t_flex(m)
 #' @export
 t_flex <- function(mymatrix) {
@@ -193,7 +193,7 @@ t_flex <- function(mymatrix) {
 #' @keywords internal
 #' @examples
 #' m <- matrix(rnorm(100), nrow = 10)
-#' 
+#'
 #' cor_flex(m)
 #' @export
 cor_flex <- function(x, ...) {
@@ -213,7 +213,7 @@ cor_flex <- function(x, ...) {
 #' @keywords internal
 #' @examples
 #' m <- matrix(rnorm(100), nrow = 10)
-#' 
+#'
 #' my_arowMeans(m)
 #' @export
 my_arowMeans <- function(x) {
@@ -235,7 +235,7 @@ my_arowMeans <- function(x) {
 #' @keywords internal
 #' @examples
 #' m <- matrix(rnorm(100), nrow = 10)
-#' 
+#'
 #' my_growMeans(abs(m))
 #' @export
 my_growMeans <- function(x, offset = 0.1) {
@@ -256,7 +256,7 @@ my_growMeans <- function(x, offset = 0.1) {
 #' @keywords internal
 #' @examples
 #' m <- matrix(rnorm(100), nrow = 10)
-#' 
+#'
 #' my_rowMeans(m)
 #' @export
 my_rowMeans <- function(x, method = c("arithmic", "geometric"), offset = 0.1) {
@@ -281,7 +281,7 @@ my_rowMeans <- function(x, method = c("arithmic", "geometric"), offset = 0.1) {
 #' @keywords internal
 #' @examples
 #' m <- matrix(rnorm(100), nrow = 10)
-#' 
+#'
 #' standardise_flex(m)
 #' @export
 standardise_flex <- function(x, center = TRUE, scale = TRUE) {

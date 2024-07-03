@@ -19,26 +19,24 @@
 #' @returns Updated location dataframe with new X \['X_final'\] and
 #' Y \['Y_final'\] coordinates
 #' @details Stitching of fields:
-#' \itemize{
-#'   \item{1. have cell locations: }{at least 3 columns: field, X, Y}
-#'   \item{2. create offset file: }{offset file has 3 columns: field,
-#'   x_offset, y_offset}
-#'   \item{3. create new cell location file by stitching original cell
-#'   locations with stitchFieldCoordinates}
-#'   \item{4. provide new cell location file
-#'   to \code{\link{createGiottoObject}}}
-#' }
+#'   1. **have cell locations:** at least 3 columns: field, X, Y
+#'   2. **create offset file:** offset file has 3 columns: field,
+#'   x_offset, y_offset
+#'   3. create new cell location file by stitching original cell
+#'   locations with stitchFieldCoordinates
+#'   4. provide new cell location file
+#'   to \code{\link{createGiottoObject}}
+#' 
 #' @export
-stitchFieldCoordinates <- function(
-        location_file,
-        offset_file,
-        cumulate_offset_x = FALSE,
-        cumulate_offset_y = FALSE,
-        field_col = "Field of View",
-        X_coord_col = "X",
-        Y_coord_col = "Y",
-        reverse_final_x = FALSE,
-        reverse_final_y = TRUE) {
+stitchFieldCoordinates <- function(location_file,
+    offset_file,
+    cumulate_offset_x = FALSE,
+    cumulate_offset_y = FALSE,
+    field_col = "Field of View",
+    X_coord_col = "X",
+    Y_coord_col = "Y",
+    reverse_final_x = FALSE,
+    reverse_final_y = TRUE) {
     # data.table variables
     x_offset_final <- x_offset <- y_offset_final <- y_offset <- field <- NULL
 
@@ -98,16 +96,17 @@ stitchFieldCoordinates <- function(
 #' @param Ytilespan numerical value specifying the height of each tile
 #' @returns data.table
 #' @examples
-#' location_file <- data.table::data.table(field = rep(c(1,2),5), 
-#' X.X = rnorm(10), Y.Y = rnorm(10), XtileIndex = seq_len(10), 
-#' YtileIndex = seq_len(10))
-#' 
+#' location_file <- data.table::data.table(
+#'     field = rep(c(1, 2), 5),
+#'     X.X = rnorm(10), Y.Y = rnorm(10), XtileIndex = seq_len(10),
+#'     YtileIndex = seq_len(10)
+#' )
+#'
 #' stitchTileCoordinates(location_file, Xtilespan = 0.5, Ytilespan = 0.5)
 #' @export
-stitchTileCoordinates <- function(
-        location_file,
-        Xtilespan,
-        Ytilespan) {
+stitchTileCoordinates <- function(location_file,
+    Xtilespan,
+    Ytilespan) {
     # data.table variables
     Xcoord <- X.X <- XtileIndex <- Ycoord <- Y.Y <- YtileIndex <- NULL
 

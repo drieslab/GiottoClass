@@ -22,6 +22,8 @@ g <- GiottoData::loadGiottoMini("starmap")
 g_spatloc <- getSpatialLocations(g, output = "data.table")
 g_spatgrid <- getSpatialGrid(g)
 
-annotate_spatlocs_with_spatgrid_3D(spatloc = g_spatloc, 
-spatgrid = g_spatgrid)
+annotate_spatlocs_with_spatgrid_3D(
+    spatloc = g_spatloc,
+    spatgrid = g_spatgrid
+)
 }

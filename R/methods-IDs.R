@@ -29,7 +29,7 @@ NULL
 #' @include classes.R
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("giottoPoints")
-#' 
+#'
 #' featIDs(g)
 NULL
 

@@ -61,7 +61,7 @@ spatial region}
 
 \item{images}{list of images}
 
-\item{largeImages}{list of large images}
+\item{largeImages}{deprecated}
 
 \item{largeImages_list_params}{image params when loading largeImages as list}
 
@@ -96,6 +96,7 @@ x_gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
 
 createGiottoObjectSubcellular(
     gpolygons = x_gpolygons,
-    gpoints = x_gpoints)
+    gpoints = x_gpoints
+)
 }
 \concept{giotto}

@@ -33,8 +33,10 @@ plot to another color
 }
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
-g_image <- convertGiottoLargeImageToMG(g, largeImage_name = "image", 
-return_gobject = FALSE)
+g_image <- convertGiottoLargeImageToMG(g,
+    largeImage_name = "image",
+    return_gobject = FALSE
+)
 
 changeImageBg(mg_object = g_image, bg_color = "white")
 }

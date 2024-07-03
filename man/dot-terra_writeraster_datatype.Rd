@@ -19,6 +19,9 @@
 \item{giottoLargeImage}{giottoLargeImage object to determine max_intensity,
 min_intensity, is_int settings from}
 
+\item{quick_INTS_maxval}{Treat as maximum intensity to find compatible
+unsigned integer settings}
+
 \item{max_intensity, min_intensity}{value given as image maximum/minimum
 intensity}
 
@@ -29,9 +32,6 @@ intensity}
 \item{bitDepth}{image bitDepth}
 
 \item{verbose}{be verbose}
-
-\item{quick_INTU_maxval}{Treat as maximum intensity to find compatible
-unsigned integer settings}
 }
 \value{
 datatype for terra writeRaster function

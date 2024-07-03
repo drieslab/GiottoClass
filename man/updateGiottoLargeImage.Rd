@@ -71,3 +71,6 @@ g <- GiottoData::loadGiottoMini("visium")
 
 updateGiottoLargeImage(g, largeImage_name = "image")
 }
+\seealso{
+\code{\link[=ext]{ext()}}
+}

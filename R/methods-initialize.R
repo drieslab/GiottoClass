@@ -205,7 +205,12 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
             )
 
             exp_list_names <- lapply(exp_list, spatIDs)
-            list_match <- sapply(exp_list_names, setequal, exp_list_names[[1L]])
+            list_match <- vapply(
+                exp_list_names,
+                setequal,
+                exp_list_names[[1L]],
+                FUN.VALUE = logical(1L)
+            )
             if (!all(list_match)) {
                 wrap_msg(list_match)
                 warning(wrap_txt(
@@ -356,7 +361,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             .Object <- set_cell_metadata(
                 gobject = .Object,
-                metadata = cm, 
+                metadata = cm,
                 verbose = FALSE,
                 initialize = FALSE
             )
@@ -561,8 +566,22 @@ setMethod(
 )
 
 
+## transform_plan_2d
+setMethod("initialize", "affine2d", function(.Object, ...) {
+    .Object <- methods::callNextMethod()
+    .Object@anchor <- ext(.Object@anchor) %>%
+        .ext_to_num_vec()
+    
+    res <- .decomp_affine(.Object@affine)
+    
+    .Object@affine <- res$affine
+    .Object@rotate <- res$rotate
+    .Object@shear <- res$shear
+    .Object@scale <- res$scale
+    .Object@translate <- res$translate
 
-
+    return(.Object)
+})
 
 
 
@@ -740,9 +759,8 @@ init_cell_and_feat_IDs <- function(gobject) {
 #' and feature type in the giotto object.
 #' @returns cellMetaObjs
 #' @keywords internal
-init_cell_metadata <- function(
-        gobject,
-        provenance = NULL) {
+init_cell_metadata <- function(gobject,
+    provenance = NULL) {
     # data.table vars
     spat_unit <- feat_type <- NULL
 
@@ -810,9 +828,8 @@ init_cell_metadata <- function(
 #' @param provenance provenance information (optional)
 #' @returns featMetaObjs
 #' @keywords internal
-init_feat_metadata <- function(
-        gobject,
-        provenance = NULL) {
+init_feat_metadata <- function(gobject,
+    provenance = NULL) {
     # data.table vars
     spat_unit <- feat_type <- NULL
 

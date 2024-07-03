@@ -13,7 +13,7 @@ NULL
 #' @returns spatVectorCentroids or spatVector
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("giottoPolygon")
-#' 
+#'
 #' centroids(g)
 NULL
 # ---------------------------------------------------------------- #

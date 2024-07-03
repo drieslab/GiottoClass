@@ -10,7 +10,7 @@ NULL
 #' @returns list of overlaps from object
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("giottoPolygon")
-#' 
+#'
 #' overlaps(g)
 NULL
 # ---------------------------------------------------------------- #

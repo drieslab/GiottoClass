@@ -30,7 +30,7 @@ NULL
 # methods ####
 
 
-
+# * giottoLargeImage ####
 #' @rdname crop
 #' @export
 setMethod("crop", signature("giottoLargeImage"), function(x, y, ...) {
@@ -46,10 +46,13 @@ setMethod("crop", signature("giottoLargeImage"), function(x, y, ...) {
     x
 })
 
-
+# * spatLocsObj ####
 #' @rdname crop
 #' @export
 setMethod("crop", signature("spatLocsObj"), function(x, y, ...) {
+    # NSE vars
+    sdimx <- sdimy <- NULL
+    
     e <- ext(y)
     if (is.null(terra::intersect(terra::ext(x), e))) {
         warning("crop region is empty", call. = FALSE)
@@ -59,7 +62,27 @@ setMethod("crop", signature("spatLocsObj"), function(x, y, ...) {
     return(x)
 })
 
+# should only be used with spatial networks that contain spatial information
+# * spatialNetworkObj ####
+#' @rdname crop
+#' @export
+setMethod("crop", signature("spatialNetworkObj"), function(x, y, ...) {
+    # NSE vars
+    sdimx_begin <- sdimy_begin <- sdimx_end <- sdimy_end <- NULL
+    
+    e <- ext(y)
+    if (is.null(terra::intersect(terra::ext(x), e))) {
+        warning("crop region is empty", call. = FALSE)
+    }
+    b <- .ext_to_num_vec(e) # bounds as a numerical vector
+    x[] <- x[][sdimx_begin >= b[1] & sdimx_begin <= b[2] &
+               sdimy_begin >= b[3] & sdimy_begin <= b[4]]
+    x[] <- x[][sdimx_end >= b[1] & sdimx_end <= b[2] &
+               sdimy_end >= b[3] & sdimy_end <= b[4]]
+    return(x)
+})
 
+# * giottoPoints ####
 #' @rdname crop
 #' @param DT logical. Use alternative DT subsetting for crop operation
 #' @param xmin,xmax,ymin,ymax only used if DT = TRUE. Set extent bounds
@@ -67,8 +90,9 @@ setMethod("crop", signature("spatLocsObj"), function(x, y, ...) {
 #' @export
 setMethod(
     "crop", signature("giottoPoints"),
-    function(x, y, DT = TRUE, xmin = NULL, xmax = NULL,
-    ymin = NULL, ymax = NULL, ...) {
+    function(
+        x, y, DT = TRUE, xmin = NULL, xmax = NULL,
+        ymin = NULL, ymax = NULL, ...) {
         checkmate::assert_logical(DT)
         if (DT) {
             # converting to DT, subsetting, then regeneration of SpatVector with vect()
@@ -76,7 +100,7 @@ setMethod(
             missing_y <- missing(y)
             if (missing_y) y <- NULL # make easier to pass as a param downstream
             n_single_bounds <- 4 - sum(
-                sapply(list(xmin, xmax, ymin, ymax), is.null)
+                vapply(list(xmin, xmax, ymin, ymax), is.null, logical(1L))
             )
 
             # 1. get final crop bounds (numeric vector of xmin, xmax, ymin, ymax)
@@ -116,7 +140,7 @@ setMethod(
 )
 
 
-
+# * giottoPolygon ####
 #' @rdname crop
 #' @param DT logical. Use alternative DT subsetting for crop operation
 #' @param xmin,xmax,ymin,ymax only used if DT = TRUE. Set extent bounds
@@ -124,8 +148,9 @@ setMethod(
 #' @export
 setMethod(
     "crop", signature("giottoPolygon"),
-    function(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL,
-    ymax = NULL, ...) {
+    function(
+        x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL,
+        ymax = NULL, ...) {
         # A. spatVector cropping
         checkmate::assert_logical(DT)
         if (DT) {
@@ -134,7 +159,8 @@ setMethod(
             missing_y <- missing(y)
             if (missing_y) y <- NULL # make easier to pass as a param downstream
             n_single_bounds <- 4 - sum(
-                sapply(list(xmin, xmax, ymin, ymax), is.null)
+                vapply(list(xmin, xmax, ymin, ymax),
+                       is.null, FUN.VALUE = logical(1L))
             )
 
             # 1. get final crop bounds (numeric vector of xmin, xmax, ymin, ymax)
@@ -197,6 +223,8 @@ setMethod(
 
 
 
+
+
 # helpers ####
 
 
@@ -208,10 +236,10 @@ setMethod(
 #
 # returns a numeric vector of the 4 bounds in the order of:
 #   xmin, xmax, ymin, ymax
-.determine_crop_bounds <- function(x, y, missing_y, n_single_bounds,
-    xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL,
-    output = c("numeric", "extent")) {
-
+.determine_crop_bounds <- function(
+        x, y, missing_y, n_single_bounds,
+        xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL,
+        output = c("numeric", "extent")) {
     # check cropping params
     output <- match.arg(tolower(output), choices = c("numeric", "extent"))
 

@@ -1,24 +1,72 @@
 
+# GiottoClass 0.3.2
 
-# GiottoClass 0.2.4
+## breaking changes
+- python environment installation and how it relates to default settings such as .condarc may have changed.
+
+## enhancements
+- `verbose` param for `createNearestNetwork()`
+- `checkGiottoEnvironment()` in addition to full filepaths, also now supports name of environment or installation directory
+- `installGiottoEnvironment()`, `removeGiottoEnvironment()` now have `conda` param for setting path to conda executable and `envname` param for specifying environment by name
+- `installGiottoEnvironment()` now has `confirm` param for skipping path input checks
+
+## new
+- `affine()` for `giottoPolygon`, `giottoPoints`, `spatLocsObj`
+- `shear()` for `giottoPoints`, `giottoPolygon`, `spatLocsObj`, `affine2d`
+- `affine2d` class for accumulating linear transforms to be used with `affine()`
+- `spin()`, `rescale`, `spatShift()` methods for `affine2d`
+- `initialize()`, `[`, `$`, `show()`, `plot()` methods for `affine2d`
+- `.get_centroid_xy()` internal for getting numeric centroid xy values of any object that responds to `ext()`
+- `.bound_poly()` internal for generating a dummy polygon from the extent of any object that responds to `ext()`
+- `.aff_shift_2d()`, `.aff_shift_2d<-()`, `.aff_linear_2d`, `.aff_linear_2d()<-` internals for accessing and manipulating affine matrices
+
+
+# GiottoClass 0.3.1 (2024/05/21)
+
+## bug fixes
+- allow passing of additional params with `setGiotto()` with `...`
+- `spatShift()` can now perform z shifts when start `spatLocsObj` has no z information
+- fix bug in `joinGiottoObjects()` after v0.3.0 where it looks for the now non-existent `@largeImages` slot
+- fix bug in `.update_image_slot()` after v0.3.0 where a NULL `@largeImages` slot will result in an error
+- fix bugs in `spatShift()` and `rescale()` methods for `giotto` when setting a default `spat_unit` and `feat_type`
+
+## enhancements
+- `joinGiottoObjects()` extent detection and xshift defaults now depend on `ext()` of the gobject instead of any images (when available)
+- `joinGiottoObjects()` now has a `dry_run` param for previewing where datasets will be spatially located after the join
+
+## new
+- `as()` conversion from `giottoLargeImage` to `array`
+- `as.matrix()` method for `spatLocsObj()`
+
+
+# GiottoClass 0.3.0 (2024/05/13)
 
 ## breaking changes
 - deprecation of `reconnect_image_object()`, `reconnect_giottoImage_MG()` and `reconnect_giottoLargeImage()` internals in favor of simpler `reconnect()` generic
+- `giotto` `@largeImage` slot is removed. All images now exist in `@images` slot.
+- backwards compatibility for S3 `spatialNetworkObj` removed
+- Not finding a specific `spatialNetworkObj` with `getSpatialNetwork()` is now upgraded to an error instead of returning `NULL` to be in line with other accessors.
+- backwards compatibility for bare `data.table` spatial coordinates information is removed
 
 ## bug fixes
 - fix `plot()` params passing for `giottoPolygon` when `type = "centroid"`
+- fix `ext()` output for `giottoImage`
+- `spatShift()` and `rescale()` now also affect gobject attached images [#945](https://github.com/drieslab/Giotto/issues/945) by rbutleriii
 
 ## enhancements
 - use faster `terra::rasterize()` and `terra::plot()` instead of `scattermore::scattermoreplot()` for `giottoPoints` `plot()` method
 - `plot()` `giottoPoints` method now plots density when `dens = TRUE`
-- `show_max` param `density()` and `hist()` to show the image object's `max_window` setting
+- `show_max` param in `density()` and `hist()` to plot the image object's `max_window` setting
 - `.identify_background_range_polygons()` now finds any polygons larger than a threshold percentage than the overall extent of the `SpatVector` input.
+- `ext()` can now be used with `giotto` objects [#945](https://github.com/drieslab/Giotto/issues/945) by rbutleriii
+- `ext()<-` can now be used with `giottoImage`
+- `as` conversion from `giottoLargeImage` to `giottoImage` (`giottoImage` is sampled)
+- `crop()` works for `spatialNetworkObj`
 
 ## new
 - new `spatValues()` to get specific values from a `giotto` object in `data.table` format
 - new `ometif_to_tif` to convert between .ome.tif and .tif
 - new `terra::density()` and `terra::hist()` wrappers for `giottoLargeImage`
-- new `zoom()` generic that works like terra's for `giottoLargeImage`, `giottoPolygon`, `giottoPoints`
 
 
 

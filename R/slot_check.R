@@ -2,9 +2,8 @@
 
 #' @keywords internal
 #' @noRd
-.check_cell_metadata <- function(
-        gobject,
-        verbose = TRUE) {
+.check_cell_metadata <- function(gobject,
+    verbose = TRUE) {
     # data.table vars
     cell_ID <- spat_unit <- NULL
 
@@ -47,9 +46,10 @@
             if (any(meta[][, is.na(cell_ID)])) {
                 # denotes missing or need to repair IDs
 
-                ID_col_guess <- which.max(sapply(
+                ID_col_guess <- which.max(vapply(
                     meta[],
-                    function(x) sum(search_IDs %in% x)
+                    function(x) sum(search_IDs %in% x),
+                    FUN.VALUE = integer(1L)
                 ))
 
                 if (ID_col_guess == 0L) {
@@ -133,9 +133,8 @@
 
 #' @keywords internal
 #' @noRd
-.check_feat_metadata <- function(
-        gobject,
-        verbose = TRUE) {
+.check_feat_metadata <- function(gobject,
+    verbose = TRUE) {
     # data.table vars
     feat_ID <- spat_unit <- feat_type <- NULL
 
@@ -198,9 +197,10 @@
             if (any(meta[][, is.na(feat_ID)])) {
                 # denotes missing or need to repair IDs
 
-                ID_col_guess <- which.max(sapply(
+                ID_col_guess <- which.max(vapply(
                     meta[],
-                    function(x) sum(search_IDs %in% x)
+                    function(x) sum(search_IDs %in% x),
+                    FUN.VALUE = integer(1L)
                 ))
 
                 if (ID_col_guess == 0L) {

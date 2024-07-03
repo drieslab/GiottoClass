@@ -9,7 +9,7 @@
 #' @returns wrapped giottoPolygon or giottoPoints
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("giottoPoints")
-#' 
+#'
 #' wrap(g)
 NULL
 # ---------------------------------------------------------------- #

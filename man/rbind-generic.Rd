@@ -31,5 +31,5 @@ row bind two objects
 \examples{
 g <- GiottoData::loadSubObjectMini("giottoPolygon")
 
-rbind2(g,g)
+rbind2(g, g)
 }

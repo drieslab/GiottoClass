@@ -11,13 +11,12 @@
 #' @keywords internal
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' list_giotto_data(gobject = g, slot = "expression")
 #' @export
-list_giotto_data <- function(
-        gobject = NULL,
-        slot = NULL,
-        ...) {
+list_giotto_data <- function(gobject = NULL,
+    slot = NULL,
+    ...) {
     if (slot == "expression") {
         return(list_expression(gobject = gobject, ...))
     }
@@ -52,10 +51,7 @@ list_giotto_data <- function(
         return(list_spatial_grids(gobject = gobject, ...))
     }
     if (slot == "images") {
-        return(list_images_names(gobject = gobject, img_type = "image"))
-    }
-    if (slot == "largeImages") {
-        return(list_images_names(gobject = gobject, img_type = "largeImage"))
+        return(list_images_names(gobject = gobject, ...))
     }
 }
 
@@ -68,13 +64,12 @@ list_giotto_data <- function(
 #' col order matters.
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' list_expression(g)
 #' @export
-list_expression <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL) {
+list_expression <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL) {
     availableExpr <- data.table()
     for (spatial_unit in names(gobject@expression)) {
         for (feature_type in names(gobject@expression[[spatial_unit]])) {
@@ -126,13 +121,12 @@ list_expression <- function(
 #' @returns vector with names of available matrices
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' list_expression_names(g, spat_unit = "cell", feat_type = "rna")
 #' @export
-list_expression_names <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL) {
+list_expression_names <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
     if (is.null(feat_type)) stop("feat_type must be given\n")
 
@@ -151,7 +145,7 @@ list_expression_names <- function(
 #' @returns vector with names of available sets of cell_IDs
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' list_cell_id_names(g)
 #' @export
 list_cell_id_names <- function(gobject) {
@@ -167,7 +161,7 @@ list_cell_id_names <- function(gobject) {
 #' @returns vector with names of available sets of feat_IDs
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' list_feat_id_names(g)
 #' @export
 list_feat_id_names <- function(gobject) {
@@ -182,14 +176,13 @@ list_feat_id_names <- function(gobject) {
 #' @returns names and locations of available cell metadata as data.table
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' list_cell_metadata(g)
 #' @export
-list_cell_metadata <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        return_uniques = FALSE) {
+list_cell_metadata <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    return_uniques = FALSE) {
     availableCMet <- data.table()
     uniques <- list()
     for (spatial_unit in names(gobject@cell_metadata)) {
@@ -243,14 +236,13 @@ list_cell_metadata <- function(
 #' @returns names and locations of available feature metadata as data.table
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' list_feat_metadata(g)
 #' @export
-list_feat_metadata <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        return_uniques = FALSE) {
+list_feat_metadata <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    return_uniques = FALSE) {
     availableFMet <- data.table()
     uniques <- list()
     for (spatial_unit in names(gobject@feat_metadata)) {
@@ -304,13 +296,12 @@ list_feat_metadata <- function(
 #' @returns names and locations of available data.table as data.table
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' list_spatial_locations(g)
 #' @export
-list_spatial_locations <- function(
-        gobject,
-        spat_unit = NULL,
-        return_uniques = FALSE) {
+list_spatial_locations <- function(gobject,
+    spat_unit = NULL,
+    return_uniques = FALSE) {
     availableSpatLocs <- data.table()
     uniques <- list()
     for (spatial_unit in names(gobject@spatial_locs)) {
@@ -364,12 +355,11 @@ list_spatial_locations <- function(
 #' @returns vector with names of available spatial locations
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' list_spatial_locations_names(g, spat_unit = "cell")
 #' @export
-list_spatial_locations_names <- function(
-        gobject,
-        spat_unit = NULL) {
+list_spatial_locations_names <- function(gobject,
+    spat_unit = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
 
     spatlocs_names <- names(gobject@spatial_locs[[spat_unit]])
@@ -386,13 +376,12 @@ list_spatial_locations_names <- function(
 #' @returns names and locations of available data as data.table
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' list_spatial_enrichments(g)
 #' @export
-list_spatial_enrichments <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL) {
+list_spatial_enrichments <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL) {
     availableSpatEnr <- data.table()
 
     for (spatial_unit in names(gobject@spatial_enrichment)) {
@@ -449,13 +438,12 @@ list_spatial_enrichments <- function(
 #' @returns vector of names for available spatial enrichments
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' list_spatial_enrichments_names(g, spat_unit = "aggregate", feat_type = "rna")
 #' @export
-list_spatial_enrichments_names <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL) {
+list_spatial_enrichments_names <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
     if (is.null(feat_type)) stop("feat_type must be given\n")
 
@@ -477,15 +465,14 @@ list_spatial_enrichments_names <- function(
 #' @returns names and locations of dimension reduction as a data.table
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' list_dim_reductions(g)
 #' @export
-list_dim_reductions <- function(
-        gobject,
-        data_type = NULL,
-        spat_unit = NULL,
-        feat_type = NULL,
-        dim_type = NULL) {
+list_dim_reductions <- function(gobject,
+    data_type = NULL,
+    spat_unit = NULL,
+    feat_type = NULL,
+    dim_type = NULL) {
     availableDimRed <- data.table()
     for (dataType in names(slot(gobject, "dimension_reduction"))) {
         for (spatUnit in
@@ -562,16 +549,17 @@ list_dim_reductions <- function(
 #' @details function that can be used to find which names have been used
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
-#' list_dim_reductions_names(g, spat_unit = "cell", feat_type = "rna", 
-#' dim_type = "pca")
+#'
+#' list_dim_reductions_names(g,
+#'     spat_unit = "cell", feat_type = "rna",
+#'     dim_type = "pca"
+#' )
 #' @export
-list_dim_reductions_names <- function(
-        gobject,
-        data_type = "cells",
-        spat_unit = NULL,
-        feat_type = NULL,
-        dim_type = NULL) {
+list_dim_reductions_names <- function(gobject,
+    data_type = "cells",
+    spat_unit = NULL,
+    feat_type = NULL,
+    dim_type = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
     if (is.null(feat_type)) stop("feat_type must be given\n")
     if (is.null(dim_type)) stop("dim_type must be given\n")
@@ -591,15 +579,14 @@ list_dim_reductions_names <- function(
 #' @returns names and locations of nearest neighbor networks as a data.table
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' list_nearest_networks(g)
 #' @export
-list_nearest_networks <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        nn_type = NULL,
-        return_uniques = FALSE) {
+list_nearest_networks <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    nn_type = NULL,
+    return_uniques = FALSE) {
     # TODO remove uniques
 
     availableNN <- data.table()
@@ -677,15 +664,16 @@ list_nearest_networks <- function(
 #' @details function that can be used to find which names have been used
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
-#' list_nearest_networks_names(g, spat_unit = "cell", feat_type = "rna", 
-#' nn_type = "sNN")
+#'
+#' list_nearest_networks_names(g,
+#'     spat_unit = "cell", feat_type = "rna",
+#'     nn_type = "sNN"
+#' )
 #' @export
-list_nearest_networks_names <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        nn_type = NULL) {
+list_nearest_networks_names <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    nn_type = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
     if (is.null(feat_type)) stop("feat_type must be given\n")
     if (is.null(nn_type)) stop("nn_type must be given\n")
@@ -706,7 +694,7 @@ list_nearest_networks_names <- function(
 #' @returns names of available spatial polygon information
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' list_spatial_info(g)
 #' @export
 list_spatial_info <- function(gobject) {
@@ -736,7 +724,7 @@ list_spatial_info <- function(gobject) {
 #' @returns vector with names of available spatial polygon information
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' list_spatial_info_names(g)
 #' @export
 list_spatial_info_names <- function(gobject) {
@@ -754,7 +742,7 @@ list_spatial_info_names <- function(gobject) {
 #' @returns names of available feature information
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' list_feature_info(g)
 #' @export
 list_feature_info <- function(gobject) {
@@ -781,7 +769,7 @@ list_feature_info <- function(gobject) {
 #' @returns vector with names of available feature information
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' list_feature_info_names(g)
 #' @export
 list_feature_info_names <- function(gobject) {
@@ -801,13 +789,12 @@ list_feature_info_names <- function(gobject) {
 #' col order matters or list of unique nestings
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' list_spatial_networks(g)
 #' @export
-list_spatial_networks <- function(
-        gobject,
-        spat_unit = NULL,
-        return_uniques = FALSE) {
+list_spatial_networks <- function(gobject,
+    spat_unit = NULL,
+    return_uniques = FALSE) {
     availableSpatNetworks <- data.table()
     uniques <- list()
     for (spatial_unit in names(gobject@spatial_network)) {
@@ -858,12 +845,11 @@ list_spatial_networks <- function(
 #' @returns vector with names of available feature information
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' list_spatial_networks_names(g, spat_unit = "cell")
 #' @export
-list_spatial_networks_names <- function(
-        gobject,
-        spat_unit = NULL) {
+list_spatial_networks_names <- function(gobject,
+    spat_unit = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
 
     spat_network_names <- names(gobject@spatial_network[[spat_unit]])
@@ -884,14 +870,13 @@ list_spatial_networks_names <- function(
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
-#' 
+#'
 #' list_spatial_grids(g)
 #' @export
-list_spatial_grids <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        return_uniques = FALSE) {
+list_spatial_grids <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    return_uniques = FALSE) {
     availableSpatGrids <- data.table()
     uniques <- list()
     for (spatial_unit in names(gobject@spatial_grid)) {
@@ -960,14 +945,13 @@ list_spatial_grids <- function(
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
-#' 
+#'
 #' list_spatial_grids_names(g, spat_unit = "cell", feat_type = "rna")
 #' @export
-list_spatial_grids_names <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        return_uniques = FALSE) {
+list_spatial_grids_names <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    return_uniques = FALSE) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
     if (is.null(feat_type)) stop("feat_type must be given\n")
 
@@ -986,57 +970,42 @@ list_spatial_grids_names <- function(
 #' @returns data.table of giotto image names attached to the giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#' list_images(g)
 #' list_images(g, img_type = "largeImage")
 #' @export
-list_images <- function(
-        gobject,
-        img_type = NULL) {
-    availableImages <- data.table()
-
-    g_image_names <- names(slot(gobject, "images"))
-    g_limage_names <- names(slot(gobject, "largeImages"))
-
-    for (image_type in c("image", "largeImage")) {
-        if (image_type == "image") {
-            for (name in g_image_names) {
-                availableImages <- rbind(
-                    availableImages,
-                    list(
-                        img_type = image_type,
-                        name = name
-                    )
-                )
-            }
+list_images <- function(gobject,
+    img_type = NULL) {
+    img_info <- lapply(
+        slot(gobject, "images"),
+        function(img) {
+            data.table::data.table(
+                name = objName(img),
+                img_type = class(img)
+            )
         }
-        if (image_type == "largeImage") {
-            for (name in g_limage_names) {
-                availableImages <- rbind(
-                    availableImages,
-                    list(
-                        img_type = image_type,
-                        name = name
-                    )
-                )
-            }
-        }
+    )
+    avail_imgs <- data.table::rbindlist(img_info)
+
+    # change to shortnames for img_type
+    if (nrow(avail_imgs) > 0) {
+        avail_imgs[img_type == "giottoLargeImage", img_type := "largeImage"]
+        avail_imgs[img_type == "giottoImage", img_type := "image"]
     }
 
     # check if a specific category is desired
     if (!is.null(img_type)) {
-        img_type_subset <- availableImages$img_type %in%
-            img_type
+        img_type_subset <- avail_imgs$img_type %in% img_type
     } else {
         img_type_subset <- TRUE
     }
 
-    availableImages <- availableImages[img_type_subset, ]
+    avail_imgs <- avail_imgs[img_type_subset, ]
 
     # NULL if there is no data
-    if (nrow(availableImages) == 0) {
+    if (nrow(avail_imgs) == 0) {
         return(NULL)
     } else {
-        return(availableImages)
+        return(avail_imgs)
     }
 }
 
@@ -1047,22 +1016,20 @@ list_images <- function(
 #' @description return the available image names for a given image type that
 #' are attached to the Giotto object
 #' @param gobject a giotto object
-#' @param img_type "image" or "largeImage"
+#' @param img_type passing NULL (default) gets all image names. Can further
+#' specify "image" or "largeImage"
 #' @returns vector with names of available image names
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#' list_images_names(g)
 #' list_images_names(g, img_type = "largeImage")
 #' @export
-list_images_names <- function(
-        gobject,
-        img_type) {
-    if (!img_type %in% c("image", "largeImage")) {
-        stop('img_type must be either "image" or "largeImage\n"')
+list_images_names <- function(gobject,
+    img_type = NULL) {
+    if (!is.null(img_type)) {
+        img_type <- match.arg(img_type, choices = c("image", "largeImage"))
     }
 
-    if (img_type == "image") img_names <- names(gobject@images)
-    if (img_type == "largeImage") img_names <- names(gobject@largeImages)
-
+    img_names <- list_images(gobject, img_type = img_type)$name
     return(img_names)
 }

@@ -34,7 +34,7 @@ left.}
 an updated Giotto object with access to the list of images
 }
 \description{
-Adds giotto image objects to your giotto object
+Add giotto image objects to \code{giotto} object
 }
 \examples{
 g <- GiottoData::loadGiottoMini("visium")

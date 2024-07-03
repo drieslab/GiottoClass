@@ -11,7 +11,8 @@ get_spatial_locations(
   output = c("spatLocsObj", "data.table"),
   copy_obj = TRUE,
   verbose = TRUE,
-  set_defaults = TRUE
+  set_defaults = TRUE,
+  simplify = TRUE
 )
 }
 \arguments{
@@ -32,6 +33,9 @@ object (default = TRUE)}
 
 \item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
 expression and spat_info are not expected to exist.}
+
+\item{simplify}{logical. Whether or not to take object out of a list when
+there is a length of 1.}
 }
 \value{
 data.table with coordinates or spatLocsObj depending on \code{output}

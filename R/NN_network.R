@@ -128,15 +128,16 @@ NULL
 
 #' @rdname createNetwork
 #' @export
-createNetwork <- function(x,
-    type = c("sNN", "kNN", "delaunay"),
-    method = c("dbscan", "geometry", "RTriangle", "deldir"),
-    node_ids = NULL,
-    include_distance = TRUE,
-    include_weight = TRUE,
-    as.igraph = TRUE,
-    verbose = NULL,
-    ...) {
+createNetwork <- function(
+        x,
+        type = c("sNN", "kNN", "delaunay"),
+        method = c("dbscan", "geometry", "RTriangle", "deldir"),
+        node_ids = NULL,
+        include_distance = TRUE,
+        include_weight = TRUE,
+        as.igraph = TRUE,
+        verbose = NULL,
+        ...) {
     # NSE vars
     from <- to <- NULL
 
@@ -211,11 +212,12 @@ createNetwork <- function(x,
 
 
 # x input is a matrix
-.net_dt_knn <- function(x, k = 30L, include_weight = TRUE, include_distance = TRUE,
-    filter = FALSE,
-    maximum_distance = NULL, minimum_k = 0L,
-    weight_fun = function(d) 1 / (1 + d),
-    verbose = NULL, ...) {
+.net_dt_knn <- function(
+        x, k = 30L, include_weight = TRUE, include_distance = TRUE,
+        filter = FALSE,
+        maximum_distance = NULL, minimum_k = 0L,
+        weight_fun = function(d) 1 / (1 + d),
+        verbose = NULL, ...) {
     # NSE vars
     from <- to <- distance <- NULL
 
@@ -268,10 +270,11 @@ createNetwork <- function(x,
 }
 
 # x input is a matrix
-.net_dt_snn <- function(x, k = 30L, include_weight = TRUE, include_distance = TRUE,
-    top_shared = 3L, minimum_shared = 5L,
-    weight_fun = function(d) 1 / (1 + d),
-    verbose = NULL, ...) {
+.net_dt_snn <- function(
+        x, k = 30L, include_weight = TRUE, include_distance = TRUE,
+        top_shared = 3L, minimum_shared = 5L,
+        weight_fun = function(d) 1 / (1 + d),
+        verbose = NULL, ...) {
     # NSE vars
     from <- to <- shared <- distance <- NULL
 
@@ -318,9 +321,10 @@ createNetwork <- function(x,
     return(snn_network_dt)
 }
 
-.net_dt_del_geometry <- function(x, include_weight = TRUE, options = "Pp", maximum_distance = "auto",
-    minimum_k = 0L, weight_fun = function(d) 1 / d,
-    ...) {
+.net_dt_del_geometry <- function(
+        x, include_weight = TRUE, options = "Pp", maximum_distance = "auto",
+        minimum_k = 0L, weight_fun = function(d) 1 / d,
+        ...) {
     package_check("geometry", repository = "CRAN:geometry")
 
     # data.table variables
@@ -371,9 +375,10 @@ createNetwork <- function(x,
     return(out_object)
 }
 
-.net_dt_del_rtriangle <- function(x, include_weight = TRUE, maximum_distance = "auto", minimum_k = 0L,
-    Y = TRUE, j = TRUE, S = 0, weight_fun = function(d) 1 / d,
-    ...) {
+.net_dt_del_rtriangle <- function(
+        x, include_weight = TRUE, maximum_distance = "auto", minimum_k = 0L,
+        Y = TRUE, j = TRUE, S = 0, weight_fun = function(d) 1 / d,
+        ...) {
     # NSE vars
     from <- to <- distance <- NULL
 
@@ -415,9 +420,10 @@ createNetwork <- function(x,
     return(out_object)
 }
 
-.net_dt_del_deldir <- function(x, include_weight = TRUE, maximum_distance = "auto", minimum_k = 0L,
-    weight_fun = function(d) 1 / d,
-    ...) {
+.net_dt_del_deldir <- function(
+        x, include_weight = TRUE, maximum_distance = "auto", minimum_k = 0L,
+        weight_fun = function(d) 1 / d,
+        ...) {
     # NSE variables
     from <- to <- distance <- NULL
 
@@ -476,7 +482,7 @@ createNetwork <- function(x,
 #'     from = c(1, 1),
 #'     to = c(2, 3)
 #' )
-#' 
+#'
 #' edge_distances(m, edges)
 #' @export
 edge_distances <- function(x, y, x_node_ids = NULL) {
@@ -541,9 +547,10 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
 .calc_edge_dist <- function(x, method = "euclidean", ...) {
     checkmate::assert_class(x, "edge_coords_array")
 
-    sapply(
+    vapply(
         seq(dim(x)[3L]),
-        function(pair_i) stats::dist(x[, , pair_i], method = method, ...)
+        function(pair_i) stats::dist(x[, , pair_i], method = method, ...),
+        FUN.VALUE = numeric(1L)
     )
 }
 
@@ -582,49 +589,46 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
 #' information about how the networks are created.
 #'
 #' Output for kNN:
-#' \itemize{
-#'   \item{from: }{cell_ID for source cell}
-#'   \item{to: }{cell_ID for target cell}
-#'   \item{distance: }{distance between cells}
-#'   \item{weight: }{weight = 1/(1 + distance)}
-#' }
+#'   * **from:** cell_ID for source cell
+#'   * **to:** cell_ID for target cell
+#'   * **distance:** distance between cells
+#'   * **weight:** \eqn{1/(1 + distance)}
 #'
 #' Output for sNN:
-#' \itemize{
-#'   \item{from: }{cell_ID for source cell}
-#'   \item{to: }{cell_ID for target cell}
-#'   \item{distance: }{distance between cells}
-#'   \item{weight: }{1/(1 + distance)}
-#'   \item{shared: }{number of shared neighbours}
-#'   \item{rank: }{ranking of pairwise cell neighbours}
-#' }
+#'   * **from:** cell_ID for source cell
+#'   * **to:** cell_ID for target cell
+#'   * **distance:** distance between cells
+#'   * **weight:** \eqn{1/(1 + distance)}
+#'   * **shared:** number of shared neighbours
+#'   * **rank:** ranking of pairwise cell neighbours
+#' 
 #' For sNN networks two additional parameters can be set:
-#' \itemize{
-#'   \item{minimum_shared: }{minimum number of shared neighbours needed}
-#'   \item{top_shared: }{keep this number of the top shared neighbours,
-#'   irrespective of minimum_shared setting}
-#' }
+#'   * **minimum_shared:** minimum number of shared neighbours needed
+#'   * **top_shared:** keep this number of the top shared neighbours,
+#'   irrespective of minimum_shared setting
+#' 
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' createNearestNetwork(g)
 #' @export
-createNearestNetwork <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    type = c("sNN", "kNN"),
-    dim_reduction_to_use = "pca",
-    dim_reduction_name = NULL,
-    dimensions_to_use = seq_len(10),
-    feats_to_use = NULL,
-    expression_values = c("normalized", "scaled", "custom"),
-    name = NULL,
-    return_gobject = TRUE,
-    k = 30,
-    minimum_shared = 5,
-    top_shared = 3,
-    verbose = TRUE,
-    ...) {
+createNearestNetwork <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        type = c("sNN", "kNN"),
+        dim_reduction_to_use = "pca",
+        dim_reduction_name = NULL,
+        dimensions_to_use = seq_len(10),
+        feats_to_use = NULL,
+        expression_values = c("normalized", "scaled", "custom"),
+        name = NULL,
+        return_gobject = TRUE,
+        k = 30,
+        minimum_shared = 5,
+        top_shared = 3,
+        verbose = TRUE,
+        ...) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -805,7 +809,8 @@ createNearestNetwork <- function(gobject,
         nn_names <- names(gobject@nn_network[[spat_unit]][[type]])
 
         if (name %in% nn_names) {
-            wrap_msg(name, " has already been used, will be overwritten")
+            vmsg(.v = verbose, 
+                 name, "has already been used, will be overwritten")
         }
 
         nnObj <- create_nn_net_obj(
@@ -824,7 +829,8 @@ createNearestNetwork <- function(gobject,
             feat_type = feat_type,
             nn_network_to_use = type,
             network_name = name,
-            nn_network = nnObj
+            nn_network = nnObj,
+            verbose = verbose
         )
 
         ## update parameters used ##
@@ -858,19 +864,18 @@ createNearestNetwork <- function(gobject,
 #' This provides an alternative to tSNE or UMAP based visualizations.
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' addNetworkLayout(g)
 #' @export
-addNetworkLayout <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        nn_network_to_use = "sNN",
-        network_name = "sNN.pca",
-        layout_type = c("drl"),
-        options_list = NULL,
-        layout_name = "layout",
-        return_gobject = TRUE) {
+addNetworkLayout <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    nn_network_to_use = "sNN",
+    network_name = "sNN.pca",
+    layout_type = c("drl"),
+    options_list = NULL,
+    layout_name = "layout",
+    return_gobject = TRUE) {
     ## checks
     if (is.null(nn_network_to_use) | is.null(network_name)) {
         stop("\n first create a nearest network \n")
@@ -915,7 +920,7 @@ addNetworkLayout <- function(
     if (return_gobject == TRUE) {
         nn_names <- names(gobject@nn_network[[spat_unit]][[nn_network_to_use]])
         if (layout_name %in% nn_names) {
-            wrap_msg(layout_name," has already been used, will be overwritten")
+            wrap_msg(layout_name, " has already been used, will be overwritten")
         }
 
         gobject@nn_network[[spat_unit]][[
@@ -942,7 +947,7 @@ addNetworkLayout <- function(
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' g_nn <- getNearestNetwork(g, output = "data.table", name = "custom_NN")
-#' 
+#'
 #' nnDT_to_kNN(g_nn)
 #' @export
 nnDT_to_kNN <- function(nnDT) {

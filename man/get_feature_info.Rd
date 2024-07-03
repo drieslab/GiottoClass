@@ -8,7 +8,8 @@ get_feature_info(
   gobject,
   feat_type = NULL,
   set_defaults = TRUE,
-  return_giottoPoints = FALSE
+  return_giottoPoints = FALSE,
+  simplify = TRUE
 )
 }
 \arguments{
@@ -20,6 +21,9 @@ get_feature_info(
 expression and spat_info are not expected to exist.}
 
 \item{return_giottoPoints}{return as a giottoPoints object}
+
+\item{simplify}{logical. Whether or not to take object out of a list when
+there is a length of 1.}
 }
 \value{
 a SpatVector (default) or giottoPoints object depending on value of

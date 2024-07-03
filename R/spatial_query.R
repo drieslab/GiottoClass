@@ -23,12 +23,11 @@
 #' @returns giottoPolygon
 #' @seealso [spatQueryGiottoSpatLocs()
 #' @export
-spatQueryGiottoPolygons <- function(
-        gobject,
-        filters,
-        name = "query_polys",
-        feat_type = NULL,
-        clip = TRUE) {
+spatQueryGiottoPolygons <- function(gobject,
+    filters,
+    name = "query_polys",
+    feat_type = NULL,
+    clip = TRUE) {
     assert_giotto(gobject)
     if (!is.null(name)) checkmate::assert_character(name)
     checkmate::assert_list(filters, types = "character")
@@ -43,7 +42,7 @@ spatQueryGiottoPolygons <- function(
 
     # check spat units input
     spat_units <- names(filters)
-    if (any(sapply(spat_units, is_empty_char))) {
+    if (any(vapply(spat_units, is_empty_char, FUN.VALUE = logical(1L)))) {
         stop(wrap_txt("All elements in filters list must be named by the
                     spatial units being used."))
     }

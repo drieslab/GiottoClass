@@ -50,13 +50,13 @@ one complete picture
 }
 \details{
 Stitching of fields:
-\itemize{
-\item{1. have cell locations: }{at least 3 columns: field, X, Y}
-\item{2. create offset file: }{offset file has 3 columns: field,
-x_offset, y_offset}
-\item{3. create new cell location file by stitching original cell
-locations with stitchFieldCoordinates}
-\item{4. provide new cell location file
-to \code{\link{createGiottoObject}}}
+\enumerate{
+\item \strong{have cell locations:} at least 3 columns: field, X, Y
+\item \strong{create offset file:} offset file has 3 columns: field,
+x_offset, y_offset
+\item create new cell location file by stitching original cell
+locations with stitchFieldCoordinates
+\item provide new cell location file
+to \code{\link{createGiottoObject}}
 }
 }

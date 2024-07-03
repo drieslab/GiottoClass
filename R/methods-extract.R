@@ -25,7 +25,7 @@ NULL
 #' @section \code{`[<-`} methods:
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("spatEnrObj")
-#' 
+#'
 #' g$cell_ID
 NULL
 
@@ -184,6 +184,24 @@ setMethod(
 #' @export
 .DollarNames.terraVectData <- function(x, pattern) {
     names(x@spatVector)
+}
+
+#' @rdname extract-methods
+#' @section \code{`$`} methods:
+#'   Select piecewise transform values from `affine2d`
+#' @export
+setMethod("$", signature("affine2d"), function(x, name) {
+    accessible <- c("affine", "order", "rotate", "shear", "scale", "translate")
+    if (name %in% accessible) {
+        return(slot(x, name))
+    } else {
+        return(NULL)
+    }
+})
+
+#' @export
+.DollarNames.affine2d <- function(x, pattern) {
+    c("affine", "order", "rotate", "shear", "scale", "translate")
 }
 
 
@@ -953,5 +971,33 @@ setMethod(
     function(x, i, j, value) {
         x@spatVector <- value
         x
+    }
+)
+
+#' @rdname extract-methods
+#' @export
+setMethod(
+    "[",
+    signature(
+        x = "affine2d", i = "missing", j = "missing", drop = "missing"
+    ),
+    function(x) {
+        x@affine
+    }
+)
+
+#' @rdname extract-methods
+#' @aliases [<-,affine2d,missing,missing,
+#' ANY-method [<-,affine2d,missing,missing-method
+#' @docType methods
+#' @section \code{`[<-`} methods:
+#'   Assign to \code{affine} slot in affine2d
+#' @export
+setMethod(
+    "[<-",
+    signature(x = "affine2d", i = "missing", j = "missing", value = "ANY"),
+    function(x, value) {
+        x@affine <- value
+        return(initialize(x))
     }
 )

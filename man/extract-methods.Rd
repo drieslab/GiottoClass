@@ -17,6 +17,7 @@
 \alias{$<-,metaData-method}
 \alias{$,terraVectData-method}
 \alias{$<-,terraVectData-method}
+\alias{$,affine2d-method}
 \alias{[,gdtData,gIndex,gIndex,missing-method}
 \alias{[,gdtData,logical,missing,missing-method}
 \alias{[,gdtData,character,missing,missing-method}
@@ -84,6 +85,10 @@
 \alias{[<-,giottoPolygon,missing,missing,ANY-method}
 \alias{[<-,giottoPolygon,missing,missing,}
 \alias{[<-,giottoPolygon,missing,missing-method}
+\alias{[,affine2d,missing,missing,missing-method}
+\alias{[<-,affine2d,missing,missing,ANY-method}
+\alias{[<-,affine2d,missing,missing,}
+\alias{[<-,affine2d,missing,missing-method}
 \title{Extract or replace parts of an object}
 \usage{
 \S4method{$}{coordDataDT}(x, name)
@@ -105,6 +110,8 @@
 \S4method{$}{terraVectData}(x, name)
 
 \S4method{$}{terraVectData}(x, name) <- value
+
+\S4method{$}{affine2d}(x, name)
 
 \S4method{[}{gdtData,gIndex,gIndex,missing}(x, i, j)
 
@@ -199,6 +206,10 @@
 \S4method{[}{terraVectData,gIndex,gIndex,missing}(x, i, j)
 
 \S4method{[}{giottoPolygon,missing,missing,ANY}(x, i, j) <- value
+
+\S4method{[}{affine2d,missing,missing,missing}(x)
+
+\S4method{[}{affine2d,missing,missing,ANY}(x) <- value
 }
 \arguments{
 \item{x}{Giotto S4 object to extract columns from}
@@ -242,6 +253,9 @@ Select by colname from giotto S4 data.table metaDT slot.
 
 
 Select by colname from giotto S4 spatVector slot.
+
+
+Select piecewise transform values from \code{affine2d}
 }
 
 \section{\code{`$<-`} methods}{
@@ -331,6 +345,9 @@ Assign to \code{spatVector} slot in giotto S4
 
 
 Assign to \code{spatVector} slot in giottoPolygon
+
+
+Assign to \code{affine} slot in affine2d
 }
 
 \examples{

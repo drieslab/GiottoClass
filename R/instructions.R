@@ -4,7 +4,9 @@
 #' @title Create instructions for giotto functions
 #' @name createGiottoInstructions
 #' @description Function to set global instructions for giotto functions
-#' @param python_path path to python binary to use
+#' @param python_path path to python binary to use or directory one level
+#' up from the `env` directory (similar to output of 
+#' `reticulate::miniconda_path()`)
 #' @param show_plot print plot to console, default = TRUE
 #' @param return_plot return plot as object, default = TRUE
 #' @param save_plot automatically save plot, dafault = FALSE
@@ -27,20 +29,20 @@
 #' createGiottoInstructions()
 #' @export
 createGiottoInstructions <- function(
-        python_path = NULL,
-        show_plot = NULL,
-        return_plot = NULL,
-        save_plot = NULL,
-        save_dir = NULL,
-        plot_format = NULL,
-        dpi = NULL,
-        units = NULL,
-        height = NULL,
-        width = NULL,
-        is_docker = FALSE,
-        plot_count = 0,
-        fiji_path = NULL,
-        no_python_warn = FALSE) {
+    python_path = getOption("giotto.py_path"),
+    show_plot = NULL,
+    return_plot = NULL,
+    save_plot = NULL,
+    save_dir = NULL,
+    plot_format = NULL,
+    dpi = NULL,
+    units = NULL,
+    height = NULL,
+    width = NULL,
+    is_docker = FALSE,
+    plot_count = 0,
+    fiji_path = NULL,
+    no_python_warn = FALSE) {
     # python path to use
     # try used here to allow instructions to be made in the absence of a
     # compatible python env
@@ -54,9 +56,10 @@ createGiottoInstructions <- function(
         silent = TRUE
     )
 
-    if ((is.null(python_path) | inherits(python_path, "try-error")) &
+    if ((is.null(python_path) || inherits(python_path, "try-error")) &
         !no_python_warn) {
-        warning(wrap_txt("Python is required for full Giotto functionality."))
+        warning(wrap_txt("Python is required for full Giotto functionality."),
+                call. = FALSE)
         options("giotto.has_conda" = FALSE)
     }
 
@@ -143,18 +146,17 @@ createGiottoInstructions <- function(
 
 
 #' @keywords internal
-create_giotto_instructions <- function(
-        python_path = NULL,
-        show_plot = NULL,
-        return_plot = NULL,
-        save_plot = NULL,
-        save_dir = NULL,
-        plot_format = NULL,
-        dpi = NULL,
-        units = NULL,
-        height = NULL,
-        width = NULL,
-        is_docker = NULL) {
+create_giotto_instructions <- function(python_path = NULL,
+    show_plot = NULL,
+    return_plot = NULL,
+    save_plot = NULL,
+    save_dir = NULL,
+    plot_format = NULL,
+    dpi = NULL,
+    units = NULL,
+    height = NULL,
+    width = NULL,
+    is_docker = NULL) {
     instructions_list <- list(
         python_path = python_path,
         show_plot = show_plot,
@@ -183,13 +185,14 @@ create_giotto_instructions <- function(
 #' exist
 #' @returns specific parameter
 #' @examples
-#' readGiottoInstructions(giotto_instructions = createGiottoInstructions(),
-#' param = "show_plot")
+#' readGiottoInstructions(
+#'     giotto_instructions = createGiottoInstructions(),
+#'     param = "show_plot"
+#' )
 #' @export
-readGiottoInstructions <- function(
-        giotto_instructions,
-        param = NULL,
-        default) {
+readGiottoInstructions <- function(giotto_instructions,
+    param = NULL,
+    default) {
     # get instructions if provided the giotto object
     if (inherits(giotto_instructions, "giotto")) {
         giotto_instructions <- giotto_instructions@instructions
@@ -217,7 +220,7 @@ readGiottoInstructions <- function(
 #' @returns named vector with giotto instructions
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' showGiottoInstructions(g)
 #' @export
 showGiottoInstructions <- function(gobject) {
@@ -239,16 +242,17 @@ showGiottoInstructions <- function(gobject) {
 #' @returns giotto object with one or more changed instructions
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
-#' changeGiottoInstructions(gobject = g, params = "save_plot", 
-#' new_values = TRUE)
+#'
+#' changeGiottoInstructions(
+#'     gobject = g, params = "save_plot",
+#'     new_values = TRUE
+#' )
 #' @export
-changeGiottoInstructions <- function(
-        gobject,
-        params = NULL,
-        new_values = NULL,
-        return_gobject = TRUE,
-        init_gobject = TRUE) {
+changeGiottoInstructions <- function(gobject,
+    params = NULL,
+    new_values = NULL,
+    return_gobject = TRUE,
+    init_gobject = TRUE) {
     instrs <- gobject@instructions
 
     if (is.null(params) | is.null(new_values)) {
@@ -311,14 +315,15 @@ changeGiottoInstructions <- function(
 #' @returns giotto object with replaces instructions
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
-#' replaceGiottoInstructions(gobject = g, 
-#' instructions = createGiottoInstructions())
+#'
+#' replaceGiottoInstructions(
+#'     gobject = g,
+#'     instructions = createGiottoInstructions()
+#' )
 #' @export
-replaceGiottoInstructions <- function(
-        gobject,
-        instructions = NULL,
-        init_gobject = TRUE) {
+replaceGiottoInstructions <- function(gobject,
+    instructions = NULL,
+    init_gobject = TRUE) {
     instrs_needed <- names(create_giotto_instructions())
 
     # validate new instructions

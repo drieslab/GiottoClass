@@ -16,9 +16,9 @@ addGiottoImage(
 \arguments{
 \item{gobject}{gobject to add images objects to}
 
-\item{images}{list of giottoImages to add}
+\item{images}{list of giotto images to add}
 
-\item{largeImages}{list of giottoLargeImages to add}
+\item{largeImages}{deprecated}
 
 \item{spat_loc_name}{provide spatial location slot in Giotto to align
 giottoImages. Defaults to first one}

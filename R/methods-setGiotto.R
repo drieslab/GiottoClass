@@ -2,18 +2,31 @@
 #' @name setGiotto
 #' @param gobject giotto object
 #' @param x giottoSubobject to set
+#' @param verbose be verbose
 #' @param \dots additional params to pass to specific Giotto setter functions
 #' @returns giottoSubobject
 #' @examples
 #' g <- createGiottoObject()
 #' g_expression <- GiottoData::loadSubObjectMini("exprObj")
-#' 
+#'
 #' setGiotto(gobject = g, x = g_expression)
 NULL
 
 
 
 # methods ####
+
+#' @rdname setGiotto
+#' @export
+setMethod(
+    "setGiotto", signature("giotto", "list"),
+    function(gobject, x, verbose = TRUE, ...) {
+        for (item in x) {
+            gobject <- setGiotto(gobject, item, verbose = verbose, ...)
+        }
+        return(gobject)
+    }
+)
 
 #' @rdname setGiotto
 #' @export
@@ -122,8 +135,10 @@ setMethod(
     "setGiotto", signature("giotto", "giottoLargeImage"),
     function(gobject, x, ...) {
         gobject <- setGiottoImage(
-            gobject = gobject, image = x,
-            image_type = "largeImage", name = x@name, ...
+            gobject = gobject,
+            image = x,
+            name = x@name,
+            ...
         )
         gobject
     }
@@ -135,8 +150,10 @@ setMethod(
     "setGiotto", signature("giotto", "giottoImage"),
     function(gobject, x, ...) {
         gobject <- setGiottoImage(
-            gobject = gobject, image = x,
-            image_type = "image", name = x@name, ...
+            gobject = gobject,
+            image = x,
+            name = x@name,
+            ...
         )
         gobject
     }

@@ -71,7 +71,7 @@ spatial region}
 
 \item{images}{list of images}
 
-\item{largeImages}{list of large images}
+\item{largeImages}{deprecated}
 
 \item{offset_file}{file used to stitch fields together (optional)}
 

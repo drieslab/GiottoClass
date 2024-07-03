@@ -8,7 +8,7 @@ anndataToGiotto(
   anndata_path = NULL,
   n_key_added = NULL,
   spatial_n_key_added = NULL,
-  deluanay_spat_net = TRUE,
+  delaunay_spat_net = TRUE,
   spat_unit = NULL,
   feat_type = NULL,
   h5_file = NULL,
@@ -34,8 +34,8 @@ generated in that function,
 i.e. {spat_unit}_{feat_type}_spatial_network_keys_added.txt
 Cannot be the same as n_key_added.}
 
-\item{deluanay_spat_net}{binary parameter for spatial network. If TRUE, the
-spatial network is a deluanay network.}
+\item{delaunay_spat_net}{binary parameter for spatial network. If TRUE, the
+spatial network is a delaunay network.}
 
 \item{spat_unit}{desired spatial unit for conversion, default NULL}
 
@@ -61,12 +61,4 @@ The returned Giotto Object will take default insructions with the
 exception of the python path, which may be customized.
 See \code{\link{changeGiottoInstructions}} to modify instructions after
 creation.
-}
-\examples{
-g <- GiottoData::loadGiottoMini("visium")
-temp_directory <- tempdir()
-giottoToAnnData(g, save_directory = paste0(temp_directory,"/"))
-
-anndataToGiotto(anndata_path = paste0(temp_directory,
-"/cell_rna_converted_gobject.h5ad"))
 }

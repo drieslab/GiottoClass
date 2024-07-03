@@ -13,7 +13,7 @@
 #' @keywords show
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' showGiottoExpression(g)
 #' @export
 showGiottoExpression <- function(gobject, nrows = 4, ncols = 4) {
@@ -119,12 +119,11 @@ showGiottoExpression <- function(gobject, nrows = 4, ncols = 4) {
 #' @keywords show
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' showGiottoCellMetadata(g)
 #' @export
-showGiottoCellMetadata <- function(
-        gobject,
-        nrows = 4) {
+showGiottoCellMetadata <- function(gobject,
+    nrows = 4) {
     # import print styling
     ch <- box_chars()
     ct <- color_tag()
@@ -209,12 +208,11 @@ showGiottoCellMetadata <- function(
 #' @keywords show
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' showGiottoFeatMetadata(g)
 #' @export
-showGiottoFeatMetadata <- function(
-        gobject,
-        nrows = 4) {
+showGiottoFeatMetadata <- function(gobject,
+    nrows = 4) {
     # import print styling
     ch <- box_chars()
     ct <- color_tag()
@@ -300,12 +298,11 @@ showGiottoFeatMetadata <- function(
 #' @keywords show
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' showGiottoSpatLocs(g)
 #' @export
-showGiottoSpatLocs <- function(
-        gobject,
-        nrows = 4) {
+showGiottoSpatLocs <- function(gobject,
+    nrows = 4) {
     # import print styling
     ch <- box_chars()
     ct <- color_tag()
@@ -422,15 +419,13 @@ showGiottoSpatLocs <- function(
 #' @keywords show
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' showGiottoSpatEnrichments(g)
 #' @export
-showGiottoSpatEnrichments <- function(
-        gobject,
-        nrows = 4) {
-    # define for data.table [] subsetting
-    spat_unit <- NULL
-    feat_type <- NULL
+showGiottoSpatEnrichments <- function(gobject,
+    nrows = 4) {
+    # NSE vars
+    spat_unit <- feat_type <- name <- NULL
 
     if (is.null(gobject)) stop("A giotto object needs to be provided \n")
 
@@ -442,12 +437,16 @@ showGiottoSpatEnrichments <- function(
         cat("Spatial unit: ", spatial_unit, " \n\n")
 
         for (feature_type in
-            available_data[spat_unit == spatial_unit][["feat_type"]]) {
-            cat("--> Feature type: ", feature_type, " \n\n")
+            available_data[spat_unit == spatial_unit, unique(feat_type)]) {
+            cat("--> Feature type: ", feature_type, " \n")
 
             for (spatenrichname in
-                available_data[spat_unit == spatial_unit][feat_type == feature_type][["name"]]) {
-                cat("----> Name ", spatenrichname, ": \n\n")
+                available_data[
+                    spat_unit == spatial_unit
+                ][
+                    feat_type == feature_type, unique(name)
+                ]) {
+                cat("\n----> Name ", spatenrichname, ": \n")
 
                 print(gobject@spatial_enrichment[[spatial_unit]][[
                     feature_type
@@ -473,13 +472,12 @@ showGiottoSpatEnrichments <- function(
 #' @keywords show
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' showGiottoDimRed(g)
 #' @export
-showGiottoDimRed <- function(
-        gobject,
-        nrows = 3,
-        ncols = 2) {
+showGiottoDimRed <- function(gobject,
+    nrows = 3,
+    ncols = 2) {
     # Define for data.table
     data_type <- NULL
 
@@ -629,12 +627,11 @@ showGiottoDimRed <- function(
 #' @keywords show
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' showGiottoNearestNetworks(g)
 #' @export
-showGiottoNearestNetworks <- function(
-        gobject,
-        nrows = 3) {
+showGiottoNearestNetworks <- function(gobject,
+    nrows = 3) {
     # import print styling
     ch <- box_chars()
     ct <- color_tag()
@@ -750,7 +747,7 @@ showGiottoNearestNetworks <- function(
 #' @keywords show
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' showGiottoSpatialInfo(g)
 #' @export
 showGiottoSpatialInfo <- function(gobject) {
@@ -777,7 +774,7 @@ showGiottoSpatialInfo <- function(gobject) {
 #' @returns SpatVector
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' showGiottoFeatInfo(g)
 #' @export
 showGiottoFeatInfo <- function(gobject) {
@@ -808,12 +805,11 @@ showGiottoFeatInfo <- function(gobject) {
 #' @keywords show
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
-#' 
+#'
 #' showGiottoSpatNetworks(g)
 #' @export
-showGiottoSpatNetworks <- function(
-        gobject,
-        nrows = 4) {
+showGiottoSpatNetworks <- function(gobject,
+    nrows = 4) {
     # import print styling
     ch <- box_chars()
     ct <- color_tag()
@@ -917,12 +913,11 @@ showNetworks <- function(...) {
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #' g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
-#' 
+#'
 #' showGiottoSpatGrids(g)
 #' @export
-showGiottoSpatGrids <- function(
-        gobject,
-        nrows = 4) {
+showGiottoSpatGrids <- function(gobject,
+    nrows = 4) {
     # import boxchars
     ch <- box_chars()
 
@@ -1028,7 +1023,7 @@ showGrids <- function(...) {
 #' @keywords show
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' showGiottoImageNames(g)
 #' @export
 showGiottoImageNames <- function(gobject) {
@@ -1064,11 +1059,10 @@ showGiottoImageNames <- function(gobject) {
 #' @details Much inspiration taken from https://rdrr.io/cran/fs/src/R/tree.R
 #' @returns Hierarchical tree
 #' @keywords internal
-.print_leaf <- function(
-        level_index,
-        availableDT,
-        inherit_last = TRUE,
-        indent) {
+.print_leaf <- function(level_index,
+    availableDT,
+    inherit_last = TRUE,
+    indent) {
     ch <- box_chars()
 
     leafs <- unique(unlist(availableDT[, level_index, with = FALSE]))
@@ -1173,8 +1167,10 @@ showGiottoImageNames <- function(gobject) {
     print(spatlocs)
     cat("\nranges:\n")
     try(
-        expr = print(sapply(
-            slot(spatLocsObj, "coordinates")[, .(sdimx, sdimy)], range
+        expr = print(vapply(
+            slot(spatLocsObj, "coordinates")[, .(sdimx, sdimy)],
+            range,
+            FUN.VALUE = numeric(2L)
         )),
         silent = TRUE
     )

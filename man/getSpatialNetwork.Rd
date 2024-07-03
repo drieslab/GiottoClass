@@ -11,7 +11,8 @@ getSpatialNetwork(
   output = c("spatialNetworkObj", "networkDT", "networkDT_before_filter", "outputObj"),
   set_defaults = TRUE,
   copy_obj = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  simplify = TRUE
 )
 }
 \arguments{
@@ -32,6 +33,9 @@ expression and spat_info are not expected to exist.}
 object (default = TRUE)}
 
 \item{verbose}{be verbose}
+
+\item{simplify}{logical. Whether or not to take object out of a list when
+there is a length of 1.}
 }
 \value{
 spatialNetworkObj of data.table

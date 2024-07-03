@@ -13,10 +13,14 @@
 #' the center of the extent of x is used
 #' @param z0 numeric. z-coordinate of the center of rescaling. If missing,
 #' the center of the extent of x is used (only for supported objects)
+#' @details
+#' With the `giotto` object, the ":all:" token can be passed to `spat_unit`,
+#' `feat_type`, and `images` arguments to affect all available items.
+#'
 #' @returns re-scaled object
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("spatLocsObj")
-#' 
+#'
 #' rescale(g)
 NULL
 # ------------------------------------------------------------------- #
@@ -25,17 +29,42 @@ NULL
 #' @rdname rescale
 #' @param spat_unit character vector. spatial units to affect
 #' @param feat_type character vector. feature types to affect
+#' @param images character vector. Images to affect
 #' @export
 setMethod(
     "rescale", signature("giotto"),
     function(x, fx = 1, fy = fx, x0, y0, spat_unit = ":all:",
-    feat_type = ":all:") {
+             feat_type = ":all:", images = ":all:"
+    ) {
+        # scalefactor settings
         a <- list(fx = fx, fy = fy)
+
         if (!missing(x0)) a$x0 <- x0
         if (!missing(y0)) a$y0 <- y0
 
-        checkmate::assert_character(spat_unit)
-        checkmate::assert_character(feat_type)
+        spat_unit <- set_default_spat_unit(
+            gobject = x, spat_unit = spat_unit
+        )
+        feat_type <- set_default_feat_type(
+            gobject = x, spat_unit = spat_unit, feat_type = feat_type
+        )
+
+        # if no rescale center provided, use center of gobject data to use
+        if (is.null(a$x0) || is.null(a$y0)) {
+            # find center
+            centroid <- ext(x,
+                spat_unit = spat_unit,
+                feat_type = feat_type,
+                all_data = TRUE
+            ) %>%
+                as.polygons() %>%
+                centroids() %>%
+                data.table::as.data.table(geom = "XY")
+
+            if (is.null(a$x0)) a$x0 <- centroid$x
+            if (is.null(a$y0)) a$y0 <- centroid$y
+        }
+
         all_su <- spat_unit == ":all:"
         all_ft <- feat_type == ":all:"
 
@@ -104,6 +133,17 @@ setMethod(
                 x <- setFeatureInfo(x, pt, verbose = FALSE, initialize = FALSE)
             }
         }
+
+        # images ----------------------------------------------------------- #
+        imgs <- getGiottoImage(x, name = images)
+        if (!is.null(imgs)) {
+            if (!inherits(imgs, "list")) imgs <- list(imgs)
+            for(img in imgs) {
+                img <- do.call(rescale, args = c(list(x = img), a))
+                x <- setGiottoImage(x, img, verbose = FALSE)
+            }
+        }
+
         return(initialize(x)) # init not necessarily needed
     }
 )
@@ -128,9 +168,8 @@ setMethod(
 #' columns. Default is `c("sdimx", "sdimy", "sdimz")`
 setMethod(
     "rescale", signature("data.frame"),
-    function(
-        x, fx = 1, fy = fx, fz = fx, x0, y0, z0,
-        geom = c("sdimx", "sdimy", "sdimz")) {
+    function(x, fx = 1, fy = fx, fz = fx, x0, y0, z0,
+    geom = c("sdimx", "sdimy", "sdimz")) {
         x <- data.table::as.data.table(x)
 
         # find center
@@ -191,6 +230,39 @@ setMethod("rescale", signature("giottoLargeImage"), function(x, fx = 1, fy = fx,
     return(x)
 })
 
+#' @rdname rescale
+#' @export
+setMethod("rescale", signature("affine2d"), function(x, fx = 1, fy = fx, x0, y0) {
+    a <- get_args_list()
+    
+    # update linear
+    scale_m <- diag(c(fx, fy))
+    old_aff <- new_aff <- x@affine
+    .aff_linear_2d(new_aff) <- .aff_linear_2d(new_aff) %*% scale_m
+
+    ## calc shifts ##
+    # create dummy
+    d <- .bound_poly(x@anchor)
+    # perform transforms so far
+    a$x <- affine(d, old_aff)
+    # perform new transform
+    post <- do.call(rescale, args = a)
+    
+    # perform affine & transform without shifts
+    b <- a
+    b$x0 <- b$y0 <- 0
+    b$x <- affine(d, .aff_linear_2d(old_aff))
+    pre <- do.call(rescale, args = b)
+    
+    # find xyshift by comparing tfs so far vs new tf
+    xyshift <- .get_centroid_xy(post) - .get_centroid_xy(pre)
+    
+    # update translate
+    .aff_shift_2d(new_aff) <- xyshift
+    
+    x@affine <- new_aff
+    return(initialize(x))
+})
 
 
 # TODO more methods for other objects
@@ -222,11 +294,10 @@ setMethod("rescale", signature("giottoLargeImage"), function(x, fx = 1, fy = fx,
 #' be applied to x, y, and z (if available) dimensions or as a vector of named
 #' values for 'x', y', (and 'z').
 #' @keywords internal
-.scale_spatial_locations <- function(
-        spatlocs,
-        scale_factor = c(1, 1, 1),
-        scenter = c(0, 0, 0),
-        geom = c("sdimx", "sdimy", "sdimz")) {
+.scale_spatial_locations <- function(spatlocs,
+    scale_factor = c(1, 1, 1),
+    scenter = c(0, 0, 0),
+    geom = c("sdimx", "sdimy", "sdimz")) {
     checkmate::assert_data_table(spatlocs)
 
     xyz <- c("x", "y", "z")
@@ -284,10 +355,9 @@ setMethod("rescale", signature("giottoLargeImage"), function(x, fx = 1, fy = fx,
 #' @returns polygons
 #' @description  rescale individual polygons by a factor x and y
 #' @keywords internal
-.rescale_polygons <- function(
-        spatVector,
-        spatVectorCentroids,
-        fx = 0.5, fy = 0.5) {
+.rescale_polygons <- function(spatVector,
+    spatVectorCentroids,
+    fx = 0.5, fy = 0.5) {
     # DT vars
     poly_ID <- NULL
 
@@ -327,17 +397,16 @@ setMethod("rescale", signature("giottoLargeImage"), function(x, fx = 1, fy = fx,
 #' @concept polygon scaling
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' rescalePolygons(g, poly_info = "aggregate")
 #' @export
-rescalePolygons <- function(
-        gobject,
-        poly_info = "cell",
-        name = "rescaled_cell",
-        fx = 0.5,
-        fy = 0.5,
-        calculate_centroids = TRUE,
-        return_gobject = TRUE) {
+rescalePolygons <- function(gobject,
+    poly_info = "cell",
+    name = "rescaled_cell",
+    fx = 0.5,
+    fy = 0.5,
+    calculate_centroids = TRUE,
+    return_gobject = TRUE) {
     # 1. get polygon information
     original <- get_polygon_info(
         gobject = gobject,

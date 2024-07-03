@@ -47,9 +47,8 @@ setMethod("plot", signature(x = "giottoImage", y = "missing"), function(x, y, ..
 setMethod(
     "plot",
     signature(x = "giottoLargeImage", y = "missing"),
-    function(
-        x, y, col, max_intensity, mar, asRGB = FALSE, legend = FALSE, axes = TRUE,
-        maxcell = 5e5, smooth = TRUE, ...) {
+    function(x, y, col, max_intensity, mar, asRGB = FALSE, legend = FALSE, axes = TRUE,
+    maxcell = 5e5, smooth = TRUE, ...) {
         arglist <- list(
             giottoLargeImage = x,
             asRGB = asRGB,
@@ -102,11 +101,12 @@ setMethod(
 #' @export
 setMethod(
     "plot", signature(x = "giottoPolygon", y = "missing"),
-    function(x,
-    point_size = 0.6,
-    type = c("poly", "centroid"),
-    max_poly = getOption("giotto.plot_max_poly", 1e4),
-    ...) {
+    function(
+        x,
+        point_size = 0.6,
+        type = c("poly", "centroid"),
+        max_poly = getOption("giotto.plot_max_poly", 1e4),
+        ...) {
         if (length(x@unique_ID_cache) == 0) {
             stop(wrap_txt("No geometries to plot"), call. = FALSE)
         }
@@ -138,17 +138,16 @@ setMethod(
 #' when `raster = FALSE`
 #' Allows the following additional params when
 #' plotting with no specific `feats` input:
-#' \itemize{
-#'   \item{**force_size** }{logical. `raster_size` param caps at 1:1 with the
+#'   * **force_size** logical. `raster_size` param caps at 1:1 with the
 #'   spatial extent, but also with a minimum resulting px dim of 100. To ignore
-#'   these constraints, set `force_size = FALSE`}
-#'   \item{**dens** }{logical. Show point density using `count` statistic per
+#'   these constraints, set `force_size = FALSE`
+#'   * **dens** logical. Show point density using `count` statistic per
 #'   rasterized cell. (Default = FALSE). This param affects `col` param is
 #'   defaults. When TRUE, `col` is `grDevices::hcl.colors(256)`. When `FALSE`,
-#'   "black" and "white" are used.}
-#'   \item{**background** }{(optional) background color. Usually not used when a
-#'   `col` color mapping is sufficient.}
-#' }
+#'   "black" and "white" are used.
+#'   * **background** (optional) background color. Usually not used when a
+#'   `col` color mapping is sufficient.
+#' 
 #' Note that `col` param and other [base::plot()] graphical params are available
 #' through `...`
 #' @examples
@@ -292,9 +291,16 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 })
 
 
-
-
-
+#' @describeIn plot-generic Plot a affine2d. blue is start, red is end
+#' @export
+setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
+    a <- as.polygons(ext(x@anchor))
+    a$id <- "start"
+    b <- affine(a, x)
+    b$id <- "end"
+    res <- rbind(a, b)
+    terra::plot(res, border = c("blue", "red"), alpha = 0.5)
+})
 
 # internals ####
 
@@ -403,10 +409,9 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @param giottoImage giottoImage object
 #' @return plot
 #' @keywords internal
-.plot_giottoimage_mg <- function(
-        gobject = NULL,
-        image_name = NULL,
-        giottoImage = NULL) {
+.plot_giottoimage_mg <- function(gobject = NULL,
+    image_name = NULL,
+    giottoImage = NULL) {
     if (!is.null(giottoImage)) {
         graphics::plot(giottoImage@mg_object)
     } else {
@@ -424,7 +429,6 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 
 
 
-# TODO link this up to plot_auto_largeImage_resample() ?
 
 #' @title .plot_giottolargeimage
 #' @name .plot_giottolargeimage
@@ -453,26 +457,25 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' depending on image type
 #' @return plot
 #' @keywords internal
-.plot_giottolargeimage <- function(
-        gobject = NULL,
-        largeImage_name = NULL,
-        giottoLargeImage = NULL,
-        crop_extent = NULL,
-        xmax_crop = NULL,
-        xmin_crop = NULL,
-        ymax_crop = NULL,
-        ymin_crop = NULL,
-        max_intensity = NULL,
-        asRGB = FALSE,
-        stretch = NULL,
-        axes = TRUE,
-        smooth = TRUE,
-        mar = c(3, 5, 1.5, 1),
-        legend = FALSE,
-        maxcell = 5e5,
-        col = grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1),
-        asp = 1,
-        ...) {
+.plot_giottolargeimage <- function(gobject = NULL,
+    largeImage_name = NULL,
+    giottoLargeImage = NULL,
+    crop_extent = NULL,
+    xmax_crop = NULL,
+    xmin_crop = NULL,
+    ymax_crop = NULL,
+    ymin_crop = NULL,
+    max_intensity = NULL,
+    asRGB = FALSE,
+    stretch = NULL,
+    axes = TRUE,
+    smooth = TRUE,
+    mar = c(3, 5, 1.5, 1),
+    legend = FALSE,
+    maxcell = 5e5,
+    col = grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1),
+    asp = 1,
+    ...) {
     a <- c(get_args_list(), list(...))
 
     # Get giottoLargeImage and check and perform crop if needed
@@ -543,13 +546,12 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @param ... additional params to pass to plot functions
 #' @keywords internal
 #' @noRd
-.plot_giotto_points <- function(
-        x,
-        point_size = 0,
-        feats = NULL,
-        raster = TRUE,
-        raster_size = 600L,
-        ...) {
+.plot_giotto_points <- function(x,
+    point_size = 0,
+    feats = NULL,
+    raster = TRUE,
+    raster_size = 600L,
+    ...) {
     args_list <- list(feats, asp = 1L, ...)
 
     # point size
@@ -747,7 +749,12 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
     data.table::setkey(dataDT, "feat_ID")
     dataDT <- dataDT[feat_ID %in% feats]
     dataDT[, feat_color_idx :=
-        sapply(feat_ID, function(feat_i) which(feats == feat_i))]
+        vapply(
+            feat_ID,
+            function(feat_i) which(feats == feat_i),
+            FUN.VALUE = integer(1L)
+        )
+    ]
 
     args_list$x <- dataDT$x
     args_list$y <- dataDT$y
@@ -820,8 +827,9 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 #' @param ... additional params to pass to plot function
 #' @keywords internal
 #' @noRd
-.plot_giotto_polygon <- function(x, point_size = 0.6,
-    type = c("poly", "centroid"), ...) {
+.plot_giotto_polygon <- function(
+        x, point_size = 0.6,
+        type = c("poly", "centroid"), ...) {
     a <- list(...)
 
     type <- match.arg(type, choices = c("poly", "centroid"))

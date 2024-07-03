@@ -118,31 +118,11 @@ setMethod(
         avail_im <- list_images(object)
         if (!is.null(avail_im)) {
             cat("attached images ------------------\n")
-            if ("image" %in% avail_im$img_type) {
-                if (sum(avail_im$img_type == "image") > 3) {
-                    cat(
-                        "giottoImage      :",
-                        sum(avail_im$img_type == "image"), "items...\n"
-                    )
+            if (!is.null(avail_im)) {
+                if (nrow(avail_im) > 3L) {
+                    cat("images      :", nrow(avail_im), "items...\n")
                 } else {
-                    cat(
-                        "giottoImage      :",
-                        wrap_txt(avail_im[img_type == "image", name]), "\n"
-                    )
-                }
-            }
-            if ("largeImage" %in% avail_im$img_type) {
-                if (sum(avail_im$img_type == "largeImage") > 3) {
-                    cat(
-                        "giottoLargeImage :",
-                        sum(avail_im$img_type == "largeImage"), "items...\n"
-                    )
-                } else {
-                    cat(
-                        "giottoLargeImage :",
-                        wrap_txt(avail_im[img_type == "largeImage", name]),
-                        "\n"
-                    )
+                    cat("images      :", wrap_txt(avail_im[, name]), "\n")
                 }
             }
         }
@@ -367,35 +347,31 @@ setMethod(
 #' @aliases show,spatLocsObj-method
 #' @docType methods
 #' @rdname show-methods
-setMethod(
-    f = "show", signature("spatLocsObj"), function(object) {
-        sdimx <- sdimy <- NULL
-
-        show_class_and_name(object)
-        show_spat(object)
-        show_prov(object)
-
-        cat("   ------------------------\n\npreview:\n")
-        if (!is.null(slot(object, "coordinates"))) {
-            show(head(slot(object, "coordinates"), 3L))
-        }
-
-        cat("\nranges:\n")
-
-        col_names <- colnames(object)
-        coord_cols <- col_names[col_names %in% c("sdimx", "sdimy", "sdimz")]
-
-        try(
-            expr = print(sapply(
-                slot(object, "coordinates")[, c(coord_cols), with = FALSE],
-                range
-            )),
-            silent = TRUE
-        )
-
-        cat("\n")
+setMethod("show", signature("spatLocsObj"), function(object) {
+    show_class_and_name(object)
+    show_spat(object)
+    show_prov(object)
+    
+    cat("   ------------------------\n\npreview:\n")
+    if (!is.null(slot(object, "coordinates"))) {
+        show(head(slot(object, "coordinates"), 3L))
     }
-)
+    
+    # print ranges if possible
+    cat("\nranges:\n")
+    col_names <- colnames(slot(object, "coordinates"))
+    coord_cols <- col_names[col_names %in% c("sdimx", "sdimy", "sdimz")]
+    
+    try(
+        expr = print(vapply(
+            slot(object, "coordinates")[, c(coord_cols), with = FALSE],
+            range,
+            FUN.VALUE = numeric(2L)
+        )),
+        silent = TRUE
+    )
+    cat("\n")
+})
 
 
 
@@ -745,7 +721,10 @@ setMethod(
     }
 )
 
-
+# internal
+setMethod("as.character", signature("giottoImage"), function(x, ...) {
+    sprintf("<%s> %s", class(x), objName(x))
+})
 
 
 
@@ -800,6 +779,40 @@ setMethod(
 )
 
 
+
+
+#' @rdname show-methods
+setMethod("show", signature("affine2d"), function(object) {
+    cat("<affine2d>\n")
+    .anchor_print <- function() {
+        paste(object@anchor, collapse = ", ") %>%
+            paste(" (xmin, xmax, ymin, ymax)")
+    }
+    .rad_val_show <- function() {
+        paste(object@rotate, " (rad)")
+    }
+    .xy_val_show <- function(x) {
+        paste(x, collapse = ", ") %>%
+            paste(" (x, y)")
+    }
+    
+    showlist <- list()
+    showlist$anchor <- .anchor_print()
+    for (tf in object@order) {
+        if (tf == "rotate") {
+            showlist$rotate <- .rad_val_show()
+            next
+        }
+        showlist[[tf]] <- .xy_val_show(slot(object, tf))
+    }
+    GiottoUtils::print_list(showlist)
+})
+
+
+# internal
+setMethod("as.character", signature("giottoLargeImage"), function(x, ...) {
+    sprintf("<%s> %s", class(x), objName(x))
+})
 
 
 
