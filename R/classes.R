@@ -1596,11 +1596,15 @@ giottoImage <- setClass(
 # giottoLargeImage class
 
 #' @title S4 giottoLargeImage Class
-#' @description class to handle images too large to load in normally through
-#' magick
+#' @description Image class for Giotto that uses \pkg{terra} `SpatRaster` as
+#' a backend. If images are loaded from a file on disk then they are worked
+#' with lazily, where only the values needed at any moment are loaded/sampled
+#' into memory. Since `SpatRaster` objects are C pointers, `giottoLargeImage`
+#' and inheriting classes need to run `reconnect()` after loading from a
+#' saved object.
 #' @concept giotto object image
 #' @slot name name of large Giotto image
-#' @slot raster_object terra raster object
+#' @slot raster_object terra `SpatRaster` object
 #' @slot extent tracks the extent of the raster object. Note that most
 #' processes should rely on the extent of the raster object instead of this.
 #' @slot overall_extent terra extent object covering the original extent of
