@@ -227,7 +227,11 @@ setMethod("ext", signature("giotto"), function(x,
     return(e)
 })
 
-
+#' @rdname ext
+#' @export
+setMethod("ext", signature("giottoAffineImage"), function(x, ...) {
+    ext(x@extent)
+})
 
 
 

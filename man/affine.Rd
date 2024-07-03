@@ -8,6 +8,9 @@
 \alias{affine,giottoPoints,matrix-method}
 \alias{affine,giottoPolygon,matrix-method}
 \alias{affine,spatLocsObj,matrix-method}
+\alias{affine,giottoLargeImage,matrix-method}
+\alias{affine,giottoAffineImage,matrix-method}
+\alias{affine,affine2d,matrix-method}
 \title{Affine transformations}
 \usage{
 \S4method{affine}{ANY,missing}(x)
@@ -21,6 +24,12 @@
 \S4method{affine}{giottoPolygon,matrix}(x, y, inv = FALSE, ...)
 
 \S4method{affine}{spatLocsObj,matrix}(x, y, inv = FALSE, ...)
+
+\S4method{affine}{giottoLargeImage,matrix}(x, y, inv = FALSE, ...)
+
+\S4method{affine}{giottoAffineImage,matrix}(x, y, inv = FALSE, ...)
+
+\S4method{affine}{affine2d,matrix}(x, y, inv = FALSE, ...)
 }
 \arguments{
 \item{x}{object}

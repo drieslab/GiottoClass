@@ -566,7 +566,7 @@ setMethod(
 )
 
 
-## transform_plan_2d
+## affine2d ####
 setMethod("initialize", "affine2d", function(.Object, ...) {
     .Object <- methods::callNextMethod()
     .Object@anchor <- ext(.Object@anchor) %>%
@@ -583,10 +583,91 @@ setMethod("initialize", "affine2d", function(.Object, ...) {
     return(.Object)
 })
 
+## giottoLargeImage ####
+setMethod("initialize", signature("giottoLargeImage"), function(.Object, ...) {
+    .Object <- methods::callNextMethod()
+    
+    # defaults
+    .Object@OS_platform <- .Object@OS_platform %null% .Platform[["OS.type"]]
+    objName(.Object) <- objName(.Object) %null% "image"
+    
+    r <- .Object@raster_object
+    if (is.null(r)) return(.Object) # return early if NULL
+    
+    # scale factor and res
+    .Object@resolution <- terra::res(r)
+    names(.Object@resolution) <- c("x", "y")
+    .Object@scale_factor <- 1 / .Object@resolution
+    
+    # sample for image characteristics
+    svals <- .spatraster_sample_values(r, size = 5000, verbose = FALSE)
+    
+    if (nrow(svals) != 0) {
+        intensity_range <- .spatraster_intensity_range(
+            raster_object = r,
+            sample_values = svals
+        )
+    }
+    .Object@min_intensity <- intensity_range[["min"]]
+    .Object@max_intensity <- intensity_range[["max"]]
+    
+    # find out if image is int or floating pt
+    is_int <- .spatraster_is_int(
+        raster_object = r,
+        sample_values = svals
+    )
+    .Object@is_int <- is_int
+    
+    # extent
+    .Object@extent <- as.vector(terra::ext(r))
+    .Object@overall_extent <- .Object@overall_extent %null%
+        as.vector(terra::ext(r))
+    
+    # max window
+    .Object@max_window <- .Object@max_window %na% 
+        .bitdepth(.Object@max_intensity, return_max = TRUE)
+    
+    return(.Object)
+})
 
-
-
-
+## giottoAffineImage ####
+setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
+    .Object <- methods::callNextMethod()
+    
+    # default name
+    if (is.null(objName(.Object))) {
+        objName(.Object) <- "test"
+    }
+    
+    # append associated functions
+    
+    
+    r <- .Object@raster_object
+    if (!is.null(r)) {
+        # apply the image extent as anchor for affine object plotting
+        .Object@affine@anchor <- ext(r)
+        .Object@affine <- initialize(.Object@affine)
+        
+        # compute & set extent slot as a numeric vector
+        d <- .bound_poly(r) %>%
+            affine(.Object@affine)
+        .Object@extent <- .ext_to_num_vec(ext(d))
+    }
+    
+    .Object@funs$realize_magick <- function(tempname = "preview", size = 5e5) {
+        mg <- .gaffine_realize_magick(.Object, size = size)
+        gimg <- .magick_preview(mg@mg_object, tempname = tempname) %>%
+            createGiottoLargeImage()
+        ext(gimg) <- ext(.Object)
+        return(gimg)
+        # TODO things to be implemented for this pipeline:
+        # col (the trip the magick-image flattened the image without applying col)
+        # max_intensity same as above
+        # the above options are also stripped when the fresh largeImage is created
+    }
+    
+    return(.Object)
+})
 
 
 

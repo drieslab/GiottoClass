@@ -5,6 +5,7 @@
 \alias{plot}
 \alias{plot,giottoImage,missing-method}
 \alias{plot,giottoLargeImage,missing-method}
+\alias{plot,giottoAffineImage,missing-method}
 \alias{plot,giottoPolygon,missing-method}
 \alias{plot,giottoPoints,missing-method}
 \alias{plot,spatLocsObj,missing-method}
@@ -28,6 +29,8 @@
   smooth = TRUE,
   ...
 )
+
+\S4method{plot}{giottoAffineImage,missing}(x, y, ...)
 
 \S4method{plot}{giottoPolygon,missing}(
   x,

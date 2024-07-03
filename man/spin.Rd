@@ -7,6 +7,8 @@
 \alias{spin,giottoPoints-method}
 \alias{spin,spatLocsObj-method}
 \alias{spin,data.frame-method}
+\alias{spin,giottoLargeImage-method}
+\alias{spin,giottoAffineImage-method}
 \alias{spin,affine2d-method}
 \title{Spin an object}
 \usage{
@@ -38,6 +40,10 @@
   xz_angle = NULL,
   geom = c("sdimx", "sdimy", "sdimz")
 )
+
+\S4method{spin}{giottoLargeImage}(x, angle = NULL, x0 = NULL, y0 = NULL, ...)
+
+\S4method{spin}{giottoAffineImage}(x, angle = NULL, x0 = NULL, y0 = NULL, ...)
 
 \S4method{spin}{affine2d}(x, angle = NULL, x0 = NULL, y0 = NULL)
 }

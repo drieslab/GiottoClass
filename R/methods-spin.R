@@ -206,6 +206,31 @@ setMethod(
     }
 )
 
+
+#' @rdname spin
+#' @export
+setMethod("spin", signature("giottoLargeImage"), function(
+        x, angle = NULL, x0 = NULL, y0 = NULL, ...
+) {
+    a <- get_args_list(...)
+    a$x <- as(x, "giottoAffineImage") # convert to giottoAffineImage
+    res <- do.call(spin, args = a)
+    return(res)
+})
+
+#' @rdname spin
+#' @export
+setMethod("spin", signature("giottoAffineImage"), function(
+        x, angle = NULL, x0 = NULL, y0 = NULL, ...
+) {
+    a <- get_args_list(...)
+    a$x <- x@affine
+    # update affine
+    x@affine <- do.call(spin, args = a)
+    
+    return(initialize(x))
+})
+
 #' @rdname spin
 #' @export
 setMethod("spin", signature("affine2d"), function(
