@@ -235,6 +235,14 @@ setMethod(
 
 #' @rdname spatShift
 #' @export
+setMethod("spatShift", signature("giottoAffineImage"),
+          function(x, dx = 0, dy = 0, ...) {
+              x@affine <- spatShift(x@affine, dx = dx, dy = dy, ...)
+              return(initialize(x))
+          })
+
+#' @rdname spatShift
+#' @export
 setMethod(
     "spatShift", signature("affine2d"),
     function(x, dx = 0, dy = 0, ...) {
