@@ -99,6 +99,41 @@ setMethod(
 )
 
 
+#' @rdname affine
+#' @export
+setMethod("affine", signature(x = "affine2d", y = "matrix"), function(
+    x, y, inv = FALSE, ...   
+) {
+    a <- get_args_list()
+    # update linear
+    m <- .aff_linear_2d(y)
+    if (isTRUE(inv)) m <- solve(m)
+    old_aff <- new_aff <- x@affine
+    .aff_linear_2d(new_aff) <- .aff_linear_2d(new_aff) %*% m
+    
+    ## calc shifts ##
+    # create dummy
+    d <- .bound_poly(x@anchor)
+    # perform transforms so far
+    a$x <- affine(d, old_aff)
+    # perform new transform
+    post <- do.call(affine, args = a)
+    
+    # perform affine & transform without shifts
+    b <- a
+    b$y <- .aff_linear_2d(y)
+    b$x <- affine(d, .aff_linear_2d(old_aff))
+    pre <- do.call(affine, args = b)
+    
+    # find xyshift by comparing tfs so far vs new tf
+    xyshift <- .get_centroid_xy(post) - .get_centroid_xy(pre)
+    
+    # update translate
+    .aff_shift_2d(new_aff) <- xyshift 
+
+    x@affine <- new_aff
+    return(initialize(x))
+})
 
 
 # internals ####
