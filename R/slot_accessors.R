@@ -1438,11 +1438,11 @@ getExpression <- function(
         feat_type = NULL,
         output = c("exprObj", "matrix"),
         set_defaults = TRUE) {
-    # 0. Check input
+    
+  
+  # 0. Check input
     assert_giotto(gobject)
     output <- match.arg(output, choices = c("exprObj", "matrix"))
-
-
 
     # 1. Set feat_type and spat_unit
     if (isTRUE(set_defaults)) {
@@ -1503,13 +1503,19 @@ get_expression_values <- function(
         gobject,
         spat_unit = NULL,
         feat_type = NULL,
-        values = NULL,
+        values = c('raw', 'normalized', 'scaled'),
         output = c("exprObj", "matrix"),
         set_defaults = TRUE) {
     deprecate_soft("3.3.0", "get_expression_values()", "getExpression()")
 
     assert_giotto(gobject)
 
+    ## check parameters
+    values <- match.arg(
+      arg = values,
+      choices = unique(c("raw", "normalized", "scaled", values))
+    )
+    
     output <- match.arg(output, choices = c("exprObj", "matrix"))
 
     # 1. Set feat_type and spat_unit
@@ -1525,6 +1531,7 @@ get_expression_values <- function(
         )
     }
 
+    
     # 2. Find object
     potential_values <- list_expression_names(
         gobject = gobject,
