@@ -745,7 +745,7 @@ setMethod(
     signature = "giottoLargeImage",
     definition = function(object) {
         if (is.null(object@raster_object)) {
-            cat("NULL giottoLargeImage")
+            cat("NULL", class(object))
         } else {
             e <- ext(object)
             img_dim <- dim(object)[c(2, 1, 3)] # x, y, layers
@@ -777,7 +777,6 @@ setMethod(
         }
     }
 )
-
 
 
 
