@@ -1658,11 +1658,22 @@ giottoLargeImage <- setClass(
     )
 )
 
+#' @title S4 giottoAffineImage Class
+#' @description
+#' Class extending `giottoLargeImage`. When `shear()` or `spin()` operations
+#' are performed on  
+#' 
+#' 
+#' @slot affine contains `affine2d` object allowing lazily performed spatial
+#' transforms
+#' @slot funs list of functions associated with the object. Primarily to 
+#' perform the delayed/lazy operations
 setClass(
     "giottoAffineImage",
     contains = c("giottoLargeImage"),
     slots = c(
-        affine = "affine2d"
+        affine = "affine2d",
+        funs = "list"
     )
 )
 
