@@ -243,6 +243,18 @@ setMethod("rescale", signature("giottoLargeImage"), function(x, fx = 1, fy = fx,
 
 #' @rdname rescale
 #' @export
+setMethod("rescale", signature("giottoAffineImage"), 
+          function(x, fx = 1, fy = fx, x0, y0) {
+    a <- get_args_list()
+    a$x <- x@affine
+    # update affine
+    x@affine <- do.call(rescale, args = a)
+    
+    return(initialize(x))
+})
+
+#' @rdname rescale
+#' @export
 setMethod("rescale", signature("affine2d"), function(x, fx = 1, fy = fx, x0, y0) {
     a <- get_args_list()
     
