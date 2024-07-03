@@ -8,7 +8,8 @@
 \S4method{as.points}{data.frame}(x, include_values = TRUE, specific_values = NULL)
 }
 \arguments{
-\item{x}{SpatRaster, SpatVector, SpatExtent, or correctly formatted data.frame}
+\item{x}{SpatRaster, SpatVector, SpatExtent, or correctly formatted
+data.frame}
 
 \item{include_values}{\code{logical}. Whether to include additional columns other
 than the geometry information as \code{SpatVector} attributes. Default is TRUE.}
@@ -16,14 +17,23 @@ than the geometry information as \code{SpatVector} attributes. Default is TRUE.}
 \item{specific_values}{\code{character}. Specific subset of columns to include as
 attributes if \code{include_values = TRUE}.}
 }
+\value{
+SpatVector points
+}
 \description{
 Coversion to a SpatVector of points.
+}
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPoints")
+
+as.points(slot(g, "spatVector"))
 }
 \seealso{
 \code{\link[terra:as.points]{terra::as.points()}}
 
 Other As coercion functions: 
 \code{\link{as.data.table}()},
+\code{\link{as.matrix}()},
 \code{\link{as.polygons}()},
 \code{\link{r_spatial_conversions}}
 }

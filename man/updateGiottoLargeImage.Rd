@@ -27,23 +27,26 @@ updateGiottoLargeImage(
 )
 }
 \arguments{
-\item{gobject}{\code{giotto} object containing giotto \code{largeImage} object}
+\item{gobject}{\code{giotto} object containing giotto \code{largeImage}
+object}
 
 \item{largeImage_name}{name of giotto \code{largeImage} object}
 
 \item{giottoLargeImage}{\code{largeImage} object to directly update}
 
-\item{xmax_adj, xmin_adj, ymax_adj, ymin_adj}{adjust image boundaries by increasing
-maximum and decreasing minimum bounds respectively of xy bounds}
+\item{xmax_adj, xmin_adj, ymax_adj, ymin_adj}{adjust image boundaries by
+increasing maximum and decreasing minimum bounds respectively of xy bounds}
 
 \item{x_shift, y_shift}{shift entire image along xy axes}
 
-\item{scale_factor}{set \code{scale_x} and \code{scale_y} params at the same time}
+\item{scale_factor}{set \code{scale_x} and \code{scale_y} params at the
+same time}
 
-\item{scale_x, scale_y}{independently scale x or y axis image mapping from coordinate origin}
+\item{scale_x, scale_y}{independently scale x or y axis image mapping from
+coordinate origin}
 
-\item{order}{order of operations between fine adjustments (adjustment and shift
-parameters) and scaling}
+\item{order}{order of operations between fine
+adjustments (adjustment and shift parameters) and scaling}
 
 \item{xmin_set, xmax_set, ymin_set, ymax_set}{directly set xy image boundaries.
 Overrides minmax values as spatial anchor.}
@@ -54,11 +57,20 @@ Overrides minmax values as spatial anchor.}
 \item{verbose}{be verbose}
 }
 \value{
-a \code{giotto} object or an updated giotto \code{largeImage} object if
-\code{return_gobject = FALSE}
+a \code{giotto} object or an updated giotto \code{largeImage} object
+if \code{return_gobject = FALSE}
 }
 \description{
-Updates the boundaries of a giotto \code{largeImage} object attached to
-a \code{giotto} object if both \code{gobject} and \code{largeImage_name} params
-are given. Alternatively can directly accept and return as \code{largeImage}
+Updates the boundaries of a giotto \code{largeImage} object
+attached to a \code{giotto} object if both \code{gobject}
+and \code{largeImage_name} params are given. Alternatively can directly
+accept and return as \code{largeImage}
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+updateGiottoLargeImage(g, largeImage_name = "image")
+}
+\seealso{
+\code{\link[=ext]{ext()}}
 }

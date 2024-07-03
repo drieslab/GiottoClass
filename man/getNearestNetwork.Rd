@@ -36,6 +36,11 @@ igraph or data.table object
 \description{
 Get a NN-network from a Giotto object
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+getNearestNetwork(gobject = g)
+}
 \seealso{
 Other expression space nearest network accessor functions: 
 \code{\link{get_NearestNetwork}()},

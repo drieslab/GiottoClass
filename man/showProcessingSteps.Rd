@@ -16,3 +16,8 @@ list of processing steps and names
 shows the sequential processing steps that were performed
 on a Giotto object in a summarized format
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+showProcessingSteps(g)
+}

@@ -19,14 +19,15 @@ has changed.}
 
 \item{...}{additional params to pass}
 }
+\value{
+GiottoClass object
+}
 \description{
 Reconnect a GiottoClass object
 }
 \examples{
-\dontrun{
-gimg <- GiottoData::loadSubObjectMini("giottoLargeImage")
-gimg@raster_object <- NULL
-gimg <- reconnect(gimg)
-plot(gimg)
-}
+g <- GiottoData::loadGiottoMini("visium")
+g_image <- getGiottoImage(g, image_type = "largeImage")
+
+reconnect(g_image)
 }

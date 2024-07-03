@@ -13,6 +13,9 @@
   ...
 )
 }
+\value{
+spatial 3D Delaunay network with geometry
+}
 \description{
 Create a spatial 3D Delaunay network with geometry
 }

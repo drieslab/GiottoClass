@@ -14,6 +14,9 @@ showGrids(...)
     \item{\code{nrows}}{number of rows to print}
   }}
 }
+\value{
+prints name of available spatial grids
+}
 \description{
 Show Spatial Grids
 }

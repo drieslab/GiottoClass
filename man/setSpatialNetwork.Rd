@@ -37,6 +37,12 @@ giotto object
 \description{
 Function to set a spatial network
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+spatnet <- getSpatialNetwork(g)
+
+setSpatialNetwork(gobject = g, x = spatnet)
+}
 \seealso{
 Other spatial network data accessor functions: 
 \code{\link{getSpatialNetwork}()},

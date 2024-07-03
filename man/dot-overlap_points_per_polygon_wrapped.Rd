@@ -10,6 +10,9 @@
   poly_ID_names
 )
 }
+\value{
+Packed object
+}
 \description{
 overlap wrapped polygons
 }

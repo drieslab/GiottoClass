@@ -10,6 +10,9 @@
   append_gpolygon = TRUE
 )
 }
+\value{
+SpatVector or giotto polygon
+}
 \description{
 calculates centroids from selected polygons
 }

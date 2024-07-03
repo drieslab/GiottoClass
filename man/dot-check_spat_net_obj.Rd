@@ -9,6 +9,9 @@
 \arguments{
 \item{object}{S4 spatialNetworkObj to check}
 }
+\value{
+character or TRUE
+}
 \description{
 Check function for S4 spatialNetworkObj
 }

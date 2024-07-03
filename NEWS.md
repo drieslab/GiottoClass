@@ -1,20 +1,51 @@
 
+# GiottoClass 0.3.1
 
-# GiottoClass 0.2.4
+## bug fixes
+- allow passing of additional params with `setGiotto()` with `...`
+- `spatShift()` can now perform z shifts when start `spatLocsObj` has no z information
+- fix bug in `joinGiottoObjects()` after v0.3.0 where it looks for the now non-existent `@largeImages` slot
+- fix bug in `.update_image_slot()` after v0.3.0 where a NULL `@largeImages` slot will result in an error
+- fix bugs in `spatShift()` and `rescale()` methods for `giotto` when setting a default `spat_unit` and `feat_type`
+
+## enhancements
+- `joinGiottoObjects()` extent detection and xshift defaults now depend on `ext()` of the gobject instead of any images (when available)
+- `joinGiottoObjects()` now has a `dry_run` param for previewing where datasets will be spatially located after the join
+
+## new
+- `as()` conversion from `giottoLargeImage` to `array`
+- `as.matrix()` method for `spatLocsObj()`
+
+
+# GiottoClass 0.3.0 (2024/05/13)
 
 ## breaking changes
 - deprecation of `reconnect_image_object()`, `reconnect_giottoImage_MG()` and `reconnect_giottoLargeImage()` internals in favor of simpler `reconnect()` generic
+- `giotto` `@largeImage` slot is removed. All images now exist in `@images` slot.
+- backwards compatibility for S3 `spatialNetworkObj` removed
+- Not finding a specific `spatialNetworkObj` with `getSpatialNetwork()` is now upgraded to an error instead of returning `NULL` to be in line with other accessors.
+- backwards compatibility for bare `data.table` spatial coordinates information is removed
 
 ## bug fixes
 - fix `plot()` params passing for `giottoPolygon` when `type = "centroid"`
+- fix `ext()` output for `giottoImage`
+- `spatShift()` and `rescale()` now also affect attached images [#865](https://github.com/drieslab/Giotto/issues/865) by rbutleriii
 
 ## enhancements
 - use faster `terra::rasterize()` and `terra::plot()` instead of `scattermore::scattermoreplot()` for `giottoPoints` `plot()` method
 - `plot()` `giottoPoints` method now plots density when `dens = TRUE`
+- `show_max` param in `density()` and `hist()` to plot the image object's `max_window` setting
+- `.identify_background_range_polygons()` now finds any polygons larger than a threshold percentage than the overall extent of the `SpatVector` input.
+- `ext()` can now be used with `giotto` objects [#865](https://github.com/drieslab/Giotto/issues/865) by rbutleriii
+- `ext()<-` can now be used with `giottoImage`
+- `as` conversion from `giottoLargeImage` to `giottoImage` (`giottoImage` is sampled)
+- `crop()` works for `spatialNetworkObj`
+
+## new
 - new `spatValues()` to get specific values from a `giotto` object in `data.table` format
 - new `ometif_to_tif` to convert between .ome.tif and .tif
 - new `terra::density()` and `terra::hist()` wrappers for `giottoLargeImage`
-- `show_max` param `density()` and `hist()` to show the image object's `max_window` setting
+
 
 
 
@@ -28,7 +59,6 @@
 - `createGiottoPoints` `data.frame` method can now select which columns to use with `x_colname`, `y_colname`, `feat_ID_colname` params
 - `giotto` now responds to spatial manipulation generics: `t()`, `flip()`, `rescale()`, `spatShift()`, `spin()`
 - `spatUnit()` and `featType()` are now vectorized
-- new `.evalute_extent()` internal that for fine extent modifications
 - internal `get_spatial_locations_list()` and `get_spatial_network_list()` accessors now accept ":all:" token to get all available, ignoring spat_unit
 
 

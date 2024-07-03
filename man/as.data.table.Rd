@@ -25,18 +25,28 @@
 \item{keep.rownames}{This argument is ignored}
 
 \item{geom}{character or NULL. If not NULL, either "XY", "WKT", or "HEX", to
-get the geometry included in coordinates of each point or vertex, Well-Known-Text
-or hexadecimal notation.}
+get the geometry included in coordinates of each point or vertex,
+Well-Known-Text or hexadecimal notation.}
 
-\item{include_values}{whether to include attributes information when geom is 'XY'}
+\item{include_values}{whether to include attributes information when geom
+is 'XY'}
 
 \item{\dots}{additional arguments to pass}
+}
+\value{
+data.table
 }
 \description{
 Coerce to data.table if possible
 }
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPolygon")
+
+data.table::as.data.table(g)
+}
 \seealso{
 Other As coercion functions: 
+\code{\link{as.matrix}()},
 \code{\link{as.points}()},
 \code{\link{as.polygons}()},
 \code{\link{r_spatial_conversions}}

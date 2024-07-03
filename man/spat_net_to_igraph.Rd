@@ -11,6 +11,9 @@ spat_net_to_igraph(spatialNetworkObj, attr = NULL)
 
 \item{attr}{columns to include as edge attributes.}
 }
+\value{
+igraph
+}
 \description{
 Convert a \code{spatialNetworkObj} to a non-directed igraph
 representation.
@@ -22,6 +25,7 @@ g <- spat_net_to_igraph(sn)
 
 # view other column info besides to and from cols
 head(sn[], 1)
+
 # include distance and weight col info
 g <- spat_net_to_igraph(sn, attr = c("distance", "weight"))
 }

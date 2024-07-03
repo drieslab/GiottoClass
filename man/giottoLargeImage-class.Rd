@@ -5,8 +5,12 @@
 \alias{giottoLargeImage-class}
 \alias{giottoLargeImage}
 \title{S4 giottoLargeImage Class}
+\value{
+giottoLargeImage
+}
 \description{
-class to handle images too large to load in normally through magick
+class to handle images too large to load in normally through
+magick
 }
 \section{Slots}{
 
@@ -15,9 +19,11 @@ class to handle images too large to load in normally through magick
 
 \item{\code{raster_object}}{terra raster object}
 
-\item{\code{extent}}{tracks the extent of the raster object. Note that most processes should rely on the extent of the raster object instead of this.}
+\item{\code{extent}}{tracks the extent of the raster object. Note that most
+processes should rely on the extent of the raster object instead of this.}
 
-\item{\code{overall_extent}}{terra extent object covering the original extent of image}
+\item{\code{overall_extent}}{terra extent object covering the original extent of
+image}
 
 \item{\code{scale_factor}}{image scaling relative to spatial locations}
 
@@ -38,4 +44,8 @@ class to handle images too large to load in normally through magick
 \item{\code{OS_platform}}{Operating System to run Giotto analysis on}
 }}
 
+\examples{
+giottoLargeImage()
+
+}
 \concept{giotto object image}

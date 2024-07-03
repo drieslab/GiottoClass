@@ -13,6 +13,9 @@
   minimum_padding = 1
 )
 }
+\value{
+2D spatial grid
+}
 \description{
 create a 2D spatial grid
 }

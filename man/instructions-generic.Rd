@@ -27,15 +27,24 @@
 \arguments{
 \item{gobject}{giotto object}
 
-\item{initialize}{(boolean, default = TRUE) whether to initialize the giotto object}
+\item{initialize}{(boolean, default = TRUE) whether to initialize the giotto
+object}
 
 \item{value}{value to set}
 
 \item{param}{Specific param in instructions to access or modify}
+}
+\value{
+giotto instructions
 }
 \description{
 Retrieve or set giotto instructions. Specific instructions can
 be replaced using the \code{field} param. Additionally, when using
 instructions<-, \code{initialize()} will be called on the giotto object if
 initialize param is TRUE
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+showGiottoInstructions(g)
 }

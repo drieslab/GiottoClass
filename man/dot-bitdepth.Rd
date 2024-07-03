@@ -13,6 +13,9 @@ bitdepth. This is usually a sampled subset of values from the raster.}
 \item{return_max}{logical. default is \code{FALSE}. Whether to return the maximum
 possible value for the detected bitdepth instead of the bitdepth itself}
 }
+\value{
+numeric
+}
 \description{
 Guess likely bitdepth from value(s)
 }

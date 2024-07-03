@@ -10,12 +10,19 @@ addGiottoPolygons(gobject, gpolygons)
 \item{gobject}{giotto object}
 
 \item{gpolygons}{list of giotto polygon objects,
-see \code{\link{createGiottoPolygonsFromMask}} and \code{\link{createGiottoPolygonsFromDfr}}}
+see \code{\link{createGiottoPolygonsFromMask}}
+and \code{\link{createGiottoPolygonsFromDfr}}}
 }
 \value{
 giotto object
 }
 \description{
 Adds Giotto polygon to an existing Giotto object
+}
+\examples{
+x <- GiottoData::loadSubObjectMini("giottoPolygon")
+g <- createGiottoObject()
+
+g <- addGiottoPolygons(gobject = g, gpolygons = list(x))
 }
 \concept{polygon}

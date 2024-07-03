@@ -17,6 +17,9 @@
     \item{\code{}}{}
   }}
 }
+\value{
+density plot
+}
 \description{
 Create density plots of the pixel values of a giottoLargeImage. Wrapper
 around \code{\link[terra:density]{terra::density()}}.
@@ -24,6 +27,7 @@ around \code{\link[terra:density]{terra::density()}}.
 \examples{
 f <- system.file(package = "GiottoClass", "extdata/toy_intensity.tif")
 gimg <- createGiottoLargeImage(f, use_rast_ext = TRUE)
+
 density(gimg)
 }
 \seealso{

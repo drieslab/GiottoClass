@@ -19,4 +19,9 @@ standardized matrix
 \description{
 standardizes a matrix
 }
+\examples{
+m <- matrix(rnorm(100), nrow = 10)
+
+standardise_flex(m)
+}
 \keyword{internal}

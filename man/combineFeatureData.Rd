@@ -26,4 +26,9 @@ data.table with combined spatial feature information
 \description{
 combine feature data information
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+combineFeatureData(g, spat_unit = "aggregate", feat_type = "rna")
+}
 \concept{combine feature metadata}

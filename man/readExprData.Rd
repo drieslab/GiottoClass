@@ -27,24 +27,37 @@ readExprData(
 
 \item{provenance}{(optional) provenance information}
 
-\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'DelayedArray')}
+\item{expression_matrix_class}{class of expression matrix to
+use (e.g. 'dgCMatrix', 'DelayedArray')}
+}
+\value{
+exprObj
 }
 \description{
 Read a nested list of expression data inputs in order to
 generate a list of giotto-native exprObj
 }
 \details{
-mylistA = list('a' = matrix(1:5), 'b' = matrix(1:5))
+mylistA = list('a' = matrix(seq(5)), 'b' = matrix(seq(5)))
 depth(mylistA)
 
-mylistB = list(A = list('a' = matrix(1:5), 'b' = matrix(1:5)),
-B = list('c' = matrix(1:5),'d' = matrix(1:5)))
+mylistB = list(A = list('a' = matrix(seq(5)), 'b' = matrix(seq(5))),
+B = list('c' = matrix(seq(5)),'d' = matrix(seq(5))))
 depth(mylistB)
 
-mylistC = list('RNA' = list('RAW' = list('cell' = matrix(1:5), 'nucleus' = matrix(6:10)),
-'NORM' = list('cell' = matrix(11:15),'nucleus' = matrix(20:25))),
-'PROT' = list('RAW' = list('cell' = matrix(16:20))))
+mylistC = list('RNA' = list('RAW' = list('cell' = matrix(seq(5)),
+'nucleus' = matrix(seq(6,10))),
+'NORM' = list('cell' = matrix(seq(11,15)),
+'nucleus' = matrix(seq(20,25)))),
+'PROT' = list('RAW' = list('cell' = matrix(seq(16,20)))))
 depth(mylistC)
 
-mymatD = matrix(data = 1:4)
+mymatD = matrix(data = seq(4))
+}
+\examples{
+x <- matrix(seq_len(100), nrow = 10)
+temporal_dir <- tempdir()
+write.csv(x, paste0(temporal_dir, "/mymatrix.csv"))
+
+readExprData(paste0(temporal_dir, "/mymatrix.csv"))
 }

@@ -88,12 +88,21 @@ instead of wrapped in a \code{giottoPoints} or \code{giottoPolygon} object}
 
 \item{type}{whether data is 'vector' or 'raster'}
 }
+\value{
+sf, sp, stars or terra
+}
 \description{
 R spatial conversions
+}
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPoints")
+
+as.sf(g)
 }
 \seealso{
 Other As coercion functions: 
 \code{\link{as.data.table}()},
+\code{\link{as.matrix}()},
 \code{\link{as.points}()},
 \code{\link{as.polygons}()}
 }

@@ -4,16 +4,20 @@
 \alias{objName-generic}
 \alias{objName}
 \alias{objName<-}
+\alias{objName,list-method}
 \alias{objName,nameData-method}
 \alias{objName,giottoPoints-method}
 \alias{objName,giottoLargeImage-method}
 \alias{objName,giottoImage-method}
+\alias{objName<-,list-method}
 \alias{objName<-,nameData-method}
 \alias{objName<-,giottoImage-method}
 \alias{objName<-,giottoLargeImage-method}
 \alias{objName<-,giottoPoints-method}
 \title{Giotto object name information}
 \usage{
+\S4method{objName}{list}(x)
+
 \S4method{objName}{nameData}(x)
 
 \S4method{objName}{giottoPoints}(x)
@@ -21,6 +25,8 @@
 \S4method{objName}{giottoLargeImage}(x)
 
 \S4method{objName}{giottoImage}(x)
+
+\S4method{objName}{list}(x) <- value
 
 \S4method{objName}{nameData}(x) <- value
 
@@ -35,6 +41,9 @@
 
 \item{value}{value to set as object name}
 }
+\value{
+name slot
+}
 \description{
 access and set name slot fo S4 subobject
 }
@@ -47,3 +56,8 @@ access and set name slot fo S4 subobject
 \item \code{objName(giottoPoints) <- value}: Set name giottoPoints
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("exprObj")
+
+objName(g)
+}

@@ -11,8 +11,11 @@ init_feat_metadata(gobject, provenance = NULL)
 
 \item{provenance}{provenance information (optional)}
 }
+\value{
+featMetaObjs
+}
 \description{
-Generate featMetaObjs to hold all feature metadata for each spatial unit
-and feature type in the giotto object.
+Generate featMetaObjs to hold all feature metadata for each
+spatial unit and feature type in the giotto object.
 }
 \keyword{internal}

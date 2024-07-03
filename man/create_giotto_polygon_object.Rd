@@ -23,6 +23,9 @@ create_giotto_polygon_object(
 
 \item{unique_IDs}{unique polygon IDs for cacheing}
 }
+\value{
+giotto_polygon_object
+}
 \description{
 Create a giotto polygon object
 }

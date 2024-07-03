@@ -11,7 +11,8 @@ getSpatialNetwork(
   output = c("spatialNetworkObj", "networkDT", "networkDT_before_filter", "outputObj"),
   set_defaults = TRUE,
   copy_obj = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  simplify = TRUE
 )
 }
 \arguments{
@@ -21,18 +22,31 @@ getSpatialNetwork(
 
 \item{name}{name of spatial network}
 
-\item{output}{object type to return as. Options: 'spatialNetworkObj' (default),
+\item{output}{object type to return as. Options:
+'spatialNetworkObj' (default),
 'networkDT' and 'networkDT_before_filter' for data.table outputs.}
 
 \item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
 expression and spat_info are not expected to exist.}
 
-\item{copy_obj}{whether to copy/duplicate when getting the object (default = TRUE)}
+\item{copy_obj}{whether to copy/duplicate when getting the
+object (default = TRUE)}
 
 \item{verbose}{be verbose}
+
+\item{simplify}{logical. Whether or not to take object out of a list when
+there is a length of 1.}
+}
+\value{
+spatialNetworkObj of data.table
 }
 \description{
 Function to get a spatial network
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+getSpatialNetwork(g)
 }
 \seealso{
 Other spatial network data accessor functions: 

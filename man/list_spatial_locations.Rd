@@ -19,3 +19,8 @@ names and locations of available data.table as data.table
 \description{
 shows the available spatial locations
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+list_spatial_locations(g)
+}

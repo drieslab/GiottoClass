@@ -1,4 +1,3 @@
-
 #' @name reconnect
 #' @title Reconnect a GiottoClass object
 #' @param x object to reconnect
@@ -6,6 +5,7 @@
 #' Only needed if the filepath is not normally carried by the object or the path
 #' has changed.
 #' @param ... additional params to pass
+#' @returns GiottoClass object
 NULL
 
 
@@ -14,12 +14,10 @@ NULL
 
 #' @rdname reconnect
 #' @examples
-#' \dontrun{
-#' gimg <- GiottoData::loadSubObjectMini("giottoLargeImage")
-#' gimg@raster_object <- NULL
-#' gimg <- reconnect(gimg)
-#' plot(gimg)
-#' }
+#' g <- GiottoData::loadGiottoMini("visium")
+#' g_image <- getGiottoImage(g, image_type = "largeImage")
+#'
+#' reconnect(g_image)
 #' @export
 setMethod("reconnect", signature("giottoLargeImage"), function(x, path = NULL, ...) {
     path <- path %null% slot(x, "file_path")

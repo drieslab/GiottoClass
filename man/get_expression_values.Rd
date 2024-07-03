@@ -20,14 +20,18 @@ get_expression_values(
 
 \item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
 
-\item{values}{expression values to extract (e.g. "raw", "normalized", "scaled")}
+\item{values}{expression values to
+extract (e.g. "raw", "normalized", "scaled")}
 
-\item{output}{what object type to retrieve the expression as. Currently either
-'matrix' for the matrix object contained in the exprObj or 'exprObj' (default) for
-the exprObj itself are allowed.}
+\item{output}{what object type to retrieve the expression as. Currently
+either matrix' for the matrix object contained in the exprObj or
+'exprObj' (default) for the exprObj itself are allowed.}
 
 \item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
 expression and spat_info are not expected to exist.}
+}
+\value{
+exprObj or matrix depending on output param
 }
 \description{
 get_expression_values

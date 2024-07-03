@@ -7,9 +7,19 @@
 \alias{rescale,data.frame-method}
 \alias{rescale,giottoPolygon-method}
 \alias{rescale,giottoPoints-method}
+\alias{rescale,giottoLargeImage-method}
 \title{Rescale an object}
 \usage{
-\S4method{rescale}{giotto}(x, fx = 1, fy = fx, x0, y0, spat_unit = ":all:", feat_type = ":all:")
+\S4method{rescale}{giotto}(
+  x,
+  fx = 1,
+  fy = fx,
+  x0,
+  y0,
+  spat_unit = ":all:",
+  feat_type = ":all:",
+  images = ":all:"
+)
 
 \S4method{rescale}{spatLocsObj}(x, fx = 1, fy = fx, fz = fx, x0, y0, z0)
 
@@ -27,6 +37,8 @@
 \S4method{rescale}{giottoPolygon}(x, fx = 1, fy = fx, x0, y0)
 
 \S4method{rescale}{giottoPoints}(x, fx = 1, fy = fx, x0, y0)
+
+\S4method{rescale}{giottoLargeImage}(x, fx = 1, fy = fx, x0, y0)
 }
 \arguments{
 \item{x}{object}
@@ -35,23 +47,39 @@
 
 \item{fy}{numeric > 0. The vertical scaling factor}
 
-\item{x0}{numeric. x-coordinate of the center of rescaling. If missing, the center of the extent of x is used}
+\item{x0}{numeric. x-coordinate of the center of rescaling. If missing,
+the center of the extent of x is used}
 
-\item{y0}{numeric. y-coordinate of the center of rescaling. If missing, the center of the extent of x is used}
+\item{y0}{numeric. y-coordinate of the center of rescaling. If missing,
+the center of the extent of x is used}
 
 \item{spat_unit}{character vector. spatial units to affect}
 
 \item{feat_type}{character vector. feature types to affect}
 
+\item{images}{character vector. Images to affect}
+
 \item{fz}{numeric > 0. The z scaling factor (only for supported objects)}
 
-\item{z0}{numeric. z-coordinate of the center of rescaling. If missing, the center of the extent of x is used
-(only for supported objects)}
+\item{z0}{numeric. z-coordinate of the center of rescaling. If missing,
+the center of the extent of x is used (only for supported objects)}
 
-\item{geom}{character. Named vector of colnames of x, y, (z) coordinate columns.
-Default is \code{c("sdimx", "sdimy", "sdimz")}}
+\item{geom}{character. Named vector of colnames of x, y, (z) coordinate
+columns. Default is \code{c("sdimx", "sdimy", "sdimz")}}
+}
+\value{
+re-scaled object
 }
 \description{
-Rescale an object spatially. Z dimension scaling is supported for
-some types of subobjects.
+Rescale an object spatially. Z dimension scaling is supported
+for some types of subobjects.
+}
+\details{
+With the \code{giotto} object, the ":all:" token can be passed to \code{spat_unit},
+\code{feat_type}, and \code{images} arguments to affect all available items.
+}
+\examples{
+g <- GiottoData::loadSubObjectMini("spatLocsObj")
+
+rescale(g)
 }

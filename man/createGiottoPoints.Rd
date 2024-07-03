@@ -26,7 +26,8 @@
 )
 }
 \arguments{
-\item{x}{spatVector or data.frame-like object with points coordinate information (x, y, feat_ID)}
+\item{x}{spatVector or data.frame-like object with points coordinate
+information (x, y, feat_ID)}
 
 \item{feat_type}{character. feature type. Provide more than one value if
 using the \code{split_keyword} param. For each set of keywords to split by, an
@@ -54,21 +55,21 @@ giottoPoints
 Create a \code{giottoPoints} object that is used to represent
 subcellular point-type features. The main values are contained within the
 \code{spatVector} slot, which should contain spatial point data and also an
-associated set of attributes for at least \code{feat_ID} (name of the feature being
-described) and \code{feat_ID_uniq} (a unique integer identifier for each specific
-point).
+associated set of attributes for at
+least \code{feat_ID} (name of the feature being described)
+and \code{feat_ID_uniq} (a unique integer identifier for each specific point).
 }
 \details{
-Using the manual option where you can select the names of the x, y, and feat_ID
-columns is not compatible with a data.frame that already has the names x, y, and/or
-feat_ID.
+Using the manual option where you can select the names of the x, y, and
+feat_ID columns is not compatible with a data.frame that already has the
+names x, y, and/or feat_ID.
 }
 \examples{
 # data.frame input
 x <- data.frame(
-    ID = letters[1:6],
-    x = 1:6,
-    y = 6:1
+    ID = letters[seq_len(6)],
+    x = seq_len(6),
+    y = seq(6, 1)
 )
 gpoints <- createGiottoPoints(x)
 plot(gpoints,

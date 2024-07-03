@@ -6,6 +6,9 @@
 \usage{
 .find_grid_3d(grid_DT, x_loc, y_loc, z_loc)
 }
+\value{
+character
+}
 \description{
 find grid location in 3D
 }

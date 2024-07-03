@@ -4,26 +4,33 @@ NULL
 ## spatIDs and featIDs generic ####
 #' @title Spatial and feature IDs
 #' @name spatIDs-generic
-#' @description Get the cell IDs (termed spatial IDs to better reflect when not at
-#' the single-cell level) and feature IDs of a giotto object or subobject.
+#' @description Get the cell
+#' IDs (termed spatial IDs to better reflect when not at the single-cell level)
+#' and feature IDs of a giotto object or subobject.
 #'
 #' \[**`giotto` object specific**\]
-#' When applied on a `giotto` object, these functions pull from the `cell_ID` and
-#' `feat_ID` slots. The values within these slots are updated whenever the object
-#' is data is changed and, importantly, whenever the active spat_unit and
+#' When applied on a `giotto` object, these functions pull from the `cell_ID`
+#' and `feat_ID` slots. The values within these slots are updated whenever the
+#' object is data is changed and, importantly, whenever the active spat_unit and
 #' feat_type is set (see [activeSpatUnit()] and [activeFeatType()]). New values
 #' for these slots are specific to the active spat_unit and feat_type and are
-#' detected from either the *subcellular* level (`giottoPolygon` and `giottoPoints`)
-#' or the *aggregate* level (expression matrix) data, with a preference for the
-#' latter if it exists.
-#' Be aware that with this current behavior, values returned by`spatIDs()` and
-#' `featIDs()` should be regarded as the minimal set of expected IDs within
-#' all `giotto` slots, and not always the exact set or ordering.
+#' detected from either the *subcellular*
+#' level (`giottoPolygon` and `giottoPoints`) or the *aggregate*
+#' level (expression matrix) data, with a preference for the latter if it
+#' exists. Be aware that with this current behavior, values returned
+#' by`spatIDs()` and `featIDs()` should be regarded as the minimal set of
+#' expected IDs within all `giotto` slots, and not always the exact set or
+#' ordering.
 #'
 #' @aliases spatIDs featIDs
 #' @param x an object
 #' @param ... additional parameters to pass
+#' @returns spatIDs and featIDs
 #' @include classes.R
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPoints")
+#'
+#' featIDs(g)
 NULL
 
 
@@ -83,7 +90,8 @@ setMethod(
 )
 #' @rdname spatIDs-generic
 #' @param use_cache use cached IDs if available (gpoly and gpoints only)
-#' @param uniques return unique ID values only (currently gpoly and gpoints only)
+#' @param uniques return unique ID values
+#' only (currently gpoly and gpoints only)
 #' @export
 setMethod(
     "spatIDs", signature(x = "giottoPolygon"),

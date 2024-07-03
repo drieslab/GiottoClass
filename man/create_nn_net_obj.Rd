@@ -14,6 +14,9 @@ create_nn_net_obj(
   misc = NULL
 )
 }
+\value{
+nn_net_obj
+}
 \description{
 create_nn_net_obj
 }

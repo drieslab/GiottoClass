@@ -9,7 +9,8 @@ getPolygonInfo(
   polygon_name = NULL,
   polygon_overlap = NULL,
   return_giottoPolygon = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  simplify = TRUE
 )
 }
 \arguments{
@@ -19,12 +20,24 @@ getPolygonInfo(
 
 \item{polygon_overlap}{include polygon overlap information}
 
-\item{return_giottoPolygon}{(Defaults to FALSE) Return as giottoPolygon S4 object}
+\item{return_giottoPolygon}{(Defaults to FALSE) Return as giottoPolygon
+S4 object}
 
 \item{verbose}{be verbose}
+
+\item{simplify}{logical. Whether or not to take object out of a list when
+there is a length of 1.}
+}
+\value{
+spatVector
 }
 \description{
 Get giotto polygon spatVector
+}
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+getPolygonInfo(g)
 }
 \seealso{
 Other polygon info data accessor functions: 

@@ -11,7 +11,15 @@ mean_flex(x, ...)
 
 \item{...}{other arguments to pass}
 }
+\value{
+numeric
+}
 \description{
 mean_flex
+}
+\examples{
+m <- matrix(rnorm(100), nrow = 10)
+
+mean_flex(m)
 }
 \keyword{internal}

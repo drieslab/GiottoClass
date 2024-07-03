@@ -80,10 +80,12 @@ setClass("exprData",
 # ** coordData Class ####
 #' Basic class for classes with coordinate information
 #'
-#' coordDataDT is the specific flavor that deals with objects where the coordinate
-#' information is stored within data.table objects and should work similarly to
-#' data.table when interacting with some basic generic operators for data
-#' retreival and setting.
+#' @description
+#' coordDataDT is the specific flavor that deals with objects where the
+#' coordinate information is stored within data.table objects and should work
+#' similarly to data.table when interacting with some basic generic operators
+#' for data retreival and setting.
+#'
 #' @keywords internal
 #' @noRd
 setClass("coordDataDT",
@@ -104,9 +106,11 @@ setClass("coordDataDT",
 # ** metaData Class ####
 #' Basic class for classes with metadata information
 #'
-#' Classes that inherit from this class will contain a metadata slot that stores
-#' information in a data.table and should work similarly to data.table when interacting
-#' with some basic generic operators for data retrieval and setting
+#' @description
+#' Classes that inherit from this class will contain a metadata slot that
+#' stores information in a data.table and should work similarly to data.table
+#' when interacting with some basic generic operators for data retrieval and
+#' setting
 #' @keywords internal
 #' @noRd
 setClass("metaData",
@@ -211,12 +215,14 @@ setClass("spatGridData",
 # ** provData Class ####
 #' Basic class for classes with provenance information.
 #'
-#' This kind of information is necesssary when generating data that is aggregated
-#' from multiple original sources of raw information. This could refer to situations
-#' such as when producing cellxfeature expression matrices from subcellular transcript
-#' information and polygons that are provided as multiple z layers. Provenance
-#' is Giotto's method of mapping this aggregated information back to the original
-#' z layers that were used in its generation.
+#' @description
+#' This kind of information is necessary when generating data that is
+#' aggregated from multiple original sources of raw information. This could
+#' refer to situations such as when producing cellxfeature expression matrices
+#' from subcellular transcript information and polygons that are provided as
+#' multiple z layers. Provenance is Giotto's method of mapping this aggregated
+#' information back to the original z layers that were used in its generation.
+#'
 #' @keywords internal
 #' @noRd
 setClass("provData",
@@ -230,10 +236,12 @@ setClass("provData",
 # ** spatData Class ####
 #' Basic class for classes with spatial information
 #'
-#' Classes that inherit from this class will contain a spat_unit slot that describes
-#' which spatial unit the data belongs to. This is most relevant to aggregated information.
-#' Subcellular information such as poly data in \code{spatial_info} slot essentially define their
-#' own spatial units. Within slots that deal with classes that contain spatData,
+#' @description
+#' Classes that inherit from this class will contain a spat_unit slot that
+#' describes which spatial unit the data belongs to. This is most relevant
+#' to aggregated information. Subcellular information such as poly data
+#' in \code{spatial_info} slot essentially define their own spatial units.
+#' Within slots that deal with classes that contain spatData,
 #' there is a nesting structure that first nests by spatial unit.
 #' @keywords internal
 #' @noRd
@@ -249,12 +257,12 @@ setClass("spatData",
 #' @title Basic class for classes with feature information
 #'
 #' @description
-#' Features in Giotto are a blanket term for any features that are detected, covering
-#' modalities such as, but not limited to rna, protein, ATAC, and even QC probes.
-#' Classes that inherit from this class will contain a feat_type slot that describes
-#' which feature type the data is. Within slots that deal with classes that contain
-#' featData, there is a nesting structure that usually first nests by spatial unit
-#' and then by feature type
+#' Features in Giotto are a blanket term for any features that are detected,
+#' covering modalities such as, but not limited to rna, protein, ATAC, and
+#' even QC probes. Classes that inherit from this class will contain a
+#' feat_type slot that describes which feature type the data is. Within slots
+#' that deal with classes that contain featData, there is a nesting structure
+#' that usually first nests by spatial unit and then by feature type.
 #' @keywords internal
 #' @noRd
 setClass("featData",
@@ -269,9 +277,14 @@ setClass("featData",
 #' @title Basic class for additional miscellaneous information
 #'
 #' @description
-#' Classes (such as dimObj) that can hold information from multiple types of methods
-#' use the misc slot to hold additional information specific to each method.
-#' Information may be stored within as S3 structures.
+#' Classes (such as dimObj) that can hold information from multiple types of
+#' methods use the misc slot to hold additional information specific to each
+#' method. Information may be stored within as S3 structures.
+#' @returns slot for miscellaneous information
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("dimObj")
+#'
+#' slot(g, "misc")
 setClass("miscData",
     contains = "VIRTUAL",
     slots = list(misc = "ANY"),
@@ -284,6 +297,7 @@ setClass("miscData",
 #' @description
 #' Classes that inherit from this class will contain a spatVector slot meant to
 #' hold and work with terra SpatVector objects
+#' @returns object with spatVector slot
 terraVectData <- setClass(
     "terraVectData",
     contains = "VIRTUAL",
@@ -298,7 +312,8 @@ terraVectData <- setClass(
 # SUBCLASSES ####
 
 # ** spatFeatData ####
-#' Superclass for classes that contain both spatial and feature data
+#' @description Superclass for classes that contain both spatial and feature
+#' data
 #' @keywords internal
 #' @noRd
 setClass("spatFeatData",
@@ -346,17 +361,18 @@ setClass("spatFeatData",
 #'   \item{3.2.0 update adding multiomics slot}
 #'   \item{master branch to suite - TODO}
 #' }
+#' @returns giotto object
 #' @examples
-#' \dontrun{
-#' gobject <- updateGiottoObject(gobject)
-#' }
+#' g <- GiottoData::loadGiottoMini("visium")
+#'
+#' g <- updateGiottoObject(g)
 #' @export
 updateGiottoObject <- function(gobject) {
     if (!inherits(gobject, "giotto")) {
         stop(wrap_txt("This function is intended for updating giotto objects"))
     }
 
-    # [Giotto versions (pre-modularization)] ---------------------------------- #
+    # [Giotto versions (pre-modularization)] ----------------------------------#
     # 3.2.0 release adds multiomics slot
     if (is.null(attr(gobject, "multiomics"))) {
         attr(gobject, "multiomics") <- NA
@@ -369,41 +385,94 @@ updateGiottoObject <- function(gobject) {
         gobject@h5_file <- NULL
     }
 
-    # [Switch to GiottoClass versioning] -------------------------------------- #
+    # [Switch to GiottoClass versioning] --------------------------------------#
     # GiottoClass 0.1.2 adds max_window and colors slots to giottoLargeImage
-    if (!is.null(gobject@largeImages)) {
-        gobject@largeImages <- lapply(gobject@largeImages, .update_giotto_image)
-    }
+    # this update function has been moved to .update_image_slot() below
 
     # GiottoClass 0.1.4 supercedes @OS_platform with @versions slot
     if (!is.null(attr(gobject, "OS_platform"))) {
         attr(gobject, "OS_platform") <- NULL
     }
-    if (is.null(attr(gobject, "versions"))) {
+    if (is.null(attr(gobject, "versions"))) { # apply default version 0
         attr(gobject, "versions") <- .versions_info()
         gobject@versions$gclass <- 0 # untracked
     }
 
-    if (.gversion(gobject) > packageVersion("GiottoClass")) {
+    # warn if gobject newer than package
+    if (as.character(.gversion(gobject)) > as.character(packageVersion("GiottoClass"))) {
         warning(
             call. = FALSE,
             sprintf(
-                "This giotto object was created in a newer version of GiottoClass (v%s)",
+                "This giotto object was created in a newer version of
+                GiottoClass (v%s)",
                 as.character(.gversion(gobject))
             )
         )
     }
 
-    # [version-based updates] ------------------------------------------------- #
+    # [version-based updates] -------------------------------------------------#
 
+    # GiottoClass 0.3.0 removes @largeImages slot
+    if (.gversion(gobject) < "0.3.0") {
+        gobject <- .update_image_slot(gobject)
+    }
 
-    # ------------------------------------------------------------------------- #
+    # GiottoClass 0.1.2 image updates moved here
+    # TODO remove in future update
+    gobject@images <- lapply(gobject@images, .update_giotto_image)
+
+    # -------------------------------------------------------------------------#
 
     # finally, set updated version number
     .gversion(gobject) <- packageVersion("GiottoClass")
 
     return(gobject)
 }
+
+# for updating pre-v0.3.0 objects
+.update_image_slot <- function(x) {
+    checkmate::assert_class(x, "giotto")
+    # return early if no largeImages
+    if (!methods::.hasSlot(x, "largeImages")) {
+        return(x)
+    }
+    
+    # transfer largeImages slot contents to images slot
+    lgimg_list <- attr(x, "largeImages")
+
+    # remove slot
+    attr(x, "largeImages") <- NULL
+    
+    # if @largeImages was empty, expect `\001NULL\001` of class `name`
+    # the object can be returned early now that @largeImages is stripped
+    if (inherits(lgimg_list, "name")) {
+        return(x)
+    }
+
+    # deal with same image and largeImage names
+    lgnames <- names(lgimg_list)
+    imgnames <- names(x@images)
+
+    samename_bool <- imgnames %in% lgnames
+    if (any(samename_bool)) {
+        samenames <- imgnames[samename_bool]
+        warning(wrap_txt(
+            "GiottoClass v0.3.0 merges @images and @largeImages slots.
+            image name(s):", paste(samenames, collapse = ", "),
+            "\nare found in both slots.
+            largeImages will be prioritized."
+        ), call. = FALSE)
+
+        # remove images with overlapped names
+        x@images[samename_bool] <- NULL
+    }
+
+    x@images <- c(x@images, lgimg_list)
+        
+    return(x)
+}
+
+
 
 
 
@@ -430,8 +499,7 @@ updateGiottoObject <- function(gobject) {
 #' @slot spatial_enrichment slot to save spatial enrichment-like results
 #' @slot dimension_reduction slot to save dimension reduction coordinates
 #' @slot nn_network nearest neighbor network in igraph format
-#' @slot images slot to store giotto images
-#' @slot largeImages slot to store giottoLargeImage objects
+#' @slot images slot to store giotto image objects
 #' @slot parameters slot to save parameters that have been used
 #' @slot instructions slot for global function instructions
 #' @slot offset_file offset file used to stitch together image fields
@@ -443,10 +511,12 @@ updateGiottoObject <- function(gobject) {
 #'
 #' \[**initialize**\]
 #' The `giotto` class has a robust `initialize()` method that is automatically
-#' called upon setting data into the object, updates of the `giottoInstructions`,
-#' and loading of saved objects. It performs the following steps:
+#' called upon setting data into the object, updates of
+#' the `giottoInstructions`, and loading of saved objects.
+#' It performs the following steps:
 #' 1. Update the object and subobjects for class definition changes if needed
-#' 2. Ensure a set of `giottoInstructions` are available, otherwise generate defaults
+#' 2. Ensure a set of `giottoInstructions` are available, otherwise generate
+#' defaults
 #' 3. Ensure a giotto python environment is accessible when the options
 #'    giotto.has_conda and giotto.use_conda are TRUE
 #' 4. Check the active spat_unit and feat_type
@@ -459,7 +529,9 @@ updateGiottoObject <- function(gobject) {
 #'    of information are only added AFTER the data that they depend on and that
 #'    existing information is consistent across slots.
 #' 7. Object validity checking
-#'
+#' @returns giotto object
+#' @examples
+#' giotto()
 #' @export giotto
 #' @exportClass giotto
 giotto <- setClass(
@@ -480,7 +552,6 @@ giotto <- setClass(
         dimension_reduction = "ANY",
         nn_network = "ANY",
         images = "ANY",
-        largeImages = "ANY",
         parameters = "ANY",
         instructions = "ANY",
         offset_file = "ANY",
@@ -506,7 +577,6 @@ giotto <- setClass(
         dimension_reduction = NULL,
         nn_network = NULL,
         images = NULL,
-        largeImages = NULL,
         parameters = list(),
         instructions = NULL,
         offset_file = NULL,
@@ -558,7 +628,6 @@ setClass(
         dimension_reduction = "ANY",
         nn_network = "ANY",
         images = "ANY",
-        largeImages = "ANY",
         parameters = "ANY",
         instructions = "ANY",
         offset_file = "ANY",
@@ -583,7 +652,6 @@ setClass(
         dimension_reduction = NULL,
         nn_network = NULL,
         images = NULL,
-        largeImages = NULL,
         parameters = NULL,
         instructions = NULL,
         offset_file = NULL,
@@ -611,6 +679,7 @@ setClass(
 #' @name .check_expr_obj
 #' @description Check function for S4 exprObj
 #' @param object S4 exprObj to check
+#' @returns character or TRUE
 #' @keywords internal
 .check_expr_obj <- function(object) {
     errors <- character()
@@ -644,9 +713,15 @@ setClass(
 #' @slot feat_type feature type of expression (e.g. 'rna', 'protein')
 #' @slot provenance origin data of expression information (if applicable)
 #' @slot misc misc
+#' @returns exprObj
+#' @examples
+#' GiottoData::loadSubObjectMini("exprObj")
 #' @exportClass exprObj
 exprObj <- setClass("exprObj",
-    contains = c("nameData", "exprData", "spatFeatData", "miscData", "giottoSubobject"),
+    contains = c(
+        "nameData", "exprData", "spatFeatData", "miscData",
+        "giottoSubobject"
+    ),
     validity = .check_expr_obj
 )
 
@@ -671,6 +746,7 @@ exprObj <- setClass("exprObj",
 #' @description Function to check S4 cellMetaObj
 #' @param object S4 cellMetaObj to check
 #' @keywords internal
+#' @returns character or TRUE
 .check_cell_meta_obj <- function(object) {
     errors <- character()
 
@@ -698,7 +774,11 @@ exprObj <- setClass("exprObj",
 #' @slot col_desc (optional) character vector describing columns of the metadata
 #' @slot spat_unit spatial unit of aggregated expression (e.g. 'cell')
 #' @slot feat_type feature type of aggregated expression (e.g. 'rna', 'protein')
-#' @slot provenance origin data of aggregated expression information (if applicable)
+#' @slot provenance origin data of aggregated expression
+#' information (if applicable)
+#' @returns cellMetaObj
+#' @examples
+#' GiottoData::loadSubObjectMini("cellMetaObj")
 #' @exportClass cellMetaObj
 cellMetaObj <- setClass("cellMetaObj",
     contains = c("metaData", "spatFeatData", "giottoSubobject"),
@@ -716,6 +796,7 @@ cellMetaObj <- setClass("cellMetaObj",
 #' @description Function to check S4 featMetaObj
 #' @param object S4 featMetaObj to check
 #' @keywords internal
+#' @returns character or TRUE
 .check_feat_meta_obj <- function(object) {
     errors <- character()
 
@@ -743,7 +824,11 @@ cellMetaObj <- setClass("cellMetaObj",
 #' @slot col_desc (optional) character vector describing columns of the metadata
 #' @slot spat_unit spatial unit of aggregated expression (e.g. 'cell')
 #' @slot feat_type feature type of aggregated expression (e.g. 'rna', 'protein')
-#' @slot provenance origin data of aggregated expression information (if applicable)
+#' @slot provenance origin data of aggregated expression
+#' information (if applicable)
+#' @returns featMetaObj
+#' @examples
+#' GiottoData::loadSubObjectMini("featMetaObj")
 #' @exportClass featMetaObj
 featMetaObj <- setClass("featMetaObj",
     contains = c("metaData", "spatFeatData", "giottoSubobject"),
@@ -767,11 +852,15 @@ featMetaObj <- setClass("featMetaObj",
 #' @description check function for S4 dimObj
 #' @param object S4 dimObj to check
 #' @keywords internal
+#' @returns character or TRUE
 .check_dim_obj <- function(object) {
     errors <- character()
     length_reduction_method <- length(object@reduction_method)
     if (length_reduction_method > 1) {
-        msg <- paste0("reduction_method is length ", length_reduction_method, ". Should be 1")
+        msg <- paste0(
+            "reduction_method is length ", length_reduction_method,
+            ". Should be 1"
+        )
         errors <- c(errors, msg)
     }
 
@@ -783,7 +872,8 @@ featMetaObj <- setClass("featMetaObj",
     lastCols <- tail(colnames(object@coordinates), 2)
     col_dims <- all(grepl(pattern = "Dim.", x = lastCols))
     if (!isTRUE(col_dims)) {
-        msg <- 'Dim reduction coordinates should be provided with dimensions ("Dim.#") as columns and samples as rows\n'
+        msg <- 'Dim reduction coordinates should be provided with dimensions
+        ("Dim.#") as columns and samples as rows\n'
         errors <- c(errors, msg)
     }
 
@@ -811,6 +901,9 @@ featMetaObj <- setClass("featMetaObj",
 #' @slot reduction_method method used to generate dimension reduction
 #' @slot coordinates embedding coordinates
 #' @slot misc method-specific additional outputs
+#' @returns dimObj
+#' @examples
+#' GiottoData::loadSubObjectMini("dimObj")
 #' @exportClass dimObj
 dimObj <- setClass("dimObj",
     contains = c("nameData", "spatFeatData", "giottoSubobject"),
@@ -842,6 +935,7 @@ dimObj <- setClass("dimObj",
 #' @description Convert S3 dimObj to S4
 #' @param object S3 dimObj
 #' @keywords internal
+#' @returns S4 dimObj
 S3toS4dimObj <- function(object) {
     if (!isS4(object)) {
         object <- new("dimObj",
@@ -874,9 +968,15 @@ S3toS4dimObj <- function(object) {
 #' @slot spat_unit spatial unit of data
 #' @slot provenance origin of aggregated information (if applicable)
 #' @slot misc misc
+#' @returns nnNetObj
+#' @examples
+#' GiottoData::loadSubObjectMini("nnNetObj")
 #' @exportClass nnNetObj
 nnNetObj <- setClass("nnNetObj",
-    contains = c("nameData", "nnData", "spatFeatData", "miscData", "giottoSubobject")
+    contains = c(
+        "nameData", "nnData", "spatFeatData", "miscData",
+        "giottoSubobject"
+    )
 )
 
 
@@ -909,6 +1009,7 @@ nnNetObj <- setClass("nnNetObj",
 #' @description Check function for S4 spatLocsObj
 #' @param object S4 spatLocsObj to check
 #' @keywords internal
+#' @returns character or TRUE
 .check_spat_locs_obj <- function(object) {
     errors <- character()
 
@@ -941,9 +1042,15 @@ nnNetObj <- setClass("nnNetObj",
 #' @slot coordinates data.table of spatial coordinates/locations
 #' @slot spat_unit spatial unit tag
 #' @slot provenance origin of aggregated information (if applicable)
+#' @returns spatLocsObj
+#' @examples
+#' GiottoData::loadSubObjectMini("spatLocsObj")
 #' @exportClass spatLocsObj
 spatLocsObj <- setClass("spatLocsObj",
-    contains = c("nameData", "coordDataDT", "spatData", "miscData", "giottoSubobject"),
+    contains = c(
+        "nameData", "coordDataDT", "spatData", "miscData",
+        "giottoSubobject"
+    ),
     validity = .check_spat_locs_obj
 )
 
@@ -970,6 +1077,7 @@ spatLocsObj <- setClass("spatLocsObj",
 #' @description Check function for S4 spatialNetworkObj
 #' @param object S4 spatialNetworkObj to check
 #' @keywords internal
+#' @returns character or TRUE
 .check_spat_net_obj <- function(object) {
     errors <- character()
     method_slot <- slot(object, "method")
@@ -985,7 +1093,8 @@ spatLocsObj <- setClass("spatLocsObj",
     # }
 
     if (is.null(object@networkDT) && is.null(object@networkDT_before_filter)) {
-        msg <- "No data in either networkDT or networkDT_before_filter slots.\nThis object contains no network information.\n"
+        msg <- "No data in either networkDT or networkDT_before_filter slots.\n
+        This object contains no network information.\n"
         errors <- c(errors, msg)
     }
 
@@ -1001,20 +1110,29 @@ spatLocsObj <- setClass("spatLocsObj",
 #' @description Framework to store spatial network information
 #' @slot name name of spatialNetworkObj
 #' @slot method method used to generate spatial network
-#' @slot parameters additional method-specific parameters used during spatial network generation
+#' @slot parameters additional method-specific parameters used during spatial
+#' network generation
 #' @slot outputObj network geometry object
 #' @slot networkDT data.table of network connections, distances, and weightings
-#' @slot networkDT_before_filter unfiltered data.table  of network connections, distances, and weightings
+#' @slot networkDT_before_filter unfiltered data.table  of network connections,
+#' distances, and weightings
 #' @slot cellShapeObj network cell shape information
 #' @slot crossSectionObjects crossSectionObjects
 #' @slot spat_unit spatial unit tag
 #' @slot provenance origin of aggregated information (if applicable)
 #' @slot misc misc
-#' @details The generic access operators work with the data within the \code{networkDT}
+#' @details The generic access operators work with the data within
+#' the \code{networkDT}
 #' slot (filtered).
+#' @returns spatialNetworkObj
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("spatialNetworkObj")
 #' @export
 setClass("spatialNetworkObj",
-    contains = c("nameData", "spatNetData", "spatData", "miscData", "giottoSubobject"),
+    contains = c(
+        "nameData", "spatNetData", "spatData", "miscData",
+        "giottoSubobject"
+    ),
     slots = c(crossSectionObjects = "ANY"),
     prototype = list(crossSectionObjects = NULL),
     validity = .check_spat_net_obj
@@ -1026,37 +1144,6 @@ setClass("spatialNetworkObj",
 
 
 ### * Additional functions ####
-# spatialNetworkObj Class
-
-# S3 to S4 backwards compatibility
-
-#' @title Spatial Networks
-#' @name S3toS4spatNetObj
-#' @description convert S3 spatialNetworkObj to S4
-#' @param object S3 spatNetworkObj
-#' @param spat_unit spatial unit metadata to append
-#' @keywords internal
-S3toS4spatNetObj <- function(
-        object,
-        spat_unit = NULL) {
-    if (!isS4(object)) {
-        object <- new("spatialNetworkObj",
-            name = object$name,
-            method = object$method,
-            parameters = object$parameters,
-            outputObj = object$outputObj,
-            networkDT = object$networkDT,
-            networkDT_before_filter = object$networkDT_before_filter,
-            cellShapeObj = object$cellShapeObj,
-            crossSectionObjects = object$crossSectionObjects,
-            spat_unit = spat_unit,
-            misc = object$misc
-        )
-    }
-    object
-}
-
-
 
 
 ## crossSectionObj class ####
@@ -1079,6 +1166,7 @@ S3toS4spatNetObj <- function(
 #' @description Check function for S4 spatialGridObj
 #' @param object S4 spatialGridObj to check
 #' @keywords internal
+#' @returns character or TRUE
 .check_spat_grid_obj <- function(object) {
     errors <- character()
     method_slot <- slot(object, "method")
@@ -1094,7 +1182,8 @@ S3toS4spatNetObj <- function(
     # }
 
     if (is.null(object@gridDT)) {
-        msg <- "No data in gridDT slot.\nThis object contains no spatial grid information\n"
+        msg <- "No data in gridDT slot.\nThis object contains no spatial
+        grid information\n"
         errors <- c(errors, msg)
     }
 
@@ -1110,21 +1199,29 @@ S3toS4spatNetObj <- function(
 #' @description Framework to store spatial grid
 #' @slot name name of spatialGridObj
 #' @slot method method used to generate spatial grid
-#' @slot parameters additional method-specific parameters used during spatial grid generation
+#' @slot parameters additional method-specific parameters used during spatial
+#' grid generation
 #' @slot gridDT data.table holding the spatial grid information
 #' @slot spat_unit spatial unit
 #' @slot feat_type feature type
 #' @slot provenance origin of aggregated information (if applicable)
 #' @slot misc misc
 #' @details
-#' This is an S4 object that defines a spatial grid. The structure of the grid is stored as a
-#' \code{data.table} within the \code{gridDT} slot and is defined by start and stop spatial
-#' locations along the spatial axes. The \code{data.table} also includes names for each cell
-#' of the grid and names for each of the spatial axis locations that make up the cell.
+#' This is an S4 object that defines a spatial grid. The structure of the grid
+#' is stored as a \code{data.table} within the \code{gridDT} slot and is
+#' defined by start and stop spatial locations along the spatial axes.
+#' The \code{data.table} also includes names for each cell of the grid and
+#' names for each of the spatial axis locations that make up the cell.
 #' Grids can be annotated with both spatial and feature information
+#' @returns spatialGridObj
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("spatialGridObj")
 #' @export
 setClass("spatialGridObj",
-    contains = c("nameData", "spatGridData", "spatFeatData", "miscData", "giottoSubobject"),
+    contains = c(
+        "nameData", "spatGridData", "spatFeatData", "miscData",
+        "giottoSubobject"
+    ),
     validity = .check_spat_grid_obj
 )
 
@@ -1144,6 +1241,7 @@ setClass("spatialGridObj",
 #' @description convert S3 spatialGridObj to S4
 #' @param object S3 spatialGridObj
 #' @keywords internal
+#' @returns S4 spatialGridObj
 S3toS4spatialGridObj <- function(object) {
     if (!isS4(object)) {
         object <- new("spatialGridObj",
@@ -1173,9 +1271,15 @@ S3toS4spatialGridObj <- function(object) {
 #' @slot feat_type feature type
 #' @slot provenance provenance information
 #' @slot misc misc
+#' @returns spatEnrObj
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("spatEnrObj")
 #' @export
 setClass("spatEnrObj",
-    contains = c("nameData", "enrData", "spatFeatData", "miscData", "giottoSubobject")
+    contains = c(
+        "nameData", "enrData", "spatFeatData", "miscData",
+        "giottoSubobject"
+    )
 )
 
 
@@ -1196,9 +1300,12 @@ setClass("spatEnrObj",
 #' @slot spatVector terra spatVector to store polygon shapes
 #' @slot spatVectorCentroids centroids of polygon shapes
 #' @slot overlaps information about overlapping points and polygons
-#' @slot unique_ID_cache cached unique spatial IDs that should match the spatVector slot
+#' @slot unique_ID_cache cached unique spatial IDs that should match the
+#' spatVector slot
 #' @details holds polygon data
-#'
+#' @returns giottoPolygon
+#' @examples
+#' giottoPolygon()
 #' @export
 giottoPolygon <- setClass(
     Class = "giottoPolygon",
@@ -1221,6 +1328,11 @@ giottoPolygon <- setClass(
 #' @title Update giotto polygon object
 #' @name updateGiottoPolygonObject
 #' @param gpoly giotto polygon object
+#' @returns GiottoPolygonObject
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPolygon")
+#'
+#' updateGiottoPolygonObject(g)
 #' @export
 updateGiottoPolygonObject <- function(gpoly) {
     if (!inherits(gpoly, "giottoPolygon")) {
@@ -1229,7 +1341,9 @@ updateGiottoPolygonObject <- function(gpoly) {
 
     # 3.2.X adds cacheing of IDs
     if (is.null(attr(gpoly, "unique_ID_cache"))) {
-        attr(gpoly, "unique_ID_cache") <- unique(as.list(gpoly@spatVector)$poly_ID)
+        attr(gpoly, "unique_ID_cache") <- unique(
+            as.list(gpoly@spatVector)$poly_ID
+        )
     }
 
     gpoly
@@ -1274,9 +1388,12 @@ setClass("packedGiottoPolygon",
 #' @slot feat_type name of feature type
 #' @slot spatVector terra spatVector to store point shapes
 #' @slot networks feature networks
-#' @slot unique_ID_cache cached unique feature IDs that should match the spatVector slot
+#' @slot unique_ID_cache cached unique feature IDs that should match the
+#' spatVector slot
 #' @details Contains vector-type feature data
-#'
+#' @returns giottoPoints
+#' @examples
+#' giottoPoints()
 #' @export
 giottoPoints <- setClass(
     Class = "giottoPoints",
@@ -1297,6 +1414,11 @@ giottoPoints <- setClass(
 #' @title Update giotto points object
 #' @name updateGiottoPointsObject
 #' @param gpoints giotto points object
+#' @returns GiottoPointsObject
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPoints")
+#'
+#' updateGiottoPointsObject(g)
 #' @export
 updateGiottoPointsObject <- function(gpoints) {
     if (!inherits(gpoints, "giottoPoints")) {
@@ -1305,7 +1427,9 @@ updateGiottoPointsObject <- function(gpoints) {
 
     # 3.2.X adds cacheing of IDs
     if (is.null(attr(gpoints, "unique_ID_cache"))) {
-        attr(gpoints, "unique_ID_cache") <- unique(as.list(gpoints@spatVector)$feat_ID)
+        attr(gpoints, "unique_ID_cache") <- unique(
+            as.list(gpoints@spatVector)$feat_ID
+        )
     }
 
     gpoints
@@ -1358,10 +1482,13 @@ setClass(
 #' @concept giotto points network class
 #' @slot name name of feature network
 #' @slot network_datatable feature network in data.table format
-#' @slot network_lookup_id table mapping numeric network ID to unique feature numerical IDs
+#' @slot network_lookup_id table mapping numeric network ID to unique
+#' feature numerical IDs
 #' @slot full fully connected network
 #' @details contains feature network information
-#'
+#' @returns featureNetwork
+#' @examples
+#' featureNetwork()
 #' @export
 featureNetwork <- setClass(
     Class = "featureNetwork",
@@ -1387,7 +1514,8 @@ featureNetwork <- setClass(
 # giottoImage class
 
 #' @title S4 giottoImage Class
-#' @description Framework of giotto object to store and work with spatial expression data
+#' @description Framework of giotto object to store and work with spatial
+#' expression data
 #' @concept giotto image object
 #' @slot name name of Giotto image
 #' @slot mg_object magick image object
@@ -1398,12 +1526,15 @@ featureNetwork <- setClass(
 #' @slot file_path file path to the image if given
 #' @slot OS_platform Operating System to run Giotto analysis on
 #' @details
-#' \[\strong{mg_object}\] Core object is any image that can be read by the magick package
+#' \[\strong{mg_object}\] Core object is any image that can be read by the
+#' magick package
 #'
 #' \[\strong{boundaries}\] Boundary adjustments can be used to manually or
 #' automatically through a script adjust the image with the spatial data.
 #'
-#'
+#' @returns giottoImage
+#' @examples
+#' giottoImage()
 #' @export
 giottoImage <- setClass(
     Class = "giottoImage",
@@ -1441,12 +1572,15 @@ giottoImage <- setClass(
 # giottoLargeImage class
 
 #' @title S4 giottoLargeImage Class
-#' @description class to handle images too large to load in normally through magick
+#' @description class to handle images too large to load in normally through
+#' magick
 #' @concept giotto object image
 #' @slot name name of large Giotto image
 #' @slot raster_object terra raster object
-#' @slot extent tracks the extent of the raster object. Note that most processes should rely on the extent of the raster object instead of this.
-#' @slot overall_extent terra extent object covering the original extent of image
+#' @slot extent tracks the extent of the raster object. Note that most
+#' processes should rely on the extent of the raster object instead of this.
+#' @slot overall_extent terra extent object covering the original extent of
+#' image
 #' @slot scale_factor image scaling relative to spatial locations
 #' @slot resolution spatial location units covered per pixel
 #' @slot max_intensity approximate maximum value
@@ -1456,6 +1590,10 @@ giottoImage <- setClass(
 #' @slot is_int values are integers
 #' @slot file_path file path to the image if given
 #' @slot OS_platform Operating System to run Giotto analysis on
+#' @returns giottoLargeImage
+#' @examples
+#' giottoLargeImage()
+#'
 #' @export giottoLargeImage
 #' @exportClass giottoLargeImage
 giottoLargeImage <- setClass(
@@ -1494,22 +1632,31 @@ giottoLargeImage <- setClass(
 
 # function for updating image objects if structure definitions have changed
 .update_giotto_image <- function(x) {
-    # 0.1.2 release adds colors & max_window slots
-    if (is.null(attr(x, "colors"))) {
-        attr(x, "colors") <- grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1)
-    }
-    if (is.null(attr(x, "max_window"))) {
-        # get a max intensity value
-        if (!is.null(x@max_intensity)) {
-            x@max_intensity <- .spatraster_intensity_range(x@raster_object)[["max"]]
+    if (inherits(x, "giottoLargeImage")) {
+        # 0.1.2 release adds colors & max_window slots
+        if (is.null(attr(x, "colors"))) {
+            attr(x, "colors") <- grDevices::grey.colors(
+                n = 256, start = 0,
+                end = 1, gamma = 1
+            )
+        }
+        if (is.null(attr(x, "max_window"))) {
+            # get a max intensity value
+            if (!is.null(x@max_intensity)) {
+                x@max_intensity <- .spatraster_intensity_range(
+                    x@raster_object
+                )[["max"]]
+            }
+
+            attr(x, "max_window") <- .bitdepth(
+                x@max_intensity,
+                return_max = TRUE
+            )
         }
 
-        attr(x, "max_window") <- .bitdepth(x@max_intensity, return_max = TRUE)
+        # 0.1.x release adds giottoImageStack
+        # deprecate
     }
-
-    # 0.1.x release adds giottoImageStack
-    # deprecate
-
     return(x)
 }
 

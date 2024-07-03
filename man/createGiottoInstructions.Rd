@@ -44,11 +44,13 @@ createGiottoInstructions(
 
 \item{is_docker}{using docker implementation of Giotto (defaults to FALSE)}
 
-\item{plot_count}{(global option) start count for creating automatic unique plots}
+\item{plot_count}{(global option) start count for creating automatic unique
+plots}
 
 \item{fiji_path}{path to fiji executable}
 
-\item{no_python_warn}{turn off warning that no compatible python env has been detected}
+\item{no_python_warn}{turn off warning that no compatible python env has
+been detected}
 }
 \value{
 named vector with giotto instructions
@@ -56,6 +58,10 @@ named vector with giotto instructions
 \description{
 Function to set global instructions for giotto functions
 }
+\examples{
+createGiottoInstructions()
+}
 \seealso{
-More online information can be found here \url{https://rubd.github.io/Giotto_site/articles/instructions_and_plotting.html}
+More online information can be found
+here \url{http://giottosuite.com}
 }

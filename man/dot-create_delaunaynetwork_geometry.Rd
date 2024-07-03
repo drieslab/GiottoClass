@@ -12,6 +12,9 @@
   ...
 )
 }
+\value{
+spatial Delaunay network
+}
 \description{
 Create a spatial Delaunay network.
 }

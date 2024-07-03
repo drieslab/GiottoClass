@@ -9,7 +9,8 @@ list_giotto_data(gobject = NULL, slot = NULL, ...)
 \arguments{
 \item{gobject}{giotto object}
 
-\item{slot}{giotto object slot of interest (e.g. "expression", "spatial_locs", etc.)}
+\item{slot}{giotto object slot of
+interest (e.g. "expression", "spatial_locs", etc.)}
 
 \item{...}{additional params to pass}
 }
@@ -18,5 +19,10 @@ names and locations of data within giotto object slot
 }
 \description{
 list the available data within specified giotto object slot
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+list_giotto_data(gobject = g, slot = "expression")
 }
 \keyword{internal}

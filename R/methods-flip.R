@@ -4,12 +4,18 @@
 #' @description Flip an object over a designated x or y value depending on
 #' direction param input. Note that this behavior may be different from terra's
 #' @param x object
-#' @param direction character. Direction to flip. Should be either partial match to 'vertical' or 'horizontal'
+#' @param direction character. Direction to flip. Should be either partial
+#' match to 'vertical' or 'horizontal'
 #' @param x0 x value to flip horizontally over (ignored for vertical). Pass NULL
 #' to flip over the extent
 #' @param y0 y value to flip vertically over (ignored for horizontal). Pass NULL
 #' to flip over the extent
 #' @param ... additional args to pass
+#' @returns flipped object
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("spatLocsObj")
+#'
+#' flip(g)
 NULL
 # ---------------------------------------------------------------- #
 
@@ -19,11 +25,10 @@ NULL
 #' @export
 setMethod(
     "flip", signature("giotto"),
-    function(
-        x, direction = "vertical",
-        x0 = 0, y0 = 0,
-        spat_unit = ":all:", feat_type = ":all:",
-        ...) {
+    function(x, direction = "vertical",
+    x0 = 0, y0 = 0,
+    spat_unit = ":all:", feat_type = ":all:",
+    ...) {
         a <- list(direction = direction, x0 = x0, y0 = y0, ...)
 
         checkmate::assert_character(spat_unit)
@@ -31,7 +36,8 @@ setMethod(
         all_su <- spat_unit == ":all:"
         all_ft <- feat_type == ":all:"
 
-        # no need to set default spat_unit and feat_type. NULL is acceptable input
+        # no need to set default spat_unit and feat_type. NULL is acceptable
+        # input
 
         # polygons --------------------------------------------------------- #
         poly <- get_polygon_info_list(
@@ -60,10 +66,14 @@ setMethod(
         if (!is.null(sls)) {
             for (sl in sls) {
                 sl <- do.call(flip, args = c(list(x = sl), a))
-                x <- setSpatialLocations(x, sl, verbose = FALSE, initialize = FALSE)
+                x <- setSpatialLocations(x, sl,
+                    verbose = FALSE,
+                    initialize = FALSE
+                )
             }
 
-            # TODO remove this after spatial info is removed from spatialNetwork objs
+            # TODO remove this after spatial info is removed from
+            # spatialNetwork objs
             sn_list <- get_spatial_network_list(
                 gobject = x,
                 spat_unit = ":all:",
@@ -71,10 +81,9 @@ setMethod(
                 copy_obj = FALSE
             )
             if (length(sn_list) > 0) {
-                warning(wrap_txt(
-                    "spatial locations have been modified.
-          Relevant spatial networks may need to be regenerated"
-                ), call. = FALSE)
+                warning(wrap_txt("spatial locations have been modified.
+                                Relevant spatial networks may need to be
+                                regenerated"), call. = FALSE)
             }
         }
 
@@ -165,18 +174,18 @@ setMethod(
 #' direction param input. Note that this behavior is different from terra's
 #' implementation of flip for SpatVectors where flips happen over the extent
 #' @param gpoly giottoPolygon
-#' @param direction character. Direction to flip. Should be either partial match to 'vertical' or 'horizontal'
+#' @param direction character. Direction to flip. Should be either partial
+#' match to 'vertical' or 'horizontal'
 #' @param x0 x value to flip horizontally over (ignored for vertical). Pass NULL
 #' to flip over the extent
 #' @param y0 y value to flip vertically over (ignored for horizontal). Pass NULL
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-.flip_gpoly <- function(
-        gpoly,
-        direction = "vertical",
-        x0 = 0,
-        y0 = 0) {
+.flip_gpoly <- function(gpoly,
+    direction = "vertical",
+    x0 = 0,
+    y0 = 0) {
     checkmate::assert_class(gpoly, "giottoPolygon")
     checkmate::assert_character(direction)
     if (!is.null(x0)) {
@@ -320,18 +329,18 @@ setMethod(
 #' direction param input. Note that this behavior is different from terra's
 #' implementation of flip for SpatVectors where flips happen over the extent
 #' @param image giottoLargeImage
-#' @param direction character. Direction to flip. Should be either partial match to 'vertical' or 'horizontal'
+#' @param direction character. Direction to flip. Should be either partial
+#' match to 'vertical' or 'horizontal'
 #' @param x0 x value to flip horizontally over (ignored for vertical). Pass NULL
 #' to flip over the extent
 #' @param y0 y value to flip vertically over (ignored for horizontal). Pass NULL
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-.flip_large_image <- function(
-        image,
-        direction = "vertical",
-        x0 = 0,
-        y0 = 0) {
+.flip_large_image <- function(image,
+    direction = "vertical",
+    x0 = 0,
+    y0 = 0) {
     checkmate::assert_class(image, "giottoLargeImage")
     checkmate::assert_character(direction)
     if (!is.null(x0)) {
@@ -370,18 +379,18 @@ setMethod(
 #' direction param input. Note that this behavior is different from terra's
 #' implementation of flip for SpatVectors where flips happen over the extent
 #' @param gpoly giottoPoints
-#' @param direction character. Direction to flip. Should be either partial match to 'vertical' or 'horizontal'
+#' @param direction character. Direction to flip. Should be either partial
+#' match to 'vertical' or 'horizontal'
 #' @param x0 x value to flip horizontally over (ignored for vertical). Pass NULL
 #' to flip over the extent
 #' @param y0 y value to flip vertically over (ignored for horizontal). Pass NULL
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-.flip_gpoints <- function(
-        gpoints,
-        direction = "vertical",
-        x0 = 0,
-        y0 = 0) {
+.flip_gpoints <- function(gpoints,
+    direction = "vertical",
+    x0 = 0,
+    y0 = 0) {
     checkmate::assert_class(gpoints, "giottoPoints")
     checkmate::assert_character(direction)
     if (!is.null(x0)) {
@@ -427,19 +436,19 @@ setMethod(
 
 #' @name .flip_spatlocs
 #' @param sl spatLocsObj
-#' @param direction character. Direction to flip. Should be either partial match to 'vertical' or 'horizontal'
+#' @param direction character. Direction to flip. Should be either partial
+#' match to 'vertical' or 'horizontal'
 #' @param x0 x value to flip horizontally over (ignored for vertical). Pass NULL
 #' to flip over the extent
 #' @param y0 y value to flip vertically over (ignored for horizontal). Pass NULL
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-.flip_spatlocs <- function(
-        sl,
-        direction = "vertical",
-        x0 = 0,
-        y0 = 0,
-        copy_obj = TRUE) {
+.flip_spatlocs <- function(sl,
+    direction = "vertical",
+    x0 = 0,
+    y0 = 0,
+    copy_obj = TRUE) {
     sdimy <- sdimx <- NULL
 
     checkmate::assert_class(sl, "spatLocsObj")
@@ -472,19 +481,19 @@ setMethod(
 
 #' @name .flip_spatnet
 #' @param sn spatialNetworkObj
-#' @param direction character. Direction to flip. Should be either partial match to 'vertical' or 'horizontal'
+#' @param direction character. Direction to flip. Should be either partial
+#' match to 'vertical' or 'horizontal'
 #' @param x0 x value to flip horizontally over (ignored for vertical). Pass NULL
 #' to flip over the extent
 #' @param y0 y value to flip vertically over (ignored for horizontal). Pass NULL
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-.flip_spatnet <- function(
-        sn,
-        direction = "vertical",
-        x0 = 0,
-        y0 = 0,
-        copy_obj = TRUE) {
+.flip_spatnet <- function(sn,
+    direction = "vertical",
+    x0 = 0,
+    y0 = 0,
+    copy_obj = TRUE) {
     sdimy_begin <- sdimy_end <- sdimx_begin <- sdimx_end <- NULL
 
     checkmate::assert_class(sn, "spatialNetworkObj")
@@ -501,17 +510,35 @@ setMethod(
     if (grepl(direction, "vertical")) {
         y_min <- sn[][, min(sdimy_begin, sdimy_end)]
         if (is.null(y0)) y0 <- y_min
-        sn[][, c("sdimy_begin", "sdimy_end") := .(-sdimy_begin + (2 * y0), -sdimy_end + (2 * y0))]
+        sn[][, c("sdimy_begin", "sdimy_end") := .(
+            -sdimy_begin + (2 * y0),
+            -sdimy_end + (2 * y0)
+        )]
         if (!is.null(sn@networkDT_before_filter)) {
-            sn@networkDT_before_filter[, c("sdimy_begin", "sdimy_end") := .(-sdimy_begin + (2 * y0), -sdimy_end + (2 * y0))]
+            sn@networkDT_before_filter[
+                ,
+                c("sdimy_begin", "sdimy_end") := .(
+                    -sdimy_begin + (2 * y0),
+                    -sdimy_end + (2 * y0)
+                )
+            ]
         }
     }
     if (grepl(direction, "horizontal")) {
         x_min <- sn[][, min(sdimx_begin, sdimx_end)]
         if (is.null(x0)) x0 <- x_min
-        sn[][, c("sdimx_begin", "sdimx_end") := .(-sdimx_begin + (2 * x0), -sdimx_end + (2 * x0))]
+        sn[][, c("sdimx_begin", "sdimx_end") := .(
+            -sdimx_begin + (2 * x0),
+            -sdimx_end + (2 * x0)
+        )]
         if (!is.null(sn@networkDT_before_filter)) {
-            sn@networkDT_before_filter[, c("sdimx_begin", "sdimx_end") := .(-sdimx_begin + (2 * x0), -sdimx_end + (2 * x0))]
+            sn@networkDT_before_filter[
+                ,
+                c("sdimx_begin", "sdimx_end") := .(
+                    -sdimx_begin + (2 * x0),
+                    -sdimx_end + (2 * x0)
+                )
+            ]
         }
     }
 
@@ -524,18 +551,18 @@ setMethod(
 #' @name .flip_extent
 #' @title Flip a SpatExtent
 #' @param e extent
-#' @param direction character. Direction to flip. Should be either partial match to 'vertical' or 'horizontal'
+#' @param direction character. Direction to flip. Should be either partial
+#' match to 'vertical' or 'horizontal'
 #' @param x0 x value to flip horizontally over (ignored for vertical). Pass NULL
 #' to flip over the extent
 #' @param y0 y value to flip vertically over (ignored for horizontal). Pass NULL
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-.flip_extent <- function(
-        e,
-        direction = "vertical",
-        x0 = 0,
-        y0 = 0) {
+.flip_extent <- function(e,
+    direction = "vertical",
+    x0 = 0,
+    y0 = 0) {
     checkmate::assert_class(e, "SpatExtent")
     checkmate::assert_character(direction)
     if (!is.null(x0)) {
@@ -549,11 +576,13 @@ setMethod(
     x_vals <- as.numeric(c(e$xmin, e$xmax))
 
     if (grepl(direction, "vertical")) {
-        if (is.null(y0)) y0 <- y_vals[1] # set bound min as line of sym (terra default)
+        if (is.null(y0)) y0 <- y_vals[1] # set bound min as line of
+        # sym (terra default)
         y_vals <- -y_vals + (2 * y0)
     }
     if (grepl(direction, "horizontal")) {
-        if (is.null(x0)) x0 <- x_vals[1] # set bound min as line of sym (terra default)
+        if (is.null(x0)) x0 <- x_vals[1] # set bound min as line of
+        # sym (terra default)
         x_vals <- -x_vals + (2 * x0)
     }
 

@@ -29,6 +29,14 @@
 \arguments{
 \item{x}{object to be transposed}
 }
+\value{
+transposed object
+}
 \description{
 Transpose
+}
+\examples{
+m <- matrix(rnorm(10), nrow = 5)
+
+t(m)
 }

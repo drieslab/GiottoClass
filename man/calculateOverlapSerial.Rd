@@ -18,7 +18,8 @@ calculateOverlapSerial(
 \arguments{
 \item{gobject}{giotto object}
 
-\item{name_overlap}{name for the overlap results (default to feat_info parameter)}
+\item{name_overlap}{name for the overlap
+results (default to feat_info parameter)}
 
 \item{spatial_info}{polygon information}
 
@@ -36,10 +37,17 @@ calculateOverlapSerial(
 giotto object or spatVector with overlapping information
 }
 \description{
-calculate overlap between cellular structures (polygons) and features (points)
+calculate overlap between cellular
+structures (polygons) and features (points)
 }
 \details{
-Serial overlapping function that works on groups of polygons at a time.
-Number of polygons per group is defined by \code{polygon_group_size} param
+Serial overlapping function that works on groups of polygons
+at a time. Number of polygons per group is defined
+by \code{polygon_group_size} param
+}
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+calculateOverlapSerial(g, spatial_info = "z1")
 }
 \concept{overlap}

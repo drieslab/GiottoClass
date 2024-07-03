@@ -10,6 +10,9 @@ S3toS4spatialGridObj(object)
 \arguments{
 \item{object}{S3 spatialGridObj}
 }
+\value{
+S4 spatialGridObj
+}
 \description{
 convert S3 spatialGridObj to S4
 }

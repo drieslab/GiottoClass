@@ -76,6 +76,7 @@ jobs:
             any::RTriangle
             any::geometry
             any::qs
+            any::future.apply
             github::drieslab/GiottoData
 
       - name: Test python env build

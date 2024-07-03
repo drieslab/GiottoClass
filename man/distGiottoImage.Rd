@@ -17,8 +17,8 @@ distGiottoImage(
 \arguments{
 \item{gobject}{giotto object}
 
-\item{image_type}{image object type (only supports largeImage and is set as
-default)}
+\item{image_type}{image object
+type (only supports largeImage and is set as default)}
 
 \item{image_name}{name of image object to use}
 
@@ -30,10 +30,13 @@ default)}
 
 \item{...}{additional params to pass to \code{\link[terra:hist]{terra::hist()}} or \code{\link[terra:density]{terra::density()}}}
 }
+\value{
+density or histogram plot
+}
 \description{
-Plot distribution of intensity values using either a density plot
-or a histogram. Useful for finding image artefact outliers and determining
-reasonable scaling cutoffs.
+Plot distribution of intensity values using either a density
+plot or a histogram. Useful for finding image artefact outliers and
+determining reasonable scaling cutoffs.
 }
 \details{
 Plot is generated from a downsampling of the original image
@@ -49,3 +52,8 @@ examined. \strong{Bandwidth} refers to the curve smoothing value applied.
 Histogram of intensity values for image objects.
 }
 
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+distGiottoImage(g, image_name = "image")
+}

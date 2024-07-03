@@ -28,9 +28,11 @@ test_that("Not found exprObj returns error", {
 test_that("Not found CellMetadata returns error", {
     rlang::local_options(lifecycle_verbosity = "quiet")
     expect_error(
-        getCellMetadata(giotto_object,
+        getCellMetadata(
+            giotto_object,
             spat_unit = "none",
-            feat_type = "none", values = "raw"
+            feat_type = "none",
+            values = "raw"
         )
     )
 })
@@ -38,9 +40,11 @@ test_that("Not found CellMetadata returns error", {
 test_that("Not found DimReduction returns error", {
     rlang::local_options(lifecycle_verbosity = "quiet")
     expect_error(
-        getDimReduction(giotto_object,
+        getDimReduction(
+            giotto_object,
             spat_unit = "none",
-            feat_type = "none", values = "raw"
+            feat_type = "none",
+            name = "raw"
         )
     )
 })
@@ -49,8 +53,7 @@ test_that("Not found FeatureInfo returns error", {
     rlang::local_options(lifecycle_verbosity = "quiet")
     expect_error(
         getFeatureInfo(giotto_object,
-            spat_unit = "none",
-            feat_type = "none", values = "raw"
+            feat_type = "none"
         )
     )
 })
@@ -60,7 +63,7 @@ test_that("Not found FeatureMetadata returns error", {
     expect_error(
         getFeatureMetadata(giotto_object,
             spat_unit = "none",
-            feat_type = "none", values = "raw"
+            feat_type = "none"
         )
     )
 })
@@ -69,8 +72,7 @@ test_that("Not found GiottoImage returns error", {
     rlang::local_options(lifecycle_verbosity = "quiet")
     expect_error(
         getGiottoImage(giotto_object,
-            spat_unit = "none",
-            feat_type = "none", values = "raw"
+            name = "none"
         )
     )
 })
@@ -80,7 +82,9 @@ test_that("Not found Multiomics returns error", {
     expect_error(
         getMultiomics(giotto_object,
             spat_unit = "none",
-            feat_type = "none", values = "raw"
+            feat_type = "none",
+            result_name = "use_this",
+            integration_method = "wnn"
         )
     )
 })
@@ -90,7 +94,9 @@ test_that("Not found NearestNetwork returns error", {
     expect_error(
         getNearestNetwork(giotto_object,
             spat_unit = "none",
-            feat_type = "none", values = "raw"
+            feat_type = "none",
+            nn_type = "knn",
+            name = "random"
         )
     )
 })
@@ -99,8 +105,7 @@ test_that("Not found PolygonInfo returns error", {
     rlang::local_options(lifecycle_verbosity = "quiet")
     expect_error(
         getPolygonInfo(giotto_object,
-            spat_unit = "none",
-            feat_type = "none", values = "raw"
+            polygon_name = "none"
         )
     )
 })
@@ -110,7 +115,8 @@ test_that("Not found SpatialEnrichment returns error", {
     expect_error(
         getSpatialEnrichment(giotto_object,
             spat_unit = "none",
-            feat_type = "none", values = "raw"
+            feat_type = "none",
+            name = "metafeat"
         )
     )
 })
@@ -120,7 +126,8 @@ test_that("Not found SpatialGrid returns error", {
     expect_error(
         getSpatialGrid(giotto_object,
             spat_unit = "none",
-            feat_type = "none", values = "raw"
+            feat_type = "none",
+            name = "raw"
         )
     )
 })
@@ -130,7 +137,7 @@ test_that("Not found SpatialLocations returns error", {
     expect_error(
         getSpatialLocations(giotto_object,
             spat_unit = "none",
-            feat_type = "none", values = "raw"
+            name = "raw"
         )
     )
 })
@@ -139,15 +146,14 @@ test_that("Not found SpatialNetwork returns error", {
     rlang::local_options(lifecycle_verbosity = "quiet")
     expect_error(
         getSpatialNetwork(giotto_object,
-            spat_unit = "none",
-            feat_type = "none", values = "raw"
+            spat_unit = "none", name = "raw"
         )
     )
 })
 
 ## expect information ####
 
-### download pre-processed Giotto object
+### load pre-processed Giotto object
 giotto_object <- GiottoData::loadGiottoMini("vizgen")
 
 test_that("Finds exprObj", {
@@ -186,7 +192,9 @@ test_that("Finds NearestNetwork", {
     expect_class(
         getNearestNetwork(giotto_object,
             spat_unit = "aggregate",
-            feat_type = "rna"
+            feat_type = "rna",
+            nn_type = "sNN",
+            name = "sNN.pca"
         ),
         "nnNetObj"
     )
@@ -194,7 +202,9 @@ test_that("Finds NearestNetwork", {
 
 test_that("Finds PolygonInfo", {
     rlang::local_options(lifecycle_verbosity = "quiet")
-    expect_class(getPolygonInfo(giotto_object), "SpatVector")
+    expect_class(getPolygonInfo(giotto_object,
+                                polygon_name = "z0"),
+                 "SpatVector")
 })
 
 test_that("Finds SpatialEnrichment", {

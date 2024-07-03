@@ -6,6 +6,9 @@
 \usage{
 .overlap_points_single_polygon(spatvec, poly_ID_name, pointvec_dt)
 }
+\value{
+terra::intersect
+}
 \description{
 overlap for a single polygon
 }

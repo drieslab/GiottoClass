@@ -46,6 +46,12 @@ filepath. \cr
 For required formatting when reading tabular data or objects, see
 \code{\link{createGiottoPolygonsFromDfr}} details.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+polyinfo <- getPolygonInfo(g, return_giottoPolygon = TRUE)
+
+setPolygonInfo(gobject = g, x = polyinfo)
+}
 \seealso{
 Other polygon info data accessor functions: 
 \code{\link{getPolygonInfo}()},

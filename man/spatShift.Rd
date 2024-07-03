@@ -3,15 +3,26 @@
 \name{spatShift}
 \alias{spatShift}
 \alias{spatShift,giotto-method}
+\alias{spatShift,SpatExtent-method}
 \alias{spatShift,spatLocsObj-method}
 \alias{spatShift,data.frame-method}
 \alias{spatShift,spatialNetworkObj-method}
 \alias{spatShift,giottoPolygon-method}
 \alias{spatShift,giottoPoints-method}
 \alias{spatShift,giottoLargeImage-method}
+\alias{spatShift,giottoImage-method}
 \title{Spatially shift an object}
 \usage{
-\S4method{spatShift}{giotto}(x, dx = 0, dy = 0, spat_unit = ":all:", feat_type = ":all:")
+\S4method{spatShift}{giotto}(
+  x,
+  dx = 0,
+  dy = 0,
+  spat_unit = ":all:",
+  feat_type = ":all:",
+  images = ":all:"
+)
+
+\S4method{spatShift}{SpatExtent}(x, dx = 0, dy = 0)
 
 \S4method{spatShift}{spatLocsObj}(x, dx = 0, dy = 0, dz = 0, copy_obj = TRUE, ...)
 
@@ -32,6 +43,8 @@
 \S4method{spatShift}{giottoPoints}(x, dx = 0, dy = 0, copy_obj = FALSE, ...)
 
 \S4method{spatShift}{giottoLargeImage}(x, dx = 0, dy = 0, copy_obj = FALSE, ...)
+
+\S4method{spatShift}{giottoImage}(x, dx = 0, dy = 0, ...)
 }
 \arguments{
 \item{x}{object}
@@ -44,22 +57,34 @@
 
 \item{feat_type}{character vector. feature types to affect}
 
+\item{images}{character vector. Images to affect.}
+
 \item{dz}{numeric. The shift on the z axis}
 
 \item{copy_obj}{Default = TRUE}
 
 \item{...}{additional params to pass to methods}
 
-\item{geom}{character. Named vector of colnames of x, y, (z) coordinate columns.
-Default is \code{c("sdimx", "sdimy", "sdimz")}}
+\item{geom}{character. Named vector of colnames of x, y, (z) coordinate
+columns. Default is \code{c("sdimx", "sdimy", "sdimz")}}
+}
+\value{
+object with shifted spatial locations
 }
 \description{
 Shift the spatial locations of an object
 }
+\details{
+With the \code{giotto} object, the ":all:" token can be passed to \code{spat_unit},
+\code{feat_type}, and \code{images} arguments to affect all available items.
+}
 \section{Methods (by class)}{
 \itemize{
-\item \code{spatShift(spatLocsObj)}: Shift the locations of a spatLocsObj
-
 \item \code{spatShift(spatialNetworkObj)}: Shift the locations of a spatialNetworkObj
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("spatLocsObj")
+
+spatShift(g)
+}

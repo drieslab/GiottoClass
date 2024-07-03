@@ -7,7 +7,11 @@
 convert_to_full_spatial_network(reduced_spatial_network_DT)
 }
 \arguments{
-\item{reduced_spatial_network_DT}{reduced spatial network in \code{data.table} format}
+\item{reduced_spatial_network_DT}{reduced spatial network in \code{data.table}
+format}
+}
+\value{
+data.table
 }
 \description{
 Convert to a full spatial network, ie ensuring that all edges
@@ -17,5 +21,11 @@ interactions are ranked by distance, where rank increases from smaller to
 larger distances. This rank is appended to the \code{data.table} as a \code{rank_int}
 column. Another \code{rnk_src_trgt} column is added with the IDs of \eqn{a} and
 \eqn{b} pasted together
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+spat_net <- getSpatialNetwork(g, output = "networkDT")
+
+spat_net_full <- convert_to_full_spatial_network(spat_net)
 }
 \keyword{internal}

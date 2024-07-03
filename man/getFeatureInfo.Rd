@@ -8,7 +8,8 @@ getFeatureInfo(
   gobject = gobject,
   feat_type = NULL,
   return_giottoPoints = FALSE,
-  set_defaults = TRUE
+  set_defaults = TRUE,
+  simplify = TRUE
 )
 }
 \arguments{
@@ -20,9 +21,20 @@ getFeatureInfo(
 
 \item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
 expression and spat_info are not expected to exist.}
+
+\item{simplify}{logical. Whether or not to take object out of a list when
+there is a length of 1.}
+}
+\value{
+giotto points spatVector
 }
 \description{
 Get giotto points spatVector
+}
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+getFeatureInfo(g)
 }
 \seealso{
 Other feature info data accessor functions: 

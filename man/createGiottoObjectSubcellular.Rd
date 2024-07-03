@@ -30,9 +30,11 @@ createGiottoObjectSubcellular(
 \arguments{
 \item{gpolygons}{giotto polygons}
 
-\item{polygon_mask_list_params}{list parameters for \code{\link{createGiottoPolygonsFromMask}}}
+\item{polygon_mask_list_params}{list parameters
+for \code{\link{createGiottoPolygonsFromMask}}}
 
-\item{polygon_dfr_list_params}{list parameters for \code{\link{createGiottoPolygonsFromDfr}}}
+\item{polygon_dfr_list_params}{list parameters
+for \code{\link{createGiottoPolygonsFromDfr}}}
 
 \item{gpoints}{giotto points}
 
@@ -48,7 +50,8 @@ createGiottoObjectSubcellular(
 
 \item{spatial_grid_name}{list of spatial grid name(s)}
 
-\item{spatial_enrichment}{list of spatial enrichment score(s) for each spatial region}
+\item{spatial_enrichment}{list of spatial enrichment score(s) for each
+spatial region}
 
 \item{spatial_enrichment_name}{list of spatial enrichment name(s)}
 
@@ -58,13 +61,15 @@ createGiottoObjectSubcellular(
 
 \item{images}{list of images}
 
-\item{largeImages}{list of large images}
+\item{largeImages}{deprecated}
 
 \item{largeImages_list_params}{image params when loading largeImages as list}
 
-\item{instructions}{list of instructions or output result from \code{\link{createGiottoInstructions}}}
+\item{instructions}{list of instructions or output result
+from \code{\link{createGiottoInstructions}}}
 
-\item{cores}{how many cores or threads to use to read data if paths are provided}
+\item{cores}{how many cores or threads to use to read data if paths are
+provided}
 
 \item{verbose}{be verbose when building Giotto object}
 }
@@ -72,13 +77,26 @@ createGiottoObjectSubcellular(
 giotto object
 }
 \description{
-Function to create a giotto object starting from subcellular polygon (e.g. cell) and points (e.g. transcripts) information
+Function to create a giotto object starting from subcellular
+polygon (e.g. cell) and points (e.g. transcripts) information
 }
 \details{
-There are two different ways to create a Giotto Object with subcellular information:
+There are two different ways to create a Giotto Object with
+subcellular information:
 \itemize{
-\item Starting from polygons (spatial units e.g. cell) represented by a mask or dataframe file and giotto points (analyte coordinates e.g. transcripts)
-\item Starting from polygons (spatial units e.g. cell) represented by a mask or dataframe file and raw intensity images (e.g. protein stains)
+\item Starting from polygons (spatial units e.g. cell) represented by a mask
+or dataframe file and giotto points (analyte coordinates e.g. transcripts)
+\item Starting from polygons (spatial units e.g. cell) represented by a mask
+or dataframe file and raw intensity images (e.g. protein stains)
 }
+}
+\examples{
+x_gpolygons <- GiottoData::loadSubObjectMini("giottoPolygon")
+x_gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
+
+createGiottoObjectSubcellular(
+    gpolygons = x_gpolygons,
+    gpoints = x_gpoints
+)
 }
 \concept{giotto}

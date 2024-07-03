@@ -17,7 +17,8 @@ combineSpatialCellMetadataInfo(gobject, spat_unit = NULL, feat_type = NULL)
 list of data.table(s)
 }
 \description{
-Combine cell metadata with spatial cell information (e.g. polygon)
+Combine cell metadata with spatial cell
+information (e.g. polygon)
 }
 \details{
 The returned data.table has the following columns: \cr
@@ -28,4 +29,9 @@ The returned data.table has the following columns: \cr
 \item{feat: selected feature(s)}
 \item{other columns that are part of the cell metadata}
 }
+}
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+combineSpatialCellMetadataInfo(g, spat_unit = "aggregate", feat_type = "rna")
 }

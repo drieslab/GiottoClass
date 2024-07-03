@@ -27,8 +27,19 @@ createExprObj(
 
 \item{misc}{misc}
 
-\item{expression_matrix_class}{class of expression matrix to use (e.g. 'dgCMatrix', 'DelayedArray')}
+\item{expression_matrix_class}{class of expression matrix to
+use (e.g. 'dgCMatrix', 'DelayedArray')}
+}
+\value{
+exprObj
 }
 \description{
 Create an S4 exprObj
+}
+\examples{
+x_expr <- readRDS(system.file("extdata/toy_matrix.RDS",
+    package = "GiottoClass"
+))
+
+createExprObj(expression_data = x_expr)
 }

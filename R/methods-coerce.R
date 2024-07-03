@@ -9,28 +9,59 @@ NULL
 #' @param x The object to coerce
 #' @param keep.rownames This argument is ignored
 #' @param geom character or NULL. If not NULL, either "XY", "WKT", or "HEX", to
-#' get the geometry included in coordinates of each point or vertex, Well-Known-Text
-#' or hexadecimal notation.
-#' @param include_values whether to include attributes information when geom is 'XY'
+#' get the geometry included in coordinates of each point or vertex,
+#' Well-Known-Text or hexadecimal notation.
+#' @param include_values whether to include attributes information when geom
+#' is 'XY'
 #' @param \dots additional arguments to pass
 #' @family As coercion functions
+#' @returns data.table
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPolygon")
+#'
+#' data.table::as.data.table(g)
+NULL
+
+#' @title Coerce to matrix
+#' @name as.matrix
+#' @description Coerce to matrix
+#' @param x object to coerce
+#' @param id_rownames logical. Retain the spatial IDs as the rownames
+#' @param \dots additional params to pass (none implemented)
+#' @examples
+#' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
+#' m <- as.matrix(sl)
+#' @family As coercion functions
+#' @returns matrix
 NULL
 
 
 #' @title Coerce to SpatVector polygons
 #' @name as.polygons
 #' @description Coversion to a SpatVector of polygons.
-#' @param x SpatRaster, SpatVector, SpatExtent, or correctly formatted data.frame
+#' @param x SpatRaster, SpatVector, SpatExtent, or correctly formatted
+#' data.frame
+#' @returns SpatVector polygons
 #' @seealso [terra::as.polygons()]
 #' @family As coercion functions
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPolygon")
+#'
+#' as.polygons(slot(g, "spatVector"))
 NULL
 
 #' @title Coerce to SpatVector points
 #' @name as.points
 #' @description Coversion to a SpatVector of points.
-#' @param x SpatRaster, SpatVector, SpatExtent, or correctly formatted data.frame
+#' @param x SpatRaster, SpatVector, SpatExtent, or correctly formatted
+#' data.frame
+#' @returns SpatVector points
 #' @seealso [terra::as.points()]
 #' @family As coercion functions
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPoints")
+#'
+#' as.points(slot(g, "spatVector"))
 NULL
 
 
@@ -40,7 +71,12 @@ NULL
 #' @param x The object to coerce
 #' @param drop When TRUE, returned object will be of the desired object type
 #' instead of wrapped in a `giottoPoints` or `giottoPolygon` object
+#' @returns  sf, sp, stars or terra
 #' @family As coercion functions
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPoints")
+#'
+#' as.sf(g)
 NULL
 
 
@@ -50,7 +86,9 @@ NULL
 #' @rdname as.data.table
 #' @method as.data.table SpatVector
 #' @export
-as.data.table.SpatVector <- function(x, keep.rownames = FALSE, geom = NULL, include_values = TRUE, ...) {
+as.data.table.SpatVector <- function(
+        x, keep.rownames = FALSE, geom = NULL,
+        include_values = TRUE, ...) {
     # if looking for polygon XY...
     if (terra::is.polygons(x)) {
         if (!is.null(geom)) {
@@ -80,6 +118,76 @@ as.data.table.giottoPoints <- function(x, ...) {
 }
 
 
+
+
+# to matrix ####
+
+
+#' @rdname as.matrix
+#' @export
+setMethod("as.matrix", signature("spatLocsObj"), function(
+        x, id_rownames = TRUE, ...) {
+
+    x <- x[] # drop to DT
+    spat_cols <- c("sdimx", "sdimy", "sdimz")
+    spat_cols <- spat_cols %in% colnames(x)
+    
+    m <- x[, spat_cols, with = FALSE] %>%
+        as.matrix()
+    
+    if (id_rownames) {
+        rownames(m) <- x$cell_ID
+    }
+    return(m)
+})
+
+
+
+
+# image types ####
+
+methods::setAs("giottoLargeImage", "giottoImage", function(from) {
+    mgobj <- .spatraster_sample_values(
+        raster_object = from,
+        size = getOption("giotto.plot_img_max_crop", 1e8),
+        output = "magick",
+        verbose = TRUE
+    )
+
+    # Create giottoImage
+    mImg <- createGiottoImage(
+        name = objName(from),
+        mg_object = mgobj,
+        verbose = FALSE
+    )
+
+    ext(mImg) <- ext(from)
+
+    # # Set scalefactor
+    im_dims <- magick::image_info(mImg@mg_object)
+    x_scalefactor <- im_dims[["width"]] / dim(from)[2]
+    y_scalefactor <- im_dims[["height"]] / dim(from)[1]
+
+    mImg@scale_factor <- c("x" = x_scalefactor, "y" = y_scalefactor)
+    mImg@resolution <- 1 / mImg@scale_factor
+
+    return(mImg)
+})
+
+# TODO redo this as `as.array`. 
+# Careful: There are already usages of this `as()` method in the code
+methods::setAs("giottoLargeImage", "array", function(from) {
+    .spatraster_sample_values(
+        raster_object = from,
+        size = getOption("giotto.plot_img_max_crop", 1e8),
+        output = "array",
+        verbose = FALSE
+    )
+})
+
+
+
+
 # to SpatVector ####
 # TODO
 # as.points
@@ -95,7 +203,9 @@ as.data.table.giottoPoints <- function(x, ...) {
 #' @export
 setMethod(
     "as.polygons", signature("data.frame"),
-    function(x, include_values = TRUE, specific_values = NULL, sort_geom = FALSE) {
+    function(
+        x, include_values = TRUE, specific_values = NULL,
+        sort_geom = FALSE) {
         .dt_to_spatvector_polygon(
             dt = data.table::setDT(x),
             include_values = include_values,
@@ -425,11 +535,11 @@ setMethod(
 
 #' @title Convert spatVector to data.table
 #' @name .spatvector_to_dt
+#' @returns data.table
 #' @description  convert spatVector to data.table
 #' @keywords internal
-.spatvector_to_dt <- function(
-        spatvector,
-        include_values = TRUE) {
+.spatvector_to_dt <- function(spatvector,
+    include_values = TRUE) {
     # NSE var
     geom <- NULL
 
@@ -437,7 +547,7 @@ setMethod(
 
     if (isTRUE(include_values)) {
         DT_values <- data.table::as.data.table(terra::values(spatvector))
-        DT_values[, geom := 1:nrow(DT_values)]
+        DT_values[, geom := seq_len(nrow(DT_values))]
         DT_full <- data.table::merge.data.table(DT_geom, DT_values, by = "geom")
         return(DT_full)
     } else {
@@ -456,12 +566,12 @@ setMethod(
 #' attributes if `include_values = TRUE`.
 #' @param sort_geom `logical`. Whether to sort key the data.table input by
 #' 'geom', 'part', and 'hole' columns.
+#' @returns polygon spatVector
 #' @keywords internal
-.dt_to_spatvector_polygon <- function(
-        dt,
-        include_values = TRUE,
-        specific_values = NULL,
-        sort_geom = FALSE) {
+.dt_to_spatvector_polygon <- function(dt,
+    include_values = TRUE,
+    specific_values = NULL,
+    sort_geom = FALSE) {
     # DT vars
     geom <- NULL
 
@@ -475,7 +585,10 @@ setMethod(
     all_colnames <- colnames(dt)
     geom_values <- c("geom", "part", "x", "y", "hole")
     if (!all(geom_values %in% all_colnames)) {
-        stop("All columns for '", paste0(geom_values, collapse = "', '"), "' are needed")
+        stop(
+            "All columns for '",
+            paste0(geom_values, collapse = "', '"), "' are needed"
+        )
     }
     other_values <- all_colnames[!all_colnames %in% geom_values]
 
@@ -493,11 +606,9 @@ setMethod(
         attr_values <- unique(dt[, other_values, with = FALSE])
         if (nrow(attr_values) > 0L &&
             nrow(attr_values) != max(dt[, max(geom)])) {
-            warning(wrap_txt(
-                ".dt_to_spatvector_polygon:
-        Number of attributes does not match number of polygons to create.
-        Attributes are ignored."
-            ), call. = FALSE)
+            warning(wrap_txt(".dt_to_spatvector_polygon:
+                            Number of attributes does not match number of
+                            polygons to create. Attributes are ignored."), call. = FALSE)
         }
     }
 
@@ -518,11 +629,11 @@ setMethod(
 #' attributes paired with created terra spatVector
 #' @param specific_values specific values to include as attributes if
 #' include_values == TRUE
+#' @returns spatVector for points
 #' @keywords internal
-.dt_to_spatvector_points <- function(
-        dt,
-        include_values = TRUE,
-        specific_values = NULL) {
+.dt_to_spatvector_points <- function(dt,
+    include_values = TRUE,
+    specific_values = NULL) {
     all_colnames <- colnames(dt)
     geom_values <- c("geom", "part", "x", "y", "hole")
     other_values <- all_colnames[!all_colnames %in% geom_values]
@@ -534,12 +645,12 @@ setMethod(
 
 
         spatVec <- terra::vect(
-            x = as.matrix(dt[, geom_values, with = F]),
-            type = "points", atts = dt[, other_values, with = F]
+            x = as.matrix(dt[, geom_values, with = FALSE]),
+            type = "points", atts = dt[, other_values, with = FALSE]
         )
     } else {
         spatVec <- terra::vect(
-            x = as.matrix(dt[, geom_values, with = F]),
+            x = as.matrix(dt[, geom_values, with = FALSE]),
             type = "points", atts = NULL
         )
     }

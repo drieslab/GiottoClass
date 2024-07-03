@@ -36,7 +36,8 @@
 \arguments{
 \item{x}{object}
 
-\item{direction}{character. Direction to flip. Should be either partial match to 'vertical' or 'horizontal'}
+\item{direction}{character. Direction to flip. Should be either partial
+match to 'vertical' or 'horizontal'}
 
 \item{x0}{x value to flip horizontally over (ignored for vertical). Pass NULL
 to flip over the extent}
@@ -49,6 +50,9 @@ to flip over the extent}
 \item{feat_type}{character vector. feature types to affect}
 
 \item{...}{additional args to pass}
+}
+\value{
+flipped object
 }
 \description{
 Flip an object over a designated x or y value depending on
@@ -69,3 +73,8 @@ direction param input. Note that this behavior may be different from terra's
 \item \code{flip(SpatExtent)}: Flip a SpatExtent
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("spatLocsObj")
+
+flip(g)
+}

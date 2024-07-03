@@ -12,7 +12,11 @@ init_cell_metadata(gobject, provenance = NULL)
 \item{provenance}{provenance information (optional)
 and feature type in the giotto object.}
 }
+\value{
+cellMetaObjs
+}
 \description{
-Generate cellMetaObjs to hold cell metadata for each spatial unit
+Generate cellMetaObjs to hold cell metadata for each spatial
+unit
 }
 \keyword{internal}

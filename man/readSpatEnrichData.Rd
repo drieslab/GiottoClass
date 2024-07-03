@@ -23,6 +23,14 @@ readSpatEnrichData(
 
 \item{verbose}{be verbose}
 }
+\value{
+spatEnrObj
+}
 \description{
 read spatial enrichment results from list
+}
+\examples{
+x <- GiottoData::loadSubObjectMini("spatEnrObj")
+
+readSpatEnrichData(x)
 }
