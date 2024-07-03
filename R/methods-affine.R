@@ -215,6 +215,52 @@ setMethod("affine", signature(x = "affine2d", y = "matrix"), function(
 }
 
 
+# perform the actual affine operation
+.gaffine_realize_magick <- function(x, size = 5e5, ...) {
+    mg <- .spatraster_sample_values(x, output = "magick", size = size, ...)
+    aff <- x@affine
+    dummy_sl <- .magick_image_corners(mg)
+    aff_dummy_sl <- affine(dummy_sl, .aff_linear_2d(aff)) %>%
+        flip()
+    
+    .sl_to_mat <- function(x) {
+        x[][, c("sdimx", "sdimy")] %>% t()
+    }
+    
+    # convert spatlocs of dummy points to matrix
+    ctrl_pts_a <- .sl_to_mat(flip(dummy_sl))
+    ctrl_pts_b <- .sl_to_mat(aff_dummy_sl)
+    
+    ctrl_pts <- c(
+        ctrl_pts_a[, 1], ctrl_pts_b[, 1],
+        ctrl_pts_a[, 2], ctrl_pts_b[, 2],
+        ctrl_pts_a[, 3], ctrl_pts_b[, 3]
+    )
+    names(ctrl_pts) <- NULL
+    
+    mg_aff <- magick::image_distort(
+        mg, distortion = "Affine", coordinates = ctrl_pts, bestfit = TRUE
+    )
+    
+    d <- .bound_poly(x) %>%
+        affine(aff)
+    
+    affine_gimg <- giottoImage(
+        name = paste(objName(x), "affine", collapse = "_"),
+        mg_object = mg_aff,
+        minmax = c(xmax_sloc = 10, xmin_sloc = 0, 
+                   ymax_sloc = 10, ymin_sloc = 0),
+        boundaries = c(xmax_adj = 0, xmin_adj = 0,
+                       ymax_adj = 0, ymin_adj = 0)
+    )
+    
+    # assign ext from dummy
+    ext(affine_gimg) <- ext(d)
+    
+    return(initialize(affine_gimg))
+}
+
+
 
 
 
