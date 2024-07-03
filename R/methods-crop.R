@@ -46,6 +46,19 @@ setMethod("crop", signature("giottoLargeImage"), function(x, y, ...) {
     x
 })
 
+# * giottoAffineImage ####
+#' @rdname crop
+#' @export
+setMethod("crop", signature("giottoAffineImage"), function(x, y, ...) {
+    crop_ext <- ext(y)
+    d <- .bound_poly(crop_ext)
+    aff <- x@affine
+    img_crop_ext <- ext(affine(d, aff, inv = TRUE)) # find extent in img space
+    x@raster_object <- terra::crop(x@raster_object, img_crop_ext)
+    
+    return(initialize(x))
+})
+
 # * spatLocsObj ####
 #' @rdname crop
 #' @export
