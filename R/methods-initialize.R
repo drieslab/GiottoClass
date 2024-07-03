@@ -566,7 +566,7 @@ setMethod(
 )
 
 
-## transform_plan_2d
+## affine2d ####
 setMethod("initialize", "affine2d", function(.Object, ...) {
     .Object <- methods::callNextMethod()
     .Object@anchor <- ext(.Object@anchor) %>%
