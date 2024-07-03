@@ -98,6 +98,29 @@ setMethod(
     }
 )
 
+#' @rdname affine
+#' @export
+setMethod("affine", signature(x = "giottoLargeImage", y = "matrix"), function(
+        x, y, inv = FALSE, ...
+) {
+    a <- get_args_list(...)
+    a$x <- as(x, "giottoAffineImage") # convert to giottoAffineImage
+    res <- do.call(affine, args = a)
+    return(res)
+})
+
+#' @rdname affine
+#' @export
+setMethod("affine", signature(x = "giottoAffineImage", y = "matrix"), function(
+        x, y, inv = FALSE, ...
+) {
+    a <- get_args_list(...)
+    aff <- x@affine
+    a$x <- aff
+    # update affine
+    x@affine <- do.call(affine, args = a)
+    return(x)
+})
 
 #' @rdname affine
 #' @export
