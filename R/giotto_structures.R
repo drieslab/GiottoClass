@@ -180,7 +180,20 @@
     return(res)
 }
 
-
+# create a spatLocsObj of 3 corner pixel locations from a magick object input.
+# used to help with calculation of control coordinates for affine distorts
+.magick_image_corners <- function(x) {
+    checkmate::assert_class(x, "magick-image")
+    im_info <- magick::image_info(x)
+    spatLocsObj(
+        name = "mg_ctrl_coords",
+        coordinates = data.table::data.table(
+            cell_ID = letters[seq_len(3)],
+            sdimx = c(0.5, 0.5, im_info$width - 0.5),
+            sdimy = c(0.5, im_info$height - 0.5, 0.5)
+        )
+    )
+}
 
 
 
