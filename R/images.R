@@ -276,7 +276,19 @@ get_adj_rescale_img <- function(img_minmax,
     ))
 }
 
-
+# save a magick image to disk and return the filepath
+# can be loaded in with terra or used with getOption("viewer")() downstream 
+# based on magick:::image_preview()
+# accepts a single `magick-image` object
+.magick_preview <- function(x, tempname = "preview") {
+    stopifnot(inherits(x, "magick-image"))
+    stopifnot(length(x) == 1L)
+    format <- tolower(magick::image_info(x[1])$format)
+    tmp <- file.path(tempdir(), paste0(tempname, format, collapse = "."))
+    vmsg(.is_debug = TRUE, "`.magick_preview()` saving as", format)
+    image_write(x, path = tmp, format = format)
+    return(tmp)
+}
 
 #' @title addGiottoImageMG
 #' @name addGiottoImageMG
