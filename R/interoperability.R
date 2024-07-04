@@ -1694,13 +1694,12 @@ giottoToSeuratV5 <- function(
 
     # spatial coordinates
     loc_use <- getSpatialLocations(
-            gobject = gobject,
-            spat_unit = spat_unit,
-            output = "spatLocsObj",
-            output = "data.table",
-            copy_obj = TRUE,
-            ... # allow setting of spat_loc_name through additional params
-        )
+      gobject = gobject,
+      spat_unit = spat_unit,
+      output = "spatLocsObj",
+      copy_obj = TRUE,
+      ... # allow setting of spat_loc_name through additional params
+    )
     
     # flip y vals
      	
