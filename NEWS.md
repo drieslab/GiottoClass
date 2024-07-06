@@ -3,6 +3,7 @@
 
 ## breaking changes
 - python environment installation and how it relates to default settings such as .condarc may have changed.
+- `giottoImage` `name` slot now requires `character` and will not accept `NULL`
 
 ## enhancements
 - `verbose` param for `createNearestNetwork()`
@@ -14,8 +15,14 @@
 - `affine()` for `giottoPolygon`, `giottoPoints`, `spatLocsObj`
 - `shear()` for `giottoPoints`, `giottoPolygon`, `spatLocsObj`, `affine2d`
 - `affine2d` class for accumulating linear transforms to be used with `affine()`
-- `spin()`, `rescale`, `spatShift()` methods for `affine2d`
+- `spin()`, `rescale`, `spatShift()`, `affine()` methods for `affine2d`
+- `giottoAffineImage` class for just-in-time affine transformed images
+- `initialize()`, method for `giottoLargeImage`
 - `initialize()`, `[`, `$`, `show()`, `plot()` methods for `affine2d`
+- `initialize()`, `ext()`, `crop()`, `rescale()`, `spatShift()`, `plot()` methods for `giottoAffineImage`
+- `rescale()` method for `giottoImage`
+- `spin()`, `shear()`, `affine()` methods for `giottoAffineImage` and `giottoLargeImage` (which converts to `giottoAffineImage`)
+- `as()` conversion from `giottoLargeImage` to `giottoAffineImage`
 - `.get_centroid_xy()` internal for getting numeric centroid xy values of any object that responds to `ext()`
 - `.bound_poly()` internal for generating a dummy polygon from the extent of any object that responds to `ext()`
 - `.aff_shift_2d()`, `.aff_shift_2d<-()`, `.aff_linear_2d`, `.aff_linear_2d()<-` internals for accessing and manipulating affine matrices

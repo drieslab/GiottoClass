@@ -70,7 +70,29 @@ setMethod("shear", signature("giottoPolygon"), function(
     .do_gpoly(x, what = .shear_sv, args = a)
 })
 
+#' @rdname shear
+#' @export
+setMethod("shear", signature("giottoLargeImage"), function(
+        x, fx = 0, fy = 0, x0, y0, ...
+) {
+    a <- get_args_list(...)
+    a$x <- as(x, "giottoAffineImage") # convert to giottoAffineImage
+    res <- do.call(shear, args = a)
+    return(res)
+})
 
+#' @rdname shear
+#' @export
+setMethod("shear", signature("giottoAffineImage"), function(
+        x, fx = 0, fy = 0, x0, y0, ...
+) {
+    a <- get_args_list(...)
+    a$x <- x@affine
+    # update affine
+    x@affine <- do.call(shear, args = a)
+    
+    return(initialize(x))
+})
 
 setMethod("shear", signature("affine2d"), function(
          x, fx = 0, fy = 0, x0, y0, ...
