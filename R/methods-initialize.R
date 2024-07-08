@@ -660,6 +660,13 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
         gimg <- .magick_preview(mg@mg_object, tempname = tempname) %>%
             createGiottoLargeImage()
         ext(gimg) <- ext(.Object)
+        
+        # mask image
+        aff <- .Object@affine
+        m <- .bound_poly(ext(aff@anchor))
+        m <- affine(m, aff)
+        gimg@raster_object <- terra::mask(gimg@raster_object, mask = m)
+        
         return(gimg)
         # TODO things to be implemented for this pipeline:
         # col (the trip the magick-image flattened the image without applying col)
