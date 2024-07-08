@@ -38,12 +38,7 @@ setMethod("crop", signature("giottoLargeImage"), function(x, y, ...) {
         warning("crop region is empty", call. = FALSE)
     }
     x@raster_object <- terra::crop(x@raster_object, y, ...)
-    x@extent <- ext(x@raster_object)
-    intensity_range <- .spatraster_intensity_range(x@raster_object)
-    x@min_intensity <- intensity_range[["min"]]
-    x@max_intensity <- intensity_range[["max"]]
-
-    x
+    return(initialize(x))
 })
 
 # * giottoAffineImage ####
