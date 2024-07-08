@@ -620,6 +620,7 @@ setMethod("initialize", signature("giottoLargeImage"), function(.Object, ...) {
     
     # extent
     .Object@extent <- as.vector(terra::ext(r))
+    names(.Object@extent) <- c("xmin", "xmax", "ymin", "ymax")
     .Object@overall_extent <- .Object@overall_extent %null%
         as.vector(terra::ext(r))
     
