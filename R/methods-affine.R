@@ -221,7 +221,10 @@ setMethod("affine", signature(x = "affine2d", y = "matrix"), function(
     aff <- x@affine
     dummy_sl <- .magick_image_corners(mg)
     aff_dummy_sl <- affine(dummy_sl, .aff_linear_2d(aff)) %>%
-        flip()
+        flip() %>%
+        rescale(fx = 1 / aff$scale[["x"]], fy = 1 / aff$scale[["y"]])
+    # no rescaling should be performed at this step. Otherwise magick
+    # will generate a differently sized image during distortion
     
     .sl_to_mat <- function(x) {
         x[][, c("sdimx", "sdimy")] %>% t()
