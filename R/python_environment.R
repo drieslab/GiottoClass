@@ -644,7 +644,7 @@ set_giotto_python_path <- function(
 #' @returns numeric
 .py_install_prompt <- function(package = NULL,
     env = NULL) {
-    if (is.null(package) | is.null(env)) {
+    if (is.null(package) || is.null(env)) {
         stop(GiottoUtils::wrap_txt("Incorrect Usage.\n", errWidth = TRUE))
     }
 
