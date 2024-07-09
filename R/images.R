@@ -286,7 +286,7 @@ get_adj_rescale_img <- function(img_minmax,
     format <- tolower(magick::image_info(x[1])$format)
     tmp <- file.path(tempdir(), paste(tempname, format, sep = "."))
     vmsg(.is_debug = TRUE, "`.magick_preview()` saving as", format)
-    image_write(x, path = tmp, format = format)
+    image_write(x, path = tmp, format = format, depth = 8)
     return(tmp)
 }
 
