@@ -221,6 +221,17 @@ setMethod(
 
 #' @rdname rescale
 #' @export
+setMethod("rescale", signature("giottoImage"), function(x, fx = 1, fy = fx, x0, y0) {
+    a <- get_args_list()
+    d <- .bound_poly(x)
+    a$x <- d
+    d <- do.call(rescale, args = a)
+    ext(x) <- ext(d)
+    return(x)
+})
+
+#' @rdname rescale
+#' @export
 setMethod("rescale", signature("giottoLargeImage"), function(x, fx = 1, fy = fx, x0, y0) {
     a <- list(x = x@raster_object, fx = fx, fy = fy)
     if (!missing(x0)) a$x0 <- x0
@@ -228,6 +239,18 @@ setMethod("rescale", signature("giottoLargeImage"), function(x, fx = 1, fy = fx,
 
     x@raster_object <- do.call("rescale", args = a)
     return(x)
+})
+
+#' @rdname rescale
+#' @export
+setMethod("rescale", signature("giottoAffineImage"), 
+          function(x, fx = 1, fy = fx, x0, y0) {
+    a <- get_args_list()
+    a$x <- x@affine
+    # update affine
+    x@affine <- do.call(rescale, args = a)
+    
+    return(initialize(x))
 })
 
 #' @rdname rescale

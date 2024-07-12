@@ -98,7 +98,65 @@ setMethod(
     }
 )
 
+#' @rdname affine
+#' @export
+setMethod("affine", signature(x = "giottoLargeImage", y = "matrix"), function(
+        x, y, inv = FALSE, ...
+) {
+    a <- get_args_list(...)
+    a$x <- as(x, "giottoAffineImage") # convert to giottoAffineImage
+    res <- do.call(affine, args = a)
+    return(res)
+})
 
+#' @rdname affine
+#' @export
+setMethod("affine", signature(x = "giottoAffineImage", y = "matrix"), function(
+        x, y, inv = FALSE, ...
+) {
+    a <- get_args_list(...)
+    aff <- x@affine
+    a$x <- aff
+    # update affine
+    x@affine <- do.call(affine, args = a)
+    return(x)
+})
+
+#' @rdname affine
+#' @export
+setMethod("affine", signature(x = "affine2d", y = "matrix"), function(
+    x, y, inv = FALSE, ...   
+) {
+    a <- get_args_list()
+    # update linear
+    m <- .aff_linear_2d(y)
+    if (isTRUE(inv)) m <- solve(m)
+    old_aff <- new_aff <- x@affine
+    .aff_linear_2d(new_aff) <- .aff_linear_2d(new_aff) %*% m
+    
+    ## calc shifts ##
+    # create dummy
+    d <- .bound_poly(x@anchor)
+    # perform transforms so far
+    a$x <- affine(d, old_aff)
+    # perform new transform
+    post <- do.call(affine, args = a)
+    
+    # perform affine & transform without shifts
+    b <- a
+    b$y <- .aff_linear_2d(y)
+    b$x <- affine(d, .aff_linear_2d(old_aff))
+    pre <- do.call(affine, args = b)
+    
+    # find xyshift by comparing tfs so far vs new tf
+    xyshift <- .get_centroid_xy(post) - .get_centroid_xy(pre)
+    
+    # update translate
+    .aff_shift_2d(new_aff) <- xyshift 
+
+    x@affine <- new_aff
+    return(initialize(x))
+})
 
 
 # internals ####
@@ -154,6 +212,55 @@ setMethod(
     x[, (ycol) := xm[, 2L]]
     
     return(x)
+}
+
+
+# perform the actual affine operation
+.gaffine_realize_magick <- function(x, size = 5e5, ...) {
+    mg <- .spatraster_sample_values(x, output = "magick", size = size, ...)
+    aff <- x@affine
+    dummy_sl <- .magick_image_corners(mg)
+    aff_dummy_sl <- affine(dummy_sl, .aff_linear_2d(aff)) %>%
+        flip() %>%
+        rescale(fx = 1 / aff$scale[["x"]], fy = 1 / aff$scale[["y"]])
+    # no rescaling should be performed at this step. Otherwise magick
+    # will generate a differently sized image during distortion
+    
+    .sl_to_mat <- function(x) {
+        x[][, c("sdimx", "sdimy")] %>% t()
+    }
+    
+    # convert spatlocs of dummy points to matrix
+    ctrl_pts_a <- .sl_to_mat(flip(dummy_sl))
+    ctrl_pts_b <- .sl_to_mat(aff_dummy_sl)
+    
+    ctrl_pts <- c(
+        ctrl_pts_a[, 1], ctrl_pts_b[, 1],
+        ctrl_pts_a[, 2], ctrl_pts_b[, 2],
+        ctrl_pts_a[, 3], ctrl_pts_b[, 3]
+    )
+    names(ctrl_pts) <- NULL
+    
+    mg_aff <- magick::image_distort(
+        mg, distortion = "Affine", coordinates = ctrl_pts, bestfit = TRUE
+    )
+    
+    d <- .bound_poly(x) %>%
+        affine(aff)
+    
+    affine_gimg <- giottoImage(
+        name = paste(objName(x), "affine", collapse = "_"),
+        mg_object = mg_aff,
+        minmax = c(xmax_sloc = 10, xmin_sloc = 0, 
+                   ymax_sloc = 10, ymin_sloc = 0),
+        boundaries = c(xmax_adj = 0, xmin_adj = 0,
+                       ymax_adj = 0, ymin_adj = 0)
+    )
+    
+    # assign ext from dummy
+    ext(affine_gimg) <- ext(d)
+    
+    return(initialize(affine_gimg))
 }
 
 
@@ -297,6 +404,8 @@ setMethod(
     )
 }
 
+## affine matrix manipulation ####
+# internal accessors for the relevant parts of 2D affine matrices
 .aff_linear_2d <- function(x) {
     if (inherits(x, "affine2d")) x <- x[]
     x[][seq(2), seq(2)]

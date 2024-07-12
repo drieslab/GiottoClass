@@ -10,6 +10,7 @@
 \alias{ext,giottoLargeImage-method}
 \alias{ext,giottoImage-method}
 \alias{ext,giotto-method}
+\alias{ext,giottoAffineImage-method}
 \alias{ext<-,giottoPoints,SpatExtent-method}
 \alias{ext<-,giottoPolygon,SpatExtent-method}
 \alias{ext<-,giottoLargeImage,SpatExtent-method}
@@ -39,6 +40,8 @@
   verbose = NULL,
   ...
 )
+
+\S4method{ext}{giottoAffineImage}(x, ...)
 
 \S4method{ext}{giottoPoints,SpatExtent}(x) <- value
 
