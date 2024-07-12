@@ -119,7 +119,7 @@ setMethod("affine", signature(x = "giottoAffineImage", y = "matrix"), function(
     a$x <- aff
     # update affine
     x@affine <- do.call(affine, args = a)
-    return(x)
+    return(initialize(x))
 })
 
 #' @rdname affine
