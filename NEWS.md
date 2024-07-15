@@ -5,6 +5,9 @@
 - python environment installation and how it relates to default settings such as .condarc may have changed.
 - `giottoImage` `name` slot now requires `character` and will not accept `NULL`
 
+## bug fixes
+- `loadGiotto()` no longer errors with similarly named spat_units or feat_types (e.g. "cell" and "new_cell" would previously throw an error)
+
 ## enhancements
 - `verbose` param for `createNearestNetwork()`
 - `checkGiottoEnvironment()` in addition to full filepaths, also now supports name of environment or installation directory
