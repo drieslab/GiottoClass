@@ -691,7 +691,7 @@ giottoToAnnData <- function(
 
             for (en in expr_names) {
                 if (en == "raw") {
-                    raw_x <- get_expression_values(
+                    raw_x <- getExpression(
                         gobject = gobject,
                         values = en,
                         spat_unit = su,
@@ -703,7 +703,7 @@ giottoToAnnData <- function(
                 } else {
                     ad_layer_name <- paste0(su, "_", ft, "_", en)
 
-                    x <- get_expression_values(
+                    x <- getExpression(
                         gobject = gobject,
                         values = en,
                         spat_unit = su,
@@ -1222,7 +1222,7 @@ giottoToSeuratV4 <- function(
         expr_use <- lapply(
             avail_expr[feat_type == assay_use, name],
             function(x) {
-                get_expression_values(
+                getExpression(
                     gobject = gobject,
                     spat_unit = spat_unit,
                     feat_type = assay_use,
@@ -1503,7 +1503,7 @@ giottoToSeuratV5 <- function(
         expr_use <- lapply(
             avail_expr[feat_type == assay_use, name],
             function(x) {
-                get_expression_values(
+                getExpression(
                     gobject = gobject,
                     spat_unit = spat_unit,
                     feat_type = assay_use,
@@ -2613,7 +2613,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
                     "' for spatial unit: '", spatialUnits[su], "'"
                 )
             }
-            exprMat <- get_expression_values(
+            exprMat <- getExpression(
                 gobject = giottoObj,
                 spat_unit = spatialUnits[su],
                 feat_type = giottoExpr[1]$feat_type,
@@ -2657,7 +2657,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
                         spatialUnits[su]
                     ),
                     withDimnames = FALSE
-                ) <- get_expression_values(
+                ) <- getExpression(
                     gobject = giottoObj,
                     spat_unit = spatialUnits[su],
                     feat_type = giottoExpr[i]$feat_type,

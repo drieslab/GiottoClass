@@ -284,7 +284,7 @@ set_cell_id <- function(gobject,
         # get cell ID values
         if (spat_unit %in% expr_avail$spat_unit) { # preferred from expression
 
-            cell_IDs <- spatIDs(get_expression_values(
+            cell_IDs <- spatIDs(getExpression(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = expr_avail$feat_type[[1L]],
@@ -424,7 +424,7 @@ set_feat_id <- function(gobject,
 
         if (feat_type %in% expr_avail$feat_type) { # preferred from expression
 
-            feat_IDs <- featIDs(get_expression_values(
+            feat_IDs <- featIDs(getExpression(
                 gobject = gobject,
                 spat_unit = expr_avail$spat_unit[[1L]],
                 feat_type = feat_type,
