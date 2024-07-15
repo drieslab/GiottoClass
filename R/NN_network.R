@@ -704,7 +704,7 @@ createNearestNetwork <- function(
                 expression_values
             ))
         )
-        expr_obj <- get_expression_values(
+        expr_obj <- getExpression(
             gobject = gobject,
             feat_type = feat_type,
             spat_unit = spat_unit,

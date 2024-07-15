@@ -647,7 +647,7 @@ joinGiottoObjects <- function(gobject_list,
     } else {
         for (exprObj_i in seq(nrow(avail_expr))) {
             expr_list <- lapply(updated_object_list, function(gobj) {
-                get_expression_values(
+                getExpression(
                     gobject = gobj,
                     spat_unit = avail_expr$spat_unit[[exprObj_i]],
                     feat_type = avail_expr$feat_type[[exprObj_i]],
