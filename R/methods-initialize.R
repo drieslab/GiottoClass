@@ -272,7 +272,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
             if (!is.null(avail_expr)) {
                 if (nrow(avail_expr[spat_unit == spatial_unit &
                     feat_type == feature_type]) != 0L) {
-                    provenance <- prov(get_expression_values(
+                    provenance <- prov(getExpression(
                         gobject = .Object,
                         spat_unit = spatial_unit,
                         feat_type = feature_type,

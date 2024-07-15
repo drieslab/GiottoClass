@@ -161,7 +161,7 @@
         ft_fm <- avail_fm[feat_type == ft_i, ]
         lapply(seq(nrow(ft_fm)), function(obj_i) {
             su_i <- ft_fm$spat_unit[[obj_i]]
-
+browser()
             # get metadata
             meta <- getFeatureMetadata(
                 gobject = gobject,

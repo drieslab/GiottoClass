@@ -16,6 +16,7 @@ m <- matrix(
 e <- exprObj(
     exprMat = m,
     spat_unit = "cell",
+    provenance = "cell",
     feat_type = "test_feat",
     name = "test"
 )
@@ -36,13 +37,15 @@ df_clus_weight <- data.frame(
 )
 
 test_that("createMetafeat can calculate mean values", {
+    rlang::local_options(lifecycle_verbosity = "quiet")
     expect_m <- matrix(rep(c(2, 5, 8), 3), nrow = 3)
 
     g <- createMetafeats(
         g, stat = "mean",
         expression_values = "test",
         feat_clusters = num_vec_clus,
-        name = "chara_vec_mean"
+        name = "chara_vec_mean",
+        verbose = FALSE
     )
     enr <- getSpatialEnrichment(g, name = "chara_vec_mean",
                                 output = "data.table")
@@ -55,7 +58,8 @@ test_that("createMetafeat can calculate mean values", {
         g, stat = "mean",
         expression_values = "test",
         feat_clusters = df_clus,
-        name = "df_mean"
+        name = "df_mean",
+        verbose = FALSE
     )
     enr <- getSpatialEnrichment(g, name = "df_mean", output = "data.table")
 
@@ -65,13 +69,15 @@ test_that("createMetafeat can calculate mean values", {
 })
 
 test_that("createMetafeat can calculate sum values", {
+    rlang::local_options(lifecycle_verbosity = "quiet")
     expect_m <- matrix(c(6, 15, 24, 4, 10, 16, 2, 5, 8), nrow = 3)
 
     g <- createMetafeats(
         g, stat = "sum",
         expression_values = "test",
         feat_clusters = num_vec_clus,
-        name = "sum"
+        name = "sum",
+        verbose = FALSE
     )
     enr <- getSpatialEnrichment(g, name = "sum", output = "data.table")
 
@@ -81,13 +87,15 @@ test_that("createMetafeat can calculate sum values", {
 })
 
 test_that("createMetafeat can calculate min values", {
+    rlang::local_options(lifecycle_verbosity = "quiet")
     expect_m <- matrix(c(1L, 4L, 7L, 1L, 4L, 7L, 2L, 5L, 8L), nrow = 3)
 
     g <- createMetafeats(
         g, stat = "min",
         expression_values = "test",
         feat_clusters = num_vec_clus,
-        name = "min"
+        name = "min",
+        verbose = FALSE
     )
     enr <- getSpatialEnrichment(g, name = "min", output = "data.table")
 
@@ -97,13 +105,15 @@ test_that("createMetafeat can calculate min values", {
 })
 
 test_that("createMetafeat can calculate max values", {
+    rlang::local_options(lifecycle_verbosity = "quiet")
     expect_m <- matrix(c(3L, 6L, 9L, 3L, 6L, 9L, 2L, 5L, 8L), nrow = 3)
 
     g <- createMetafeats(
         g, stat = "max",
         expression_values = "test",
         feat_clusters = num_vec_clus,
-        name = "max"
+        name = "max",
+        verbose = FALSE
     )
     enr <- getSpatialEnrichment(g, name = "max", output = "data.table")
 
@@ -113,13 +123,15 @@ test_that("createMetafeat can calculate max values", {
 })
 
 test_that("createMetafeat can use weights", {
+    rlang::local_options(lifecycle_verbosity = "quiet")
     expect_m <- matrix(c(4, 10, 16, 0.4, 1.3, 2.2, 2, 5, 8), nrow = 3)
 
     g <- createMetafeats(
         g, stat = "mean",
         expression_values = "test",
         feat_clusters = df_clus_weight,
-        name = "weighted_means"
+        name = "weighted_means",
+        verbose = FALSE
     )
     enr <- getSpatialEnrichment(g, name = "weighted_means",
                                 output = "data.table")
@@ -130,6 +142,7 @@ test_that("createMetafeat can use weights", {
 })
 
 test_that("createMetafeat can use rescale", {
+    rlang::local_options(lifecycle_verbosity = "quiet")
     expect_m <- matrix(rep(c(0, 0.5, 1), 3), nrow = 3)
 
     g <- createMetafeats(
@@ -137,7 +150,8 @@ test_that("createMetafeat can use rescale", {
         expression_values = "test",
         feat_clusters = num_vec_clus,
         rescale_to = c(0, 1),
-        name = "scaled_means"
+        name = "scaled_means",
+        verbose = FALSE
     )
     enr <- getSpatialEnrichment(g, name = "scaled_means",
                                 output = "data.table")
