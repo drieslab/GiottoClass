@@ -1900,7 +1900,7 @@ aggregateStacksExpression <- function(gobject,
     # aggregate matrices
     matrix_list <- list()
     for (spat_unit in spat_units) {
-        mat <- get_expression_values(gobject,
+        mat <- getExpression(gobject,
             spat_unit = spat_unit,
             feat_type = feat_type,
             values = values,
