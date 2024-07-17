@@ -2816,6 +2816,6 @@ ometif_metadata <- function(path, output = c("xml", "list")) {
     return(out)
 }
 
-.
+
 
 
