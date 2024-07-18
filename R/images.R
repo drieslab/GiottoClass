@@ -2796,19 +2796,26 @@ ometif_to_tif <- function(input_file,
 #' @name ometif_metadata
 #' @title Read metadata of an ometif
 #' @description Use the python package tifffile to get the the XML metadata
-#' of a .ome.tif file. The R package XML is then used to parse the metadata
+#' of a .ome.tif file. The R package xml2 is then used to parse the metadata
 #' as a list.
 #' @param path character. filepath to .ome.tif image
 #' @returns list of image metadata information
 #' @export
-ometif_metadata <- function(path) {
+ometif_metadata <- function(path, output = c("xml", "list")) {
     checkmate::assert_file_exists(path)
     package_check(
-        pkg_name = c("tifffile", "XML"),
-        repository = c("pip:tifffile", "CRAN:XML")
+        pkg_name = c("tifffile", "xml2"),
+        repository = c("pip:tifffile", "CRAN:xml2")
     )
 
     TIF <- reticulate::import("tifffile", convert = TRUE, delay_load = TRUE)
     img <- TIF$TiffFile(path)
-    XML::xmlToList(img$ome_metadata)
+    out <- xml2::read_xml(img$ome_metadata)
+
+    if (output == "list") out <- xml2::as_list(out)
+    return(out)
 }
+
+
+
+

@@ -4,7 +4,7 @@
 \alias{ometif_metadata}
 \title{Read metadata of an ometif}
 \usage{
-ometif_metadata(path)
+ometif_metadata(path, output = c("xml", "list"))
 }
 \arguments{
 \item{path}{character. filepath to .ome.tif image}
@@ -14,6 +14,6 @@ list of image metadata information
 }
 \description{
 Use the python package tifffile to get the the XML metadata
-of a .ome.tif file. The R package XML is then used to parse the metadata
+of a .ome.tif file. The R package xml2 is then used to parse the metadata
 as a list.
 }

@@ -79,7 +79,7 @@ Suggests:
     SummarizedExperiment,
     testthat (>= 3.0.0),
     qs,
-    XML
+    xml2
 Config/testthat/edition: 3
 Collate: 
     'package_imports.R'
