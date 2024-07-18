@@ -2726,7 +2726,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
                 )
             }
             SpatialExperiment::spatialCoords(spe) <- data.matrix(
-              spatialLocs[, seq_len(2)]
+                spatialLocs[, 0:2]
             )
         } else {
             if (verbose) {
