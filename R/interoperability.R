@@ -1605,13 +1605,13 @@ giottoToSeuratV5 <- function(
         )
         rownames(meta_genes) <- meta_genes$feat_ID
         for (i in seq_along(sobj@assays)) {
-            assay_slot <- sobj@assays[[i]]
+            #assay_slot <- sobj@assays[[i]]
 
             # Check if assay_slot has @meta.data or @meta.features
-            if ("meta.data" %in% slotNames(assay_slot)) {
-                assay_slot@meta.data <- meta_genes
-            } else if ("meta.features" %in% slotNames(assay_slot)) {
-                assay_slot@meta.features <- meta_genes
+            if ("meta.data" %in% slotNames(sobj@assays[[i]])) {
+                sobj@assays[[i]]@meta.data <- meta_genes
+            } else if ("meta.features" %in% slotNames(sobj@assays[[i]])) {
+                sobj@assays[[i]]@meta.features <- meta_genes
             } else {
                 warning(paste("No suitable metadata slot found for assay", i))
             }
@@ -2545,8 +2545,7 @@ seuratToGiottoV5 <- function(
       by_column = TRUE, column_cell_ID = "rn")
 
     gobject <- addFeatMetadata(
-      gobject = gobject, new_metadata = feat_metadata,
-      by_column = TRUE, column_feat_ID = "rn")
+      gobject = gobject, new_metadata = feat_metadata)
 
     if (exists("gpoints")) {
         gobject <- addGiottoPoints(
