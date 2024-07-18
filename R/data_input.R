@@ -37,7 +37,7 @@ readExprMatrix <- function(path,
   # check if expression_matrix_class is dbMatrix, if so stop and throw error saying not yet supported
   if (expression_matrix_class == "dbSparseMatrix"){
      # Note: Implementation of this feature should be done within {dbMatrix}
-     # See dbMatrix::createDbMatrix() function for more info
+     # See dbMatrix::dbMatrix() function for more info
      stop("File conversion to dbMatrix is not yet supported") 
   }
   
