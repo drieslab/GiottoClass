@@ -1605,7 +1605,6 @@ giottoToSeuratV5 <- function(
         )
         rownames(meta_genes) <- meta_genes$feat_ID
         for (i in seq_along(sobj@assays)) {
-            #assay_slot <- sobj@assays[[i]]
 
             # Check if assay_slot has @meta.data or @meta.features
             if ("meta.data" %in% slotNames(sobj@assays[[i]])) {
@@ -2724,9 +2723,15 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
                     spatialUnits[su], "'"
                 )
             }
-            SpatialExperiment::spatialCoords(spe) <- data.matrix(
-                spatialLocs[, 0:2]
-            )
+            if (all(colnames(spatialLocs[, seq_along(2)]) == c("sdimx", "sdimy"))) {
+                spatialLocs <- spatialLocs[, c("sdimx", "sdimy"), drop = FALSE]
+            } else {
+                # Rename the first two columns to sdimx and sdimy
+                colnames(spatialLocs)[seq_along(2)] <- c("sdimx", "sdimy")
+                spatialLocs <- spatialLocs[, c("sdimx", "sdimy"), drop = FALSE]
+            }
+            SpatialExperiment::spatialCoords(spe) <- data.matrix(spatialLocs)
+
         } else {
             if (verbose) {
                 message("No spatial locations found in the input Giotto object")
