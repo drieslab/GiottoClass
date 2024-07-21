@@ -2482,8 +2482,14 @@ seuratToGiottoV5 <- function(
                 es = igraph::E(sobjIgraph),
                 names = TRUE
             )
+
             DT$from <- edges[, 1]
             DT$to <- edges[, 2]
+            num_rows <- nrow(DT)
+            DT$sdimx_begin <- as.numeric(rep(NA, num_rows))
+            DT$sdimy_begin <- as.numeric(rep(NA, num_rows))
+            DT$sdimx_end <- as.numeric(rep(NA, num_rows))
+            DT$sdimy_end <- as.numeric(rep(NA, num_rows))
             ed_attr <- igraph::edge.attributes(sobjIgraph)
             DT$weight <- ed_attr[1]
             DT$distance <- ed_attr[2]
