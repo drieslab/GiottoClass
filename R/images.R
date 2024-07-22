@@ -2820,11 +2820,15 @@ ometif_metadata <- function(
 
     TIF <- reticulate::import("tifffile", convert = TRUE, delay_load = TRUE)
     img <- TIF$TiffFile(path)
+    output <- match.arg(output, choices = c("data.frame", "xml", "list"))
     x <- xml2::read_xml(img$ome_metadata)
 
     if (!is.null(node)) {
         node <- paste(node, collapse = "/")
-        x <- xml2::xml_find_all(x, sprintf("//d1:%s", node), ns = xml_ns(x))
+        x <- xml2::xml_find_all(
+            x, sprintf("//d1:%s", node), 
+            ns = xml2::xml_ns(x)
+        )
     }
         
     switch(output,
