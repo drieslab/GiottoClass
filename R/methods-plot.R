@@ -507,7 +507,7 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
 
     # Determine likely image bitdepth
     if (is.null(max_intensity)) {
-        bitDepth <- ceiling(log(x = a$x@max_intensity, base = 2))
+        bitDepth <- ceiling(log(x = giottoLargeImage@max_intensity, base = 2))
         # Assign discovered bitdepth as max_intensity
         max_intensity <- 2^bitDepth - 1
 

@@ -2025,19 +2025,18 @@ plotGiottoImage <- function(gobject = NULL,
     if (!is.null(gobject)) {
         img_obj <- getGiottoImage(
             gobject = gobject,
-            image_type = image_type,
             name = image_name
         )
+        if (inherits(img_obj, "giottoLargeImage")) image_type = "largeImage"
+        if (inherits(img_obj, "giottoImage")) image_type = "image"
     }
     if (!is.null(giottoImage)) {
         img_obj <- giottoImage
         image_type <- "image"
-        image_name <- img_obj@name
     }
     if (!is.null(giottoLargeImage)) {
         img_obj <- giottoLargeImage
         image_type <- "largeImage"
-        image_name <- img_obj@name
     }
 
     # Select plotting function
