@@ -2822,7 +2822,9 @@ ometif_metadata <- function(
 
     TIF <- reticulate::import("tifffile", convert = TRUE, delay_load = TRUE)
     img <- TIF$TiffFile(path)
-    output <- match.arg(output, choices = c("data.frame", "xml", "list"))
+    output <- match.arg(
+        output, choices = c("data.frame", "xml", "list", "structure")
+    )
     x <- xml2::read_xml(img$ome_metadata)
 
     if (!is.null(node)) {
