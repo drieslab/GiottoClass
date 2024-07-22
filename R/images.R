@@ -2804,13 +2804,15 @@ ometif_to_tif <- function(input_file,
 #' added to get a node from a specific hierarchy.
 #' @param output character. One of "data.frame" to return a data.frame of the
 #' attributes information of the xml node, "xmL" for an xml2 representation
-#' of the node, or "list" for an R native list (note that many items in the
-#' list may have overlapping names that make indexing difficult).
+#' of the node, "list" for an R native list (note that many items in the
+#' list may have overlapping names that make indexing difficult), or 
+#' "structure" to invisibly return NULL, but print the structure of the XML
+#' document or node.
 #' @returns list of image metadata information
 #' @family ometif utility functions
 #' @export
 ometif_metadata <- function(
-        path, node = NULL, output = c("data.frame", "xml", "list")
+        path, node = NULL, output = c("data.frame", "xml", "list", "structure")
 ) {
     checkmate::assert_file_exists(path)
     package_check(
@@ -2839,7 +2841,11 @@ ometif_metadata <- function(
             return(x)
         }, 
         "xml" = return(x),
-        "list" = return(xml2::as_list(x))
+        "list" = return(xml2::as_list(x)),
+        "structure" = {
+            xml2::xml_structure(x)
+            return(invisible())
+        }
     )
 }
 

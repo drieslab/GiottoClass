@@ -4,7 +4,11 @@
 \alias{ometif_metadata}
 \title{Read metadata of an ometif}
 \usage{
-ometif_metadata(path, node = NULL, output = c("data.frame", "xml", "list"))
+ometif_metadata(
+  path,
+  node = NULL,
+  output = c("data.frame", "xml", "list", "structure")
+)
 }
 \arguments{
 \item{path}{character. filepath to .ome.tif image}
@@ -14,8 +18,10 @@ added to get a node from a specific hierarchy.}
 
 \item{output}{character. One of "data.frame" to return a data.frame of the
 attributes information of the xml node, "xmL" for an xml2 representation
-of the node, or "list" for an R native list (note that many items in the
-list may have overlapping names that make indexing difficult).}
+of the node, "list" for an R native list (note that many items in the
+list may have overlapping names that make indexing difficult), or
+"structure" to invisibly return NULL, but print the structure of the XML
+document or node.}
 }
 \value{
 list of image metadata information
