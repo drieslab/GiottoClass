@@ -2737,6 +2737,7 @@ add_img_array_alpha <- function(x,
 #' @param overwrite logical. Default = FALSE. Whether to overwrite if the
 #' filename already exists.
 #' @returns returns the written filepath invisibly
+#' @family ometif utility functions
 #' @export
 ometif_to_tif <- function(input_file,
     output_dir = file.path(dirname(input_file), "tif_exports"),
@@ -2796,12 +2797,21 @@ ometif_to_tif <- function(input_file,
 #' @name ometif_metadata
 #' @title Read metadata of an ometif
 #' @description Use the python package tifffile to get the the XML metadata
-#' of a .ome.tif file. The R package xml2 is then used to parse the metadata
-#' as a list.
+#' of a .ome.tif file. The R package xml2 is then used to work with it to
+#' retrieve specific nodes in the xml data and extract data.
 #' @param path character. filepath to .ome.tif image
+#' @param node character vector. Specific xml node to get. More terms can be
+#' added to get a node from a specific hierarchy.
+#' @param output character. One of "data.frame" to return a data.frame of the
+#' attributes information of the xml node, "xmL" for an xml2 representation
+#' of the node, or "list" for an R native list (note that many items in the
+#' list may have overlapping names that make indexing difficult).
 #' @returns list of image metadata information
+#' @family ometif utility functions
 #' @export
-ometif_metadata <- function(path, output = c("xml", "list")) {
+ometif_metadata <- function(
+        path, node = NULL, output = c("data.frame", "xml", "list")
+) {
     checkmate::assert_file_exists(path)
     package_check(
         pkg_name = c("tifffile", "xml2"),
@@ -2810,10 +2820,22 @@ ometif_metadata <- function(path, output = c("xml", "list")) {
 
     TIF <- reticulate::import("tifffile", convert = TRUE, delay_load = TRUE)
     img <- TIF$TiffFile(path)
-    out <- xml2::read_xml(img$ome_metadata)
+    x <- xml2::read_xml(img$ome_metadata)
 
-    if (output == "list") out <- xml2::as_list(out)
-    return(out)
+    if (!is.null(node)) {
+        node <- paste(node, collapse = "/")
+        x <- xml2::xml_find_all(x, sprintf("//d1:%s", node), ns = xml_ns(x))
+    }
+        
+    switch(output,
+        "data.frame" = {
+            x = Reduce("rbind", xml2::xml_attrs(x))
+            rownames(x) <- NULL
+            return(x)
+        }, 
+        "xml" = return(x),
+        "list" = return(xml2::as_list(x))
+    )
 }
 
 

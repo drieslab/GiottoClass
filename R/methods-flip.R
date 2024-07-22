@@ -108,7 +108,7 @@ setMethod(
     }
 )
 
-#' @describeIn flip Flip a giottoPolygon object
+#' @rdname flip
 #' @export
 setMethod(
     "flip", signature(x = "giottoPolygon"),
@@ -117,7 +117,7 @@ setMethod(
     }
 )
 
-#' @describeIn flip Flip a giottoPoints object
+#' @rdname flip
 #' @export
 setMethod(
     "flip", signature(x = "giottoPoints"),
@@ -126,7 +126,7 @@ setMethod(
     }
 )
 
-#' @describeIn flip Flip a spatLocsObj
+#' @rdname flip
 #' @export
 setMethod(
     "flip", signature(x = "spatLocsObj"),
@@ -135,7 +135,7 @@ setMethod(
     }
 )
 
-#' @describeIn flip Flip a spatialNetworkObj
+#' @rdname flip
 #' @export
 setMethod(
     "flip", signature(x = "spatialNetworkObj"),
@@ -145,7 +145,7 @@ setMethod(
 )
 
 # TODO apply as instructions for lazy eval after crop/resampling
-#' @describeIn flip Flip a giottoLargeImage
+#' @rdname flip
 #' @export
 setMethod(
     "flip", signature(x = "giottoLargeImage"),

@@ -66,19 +66,6 @@ flipped object
 Flip an object over a designated x or y value depending on
 direction param input. Note that this behavior may be different from terra's
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{flip(giottoPolygon)}: Flip a giottoPolygon object
-
-\item \code{flip(giottoPoints)}: Flip a giottoPoints object
-
-\item \code{flip(spatLocsObj)}: Flip a spatLocsObj
-
-\item \code{flip(spatialNetworkObj)}: Flip a spatialNetworkObj
-
-\item \code{flip(giottoLargeImage)}: Flip a giottoLargeImage
-
-}}
 \examples{
 g <- GiottoData::loadSubObjectMini("spatLocsObj")
 
