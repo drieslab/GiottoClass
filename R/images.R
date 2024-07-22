@@ -2835,6 +2835,7 @@ ometif_metadata <- function(
         "data.frame" = {
             x = Reduce("rbind", xml2::xml_attrs(x))
             rownames(x) <- NULL
+            x <- as.data.frame(x)
             return(x)
         }, 
         "xml" = return(x),
