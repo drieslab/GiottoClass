@@ -2196,7 +2196,7 @@ seuratToGiottoV5 <- function(
         sobject,
         spatial_assay = "Spatial",
         dim_reduction = c("pca", "umap"),
-        subcellular_assay = "Vizgen",
+        subcellular_assay = "SCT",
         sp_network = NULL,
         nn_network = NULL,
         verbose = TRUE) {
@@ -2341,7 +2341,8 @@ seuratToGiottoV5 <- function(
         # if (!is.null(subcellular_assay)){
         if (length(sobject@assays[[subcellular_assay]]) == 1) {
             spat_coord <- Seurat::GetTissueCoordinates(sobject)
-            colnames(spat_coord) <- c("sdimx", "sdimy", "cell_ID")
+            colnames(spat_coord) <- c("sdimx", "sdimy")
+            spat_coord$cell_ID <- rownames(spat_coord)
             exp <- exp[, c(intersect(spat_coord$cell_ID, colnames(exp)))]
             spat_loc <- spat_coord
         }
