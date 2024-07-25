@@ -50,23 +50,23 @@ setMethod(
                     initialize = FALSE
                 )
             }
-
-            # TODO remove this after spatial info is removed from
-            # spatialNetwork objs
-            sn_list <- get_spatial_network_list(
-                gobject = x,
-                spat_unit = ":all:",
-                output = "spatialNetworkObj",
-                copy_obj = FALSE
-            )
-            if (length(sn_list) > 0) {
-                warning(wrap_txt(
-                    "spatial locations have been modified.
-          Relevant spatial networks may need to be regenerated"
-                ), call. = FALSE)
-            }
         }
 
+        # spatnets --------------------------------------------------------- #
+        # TODO remove this after spatial info is removed from
+        # spatialNetwork objs
+        sn_list <- get_spatial_network_list(
+            gobject = x,
+            spat_unit = ":all:",
+            output = "spatialNetworkObj",
+            copy_obj = FALSE
+        )
+        if (length(sn_list) > 0) {
+            for (sn in sn_list) {
+                sn <- t(sn)
+                x <- setGiotto(x, sn, verbose = FALSE, initialize = FALSE)
+            }
+        }
 
 
         # points ----------------------------------------------------------- #
