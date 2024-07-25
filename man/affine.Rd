@@ -2,6 +2,7 @@
 % Please edit documentation in R/methods-affine.R
 \name{affine}
 \alias{affine}
+\alias{affine,giotto,matrix-method}
 \alias{affine,ANY,missing-method}
 \alias{affine,ANY,affine2d-method}
 \alias{affine,SpatVector,matrix-method}
@@ -13,6 +14,16 @@
 \alias{affine,affine2d,matrix-method}
 \title{Affine transformations}
 \usage{
+\S4method{affine}{giotto,matrix}(
+  x,
+  y,
+  inv = FALSE,
+  spat_unit = ":all:",
+  feat_type = ":all:",
+  images = ":all:",
+  ...
+)
+
 \S4method{affine}{ANY,missing}(x)
 
 \S4method{affine}{ANY,affine2d}(x, y, ...)
@@ -32,18 +43,28 @@
 \S4method{affine}{affine2d,matrix}(x, y, inv = FALSE, ...)
 }
 \arguments{
-\item{x}{object}
+\item{x}{object to affine transform or a \code{matrix}}
 
-\item{...}{additional args to pass (none implemented)}
+\item{y}{\code{matrix} or coercible to \code{matrix} (such as \code{affine2d}). Should
+be a matrix with either 2 or 3 columns (linear or affine).}
 
 \item{inv}{logical. Whether the inverse of the affine transform should
 be applied.}
 
-\item{m}{\code{matrix} or coercible to \code{matrix}. Should be a matrix with either
-2 or 3 columns (linear or affine).}
+\item{spat_unit}{character vector. spatial units to affect. The :all: token
+to affect all can be used.}
+
+\item{feat_type}{character vector. feature types to affect. The :all: token
+to affect all can be used.}
+
+\item{images}{character vector. Images to affect. The :all: token
+to affect all can be used.}
+
+\item{...}{additional args to pass (none implemented)}
 }
 \value{
-affine transformed object
+affine transformed object or an \code{affine2d} if a \code{matrix} was
+passed to \code{x}
 }
 \description{
 Apply an affine transformation matrix to a spatial object.
@@ -59,6 +80,11 @@ gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
 gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
 sl <- GiottoData::loadSubObjectMini("spatLocsObj")
 
+# creation of affine2d
+aff <- affine(m)
+aff <- spin(flip(shear(aff, fx = 0.2)), 45)
+plot(aff) # blue is start, red is end
+
 # giottoPoints ##############################################
 plot(gpoints)
 plot(affine(gpoints, trans_m))
@@ -66,6 +92,7 @@ plot(affine(gpoints, trans_m))
 # giottoPolygon #############################################
 plot(gpoly)
 plot(affine(gpoly, scale_m))
+plot(affine(gpoly, aff)) # affine() with `affine2d`
 
 # spatLocsObj ###############################################
 plot(affine(sl, m))

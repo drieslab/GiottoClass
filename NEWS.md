@@ -13,9 +13,10 @@
 - `checkGiottoEnvironment()` in addition to full filepaths, also now supports name of environment or installation directory
 - `installGiottoEnvironment()`, `removeGiottoEnvironment()` now have `conda` param for setting path to conda executable and `envname` param for specifying environment by name
 - `installGiottoEnvironment()` now has `confirm` param for skipping path input checks
+- `t()` for `giotto` now affects images as well.
 
 ## new
-- `affine()` for `giottoPolygon`, `giottoPoints`, `spatLocsObj`
+- `affine()` for `giottoPolygon`, `giottoPoints`, `spatLocsObj`, `giotto`
 - `shear()` for `giottoPoints`, `giottoPolygon`, `spatLocsObj`, `affine2d`
 - `affine2d` class for accumulating linear transforms to be used with `affine()`
 - `initialize()`, `[`, `$`, `show()`, `plot()`, methods for `affine2d`
