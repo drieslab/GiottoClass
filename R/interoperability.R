@@ -1605,13 +1605,12 @@ giottoToSeuratV5 <- function(
         )
         rownames(meta_genes) <- meta_genes$feat_ID
         for (i in seq_along(sobj@assays)) {
-            assay_slot <- sobj@assays[[i]]
 
             # Check if assay_slot has @meta.data or @meta.features
-            if ("meta.data" %in% slotNames(assay_slot)) {
-                assay_slot@meta.data <- meta_genes
-            } else if ("meta.features" %in% slotNames(assay_slot)) {
-                assay_slot@meta.features <- meta_genes
+            if ("meta.data" %in% slotNames(sobj@assays[[i]])) {
+                sobj@assays[[i]]@meta.data <- meta_genes
+            } else if ("meta.features" %in% slotNames(sobj@assays[[i]])) {
+                sobj@assays[[i]]@meta.features <- meta_genes
             } else {
                 warning(paste("No suitable metadata slot found for assay", i))
             }
@@ -2197,7 +2196,7 @@ seuratToGiottoV5 <- function(
         sobject,
         spatial_assay = "Spatial",
         dim_reduction = c("pca", "umap"),
-        subcellular_assay = "Vizgen",
+        subcellular_assay = "SCT",
         sp_network = NULL,
         nn_network = NULL,
         verbose = TRUE) {
@@ -2342,7 +2341,8 @@ seuratToGiottoV5 <- function(
         # if (!is.null(subcellular_assay)){
         if (length(sobject@assays[[subcellular_assay]]) == 1) {
             spat_coord <- Seurat::GetTissueCoordinates(sobject)
-            colnames(spat_coord) <- c("sdimx", "sdimy", "cell_ID")
+            colnames(spat_coord) <- c("sdimx", "sdimy")
+            spat_coord$cell_ID <- rownames(spat_coord)
             exp <- exp[, c(intersect(spat_coord$cell_ID, colnames(exp)))]
             spat_loc <- spat_coord
         }
@@ -2483,8 +2483,14 @@ seuratToGiottoV5 <- function(
                 es = igraph::E(sobjIgraph),
                 names = TRUE
             )
+
             DT$from <- edges[, 1]
             DT$to <- edges[, 2]
+            num_rows <- nrow(DT)
+            DT$sdimx_begin <- as.numeric(rep(NA, num_rows))
+            DT$sdimy_begin <- as.numeric(rep(NA, num_rows))
+            DT$sdimx_end <- as.numeric(rep(NA, num_rows))
+            DT$sdimy_end <- as.numeric(rep(NA, num_rows))
             ed_attr <- igraph::edge.attributes(sobjIgraph)
             DT$weight <- ed_attr[1]
             DT$distance <- ed_attr[2]
@@ -2545,8 +2551,7 @@ seuratToGiottoV5 <- function(
       by_column = TRUE, column_cell_ID = "rn")
 
     gobject <- addFeatMetadata(
-      gobject = gobject, new_metadata = feat_metadata,
-      by_column = TRUE, column_feat_ID = "rn")
+      gobject = gobject, new_metadata = feat_metadata)
 
     if (exists("gpoints")) {
         gobject <- addGiottoPoints(
@@ -2725,9 +2730,15 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
                     spatialUnits[su], "'"
                 )
             }
-            SpatialExperiment::spatialCoords(spe) <- data.matrix(
-              spatialLocs[, seq_len(2)]
-            )
+            if (all(colnames(spatialLocs[, seq_along(2)]) == c("sdimx", "sdimy"))) {
+                spatialLocs <- spatialLocs[, c("sdimx", "sdimy"), drop = FALSE]
+            } else {
+                # Rename the first two columns to sdimx and sdimy
+                colnames(spatialLocs)[seq_along(2)] <- c("sdimx", "sdimy")
+                spatialLocs <- spatialLocs[, c("sdimx", "sdimy"), drop = FALSE]
+            }
+            SpatialExperiment::spatialCoords(spe) <- data.matrix(spatialLocs)
+
         } else {
             if (verbose) {
                 message("No spatial locations found in the input Giotto object")
