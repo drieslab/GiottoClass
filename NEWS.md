@@ -1,5 +1,5 @@
 
-# GiottoClass 0.3.2
+# GiottoClass 0.3.2 (2024/07/26)
 
 ## breaking changes
 - python environment installation and how it relates to default settings such as .condarc may have changed.
@@ -7,6 +7,9 @@
 
 ## bug fixes
 - `loadGiotto()` no longer errors with similarly named spat_units or feat_types (e.g. "cell" and "new_cell" would previously throw an error)
+- fix in `giottoToSpatialExperiment()`
+- fix for `giottoToSeuratV5` for cosmx mini dataset [#989](https://github.com/drieslab/Giotto/issues/989) by guillermoturiel
+- fix issue with prints in `createGiottoCosMxObject()` [#960](https://github.com/drieslab/Giotto/issues/960) by GBeattie
 
 ## enhancements
 - `verbose` param for `createNearestNetwork()`
