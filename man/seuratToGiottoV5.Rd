@@ -8,7 +8,7 @@ seuratToGiottoV5(
   sobject,
   spatial_assay = "Spatial",
   dim_reduction = c("pca", "umap"),
-  subcellular_assay = "Vizgen",
+  subcellular_assay = "SCT",
   sp_network = NULL,
   nn_network = NULL,
   verbose = TRUE
@@ -38,12 +38,6 @@ stored in it.
 }
 \description{
 Convert a Seurat V5 object to a Giotto object
-}
-\examples{
-m_expression <- Matrix::Matrix(rnorm(100), nrow = 10, sparse = TRUE)
-s <- Seurat::CreateSeuratObject(counts = m_expression)
-
-seuratToGiottoV5(s, spatial_assay = "RNA")
 }
 \keyword{interoperability}
 \keyword{seurat}

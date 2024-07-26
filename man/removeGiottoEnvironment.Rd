@@ -4,12 +4,22 @@
 \alias{removeGiottoEnvironment}
 \title{removeGiottoEnvironment}
 \usage{
-removeGiottoEnvironment(mini_path = NULL, verbose = TRUE)
+removeGiottoEnvironment(
+  envname = "giotto_env",
+  mini_path = deprecated(),
+  conda = "auto",
+  verbose = TRUE
+)
 }
 \arguments{
-\item{mini_path}{path to anaconda/miniconda.
-Default: reticulate::miniconda_path()
-i.e. "C:/my/conda/lives/here" OR "C:\\my\\conda\\lives\\here"}
+\item{envname}{name of environment to remove (e.g. "giotto_env")}
+
+\item{mini_path}{deprecated}
+
+\item{conda}{either "auto" (default) to allow reticulate to handle it, or
+the full filepath to the conda executable. You can also set the option
+"reticulate.conda_binary" or \code{Sys.setenv()} "RETICULATE_CONDA" to tell
+reticulate where to look.}
 
 \item{verbose}{be verbose}
 }
@@ -17,7 +27,7 @@ i.e. "C:/my/conda/lives/here" OR "C:\\my\\conda\\lives\\here"}
 character or NULL
 }
 \description{
-removeGiottoEnvironment
+Remove a Giotto environment
 }
 \details{
 Removes a previously installed giotto environment.

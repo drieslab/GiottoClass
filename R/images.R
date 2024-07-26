@@ -276,7 +276,19 @@ get_adj_rescale_img <- function(img_minmax,
     ))
 }
 
-
+# save a magick image to disk and return the filepath
+# can be loaded in with terra or used with getOption("viewer")() downstream 
+# based on magick:::image_preview()
+# accepts a single `magick-image` object
+.magick_preview <- function(x, tempname = "preview") {
+    stopifnot(inherits(x, "magick-image"))
+    stopifnot(length(x) == 1L)
+    format <- tolower(magick::image_info(x[1])$format)
+    tmp <- file.path(tempdir(), paste(tempname, format, sep = "."))
+    vmsg(.is_debug = TRUE, "`.magick_preview()` saving as", format)
+    image_write(x, path = tmp, format = format, depth = 8)
+    return(tmp)
+}
 
 #' @title addGiottoImageMG
 #' @name addGiottoImageMG
@@ -2013,19 +2025,18 @@ plotGiottoImage <- function(gobject = NULL,
     if (!is.null(gobject)) {
         img_obj <- getGiottoImage(
             gobject = gobject,
-            image_type = image_type,
             name = image_name
         )
+        if (inherits(img_obj, "giottoLargeImage")) image_type = "largeImage"
+        if (inherits(img_obj, "giottoImage")) image_type = "image"
     }
     if (!is.null(giottoImage)) {
         img_obj <- giottoImage
         image_type <- "image"
-        image_name <- img_obj@name
     }
     if (!is.null(giottoLargeImage)) {
         img_obj <- giottoLargeImage
         image_type <- "largeImage"
-        image_name <- img_obj@name
     }
 
     # Select plotting function
@@ -2725,6 +2736,7 @@ add_img_array_alpha <- function(x,
 #' @param overwrite logical. Default = FALSE. Whether to overwrite if the
 #' filename already exists.
 #' @returns returns the written filepath invisibly
+#' @family ometif utility functions
 #' @export
 ometif_to_tif <- function(input_file,
     output_dir = file.path(dirname(input_file), "tif_exports"),
@@ -2784,19 +2796,60 @@ ometif_to_tif <- function(input_file,
 #' @name ometif_metadata
 #' @title Read metadata of an ometif
 #' @description Use the python package tifffile to get the the XML metadata
-#' of a .ome.tif file. The R package XML is then used to parse the metadata
-#' as a list.
+#' of a .ome.tif file. The R package xml2 is then used to work with it to
+#' retrieve specific nodes in the xml data and extract data.
 #' @param path character. filepath to .ome.tif image
+#' @param node character vector. Specific xml node to get. More terms can be
+#' added to get a node from a specific hierarchy.
+#' @param output character. One of "data.frame" to return a data.frame of the
+#' attributes information of the xml node, "xmL" for an xml2 representation
+#' of the node, "list" for an R native list (note that many items in the
+#' list may have overlapping names that make indexing difficult), or 
+#' "structure" to invisibly return NULL, but print the structure of the XML
+#' document or node.
 #' @returns list of image metadata information
+#' @family ometif utility functions
 #' @export
-ometif_metadata <- function(path) {
+ometif_metadata <- function(
+        path, node = NULL, output = c("data.frame", "xml", "list", "structure")
+) {
     checkmate::assert_file_exists(path)
     package_check(
-        pkg_name = c("tifffile", "XML"),
-        repository = c("pip:tifffile", "CRAN:XML")
+        pkg_name = c("tifffile", "xml2"),
+        repository = c("pip:tifffile", "CRAN:xml2")
     )
 
     TIF <- reticulate::import("tifffile", convert = TRUE, delay_load = TRUE)
     img <- TIF$TiffFile(path)
-    XML::xmlToList(img$ome_metadata)
+    output <- match.arg(
+        output, choices = c("data.frame", "xml", "list", "structure")
+    )
+    x <- xml2::read_xml(img$ome_metadata)
+
+    if (!is.null(node)) {
+        node <- paste(node, collapse = "/")
+        x <- xml2::xml_find_all(
+            x, sprintf("//d1:%s", node), 
+            ns = xml2::xml_ns(x)
+        )
+    }
+        
+    switch(output,
+        "data.frame" = {
+            x = Reduce("rbind", xml2::xml_attrs(x))
+            rownames(x) <- NULL
+            x <- as.data.frame(x)
+            return(x)
+        }, 
+        "xml" = return(x),
+        "list" = return(xml2::as_list(x)),
+        "structure" = {
+            xml2::xml_structure(x)
+            return(invisible())
+        }
+    )
 }
+
+
+
+

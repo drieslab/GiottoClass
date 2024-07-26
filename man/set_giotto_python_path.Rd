@@ -4,10 +4,11 @@
 \alias{set_giotto_python_path}
 \title{set_giotto_python_path}
 \usage{
-set_giotto_python_path(python_path = NULL, verbose = TRUE)
+set_giotto_python_path(python_path = NULL, verbose = NULL)
 }
 \arguments{
-\item{python_path}{character. Full path to python executable}
+\item{python_path}{character. Name of environment or full path to python
+executable.}
 
 \item{verbose}{be verbose}
 }
@@ -15,8 +16,20 @@ set_giotto_python_path(python_path = NULL, verbose = TRUE)
 path to python executable
 }
 \description{
-detects and sets the python path. Exits without doing anything
-if getOption('giotto.use_conda') is FALSE.
+Detect and activate a python path. The \code{python_path} param
+accepts both full filepaths to the python executable and envnames. The
+final path to use is determined as follows in decreasing priority:
+\enumerate{
+\item User provided (when \code{python_path} is not \code{NULL})
+\item Any provided path or envname in option \code{"giotto.py_path"}
+\item Default expected giotto environment location based on
+\code{reticulate::miniconda_path()}
+\item Envname "giotto_env"
+\item System default python environment
+}
+
+This function exits without doing anything if option
+\code{"giotto.use_conda"} is \code{FALSE}.
 }
 \examples{
 set_giotto_python_path()

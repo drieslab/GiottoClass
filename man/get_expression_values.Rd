@@ -8,7 +8,7 @@ get_expression_values(
   gobject,
   spat_unit = NULL,
   feat_type = NULL,
-  values = NULL,
+  values = c("raw", "normalized", "scaled"),
   output = c("exprObj", "matrix"),
   set_defaults = TRUE
 )

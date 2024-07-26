@@ -19,3 +19,9 @@ object.
 \description{
 Utility function to convert a Giotto object to a SpatialExperiment object.
 }
+\examples{
+\dontrun{
+mini_gobject <- GiottoData::loadGiottoMini("vizgen")
+giottoToSpatialExperiment(mini_gobject)
+}
+}

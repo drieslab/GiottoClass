@@ -174,6 +174,14 @@ methods::setAs("giottoLargeImage", "giottoImage", function(from) {
     return(mImg)
 })
 
+methods::setAs("giottoLargeImage", "giottoAffineImage", function(from) {
+    attr(from, "affine") <- new("affine2d")
+    attr(from, "funs") <- list()
+    attr(from, "class") <- "giottoAffineImage"
+    
+    initialize(from)
+})
+
 # TODO redo this as `as.array`. 
 # Careful: There are already usages of this `as()` method in the code
 methods::setAs("giottoLargeImage", "array", function(from) {

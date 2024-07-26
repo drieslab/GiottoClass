@@ -272,7 +272,7 @@ setMethod("initialize", signature("giotto"), function(.Object, ...) {
             if (!is.null(avail_expr)) {
                 if (nrow(avail_expr[spat_unit == spatial_unit &
                     feat_type == feature_type]) != 0L) {
-                    provenance <- prov(get_expression_values(
+                    provenance <- prov(getExpression(
                         gobject = .Object,
                         spat_unit = spatial_unit,
                         feat_type = feature_type,
@@ -566,13 +566,116 @@ setMethod(
 )
 
 
+## affine2d ####
+setMethod("initialize", "affine2d", function(.Object, ...) {
+    .Object <- methods::callNextMethod()
+    .Object@anchor <- ext(.Object@anchor) %>%
+        .ext_to_num_vec()
+    
+    res <- .decomp_affine(.Object@affine)
+    
+    .Object@affine <- res$affine
+    .Object@rotate <- res$rotate
+    .Object@shear <- res$shear
+    .Object@scale <- res$scale
+    .Object@translate <- res$translate
 
+    return(.Object)
+})
 
+## giottoLargeImage ####
+setMethod("initialize", signature("giottoLargeImage"), function(.Object, ...) {
+    .Object <- methods::callNextMethod()
+    
+    # defaults
+    .Object@OS_platform <- .Object@OS_platform %null% .Platform[["OS.type"]]
+    objName(.Object) <- objName(.Object) %null% "image"
+    
+    r <- .Object@raster_object
+    if (is.null(r)) return(.Object) # return early if NULL
+    
+    # scale factor and res
+    .Object@resolution <- terra::res(r)
+    names(.Object@resolution) <- c("x", "y")
+    .Object@scale_factor <- 1 / .Object@resolution
+    
+    # sample for image characteristics
+    svals <- .spatraster_sample_values(r, size = 5000, verbose = FALSE)
+    
+    if (nrow(svals) != 0) {
+        intensity_range <- .spatraster_intensity_range(
+            raster_object = r,
+            sample_values = svals
+        )
+    }
+    .Object@min_intensity <- intensity_range[["min"]]
+    .Object@max_intensity <- intensity_range[["max"]]
+    
+    # find out if image is int or floating pt
+    is_int <- .spatraster_is_int(
+        raster_object = r,
+        sample_values = svals
+    )
+    .Object@is_int <- is_int
+    
+    # extent
+    .Object@extent <- as.vector(terra::ext(r))
+    names(.Object@extent) <- c("xmin", "xmax", "ymin", "ymax")
+    .Object@overall_extent <- .Object@overall_extent %null%
+        as.vector(terra::ext(r))
+    
+    # max window
+    .Object@max_window <- .Object@max_window %na% 
+        .bitdepth(.Object@max_intensity, return_max = TRUE)
+    
+    return(.Object)
+})
 
-
-
-
-
+## giottoAffineImage ####
+setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
+    .Object <- methods::callNextMethod()
+    
+    # default name
+    if (is.null(objName(.Object))) {
+        objName(.Object) <- "test"
+    }
+    
+    # append associated functions
+    
+    
+    r <- .Object@raster_object
+    if (!is.null(r)) {
+        # apply the image extent as anchor for affine object plotting
+        .Object@affine@anchor <- ext(r)
+        .Object@affine <- initialize(.Object@affine)
+        
+        # compute & set extent slot as a numeric vector
+        d <- .bound_poly(r) %>%
+            affine(.Object@affine)
+        .Object@extent <- .ext_to_num_vec(ext(d))
+    }
+    
+    .Object@funs$realize_magick <- function(tempname = "preview", size = 5e5) {
+        mg <- .gaffine_realize_magick(.Object, size = size)
+        gimg <- .magick_preview(mg@mg_object, tempname = tempname) %>%
+            createGiottoLargeImage()
+        ext(gimg) <- ext(.Object)
+        
+        # mask image
+        aff <- .Object@affine
+        m <- .bound_poly(ext(aff@anchor))
+        m <- affine(m, aff)
+        gimg@raster_object <- terra::mask(gimg@raster_object, mask = m)
+        
+        return(gimg)
+        # TODO things to be implemented for this pipeline:
+        # col (the trip the magick-image flattened the image without applying col)
+        # max_intensity same as above
+        # the above options are also stripped when the fresh largeImage is created
+    }
+    
+    return(.Object)
+})
 
 
 

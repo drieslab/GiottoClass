@@ -1,6 +1,6 @@
 Package: GiottoClass
 Title: Giotto Suite object definitions and framework
-Version: 0.3.1
+Version: 0.3.2
 Authors@R: c(
 	person("Ruben", "Dries", email = "rubendries@gmail.com",
 		 role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7650-7754")),
@@ -24,7 +24,7 @@ Description: This package contains the Giotto object and subobject class
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Depends:
     base (>= 4.0.1),
     utils (>= 4.0.1),
@@ -34,7 +34,7 @@ Imports:
     data.table (>= 1.12.2),
     dbscan (>= 1.1-3),
     deldir (>= 1.0.6),
-    GiottoUtils (>= 0.1.7),
+    GiottoUtils (>= 0.1.10),
     graphics,
     grDevices,
     igraph (>= 1.2.4.1),
@@ -79,7 +79,7 @@ Suggests:
     SummarizedExperiment,
     testthat (>= 3.0.0),
     qs,
-    XML
+    xml2
 Remotes: drieslab/GiottoUtils
 Config/testthat/edition: 3
 Collate: 
@@ -107,6 +107,7 @@ Collate:
     'interoperability.R'
     'join.R'
     'methods-IDs.R'
+    'methods-affine.R'
     'methods-centroids.R'
     'methods-coerce.R'
     'methods-copy.R'
@@ -125,6 +126,7 @@ Collate:
     'methods-reconnect.R'
     'methods-rescale.R'
     'methods-setGiotto.R'
+    'methods-shear.R'
     'methods-show.R'
     'methods-spatShift.R'
     'methods-spin.R'

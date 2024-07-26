@@ -33,7 +33,7 @@ showGiottoExpression <- function(gobject, nrows = 4, ncols = 4) {
         objPrints <- list()
         for (obj_i in seq(nrow(available_data))) {
             # get object
-            dataObj <- get_expression_values(
+            dataObj <- getExpression(
                 gobject = gobject,
                 values = available_data$name[[obj_i]],
                 spat_unit = available_data$spat_unit[[obj_i]],

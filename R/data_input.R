@@ -2331,6 +2331,7 @@ readFeatData <- function(data_list,
 #' @param pointslist list of inputs from which to create giotto points objects
 #' @param verbose be verbose
 #' @keywords internal
+#' @returns name list of `giottoPoints` objects
 #' @noRd
 .extract_points_list <- function(pointslist,
     verbose = TRUE) {

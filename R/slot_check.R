@@ -178,7 +178,7 @@
             }
 
             if (!nrow(avail_ex[spat_unit == su_i & feat_type == ft_i]) == 0L) {
-                IDs <- featIDs(get_expression_values(
+                IDs <- featIDs(getExpression(
                     gobject = gobject,
                     spat_unit = su_i,
                     feat_type = ft_i,
