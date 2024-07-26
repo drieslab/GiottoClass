@@ -9,6 +9,8 @@
 \alias{flip,spatialNetworkObj-method}
 \alias{flip,giottoLargeImage-method}
 \alias{flip,SpatExtent-method}
+\alias{flip,giottoAffineImage-method}
+\alias{flip,affine2d-method}
 \title{Flip an object}
 \usage{
 \S4method{flip}{giotto}(
@@ -29,9 +31,15 @@
 
 \S4method{flip}{spatialNetworkObj}(x, direction = "vertical", x0 = 0, y0 = 0, ...)
 
-\S4method{flip}{giottoLargeImage}(x, direction = "vertical", x0 = 0, y0 = 0, ...)
+\S4method{flip}{giottoLargeImage}(x, direction = "vertical", x0 = 0, y0 = 0)
 
 \S4method{flip}{SpatExtent}(x, direction = "vertical", x0 = 0, y0 = 0)
+
+\S4method{flip}{giottoLargeImage}(x, direction = "vertical", x0 = 0, y0 = 0)
+
+\S4method{flip}{giottoAffineImage}(x, direction = "vertical", x0 = 0, y0 = 0)
+
+\S4method{flip}{affine2d}(x, direction = "vertical", x0 = 0, y0 = 0)
 }
 \arguments{
 \item{x}{object}
@@ -58,21 +66,6 @@ flipped object
 Flip an object over a designated x or y value depending on
 direction param input. Note that this behavior may be different from terra's
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{flip(giottoPolygon)}: Flip a giottoPolygon object
-
-\item \code{flip(giottoPoints)}: Flip a giottoPoints object
-
-\item \code{flip(spatLocsObj)}: Flip a spatLocsObj
-
-\item \code{flip(spatialNetworkObj)}: Flip a spatialNetworkObj
-
-\item \code{flip(giottoLargeImage)}: Flip a giottoLargeImage
-
-\item \code{flip(SpatExtent)}: Flip a SpatExtent
-
-}}
 \examples{
 g <- GiottoData::loadSubObjectMini("spatLocsObj")
 

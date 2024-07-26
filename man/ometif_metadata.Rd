@@ -4,16 +4,35 @@
 \alias{ometif_metadata}
 \title{Read metadata of an ometif}
 \usage{
-ometif_metadata(path)
+ometif_metadata(
+  path,
+  node = NULL,
+  output = c("data.frame", "xml", "list", "structure")
+)
 }
 \arguments{
 \item{path}{character. filepath to .ome.tif image}
+
+\item{node}{character vector. Specific xml node to get. More terms can be
+added to get a node from a specific hierarchy.}
+
+\item{output}{character. One of "data.frame" to return a data.frame of the
+attributes information of the xml node, "xmL" for an xml2 representation
+of the node, "list" for an R native list (note that many items in the
+list may have overlapping names that make indexing difficult), or
+"structure" to invisibly return NULL, but print the structure of the XML
+document or node.}
 }
 \value{
 list of image metadata information
 }
 \description{
 Use the python package tifffile to get the the XML metadata
-of a .ome.tif file. The R package XML is then used to parse the metadata
-as a list.
+of a .ome.tif file. The R package xml2 is then used to work with it to
+retrieve specific nodes in the xml data and extract data.
 }
+\seealso{
+Other ometif utility functions: 
+\code{\link{ometif_to_tif}()}
+}
+\concept{ometif utility functions}

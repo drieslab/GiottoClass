@@ -79,7 +79,7 @@ Suggests:
     SummarizedExperiment,
     testthat (>= 3.0.0),
     qs,
-    XML
+    xml2
 Remotes: drieslab/GiottoUtils
 Config/testthat/edition: 3
 Collate: 

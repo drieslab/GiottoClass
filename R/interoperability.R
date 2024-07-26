@@ -23,8 +23,8 @@
 #' @export
 
 gefToGiotto <- function(
-    gef_file, 
-    bin_size = "bin100", 
+    gef_file,
+    bin_size = "bin100",
     verbose = FALSE,
     h5_file = NULL) {
     # data.table vars
@@ -1473,7 +1473,7 @@ giottoToSeuratV5 <- function(
     feat_type <- name <- dim_type <- nn_type <- NULL
 
     res_type <- match.arg(res_type, choices = c("hires", "lowres", "fullres"))
-    
+
     # set default spat_unit and feat_type to be extracted as a Seurat assay
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -1589,7 +1589,8 @@ giottoToSeuratV5 <- function(
             )
         }
         sobj <- Seurat::AddMetaData(sobj,
-            metadata = meta_cells[Seurat::Cells(sobj), ]
+            metadata = meta_cells[Seurat::Cells(sobj), ],
+            col.name = names(meta_cells)
         )
 
         # add feature metadata
@@ -1603,10 +1604,17 @@ giottoToSeuratV5 <- function(
             )
         )
         rownames(meta_genes) <- meta_genes$feat_ID
-        for (i in seq(sobj@assays)) {
-            sobj@assays[[i]]@meta.data <- meta_genes
-        }
+        for (i in seq_along(sobj@assays)) {
 
+            # Check if assay_slot has @meta.data or @meta.features
+            if ("meta.data" %in% slotNames(sobj@assays[[i]])) {
+                sobj@assays[[i]]@meta.data <- meta_genes
+            } else if ("meta.features" %in% slotNames(sobj@assays[[i]])) {
+                sobj@assays[[i]]@meta.features <- meta_genes
+            } else {
+                warning(paste("No suitable metadata slot found for assay", i))
+            }
+        }
 
         # dim reduction
         # note: Seurat requires assay name specification for each dim reduc
@@ -1700,12 +1708,12 @@ giottoToSeuratV5 <- function(
         copy_obj = TRUE,
         ... # allow setting of spat_loc_name through additional params
     )
-    
+
     # flip y vals
-     	
+
       loc_use <- flip(loc_use)[] %>%
       data.table::setDF()
-      
+
     rownames(loc_use) <- loc_use$cell_ID
     sobj <- Seurat::AddMetaData(sobj, metadata = loc_use)
     # add spatial coordinates as new dim reduct object
@@ -1759,9 +1767,9 @@ giottoToSeuratV5 <- function(
         imagerow <- loc_use$sdimy
         imagecol <- loc_use$sdimx
         img_array <- as(gimg, "array")
-        img_array <- img_array / 255	
+        img_array <- img_array / 255
         coord <- data.frame(
-          imagerow = imagerow, imagecol = imagecol, 
+          imagerow = imagerow, imagecol = imagecol,
                     row.names = loc_use$cell_ID
                     )
         scalef <- .estimate_scalefactors(
@@ -1786,8 +1794,8 @@ giottoToSeuratV5 <- function(
                 Class = "VisiumV1",
                 image = img_array,
                 scale.factors = scalefactors,
-                coordinates = coord, 
-                spot.radius = 
+                coordinates = coord,
+                spot.radius =
                   scalef$fiducial * scalef$lowres / max(dim(img_array)),
                 key = paste0(key, "_")
             )
@@ -1807,11 +1815,11 @@ giottoToSeuratV5 <- function(
 #' @noRd
 
 .estimate_scalefactors <- function(
-    x, 
+    x,
     res_type = c("hires", "lowres", "fullres"),
     spatlocs
     ){
-  res_type <- match.arg(res_type, 
+  res_type <- match.arg(res_type,
                         choices = c("hires", "lowres", "fullres"))
         pxdims <- dim(x)[1:2]
         edims <- range(ext(x))
@@ -1825,9 +1833,9 @@ giottoToSeuratV5 <- function(
         # No way to guess hires or lowres scalefs so use arbitrary values.
         hres_scalef <- switch(res_type,
                               "hires" = scalef,
-                               "lowres" = scalef * res_ratio, 
+                               "lowres" = scalef * res_ratio,
                                "fullres" = 0.08250825 # arbitrary
-                   	
+
                 )
         lres_scalef <- switch(res_type,
                               "hires" = scalef / res_ratio,
@@ -1841,15 +1849,15 @@ giottoToSeuratV5 <- function(
             coords <- data.table::as.data.table(spatlocs)
              # create a delaunay
              dnet <- createNetwork(
-             as.matrix(coords[, c("sdimx", "sdimy")]), 
+             as.matrix(coords[, c("sdimx", "sdimy")]),
              type = "delaunay",
              method = "geometry",
-             include_distance = TRUE, 
-             as.igraph = FALSE, 
-             include_weight = TRUE, 
+             include_distance = TRUE,
+             as.igraph = FALSE,
+             include_weight = TRUE,
              verbose = FALSE
              )
-             	
+
  # expect center to center be most common edge distance
  # this gives CC dist as fullres px distance
   distances <- sort(unique(dnet$distance))
@@ -1866,7 +1874,7 @@ scalef_list <- list(
   lowres = lres_scalef
   )
 return(scalef_list)
-                                  
+
   }
 
 
@@ -2188,15 +2196,15 @@ seuratToGiottoV5 <- function(
         sobject,
         spatial_assay = "Spatial",
         dim_reduction = c("pca", "umap"),
-        subcellular_assay = "Vizgen",
+        subcellular_assay = "SCT",
         sp_network = NULL,
         nn_network = NULL,
         verbose = TRUE) {
     package_check("Seurat")
- 
+
    # NSE vars
     sdimy <- NULL
-    
+
     if (is.null(Seurat::GetAssayData(
         object = sobject, slot = "counts",
         assay = spatial_assay
@@ -2236,7 +2244,7 @@ seuratToGiottoV5 <- function(
         cell_metadata <- sobject@meta.data
         cell_metadata <- data.table::as.data.table(
         cell_metadata, keep.rownames = TRUE)
-        
+
         # Feat Metadata
         feat_metadata <- sobject[[]]
         feat_metadata <- data.table::as.data.table(
@@ -2310,18 +2318,18 @@ seuratToGiottoV5 <- function(
                 }
 
                 spat_loc <- data.table::as.data.table(spat_coord)
- 
+
                 # seurat has coords following imaging conventions
                 # flip them for Giotto
                 spat_loc[, sdimy := -sdimy]
                 data.table::setcolorder(
                   spat_loc,
                   neworder = c("sdimx",
-                               "sdimy", 
+                               "sdimy",
                                "cell_ID"
                                )
                   )
-              
+
             } else {
                 message("Images for RNA assay not found in the data.
                         Skipping image processing.")
@@ -2333,7 +2341,8 @@ seuratToGiottoV5 <- function(
         # if (!is.null(subcellular_assay)){
         if (length(sobject@assays[[subcellular_assay]]) == 1) {
             spat_coord <- Seurat::GetTissueCoordinates(sobject)
-            colnames(spat_coord) <- c("sdimx", "sdimy", "cell_ID")
+            colnames(spat_coord) <- c("sdimx", "sdimy")
+            spat_coord$cell_ID <- rownames(spat_coord)
             exp <- exp[, c(intersect(spat_coord$cell_ID, colnames(exp)))]
             spat_loc <- spat_coord
         }
@@ -2401,19 +2410,20 @@ seuratToGiottoV5 <- function(
     }
 
     # Find SueratImages, extract them, and pass to create image
-
+    image_list <- list()
     for (i in names(sobject@images)) {
       simg <- sobject[[i]]
         # check if image slot has image in it
         if ("image" %in% slotNames(simg)) {
           img_array <- slot(simg, "image")
-          if (!is.null(img_array)) { 
+          if (!is.null(img_array)) {
             scalef <- Seurat::ScaleFactors(simg)
                 gImg <- createGiottoLargeImage(
                     raster_object = terra::rast(img_array) * 255,
                     name = i,
                     scale_factor = 1 / scalef$lowres
                 )
+                image_list[[i]] <- gImg
             }
         }
     }
@@ -2473,8 +2483,14 @@ seuratToGiottoV5 <- function(
                 es = igraph::E(sobjIgraph),
                 names = TRUE
             )
+
             DT$from <- edges[, 1]
             DT$to <- edges[, 2]
+            num_rows <- nrow(DT)
+            DT$sdimx_begin <- as.numeric(rep(NA, num_rows))
+            DT$sdimy_begin <- as.numeric(rep(NA, num_rows))
+            DT$sdimx_end <- as.numeric(rep(NA, num_rows))
+            DT$sdimy_end <- as.numeric(rep(NA, num_rows))
             ed_attr <- igraph::edge.attributes(sobjIgraph)
             DT$weight <- ed_attr[1]
             DT$distance <- ed_attr[2]
@@ -2531,12 +2547,11 @@ seuratToGiottoV5 <- function(
         }
     }
     gobject <- addCellMetadata(
-      gobject = gobject, new_metadata = cell_metadata, 
+      gobject = gobject, new_metadata = cell_metadata,
       by_column = TRUE, column_cell_ID = "rn")
-    
+
     gobject <- addFeatMetadata(
-      gobject = gobject, new_metadata = feat_metadata, 
-      by_column = TRUE, column_feat_ID = "rn")
+      gobject = gobject, new_metadata = feat_metadata)
 
     if (exists("gpoints")) {
         gobject <- addGiottoPoints(
@@ -2555,7 +2570,7 @@ seuratToGiottoV5 <- function(
     if (exists("gImg")) {
         gobject <- addGiottoLargeImage(
             gobject = gobject,
-            largeImages = list(gImg)
+            largeImages = image_list
         )
     }
     return(gobject)
@@ -2715,9 +2730,15 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
                     spatialUnits[su], "'"
                 )
             }
-            SpatialExperiment::spatialCoords(spe) <- data.matrix(
-              spatialLocs[, seq_len(2)]
-            )
+            if (all(colnames(spatialLocs[, seq_along(2)]) == c("sdimx", "sdimy"))) {
+                spatialLocs <- spatialLocs[, c("sdimx", "sdimy"), drop = FALSE]
+            } else {
+                # Rename the first two columns to sdimx and sdimy
+                colnames(spatialLocs)[seq_along(2)] <- c("sdimx", "sdimy")
+                spatialLocs <- spatialLocs[, c("sdimx", "sdimy"), drop = FALSE]
+            }
+            SpatialExperiment::spatialCoords(spe) <- data.matrix(spatialLocs)
+
         } else {
             if (verbose) {
                 message("No spatial locations found in the input Giotto object")
@@ -3391,7 +3412,7 @@ spatialdataToGiotto <- function(
         feat_type = NULL,
         python_path = NULL,
         env_name = NULL) {
-    
+
     # File check
     if (is.null(spatialdata_path)) {
         stop("Please provide a path to SpatialData object for conversion.\n")
@@ -3716,7 +3737,7 @@ giottoToSpatialData <- function(
         python_path = NULL,
         env_name = NULL,
         save_directory = NULL) {
-        
+
     # Initialize reticulate
     instrs <- createGiottoInstructions(python_path = python_path)
 
@@ -3758,7 +3779,7 @@ giottoToSpatialData <- function(
         overwrite = TRUE,
         verbose = TRUE
     )
-    
+
     spat_locs <- getSpatialLocations(gobject, output="data.table")
 
     # Create SpatialData object

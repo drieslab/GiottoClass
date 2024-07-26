@@ -6,13 +6,14 @@
 #' @name affine
 #' @description Apply an affine transformation matrix to a spatial object.
 #' Currently only works for 2D transforms.
-#' @param x object
-#' @param m `matrix` or coercible to `matrix`. Should be a matrix with either
-#' 2 or 3 columns (linear or affine).
+#' @param x object to affine transform or a `matrix`
+#' @param y `matrix` or coercible to `matrix` (such as `affine2d`). Should
+#' be a matrix with either 2 or 3 columns (linear or affine).
 #' @param inv logical. Whether the inverse of the affine transform should
 #' be applied.
 #' @param ... additional args to pass (none implemented)
-#' @returns affine transformed object
+#' @returns affine transformed object or an `affine2d` if a `matrix` was
+#' passed to `x`
 #' @examples
 #' m <- diag(rep(1, 3))
 #' trans_m <- matrix(c(1, 0, 0, 0, 1, 0, 200, 300, 1), nrow = 3)
@@ -22,6 +23,11 @@
 #' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
 #' gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
 #' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
+#' 
+#' # creation of affine2d
+#' aff <- affine(m)
+#' aff <- spin(flip(shear(aff, fx = 0.2)), 45)
+#' plot(aff) # blue is start, red is end
 #'
 #' # giottoPoints ##############################################
 #' plot(gpoints)
@@ -30,6 +36,7 @@
 #' # giottoPolygon #############################################
 #' plot(gpoly)
 #' plot(affine(gpoly, scale_m))
+#' plot(affine(gpoly, aff)) # affine() with `affine2d`
 #'
 #' # spatLocsObj ###############################################
 #' plot(affine(sl, m))
@@ -42,6 +49,109 @@
 NULL
 # ---------------------------------------------------------------- #
 
+# * giotto ####
+#' @rdname affine
+#' @param spat_unit character vector. spatial units to affect. The :all: token
+#' to affect all can be used.
+#' @param feat_type character vector. feature types to affect. The :all: token
+#' to affect all can be used.
+#' @param images character vector. Images to affect. The :all: token
+#' to affect all can be used.
+#' @export
+setMethod(
+    "affine", signature(x = "giotto", y = "matrix"), function(
+        x, y, inv = FALSE, 
+        spat_unit = ":all:", feat_type = ":all:", images = ":all:", 
+        ...
+    ) {
+        a <- list(y = y, inv = inv, ...)
+        
+        spat_unit <- set_default_spat_unit(
+            gobject = x, spat_unit = spat_unit
+        )
+        feat_type <- set_default_feat_type(
+            gobject = x, spat_unit = spat_unit, feat_type = feat_type
+        )
+        
+        all_su <- spat_unit == ":all:"
+        all_ft <- feat_type == ":all:"
+        
+        # polygons --------------------------------------------------------- #
+        polys <- get_polygon_info_list(
+            gobject = x, return_giottoPolygon = TRUE
+        )
+        if (!all_su) {
+            polys <- polys[spatUnit(polys) %in% spat_unit]
+        }
+        if (!is.null(polys)) {
+            for(poly in polys) {
+                poly <- do.call(affine, args = c(list(x = poly), a))
+                x <- setGiotto(x, poly, verbose = FALSE, initialize = FALSE)
+            }
+        }
+        
+        # spatlocs --------------------------------------------------------- #
+        sls <- get_spatial_locations_list(
+            gobject = x,
+            spat_unit = ":all:",
+            output = "spatLocsObj",
+            copy_obj = FALSE
+        )
+        if (!all_su) {
+            sls[spatUnit(sls) %in% spat_unit]
+        }
+        if (!is.null(sls)) {
+            for (sl in sls) {
+                sl <- do.call(affine, args = c(list(x = sl), a))
+                x <- setGiotto(x, sl, verbose = FALSE, initialize = FALSE)
+            }
+            
+            # TODO remove this after spatial info is removed from
+            # spatialNetwork objs
+            sn_list <- get_spatial_network_list(
+                gobject = x,
+                spat_unit = ":all:",
+                output = "spatialNetworkObj",
+                copy_obj = FALSE
+            )
+            if (length(sn_list) > 0) {
+                warning(wrap_txt("spatial locations have been modified.
+                                Relevant spatial networks may need to be
+                                regenerated"), call. = FALSE)
+            }
+        }
+        
+        # points ----------------------------------------------------------- #
+        
+        pts <- get_feature_info_list(
+            gobject = x, return_giottoPoints = TRUE
+        )
+        if (!all_ft) {
+            pts <- pts[featType(pts) %in% feat_type]
+        }
+        if (!is.null(pts)) {
+            for(pt in pts) {
+                pt <- do.call(affine, args = c(list(x = pt), a))
+                x <- setGiotto(x, pt, verbose = FALSE, initialize = FALSE)
+            }
+        }
+        # images ----------------------------------------------------------- #
+        
+        imgs <- get_giotto_image_list(x)
+        if (!is.null(imgs)) {
+            if (!inherits(imgs, "list")) imgs <- list(imgs)
+            for (img in imgs) {
+                img <- do.call(affine, args = c(list(x = img), a))
+                x <- setGiotto(x, img, verbose = FALSE)
+            }
+        }
+        
+        return(initialize(x)) # init not necessarily needed
+    }
+)
+
+
+# * ANY ####
 #' @rdname affine
 #' @export
 setMethod("affine", signature(x = "ANY", y = "missing"), function(x) {
@@ -52,6 +162,7 @@ setMethod("affine", signature(x = "ANY", y = "missing"), function(x) {
     return(res)
 })
 
+# * ANY, affine2d ####
 #' @rdname affine
 #' @export
 setMethod("affine", signature(x = "ANY", y = "affine2d"), function(x, y, ...) {
@@ -60,6 +171,7 @@ setMethod("affine", signature(x = "ANY", y = "affine2d"), function(x, y, ...) {
     do.call(affine, args = a)
 })
 
+# * SpatVector, matrix ####
 #' @rdname affine
 #' @export
 setMethod("affine", signature(x = "SpatVector", y = "matrix"), 
@@ -67,6 +179,7 @@ setMethod("affine", signature(x = "SpatVector", y = "matrix"),
     .affine_sv(x, m = y, inv, ...)
 })
 
+# * giottoPoints, matrix ####
 #' @rdname affine
 #' @export
 setMethod(
@@ -77,6 +190,7 @@ setMethod(
     }
 )
 
+# * giottoPolygon, matrix ####
 #' @rdname affine
 #' @export
 setMethod(
@@ -86,6 +200,7 @@ setMethod(
     }
 )
 
+# * spatLocsObj, matrix ####
 #' @rdname affine
 #' @export
 setMethod(
@@ -98,6 +213,7 @@ setMethod(
     }
 )
 
+# * giottoLargeImage, matrix ####
 #' @rdname affine
 #' @export
 setMethod("affine", signature(x = "giottoLargeImage", y = "matrix"), function(
@@ -109,6 +225,7 @@ setMethod("affine", signature(x = "giottoLargeImage", y = "matrix"), function(
     return(res)
 })
 
+# * giottoAffineImage, matrix ####
 #' @rdname affine
 #' @export
 setMethod("affine", signature(x = "giottoAffineImage", y = "matrix"), function(
@@ -122,6 +239,7 @@ setMethod("affine", signature(x = "giottoAffineImage", y = "matrix"), function(
     return(initialize(x))
 })
 
+# * affine2d, matrix ####
 #' @rdname affine
 #' @export
 setMethod("affine", signature(x = "affine2d", y = "matrix"), function(

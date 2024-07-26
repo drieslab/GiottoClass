@@ -28,6 +28,7 @@
 NULL
 # ---------------------------------------------------------------- #
 
+# * spatLocsObj ####
 #' @rdname shear
 #' @export
 setMethod("shear", signature("spatLocsObj"), function(
@@ -39,6 +40,7 @@ setMethod("shear", signature("spatLocsObj"), function(
     return(x)
 })
 
+# * SpatVector ####
 #' @rdname shear
 #' @export
 setMethod("shear", signature("SpatVector"), function(
@@ -48,6 +50,7 @@ setMethod("shear", signature("SpatVector"), function(
     do.call(.shear_sv, args = a)
 })
 
+# * giottoPoints ####
 #' @rdname shear
 #' @export
 setMethod("shear", signature("giottoPoints"), function(
@@ -60,6 +63,7 @@ setMethod("shear", signature("giottoPoints"), function(
     return(x)
 })
 
+# * giottoPolygon ####
 #' @rdname shear
 #' @export
 setMethod("shear", signature("giottoPolygon"), function(
@@ -70,6 +74,7 @@ setMethod("shear", signature("giottoPolygon"), function(
     .do_gpoly(x, what = .shear_sv, args = a)
 })
 
+# * giottoLargeImage ####
 #' @rdname shear
 #' @export
 setMethod("shear", signature("giottoLargeImage"), function(
@@ -81,6 +86,7 @@ setMethod("shear", signature("giottoLargeImage"), function(
     return(res)
 })
 
+# * giottoAffineImage ####
 #' @rdname shear
 #' @export
 setMethod("shear", signature("giottoAffineImage"), function(
@@ -94,6 +100,7 @@ setMethod("shear", signature("giottoAffineImage"), function(
     return(initialize(x))
 })
 
+# * affine2d ####
 setMethod("shear", signature("affine2d"), function(
          x, fx = 0, fy = 0, x0, y0, ...
     ) {
