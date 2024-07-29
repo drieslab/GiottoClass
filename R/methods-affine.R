@@ -150,6 +150,13 @@ setMethod(
     }
 )
 
+# * missing ####
+#' @rdname affine
+#' @export
+setMethod("affine", signature(x = "missing", y = "missing"), function(x) {
+    new("affine2d", affine = diag(c(1, 1)))
+})
+
 
 # * ANY ####
 #' @rdname affine
