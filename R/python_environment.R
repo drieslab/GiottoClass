@@ -1,118 +1,88 @@
+
+
+
+# check ####
+
 #' @title checkGiottoEnvironment
 #' @name checkGiottoEnvironment
-#' @param mini_install_path (optional) path to miniconda or conda directory
-#' within which the giotto environment lives
-#' If not provided, automatically determined by reticulate::miniconda_path()
-#' Note the required input format:
-#' Correct format --> mini_install_path = "C:/my/conda/lives/here"
-#' OR "C:\\my\\conda\\lives\\here"
-#' INCORRECT formats --> mini_install_path = "C:/my/conda/lives/here/"
-#' AND "C:\\my\\conda\\lives\\here\\"
+#' @description
+#' Based on `envname`, detect if there is a conda or miniconda installation.
+#' This is done by detecting if there is a python executable in the
+#' expected location. The default behavior is to only check for giotto's
+#' default environment called "giotto_env"
+#' @param envname character. (optional) The name of or path to a miniconda or
+#' conda environment directory or python executable. Default is 
+#' `reticulate::miniconda_path()`.
+#' @param mini_install_path deprecated
 #' @param verbose be verbose
 #' @details Checks if a miniconda giotto environment can be found.
 #' Can be installed with \code{\link{installGiottoEnvironment}}.
 #' @returns logical
 #' @examples
+#' # check default location
 #' checkGiottoEnvironment()
+#' 
+#' # use environment name
+#' checkGiottoEnvironment("giotto_env")
+#' 
+#' # full path 
+#' # (use this if a different install location specified with .condarc)
+#' if (FALSE) {
+#' checkGiottoEnvironment(
+#'     "/Users/example/Library/r-miniconda-arm64/envs/giotto_env/bin/pythonw"
+#' )
+#' }
 #' @export
-checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
-    ## get operating system
-    os_specific_system <- get_os()
-
-    ## check if giotto environment is already installed
-    if (is.null(mini_install_path)) {
-        conda_path <- reticulate::miniconda_path()
-    } else if (!dir.exists(mini_install_path)) {
-        if (verbose) {
-            GiottoUtils::wrap_msg(
-                " Unable to find miniconda directory", mini_install_path,
-                "\nPlease ensure the directory exists and is provided as
-                a string."
-            )
-        }
-        return(FALSE)
-    } else {
-        conda_path <- mini_install_path
+checkGiottoEnvironment <- function(
+        envname = "giotto_env", 
+        mini_install_path = deprecated(), 
+        verbose = NULL
+) {
+    
+    if (is_present(mini_install_path)) {
+        deprecate_warn(
+            when = "0.3.2",
+            what = "checkGiottoEnvironment(mini_install_path)",
+            with = "checkGiottoEnvironment(envname)"
+        )
+        envname <- mini_install_path
     }
-
-    if (os_specific_system == "osx") {
-        full_path <- paste0(conda_path, "/envs/giotto_env/bin/pythonw")
-    } else if (os_specific_system == "windows") {
-        full_path <- paste0(conda_path, "\\envs\\giotto_env\\python.exe")
-    } else if (os_specific_system == "linux") {
-        full_path <- paste0(conda_path, "/envs/giotto_env/bin/python")
+    envname <- envname %null% "giotto_env"
+    
+    # check for envnames, if found, get the path
+    if (!.is_path(envname)) {
+        # if a condaenv matches envname, return fullpath
+        # otherwise return envname without modification
+        envname <- .envname_to_pypath(envname, must_exist = FALSE)
     }
+    
+    # complete any directory inputs
+    # if path does not exist, return NULL
+    py_path <- .full_miniconda_path(path = envname)
+    
+   if (is.null(py_path)) {
+       vmsg(
+           .v = verbose,
+           " Unable to find conda directory", envname,
+           "\nPlease ensure the directory exists and is provided as",
+           "character."
+       )
+       return(FALSE)
+   }
 
-    if (file.exists(full_path)) {
-        if (verbose) {
-            message(
-                "\n giotto environment found at \n",
-                full_path, "\n"
-            )
-        }
-        return(TRUE)
-    } else {
-        if (verbose) GiottoUtils::wrap_msg("\n giotto environment was expected,
-                                        but NOT found at \n", full_path, "\n")
-        return(FALSE)
-    }
+    vmsg(.v = verbose, "giotto environment found at\n", py_path)
+    return(TRUE)
 }
 
-#' @title .giotto_environment_path
-#' @description returns the path to the detected giotto environment
-#' @returns string path
-#' @keywords internal
-.giotto_environment_path <- function() {
-    ## get operating system
-    os_specific_system <- get_os()
-
-    ## check if giotto environment is already installed
-    conda_path <- reticulate::miniconda_path()
-    if (os_specific_system == "osx") {
-        full_path <- paste0(conda_path, "/envs/giotto_env")
-    } else if (os_specific_system == "windows") {
-        full_path <- paste0(conda_path, "\\envs\\giotto_env")
-    } else if (os_specific_system == "linux") {
-        full_path <- paste0(conda_path, "/envs/giotto_env")
-    }
-
-    if (file.exists(full_path)) {
-        return(full_path)
-    } else {
-        return(NA)
-    }
-}
-
-#' @title .giotto_environment_path_executable
-#' @description returns the path to the detected giotto environment executable
-#' @returns string path
-#' @keywords internal
-.giotto_environment_path_executable <- function() {
-    ## get operating system
-    os_specific_system <- get_os()
-
-    ## check if giotto environment is already installed
-    conda_path <- reticulate::miniconda_path()
-    if (os_specific_system == "osx") {
-        full_path <- paste0(conda_path, "/envs/giotto_env/bin/pythonw")
-    } else if (os_specific_system == "windows") {
-        full_path <- paste0(conda_path, "\\envs\\giotto_env\\python.exe")
-    } else if (os_specific_system == "linux") {
-        full_path <- paste0(conda_path, "/envs/giotto_env/bin/python")
-    }
-
-    if (file.exists(full_path)) {
-        return(full_path)
-    } else {
-        return(NA)
-    }
-}
 
 
 
 
 #' @name .check_giotto_python_modules
 #' @title Check if Giotto python modules are in python environment
+#' @description
+#' Check for some core python packages that Giotto uses. This is an internal
+#' currently only called by the `giotto` `initialize()` method
 #' @param my_python_path path to python environment
 #' @returns character or NULL
 #' @keywords internal
@@ -143,9 +113,9 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
     if (length(missing_modules) > 0L) {
         warning(wrap_txt(sprintf(
             "Some of Giotto's expected python module(s) were not found:
-            %s\n\n** Python path used: \"%s\"
-            (This is fine if python-based functions are not needed)",
+            %s\n %s\n\n** Python path used: \"%s\"",
             paste(missing_modules, collapse = ", "),
+            "(This is fine if python-based functions are not needed)",
             my_python_path
         ), .prefix = ""), call. = FALSE)
     }
@@ -155,13 +125,22 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 
 
 
-
+# install ####
 
 
 
 #' @title .install_giotto_environment_specific
 #' @description installation of giotto environment
+#' @param packages_to_install python packages to install with giotto env
+#' @param python_version python version to install
+#' @param mini_install_path directory to install the environment to.
+#' @param create_dir whether to create the directory specified by
+#' `mini_install_path` if it does not already exist. (default = FALSE)
+#' @param conda path to conda executable. See ?reticulate::`conda-tools`
+#' **finding conda** section. (Default = "auto")
+#' @param verbose be verbose
 #' @keywords internal
+#' @noRd
 #' @returns character or NULL
 .install_giotto_environment_specific <- function(packages_to_install = c(
         "pandas", "networkx", "python-igraph",
@@ -170,112 +149,119 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
     ),
     python_version = "3.10.2",
     mini_install_path = NULL,
-    verbose = TRUE) {
-    ## install Giotto environment
-    if (verbose) message("\n |---- install giotto environment ----| \n")
-    conda_path <- mini_install_path
+    confirm = TRUE,
+    envname = "giotto_env",
+    conda = "auto",
+    verbose = NULL) {
+    
+    vmsg(.v = verbose, "\n |---- install giotto environment ----| \n")
+    
+    ## paths ##
+    ## ----- ##
+    # conda (let reticulate handle it when possible)
+    conda <- conda %null% "auto"
+    conda_path <- reticulate::conda_binary(conda)
+    
+    # environment
+    if (is.null(mini_install_path)) {
+        # giotto environment path defaults
+        if (!is.null(envname)) {
+            mini_install_path <- envname
+        } else {
+            mini_install_path <- reticulate::miniconda_path()
+        }
+        # only the envname or default path should be used.
+    } else {
+        # checks if not following defaults
+        if (!is.character(mini_install_path)) {
+            stop(wrap_txt("`mini_install_path` input must be character"))
+        }
+        if (checkmate::test_file_exists(mini_install_path)) {
+            stop(wrap_txt(
+                "`mini_install_path` should be a path to a directory;
+             not an executable."
+            ))
+        }
+        # complete path
+        mini_install_path <- file.path(mini_install_path, "envs", envname)
+        
+        # confirm location
+        vmsg(.v = verbose, sprintf(
+            "Installing env to directory:\n\"%s\"", mini_install_path
+        ))
+        if (isTRUE(confirm)) {
+            # if not confirmed, return early
+            input <- readline("Is this the right location? [y/n] ")
+            if (!input %in% c("y", "Y", "n", "N")) {
+                stop("Invalid input. Please try again.")
+            }
+            if (!input %in% c("y", "Y")) stop("aborting")
+        }
+        
+        # create directory if not existing
+        if (!dir.exists(mini_install_path)) {
+            dir.create(mini_install_path, recursive = TRUE)
+        }
+        # user defined path will be used
+    }
 
-    ## 3. identify operating system and adjust the necessary packages
+    
+    ## identify operating system and adjust the necessary packages ##
+    ## ----------------------------------------------------------- ##
     os_specific_system <- get_os()
 
-
-    if (os_specific_system != "osx") {
+    if (os_specific_system != "osx") { # only osx needs python.app
         packages_to_install <- packages_to_install[!grepl(
             pattern = "python.app", x = packages_to_install
         )]
     }
 
-    py_lou <- packages_to_install[grepl(
-        pattern = "python-louvain",
-        x = packages_to_install
-    )]
-
-    pip_packages <- c("smfishhmrf", "session-info", py_lou)
-
     # python-louvain must be installed with pip, not with conda-forge
-    packages_to_install <- packages_to_install[!grepl(
-        pattern = "python-louvain", x = packages_to_install
-    )]
-
-    ## for unix-like systems ##
-    if (.Platform[["OS.type"]] == "unix") {
-        conda_full_path <- paste0(conda_path, "/", "bin/conda")
-        # If this does not exist, check for alternative conda config
-        # i.e. an env created through .condarc config
-        if (!file.exists(conda_full_path)) {
-            conda_full_path <- paste0(
-                conda_path, "/conda.exe"
-            )
-        }
-        reticulate::conda_create(
-            envname = "giotto_env",
-            conda = conda_full_path,
-            python_version = python_version
+    # `pip_packages` will be installed with pip
+    # `forge_packages` will be installed with conda-forge
+    forge_packages <- packages_to_install
+    py_lou <-"python-louvain"
+    pip_packages <- c("smfishhmrf", "session-info")
+    if (py_lou %in% packages_to_install) {
+        pip_packages <- c(pip_packages, py_lou)
+        forge_packages <- forge_packages[
+            forge_packages != py_lou
+        ]
+    }
+    
+    ## create conda env ##
+    ## ---------------- ##
+    
+    a <- list(
+        python_version = python_version,
+        envname = mini_install_path,
+        conda = conda_path
+    )
+    
+    do.call(reticulate::conda_create, args = a)
+    
+    ## install python packges ##
+    ## ---------------------- ##
+    
+    if (length(forge_packages) > 0L) {
+        do.call(
+            reticulate::py_install, 
+            args = c(a, list(
+                packages = forge_packages, 
+                method = "conda", 
+                channel = c("conda-forge", "vtraag")
+            ))
         )
+    }
 
-        full_envname <- paste0(conda_path, "/envs/giotto_env")
-
-        if (os_specific_system == "osx") {
-            python_full_path <- paste0(
-                conda_path,
-                "/envs/giotto_env/bin/pythonw"
-            )
-        } else if (os_specific_system == "linux") {
-            python_full_path <- paste0(
-                conda_path,
-                "/envs/giotto_env/bin/python"
-            )
-        }
-
-
-        reticulate::py_install(
-            packages = packages_to_install,
-            envname = "giotto_env",
-            method = "conda",
-            conda = conda_full_path,
-            python_version = python_version,
-            channel = c("conda-forge", "vtraag")
-        )
-
-        reticulate::py_install(
-            packages = pip_packages,
-            envname = full_envname,
-            method = "conda",
-            conda = conda_full_path,
-            pip = TRUE,
-            python_version = python_version
-        )
-
-
-        ## for windows systems ##
-    } else if (.Platform[["OS.type"]] == "windows") {
-        conda_full_path <- paste0(conda_path, "/", "condabin/conda.bat")
-        reticulate::conda_create(
-            envname = "giotto_env",
-            conda = conda_full_path,
-            python_version = python_version
-        )
-
-
-        full_envname <- paste0(conda_path, "/envs/giotto_env")
-        python_full_path <- paste0(conda_path, "/envs/giotto_env/python.exe")
-
-        reticulate::py_install(
-            packages = packages_to_install,
-            envname = "giotto_env",
-            method = "conda",
-            conda = conda_full_path,
-            python_version = python_version,
-            channel = c("conda-forge", "vtraag")
-        )
-
-        reticulate::py_install(
-            packages = pip_packages,
-            envname = full_envname,
-            method = "conda",
-            conda = conda_full_path,
-            pip = TRUE,
-            python_version = python_version
+    if (length(pip_packages) > 0L) {
+        do.call(
+            reticulate::py_install,
+            args = c(a, list(
+                packages = pip_packages,
+                method = "conda",
+                pip = TRUE
+            ))
         )
     }
 }
@@ -285,97 +271,98 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 #' @description installation options of giotto environment
 #' @returns character or NULL
 #' @keywords internal
-.install_giotto_environment <- function(force_environment = FALSE,
-    packages_to_install = c(
-        "pandas", "networkx", "python-igraph",
-        "leidenalg", "python-louvain", "python.app",
-        "scikit-learn"
-    ),
-    python_version = "3.10.2",
-    mini_install_path = NULL,
-    verbose = TRUE) {
-    # first see if Giotto is already installed
+.install_giotto_environment <- function(
+        force_environment = FALSE,
+        packages_to_install = c(
+            "pandas", "networkx", "python-igraph",
+            "leidenalg", "python-louvain", "python.app",
+            "scikit-learn"
+        ),
+        python_version = "3.10.2",
+        mini_install_path = NULL,
+        confirm = TRUE,
+        envname = "giotto_env",
+        conda = "auto",
+        verbose = NULL
+) {
+    
+    # first see if Giotto environment is already installed
     giotto_installed <- checkGiottoEnvironment(
-        mini_install_path = mini_install_path,
-        verbose = verbose
+        envname = mini_install_path,
+        verbose = FALSE
     )
 
-
-    if (giotto_installed == TRUE & force_environment == FALSE) {
-        # do nothing if already installed and no force required
-
-        if (verbose) {
-            GiottoUtils::wrap_msg("Giotto environment is already installed,
-                                set force_environment = TRUE to reinstall \n")
-        }
-    } else if (giotto_installed == TRUE & force_environment == TRUE) {
-        # reinstall giotto if force required
-        if (.Platform[["OS.type"]] == "unix") {
-            conda_full_path <- paste0(mini_install_path, "/", "bin/conda")
-            # If this does not exist, check for alternative conda config
-            # i.e. an env created through .condarc config
-            if (!file.exists(conda_full_path)) {
-                conda_full_path <- paste0(mini_install_path, "/conda.exe")
-            }
-        } else if (.Platform[["OS.type"]] == "windows") {
-            conda_full_path <- paste0(
-                mini_install_path,
-                "/", "condabin/conda.bat"
-            )
-        }
+    # already installed and no force: do nothing & return
+    if (isTRUE(giotto_installed) && !isTRUE(force_environment)) {
+        vmsg(.v = verbose, 
+            "Giotto environment is already installed,
+            set force_environment = TRUE to reinstall"
+        )
+        return(invisible()) # return early
+    }
+    
+    # find conda binary (let reticulate handle it when possible)
+    conda <- conda %null% "auto"
+    conda_path <- reticulate::conda_binary(conda)
+    
+    # already installed and force: remove original env
+    if (isTRUE(giotto_installed) && isTRUE(force_environment)) {
 
         # first remove giotto environment, then install
         reticulate::conda_remove(
-            envname = "giotto_env",
-            conda = conda_full_path
-        )
-
-        .install_giotto_environment_specific(
-            packages_to_install = packages_to_install,
-            python_version = python_version,
-            mini_install_path = mini_install_path,
-            verbose = verbose
-        )
-    } else {
-        # install giotto if nothing is found
-        .install_giotto_environment_specific(
-            packages_to_install = packages_to_install,
-            python_version = python_version,
-            mini_install_path = mini_install_path,
-            verbose = verbose
+            envname = envname,
+            conda = conda_path
         )
     }
+    
+    # install giotto environment
+    .install_giotto_environment_specific(
+        packages_to_install = packages_to_install,
+        python_version = python_version,
+        mini_install_path = mini_install_path,
+        confirm = confirm,
+        envname = envname,
+        conda = conda_path,
+        verbose = verbose
+    )
 }
 
 
 
 
 #' @title installGiottoEnvironment
-#' @description Installs a giotto environment
-#' @param packages_to_install all python modules (packages) that should be
-#' installed for Giotto to work
+#' @description Installs a giotto python environment. This includes a 
+#' miniconda installation and also a set of python packages that Giotto may
+#' often use. See details for further information on setting up an
+#' environment with a .yml
+#' @param packages_to_install python modules (packages) to install for Giotto.
 #' @param python_version python version to use within the giotto conda
-#' environment
-#' @param mini_install_path (optional) desired location miniconda installation.
-#' If not provided, it is chosen by reticulate::install_miniconda()
-#' Note the required input format:
-#' Correct format --> mini_install_path = "C:/my/conda/lives/here"
-#' OR "C:\\my\\conda\\lives\\here"
-#' INCORRECT formats --> mini_install_path = "C:/my/conda/lives/here/"
-#' AND "C:\\my\\conda\\lives\\here\\"
+#' environment. Default is v3.10.2
+#' @param mini_install_path (optional) desired miniconda installation location.
+#' Default is chosen by `reticulate::install_miniconda()`
+#' @param confirm whether to pause for confirmation of conda environment
+#' install location (default = TRUE)
+#' @param envname name to assign environment. Default = "giotto_env"
+#' @param conda either "auto" (default) to allow reticulate to handle it, or
+#' the full filepath to the conda executable. You can also set the option
+#' "reticulate.conda_binary" or `Sys.setenv()` "RETICULATE_CONDA" to tell
+#' reticulate where to look.
 #' @param force_miniconda force reinstallation of miniconda
 #' @param force_environment force reinstallation of the giotto environment
 #' @param verbose be verbose
 #' @returns installs a giotto environment using the reticulate miniconda system
 #' @details This function will install a local giotto environment using
-#' the miniconda system as implemented by reticulate. Once this giotto
+#' the miniconda system as implemented by \pkg{reticulate}. Once this giotto
 #' environment is installed it will be automatically detected when you run the
-#' Giotto toolbox. If you want to use
-#' your own python path then you can set the python_path in
-#' the \code{\link{createGiottoInstructions}}
+#' Giotto toolbox. \cr
+#' 
+#' # custom python paths
+#' If you want to use your own python path then you can set the python_path in 
+#' the  `"giotto.py_path"` option or \code{\link{createGiottoInstructions}}
 #' and provide the instructions to the \code{\link{createGiottoObject}}
 #' function.
 #'
+#' # python versions
 #' By default, Python v3.10.2 will be used with the following python modules
 #' for Giotto Suite implementations:
 #' \preformatted{
@@ -404,8 +391,27 @@ checkGiottoEnvironment <- function(mini_install_path = NULL, verbose = TRUE) {
 #'   - python.app==2 # macOS only
 #'   - scikit-learn==0.24.2
 #' }
+#' 
+#' # .yml installs
+#' Please note that multiple .yml files are provided in the
+#' repository for advanced installation and convenience. To install the most
+#' up-to-date Giotto environment using a .yml file, open a shell compatible 
+#' with conda/miniconda and navigate to the directory specified by 
+#' `system.file(package = "Giotto", "python/configuration")`. Once in this 
+#' directory, run the following to create your environment in one step:
+#' 
+#' `conda env create -n giotto_env -f ./genv.yml`
+#' 
 #' @examples
+#' if (FALSE) {
+#' # default install
 #' installGiottoEnvironment()
+#' 
+#' # install to alternate location
+#' temp_env <- tempdir()
+#' installGiottoEnvironment(mini_install_path = temp_env)
+#' }
+#' 
 #' @export
 installGiottoEnvironment <- function(packages_to_install = c(
         "pandas==1.5.1",
@@ -418,242 +424,216 @@ installGiottoEnvironment <- function(packages_to_install = c(
     ),
     python_version = "3.10.2",
     mini_install_path = NULL,
+    confirm = TRUE,
+    envname = "giotto_env",
+    conda = "auto",
     force_miniconda = FALSE,
     force_environment = FALSE,
-    verbose = TRUE) {
+    verbose = NULL) {
+    
     ## 1. check and install miniconda locally if necessary
-    conda_path <- NULL
-    if (is.null(mini_install_path)) {
-        conda_path <- reticulate::miniconda_path()
-    } else if (!dir.exists(mini_install_path)) {
-        stop(GiottoUtils::wrap_msg(paste0(
-            " Unable to install miniconda in ",
-            mini_install_path,
-            "\nPlease ensure the directory has been created and provided as
-            a string."
-        )))
-    } else {
-        conda_path <- mini_install_path
+    conda_path <- reticulate::conda_binary(conda = conda)
 
-        GiottoUtils::wrap_msg(
-            "NOTICE: Attempting to install the Giotto Environment at a
-            custom path.\n",
-            "Please note that multiple .yml files are provided in the
-            repository for advanced installation and convenience.",
-            "To install the most up-to-date Giotto environment using a .yml
-            file, open a shell",
-            " compatible with conda/miniconda and navigate to the directory
-            containing Giotto.",
-            "If you are unsure where Giotto lives on your machine, run the R
-            function",
-            " `.libPaths()`, which will return the path(s) at which R packages
-            install on your machine.",
-            "Once in the directory containing Giotto, run the following to
-            create your environment in one step:\n\n",
-            "conda env create -n giotto_env -f ./python/configuration/genv.yml
-            \n\n",
-            "Alternatively, Giotto environment configurations are stored in",
-            " the directory Giotto/inst/python/configuration/ on the github
-            repository."
-        )
-
-        manual_install <- as.character(
-            readline("Would you prefer to install manually? [y/n] ")
-        )
-
-        if (!manual_install %in% c("y", "Y", "n", "N")) {
-            stop("Invalid input. Please try again.")
-        }
-
-        if (manual_install %in% c("y", "Y")) {
-            stop(GiottoUtils::wrap_txt("There is no error; this just stops
-                                    function execution. Please follow the
-                                    instructions above for manual installation.
-                                    Thank you!"))
-        } else {
-            GiottoUtils::wrap_msg("Continuing with automatic installation...\n")
-        }
-
-
-        if (.Platform[["OS.type"]] == "unix") {
-            conda_full_path <- paste0(conda_path, "/", "bin/conda")
-            # If this does not exist, check for alternative conda config
-            # i.e. an env created through .condarc config
-            if (!file.exists(conda_full_path)) {
-                conda_full_path <- paste0(
-                    conda_path, "/conda.exe"
-                )
-            }
-        } else if (.Platform[["OS.type"]] == "windows") {
-            conda_full_path <- paste0(conda_path, "/", "condabin/conda.bat")
-        }
-        if (!file.exists(conda_full_path)) force_miniconda <- TRUE
-    }
-
-    if (!file.exists(conda_path) | isTRUE(force_miniconda)) {
-        if (verbose) message("\n |---- install local miniconda ----| \n")
+    # install miniconda if needed
+    if (!file.exists(conda_path) || isTRUE(force_miniconda)) {
+        vmsg(.v = verbose, .initial = " ", 
+             "|---- install local miniconda ----|")
+        
         reticulate::install_miniconda(
             path = conda_path,
             force = force_miniconda
         )
     }
 
-
     ## 2. install giotto environment
+    if (is.null(mini_install_path)) {
+        confirm <- FALSE # following defaults, no confirm needed
+    }
+    
     .install_giotto_environment(
         force_environment = force_environment,
         packages_to_install = packages_to_install,
         python_version = python_version,
-        mini_install_path = conda_path,
+        mini_install_path =  mini_install_path,
+        confirm = confirm,
+        envname = envname,
+        conda = conda,
         verbose = verbose
     )
 }
 
 
+# remove ####
+
 
 #' @title removeGiottoEnvironment
 #' @name removeGiottoEnvironment
-#' @param mini_path path to anaconda/miniconda.
-#' Default: reticulate::miniconda_path()
-#' i.e. "C:/my/conda/lives/here" OR "C:\\my\\conda\\lives\\here"
+#' @description
+#' Remove a Giotto environment
+#' @param envname name of environment to remove (e.g. "giotto_env")
+#' @param mini_path deprecated
+#' @param conda either "auto" (default) to allow reticulate to handle it, or
+#' the full filepath to the conda executable. You can also set the option
+#' "reticulate.conda_binary" or `Sys.setenv()` "RETICULATE_CONDA" to tell
+#' reticulate where to look.
 #' @param verbose be verbose
 #' @returns character or NULL
 #' @details Removes a previously installed giotto environment.
 #' See \code{\link{installGiottoEnvironment}}.
 #' @export
-removeGiottoEnvironment <- function(mini_path = NULL, verbose = TRUE) {
-    if (is.null(mini_path)) {
-        conda_path <- reticulate::miniconda_path()
-    } else if (!dir.exists(mini_path)) {
-        stop(GiottoUtils::wrap_msg(paste0(
-            "Directory", mini_path,
-            "could not be found. Please ensure it was
-                                    entered properly and as a string."
-        )))
-    } else {
-        conda_path <- mini_path
-    }
-
-    if (.Platform[["OS.type"]] == "unix") {
-        conda_full_path <- paste0(conda_path, "/", "bin/conda")
-    } else if (.Platform[["OS.type"]] == "windows") {
-        conda_full_path <- paste0(conda_path, "/", "condabin/conda.bat")
+removeGiottoEnvironment <- function(
+        envname = "giotto_env", 
+        mini_path = deprecated(), 
+        conda = "auto", 
+        verbose = TRUE
+) {
+    
+    if (is_present(mini_path)) {
+        deprecate_warn(
+            when = "0.3.2",
+            what = "removeGiottoEnvironment(mini_path)",
+            details = "See new params `envname` and `conda` instead"
+        )
     }
 
     # first see if Giotto is already installed
-    giotto_installed <- checkGiottoEnvironment(verbose = verbose)
+    giotto_installed <- checkGiottoEnvironment(
+        envname = envname, verbose = verbose
+    )
 
-    if (giotto_installed == FALSE) {
-        GiottoUtils::wrap_msg("Giotto environment is not found and probably
-                            never installed")
+    if (!isTRUE(giotto_installed)) {
+        wrap_msg(
+            "Giotto environment is not found and probably never installed"
+        )
+    }
+    
+    # if envname was provided, get pypath from conda_list, 
+    # then convert to envpath
+    if (!.is_path(envname)) {
+        # if a condaenv matches envname, return fullpath
+        # otherwise throw error
+        envname <- .envname_to_pypath(envname, must_exist = TRUE) %>%
+            .pypath_to_envpath() # fullpath to envpath
     }
 
-    # first remove giotto environment, then install
     reticulate::conda_remove(
-        envname = "giotto_env",
-        conda = conda_full_path
+        envname = envname,
+        conda = conda
     )
 }
 
 
+
+
+# detect and activate ####
+
 #' @title set_giotto_python_path
 #' @name set_giotto_python_path
-#' @description detects and sets the python path. Exits without doing anything
-#' if getOption('giotto.use_conda') is FALSE.
-#' @param python_path character. Full path to python executable
+#' @description Detect and activate a python path. The `python_path` param
+#' accepts both full filepaths to the python executable and envnames. The 
+#' final path to use is determined as follows in decreasing priority:
+#' 
+#'   1. User provided (when `python_path` is not `NULL`)
+#'   2. Any provided path or envname in option `"giotto.py_path"`
+#'   3. Default expected giotto environment location based on 
+#'   `reticulate::miniconda_path()`
+#'   4. Envname "giotto_env"
+#'   5. System default python environment
+#' 
+#' This function exits without doing anything if option 
+#' `"giotto.use_conda"` is `FALSE`.
+#' @param python_path character. Name of environment or full path to python 
+#' executable.
 #' @param verbose be verbose
 #' @returns path to python executable
 #' @keywords internal
 #' @examples
 #' set_giotto_python_path()
 #' @export
-set_giotto_python_path <- function(python_path = NULL,
-    verbose = TRUE) {
+set_giotto_python_path <- function(
+        python_path = NULL,
+        verbose = NULL
+) {
     if (isFALSE(getOption("giotto.use_conda", TRUE))) {
         return(invisible(NULL)) # exit early
     }
+    
+    # get path in order of DECREASING priority #
+    # ---------------------------------------- #
+    found <- vector(mode = "numeric")
+    found_msg <- c(
+        "a python path has been provided",
+        "found python path from option 'giotto.py_path'",
+        "a giotto python environment was found", 
+        "", # skip 4 since it's always printed
+        "a system default python environment was found"
+    )
+    
+    # (1.) from user (when `python_path` != NULL)
+    if (!is.null(python_path)) found <- c(found, 1)
 
-    # If a path is provided by the user and it exists,
-    # direct reticulate to said executable and exit immediately
-    if (!is.null(python_path) && file.exists(python_path)) {
-        if (verbose) {
-            GiottoUtils::wrap_msg("\n external python path provided and will
-                                be used \n")
-        }
-        python_path <- as.character(python_path)
+    # (2.) check option (default is null)
+    python_path <- python_path %null% getOption("giotto.py_path")
+    if (!is.null(python_path)) found <- c(found, 2)
+    
+    # (3.) check default install path; if not existing, returns NULL
+    # will return NULL for .condarc alternate location "giotto_env" installs
+    python_path <- python_path %null% .os_py_path(must_exist = TRUE)
+    if (!is.null(python_path)) found <- c(found, 3)
+    
+    # (4.) check default envname, relying on reticulate::conda_list()
+    # catches .condarc alternate location "giotto_env"
+    if (is.null(python_path)) {
+        python_path <- "giotto_env"
+        vmsg(.v = verbose, "checking default envname \'giotto_env\'")
+    }
+    
+    # if an envname was provided, convert to a full python path to test
+    # if no existing python path found, return the envname without changes
+    if (!.is_path(python_path)) {
+        python_path <- .envname_to_pypath(python_path, must_exist = FALSE)
+    }
+    # if python_path thus far is not completable to an existing path
+    # return NULL, otherwise return existing path
+    python_path <- .full_miniconda_path(path = python_path)
+    
+    # (5.) detect from system call; return NULL if not found
+    python_path <- python_path %null% .sys_detect_py()
+    if (!is.null(python_path)) found <- c(found, 5)
+    
+    # print any found messages #
+    # ------------------------ #
+    if (length(found) > 0) {
+        found_at <- min(found)
+        vmsg(.v = verbose, found_msg[found_at])
+    }
+
+    # if any working python path found; activate the environment and return #
+    # --------------------------------------------------------------------- #
+    if (!is.null(python_path)) { 
+        vmsg(.v = verbose, sprintf("Using python path:\n\"%s\"", python_path))
         reticulate::use_python(required = TRUE, python = python_path)
         return(python_path)
     }
-
-    # Otherwise, check the OS and if a Giotto Environment exists
-    # use that executable
-    os_specific_system <- get_os()
-    conda_path <- reticulate::miniconda_path()
-    python_path <- switch(os_specific_system,
-        "osx" = paste0(conda_path, "/envs/giotto_env/bin/pythonw"),
-        "windows" = paste0(conda_path, "\\envs\\giotto_env\\python.exe"),
-        "linux" = paste0(conda_path, "/envs/giotto_env/bin/python")
-    )
-
-    # check if giotto environment exists
-    giotto_environment_installed <- checkGiottoEnvironment(
-        mini_install_path = conda_path,
-        verbose = FALSE
-    )
-
-    if (isTRUE(giotto_environment_installed)) {
-        if (verbose) {
-            GiottoUtils::wrap_msg("\n no external python path was provided,
-                                but a giotto python environment was found and
-                                will be used \n")
-        }
-        # python_path = .giotto_environment_path_executable()
-        reticulate::use_python(required = TRUE, python = python_path)
-    } else {
-        if (verbose) {
-            GiottoUtils::wrap_msg("\n no external python path or giotto
-                                environment was specified, will check if a
-                                default python path is available \n")
-        }
-
-        python_path <- try(
-            {
-                switch(.Platform[["OS.type"]],
-                    "unix" = system("which python3", intern = TRUE),
-                    "windows" = system("where python3", intern = TRUE)
-                )
-            },
-            silent = TRUE
-        )
-
-        if (inherits(python_path, "try-error")) {
-            GiottoUtils::wrap_msg("\nno default python path found
-               For full functionality, install python and/or use
-               strategy 1 or 2:")
-            python_path <- NULL
-        } else {
-            python_path <- python_path
-            reticulate::use_python(required = TRUE, python = python_path)
-            if (verbose) {
-                GiottoUtils::wrap_msg(
-                    "\n A default python path was found: ",
-                    python_path, " and will be used
-                            If this is not the correct python path, either"
-                )
-            }
-        }
-
-        GiottoUtils::wrap_msg("\n 1. use installGiottoEnvironment() to install
-            a local miniconda python environment along with required modules")
-        GiottoUtils::wrap_msg("\n 2. provide an existing python path to
-            python_path to use your own python path which has all modules
-            installed")
-        GiottoUtils::wrap_msg('Set options(\"giotto.use_conda\" = FALSE) if
-                                python functionalities are not needed')
-    }
-
-    return(python_path)
+    
+    # otherwise, not found -- helpful prints
+    vmsg("no default python path found.
+        For full functionality, install python and/or use
+        strategy 1 or 2:")
+    vmsg("1. use installGiottoEnvironment() to install
+         a local miniconda python environment along with required modules")
+    vmsg("2. provide an existing python path to
+         python_path to use your own python path which has all modules
+         installed")
+    vmsg('Set options(\"giotto.use_conda\" = FALSE) if
+         python functionalities are not needed')
 }
+
+
+
+
+
+# py package installs ####
 
 #' @title Prompt User for Python Install
 #' @name .py_install_prompt
@@ -664,7 +644,7 @@ set_giotto_python_path <- function(python_path = NULL,
 #' @returns numeric
 .py_install_prompt <- function(package = NULL,
     env = NULL) {
-    if (is.null(package) | is.null(env)) {
+    if (is.null(package) || is.null(env)) {
         stop(GiottoUtils::wrap_txt("Incorrect Usage.\n", errWidth = TRUE))
     }
 
@@ -931,4 +911,120 @@ checkPythonPackage <- function(package_name = NULL,
         }
         return(inst_result)
     }
+}
+
+
+
+
+
+
+
+# common internals ####
+
+# construct path to miniconda executable when the python directory is given
+# python directory should be provided in the same way as
+# `reticulate::miniconda_path()` where it is one level above the `envs`
+# subdirectory.
+# NULL is returned if the executable is not found if `must_exist` is TRUE
+# when `must_exist` is FALSE, the built path is always returned
+.os_py_path <- function(
+        path = reticulate::miniconda_path(), 
+        envname = "giotto_env",
+        os = get_os(),
+        must_exist = TRUE
+) {
+    checkmate::assert_directory_exists(path)
+    env_level <- file.path(path, "envs", envname)
+    full_path <- switch(os,
+        "osx" = file.path(env_level, "bin/pythonw"),
+        "windows" = file.path(env_level, "python.exe"),
+        "linux" = file.path(env_level, "bin/python")
+    )
+    # if not must exist or the file exists, return
+    if (!must_exist || file.exists(full_path)) {
+        return(full_path)
+    }
+    # call again with python instead of pythonw for mac
+    if (os == "osx") {
+        full_path <- gsub("pythonw", "python", full_path)
+        if (file.exists(full_path)) {
+            return(full_path)
+        }
+    }
+    # not found, return NULL
+    return(NULL)
+}
+
+# convert a full python executable path to the miniconda install directory
+.pypath_to_envpath <- function(python_path) {
+    os <- get_os()
+    remove <- switch(os,
+      "osx" = "bin/pythonw$|bin/python$",
+      "windows" = "python.exe",
+      "linux" = "bin/python"
+    )
+    gsub(remove, "", python_path)
+}
+
+# if found, return the fullpath
+# if not, return without modification
+.envname_to_pypath <- function(envname, must_exist = TRUE) {
+    envs <- reticulate::conda_list()
+    enames <- envs$name
+    epaths <- envs$python
+    if (envname %in% enames) envname <- epaths[enames == envname]
+    else if (isTRUE(must_exist)) {
+        stop(sprintf("envname '%s' not found in reticulate::conda_list()",
+                     envname), call. = FALSE)
+    }
+    return(envname)
+}
+
+# get full path to miniconda executable
+# if a full path to the executable is provided, it will be used
+# if a directory is provided, it will be completed with `.os_py_path`
+# if an envname is given, it will be completed with `.os_py_path` based on
+# `reticulate::miniconda_path()` as the base.
+# If no file is detected, NULL is returned.
+.full_miniconda_path <- function(path = NULL) {
+    
+    # default giotto_env install location
+    if (is.null(path)) {
+        return(.os_py_path())
+    }
+    
+    if (checkmate::test_file_exists(path)) { 
+        # fullpath
+        res <- path
+    } else if (dir.exists(path)) { 
+        # specific install location (.condarc) + giotto_env default name
+        res <- .os_py_path(path)
+    } else { 
+        # specific envname under reticulate::miniconda_path() directory
+        res <- .os_py_path(envname = path)
+    }
+    
+    return(res)
+}
+
+# system call to detect python location
+# if found, returns path, if not returns NULL
+.sys_detect_py <- function() {
+    res <- try(
+        {
+            switch(.Platform[["OS.type"]],
+                   "unix" = system("which python3", intern = TRUE),
+                   "windows" = system("where python3", intern = TRUE)
+            )
+        },
+        silent = TRUE
+    )
+    if (inherits(res, "try-error")) res <- NULL
+    return(res)
+}
+
+# detect if something is likely a path based on slashes (forward and back)
+# also if a file exists (also covers directories)
+.is_path <- function(x) {
+    grepl("\\\\|/", x) || file.exists(x)
 }

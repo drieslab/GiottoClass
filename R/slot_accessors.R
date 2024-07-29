@@ -284,7 +284,7 @@ set_cell_id <- function(gobject,
         # get cell ID values
         if (spat_unit %in% expr_avail$spat_unit) { # preferred from expression
 
-            cell_IDs <- spatIDs(get_expression_values(
+            cell_IDs <- spatIDs(getExpression(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = expr_avail$feat_type[[1L]],
@@ -424,7 +424,7 @@ set_feat_id <- function(gobject,
 
         if (feat_type %in% expr_avail$feat_type) { # preferred from expression
 
-            feat_IDs <- featIDs(get_expression_values(
+            feat_IDs <- featIDs(getExpression(
                 gobject = gobject,
                 spat_unit = expr_avail$spat_unit[[1L]],
                 feat_type = feat_type,
@@ -1428,17 +1428,18 @@ set_feature_metadata <- function(gobject,
 #'
 #' getExpression(g)
 #' @export
-getExpression <- function(gobject,
-    values = NULL,
-    spat_unit = NULL,
-    feat_type = NULL,
-    output = c("exprObj", "matrix"),
-    set_defaults = TRUE) {
-    # 0. Check input
+getExpression <- function(
+        gobject,
+        values = NULL,
+        spat_unit = NULL,
+        feat_type = NULL,
+        output = c("exprObj", "matrix"),
+        set_defaults = TRUE) {
+    
+  
+  # 0. Check input
     assert_giotto(gobject)
     output <- match.arg(output, choices = c("exprObj", "matrix"))
-
-
 
     # 1. Set feat_type and spat_unit
     if (isTRUE(set_defaults)) {
@@ -1495,16 +1496,24 @@ getExpression <- function(gobject,
 #' 'exprObj' (default) for the exprObj itself are allowed.
 #' @returns exprObj or matrix depending on output param
 #' @export
-get_expression_values <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    values = NULL,
-    output = c("exprObj", "matrix"),
-    set_defaults = TRUE) {
+get_expression_values <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        values = c('raw', 'normalized', 'scaled'),
+        output = c("exprObj", "matrix"),
+        set_defaults = TRUE) {
+
     deprecate_soft("3.3.0", "get_expression_values()", "getExpression()")
 
     assert_giotto(gobject)
 
+    ## check parameters
+    values <- match.arg(
+      arg = values,
+      choices = unique(c("raw", "normalized", "scaled", values))
+    )
+    
     output <- match.arg(output, choices = c("exprObj", "matrix"))
 
     # 1. Set feat_type and spat_unit
@@ -1520,6 +1529,7 @@ get_expression_values <- function(gobject,
         )
     }
 
+    
     # 2. Find object
     potential_values <- list_expression_names(
         gobject = gobject,
@@ -3247,8 +3257,9 @@ get_NearestNetwork <- function(gobject,
 #' @inheritParams data_access_params
 #' @param nn_type "kNN" or "sNN"
 #' @param name name of NN network to be used
-#' @param output return a igraph or data.table object. Default 'igraph'
-#' @returns igraph or data.table object
+#' @param output return a giotto `nnNetObj`, `igraph`, `data.table` object. 
+#' Default 'nnNetObj'
+#' @returns Giotto `nnNetObj`, `igraph` or `data.table` object
 #' @family expression space nearest network accessor functions
 #' @family functions to get data from giotto object
 #' @examples
@@ -3527,8 +3538,8 @@ set_NearestNetwork <- function(gobject,
 
     # 3. If input is null, remove object
     if (is.null(nn_network)) {
-        if (isTRUE(verbose)) wrap_msg("NULL passed to nn_network.
-                                Removing specified nearest neighbor network.")
+        vmsg(.v = verbose, "NULL passed to nn_network.
+                           Removing specified nearest neighbor network.")
         gobject@nn_network[[spat_unit]][[feat_type]][[nn_type]][[name]] <- NULL
 
         # prune if empty
@@ -3566,20 +3577,18 @@ set_NearestNetwork <- function(gobject,
         nn_type = nn_type
     )
     if (name %in% potential_names) {
-        if (isTRUE(verbose)) {
-            wrap_msg('> "', name, '" already exists and will be replaced with
-                    new nearest neighbor network')
-        }
+        vmsg(.v = verbose, sprintf(
+            "> '%s' already exists and will be replaced with
+            new nearest neighbor network", name
+        ))
     }
 
     ## 6. update and return giotto object
-    if (isTRUE(verbose) & isTRUE(call_from_external)) {
-        wrap_msg(
-            "Setting nearest neighbor network [", spatUnit(nn_network),
-            "][", featType(nn_network), "] ",
-            objName(nn_network),
-            sep = ""
-        )
+    if (isTRUE(verbose) && isTRUE(call_from_external)) {
+        wrap_msg(sprintf(
+            "Setting nearest neighbor network [%s][%s] %s",
+            spatUnit(nn_network), featType(nn_network), objName(nn_network)
+        ))
     }
 
     gobject@nn_network[[spat_unit]][[feat_type]][[nn_type]][[name]] <-

@@ -52,8 +52,3 @@ and feature type pair.
 The save_directory will be created if it does not already exist.
 The default save_directory is the working directory.
 }
-\examples{
-g <- GiottoData::loadGiottoMini("visium")
-
-giottoToAnnData(g, save_directory = paste0(tempdir(), "/"))
-}

@@ -307,6 +307,30 @@ terraVectData <- setClass(
 
 
 
+# UTILITY ####
+
+setClass(
+    Class = "affine2d",
+    slots = list(
+        anchor = "ANY",
+        affine = "matrix",
+        order = "character",
+        rotate = "numeric",
+        shear = "numeric",
+        scale = "numeric",
+        translate = "numeric"
+    ),
+    prototype = list(
+        anchor = c(-180, 180, -90, 90),
+        affine = diag(rep(1, 2L)),
+        order = c("rotate", "shear", "scale", "translate"),
+        rotate = 0,
+        shear = c(0, 0),
+        scale = c(1, 1),
+        translate = c(0, 0)
+    )
+)
+
 
 
 # SUBCLASSES ####
@@ -1539,7 +1563,7 @@ featureNetwork <- setClass(
 giottoImage <- setClass(
     Class = "giottoImage",
     slots = c(
-        name = "ANY",
+        name = "character",
         mg_object = "ANY",
         minmax = "ANY",
         boundaries = "ANY",
@@ -1549,7 +1573,7 @@ giottoImage <- setClass(
         OS_platform = "ANY"
     ),
     prototype = list(
-        name = NULL,
+        name = "test",
         mg_object = NULL,
         minmax = NULL,
         boundaries = NULL,
@@ -1572,11 +1596,15 @@ giottoImage <- setClass(
 # giottoLargeImage class
 
 #' @title S4 giottoLargeImage Class
-#' @description class to handle images too large to load in normally through
-#' magick
+#' @description Image class for Giotto that uses \pkg{terra} `SpatRaster` as
+#' a backend. If images are loaded from a file on disk then they are worked
+#' with lazily, where only the values needed at any moment are loaded/sampled
+#' into memory. Since `SpatRaster` objects are C pointers, `giottoLargeImage`
+#' and inheriting classes need to run `reconnect()` after loading from a
+#' saved object.
 #' @concept giotto object image
 #' @slot name name of large Giotto image
-#' @slot raster_object terra raster object
+#' @slot raster_object terra `SpatRaster` object
 #' @slot extent tracks the extent of the raster object. Note that most
 #' processes should rely on the extent of the raster object instead of this.
 #' @slot overall_extent terra extent object covering the original extent of
@@ -1629,6 +1657,29 @@ giottoLargeImage <- setClass(
         OS_platform = NULL
     )
 )
+
+#' @title S4 giottoAffineImage Class
+#' @description
+#' Class extending `giottoLargeImage`. When `shear()` or `spin()` operations
+#' are performed on  
+#' 
+#' 
+#' @slot affine contains `affine2d` object allowing lazily performed spatial
+#' transforms
+#' @slot funs list of functions associated with the object. Primarily to 
+#' perform the delayed/lazy operations
+setClass(
+    "giottoAffineImage",
+    contains = c("giottoLargeImage"),
+    slots = c(
+        affine = "affine2d",
+        funs = "list"
+    )
+)
+
+
+
+
 
 # function for updating image objects if structure definitions have changed
 .update_giotto_image <- function(x) {

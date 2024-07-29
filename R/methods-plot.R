@@ -86,6 +86,13 @@ setMethod(
     }
 )
 
+#' @rdname plot-generic
+#' @export
+setMethod("plot", signature(x = "giottoAffineImage", y = "missing"),
+          function(x, ...) {
+              .plot_giottoaffineimage(x, ...)
+          })
+
 #' @describeIn plot-generic Plot \emph{terra}-based giottoPolygon object. ... param passes to \code{\link[terra]{plot}}
 #' @param point_size size of points when plotting giottoPolygon object centroids
 #' @param type what to plot: either 'poly' (default) or polygon 'centroid'
@@ -291,9 +298,16 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 })
 
 
-
-
-
+#' @describeIn plot-generic Plot a affine2d. blue is start, red is end
+#' @export
+setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
+    a <- as.polygons(ext(x@anchor))
+    a$id <- "start"
+    b <- affine(a, x)
+    b$id <- "end"
+    res <- rbind(a, b)
+    terra::plot(res, border = c("blue", "red"), alpha = 0.5)
+})
 
 # internals ####
 
@@ -493,7 +507,7 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
 
     # Determine likely image bitdepth
     if (is.null(max_intensity)) {
-        bitDepth <- ceiling(log(x = a$x@max_intensity, base = 2))
+        bitDepth <- ceiling(log(x = giottoLargeImage@max_intensity, base = 2))
         # Assign discovered bitdepth as max_intensity
         max_intensity <- 2^bitDepth - 1
 
@@ -523,7 +537,16 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
     }
 }
 
-
+.plot_giottoaffineimage <- function(x, maxcell = 5e5, ...) {
+    pargs <- get_args_list(...)
+    gimg <- x@funs$realize_magick()
+    pargs$x <- gimg
+    do.call(plot, args = pargs)
+    # TODO things to be implemented for this pipeline:
+    # col (the trip the magick-image flattened the image without applying col)
+    # max_intensity same as above
+    # the above options are also stripped when the fresh largeImage is created
+}
 
 
 

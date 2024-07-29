@@ -1,5 +1,41 @@
 
-# GiottoClass 0.3.1
+# GiottoClass 0.3.2 (2024/07/26)
+
+## breaking changes
+- python environment installation and how it relates to default settings such as .condarc may have changed.
+- `giottoImage` `name` slot now requires `character` and will not accept `NULL`
+
+## bug fixes
+- `loadGiotto()` no longer errors with similarly named spat_units or feat_types (e.g. "cell" and "new_cell" would previously throw an error)
+- fix in `giottoToSpatialExperiment()`
+- fix for `giottoToSeuratV5` for cosmx mini dataset [#989](https://github.com/drieslab/Giotto/issues/989) by guillermoturiel
+- fix issue with prints in `createGiottoCosMxObject()` [#960](https://github.com/drieslab/Giotto/issues/960) by GBeattie
+
+## enhancements
+- `verbose` param for `createNearestNetwork()`
+- `checkGiottoEnvironment()` in addition to full filepaths, also now supports name of environment or installation directory
+- `installGiottoEnvironment()`, `removeGiottoEnvironment()` now have `conda` param for setting path to conda executable and `envname` param for specifying environment by name
+- `installGiottoEnvironment()` now has `confirm` param for skipping path input checks
+- `t()` for `giotto` now affects images as well.
+
+## new
+- `affine()` for `giottoPolygon`, `giottoPoints`, `spatLocsObj`, `giotto`
+- `shear()` for `giottoPoints`, `giottoPolygon`, `spatLocsObj`, `affine2d`
+- `affine2d` class for accumulating linear transforms to be used with `affine()`
+- `initialize()`, `[`, `$`, `show()`, `plot()`, methods for `affine2d`
+- `spin()`, `rescale`, `spatShift()`, `affine()`, `flip()`, `shear()` `t()` methods for `affine2d`
+- `giottoAffineImage` class for just-in-time affine transformed images
+- `initialize()`, method for `giottoLargeImage`
+- `initialize()`, `ext()`, `crop()`, `rescale()`, `spatShift()`, `plot()`, methods for `giottoAffineImage`
+- `rescale()` method for `giottoImage`
+- `spin()`, `shear()`, `affine()`, `flip()`, `t()` methods for `giottoAffineImage` and `giottoLargeImage` (which converts to `giottoAffineImage`)
+- `as()` conversion from `giottoLargeImage` to `giottoAffineImage`
+- `.get_centroid_xy()` internal for getting numeric centroid xy values of any object that responds to `ext()`
+- `.bound_poly()` internal for generating a dummy polygon from the extent of any object that responds to `ext()`
+- `.aff_shift_2d()`, `.aff_shift_2d<-()`, `.aff_linear_2d`, `.aff_linear_2d()<-` internals for accessing and manipulating affine matrices
+
+
+# GiottoClass 0.3.1 (2024/05/21)
 
 ## bug fixes
 - allow passing of additional params with `setGiotto()` with `...`
@@ -29,14 +65,14 @@
 ## bug fixes
 - fix `plot()` params passing for `giottoPolygon` when `type = "centroid"`
 - fix `ext()` output for `giottoImage`
-- `spatShift()` and `rescale()` now also affect attached images [#865](https://github.com/drieslab/Giotto/issues/865) by rbutleriii
+- `spatShift()` and `rescale()` now also affect gobject attached images [#945](https://github.com/drieslab/Giotto/issues/945) by rbutleriii
 
 ## enhancements
 - use faster `terra::rasterize()` and `terra::plot()` instead of `scattermore::scattermoreplot()` for `giottoPoints` `plot()` method
 - `plot()` `giottoPoints` method now plots density when `dens = TRUE`
 - `show_max` param in `density()` and `hist()` to plot the image object's `max_window` setting
 - `.identify_background_range_polygons()` now finds any polygons larger than a threshold percentage than the overall extent of the `SpatVector` input.
-- `ext()` can now be used with `giotto` objects [#865](https://github.com/drieslab/Giotto/issues/865) by rbutleriii
+- `ext()` can now be used with `giotto` objects [#945](https://github.com/drieslab/Giotto/issues/945) by rbutleriii
 - `ext()<-` can now be used with `giottoImage`
 - `as` conversion from `giottoLargeImage` to `giottoImage` (`giottoImage` is sampled)
 - `crop()` works for `spatialNetworkObj`

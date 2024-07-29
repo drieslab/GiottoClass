@@ -207,6 +207,69 @@ setMethod(
 )
 
 
+#' @rdname spin
+#' @export
+setMethod("spin", signature("giottoLargeImage"), function(
+        x, angle = NULL, x0 = NULL, y0 = NULL, ...
+) {
+    a <- get_args_list(...)
+    a$x <- as(x, "giottoAffineImage") # convert to giottoAffineImage
+    res <- do.call(spin, args = a)
+    return(res)
+})
+
+#' @rdname spin
+#' @export
+setMethod("spin", signature("giottoAffineImage"), function(
+        x, angle = NULL, x0 = NULL, y0 = NULL, ...
+) {
+    a <- get_args_list(...)
+    a$x <- x@affine
+    # update affine
+    x@affine <- do.call(spin, args = a)
+    
+    return(initialize(x))
+})
+
+#' @rdname spin
+#' @export
+setMethod("spin", signature("affine2d"), function(
+        x, angle = NULL, x0 = NULL, y0 = NULL
+) {
+    a <- get_args_list()
+    # remove from args list if not provided
+    if (is.null(x0)) a$x0 <- NULL
+    if (is.null(y0)) a$y0 <- NULL
+    # update linear
+    r <- radians(angle)
+    rotate_m <- matrix(c(cos(r), sin(r), -sin(r), cos(r)), nrow = 2L)
+    old_aff <- new_aff <- x@affine
+    .aff_linear_2d(new_aff) <- .aff_linear_2d(new_aff) %*% rotate_m
+    
+    ## calc shifts ##
+    # create dummy
+    d <- .bound_poly(x@anchor)
+    # perform transforms so far
+    a$x <- affine(d, old_aff)
+    # perform new transform
+    post <- do.call(spin, args = a)
+    
+    # perform affine & transform without shifts
+    b <- a
+    b$x0 <- b$y0 <- 0
+    b$x <- affine(d, .aff_linear_2d(old_aff))
+    pre <- do.call(spin, args = b)
+    
+    # find xyshift by comparing tfs so far vs new tf
+    xyshift <- .get_centroid_xy(post) - .get_centroid_xy(pre)
+    
+    # update translate
+    .aff_shift_2d(new_aff) <- xyshift
+    
+    x@affine <- new_aff
+    return(initialize(x))
+})
+
 # internals ####
 
 # Accepts a data.table with coordinates information

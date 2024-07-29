@@ -11,6 +11,8 @@
 \alias{spatShift,giottoPoints-method}
 \alias{spatShift,giottoLargeImage-method}
 \alias{spatShift,giottoImage-method}
+\alias{spatShift,giottoAffineImage-method}
+\alias{spatShift,affine2d-method}
 \title{Spatially shift an object}
 \usage{
 \S4method{spatShift}{giotto}(
@@ -45,6 +47,10 @@
 \S4method{spatShift}{giottoLargeImage}(x, dx = 0, dy = 0, copy_obj = FALSE, ...)
 
 \S4method{spatShift}{giottoImage}(x, dx = 0, dy = 0, ...)
+
+\S4method{spatShift}{giottoAffineImage}(x, dx = 0, dy = 0, ...)
+
+\S4method{spatShift}{affine2d}(x, dx = 0, dy = 0, ...)
 }
 \arguments{
 \item{x}{object}

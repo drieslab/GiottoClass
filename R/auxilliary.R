@@ -792,7 +792,7 @@ create_average_DT <- function(gobject,
         expression_values,
         unique(c("normalized", "scaled", "custom", expression_values))
     )
-    expr_data <- get_expression_values(
+    expr_data <- getExpression(
         gobject = gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
@@ -863,7 +863,7 @@ create_average_detection_DT <- function(gobject,
         expression_values,
         unique(c("normalized", "scaled", "custom", expression_values))
     )
-    expr_data <- get_expression_values(
+    expr_data <- getExpression(
         gobject = gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
@@ -1081,7 +1081,7 @@ calculateMetaTable <- function(gobject,
             expression_values
         ))
     )
-    expr_values <- get_expression_values(
+    expr_values <- getExpression(
         gobject = gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
@@ -1396,7 +1396,7 @@ createMetafeats <- function(gobject,
             expression_values
         ))
     )
-    exprobj <- get_expression_values(
+    exprobj <- getExpression(
         gobject = gobject,
         spat_unit = spat_unit,
         feat_type = feat_type,
