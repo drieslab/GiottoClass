@@ -1,4 +1,7 @@
 
+# GiottoClass 0.3.3
+
+
 # GiottoClass 0.3.2 (2024/07/26)
 
 ## breaking changes
