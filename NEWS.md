@@ -1,6 +1,9 @@
 
 # GiottoClass 0.3.3
 
+## bug fixes
+- fix flipping issue with `giottoAffineImage` for certain affine transforms
+
 ## enhancements
 - `missing` method for `affine()` instantiates an `affine2d` object
 
