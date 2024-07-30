@@ -3,6 +3,7 @@
 \name{affine}
 \alias{affine}
 \alias{affine,giotto,matrix-method}
+\alias{affine,missing,missing-method}
 \alias{affine,ANY,missing-method}
 \alias{affine,ANY,affine2d-method}
 \alias{affine,SpatVector,matrix-method}
@@ -23,6 +24,8 @@
   images = ":all:",
   ...
 )
+
+\S4method{affine}{missing,missing}(x)
 
 \S4method{affine}{ANY,missing}(x)
 
