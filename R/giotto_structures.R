@@ -185,6 +185,14 @@
 .magick_image_corners <- function(x) {
     checkmate::assert_class(x, "magick-image")
     im_info <- magick::image_info(x)
+    
+    # generate spatLocsObj as a set of control points for magick distort. #
+    # ------------------------------------------------------------------- #
+    # - magick uses 0.5 to refer to the center of pixels
+    # - 3 points are needed for an affine distort
+    # pt1: bottom left
+    # pt2: top left
+    # pt3: bottom right
     spatLocsObj(
         name = "mg_ctrl_coords",
         coordinates = data.table::data.table(
