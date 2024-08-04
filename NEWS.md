@@ -1,5 +1,10 @@
 
-# GiottoClass 0.3.3
+# GiottoClass 0.3.4 (2024/08/04)
+
+## bug fixes
+- hotfix anndata matrix support [#216](https://github.com/drieslab/GiottoClass/issues/216) by wwang-chcn
+
+# GiottoClass 0.3.3 (2024/07/29)
 
 ## bug fixes
 - fix flipping issue with `giottoAffineImage` for certain affine transforms
