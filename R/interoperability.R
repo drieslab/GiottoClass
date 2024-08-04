@@ -237,6 +237,7 @@ anndataToGiotto <- function(
     X <- extract_expression(adata)
     cID <- extract_cell_IDs(adata)
     fID <- extract_feat_IDs(adata)
+    X <- methods::as(as.matrix(X), "sparseMatrix")
     X@Dimnames[[1]] <- fID
     X@Dimnames[[2]] <- cID
     # Expression matrix X ready
