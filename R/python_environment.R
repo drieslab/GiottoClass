@@ -536,15 +536,20 @@ removeGiottoEnvironment <- function(
 #'   1. User provided (when `python_path` is not `NULL`)
 #'   2. Any provided path or envname in option `"giotto.py_path"`
 #'   3. Default expected giotto environment location based on 
-#'   `reticulate::miniconda_path()`
+#'   [reticulate::miniconda_path()]
 #'   4. Envname "giotto_env"
 #'   5. System default python environment
 #' 
-#' This function exits without doing anything if option 
-#' `"giotto.use_conda"` is `FALSE`.
+#' This function exits without doing anything if option `"giotto.use_conda"` 
+#' is `FALSE`. By default this function will also force initialization of the
+#' python to set, locking the session to the set python. This can be skipped
+#' if `initialize = FALSE`, however the actual python path set may differ from
+#' what is expected and reported by this function. Additionally, 
+#' [reticulate::py_available()] will still show as `FALSE`.
 #' @param python_path character. Name of environment or full path to python 
 #' executable.
 #' @param verbose be verbose
+#' @param initialize force initialization of set python path. Default = TRUE.
 #' @returns path to python executable
 #' @keywords internal
 #' @examples
@@ -552,9 +557,23 @@ removeGiottoEnvironment <- function(
 #' @export
 set_giotto_python_path <- function(
         python_path = NULL,
-        verbose = NULL
+        verbose = NULL,
+        initialize = TRUE
 ) {
     if (isFALSE(getOption("giotto.use_conda", TRUE))) {
+        return(invisible(NULL)) # exit early
+    }
+    
+    # if py_active_env() is character then an environment has already been
+    # initialized. Return early with a verbose message
+    py <- py_active_env()
+    if (is.character(py)) {
+        vmsg(.v = verbose, sprintf(
+            "%s\n%s '%s'\n%s %s",
+            "python already initialized in this session",
+            "active environment:", py,
+            "python version:", getOption("giotto.py_active_ver") 
+        ))
         return(invisible(NULL)) # exit early
     }
     
@@ -612,7 +631,11 @@ set_giotto_python_path <- function(
     # --------------------------------------------------------------------- #
     if (!is.null(python_path)) { 
         vmsg(.v = verbose, sprintf("Using python path:\n\"%s\"", python_path))
+        # this is applying a setting that will sit in reticulate:::.globals
+        # python is still not initialized
         reticulate::use_python(required = TRUE, python = python_path)
+        # py_config will force initialization
+        if (initialize) (reticulate::py_config())
         return(python_path)
     }
     
@@ -772,7 +795,7 @@ set_giotto_python_path <- function(
 #' `package_name`, i.e. if both are provided, only the github
 #' URL will be installed. This function should only be provided
 #' one parameter, or the other.
-#' @keywords export
+#' @keywords internal
 checkPythonPackage <- function(package_name = NULL,
     github_package_url = NULL,
     env_to_use = "giotto_env") {

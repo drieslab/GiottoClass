@@ -4,13 +4,15 @@
 \alias{set_giotto_python_path}
 \title{set_giotto_python_path}
 \usage{
-set_giotto_python_path(python_path = NULL, verbose = NULL)
+set_giotto_python_path(python_path = NULL, verbose = NULL, initialize = TRUE)
 }
 \arguments{
 \item{python_path}{character. Name of environment or full path to python
 executable.}
 
 \item{verbose}{be verbose}
+
+\item{initialize}{force initialization of set python path. Default = TRUE.}
 }
 \value{
 path to python executable
@@ -23,13 +25,17 @@ final path to use is determined as follows in decreasing priority:
 \item User provided (when \code{python_path} is not \code{NULL})
 \item Any provided path or envname in option \code{"giotto.py_path"}
 \item Default expected giotto environment location based on
-\code{reticulate::miniconda_path()}
+\code{\link[reticulate:miniconda_path]{reticulate::miniconda_path()}}
 \item Envname "giotto_env"
 \item System default python environment
 }
 
-This function exits without doing anything if option
-\code{"giotto.use_conda"} is \code{FALSE}.
+This function exits without doing anything if option \code{"giotto.use_conda"}
+is \code{FALSE}. By default this function will also force initialization of the
+python to set, locking the session to the set python. This can be skipped
+if \code{initialize = FALSE}, however the actual python path set may differ from
+what is expected and reported by this function. Additionally,
+\code{\link[reticulate:py_available]{reticulate::py_available()}} will still show as \code{FALSE}.
 }
 \examples{
 set_giotto_python_path()

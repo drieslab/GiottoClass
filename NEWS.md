@@ -1,4 +1,10 @@
 
+# GiottoClass 0.3.4
+
+## breaking changes
+- `set_giotto_python_path()` will now also initialize python env to set by default and print which python env is active, but otherwise do nothing if any python env has already been initialized.
+
+
 # GiottoClass 0.3.4 (2024/08/04)
 
 ## bug fixes
