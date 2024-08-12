@@ -187,7 +187,7 @@ check_py_for_scanpy <- function() {
 #' @param env_name name of environment containing python_path executable
 #'
 #' @details Function in beta. Converts a .h5ad file into a Giotto object.
-#' The returned Giotto Object will take default insructions with the
+#' The returned Giotto Object will take default instructions with the
 #' exception of the python path, which may be customized.
 #' See \code{\link{changeGiottoInstructions}} to modify instructions after
 #' creation.
@@ -222,11 +222,13 @@ anndataToGiotto <- function(
         }
     }
 
-    # Required step to properly initialize reticualte
+    # Required step to properly initialize reticulate
     instrs <- createGiottoInstructions(python_path = python_path)
 
-    scanpy_installed <- checkPythonPackage("scanpy", env_to_use = env_name)
-    # should trigger a stop() downstream if not installed
+    package_check(
+        pkg_name = c("anndata", "scanpy"), 
+        repository = c("pip:anndata", "pip:scanpy")
+    )
 
     # Import ad2g, a python module for parsing anndata
     ad2g_path <- system.file("python", "ad2g.py", package = "GiottoClass")
@@ -613,7 +615,10 @@ giottoToAnnData <- function(
         stop(wrap_msg("Please provide a valid Giotto Object for conversion."))
     }
 
-    scanpy_installed <- checkPythonPackage("scanpy", env_to_use = env_name)
+    package_check(
+        pkg_name = c("anndata", "scanpy"), 
+        repository = c("pip:anndata", "pip:scanpy")
+    )
 
     # Python module import
     g2ad_path <- system.file("python", "g2ad.py", package = "GiottoClass")
@@ -3441,7 +3446,10 @@ spatialdataToGiotto <- function(
     )
 
     # Check spatialdata dependencies
-    spatialdata_installed <- checkPythonPackage(package_name = "spatialdata", env_to_use = env_name)
+    package_check(
+        pkg_name = "spatialdata",
+        repository = "pip:spatialdata"
+    )
 
     # Import sd2g, a python module for parsing SpatialData
     sd2g_path <- system.file("python", "sd2g.py", package = "GiottoClass")
@@ -3743,7 +3751,10 @@ giottoToSpatialData <- function(
     instrs <- createGiottoInstructions(python_path = python_path)
 
     # Check spatialdata dependencies
-    spatialdata_installed <- checkPythonPackage(package_name = "spatialdata", env_to_use = env_name)
+    package_check(
+        pkg_name = "spatialdata",
+        repository = "pip:spatialdata"
+    )
 
     # Import sd2g, a python module for parsing SpatialData
     g2sd_path <- system.file("python", "g2sd.py", package = "GiottoClass")
