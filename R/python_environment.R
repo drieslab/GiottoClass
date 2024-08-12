@@ -571,10 +571,9 @@ set_giotto_python_path <- function(
         vmsg(.v = verbose, sprintf(
             "%s\n%s '%s'\n%s %s",
             "python already initialized in this session",
-            "active environment:", py,
-            "python version:", getOption("giotto.py_active_ver") 
+            "active environment :", py,
+            "python version :", getOption("giotto.py_active_ver") 
         ))
-        return(invisible(NULL)) # exit early
     }
     
     # get path in order of DECREASING priority #
