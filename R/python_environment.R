@@ -1,25 +1,123 @@
 
 
+#' @title Giotto python environment
+#' @name giotto_python
+#' @description
+#' \pkg{Giotto} has several functions that utilize python packages. To 
+#' facilitate this, utilities are provided for creating, removing, and
+#' attaching python environments. Python environments are currently handled
+#' entirely through \pkg{reticulate}.
+#' 
+#' **Creating an environment**
+#' 
+#' `installGiottoEnvironment()` can be used to create a default environment
+#' called `giotto_env` that includes some commonly used python packages. See
+#' the **python versions** section for specific packages and version numbers.
+#' 
+#' Custom environments managed through \pkg{reticulate} are also compatible
+#' and can be hooked into by Giotto after creation.
+#' 
+#' 
+#' **Choosing environments**
+#' 
+#' Only one python environment may be initialized and used by \pkg{reticulate}
+#' during a single R session. In order to switch to another environment, the
+#' R session must be restarted.
+#' 
+#' Whenever any of the following happens for the first time in a session:
+#' 
+#' - `giotto` object creation
+#' - `giottoInstructions` creation (`createGiottoInstructions()`)
+#' - `GiottoClass::set_giotto_python_path()` is called (most straightforward)
+#' 
+#' Giotto automatically detects AND activates a python environment based on the
+#' following defaults in decreasing priority:
+#' 
+#'   1. User provided (when `python_path` is not `NULL`)
+#'   2. Any provided path or envname in option `"giotto.py_path"`
+#'   3. Default expected giotto environment location based on 
+#'   [reticulate::miniconda_path()]
+#'   4. Envname `"giotto_env"`
+#'   5. System default python environment
+#'   
+#' This behavior is mediated by the `set_giotto_python_path()` utility
+#' function, which will find an environment and then initialize it. You can 
+#' also call `checkGiottoEnvironment()` in order to detect if there is an
+#' environment usable by Giotto without initializing.
+#' 
+#' 
+#' # python versions
+#' By default, Python v3.10.2 will be used with the following python modules
+#' for giotto environment installation:
+#' \preformatted{
+#'    - pandas==1.5.1
+#'    - networkx==2.8.8
+#'    - python-igraph==0.10.2
+#'    - leidenalg==0.9.0
+#'    - python-louvain==0.16
+#'    - python.app==1.4
+#'    - scikit-learn==1.1.3
+#' }
+#'
+#'  The giotto environment can be custom installed by changing the
+#'  python_version parameter and module versions in the
+#'  `packages_to_install` parameter.
+#'
+#'  For example, this giotto environment works as well, and was the
+#'  default environment status for past releases of Giotto.
+#'  Python  v3.6
+#'  \preformatted{
+#'   - pandas==1.1.5
+#'   - networkx==2.6.3
+#'   - python-igraph==0.9.6
+#'   - leidenalg==0.8.7
+#'   - python-louvain==0.15
+#'   - python.app==2 # macOS only
+#'   - scikit-learn==0.24.2
+#' }
+#' 
+#' # .yml installs
+#' Please note that multiple .yml files are provided in the
+#' repository for advanced installation and convenience. To install the most
+#' up-to-date Giotto environment using a .yml file, open a shell compatible 
+#' with conda/miniconda and navigate to the directory specified by 
+#' `system.file(package = "Giotto", "python/configuration")`. Once in this 
+#' directory, run the following to create your environment in one step:
+#' 
+#' \preformatted{conda env create -n giotto_env -f ./genv.yml}
+#' 
+#' @param envname character. (optional) The name of or path to a miniconda or
+#' conda environment directory or python executable. When using 
+#' `installGiottoEnvironment()`, the default is `"giotto_env"`
+#' @param conda either "auto" (default) to allow reticulate to handle it, or
+#' the full filepath to the conda executable. You can also set the option
+#' `"reticulate.conda_binary"` or `Sys.setenv()` `"RETICULATE_CONDA"` to tell
+#' reticulate where to look.
+#' @param verbose be verbose
+#' 
+NULL
+
+
+
+
+
+
 
 # check ####
 
-#' @title checkGiottoEnvironment
-#' @name checkGiottoEnvironment
-#' @description
-#' Based on `envname`, detect if there is a conda or miniconda installation.
+#' @describeIn giotto_python
+#' 
+#' - Based on `envname`, detect if there is a conda or miniconda installation
+#' without initializing any python environments.
 #' This is done by detecting if there is a python executable in the
-#' expected location. The default behavior is to only check for giotto's
-#' default environment called "giotto_env"
-#' @param envname character. (optional) The name of or path to a miniconda or
-#' conda environment directory or python executable. Default is 
-#' `reticulate::miniconda_path()`.
-#' @param mini_install_path deprecated
-#' @param verbose be verbose
-#' @details Checks if a miniconda giotto environment can be found.
-#' Can be installed with \code{\link{installGiottoEnvironment}}.
-#' @returns logical
+#' expected location. Leaving `envname` as `NULL` (default) will let 
+#' \pkg{Giotto} autodetect a python env to use. See section for
+#' `set_giotto_python_path()` for details on the autodetection.
+#' - Returns `TRUE` if an env is detected and accessible by Giotto. `FALSE`
+#' if not. Will not initialize a python environment during detection.
 #' @examples
-#' # check default location
+#' # detect without initialization
+#' # check default env location
 #' checkGiottoEnvironment()
 #' 
 #' # use environment name
@@ -34,7 +132,7 @@
 #' }
 #' @export
 checkGiottoEnvironment <- function(
-        envname = "giotto_env", 
+        envname = NULL, 
         mini_install_path = deprecated(), 
         verbose = NULL
 ) {
@@ -47,31 +145,42 @@ checkGiottoEnvironment <- function(
         )
         envname <- mini_install_path
     }
-    envname <- envname %null% "giotto_env"
     
-    # check for envnames, if found, get the path
-    if (!.is_path(envname)) {
-        # if a condaenv matches envname, return fullpath
-        # otherwise return envname without modification
-        envname <- .envname_to_pypath(envname, must_exist = FALSE)
+    py_path <- set_giotto_python_path(
+        python_path = envname, verbose = FALSE, initialize = FALSE
+    )
+    # set_giotto_python_path() returns the path if found. 
+    found <- is.character(py_path)
+    
+    if (found) {
+        vmsg(.v = verbose, "giotto environment found at\n", py_path)
     }
     
-    # complete any directory inputs
-    # if path does not exist, return NULL
-    py_path <- .full_miniconda_path(path = envname)
+    return(found)
     
-   if (is.null(py_path)) {
-       vmsg(
-           .v = verbose,
-           " Unable to find conda directory", envname,
-           "\nPlease ensure the directory exists and is provided as",
-           "character."
-       )
-       return(FALSE)
-   }
-
-    vmsg(.v = verbose, "giotto environment found at\n", py_path)
-    return(TRUE)
+   #  # check for envnames, if found, get the path
+   #  if (!.is_path(envname)) {
+   #      # if a condaenv matches envname, return fullpath
+   #      # otherwise return envname without modification
+   #      envname <- .envname_to_pypath(envname, must_exist = FALSE)
+   #  }
+   #  
+   #  # complete any directory inputs
+   #  # if path does not exist, return NULL
+   #  py_path <- .full_miniconda_path(path = envname)
+   #  
+   # if (is.null(py_path)) {
+   #     vmsg(
+   #         .v = verbose,
+   #         " Unable to find conda directory", envname,
+   #         "\nPlease ensure the directory exists and is provided as",
+   #         "character."
+   #     )
+   #     return(FALSE)
+   # }
+   # 
+   #  vmsg(.v = verbose, "giotto environment found at\n", py_path)
+   #  return(TRUE)
 }
 
 
@@ -330,11 +439,16 @@ checkGiottoEnvironment <- function(
 
 
 
-#' @title installGiottoEnvironment
-#' @description Installs a giotto python environment. This includes a 
-#' miniconda installation and also a set of python packages that Giotto may
-#' often use. See details for further information on setting up an
+#' @describeIn giotto_python
+#' 
+#' - Install a giotto python environment using the miniconda system as 
+#' implemented by \pkg{reticulate}. Once this  environment is installed it 
+#' will be automatically detected when you run the
+#' \pkg{Giotto} toolbox. \cr This includes a 
+#' miniconda installation and also a set of python packages that \pkg{Giotto} 
+#' may often use. See details for further information on setting up an
 #' environment with a .yml
+#' - Returns `NULL`
 #' @param packages_to_install python modules (packages) to install for Giotto.
 #' @param python_version python version to use within the giotto conda
 #' environment. Default is v3.10.2
@@ -342,69 +456,12 @@ checkGiottoEnvironment <- function(
 #' Default is chosen by `reticulate::install_miniconda()`
 #' @param confirm whether to pause for confirmation of conda environment
 #' install location (default = TRUE)
-#' @param envname name to assign environment. Default = "giotto_env"
-#' @param conda either "auto" (default) to allow reticulate to handle it, or
-#' the full filepath to the conda executable. You can also set the option
-#' "reticulate.conda_binary" or `Sys.setenv()` "RETICULATE_CONDA" to tell
-#' reticulate where to look.
 #' @param force_miniconda force reinstallation of miniconda
 #' @param force_environment force reinstallation of the giotto environment
-#' @param verbose be verbose
-#' @returns installs a giotto environment using the reticulate miniconda system
-#' @details This function will install a local giotto environment using
-#' the miniconda system as implemented by \pkg{reticulate}. Once this giotto
-#' environment is installed it will be automatically detected when you run the
-#' Giotto toolbox. \cr
-#' 
-#' # custom python paths
-#' If you want to use your own python path then you can set the python_path in 
-#' the  `"giotto.py_path"` option or \code{\link{createGiottoInstructions}}
-#' and provide the instructions to the \code{\link{createGiottoObject}}
-#' function.
-#'
-#' # python versions
-#' By default, Python v3.10.2 will be used with the following python modules
-#' for Giotto Suite implementations:
-#' \preformatted{
-#'    - pandas==1.5.1
-#'    - networkx==2.8.8
-#'    - python-igraph==0.10.2
-#'    - leidenalg==0.9.0
-#'    - python-louvain==0.16
-#'    - python.app==1.4
-#'    - scikit-learn==1.1.3
-#' }
-#'
-#'  The giotto environment can be custom installed by changing the
-#'  python_version parameter and module versions in the
-#'  packages_to_install parameter.
-#'
-#'  For example, this giotto environment works as well, and was the
-#'  default environment status for past releases of Giotto.
-#'  Python  v3.6
-#'  \preformatted{
-#'   - pandas==1.1.5
-#'   - networkx==2.6.3
-#'   - python-igraph==0.9.6
-#'   - leidenalg==0.8.7
-#'   - python-louvain==0.15
-#'   - python.app==2 # macOS only
-#'   - scikit-learn==0.24.2
-#' }
-#' 
-#' # .yml installs
-#' Please note that multiple .yml files are provided in the
-#' repository for advanced installation and convenience. To install the most
-#' up-to-date Giotto environment using a .yml file, open a shell compatible 
-#' with conda/miniconda and navigate to the directory specified by 
-#' `system.file(package = "Giotto", "python/configuration")`. Once in this 
-#' directory, run the following to create your environment in one step:
-#' 
-#' `conda env create -n giotto_env -f ./genv.yml`
 #' 
 #' @examples
 #' if (FALSE) {
-#' # default install
+#' # default environment installation
 #' installGiottoEnvironment()
 #' 
 #' # install to alternate location
@@ -413,7 +470,8 @@ checkGiottoEnvironment <- function(
 #' }
 #' 
 #' @export
-installGiottoEnvironment <- function(packages_to_install = c(
+installGiottoEnvironment <- function(
+    packages_to_install = c(
         "pandas==1.5.1",
         "networkx==2.8.8",
         "python-igraph==0.10.2",
@@ -429,7 +487,8 @@ installGiottoEnvironment <- function(packages_to_install = c(
     conda = "auto",
     force_miniconda = FALSE,
     force_environment = FALSE,
-    verbose = NULL) {
+    verbose = NULL
+) {
     
     ## 1. check and install miniconda locally if necessary
     conda_path <- reticulate::conda_binary(conda = conda)
@@ -466,20 +525,12 @@ installGiottoEnvironment <- function(packages_to_install = c(
 # remove ####
 
 
-#' @title removeGiottoEnvironment
-#' @name removeGiottoEnvironment
-#' @description
-#' Remove a Giotto environment
-#' @param envname name of environment to remove (e.g. "giotto_env")
+
+#' @describeIn giotto_python
+#' 
+#' - Remove a python environment
+#' - Returns `NULL`
 #' @param mini_path deprecated
-#' @param conda either "auto" (default) to allow reticulate to handle it, or
-#' the full filepath to the conda executable. You can also set the option
-#' "reticulate.conda_binary" or `Sys.setenv()` "RETICULATE_CONDA" to tell
-#' reticulate where to look.
-#' @param verbose be verbose
-#' @returns character or NULL
-#' @details Removes a previously installed giotto environment.
-#' See \code{\link{installGiottoEnvironment}}.
 #' @export
 removeGiottoEnvironment <- function(
         envname = "giotto_env", 
@@ -527,9 +578,9 @@ removeGiottoEnvironment <- function(
 
 # detect and activate ####
 
-#' @title set_giotto_python_path
-#' @name set_giotto_python_path
-#' @description Detect and activate a python path. The `python_path` param
+#' @describeIn giotto_python
+#' 
+#' - Detect and activate a python path. The `python_path` param
 #' accepts both full filepaths to the python executable and envnames. The 
 #' final path to use is determined as follows in decreasing priority:
 #' 
@@ -540,19 +591,19 @@ removeGiottoEnvironment <- function(
 #'   4. Envname "giotto_env"
 #'   5. System default python environment
 #' 
-#' This function exits without doing anything if option `"giotto.use_conda"` 
+#' - This function exits without doing anything if option `"giotto.use_conda"` 
 #' is `FALSE`. By default this function will also force initialization of the
 #' python to set, locking the session to the set python. This can be skipped
 #' if `initialize = FALSE`, however the actual python path set may differ from
 #' what is expected and reported by this function. Additionally, 
 #' [reticulate::py_available()] will still show as `FALSE`.
+#' - Returns detected path to python binary or `NULL` if none found.
 #' @param python_path character. Name of environment or full path to python 
 #' executable.
-#' @param verbose be verbose
 #' @param initialize force initialization of set python path. Default = TRUE.
-#' @returns path to python executable
 #' @keywords internal
 #' @examples
+#' # detect AND initialize a python environment
 #' set_giotto_python_path()
 #' @export
 set_giotto_python_path <- function(
@@ -629,12 +680,17 @@ set_giotto_python_path <- function(
     # if any working python path found; activate the environment and return #
     # --------------------------------------------------------------------- #
     if (!is.null(python_path)) { 
-        vmsg(.v = verbose, sprintf("Using python path:\n\"%s\"", python_path))
-        # this is applying a setting that will sit in reticulate:::.globals
-        # python is still not initialized
-        reticulate::use_python(required = TRUE, python = python_path)
-        # py_config will force initialization
-        if (initialize) (reticulate::py_config())
+        if (isTRUE(initialize)) {
+            vmsg(.v = verbose, 
+                 sprintf("Using python path:\n\"%s\"", python_path))
+            
+            # `use_python()` applies a setting in `reticulate:::.globals`
+            # but, python is still not initialized
+            reticulate::use_python(required = TRUE, python = python_path)
+            # `py_config()` will force initialization
+            reticulate::py_config()
+        }
+
         return(python_path)
     }
     
@@ -649,6 +705,7 @@ set_giotto_python_path <- function(
          installed")
     vmsg('Set options(\"giotto.use_conda\" = FALSE) if
          python functionalities are not needed')
+    return(invisible())
 }
 
 
@@ -1002,7 +1059,7 @@ checkPythonPackage <- function(package_name = NULL,
     return(envname)
 }
 
-# get full path to miniconda executable
+# Guess full path to miniconda executable
 # if a full path to the executable is provided, it will be used
 # if a directory is provided, it will be completed with `.os_py_path`
 # if an envname is given, it will be completed with `.os_py_path` based on
