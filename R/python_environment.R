@@ -6,13 +6,14 @@
 #' @title checkGiottoEnvironment
 #' @name checkGiottoEnvironment
 #' @description
-#' Based on `envname`, detect if there is a conda or miniconda installation.
+#' Based on `envname`, detect if there is a conda or miniconda installation
+#' without initializing any python environments.
 #' This is done by detecting if there is a python executable in the
-#' expected location. The default behavior is to only check for giotto's
-#' default environment called "giotto_env"
+#' expected location. Leaving `envname` as `NULL` (default) will let 
+#' \pkg{Giotto} autodetect a python env to use. See 
+#' [set_giotto_python_path()] for details on the autodetection.
 #' @param envname character. (optional) The name of or path to a miniconda or
-#' conda environment directory or python executable. Default is 
-#' `reticulate::miniconda_path()`.
+#' conda environment directory or python executable.
 #' @param mini_install_path deprecated
 #' @param verbose be verbose
 #' @details Checks if a miniconda giotto environment can be found.
@@ -34,7 +35,7 @@
 #' }
 #' @export
 checkGiottoEnvironment <- function(
-        envname = "giotto_env", 
+        envname = NULL, 
         mini_install_path = deprecated(), 
         verbose = NULL
 ) {
@@ -47,31 +48,42 @@ checkGiottoEnvironment <- function(
         )
         envname <- mini_install_path
     }
-    envname <- envname %null% "giotto_env"
     
-    # check for envnames, if found, get the path
-    if (!.is_path(envname)) {
-        # if a condaenv matches envname, return fullpath
-        # otherwise return envname without modification
-        envname <- .envname_to_pypath(envname, must_exist = FALSE)
+    py_path <- set_giotto_python_path(
+        python_path = envname, verbose = FALSE, initialize = FALSE
+    )
+    # set_giotto_python_path() returns the path if found. 
+    found <- is.character(py_path)
+    
+    if (found) {
+        vmsg(.v = verbose, "giotto environment found at\n", py_path)
     }
     
-    # complete any directory inputs
-    # if path does not exist, return NULL
-    py_path <- .full_miniconda_path(path = envname)
+    return(found)
     
-   if (is.null(py_path)) {
-       vmsg(
-           .v = verbose,
-           " Unable to find conda directory", envname,
-           "\nPlease ensure the directory exists and is provided as",
-           "character."
-       )
-       return(FALSE)
-   }
-
-    vmsg(.v = verbose, "giotto environment found at\n", py_path)
-    return(TRUE)
+   #  # check for envnames, if found, get the path
+   #  if (!.is_path(envname)) {
+   #      # if a condaenv matches envname, return fullpath
+   #      # otherwise return envname without modification
+   #      envname <- .envname_to_pypath(envname, must_exist = FALSE)
+   #  }
+   #  
+   #  # complete any directory inputs
+   #  # if path does not exist, return NULL
+   #  py_path <- .full_miniconda_path(path = envname)
+   #  
+   # if (is.null(py_path)) {
+   #     vmsg(
+   #         .v = verbose,
+   #         " Unable to find conda directory", envname,
+   #         "\nPlease ensure the directory exists and is provided as",
+   #         "character."
+   #     )
+   #     return(FALSE)
+   # }
+   # 
+   #  vmsg(.v = verbose, "giotto environment found at\n", py_path)
+   #  return(TRUE)
 }
 
 
@@ -629,12 +641,17 @@ set_giotto_python_path <- function(
     # if any working python path found; activate the environment and return #
     # --------------------------------------------------------------------- #
     if (!is.null(python_path)) { 
-        vmsg(.v = verbose, sprintf("Using python path:\n\"%s\"", python_path))
-        # this is applying a setting that will sit in reticulate:::.globals
-        # python is still not initialized
-        reticulate::use_python(required = TRUE, python = python_path)
-        # py_config will force initialization
-        if (initialize) (reticulate::py_config())
+        if (isTRUE(initialize)) {
+            vmsg(.v = verbose, 
+                 sprintf("Using python path:\n\"%s\"", python_path))
+            
+            # `use_python()` applies a setting in `reticulate:::.globals`
+            # but, python is still not initialized
+            reticulate::use_python(required = TRUE, python = python_path)
+            # `py_config()` will force initialization
+            reticulate::py_config()
+        }
+
         return(python_path)
     }
     
@@ -649,6 +666,7 @@ set_giotto_python_path <- function(
          installed")
     vmsg('Set options(\"giotto.use_conda\" = FALSE) if
          python functionalities are not needed')
+    return(invisible())
 }
 
 
@@ -1002,7 +1020,7 @@ checkPythonPackage <- function(package_name = NULL,
     return(envname)
 }
 
-# get full path to miniconda executable
+# Guess full path to miniconda executable
 # if a full path to the executable is provided, it will be used
 # if a directory is provided, it will be completed with `.os_py_path`
 # if an envname is given, it will be completed with `.os_py_path` based on
