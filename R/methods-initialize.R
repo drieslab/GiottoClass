@@ -625,8 +625,9 @@ setMethod("initialize", signature("giottoLargeImage"), function(.Object, ...) {
         as.vector(terra::ext(r))
     
     # max window
-    .Object@max_window <- .Object@max_window %na% 
-        .bitdepth(.Object@max_intensity, return_max = TRUE)
+    .Object@max_window <- .Object@max_intensity
+    # .Object@max_window <- .Object@max_window %na% 
+    #     .bitdepth(.Object@max_intensity, return_max = TRUE)
     
     return(.Object)
 })
