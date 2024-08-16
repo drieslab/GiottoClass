@@ -175,7 +175,13 @@ create_giotto_instructions <- function(python_path = NULL,
 }
 
 
-#' @title Read giotto instructions associated with giotto object
+
+# deprecated ####
+
+# These functions have been made internal. They will stop being exported
+# in a future version of GiottoClass
+
+#' @title deprecated
 #' @name readGiottoInstructions
 #' @description Retrieves the instruction associated with the provided parameter
 #' @param giotto_instructions giotto object or result from
@@ -190,9 +196,17 @@ create_giotto_instructions <- function(python_path = NULL,
 #'     param = "show_plot"
 #' )
 #' @export
+#' @keywords internal
 readGiottoInstructions <- function(giotto_instructions,
     param = NULL,
     default) {
+    
+    deprecate_warn(
+        when = "0.3.5",
+        what = "readGiottoInstructions()",
+        with = "instructions()"
+    )
+    
     # get instructions if provided the giotto object
     if (inherits(giotto_instructions, "giotto")) {
         giotto_instructions <- giotto_instructions@instructions
@@ -213,7 +227,7 @@ readGiottoInstructions <- function(giotto_instructions,
 }
 
 
-#' @title Show giotto instructions associated with giotto object
+#' @title deprecated
 #' @name showGiottoInstructions
 #' @description Function to display all instructions from giotto object
 #' @param gobject giotto object
@@ -223,13 +237,21 @@ readGiottoInstructions <- function(giotto_instructions,
 #'
 #' showGiottoInstructions(g)
 #' @export
+#' @keywords internal
 showGiottoInstructions <- function(gobject) {
+    
+    deprecate_warn(
+        when = "0.3.5",
+        what = "showGiottoInstructions()",
+        with = "instructions()"
+    )
+    
     instrs <- gobject@instructions
     return(instrs)
 }
 
 
-#' @title Change giotto instruction(s) associated with giotto object
+#' @title deprecated
 #' @name changeGiottoInstructions
 #' @description Function to change one or more instructions from giotto object.
 #' If more than one item is supplied to \code{params} and \code{new_values}, use
@@ -248,11 +270,20 @@ showGiottoInstructions <- function(gobject) {
 #'     new_values = TRUE
 #' )
 #' @export
+#' @keywords internal
 changeGiottoInstructions <- function(gobject,
     params = NULL,
     new_values = NULL,
     return_gobject = TRUE,
     init_gobject = TRUE) {
+    
+    deprecate_warn(
+        when = "0.3.5",
+        what = "changeGiottoInstructions()",
+        with = "instructions()"
+    )
+    
+    
     instrs <- gobject@instructions
 
     if (is.null(params) | is.null(new_values)) {
@@ -262,10 +293,6 @@ changeGiottoInstructions <- function(gobject,
     if (length(params) != length(new_values)) {
         stop("\t length of params need to be the same as new values \t")
     }
-
-    # if(!all(params %in% names(instrs))) {
-    #   stop('\t all params need to be part of Giotto instructions \t')
-    # }
 
     ## swap with new values
     instrs[params] <- new_values
@@ -289,7 +316,7 @@ changeGiottoInstructions <- function(gobject,
     })
 
     names(new_instrs) <- names(instrs)
-
+    class(new_instrs) <- "giottoInstructions"
 
 
     if (isTRUE(return_gobject)) {
@@ -303,7 +330,7 @@ changeGiottoInstructions <- function(gobject,
 
 
 
-#' @title Replace all giotto instructions in giotto object
+#' @title deprecated
 #' @name replaceGiottoInstructions
 #' @description Function to replace all instructions from giotto object. Does
 #' not call \code{initialize} on the giotto object
@@ -321,9 +348,17 @@ changeGiottoInstructions <- function(gobject,
 #'     instructions = createGiottoInstructions()
 #' )
 #' @export
+#' @keywords internal
 replaceGiottoInstructions <- function(gobject,
     instructions = NULL,
     init_gobject = TRUE) {
+    
+    deprecate_warn(
+        when = "0.3.5",
+        what = "replaceGiottoInstructions()",
+        with = "instructions()"
+    )
+    
     instrs_needed <- names(create_giotto_instructions())
 
     # validate new instructions
@@ -338,3 +373,15 @@ replaceGiottoInstructions <- function(gobject,
         return(gobject)
     }
 }
+
+
+# internals ####
+
+#' @export
+print.giottoInstructions <- function(x) {
+    cat(sprintf("<%s>\n", class(x)[1]))
+    print_list(x)
+}
+
+
+

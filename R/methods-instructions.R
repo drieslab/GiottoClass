@@ -19,7 +19,27 @@ NULL
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
-#' showGiottoInstructions(g)
+#' # get instructions
+#' instrs <- instructions(g)
+#' force(instrs)
+#' 
+#' # get single instructions param
+#' instructions(g, "show_plot")
+#' 
+#' # replace single instruction param
+#' instructions(g, "show_plot") <- FALSE
+#' instructions(g, "show_plot")
+#' 
+#' # replace multiple instruction params
+#' instructions(g)
+#' instructions(g, c("show_plot", "dpi")) <- list(TRUE, 600)
+#' instructions(g)
+#' 
+#' # replace instructions
+#' i <- createGiottoInstructions()
+#' instructions(g) <- i
+#' instructions(g)
+#' 
 NULL
 
 #' @title Active spatial unit
