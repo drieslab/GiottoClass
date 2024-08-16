@@ -1,9 +1,7 @@
 # Giotto instructions ####
 
 
-#' @title Create instructions for giotto functions
-#' @name createGiottoInstructions
-#' @description Function to set global instructions for giotto functions
+#' @rdname giotto_instructions
 #' @param python_path path to python binary to use or directory one level
 #' up from the `env` directory (similar to output of 
 #' `reticulate::miniconda_path()`)
@@ -22,11 +20,6 @@
 #' @param fiji_path path to fiji executable
 #' @param no_python_warn turn off warning that no compatible python env has
 #' been detected
-#' @returns named vector with giotto instructions
-#' @seealso More online information can be found
-#' here \url{http://giottosuite.com}
-#' @examples
-#' createGiottoInstructions()
 #' @export
 createGiottoInstructions <- function(
     python_path = getOption("giotto.py_path"),
