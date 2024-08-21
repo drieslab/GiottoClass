@@ -194,7 +194,7 @@ readGiottoInstructions <- function(giotto_instructions,
     param = NULL,
     default) {
     
-    deprecate_warn(
+    deprecate_soft(
         when = "0.3.5",
         what = "readGiottoInstructions()",
         with = "instructions()"
@@ -233,7 +233,7 @@ readGiottoInstructions <- function(giotto_instructions,
 #' @keywords internal
 showGiottoInstructions <- function(gobject) {
     
-    deprecate_warn(
+    deprecate_soft(
         when = "0.3.5",
         what = "showGiottoInstructions()",
         with = "instructions()"
@@ -270,7 +270,7 @@ changeGiottoInstructions <- function(gobject,
     return_gobject = TRUE,
     init_gobject = TRUE) {
     
-    deprecate_warn(
+    deprecate_soft(
         when = "0.3.5",
         what = "changeGiottoInstructions()",
         with = "instructions()"
@@ -346,7 +346,7 @@ replaceGiottoInstructions <- function(gobject,
     instructions = NULL,
     init_gobject = TRUE) {
     
-    deprecate_warn(
+    deprecate_soft(
         when = "0.3.5",
         what = "replaceGiottoInstructions()",
         with = "instructions()"
