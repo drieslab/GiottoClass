@@ -1012,7 +1012,9 @@ checkPythonPackage <- function(package_name = NULL,
         os = get_os(),
         must_exist = TRUE
 ) {
-    checkmate::assert_directory_exists(path)
+    if (!checkmate::test_directory_exists(path)) {
+        vmsg(.is_debug = TRUE, ".os_py_path: base dir not found!")
+    }
     env_level <- file.path(path, "envs", envname)
     full_path <- switch(os,
         "osx" = file.path(env_level, "bin/pythonw"),
