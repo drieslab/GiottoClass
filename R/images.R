@@ -2745,7 +2745,11 @@ ometif_to_tif <- function(input_file,
     a <- list(input_file = input_file)
 
     # get tifffile py
-    package_check("tifffile", repository = "pip:tifffile")
+    package_check(
+        pkg_name = c("tifffile", "imagecodecs"), 
+        repository = c("pip:tifffile", "pip:imagecodecs")
+    )
+    
     ometif2tif_path <- system.file(
         "python", "ometif_convert.py",
         package = "GiottoClass"

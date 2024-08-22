@@ -34,4 +34,4 @@ Parameter \code{github_package_url} takes precedent over
 URL will be installed. This function should only be provided
 one parameter, or the other.
 }
-\keyword{export}
+\keyword{internal}

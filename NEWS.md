@@ -1,4 +1,20 @@
 
+# GiottoClass 0.3.5
+
+## breaking changes
+- `set_giotto_python_path()` will now also initialize python env to set by default and print which python env is active, but otherwise do nothing if any python env has already been initialized.
+- `checkGiottoEnvironment()` no longer checks specifically for the `"giotto_env"` environment, but is instead a general check for whether Giotto can detect a python environment and also which it is.
+- deprecated `readGiottoInstructions()`, `showGiottoInstructions()`, `changeGiottoInstructions()`, `replaceGiottoInstructions()` in favor of `instructions()` generic
+
+## bug fixes
+- intensity images now automatically scale to estimated highest value
+- `giottoPolygon` `plot()` default `max_poly` raised to `1e6`
+- `giottoInstructions` no longer lose class when specific params are replaced
+
+## enhancements
+- `print()` method for `giottoInstructions`
+
+
 # GiottoClass 0.3.4 (2024/08/04)
 
 ## bug fixes

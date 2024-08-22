@@ -112,7 +112,7 @@ setMethod(
         x,
         point_size = 0.6,
         type = c("poly", "centroid"),
-        max_poly = getOption("giotto.plot_max_poly", 1e4),
+        max_poly = getOption("giotto.plot_max_poly", 1e6),
         ...) {
         if (length(x@unique_ID_cache) == 0) {
             stop(wrap_txt("No geometries to plot"), call. = FALSE)
@@ -325,7 +325,7 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
 }
 
 .plot_spatlocs_3d <- function(x, ...) {
-    engine <- (getOption("giotto.plotengine3d", "rgl"))
+    engine <- getOption("giotto.plotengine3d", "rgl")
 
     switch(engine,
         "rgl" = .plot_spatlocs_3d_rgl(x, ...),
