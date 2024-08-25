@@ -638,13 +638,29 @@ set_giotto_python_path <- function(
         "a system default python environment was found"
     )
     
+    # `specified` flag
+    # flag for when path is directly intended. When not NULL, instead of
+    # quietly passing to next default, send message and immediately return
+    # NULL
+    specified <- NULL
+
     # (1.) from user (when `python_path` != NULL)
-    if (!is.null(python_path)) found <- c(found, 1)
+    if (!is.null(python_path)) {
+        found <- c(found, 1)
+        specified <- sprintf("`envname` = '%s'", python_path)
+    }
 
     # (2.) check option (default is null)
     python_path <- python_path %null% getOption("giotto.py_path")
-    if (!is.null(python_path)) found <- c(found, 2)
-    
+    if (!is.null(python_path) && length(found) == 0L) {
+        found <- c(found, 2)
+        specified <- sprintf(
+            "%s: \"%s\"", 
+            "option 'giotto.py_path'", 
+            getOption("giotto.py_path")
+        ) 
+    }
+
     # (3.) check default install path; if not existing, returns NULL
     # will return NULL for .condarc alternate location "giotto_env" installs
     python_path <- python_path %null% .os_py_path(must_exist = TRUE)
@@ -665,6 +681,12 @@ set_giotto_python_path <- function(
     # if python_path thus far is not completable to an existing path
     # return NULL, otherwise return existing path
     python_path <- .full_miniconda_path(path = python_path)
+
+    # early return NULL if specified and NOT found.
+    if (is.null(python_path) && !is.null(specified)) {
+        vmsg(sprintf("specified py env from %s not found\n", specified))
+        return(invisible())
+    }
     
     # (5.) detect from system call; return NULL if not found
     python_path <- python_path %null% .sys_detect_py()
