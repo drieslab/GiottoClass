@@ -84,16 +84,22 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Test python env install
+      - name: setup giotto_env
+        shell: Rscript {0}
         run: |
-          if (!GiottoClass::checkGiottoEnvironment()) {
+          if (!GiottoClass::checkGiottoEnvironment(envname = "giotto_env")) {
             GiottoClass::installGiottoEnvironment()
           }
 
-          reticulate::py_list_packages(envname = "giotto_env")
-          reticulate::conda_install(envname = 'giotto_env',packages = 'scanpy',pip = TRUE)
-        shell: Rscript {0}
-
+          reticulate::conda_install(
+            envname = 'giotto_env',
+            packages = 'scanpy',
+            pip = TRUE
+          )
+          
+          writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
+                     Sys.getenv("GITHUB_ENV"))
+        
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2
         with:
