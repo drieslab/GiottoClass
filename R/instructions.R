@@ -371,7 +371,7 @@ replaceGiottoInstructions <- function(gobject,
 # internals ####
 
 #' @export
-print.giottoInstructions <- function(x) {
+print.giottoInstructions <- function(x, ...) {
     cat(sprintf("<%s>\n", class(x)[1]))
     print_list(x)
 }

@@ -1,6 +1,19 @@
 #' @include classes.R
 NULL
 
+#' @name as.character
+#' @title Create a text representation of an object
+#' @description
+#' Create a text representation of an object
+#' @param x object
+#' @examples
+#' img <- GiottoData::loadSubObjectMini("giottoLargeImage")
+#' as.character(img)
+#' 
+NULL
+
+
+
 
 # ------------------------------------------------------ #
 
@@ -721,7 +734,9 @@ setMethod(
     }
 )
 
-# internal
+
+#' @rdname as.character
+#' @export
 setMethod("as.character", signature("giottoImage"), function(x, ...) {
     sprintf("<%s> %s", class(x), objName(x))
 })
@@ -808,7 +823,8 @@ setMethod("show", signature("affine2d"), function(object) {
 })
 
 
-# internal
+#' @rdname as.character
+#' @export
 setMethod("as.character", signature("giottoLargeImage"), function(x, ...) {
     sprintf("<%s> %s", class(x), objName(x))
 })

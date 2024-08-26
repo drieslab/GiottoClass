@@ -2644,22 +2644,30 @@ distGiottoImage <- function(
 #' gimg <- createGiottoLargeImage(f, use_rast_ext = TRUE)
 #'
 #' density(gimg)
+NULL
+
+#' @rdname density
 #' @export
 setMethod(
     "density", signature("giottoLargeImage"),
     function(x, show_max = TRUE, ...) {
-        a <- list(x = x@raster_object, ...)
-        res <- do.call(terra::density, args = a)
-
-        if (isFALSE(a$plot)) {
-            return(res)
-        }
-
-        if (isTRUE(show_max)) {
-            graphics::abline(v = x@max_window, col = "red")
-        }
+        a <- get_args_list(...)
+        do.call(.density_giottolargeimage, args = a)
     }
 )
+
+.density_giottolargeimage <- function(x, show_max = TRUE, ...) {
+    a <- list(x = x@raster_object, ...)
+    res <- do.call(terra::density, args = a)
+    
+    if (isFALSE(a$plot)) {
+        return(res)
+    }
+    
+    if (isTRUE(show_max)) {
+        graphics::abline(v = x@max_window, col = "red")
+    }
+}
 
 
 #' @name hist
