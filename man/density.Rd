@@ -2,6 +2,7 @@
 % Please edit documentation in R/images.R
 \name{density}
 \alias{density}
+\alias{density,giottoLargeImage-method}
 \title{Density plot}
 \usage{
 \S4method{density}{giottoLargeImage}(x, show_max = TRUE, ...)
