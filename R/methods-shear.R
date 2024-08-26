@@ -101,6 +101,8 @@ setMethod("shear", signature("giottoAffineImage"), function(
 })
 
 # * affine2d ####
+#' @rdname shear
+#' @export
 setMethod("shear", signature("affine2d"), function(
          x, fx = 0, fy = 0, x0, y0, ...
     ) {

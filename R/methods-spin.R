@@ -2,13 +2,15 @@
 
 #' @title Spin an object
 #' @name spin
-#' @description Spin (rotate) an object spatially (limited to xy rotations)
+#' @description Spin (rotate) an object spatially (usually limited to xy 
+#' rotations)
 #' @param x object
 #' @param angle numeric. Angle of rotation in degrees
 #' @param x0 numeric. x-coordinate of the center of rotation. Defaults to
 #' center x val if not given.
 #' @param y0 numeric. y-coordinate of the center of rotation. Defaults to
 #' center y val if not given.
+#' @param ... additional params to pass
 #' @returns spun object
 #' @examples
 #' g <- GiottoData::loadSubObjectMini("spatLocsObj")
