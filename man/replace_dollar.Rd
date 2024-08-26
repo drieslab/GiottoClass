@@ -60,5 +60,5 @@ gpoints$new_col <- sprintf("feat_\%d", seq(nrow(gpoints)))
 
 }
 \seealso{
-\code{\link[=$]{$()}} [\code{\link[=]{()}} [\code{\link[=<-]{<-()}}
+\link{subset_bracket} \link{replace_bracket} \link{subset_dollar}
 }

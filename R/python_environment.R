@@ -153,7 +153,12 @@ checkGiottoEnvironment <- function(
     found <- is.character(py_path)
     
     if (found) {
-        vmsg(.v = verbose, "giotto environment found at\n", py_path)
+        vmsg(.v = verbose, sprintf(
+            "Giotto can access environment found at: \n'%s'\n%s\n%s", 
+            py_path,
+            "If this is the wrong environment, try specifying `envname` param",
+            "or set option \"giotto.py_path\" with the desired envname or path"
+        ))
     }
     
     return(found)
@@ -397,14 +402,15 @@ checkGiottoEnvironment <- function(
     
     # first see if Giotto environment is already installed
     giotto_installed <- checkGiottoEnvironment(
-        envname = mini_install_path,
+        envname = envname,
         verbose = FALSE
     )
 
     # already installed and no force: do nothing & return
     if (isTRUE(giotto_installed) && !isTRUE(force_environment)) {
         vmsg(.v = verbose, 
-            "Giotto environment is already installed,
+            "An environment usable by Giotto is already installed
+            Run `checkGiottoEnvironment()` to see which is being detected.
             set force_environment = TRUE to reinstall"
         )
         return(invisible()) # return early
@@ -684,7 +690,8 @@ set_giotto_python_path <- function(
 
     # early return NULL if specified and NOT found.
     if (is.null(python_path) && !is.null(specified)) {
-        vmsg(sprintf("specified py env from %s not found\n", specified))
+        vmsg(.v = verbose,
+             sprintf("specified py env from %s not found\n", specified))
         return(invisible())
     }
     

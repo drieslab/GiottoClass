@@ -29,7 +29,7 @@ NULL
 #' # subset by index
 #' gpoints[seq(20)]
 #' 
-#' @seealso [[<-()] [$()] [$<-()]
+#' @seealso [replace_bracket] [subset_dollar] [replace_dollar]
 NULL
 
 #' @title Replace part of an object with `[<-`
@@ -48,7 +48,7 @@ NULL
 #' 
 #' gpoints[] <- gpoints[]
 #' 
-#' @seealso [[()] [$()] [$<-()]
+#' @seealso [subset_bracket] [subset_dollar] [replace_dollar]
 NULL
 
 #' @title Replace part of an object with `$<-`
@@ -66,7 +66,7 @@ NULL
 #' 
 #' gpoints$new_col <- sprintf("feat_%d", seq(nrow(gpoints)))
 #' 
-#' @seealso [$()] [[()] [[<-()]
+#' @seealso [subset_bracket] [replace_bracket] [subset_dollar]
 NULL
 
 #' @title Subset part of an object with `$`
@@ -74,8 +74,6 @@ NULL
 #' @aliases `$`
 #' @description Subset values from a Giotto Class using `$` operator.
 #' @param x Giotto S4 object to extract columns from
-#' @param i,j indices specifying elements to extract or replace. Indices are
-#' numeric or character vectors or empty
 #' @param name A literal character string (possibly backtick quoted).
 #' This is normally matched to the colnames.
 #' @returns vector of values from a requested column
@@ -84,7 +82,7 @@ NULL
 #' enr <- GiottoData::loadSubObjectMini("spatEnrObj")
 #'
 #' enr$cell_ID
-#' @seealso [$<-()] [[()] [[<-()]
+#' @seealso [subset_bracket] [replace_bracket] [replace_dollar]
 NULL
 
 
