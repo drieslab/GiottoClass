@@ -107,8 +107,6 @@ rbind2_giotto_polygon_homo <- function(x, y) {
 #' also becomes a combination of both previous names
 #' @param x \code{giottoPolygon} 1
 #' @param y \code{giottoPolygon} 2
-#' @param poly_names sorted polygon names to be used in the
-#' combined \code{giottoPolygon} object
 #' @param add_list_ID whether to include the name of the
 #' origin \code{giottoPolygons} as a new 'list_ID' attribute
 #' @returns giottoPolygon
