@@ -118,7 +118,7 @@ environment usable by Giotto without initializing.
 \itemize{
 \item \code{checkGiottoEnvironment()}: \itemize{
 \item Based on \code{envname}, detect if there is a conda or miniconda installation
-without initializing any python environments.
+accessible by \pkg{Giotto} without initializing any python environments.
 This is done by detecting if there is a python executable in the
 expected location. Leaving \code{envname} as \code{NULL} (default) will let
 \pkg{Giotto} autodetect a python env to use. See section for

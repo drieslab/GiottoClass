@@ -10,6 +10,8 @@
 - intensity images now automatically scale to estimated highest value
 - `giottoPolygon` `plot()` default `max_poly` raised to `1e6`
 - `giottoInstructions` no longer lose class when specific params are replaced
+- `ometif_to_tif()` now checks for _imagecodecs_ package as well
+- `anndataToGiotto()` & `giottoToAnndata` now check for _anndata_ package as well.
 - fix error in documentation [#214](https://github.com/drieslab/GiottoClass/issues/214) by shaojunyu
 - fix error in `installGiottoEnvironment()` [#1006](https://github.com/drieslab/Giotto/issues/1006) by 13954380607
 
