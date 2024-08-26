@@ -3,8 +3,6 @@
 \docType{methods}
 \name{extract-methods}
 \alias{extract-methods}
-\alias{`[`}
-\alias{`[<-`}
 \alias{`$`}
 \alias{`$<-`}
 \alias{$,coordDataDT-method}
@@ -18,77 +16,6 @@
 \alias{$,terraVectData-method}
 \alias{$<-,terraVectData-method}
 \alias{$,affine2d-method}
-\alias{[,gdtData,gIndex,gIndex,missing-method}
-\alias{[,gdtData,logical,missing,missing-method}
-\alias{[,gdtData,character,missing,missing-method}
-\alias{[,gdtData,missing,numeric,missing-method}
-\alias{[,gdtData,missing,logical,missing-method}
-\alias{[,coordDataDT,ANY,ANY,missing-method}
-\alias{[,coordDataDT,missing,ANY,missing-method}
-\alias{[,coordDataDT,missing,character,missing-method}
-\alias{[,coordDataDT,ANY,missing,missing-method}
-\alias{[,coordDataDT,missing,missing,missing-method}
-\alias{[<-,coordDataDT,missing,missing,ANY-method}
-\alias{[<-,coordDataDT,missing,missing,}
-\alias{ANY-method}
-\alias{[<-,coordDataDT,missing,missing-method}
-\alias{[,giottoPoints,gIndex,missing,missing-method}
-\alias{[,metaData,missing,ANY,missing-method}
-\alias{[,metaData,missing,character,missing-method}
-\alias{[,metaData,ANY,missing,missing-method}
-\alias{[,metaData,missing,missing,missing-method}
-\alias{[<-,metaData,missing,missing,ANY-method}
-\alias{[<-,metaData,missing,missing,}
-\alias{[<-,metaData,missing,missing-method}
-\alias{[,dimObj,ANY,ANY,missing-method}
-\alias{[,dimObj,missing,missing,missing-method}
-\alias{[<-,dimObj,missing,missing,ANY-method}
-\alias{[<-,dimObj,missing,missing,}
-\alias{[<-,dimObj,missing,missing-method}
-\alias{[,exprData,missing,ANY,missing-method}
-\alias{[,exprData,ANY,missing,missing-method}
-\alias{[,exprData,ANY,ANY,missing-method}
-\alias{[,exprData,missing,missing,missing-method}
-\alias{[<-,exprData,missing,missing,ANY-method}
-\alias{[<-,exprData,missing,missing,}
-\alias{[<-,exprData,missing,missing-method}
-\alias{[,spatNetData,missing,missing,missing-method}
-\alias{[<-,spatNetData,missing,missing,ANY-method}
-\alias{[<-,spatNetData,missing,missing,}
-\alias{[<-,spatNetData,missing,missing-method}
-\alias{[,nnData,missing,missing,missing-method}
-\alias{[<-,nnData,missing,missing,ANY-method}
-\alias{[<-,nnData,missing,missing,}
-\alias{[<-,nnData,missing,missing-method}
-\alias{[,enrData,missing,missing,missing-method}
-\alias{[,enrData,ANY,missing,missing-method}
-\alias{[,enrData,missing,ANY,missing-method}
-\alias{[,enrData,missing,character,missing-method}
-\alias{[<-,enrData,missing,missing,ANY-method}
-\alias{[<-,enrData,missing,missing,}
-\alias{[<-,enrData,missing,missing-method}
-\alias{[,spatGridData,missing,missing,missing-method}
-\alias{[<-,spatGridData,missing,missing,ANY-method}
-\alias{[<-,spatGridData,missing,missing,}
-\alias{[<-,spatGridData,missing,missing-method}
-\alias{[,giottoPoints,missing,missing,missing-method}
-\alias{[,giottoPoints,character,missing,missing-method}
-\alias{[,giottoPoints,missing,gIndex,missing-method}
-\alias{[<-,giottoPoints,missing,missing,ANY-method}
-\alias{[<-,giottoPoints,missing,missing,}
-\alias{[<-,giottoPoints,missing,missing-method}
-\alias{[,giottoPolygon,missing,missing,missing-method}
-\alias{[,giottoPolygon,gIndex,missing,missing-method}
-\alias{[,giottoPolygon,character,missing,missing-method}
-\alias{[,giottoPolygon,missing,gIndex,missing-method}
-\alias{[,terraVectData,gIndex,gIndex,missing-method}
-\alias{[<-,giottoPolygon,missing,missing,ANY-method}
-\alias{[<-,giottoPolygon,missing,missing,}
-\alias{[<-,giottoPolygon,missing,missing-method}
-\alias{[,affine2d,missing,missing,missing-method}
-\alias{[<-,affine2d,missing,missing,ANY-method}
-\alias{[<-,affine2d,missing,missing,}
-\alias{[<-,affine2d,missing,missing-method}
 \title{Extract or replace parts of an object}
 \usage{
 \S4method{$}{coordDataDT}(x, name)
@@ -112,113 +39,15 @@
 \S4method{$}{terraVectData}(x, name) <- value
 
 \S4method{$}{affine2d}(x, name)
-
-\S4method{[}{gdtData,gIndex,gIndex,missing}(x, i, j)
-
-\S4method{[}{gdtData,logical,missing,missing}(x, i, j)
-
-\S4method{[}{gdtData,character,missing,missing}(x, i, j)
-
-\S4method{[}{gdtData,missing,numeric,missing}(x, i, j)
-
-\S4method{[}{gdtData,missing,logical,missing}(x, i, j)
-
-\S4method{[}{coordDataDT,ANY,ANY,missing}(x, i, j)
-
-\S4method{[}{coordDataDT,missing,ANY,missing}(x, i, j)
-
-\S4method{[}{coordDataDT,missing,character,missing}(x, i, j)
-
-\S4method{[}{coordDataDT,ANY,missing,missing}(x, i, j)
-
-\S4method{[}{coordDataDT,missing,missing,missing}(x, i, j)
-
-\S4method{[}{coordDataDT,missing,missing,ANY}(x, i, j) <- value
-
-\S4method{[}{giottoPoints,gIndex,missing,missing}(x, i, j)
-
-\S4method{[}{metaData,missing,ANY,missing}(x, i, j)
-
-\S4method{[}{metaData,missing,character,missing}(x, i, j)
-
-\S4method{[}{metaData,ANY,missing,missing}(x, i, j)
-
-\S4method{[}{metaData,missing,missing,missing}(x, i, j)
-
-\S4method{[}{metaData,missing,missing,ANY}(x, i, j) <- value
-
-\S4method{[}{dimObj,ANY,ANY,missing}(x, i, j)
-
-\S4method{[}{dimObj,missing,missing,missing}(x, i, j)
-
-\S4method{[}{dimObj,missing,missing,ANY}(x, i, j) <- value
-
-\S4method{[}{exprData,missing,ANY,missing}(x, i, j)
-
-\S4method{[}{exprData,ANY,missing,missing}(x, i, j)
-
-\S4method{[}{exprData,ANY,ANY,missing}(x, i, j)
-
-\S4method{[}{exprData,missing,missing,missing}(x, i, j)
-
-\S4method{[}{exprData,missing,missing,ANY}(x, i, j) <- value
-
-\S4method{[}{spatNetData,missing,missing,missing}(x, i, j)
-
-\S4method{[}{spatNetData,missing,missing,ANY}(x, i, j) <- value
-
-\S4method{[}{nnData,missing,missing,missing}(x, i, j)
-
-\S4method{[}{nnData,missing,missing,ANY}(x, i, j) <- value
-
-\S4method{[}{enrData,missing,missing,missing}(x, i, j)
-
-\S4method{[}{enrData,ANY,missing,missing}(x, i, j)
-
-\S4method{[}{enrData,missing,ANY,missing}(x, i, j)
-
-\S4method{[}{enrData,missing,character,missing}(x, i, j)
-
-\S4method{[}{enrData,missing,missing,ANY}(x, i, j) <- value
-
-\S4method{[}{spatGridData,missing,missing,missing}(x, i, j)
-
-\S4method{[}{spatGridData,missing,missing,ANY}(x, i, j) <- value
-
-\S4method{[}{giottoPoints,missing,missing,missing}(x, i, j)
-
-\S4method{[}{giottoPoints,gIndex,missing,missing}(x, i, j)
-
-\S4method{[}{giottoPoints,character,missing,missing}(x, i, j)
-
-\S4method{[}{giottoPoints,missing,gIndex,missing}(x, i, j)
-
-\S4method{[}{giottoPoints,missing,missing,ANY}(x, i, j) <- value
-
-\S4method{[}{giottoPolygon,missing,missing,missing}(x, i, j)
-
-\S4method{[}{giottoPolygon,gIndex,missing,missing}(x, i, j)
-
-\S4method{[}{giottoPolygon,character,missing,missing}(x, i, j)
-
-\S4method{[}{giottoPolygon,missing,gIndex,missing}(x, i, j)
-
-\S4method{[}{terraVectData,gIndex,gIndex,missing}(x, i, j)
-
-\S4method{[}{giottoPolygon,missing,missing,ANY}(x, i, j) <- value
-
-\S4method{[}{affine2d,missing,missing,missing}(x)
-
-\S4method{[}{affine2d,missing,missing,ANY}(x) <- value
 }
 \arguments{
 \item{x}{Giotto S4 object to extract columns from}
 
-\item{name}{A literal character string (possibly backtick quoted).}
-
-\item{value}{value(s) to set
+\item{name}{A literal character string (possibly backtick quoted).
 This is normally matched to the colnames of the data.table object within
 the S4.}
+
+\item{value}{value(s) to set}
 
 \item{i, j}{indices specifying elements to extract or replace. Indices are
 numeric or character vectors or empty}
@@ -275,79 +104,10 @@ Set values by colname into giotto S4 spatVector slot.
 
 \section{\code{`[`} methods}{
 
-
-
-Return \code{coordinates} slot data.table from giotto S4
-
-
-Select rows (i) and cols (j) from giotto S4 metaDT slot
-
-
-Return \code{metaDT} slot data.table from giotto S4
-
-
-Return \code{coordinates} slot matrix from giotto S4 dimObj
-
-
-Select rows (i) and cols (j) from giotto S4 exprMat slot
-
-
-Return \code{exprMat} slot Matrix object from giotto S4
-
-
-Return \code{spatNetData} slot network data.table object from giotto S4
-
-
-Return \code{nnData} slot igraph object from giotto S4
-
-
-Return \code{enrData} slot enrichment data.table object from giotto S4
-
-
-Return \code{spatGridData} slot data.table object from giotto S4
-
-
-Return \code{giottoPoints} spatVector slot
-
-
-Return \code{giottoPolygon} spatVector slot
 }
 
 \section{\code{`[<-`} methods}{
 
-
-
-Assign to \code{coordinates} slot in giotto S4
-
-
-Assign to \code{metaDT} slot in giotto S4
-
-
-Assign to \code{coordinates} slot in giotto S4 dimObj
-
-
-Assign to \code{exprMat} slot in giotto S4
-
-
-Assign to \code{networkDT} slot in giotto S4
-
-
-Assign to \code{igraph} slot in giotto S4
-
-
-Assign to \code{enrichDT} slot in giotto S4
-
-
-Assign to \code{gridDT} slot in giotto S4
-
-
-Assign to \code{spatVector} slot in giotto S4
-
-
-Assign to \code{spatVector} slot in giottoPolygon
-
-
-Assign to \code{affine} slot in affine2d
 }
 
 \examples{
