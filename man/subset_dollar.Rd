@@ -28,9 +28,6 @@
 
 \item{name}{A literal character string (possibly backtick quoted).
 This is normally matched to the colnames.}
-
-\item{i, j}{indices specifying elements to extract or replace. Indices are
-numeric or character vectors or empty}
 }
 \value{
 vector of values from a requested column
@@ -66,5 +63,5 @@ enr <- GiottoData::loadSubObjectMini("spatEnrObj")
 enr$cell_ID
 }
 \seealso{
-\code{\link[=$<-]{$<-()}} [\code{\link[=]{()}} [\code{\link[=<-]{<-()}}
+\link{subset_bracket} \link{replace_bracket} \link{replace_dollar}
 }

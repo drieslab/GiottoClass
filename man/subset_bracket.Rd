@@ -187,5 +187,5 @@ gpoints[seq(20)]
 
 }
 \seealso{
-[\code{\link[=<-]{<-()}} \code{\link[=$]{$()}} \code{\link[=$<-]{$<-()}}
+\link{replace_bracket} \link{subset_dollar} \link{replace_dollar}
 }

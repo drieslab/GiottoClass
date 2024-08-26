@@ -120,5 +120,5 @@ gpoints[] <- gpoints[]
 
 }
 \seealso{
-[\code{\link[=]{()}} \code{\link[=$]{$()}} \code{\link[=$<-]{$<-()}}
+\link{subset_bracket} \link{subset_dollar} \link{replace_dollar}
 }
