@@ -6,6 +6,7 @@ NULL
 #' @description
 #' Create a text representation of an object
 #' @param x object
+#' @param ... additional params to pass (none implemented)
 #' @examples
 #' img <- GiottoData::loadSubObjectMini("giottoLargeImage")
 #' as.character(img)

@@ -2685,6 +2685,9 @@ setMethod(
 #' gimg <- createGiottoLargeImage(f, use_rast_ext = TRUE, verbose = FALSE)
 #'
 #' hist(gimg)
+NULL
+
+#' @rdname hist
 #' @export
 setMethod(
     "hist", signature("giottoLargeImage"),
