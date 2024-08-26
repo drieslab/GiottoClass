@@ -4,9 +4,12 @@
 \name{replace_bracket}
 \alias{replace_bracket}
 \alias{`[<-`}
+\alias{[<-,coordDataDT,missing,missing,ANY-method}
+\alias{[<-,coordDataDT,missing,missing,}
+\alias{ANY-method}
+\alias{[<-,coordDataDT,missing,missing-method}
 \alias{[<-,metaData,missing,missing,ANY-method}
 \alias{[<-,metaData,missing,missing,}
-\alias{ANY-method}
 \alias{[<-,metaData,missing,missing-method}
 \alias{[<-,dimObj,missing,missing,ANY-method}
 \alias{[<-,dimObj,missing,missing,}
@@ -35,8 +38,10 @@
 \alias{[<-,affine2d,missing,missing,ANY-method}
 \alias{[<-,affine2d,missing,missing,}
 \alias{[<-,affine2d,missing,missing-method}
-\title{Replace part of an object}
+\title{Replace part of an object with \verb{[<-}}
 \usage{
+\S4method{[}{coordDataDT,missing,missing,ANY}(x, i, j) <- value
+
 \S4method{[}{metaData,missing,missing,ANY}(x, i, j) <- value
 
 \S4method{[}{dimObj,missing,missing,ANY}(x, i, j) <- value
@@ -55,7 +60,7 @@
 
 \S4method{[}{giottoPolygon,missing,missing,ANY}(x, i, j) <- value
 
-\S4method{[}{affine2d,missing,missing,ANY}(x) <- value
+\S4method{[}{affine2d,missing,missing,ANY}(x, i, j) <- value
 }
 \arguments{
 \item{x}{Giotto S4 object to replace information in}
@@ -70,9 +75,13 @@ same as \code{x}
 }
 \description{
 Replace values from Giotto Classes. Providing empty brackets
-will usually replace the entire contained data representation.
+such as \code{x[] <- value} will usually replace the entire contained data
+representation.
 }
 \section{\code{`[<-`} methods}{
+
+Assign to \code{coordinates} slot in giotto S4
+
 
 Assign to \code{metaDT} slot in giotto S4
 
@@ -111,5 +120,5 @@ gpoints[] <- gpoints[]
 
 }
 \seealso{
-[\code{[}()]
+[\code{\link[=]{()}} \code{\link[=$]{$()}} \code{\link[=$<-]{$<-()}}
 }
