@@ -4,29 +4,87 @@ NULL
 
 # Documentations ------------------------------------------------------------ #
 
+#' @title Subset part of an object with `[`
+#' @name subset_bracket
+#' @aliases `[`
+#' @description Extract values from Giotto classes. Providing empty brackets
+#' such as: `x[]` will usually extract the main contained data representation.
+#' @param x Giotto S4 object to subset information from
+#' @param i,j indices specifying elements to extract. Indices are numeric or
+#' character vectors, or empty
+#' @returns Same as `x` unless brackets are empty in which case, the main 
+#' internal representation is returned. 
+#' @examples
+#' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
+#' 
+#' # extract contained `SpatVector`
+#' gpoints[]
+#' 
+#' # subset by feature
+#' gpoints[c("Mlc1", "Gfap")]
+#' 
+#' # subset by feature and colname
+#' gpoints["Mlc1", c("feat_ID", "feat_ID_uniq")]
+#' 
+#' # subset by index
+#' gpoints[seq(20)]
+#' 
+#' @seealso [[<-()] [$()] [$<-()]
+NULL
 
-#' @title Extract or replace parts of an object
-#' @name extract-methods
-#' @docType methods
-#' @aliases `[` `[<-` `$` `$<-`
-#' @description Operators Giotto S4 internal data.tables to extract
-#' or replace parts.
+#' @title Replace part of an object with `[<-`
+#' @name replace_bracket
+#' @aliases `[<-`
+#' @description Replace values from Giotto Classes. Providing empty brackets
+#' such as `x[] <- value` will usually replace the entire contained data 
+#' representation.
+#' @param x Giotto S4 object to replace information in
+#' @param i,j indices specifying elements to replace. Indices are numeric or 
+#' character vectors or empty
+#' @param value values(s) to set
+#' @returns same as `x`
+#' @examples
+#' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
+#' 
+#' gpoints[] <- gpoints[]
+#' 
+#' @seealso [[()] [$()] [$<-()]
+NULL
+
+#' @title Replace part of an object with `$<-`
+#' @name replace_dollar
+#' @aliases `$<-`
+#' @description
+#' Replace values from Giotto Classes using `$<-` operator.
+#' @param x Giotto S4 object to replace columns from
+#' @param name A literal character string (possibly backtick quoted).
+#' This is normally matched to the colnames.
+#' @param value values(s) to set to a column
+#' @returns same as `x`
+#' @examples
+#' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
+#' 
+#' gpoints$new_col <- sprintf("feat_%d", seq(nrow(gpoints)))
+#' 
+#' @seealso [$()] [[()] [[<-()]
+NULL
+
+#' @title Subset part of an object with `$`
+#' @name subset_dollar
+#' @aliases `$`
+#' @description Subset values from a Giotto Class using `$` operator.
 #' @param x Giotto S4 object to extract columns from
 #' @param i,j indices specifying elements to extract or replace. Indices are
 #' numeric or character vectors or empty
 #' @param name A literal character string (possibly backtick quoted).
-#' @param value value(s) to set
-#' This is normally matched to the colnames of the data.table object within
-#' the S4.
-#' @returns columns or values from a data.table
+#' This is normally matched to the colnames.
+#' @returns vector of values from a requested column
 #' @section \code{`$`} methods:
-#' @section \code{`$<-`} methods:
-#' @section \code{`[`} methods:
-#' @section \code{`[<-`} methods:
 #' @examples
-#' g <- GiottoData::loadSubObjectMini("spatEnrObj")
+#' enr <- GiottoData::loadSubObjectMini("spatEnrObj")
 #'
-#' g$cell_ID
+#' enr$cell_ID
+#' @seealso [$<-()] [[()] [[<-()]
 NULL
 
 
@@ -36,7 +94,7 @@ NULL
 
 ## * coordDataDT ####
 
-#' @rdname extract-methods
+#' @rdname subset_dollar
 #' @section \code{`$`} methods:
 #'   Select by colname from giotto S4 data.table coordinates slot.
 #' @export
@@ -46,7 +104,7 @@ setMethod(
 )
 
 
-#' @rdname extract-methods
+#' @rdname replace_dollar
 #' @section \code{`$<-`} methods:
 #'   Set values by colname into giotto S4 data.table coordinates slot.
 #'   Works via data.table methods
@@ -70,9 +128,9 @@ setMethod(
 
 
 ## * spatEnrObj ####
-#' @rdname extract-methods
+#' @rdname subset_dollar
 #' @section \code{`$`} methods:
-#'   Select by colname from giotto S4 enrObj
+#'   Select by colname from giotto S4 spatEnrObj
 #' @export
 setMethod(
     "$", signature(x = "spatEnrObj"),
@@ -81,9 +139,9 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
-#' @section \code{`$`} methods:
-#'   Set values by colname into giotto S4 dimObj.
+#' @rdname replace_dollar
+#' @section \code{`$<-`} methods:
+#'   Set values by colname into giotto S4 spatEnrObj.
 #' @export
 setMethod(
     "$<-", signature(x = "spatEnrObj"),
@@ -101,7 +159,7 @@ setMethod(
 
 ## * dimObj ####
 
-#' @rdname extract-methods
+#' @rdname subset_dollar
 #' @section \code{`$`} methods:
 #'   Select entries in misc slot from giotto S4 dimObj.
 #' @export
@@ -110,8 +168,8 @@ setMethod(
     function(x, name) x@misc[[name]]
 )
 
-#' @rdname extract-methods
-#' @section \code{`$`} methods:
+#' @rdname replace_dollar
+#' @section \code{`$<-`} methods:
 #'   Set entries in misc slot from giotto S4 dimObj.
 #' @export
 setMethod(
@@ -134,7 +192,7 @@ setMethod(
     colnames(x@metaDT)
 }
 
-#' @rdname extract-methods
+#' @rdname subset_dollar
 #' @section \code{`$`} methods:
 #'   Select by colname from giotto S4 data.table metaDT slot.
 #' @export
@@ -144,7 +202,7 @@ setMethod(
 )
 
 
-#' @rdname extract-methods
+#' @rdname replace_dollar
 #' @section \code{`$<-`} methods:
 #'   Set values by colname into giotto S4 data.table metaDT slot.
 #'   Works via data.table methods
@@ -160,7 +218,7 @@ setMethod(
 
 ## * terraVectData * ####
 
-#' @rdname extract-methods
+#' @rdname subset_dollar
 #' @section \code{`$`} methods:
 #'   Select by colname from giotto S4 spatVector slot.
 #' @export
@@ -169,7 +227,7 @@ setMethod(
     function(x, name) terra::as.list(x@spatVector)[[name]]
 )
 
-#' @rdname extract-methods
+#' @rdname replace_dollar
 #' @section \code{`$<-`} methods:
 #'   Set values by colname into giotto S4 spatVector slot.
 #' @export
@@ -186,7 +244,7 @@ setMethod(
     names(x@spatVector)
 }
 
-#' @rdname extract-methods
+#' @rdname subset_dollar
 #' @section \code{`$`} methods:
 #'   Select piecewise transform values from `affine2d`
 #' @export
@@ -210,7 +268,7 @@ setMethod("$", signature("affine2d"), function(x, name) {
 ## * gdtData ####
 
 # Make it so that i and j subsets can be written independently
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[", signature(x = "gdtData", i = "gIndex", j = "gIndex", drop = "missing"),
@@ -221,7 +279,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[", signature(
@@ -246,7 +304,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[", signature(
@@ -277,7 +335,7 @@ setMethod(
 
 # enforce subsetting by character for gdtData so that cols to keep can be
 # checked for id col
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[", signature(
@@ -291,7 +349,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[", signature(
@@ -309,7 +367,7 @@ setMethod(
 
 ## * coordDataDT ####
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[", signature(x = "coordDataDT", i = "ANY", j = "ANY", drop = "missing"),
@@ -319,7 +377,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[", signature(
@@ -332,7 +390,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[", signature(
@@ -393,7 +451,7 @@ setMethod(
 #
 #           })
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[",
@@ -404,7 +462,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @aliases [,coordDataDT,missing,missing,missing-method
 #' @section \code{`[`} methods:
 #'   Return \code{coordinates} slot data.table from giotto S4
@@ -420,7 +478,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname replace_bracket
 #' @aliases [<-,coordDataDT,missing,missing,
 #' ANY-method [<-,coordDataDT,missing,missing-method
 #' @docType methods
@@ -435,7 +493,7 @@ setReplaceMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[",
@@ -455,7 +513,7 @@ setMethod(
 
 ## * metaData ####
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @section \code{`[`} methods:
 #'   Select rows (i) and cols (j) from giotto S4 metaDT slot
 #' @export
@@ -467,7 +525,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[",
@@ -479,7 +537,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[", signature(x = "metaData", i = "ANY", j = "missing", drop = "missing"),
@@ -489,7 +547,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @section \code{`[`} methods:
 #'   Return \code{metaDT} slot data.table from giotto S4
 #' @export
@@ -501,7 +559,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname replace_bracket
 #' @aliases [<-,metaData,missing,missing,
 #' ANY-method [<-,metaData,missing,missing-method
 #' @docType methods
@@ -520,7 +578,7 @@ setMethod(
 
 ## * dimObj ####
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[", signature(x = "dimObj", i = "ANY", j = "ANY", drop = "missing"),
@@ -530,7 +588,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @section \code{`[`} methods:
 #'    Return \code{coordinates} slot matrix from giotto S4 dimObj
 #' @export
@@ -542,7 +600,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname replace_bracket
 #' @aliases [<-,dimObj,missing,missing,
 #' ANY-method [<-,dimObj,missing,missing-method
 #' @docType methods
@@ -559,7 +617,7 @@ setMethod(
 
 ## * exprData ####
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @section \code{`[`} methods:
 #'   Select rows (i) and cols (j) from giotto S4 exprMat slot
 #' @export
@@ -571,7 +629,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[", signature(x = "exprData", i = "ANY", j = "missing", drop = "missing"),
@@ -581,7 +639,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[", signature(x = "exprData", i = "ANY", j = "ANY", drop = "missing"),
@@ -591,7 +649,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @section \code{`[`} methods:
 #'   Return \code{exprMat} slot Matrix object from giotto S4
 #' @export
@@ -603,7 +661,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname replace_bracket
 #' @aliases [<-,exprData,missing,missing,
 #' ANY-method [<-,exprData,missing,missing-method
 #' @docType methods
@@ -620,7 +678,7 @@ setMethod(
 )
 
 # * spatNetData ####
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @section \code{`[`} methods:
 #'   Return \code{spatNetData} slot network data.table object from giotto S4
 #' @export
@@ -635,7 +693,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname replace_bracket
 #' @aliases [<-,spatNetData,missing,missing,
 #' ANY-method [<-,spatNetData,missing,missing-method
 #' @docType methods
@@ -653,7 +711,7 @@ setMethod(
 
 
 # * nnData ####
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @section \code{`[`} methods:
 #'   Return \code{nnData} slot igraph object from giotto S4
 #' @export
@@ -665,7 +723,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname replace_bracket
 #' @aliases [<-,nnData,missing,missing,
 #' ANY-method [<-,nnData,missing,missing-method
 #' @docType methods
@@ -682,7 +740,7 @@ setMethod(
 
 
 # * enrData ####
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @section \code{`[`} methods:
 #'   Return \code{enrData} slot enrichment data.table object from giotto S4
 #' @export
@@ -694,7 +752,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[", signature(x = "enrData", i = "ANY", j = "missing", drop = "missing"),
@@ -704,7 +762,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[", signature(x = "enrData", i = "missing", j = "ANY", drop = "missing"),
@@ -714,7 +772,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[",
@@ -727,7 +785,7 @@ setMethod(
 
 
 
-#' @rdname extract-methods
+#' @rdname replace_bracket
 #' @aliases [<-,enrData,missing,missing,
 #' ANY-method [<-,enrData,missing,missing-method
 #' @docType methods
@@ -744,7 +802,7 @@ setMethod(
 )
 
 # * spatGridData ####
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @section \code{`[`} methods:
 #'   Return \code{spatGridData} slot data.table object from giotto S4
 #' @export
@@ -759,7 +817,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname replace_bracket
 #' @aliases [<-,spatGridData,missing,missing,
 #' ANY-method [<-,spatGridData,missing,missing-method
 #' @docType methods
@@ -776,7 +834,7 @@ setMethod(
 )
 
 # * giottoPoints ####
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @section \code{`[`} methods:
 #'   Return \code{giottoPoints} spatVector slot
 #' @export
@@ -791,7 +849,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[",
@@ -809,7 +867,7 @@ setMethod(
 # this behavior is different from normal spatvectors
 # SpatVector defaults to col subsetting when character is provided to i
 # subsetting on feat_ID col makes more sense for giottoPoints
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[",
@@ -823,7 +881,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[",
@@ -843,7 +901,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname replace_bracket
 #' @aliases [<-,giottoPoints,missing,missing,
 #' ANY-method [<-,giottoPoints,missing,missing-method
 #' @docType methods
@@ -860,7 +918,7 @@ setMethod(
 )
 
 # * giottoPolygon ####
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @section \code{`[`} methods:
 #'   Return \code{giottoPolygon} spatVector slot
 #' @export
@@ -875,7 +933,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[",
@@ -906,7 +964,7 @@ setMethod(
 # this behavior is different from normal spatvectors
 # SpatVector defaults to col subsetting when character is provided to i
 # subsetting on poly_ID col makes more sense for giottoPolygon
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[",
@@ -920,7 +978,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[",
@@ -941,7 +999,7 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[",
@@ -958,7 +1016,7 @@ setMethod(
 
 
 
-#' @rdname extract-methods
+#' @rdname replace_bracket
 #' @aliases [<-,giottoPolygon,missing,missing,
 #' ANY-method [<-,giottoPolygon,missing,missing-method
 #' @docType methods
@@ -974,19 +1032,19 @@ setMethod(
     }
 )
 
-#' @rdname extract-methods
+#' @rdname subset_bracket
 #' @export
 setMethod(
     "[",
     signature(
         x = "affine2d", i = "missing", j = "missing", drop = "missing"
     ),
-    function(x) {
+    function(x, i, j) {
         x@affine
     }
 )
 
-#' @rdname extract-methods
+#' @rdname replace_bracket
 #' @aliases [<-,affine2d,missing,missing,
 #' ANY-method [<-,affine2d,missing,missing-method
 #' @docType methods
@@ -996,7 +1054,7 @@ setMethod(
 setMethod(
     "[<-",
     signature(x = "affine2d", i = "missing", j = "missing", value = "ANY"),
-    function(x, value) {
+    function(x, i, j, value) {
         x@affine <- value
         return(initialize(x))
     }
