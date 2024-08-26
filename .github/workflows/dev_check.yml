@@ -97,6 +97,8 @@ jobs:
             pip = TRUE
           )
           
+          path_to_python <- GiottoClass::set_giotto_python_path()
+          
           writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
                      Sys.getenv("GITHUB_ENV"))
         
