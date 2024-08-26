@@ -12,6 +12,8 @@
 }
 \arguments{
 \item{x}{object}
+
+\item{...}{additional params to pass (none implemented)}
 }
 \description{
 Create a text representation of an object

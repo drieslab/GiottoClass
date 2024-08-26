@@ -412,6 +412,9 @@ setMethod("affine", signature(x = "affine2d", y = "matrix"), function(
 #' @returns a list of transforms information.
 #' @keywords internal
 #' @examples
+#' # load example data
+#' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
+#' 
 #' # affine transform matrices
 #' m <- diag(rep(1, 3))
 #' shear_m <- trans_m <- m

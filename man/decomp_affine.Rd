@@ -21,6 +21,9 @@ needed to perform them as a list of class \code{affine}. Works only for 2D
 transforms. Logic from \url{https://math.stackexchange.com/a/3521141}
 }
 \examples{
+# load example data
+sl <- GiottoData::loadSubObjectMini("spatLocsObj")
+
 # affine transform matrices
 m <- diag(rep(1, 3))
 shear_m <- trans_m <- m

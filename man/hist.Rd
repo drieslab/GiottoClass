@@ -2,6 +2,7 @@
 % Please edit documentation in R/images.R
 \name{hist}
 \alias{hist}
+\alias{hist,giottoLargeImage-method}
 \title{Histogram}
 \usage{
 \S4method{hist}{giottoLargeImage}(x, show_max = TRUE, ...)
