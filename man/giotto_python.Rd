@@ -9,7 +9,7 @@
 \title{Giotto python environment}
 \usage{
 checkGiottoEnvironment(
-  envname = NULL,
+  envname = "giotto_env",
   mini_install_path = deprecated(),
   verbose = NULL
 )
@@ -117,12 +117,11 @@ environment usable by Giotto without initializing.
 \section{Functions}{
 \itemize{
 \item \code{checkGiottoEnvironment()}: \itemize{
-\item Based on \code{envname}, detect if there is a conda or miniconda installation
-accessible by \pkg{Giotto} without initializing any python environments.
-This is done by detecting if there is a python executable in the
-expected location. Leaving \code{envname} as \code{NULL} (default) will let
-\pkg{Giotto} autodetect a python env to use. See section for
-\code{set_giotto_python_path()} for details on the autodetection.
+\item Based on \code{envname}, detect if there a conda or miniconda installation
+accessible by \pkg{Giotto}. By default, the \code{envname} \code{"giotto_env"} is
+checked, but an alternative can be provided. Leaving \code{envname} as \code{NULL}
+will let  \pkg{Giotto} autodetect a python env to use.
+See section for \code{set_giotto_python_path()} for details on the autodetection.
 \item Returns \code{TRUE} if an env is detected and accessible by Giotto. \code{FALSE}
 if not. Will not initialize a python environment during detection.
 }

@@ -107,12 +107,11 @@ NULL
 
 #' @describeIn giotto_python
 #' 
-#' - Based on `envname`, detect if there is a conda or miniconda installation
-#' accessible by \pkg{Giotto} without initializing any python environments.
-#' This is done by detecting if there is a python executable in the
-#' expected location. Leaving `envname` as `NULL` (default) will let 
-#' \pkg{Giotto} autodetect a python env to use. See section for
-#' `set_giotto_python_path()` for details on the autodetection.
+#' - Based on `envname`, detect if there a conda or miniconda installation
+#' accessible by \pkg{Giotto}. By default, the `envname` `"giotto_env"` is 
+#' checked, but an alternative can be provided. Leaving `envname` as `NULL` 
+#' will let  \pkg{Giotto} autodetect a python env to use. 
+#' See section for `set_giotto_python_path()` for details on the autodetection.
 #' - Returns `TRUE` if an env is detected and accessible by Giotto. `FALSE`
 #' if not. Will not initialize a python environment during detection.
 #' @examples
@@ -132,7 +131,7 @@ NULL
 #' }
 #' @export
 checkGiottoEnvironment <- function(
-        envname = NULL, 
+        envname = "giotto_env", 
         mini_install_path = deprecated(), 
         verbose = NULL
 ) {
@@ -154,12 +153,19 @@ checkGiottoEnvironment <- function(
     
     if (found) {
         vmsg(.v = verbose, sprintf(
-            "Giotto can access environment found at: \n'%s'\n%s\n%s", 
-            py_path,
-            "If this is the wrong environment, try specifying `envname` param",
-            "or set option \"giotto.py_path\" with the desired envname or path"
+            "Giotto can access environment found at: \n'%s'", py_path
+        ))
+    } else {
+        vmsg(.v = verbose, sprintf(
+            "Giotto cannot find python environment with `envname`: '%s'", 
+            envname
         ))
     }
+    
+    vmsg(.v = verbose, .initial = " ",
+         "If this is the wrong environment, try specifying `envname` param
+         or set option \"giotto.py_path\" with the desired envname or path"
+    )
     
     return(found)
     
