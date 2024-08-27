@@ -108,10 +108,12 @@ NULL
 #' @describeIn giotto_python
 #' 
 #' - Based on `envname`, detect if there a conda or miniconda installation
-#' accessible by \pkg{Giotto}. By default, the `envname` `"giotto_env"` is 
-#' checked, but an alternative can be provided. Leaving `envname` as `NULL` 
-#' will let  \pkg{Giotto} autodetect a python env to use. 
-#' See section for `set_giotto_python_path()` for details on the autodetection.
+#' accessible by \pkg{Giotto}. By default, the `envname` `"giotto_env"`, then
+#' the option `"giotto.py_path"` is checked, but an alternative can be 
+#' provided. 
+#' - Setting `envname` as `":auto:"` will let  \pkg{Giotto} autodetect a python 
+#' env to use. See section for `set_giotto_python_path()` for details on the 
+#' autodetection.
 #' - Returns `TRUE` if an env is detected and accessible by Giotto. `FALSE`
 #' if not. Will not initialize a python environment during detection.
 #' @examples
@@ -131,7 +133,7 @@ NULL
 #' }
 #' @export
 checkGiottoEnvironment <- function(
-        envname = "giotto_env", 
+        envname = NULL, 
         mini_install_path = deprecated(), 
         verbose = NULL
 ) {
@@ -145,6 +147,13 @@ checkGiottoEnvironment <- function(
         envname <- mini_install_path
     }
     
+    if (identical(envname, ":auto:")) {
+        envname <- NULL
+    } else {
+        envname <- envname %null% getOption("giotto.py_path")
+        envname <- envname %null% "giotto_env"
+    }
+
     py_path <- set_giotto_python_path(
         python_path = envname, verbose = FALSE, initialize = FALSE
     )
@@ -453,10 +462,10 @@ checkGiottoEnvironment <- function(
 
 #' @describeIn giotto_python
 #' 
-#' - Install a giotto python environment using the miniconda system as 
-#' implemented by \pkg{reticulate}. Once this  environment is installed it 
-#' will be automatically detected when you run the
-#' \pkg{Giotto} toolbox. \cr This includes a 
+#' - Install a giotto python environment using miniconda through
+#' \pkg{reticulate}. By default, the envname used will be `"giotto_env"`. If
+#' another name is used, you will have to provide that envname at the start of
+#' a session (see **Choosing an environment** above). \cr This includes a 
 #' miniconda installation and also a set of python packages that \pkg{Giotto} 
 #' may often use. See details for further information on setting up an
 #' environment with a .yml
@@ -604,11 +613,12 @@ removeGiottoEnvironment <- function(
 #'   5. System default python environment
 #' 
 #' - This function exits without doing anything if option `"giotto.use_conda"` 
-#' is `FALSE`. By default this function will also force initialization of the
-#' python to set, locking the session to the set python. This can be skipped
-#' if `initialize = FALSE`, however the actual python path set may differ from
-#' what is expected and reported by this function. Additionally, 
-#' [reticulate::py_available()] will still show as `FALSE`.
+#' is `FALSE`.
+#' - By default this function will force initialization of the python 
+#' environment to set, locking the session to that environment. 
+#' This can be skipped if `initialize = FALSE`, however in that case, the 
+#' actual python path set downstream may differ from what is expected and 
+#' reported by this function.
 #' - Returns detected path to python binary or `NULL` if none found.
 #' @param python_path character. Name of environment or full path to python 
 #' executable.

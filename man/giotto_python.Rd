@@ -9,7 +9,7 @@
 \title{Giotto python environment}
 \usage{
 checkGiottoEnvironment(
-  envname = "giotto_env",
+  envname = NULL,
   mini_install_path = deprecated(),
   verbose = NULL
 )
@@ -118,19 +118,21 @@ environment usable by Giotto without initializing.
 \itemize{
 \item \code{checkGiottoEnvironment()}: \itemize{
 \item Based on \code{envname}, detect if there a conda or miniconda installation
-accessible by \pkg{Giotto}. By default, the \code{envname} \code{"giotto_env"} is
-checked, but an alternative can be provided. Leaving \code{envname} as \code{NULL}
-will let  \pkg{Giotto} autodetect a python env to use.
-See section for \code{set_giotto_python_path()} for details on the autodetection.
+accessible by \pkg{Giotto}. By default, the \code{envname} \code{"giotto_env"}, then
+the option \code{"giotto.py_path"} is checked, but an alternative can be
+provided.
+\item Setting \code{envname} as \code{":auto:"} will let  \pkg{Giotto} autodetect a python
+env to use. See section for \code{set_giotto_python_path()} for details on the
+autodetection.
 \item Returns \code{TRUE} if an env is detected and accessible by Giotto. \code{FALSE}
 if not. Will not initialize a python environment during detection.
 }
 
 \item \code{installGiottoEnvironment()}: \itemize{
-\item Install a giotto python environment using the miniconda system as
-implemented by \pkg{reticulate}. Once this  environment is installed it
-will be automatically detected when you run the
-\pkg{Giotto} toolbox. \cr This includes a
+\item Install a giotto python environment using miniconda through
+\pkg{reticulate}. By default, the envname used will be \code{"giotto_env"}. If
+another name is used, you will have to provide that envname at the start of
+a session (see \strong{Choosing an environment} above). \cr This includes a
 miniconda installation and also a set of python packages that \pkg{Giotto}
 may often use. See details for further information on setting up an
 environment with a .yml
@@ -155,11 +157,12 @@ final path to use is determined as follows in decreasing priority:
 \item System default python environment
 }
 \item This function exits without doing anything if option \code{"giotto.use_conda"}
-is \code{FALSE}. By default this function will also force initialization of the
-python to set, locking the session to the set python. This can be skipped
-if \code{initialize = FALSE}, however the actual python path set may differ from
-what is expected and reported by this function. Additionally,
-\code{\link[reticulate:py_available]{reticulate::py_available()}} will still show as \code{FALSE}.
+is \code{FALSE}.
+\item By default this function will force initialization of the python
+environment to set, locking the session to that environment.
+This can be skipped if \code{initialize = FALSE}, however in that case, the
+actual python path set downstream may differ from what is expected and
+reported by this function.
 \item Returns detected path to python binary or \code{NULL} if none found.
 }
 
