@@ -3,7 +3,6 @@
 
 ## breaking changes
 - `set_giotto_python_path()` will now also initialize python env to set by default and print which python env is active, but otherwise do nothing if any python env has already been initialized.
-- `checkGiottoEnvironment()` no longer checks specifically for the `"giotto_env"` environment, but is instead a general check for whether Giotto can detect a python environment and also which it is.
 - deprecated `readGiottoInstructions()`, `showGiottoInstructions()`, `changeGiottoInstructions()`, `replaceGiottoInstructions()` in favor of `instructions()` generic
 
 ## bug fixes
