@@ -6,6 +6,9 @@
 \usage{
 check_py_for_scanpy()
 }
+\value{
+character
+}
 \description{
 checks current python environment for scanpy 1.9.0
 }

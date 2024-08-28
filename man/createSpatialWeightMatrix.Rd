@@ -30,15 +30,24 @@ with attached results or the bare weighted matrix}
 
 \item{verbose}{be verbose}
 }
+\value{
+spatial weight matrix
+}
 \description{
 Generate spatial weight matrix based on the strength of spatial
 interactions between nodes. Requires spatial networks to be first generated.
 }
 \details{
 \itemize{
-\item{\code{"distance"} method is calculated using 1/(1+distance) to create an inverse
-weighting based on the distance between nodes.}
-\item{\code{"adjacency"} method is a binary matrix with 1 signifying that two nodes
-are connected in the spatial network and 0 indicating that they are not.}
+\item{\code{"distance"} method is calculated using 1/(1+distance) to
+create an inverse weighting based on the distance between nodes.}
+\item{\code{"adjacency"} method is a binary matrix with 1 signifying that
+two nodes are connected in the spatial network and 0 indicating that
+they are not.}
 }
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+createSpatialWeightMatrix(g, spatial_network_to_use = "spatial_network")
 }

@@ -21,3 +21,8 @@ data.table with cell metadata
 \description{
 show cell metadata
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+pDataDT(g)
+}

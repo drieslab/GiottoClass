@@ -11,6 +11,9 @@ rbind2_giotto_polygon_homo(x, y)
 
 \item{y}{\code{giottoPolygon} 2}
 }
+\value{
+giottoPolygon
+}
 \description{
 Append two giotto polygons together of the same name.
 Performed recursively through \code{rbind2} and \code{rbind}

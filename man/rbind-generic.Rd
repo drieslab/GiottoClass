@@ -2,9 +2,12 @@
 % Please edit documentation in R/methods-rbind.R
 \name{rbind-generic}
 \alias{rbind-generic}
+\alias{rbind2,spatLocsObj,spatLocsObj-method}
 \alias{rbind2,giottoPolygon,giottoPolygon-method}
 \title{Combine objects by rows (Giotto-related)}
 \usage{
+\S4method{rbind2}{spatLocsObj,spatLocsObj}(x, y, ...)
+
 \S4method{rbind2}{giottoPolygon,giottoPolygon}(x, y, add_list_ID = TRUE, ...)
 }
 \arguments{
@@ -12,10 +15,13 @@
 
 \item{y}{item 2 to rbind}
 
+\item{\dots}{additional params to pass to methods}
+
 \item{add_list_ID}{whether to generate a list_ID column when giottoPolygons
 to append have different names}
-
-\item{\dots}{additional params to pass to methods}
+}
+\value{
+object with appended rows
 }
 \description{
 row bind two objects
@@ -25,3 +31,8 @@ row bind two objects
 \item \code{rbind2(x = giottoPolygon, y = giottoPolygon)}: Append giottoPolygon objects
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPolygon")
+
+rbind2(g, g)
+}

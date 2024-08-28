@@ -14,12 +14,17 @@ seuratToGiotto(
 \arguments{
 \item{sobject}{Input Seurat object to convert to Giotto object}
 
-\item{spatial_assay}{Specify name of the spatial assay slot in Seurat. Default is \code{"Spatial"}.}
+\item{spatial_assay}{Specify name of the spatial assay slot in Seurat.
+Default is \code{"Spatial"}.}
 
-\item{dim_reduction}{Specify which dimensional reduction computations to fetch from}
+\item{dim_reduction}{Specify which dimensional reduction computations to
+fetch from}
 
-\item{subcellular_assay}{Specify name of the subcellular assay in input object.
-Default is \code{"Vizgen"}.}
+\item{subcellular_assay}{Specify name of the subcellular assay in input
+object. Default is \code{"Vizgen"}.}
+}
+\value{
+giotto object
 }
 \description{
 Deprecated. Please use either \link{seuratToGiottoV4} or

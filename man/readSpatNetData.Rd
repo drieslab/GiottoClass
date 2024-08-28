@@ -20,6 +20,14 @@ readSpatNetData(
 
 \item{verbose}{be verbose}
 }
+\value{
+spatialNetworkObj
+}
 \description{
 read spatial networks data from list
+}
+\examples{
+x <- GiottoData::loadSubObjectMini("spatialNetworkObj", idx = 2)
+
+readSpatNetData(x)
 }

@@ -26,13 +26,16 @@ createGiottoLargeImage(
 
 \item{name}{name for the image}
 
-\item{negative_y}{Map image to negative y spatial values if TRUE. Meaning that origin is in upper left instead of lower left.}
+\item{negative_y}{Map image to negative y spatial values if TRUE. Meaning
+that origin is in upper left instead of lower left.}
 
-\item{extent}{SpatExtent object to assign spatial extent. Takes priority unless use_rast_ext is TRUE.}
+\item{extent}{SpatExtent object to assign spatial extent. Takes priority
+unless use_rast_ext is TRUE.}
 
 \item{use_rast_ext}{Use extent from input raster object}
 
-\item{image_transformations}{vector of sequential image transformations - under construction}
+\item{image_transformations}{vector of sequential image
+transformations - under construction}
 
 \item{flip_vertical}{flip raster in a vertical manner}
 
@@ -41,7 +44,8 @@ createGiottoLargeImage(
 \item{xmax_bound, xmin_bound, ymax_bound, ymin_bound}{assign min and max x and y
 values for image spatial placement}
 
-\item{scale_factor}{scaling of image dimensions relative to spatial coordinates}
+\item{scale_factor}{scaling of image dimensions relative to spatial
+coordinates}
 
 \item{verbose}{be verbose}
 }
@@ -49,5 +53,13 @@ values for image spatial placement}
 a giottoLargeImage object
 }
 \description{
-Creates a large giotto image that can be added to a Giotto subcellular object. Generates deep copy of SpatRaster
+Creates a large giotto image that can be added to a Giotto
+subcellular object. Generates deep copy of SpatRaster
+}
+\examples{
+image_test <- system.file("extdata/toy_intensity.tif",
+    package = "GiottoClass"
+)
+
+createGiottoLargeImage(raster_object = image_test)
 }

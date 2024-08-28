@@ -2,7 +2,7 @@
 % Please edit documentation in R/instructions.R
 \name{changeGiottoInstructions}
 \alias{changeGiottoInstructions}
-\title{Change giotto instruction(s) associated with giotto object}
+\title{deprecated}
 \usage{
 changeGiottoInstructions(
   gobject,
@@ -31,3 +31,12 @@ Function to change one or more instructions from giotto object.
 If more than one item is supplied to \code{params} and \code{new_values}, use
 a vector of values. Does not call \code{initialize} on the giotto object
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+changeGiottoInstructions(
+    gobject = g, params = "save_plot",
+    new_values = TRUE
+)
+}
+\keyword{internal}

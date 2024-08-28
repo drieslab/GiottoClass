@@ -10,8 +10,11 @@ createMetafeats(
   feat_type = NULL,
   expression_values = c("normalized", "scaled", "custom"),
   feat_clusters,
-  name = "metafeat",
-  return_gobject = TRUE
+  stat = c("mean", "sum", "max", "min"),
+  rescale_to = NULL,
+  name = paste0("metafeat_", ifelse(is.function(stat), "custom", stat)),
+  return_gobject = TRUE,
+  verbose = NULL
 )
 }
 \arguments{
@@ -25,54 +28,136 @@ createMetafeats(
 
 \item{feat_clusters}{numerical vector with features as names}
 
+\item{stat}{statistical transformation to calculate across the cluster
+features per cell to get the metafeature value. Provided defaults are
+"mean", 'sum', "max", and "min". If a function  is supplied instead,
+it will be run via \code{apply(MARGIN = 2)} across the expression matrix to
+calculate  the metafeature value.}
+
+\item{rescale_to}{numeric vector of length 2. (optional) New maximum and
+minimum to rescale all features to before calculating the metafeature score
+using \code{stat}. Values are first zeroed by setting the minimum value to 0,
+then they are rescaled. In cases where all values are the same across a
+feature, the rescale produces the middle point of the range specified by
+\code{rescale_to}}
+
 \item{name}{name of the metagene results}
 
 \item{return_gobject}{return giotto object}
+
+\item{verbose}{be verbose}
 }
 \value{
 giotto object
 }
 \description{
-This function creates an average metafeat/metagene/module for clusters.
+This function creates an average metafeat/metagene/module
+for clusters.
 }
 \details{
 An example for the 'gene_clusters' could be like this:
-cluster_vector = c(1, 1, 2, 2); names(cluster_vector) = c('geneA', 'geneB', 'geneC', 'geneD')
+cluster_vector = c(1, 1, 2, 2)
+names(cluster_vector) = c('geneA', 'geneB', 'geneC', 'geneD')
 }
 \examples{
-\dontrun{
 # load a dataset
 g <- GiottoData::loadGiottoMini("viz")
 # set a spat unit to use
 activeSpatUnit(g) <- "aggregate"
 
-# create the metafeats
-# We do this by making an annotation vector which is a numerical vector
-# of cluster assignments where each number is named by the feature it describes.
-#
-# Here we create an example annotation vector by arbitrarily using the first 6
-# features and putting 3 in cluster 1 and the other 3 in cluster 2.
-feats_to_use <- featIDs(g)[1:6]
-clust_to_use <- c(1, 1, 1, 2, 2, 2)
-names(clust_to_use) <- feats_to_use
+# define the metafeats
+# We do this by making a set of annotations. These annotations can be
+# made as either a vector or data.frame
 
-# show
-clust_to_use
+# 1.1 annotation vector (numeric)
+feats_to_use <- featIDs(g)[seq_len(6)]
+clust_to_use1 <- c(1, 1, 1, 2, 2, 2)
+names(clust_to_use1) <- feats_to_use
+force(clust_to_use1)
 
 g <- createMetafeats(
     gobject = g,
-    feat_clusters = clust_to_use,
-    name = "new_metagene"
+    feat_clusters = clust_to_use1,
+    name = "metagene_1"
 )
 
-GiottoVisuals::spatCellPlot(
+# 1.2 annotation vector (character)
+clust_to_use2 <- c(rep("sig_a", 3), rep("sig_b", 3))
+names(clust_to_use2) <- feats_to_use
+force(clust_to_use2)
+
+g <- createMetafeats(
     gobject = g,
-    spat_enr_names = "new_metagene",
-    cell_annotation_values = c("1", "2"),
-    point_size = 3.5,
-    cow_n_col = 2
+    feat_clusters = clust_to_use2,
+    name = "metagene_2"
 )
+
+# 2.1 annotation data.frame (no weights)
+# Cols must be:
+# `clus` - which metafeature
+# `feat` - features to assign to this metafeature
+# `w` - (optional) weight to assign the feature before metafeature score
+#       calculation
+clust_to_use3 <- data.frame(
+    clus = c(rep("sig_a", 3), rep("sig_b", 3)),
+    feat = feats_to_use
+)
+force(clust_to_use3)
+g <- createMetafeats(
+    gobject = g,
+    feat_clusters = clust_to_use3,
+    name = "metagene_3"
+)
+
+# 2.1 annotation data.frame (weights)
+clust_to_use4 <- data.frame(
+    clus = c(rep("sig_a", 3), rep("sig_b", 3)),
+    feat = feats_to_use,
+    w = c(1, 1, 1, 2, 3, 4)
+)
+force(clust_to_use4)
+g <- createMetafeats(
+    gobject = g,
+    feat_clusters = clust_to_use4,
+    name = "weighted_metagene"
+)
+
+# 3. Other statistic transforms can be calculated
+# The default and what has been used so far is just finding the mean
+g <- createMetafeats(
+    gobject = g,
+    feat_clusters = clust_to_use4,
+    stat = "sum",
+    expression_values = "raw", # find summed raw expr for these feats
+    name = "raw_sums"
+)
+
+# 4. A custom stat function can also be supplied
+# These custom functions must be summary functions, as in, they must
+# produce only a single numeric output from many
+custom_stat <- function(x) {
+    if (max(x) == 0) return(0)
+    return(mean(x/max(x)))
 }
+g <- createMetafeats(
+    gobject = g,
+    feat_clusters = clust_to_use4,
+    stat = custom_stat,
+    expression_values = "raw",
+    name = "raw_custom"
+)
+
+# 5. A rescale of the values to a specified numeric range can be applied
+# before the stat score calculation.
+g <- createMetafeats(
+    gobject = g,
+    feat_clusters = clust_to_use4,
+    stat = "mean",
+    expression_values = "normalized",
+    rescale_to = c(0, 1),
+    name = "norm_scaled_mean_metafeat"
+)
+showGiottoSpatEnrichments(g)
 }
 \seealso{
 \code{\link[GiottoVisuals:spatCellPlot]{GiottoVisuals::spatCellPlot()}}

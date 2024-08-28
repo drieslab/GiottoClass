@@ -15,6 +15,9 @@ attributes paired with created terra spatVector}
 \item{specific_values}{specific values to include as attributes if
 include_values == TRUE}
 }
+\value{
+spatVector for points
+}
 \description{
 data.table to spatVector for points
 }

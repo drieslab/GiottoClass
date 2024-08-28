@@ -20,7 +20,7 @@ createNetwork(
 \item{x}{matrix. Data to treat as nodes. Examples include expression
 information, PCA matrix, spatial locations xy(z) coordinates.}
 
-\item{type}{type of network to create. Currently: "sNN", "kNN", or "delaunay".}
+\item{type}{type of network to create. Currently: "sNN", "kNN", or "delaunay"}
 
 \item{method}{method used to create the type of network requested.
 One of "dbscan" for sNN and kNN or "geometry", "RTriangle", or "deldir"
@@ -45,18 +45,19 @@ Either \code{igraph} if \code{as.igraph = TRUE} and \code{data.table} otherwise.
 }
 \description{
 Create networks from node values. This is a hub function for
-many different methods of finding nearest neighbors. See details for additional
-params important for generating specific types of networks.
+many different methods of finding nearest neighbors. See details for
+additional params important for generating specific types of networks.
 }
 \details{
 Additional params are described below. Items in parenthesis refer to which
 network types and/or methods the params are specific to.
 \itemize{
-\item [\strong{\code{k}}] numeric. (\emph{sNN, kNN}) number of neighbors to find. Default is 30
+\item [\strong{\code{k}}] numeric. (\emph{sNN, kNN}) number of neighbors to find. Default is
+30
 \item [\strong{\code{minimum_shared}}] numeric. (\emph{sNN}) minimum shared neighbors allowed
 per edge
-\item [\strong{\code{top_shared}}] numeric. (\emph{sNN}) keep at least this many edges per node,
-where kept edges are top ranked in terms of number of shared neighbors.
+\item [\strong{\code{top_shared}}] numeric. (\emph{sNN}) keep at least this many edges per
+node, where kept edges are top ranked in terms of number of shared neighbors.
 \item [\strong{\code{filter}}] logical. (\emph{kNN}) whether to filter for only unique
 edges and apply \code{minimum_k} and \code{maximum_distance} filters. Should be set
 \code{TRUE} when generating a spatial kNN network. Default is \code{FALSE.}
@@ -79,7 +80,6 @@ networks
 }
 }
 \examples{
-\dontrun{
 pca <- GiottoData::loadSubObjectMini("dimObj")[]
 sl <- GiottoData::loadSubObjectMini("spatLocsObj")[]
 
@@ -132,7 +132,7 @@ kNN_spat <- createNetwork(
 
 # kNN NN network
 kNN <- createNetwork(
-    pca[, 1:10],
+    pca[, seq_len(10)],
     type = "kNN",
     method = "dbscan",
     node_ids = rownames(pca),
@@ -141,7 +141,7 @@ kNN <- createNetwork(
 
 # sNN NN network
 sNN <- createNetwork(
-    pca[, 1:10],
+    pca[, seq_len(10)],
     type = "sNN",
     method = "dbscan",
     node_ids = rownames(pca),
@@ -149,6 +149,5 @@ sNN <- createNetwork(
 )
 
 # using defaults for sNN with index IDs to create igraph
-sNN_idx <- createNetwork(pca[, 1:10])
-}
+sNN_idx <- createNetwork(pca[, seq_len(10)])
 }

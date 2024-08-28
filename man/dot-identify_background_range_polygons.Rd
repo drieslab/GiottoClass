@@ -4,9 +4,25 @@
 \alias{.identify_background_range_polygons}
 \title{Identify background range polygons}
 \usage{
-.identify_background_range_polygons(spatVector)
+.identify_background_range_polygons(spatVector, threshold = 0.9)
+}
+\arguments{
+\item{spatVector}{terra polygon spatvector}
+
+\item{threshold}{if a polygon's x AND y range exceeds this fraction of the
+overall \code{SpatVector} extent, it will be flagged for removal.}
+}
+\value{
+A character vector of polygon IDs of variable length (but usually
+only either length 0 i.e. no background poly to remove, or 1, being the
+background poly to remove) if used with a correct threshold.
 }
 \description{
-function to remove background polygon based on largest range
+function to remove background polygon by comparing individual
+polygon vertex xy ranges against the overall \code{SpatVector} extent. Each
+\code{SpatVector} that this function is run on MUST contain only those polygons
+that were generated as part of the same FOV. This is because the individual
+polygons are compared against the overall extent which is assumed to be
+roughly that of the original mask image.
 }
 \keyword{internal}

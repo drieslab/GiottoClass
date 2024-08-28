@@ -41,9 +41,9 @@ Pass \code{NULL} to \code{feat_IDs} param in order to delete the entry. \cr
 Pass \code{'initialize'} to \code{feat_IDs} param in order to initialize the
 specified entry. \cr
 
-\strong{NOTE:} The main purpose of the setter is to initialize, as feat_ID values
-are AUTOMATICALLY updated every time \code{initialize()} is called on the
-giotto object.
+\strong{NOTE:} The main purpose of the setter is to initialize, as feat_ID
+values are AUTOMATICALLY updated every time \code{initialize()} is called on
+the giotto object.
 }
 \seealso{
 get_feat_id

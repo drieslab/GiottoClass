@@ -71,7 +71,8 @@
 \item{x}{Object with spatial annotations: \code{giottoPolygon}, or \code{SpatVector}
 polygons. Can also be a \code{giotto} object}
 
-\item{name_overlap}{name for the overlap results (default to feat_info parameter)}
+\item{name_overlap}{name for the overlap
+results (default to feat_info parameter)}
 
 \item{spatial_info}{character. Name polygon information}
 
@@ -91,11 +92,12 @@ to overlap}
 \item{y}{Object with features to overlap: \code{giottoPoints}, \code{giottoLargeImage},
 \code{SpatVector} points or \code{SpatRaster}}
 
-\item{feat_subset_column}{character. (optional) feature info attribute to subset
-feature points on when performing overlap calculation.}
+\item{feat_subset_column}{character. (optional) feature info attribute to
+subset feature points on when performing overlap calculation.}
 
-\item{feat_subset_ids}{(optional) values matched against in \code{feat_subset_column}
-in order to subset feature points when performing overlap calculation.}
+\item{feat_subset_ids}{(optional) values matched against
+in \code{feat_subset_column} in order to subset feature points when performing
+overlap calculation.}
 
 \item{count_info_column}{character. (optional) column with count information.
 Useful in cases when more than one detection is reported per point.}
@@ -108,12 +110,12 @@ as a bare terra \code{SpatVector}}
 Usually an object of the same class as \code{x}, with the overlaps
 information appended. \verb{return_*} logical params usually allow return of
 a lower-level representation of the results instead. Only the
-\verb{SpatVector,SpatRaster} method is different in that it returns a \code{data.table}.
+\verb{SpatVector,SpatRaster} method is different in that it returns a \code{data.table}
 }
 \description{
-Calculate subcellular points/feature info or image values overlapped by polygon
-annotations. This provides a summary of the spatial data overlapped by the
-polygon which can be further processed to become an expression matrix.
+Calculate subcellular points/feature info or image values overlapped by
+polygon annotations. This provides a summary of the spatial data overlapped
+by the polygon which can be further processed to become an expression matrix.
 }
 \details{
 \code{feat_subset_column}, \code{feat_subset_ids}, and \code{count_info_column} are
@@ -131,7 +133,7 @@ gpoly <- getPolygonInfo(g,
 gpoints <- getFeatureInfo(g, return_giottoPoints = TRUE)
 gimg <- getGiottoImage(g, image_type = "largeImage")
 
-gpoly@overlaps <- NULL
+slot(gpoly, "overlaps") <- NULL
 overlaps(gpoly) # Should now be NULL
 
 # detections from 2 z-layers are provided

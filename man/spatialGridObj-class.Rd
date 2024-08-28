@@ -4,14 +4,18 @@
 \name{spatialGridObj-class}
 \alias{spatialGridObj-class}
 \title{S4 spatialGridObj Class}
+\value{
+spatialGridObj
+}
 \description{
 Framework to store spatial grid
 }
 \details{
-This is an S4 object that defines a spatial grid. The structure of the grid is stored as a
-\code{data.table} within the \code{gridDT} slot and is defined by start and stop spatial
-locations along the spatial axes. The \code{data.table} also includes names for each cell
-of the grid and names for each of the spatial axis locations that make up the cell.
+This is an S4 object that defines a spatial grid. The structure of the grid
+is stored as a \code{data.table} within the \code{gridDT} slot and is
+defined by start and stop spatial locations along the spatial axes.
+The \code{data.table} also includes names for each cell of the grid and
+names for each of the spatial axis locations that make up the cell.
 Grids can be annotated with both spatial and feature information
 }
 \section{Slots}{
@@ -21,7 +25,8 @@ Grids can be annotated with both spatial and feature information
 
 \item{\code{method}}{method used to generate spatial grid}
 
-\item{\code{parameters}}{additional method-specific parameters used during spatial grid generation}
+\item{\code{parameters}}{additional method-specific parameters used during spatial
+grid generation}
 
 \item{\code{gridDT}}{data.table holding the spatial grid information}
 
@@ -34,3 +39,6 @@ Grids can be annotated with both spatial and feature information
 \item{\code{misc}}{misc}
 }}
 
+\examples{
+g <- GiottoData::loadSubObjectMini("spatialGridObj")
+}

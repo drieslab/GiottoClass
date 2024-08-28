@@ -14,11 +14,13 @@ loadGiotto(
 )
 }
 \arguments{
-\item{path_to_folder}{path to folder where Giotto object was stored with \code{\link{saveGiotto}}}
+\item{path_to_folder}{path to folder where Giotto object was stored
+with \code{\link{saveGiotto}}}
 
 \item{load_params}{additional parameters for loading or reading giotto object}
 
-\item{reconnect_giottoImage}{(default = TRUE) whether to attempt reconnection of magick based image objects}
+\item{reconnect_giottoImage}{(default = TRUE) whether to attempt
+reconnection of magick based image objects}
 
 \item{python_path}{(optional) manually set your python path}
 
@@ -40,4 +42,11 @@ Additional load_params need to be provided as a list and will
 go to \code{\link[base]{readRDS}} or \code{\link[qs]{qread}}
 You can set the python path, alternatively it will look for an existing
 Giotto python environment.
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+td <- tempdir()
+saveGiotto(gobject = g, dir = td)
+
+loadGiotto(path_to_folder = paste0(td, "/saveGiottoDir"))
 }

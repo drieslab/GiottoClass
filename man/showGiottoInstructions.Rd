@@ -2,7 +2,7 @@
 % Please edit documentation in R/instructions.R
 \name{showGiottoInstructions}
 \alias{showGiottoInstructions}
-\title{Show giotto instructions associated with giotto object}
+\title{deprecated}
 \usage{
 showGiottoInstructions(gobject)
 }
@@ -15,3 +15,9 @@ named vector with giotto instructions
 \description{
 Function to display all instructions from giotto object
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+showGiottoInstructions(g)
+}
+\keyword{internal}

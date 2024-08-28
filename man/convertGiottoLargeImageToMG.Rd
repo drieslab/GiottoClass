@@ -30,11 +30,13 @@ convertGiottoLargeImageToMG(
 \item{giottoLargeImage}{alternative input param using giottoLargeImage object
 instead of through \code{gobject} and \code{largeImage_name} params}
 
-\item{mg_name}{name to assign converted magick image based giottoImage. Defaults to name of giottoLargeImage}
+\item{mg_name}{name to assign converted magick image based giottoImage.
+Defaults to name of giottoLargeImage}
 
 \item{spat_unit}{spatial unit}
 
-\item{spat_loc_name}{gobject spatial location name to map giottoImage to (optional)}
+\item{spat_loc_name}{gobject spatial location name to map giottoImage
+to (optional)}
 
 \item{crop_extent}{extent object to focus on specific region of image}
 
@@ -59,5 +61,11 @@ a giotto object if \code{return_gobject = TRUE} or an updated giotto
 image object if \code{return_gobject = FALSE}
 }
 \description{
-convert a giottoLargeImage by downsampling into a normal magick based giottoImage
+convert a giottoLargeImage by downsampling into a normal
+magick based giottoImage
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+convertGiottoLargeImageToMG(g, largeImage_name = "image")
 }

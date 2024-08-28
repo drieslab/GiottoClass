@@ -7,6 +7,11 @@ NULL
 #' @description Access list of overlaps information from object
 #' @param x object
 #' @aliases overlaps
+#' @returns list of overlaps from object
+#' @examples
+#' g <- GiottoData::loadSubObjectMini("giottoPolygon")
+#'
+#' overlaps(g)
 NULL
 # ---------------------------------------------------------------- #
 

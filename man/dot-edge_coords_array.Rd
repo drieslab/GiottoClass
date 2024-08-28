@@ -14,6 +14,9 @@
 \item{x_node_ids}{if y is indexed by character in from and to cols, then the
 node IDs that apply to the coords in x must be supplied as a character vector}
 }
+\value{
+numeric
+}
 \description{
 Generate a \eqn{2} x \eqn{j} x \eqn{k} numerical array of edge start and end
 coordinates. Rows correspond  to start and end. Cols are for each variable

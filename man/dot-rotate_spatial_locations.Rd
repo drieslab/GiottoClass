@@ -14,19 +14,24 @@
 \arguments{
 \item{spatlocs}{spatial locations to use}
 
-\item{rotateradians}{Named vector of radians for rotation along each of the 3 coordinate
-axes. If only a single value is provided, it will be treated as xy rotation.}
+\item{rotateradians}{Named vector of radians for rotation along each of
+the 3 coordinate axes. If only a single value is provided, it will be
+treated as xy rotation.}
 
-\item{rcenter}{center of rotation given as vector xy(z) coordinates (defaults to coordinate center)}
+\item{rcenter}{center of rotation given as vector xy(z)
+coordinates (defaults to coordinate center)}
 
 \item{geom}{character. Named vector of colames of x, y, z coordinate columns.
 Default is \code{c("sdimx", "sdimy", "sdimz")}}
+}
+\value{
+spatial locations
 }
 \description{
 Rotate given spatlocs by given radians
 }
 \details{
-Radians are provided through \code{rotateradians} param as a named vector
-with values for \code{xy} (yaw), \code{zy} (pitch), \code{xz} (roll)
+Radians are provided through \code{rotateradians} param as a named
+vector with values for \code{xy} (yaw), \code{zy} (pitch), \code{xz} (roll)
 }
 \keyword{internal}

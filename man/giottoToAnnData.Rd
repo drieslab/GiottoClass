@@ -20,7 +20,8 @@ giottoToAnnData(
 
 \item{feat_type}{feature type which will be used in conversion.}
 
-\item{python_path}{path to python executable within a conda/miniconda environment}
+\item{python_path}{path to python executable within a conda/miniconda
+environment}
 
 \item{env_name}{name of environment containing python_path executable}
 
@@ -30,7 +31,8 @@ giottoToAnnData(
 vector containing .h5ad file path(s)
 }
 \description{
-Converts a Giotto object to a spatial anndata (e.g. scanpy) .h5ad file
+Converts a Giotto object to a spatial anndata (e.g. scanpy)
+.h5ad file
 }
 \details{
 Function in beta. Converts a Giotto object into .h5ad file(s).

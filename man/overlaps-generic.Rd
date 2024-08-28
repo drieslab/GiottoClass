@@ -13,6 +13,9 @@
 
 \item{name}{(optional) name of overlaps information to retrieve}
 }
+\value{
+list of overlaps from object
+}
 \description{
 Access list of overlaps information from object
 }
@@ -21,3 +24,8 @@ Access list of overlaps information from object
 \item \code{overlaps(giottoPolygon)}: Get overlaps information from giottoPolygon
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPolygon")
+
+overlaps(g)
+}

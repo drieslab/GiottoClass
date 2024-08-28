@@ -5,11 +5,13 @@
 \alias{plot}
 \alias{plot,giottoImage,missing-method}
 \alias{plot,giottoLargeImage,missing-method}
+\alias{plot,giottoAffineImage,missing-method}
 \alias{plot,giottoPolygon,missing-method}
 \alias{plot,giottoPoints,missing-method}
 \alias{plot,spatLocsObj,missing-method}
 \alias{plot,dimObj,missing-method}
 \alias{plot,spatialNetworkObj,missing-method}
+\alias{plot,affine2d,missing-method}
 \title{Preview a Giotto spatial object}
 \usage{
 \S4method{plot}{giottoImage,missing}(x, y, ...)
@@ -28,11 +30,13 @@
   ...
 )
 
+\S4method{plot}{giottoAffineImage,missing}(x, y, ...)
+
 \S4method{plot}{giottoPolygon,missing}(
   x,
   point_size = 0.6,
   type = c("poly", "centroid"),
-  max_poly = getOption("giotto.plot_max_poly", 10000),
+  max_poly = getOption("giotto.plot_max_poly", 1e+06),
   ...
 )
 
@@ -43,6 +47,8 @@
 \S4method{plot}{dimObj,missing}(x, dims = c(1, 2), ...)
 
 \S4method{plot}{spatialNetworkObj,missing}(x, y, ...)
+
+\S4method{plot}{affine2d,missing}(x, y, ...)
 }
 \arguments{
 \item{x}{giotto image, giottoPolygon, or giottoPoints object}
@@ -75,17 +81,47 @@
 polygons to plot before automatically switching to centroids plotting.
 Default is 1e4. This value is settable using options("giotto.plot_max_poly")}
 
-\item{feats}{specific features to plot within giottoPoints object (defaults to NULL, meaning all available features)}
+\item{feats}{specific features to plot within giottoPoints object
+(defaults to NULL, meaning all available features)}
 
 \item{raster}{default = TRUE, whether to plot points as rasterized plot with
-size based on \code{size} param}
+size based on \code{raster_size} param. See details. When \code{FALSE}, plots via
+\code{\link[terra:plot]{terra::plot()}}}
 
 \item{raster_size}{Default is 600. Only used when \code{raster} is TRUE}
 
 \item{dims}{dimensions to plot}
 }
+\value{
+plot
+}
 \description{
-S4 generic for previewing Giotto's image and subcellular objects.
+S4 generic for previewing Giotto's image and subcellular
+objects.
+}
+\details{
+\emph{[giottoPoints raster plotting]}
+Fast plotting of points information by rasterizing the information using
+\code{\link[terra:rasterize]{terra::rasterize()}}. For \pkg{terra} \code{SpatVectors}, this is faster than
+\pkg{scattermore} plotting. When plotting as a raster, \code{col} colors map on
+whole image level, as opposed to mapping to individual points, as it does
+when \code{raster = FALSE}
+Allows the following additional params when
+plotting with no specific \code{feats} input:
+\itemize{
+\item \strong{force_size} logical. \code{raster_size} param caps at 1:1 with the
+spatial extent, but also with a minimum resulting px dim of 100. To ignore
+these constraints, set \code{force_size = FALSE}
+\item \strong{dens} logical. Show point density using \code{count} statistic per
+rasterized cell. (Default = FALSE). This param affects \code{col} param is
+defaults. When TRUE, \code{col} is \code{grDevices::hcl.colors(256)}. When \code{FALSE},
+"black" and "white" are used.
+\item \strong{background} (optional) background color. Usually not used when a
+\code{col} color mapping is sufficient.
+}
+
+Note that \code{col} param and other \code{\link[base:plot]{base::plot()}} graphical params are available
+through \code{...}
 }
 \section{Functions}{
 \itemize{
@@ -103,5 +139,62 @@ S4 generic for previewing Giotto's image and subcellular objects.
 
 \item \code{plot(x = spatialNetworkObj, y = missing)}: Plot a spatialNetworkObj
 
+\item \code{plot(x = affine2d, y = missing)}: Plot a affine2d. blue is start, red is end
+
 }}
+\examples{
+######### giottoLargeImage plotting #########
+\dontrun{
+gimg <- GiottoData::loadSubObjectMini("giottoLargeImage")
+gimg <- GiottoClass:::.update_giotto_image(gimg) # only needed if out of date
+plot(gimg)
+plot(gimg, col = grDevices::hcl.colors(256))
+plot(gimg, max_intensity = 100)
+}
+
+######### giottoPolygon plotting #########
+gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
+plot(gpoly)
+plot(gpoly, type = "centroid")
+
+######### giottoPoints plotting #########
+gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
+
+# ----- rasterized plotting ----- #
+# plot points binary
+plot(gpoints)
+# plotting all features maps colors on an image level
+plot(gpoints, col = grDevices::hcl.colors(n = 256)) # only 2 colors are used
+plot(gpoints, col = "green", background = "purple")
+
+# plot points density (by count)
+plot(gpoints, dens = TRUE, raster_size = 300)
+
+# force_size = TRUE to ignore default constraints on too big or too small
+# (see details)
+plot(gpoints, dens = TRUE, raster_size = 80, force_size = TRUE)
+
+# plot specific feature(s)
+plot(gpoints, feats = featIDs(gpoints)[seq_len(4)])
+
+# ----- vector plotting ----- #
+# non-rasterized plotting (slower, but higher quality)
+plot(gpoints, raster = FALSE)
+
+# vector plotting maps colors to transcripts
+plot(gpoints, raster = FALSE, col = grDevices::rainbow(nrow(gpoints)))
+
+# plot specific feature(s)
+plot(gpoints, feats = featIDs(gpoints)[seq_len(4)], raster = FALSE)
+
+######### spatLocsObj plotting #########
+sl <- GiottoData::loadSubObjectMini("spatLocsObj")
+plot(sl)
+
+######### dimObj plotting #########
+d <- GiottoData::loadSubObjectMini("dimObj")
+plot(d)
+plot(d, dims = c(3, 5))
+
+}
 \concept{plot}

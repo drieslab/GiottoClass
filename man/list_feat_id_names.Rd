@@ -16,3 +16,8 @@ vector with names of available sets of feat_IDs
 lists the available feat id names In effect, these names are the
 feat_types and feature info in the gobject
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+list_feat_id_names(g)
+}

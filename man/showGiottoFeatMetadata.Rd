@@ -17,6 +17,11 @@ prints the name and small subset of available metadata
 \description{
 shows the available feature metadata
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+showGiottoFeatMetadata(g)
+}
 \seealso{
 Other functions to show data in giotto object: 
 \code{\link{showGiottoCellMetadata}()},

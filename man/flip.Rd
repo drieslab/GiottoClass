@@ -9,6 +9,8 @@
 \alias{flip,spatialNetworkObj-method}
 \alias{flip,giottoLargeImage-method}
 \alias{flip,SpatExtent-method}
+\alias{flip,giottoAffineImage-method}
+\alias{flip,affine2d-method}
 \title{Flip an object}
 \usage{
 \S4method{flip}{giotto}(
@@ -29,14 +31,21 @@
 
 \S4method{flip}{spatialNetworkObj}(x, direction = "vertical", x0 = 0, y0 = 0, ...)
 
-\S4method{flip}{giottoLargeImage}(x, direction = "vertical", x0 = 0, y0 = 0, ...)
+\S4method{flip}{giottoLargeImage}(x, direction = "vertical", x0 = 0, y0 = 0)
 
 \S4method{flip}{SpatExtent}(x, direction = "vertical", x0 = 0, y0 = 0)
+
+\S4method{flip}{giottoLargeImage}(x, direction = "vertical", x0 = 0, y0 = 0)
+
+\S4method{flip}{giottoAffineImage}(x, direction = "vertical", x0 = 0, y0 = 0)
+
+\S4method{flip}{affine2d}(x, direction = "vertical", x0 = 0, y0 = 0)
 }
 \arguments{
 \item{x}{object}
 
-\item{direction}{character. Direction to flip. Should be either partial match to 'vertical' or 'horizontal'}
+\item{direction}{character. Direction to flip. Should be either partial
+match to 'vertical' or 'horizontal'}
 
 \item{x0}{x value to flip horizontally over (ignored for vertical). Pass NULL
 to flip over the extent}
@@ -50,22 +59,15 @@ to flip over the extent}
 
 \item{...}{additional args to pass}
 }
+\value{
+flipped object
+}
 \description{
 Flip an object over a designated x or y value depending on
 direction param input. Note that this behavior may be different from terra's
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{flip(giottoPolygon)}: Flip a giottoPolygon object
+\examples{
+g <- GiottoData::loadSubObjectMini("spatLocsObj")
 
-\item \code{flip(giottoPoints)}: Flip a giottoPoints object
-
-\item \code{flip(spatLocsObj)}: Flip a spatLocsObj
-
-\item \code{flip(spatialNetworkObj)}: Flip a spatialNetworkObj
-
-\item \code{flip(giottoLargeImage)}: Flip a giottoLargeImage
-
-\item \code{flip(SpatExtent)}: Flip a SpatExtent
-
-}}
+flip(g)
+}

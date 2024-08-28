@@ -24,22 +24,34 @@ writeGiottoLargeImage(
 
 \item{filename}{file name and path to write the image to}
 
-\item{dataType}{(optional) values for \code{dataType} are "INT1U", "INT2U", "INT2S",
-"INT4U", "INT4S", "FLT4S", "FLT8S". The first three letters indicate whether
-the dataType is integer (whole numbers) of a real number (decimal numbers),
-the fourth character indicates the number of bytes used (allowing for large
-numbers and/or more precision), and the "S" or "U" indicate whether the values
-are signed (both negative and positive) or unsigned (positive values only).}
+\item{dataType}{(optional) values for \code{dataType} are "INT1U", "INT2U",
+"INT2S", "INT4U", "INT4S", "FLT4S", "FLT8S". The first three letters
+indicate whether the dataType is integer (whole numbers) of a real
+number (decimal numbers), the fourth character indicates the number of
+bytes used (allowing for large numbers and/or more precision), and the
+"S" or "U" indicate whether the values are
+signed (both negative and positive) or unsigned (positive values only).}
 
-\item{max_intensity}{(optional) image max intensity value from which \code{dataType}
-can be automatically determined}
+\item{max_intensity}{(optional) image max intensity value from
+which \code{dataType} can be automatically determined}
 
 \item{overwrite}{Overwrite if \code{filename} is already existing}
 
 \item{verbose}{be verbose}
 }
+\value{
+image local file
+}
 \description{
-Write full resolution image to file. Filetype extension should be
-included in \code{filename} argument. Be careful if write time and disk space
-needed if image is very large.
+Write full resolution image to file. Filetype extension should
+be included in \code{filename} argument. Be careful if write time and disk
+space needed if image is very large.
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+writeGiottoLargeImage(
+    gobject = g, largeImage_name = "image",
+    filename = paste0("tempfile()", ".png")
+)
 }

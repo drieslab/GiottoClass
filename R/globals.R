@@ -4,7 +4,9 @@ utils::globalVariables(
         "python_leiden", "python_louvain", "python_spatial_genes",
         "Spatial_DE_AEH", "Spatial_DE", "silhouette_rank",
         "python_scrublet", "python_create_mesmer_app",
-        "python_segment_image", "ad_guard", "dir_guard", "ad_obj",
+        "python_segment_image", 
+        # anndata interop
+        "ad_guard", "dir_guard", "ad_obj",
         "lay_inv", "set_adg_layer_data", "set_adg_spat_locs",
         "set_adg_metadata", "set_adg_pca", "set_adg_umap",
         "set_adg_tsne", "write_ad_h5ad", "read_anndata_from_path",
@@ -15,6 +17,11 @@ utils::globalVariables(
         "extract_layered_data", "set_adg_nn", "find_NN_keys",
         "extract_NN_connectivities", "extract_NN_distances",
         "extract_NN_info", "align_network_data", "extract_SN_connectivities",
-        "extract_SN_distances", "set_adg_sn", "create_AnnData"
+        "extract_SN_distances", "set_adg_sn", "create_AnnData", 
+        # tifffile
+        "ometif_2_tif",
+        # spatialdata interop
+        "createSpatialData", "read_spatialdata_from_path", "extract_spatial",
+        "extract_image"
     )
 )

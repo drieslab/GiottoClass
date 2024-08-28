@@ -9,6 +9,14 @@ updateGiottoPointsObject(gpoints)
 \arguments{
 \item{gpoints}{giotto points object}
 }
+\value{
+GiottoPointsObject
+}
 \description{
 Update giotto points object
+}
+\examples{
+g <- GiottoData::loadSubObjectMini("giottoPoints")
+
+updateGiottoPointsObject(g)
 }

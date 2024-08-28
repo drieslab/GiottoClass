@@ -10,8 +10,14 @@
     "python-louvain", "python.app", "scikit-learn"),
   python_version = "3.10.2",
   mini_install_path = NULL,
-  verbose = TRUE
+  confirm = TRUE,
+  envname = "giotto_env",
+  conda = "auto",
+  verbose = NULL
 )
+}
+\value{
+character or NULL
 }
 \description{
 installation options of giotto environment

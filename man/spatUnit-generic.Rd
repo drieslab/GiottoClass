@@ -26,6 +26,9 @@
 
 \item{value}{value to set as spatial unit}
 }
+\value{
+spat_unit
+}
 \description{
 access and set spat_unit slot of S4 subobject
 }
@@ -40,3 +43,8 @@ access and set spat_unit slot of S4 subobject
 \item \code{spatUnit(giottoPolygon) <- value}: Set giottoPolygon spat_unit
 
 }}
+\examples{
+g <- GiottoData::loadSubObjectMini("featMetaObj")
+
+spatUnit(g)
+}

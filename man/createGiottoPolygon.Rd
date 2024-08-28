@@ -90,10 +90,11 @@ a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.}
 
 \item{verbose}{be verbose}
 
-\item{mask_method}{how the mask file defines individual segmentation annotations.
-See \emph{mask_method} section}
+\item{mask_method}{how the mask file defines individual segmentation
+annotations. See \emph{mask_method} section}
 
-\item{remove_background_polygon}{try to remove background polygon (default: FALSE)}
+\item{remove_background_polygon}{try to remove background
+polygon (default: FALSE)}
 
 \item{background_algo}{algorithm to remove background polygon}
 
@@ -122,14 +123,15 @@ whether a copy is made}
 
 \item{maskfile}{path to mask file}
 
-\item{segmdfr}{data.frame-like object with polygon coordinate information (x, y, poly_ID)
-with x and y being vertex information for the polygon referenced by poly_ID. See details
-for how columns are selected for coordinate and ID information.}
+\item{segmdfr}{data.frame-like object with polygon coordinate
+information (x, y, poly_ID) with x and y being vertex information for the
+polygon referenced by poly_ID. See details for how columns are selected for
+coordinate and ID information.}
 
 \item{GeoJSON}{path to .GeoJSON file}
 }
 \value{
-a giotto polygon object
+giottoPolygon
 }
 \description{
 Create a \code{giottoPolygon} object that is used to represent
@@ -143,12 +145,13 @@ methods based on what kind of data the file was.
 }
 \details{
 When determining which column within tabular data is intended to
-provide polygon information, Giotto first checks the column names for 'x', 'y',
-and 'poly_ID'. If any of these are discovered, they are directly selected. If
-this is not discovered then Giotto checks the data type of the columns and selects
-the first \code{'character'} type column to be 'poly_ID' and the first two \code{'numeric'}
-columns as 'x' and 'y' respectively. If this is also unsuccessful then poly_ID
-defaults to the 3rd column. 'x' and 'y' then default to the 1st and 2nd columns.
+provide polygon information, Giotto first checks the column names for 'x',
+'y', and 'poly_ID'. If any of these are discovered, they are directly
+selected. If this is not discovered then Giotto checks the data type of the
+columns and selects the first \code{'character'} type column to be 'poly_ID' and
+the first two \code{'numeric'} columns as 'x' and 'y' respectively. If this is
+also unsuccessful then poly_ID defaults to the 3rd column. 'x' and 'y' then
+default to the 1st and 2nd columns.
 }
 \section{mask_method}{
 
@@ -180,7 +183,6 @@ a \code{sprintf()} \code{fmt} param input instead. (ie: \code{ID_fmt = "cell_\%0
 }
 
 \examples{
-# \%\%\%\%\%\%\%\%\% `createGiottoPolygon()` examples \%\%\%\%\%\%\%\%\% #
 # ------- create from a mask image ------- #
 m <- system.file("extdata/toy_mask_multi.tif", package = "GiottoClass")
 plot(terra::rast(m), col = grDevices::hcl.colors(7))
@@ -212,7 +214,6 @@ out <- createGiottoPolygon(needed_cols_dt,
 )
 plot(out)
 
-# \%\%\%\%\%\%\%\%\% `createGiottoPolygonsFromMask()` examples \%\%\%\%\%\%\%\%\% #
 mask_multi <- system.file("extdata/toy_mask_multi.tif",
     package = "GiottoClass"
 )

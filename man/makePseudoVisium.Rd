@@ -7,21 +7,25 @@
 makePseudoVisium(extent = NULL, micron_size = 1, name = "pseudo_visium")
 }
 \arguments{
-\item{extent}{SpatExtent or anything else a SpatExtent can be extracted or created from}
+\item{extent}{SpatExtent or anything else a SpatExtent can be extracted or
+created from}
 
 \item{micron_size}{size of a micrometer relative to spatial coordinates}
 
-\item{name}{character. (default is 'pseudo_visium') Name of giottoPolygon object to create}
+\item{name}{character. (default is 'pseudo_visium') Name of giottoPolygon
+object to create}
 }
 \value{
 A giottoPolygon for the pseudo-visium spots.
 }
 \description{
-Generates a pseudo-visium grid of spots across a provided spatial extent
+Generates a pseudo-visium grid of spots across a provided
+spatial extent
 }
 \details{
-This function generates a pseudo-Visium grid of spots based on the input spatial locations.
-The micron_size param is used to determine the size of the spots
+This function generates a pseudo-Visium grid of spots based on the
+input spatial locations. The micron_size param is used to determine the size
+of the spots
 }
 \examples{
 e <- ext(0, 2000, 0, 2000)

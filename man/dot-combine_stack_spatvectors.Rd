@@ -11,7 +11,11 @@
   for_loop_group_size = 100
 )
 }
+\value{
+SpatRaster
+}
 \description{
-combines/aggregates polygons with the same cell ID from different z-stacks
+combines/aggregates polygons with the same cell ID from
+different z-stacks
 }
 \keyword{internal}

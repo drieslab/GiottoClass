@@ -35,8 +35,8 @@ subset}
 
 \item{spat_loc_name}{name of spatial locations to use within spat_unit}
 
-\item{x_max, x_min, y_max, y_min, z_max, z_min}{minimum and maximum x, y, and z coordinates
-to subset to}
+\item{x_max, x_min, y_max, y_min, z_max, z_min}{minimum and maximum x, y, and z
+coordinates to subset to}
 
 \item{poly_info}{character. polygon information to subset (considered
 separately from the spat_units to subset)}
@@ -55,11 +55,16 @@ Subsets Giotto object spatially by defining a set of
 cropping bounds. The information to be subset is preferred to be from spatial
 locations. If no \code{spat_loc_name} is given, the first available set of
 spatial locations for the \code{spat_unit} will be picked.
-If no spatial locations are available, the polygon information will be subset.
-Spatial IDs surviving the crop are then applied to the rest of the Giotto object
-using \link{subsetGiotto}.
+If no spatial locations are available, the polygon information will be
+subset. Spatial IDs surviving the crop are then applied to the rest of the
+Giotto object using \link{subsetGiotto}.
 }
 \details{
 If \code{return_gobject = FALSE}, then a filtered combined metadata
 data.table will be returned
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+subsetGiottoLocs(g, x_max = 4000, y_max = -1000)
 }

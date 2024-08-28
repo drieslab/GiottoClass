@@ -21,6 +21,9 @@ see details.}
 \item{env_to_use}{name of the environment into which the python
 package should be installed.}
 }
+\value{
+character or NULL
+}
 \description{
 checks python environment for a
 provided package, installs if it is not found.
@@ -31,4 +34,4 @@ Parameter \code{github_package_url} takes precedent over
 URL will be installed. This function should only be provided
 one parameter, or the other.
 }
-\keyword{export}
+\keyword{internal}

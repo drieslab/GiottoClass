@@ -45,6 +45,11 @@ Saves a Giotto object to a specific folder structure
 }
 \details{
 Works together with \code{\link{loadGiotto}} to save and re-load
-Giotto objects. Additional method_params need to be provided as a list and will
-go to \code{\link[base]{saveRDS}} or \code{\link[qs]{qsave}}
+Giotto objects. Additional method_params need to be provided as a list
+and will go to \code{\link[base]{saveRDS}} or \code{\link[qs]{qsave}}
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+saveGiotto(gobject = g, dir = tempdir(), overwrite = TRUE)
 }

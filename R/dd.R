@@ -6,10 +6,12 @@
 # ------------------------------------------------------------------------- #
 
 # No @title to prevent .Rd generation
-# No @noRd tags can be used on these dummy documentations, otherwise @inheritParams
+# No @noRd tags can be used on these dummy documentations, otherwise
+# @inheritParams
 # cannot be used
 
-# Note that these dummy documentations WILL be flagged with warnings when building
+# Note that these dummy documentations WILL be flagged with warnings when
+# building
 # the documentation, but this should be fine.
 
 
@@ -36,6 +38,7 @@
 #' @param initialize (default = FALSE) whether to initialize the gobject before
 #' returning
 #' @keywords internal
+#' @returns data.table
 NULL
 
 
@@ -50,5 +53,6 @@ NULL
 #' @param default_feat_type (optional) default feat_type to use
 #' @param provenance (optional) provenance information
 #' @param verbose be verbose
+#' @returns data params
 #' @keywords internal
 NULL

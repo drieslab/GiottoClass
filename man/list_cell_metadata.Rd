@@ -26,3 +26,8 @@ names and locations of available cell metadata as data.table
 \description{
 lists the available cell metadata.
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+list_cell_metadata(g)
+}

@@ -15,4 +15,10 @@ kNN object
 \description{
 Convert a nearest network data.table to a kNN object
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g_nn <- getNearestNetwork(g, output = "data.table", name = "custom_NN")
+
+nnDT_to_kNN(g_nn)
+}
 \keyword{internal}

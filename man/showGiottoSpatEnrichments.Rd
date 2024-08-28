@@ -17,6 +17,11 @@ prints the name and small subset of available data.table
 \description{
 shows the available spatial enrichment results
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+showGiottoSpatEnrichments(g)
+}
 \seealso{
 Other functions to show data in giotto object: 
 \code{\link{showGiottoCellMetadata}()},

@@ -7,6 +7,9 @@
 \alias{spin,giottoPoints-method}
 \alias{spin,spatLocsObj-method}
 \alias{spin,data.frame-method}
+\alias{spin,giottoLargeImage-method}
+\alias{spin,giottoAffineImage-method}
+\alias{spin,affine2d-method}
 \title{Spin an object}
 \usage{
 \S4method{spin}{giotto}(x, angle, x0 = NULL, y0 = NULL, spat_unit = ":all:", feat_type = ":all:")
@@ -37,23 +40,32 @@
   xz_angle = NULL,
   geom = c("sdimx", "sdimy", "sdimz")
 )
+
+\S4method{spin}{giottoLargeImage}(x, angle = NULL, x0 = NULL, y0 = NULL, ...)
+
+\S4method{spin}{giottoAffineImage}(x, angle = NULL, x0 = NULL, y0 = NULL, ...)
+
+\S4method{spin}{affine2d}(x, angle = NULL, x0 = NULL, y0 = NULL)
 }
 \arguments{
 \item{x}{object}
 
 \item{angle}{numeric. Angle of rotation in degrees}
 
-\item{x0}{numeric. x-coordinate of the center of rotation. Defaults to center x val if not given.}
+\item{x0}{numeric. x-coordinate of the center of rotation. Defaults to
+center x val if not given.}
 
-\item{y0}{numeric. y-coordinate of the center of rotation. Defaults to center y val if not given.}
+\item{y0}{numeric. y-coordinate of the center of rotation. Defaults to
+center y val if not given.}
 
 \item{spat_unit}{character vector. spatial units to affect}
 
 \item{feat_type}{character vector. feature types to affect
 (giottoPoints only).}
 
-\item{z0}{spatLocsObj specific. Numeric. z-coordinate of the center of rotation.
-Depending on if z data is present, defaults to either 0 or center z val if not given.}
+\item{z0}{spatLocsObj specific. Numeric. z-coordinate of the center of
+rotation. Depending on if z data is present, defaults to either 0 or
+center z val if not given.}
 
 \item{xy_angle}{spatLocsObj specific. xy plane rotation in degrees.
 Overrides angle param}
@@ -62,9 +74,20 @@ Overrides angle param}
 
 \item{xz_angle}{spatLocsObj specific. xz plane rotation}
 
-\item{geom}{character. Named vector of colnames of x, y, (z) coordinate columns.
-Default is \code{c("sdimx", "sdimy", "sdimz")}}
+\item{geom}{character. Named vector of colnames of x, y, (z) coordinate
+columns. Default is \code{c("sdimx", "sdimy", "sdimz")}}
+
+\item{...}{additional params to pass}
+}
+\value{
+spun object
 }
 \description{
-Spin (rotate) an object spatially (limited to xy rotations)
+Spin (rotate) an object spatially (usually limited to xy
+rotations)
+}
+\examples{
+g <- GiottoData::loadSubObjectMini("spatLocsObj")
+
+spin(g)
 }

@@ -48,6 +48,12 @@ Create a spatial grid using the default method
 Creates a spatial grid with defined x, y (and z) dimensions.
 The dimension units are based on the provided spatial location units.
 \itemize{
-\item{default method: }{\code{\link{createSpatialDefaultGrid}}}
+\item \strong{default method:} \code{\link{createSpatialDefaultGrid}}
 }
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
+
 }

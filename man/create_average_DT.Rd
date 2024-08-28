@@ -24,9 +24,15 @@ create_average_DT(
 \item{expression_values}{which expression values to use}
 }
 \value{
-data.table with average gene epression values for each factor
+data.table with average gene expression values for each factor
 }
 \description{
-calculates average gene expression for a cell metadata factor (e.g. cluster)
+calculates average gene expression for a cell metadata
+factor (e.g. cluster)
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+create_average_DT(g, meta_data_name = "leiden_clus")
 }
 \keyword{internal}

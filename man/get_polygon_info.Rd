@@ -9,7 +9,8 @@ get_polygon_info(
   polygon_name = NULL,
   polygon_overlap = NULL,
   return_giottoPolygon = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  simplify = TRUE
 )
 }
 \arguments{
@@ -17,11 +18,19 @@ get_polygon_info(
 
 \item{polygon_name}{name of polygons. Default "cell"}
 
-\item{polygon_overlap}{include polygon overlap information}
+\item{polygon_overlap}{if not NULL, return specified polygon overlap
+information}
 
-\item{return_giottoPolygon}{(Defaults to FALSE) Return as giottoPolygon S4 object}
+\item{return_giottoPolygon}{(Defaults to FALSE) Return as giottoPolygon S4
+object}
 
 \item{verbose}{be verbose}
+
+\item{simplify}{logical. Whether or not to take object out of a list when
+there is a length of 1.}
+}
+\value{
+spatVector
 }
 \description{
 Get giotto polygon spatVector

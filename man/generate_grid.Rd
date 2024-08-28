@@ -18,6 +18,9 @@ created from}
 
 \item{id_prefix}{character. prefix to add to ID names generated}
 }
+\value{
+spatial grid
+}
 \description{
 Generate a spatial grid of spatial locations
 }

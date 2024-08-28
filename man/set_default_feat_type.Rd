@@ -13,8 +13,16 @@ set_default_feat_type(gobject, feat_type = NULL, spat_unit)
 
 \item{spat_unit}{spatial unit (e.g. "cell")}
 }
+\value{
+character
+}
 \description{
 Function to guess a default feature type. Also see \code{\link[=activeFeatType]{activeFeatType()}} in
 methods-instructions.R for a way to manually assign this default
+}
+\examples{
+g <- createGiottoObject()
+
+set_default_feat_type(gobject = g, spat_unit = "cell", feat_type = "rna")
 }
 \keyword{internal}

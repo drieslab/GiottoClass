@@ -14,8 +14,15 @@ list_spatial_networks(gobject, spat_unit = NULL, return_uniques = FALSE)
 \item{return_uniques}{return unique nesting names (ignores if final object exists/is correct class)}
 }
 \value{
-data.table of names and locations of available spatial networks, col order matters or list of unique nestings
+data.table of names and locations of available spatial networks,
+col order matters or list of unique nestings
 }
 \description{
-return the available spatial networks that are attached to the Giotto object
+return the available spatial networks that are attached to
+the Giotto object
+}
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+list_spatial_networks(g)
 }

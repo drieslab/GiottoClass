@@ -6,6 +6,9 @@
 \usage{
 .merge_spatial_locs_feat_info(spatial_info, feature_info)
 }
+\value{
+data.table
+}
 \description{
 merge spatial cell and feature location information
 }

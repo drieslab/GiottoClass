@@ -11,7 +11,15 @@ my_growMeans(x, offset = 0.1)
 
 \item{offset}{offset}
 }
+\value{
+numeric
+}
 \description{
 my_growMeans
+}
+\examples{
+m <- matrix(rnorm(100), nrow = 10)
+
+my_growMeans(abs(m))
 }
 \keyword{internal}

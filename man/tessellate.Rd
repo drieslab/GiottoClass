@@ -16,9 +16,11 @@ tessellate(
 )
 }
 \arguments{
-\item{extent}{SpatExtent or anything else a SpatExtent can be extracted or created from}
+\item{extent}{SpatExtent or anything else a SpatExtent can be extracted or
+created from}
 
-\item{shape}{Shape of the tessellation grid. Available options are "hexagon" and "square".}
+\item{shape}{Shape of the tessellation grid. Available options are "hexagon"
+and "square".}
 
 \item{shape_size}{numeric. Size of shape to tessellate. (x-axis width for
 hexagons, side length for squares)}
@@ -35,7 +37,8 @@ hexagons, side length for squares)}
 A giottoPolygon
 }
 \description{
-Generates a tessellated grid of polygons within the provided spatial extent
+Generates a tessellated grid of polygons within the provided
+spatial extent
 }
 \details{
 This function generates a tessellated grid of spatial locations

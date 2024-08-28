@@ -2,6 +2,7 @@
 % Please edit documentation in R/methods-setGiotto.R
 \name{setGiotto}
 \alias{setGiotto}
+\alias{setGiotto,giotto,list-method}
 \alias{setGiotto,giotto,cellMetaObj-method}
 \alias{setGiotto,giotto,featMetaObj-method}
 \alias{setGiotto,giotto,exprObj-method}
@@ -16,6 +17,8 @@
 \alias{setGiotto,giotto,giottoImage-method}
 \title{Set giotto subobjects into giotto object}
 \usage{
+\S4method{setGiotto}{giotto,list}(gobject, x, verbose = TRUE, ...)
+
 \S4method{setGiotto}{giotto,cellMetaObj}(gobject, x, ...)
 
 \S4method{setGiotto}{giotto,featMetaObj}(gobject, x, ...)
@@ -45,8 +48,19 @@
 
 \item{x}{giottoSubobject to set}
 
+\item{verbose}{be verbose}
+
 \item{\dots}{additional params to pass to specific Giotto setter functions}
+}
+\value{
+giottoSubobject
 }
 \description{
 Set giotto subobjects into giotto object
+}
+\examples{
+g <- createGiottoObject()
+g_expression <- GiottoData::loadSubObjectMini("exprObj")
+
+setGiotto(gobject = g, x = g_expression)
 }

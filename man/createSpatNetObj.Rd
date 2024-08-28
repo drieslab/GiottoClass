@@ -23,7 +23,8 @@ createSpatNetObj(
 
 \item{name}{name of spatialNetworkObj}
 
-\item{networkDT_before_filter}{(optional) unfiltered data.table  of network connections, distances, and weightings}
+\item{networkDT_before_filter}{(optional) unfiltered data.table  of
+network connections, distances, and weightings}
 
 \item{method}{method used to generate spatial network}
 
@@ -31,7 +32,8 @@ createSpatNetObj(
 
 \item{provenance}{(optional) origin of aggregated information (if applicable)}
 
-\item{parameters}{(optional) additional method-specific parameters used during spatial network generation}
+\item{parameters}{(optional) additional method-specific parameters used
+during spatial network generation}
 
 \item{outputObj}{(optional) network geometry object}
 
@@ -41,6 +43,14 @@ createSpatNetObj(
 
 \item{misc}{misc}
 }
+\value{
+spatialNetworkObj
+}
 \description{
 Create S4 spatialNetworkObj
+}
+\examples{
+x <- GiottoData::loadSubObjectMini("spatialNetworkObj")
+
+createSpatNetObj(network = slot(x, "networkDT"), name = "Delaunay_network")
 }

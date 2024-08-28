@@ -17,7 +17,8 @@ setMultiomics(
 \arguments{
 \item{gobject}{A Giotto object}
 
-\item{result}{A matrix or result from multiomics integration (e.g. theta weighted values from runWNN)}
+\item{result}{A matrix or result from multiomics
+integration (e.g. theta weighted values from runWNN)}
 
 \item{spat_unit}{spatial unit (e.g. 'cell')}
 
@@ -34,6 +35,14 @@ A giotto object
 }
 \description{
 Set a multiomics integration result in a Giotto object
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+setMultiomics(
+    gobject = g, result = matrix(rnorm(100), nrow = 10),
+    spat_unit = "cell", feat_type = "rna_protein"
+)
 }
 \seealso{
 Other multiomics accessor functions: 

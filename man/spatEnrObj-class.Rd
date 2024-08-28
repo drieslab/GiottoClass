@@ -4,6 +4,9 @@
 \name{spatEnrObj-class}
 \alias{spatEnrObj-class}
 \title{S4 spatEnrObj Class}
+\value{
+spatEnrObj
+}
 \description{
 Framework to store spatial enrichment results
 }
@@ -25,3 +28,6 @@ Framework to store spatial enrichment results
 \item{\code{misc}}{misc}
 }}
 
+\examples{
+g <- GiottoData::loadSubObjectMini("spatEnrObj")
+}

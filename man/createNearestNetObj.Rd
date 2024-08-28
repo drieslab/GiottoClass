@@ -30,6 +30,9 @@ information (see details)}
 
 \item{misc}{misc}
 }
+\value{
+nnNetObj
+}
 \description{
 Create an S4 nnNetObj
 }
@@ -38,4 +41,12 @@ igraph and dataframe-like inputs must include certain information.
 For igraph, it must have, at minimum vertex 'name' attributes and 'distance'
 edge attribute.
 dataframe-like inputs must have 'from', 'to', and 'distance' columns
+}
+\examples{
+x <- GiottoData::loadSubObjectMini("nnNetObj")
+
+createNearestNetObj(
+    network = slot(x, "igraph"), name = "sNN",
+    nn_type = "sNN"
+)
 }

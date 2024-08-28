@@ -37,6 +37,16 @@ giotto object
 \description{
 Function to set feature metadata into giotto object
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+m1 <- getFeatureMetadata(g, output = "data.table")
+m2 <- data.frame(
+    feat_ID = m1$feat_ID,
+    new_column = paste0("gene_", m1$feat_ID)
+)
+
+setFeatureMetadata(gobject = g, x = createFeatMetaObj(m2))
+}
 \seealso{
 Other functions to set data in giotto object: 
 \code{\link{get_cell_id}()},

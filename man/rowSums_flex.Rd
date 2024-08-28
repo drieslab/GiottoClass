@@ -9,7 +9,15 @@ rowSums_flex(mymatrix)
 \arguments{
 \item{mymatrix}{matrix to use}
 }
+\value{
+numeric
+}
 \description{
 rowSums_flex
+}
+\examples{
+m <- matrix(rnorm(100), nrow = 10)
+
+rowSums_flex(m)
 }
 \keyword{internal}

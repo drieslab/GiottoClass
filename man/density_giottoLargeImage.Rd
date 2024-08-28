@@ -9,7 +9,8 @@
   gobject = NULL,
   image_name = NULL,
   giottoLargeImage = NULL,
-  method = "dens"
+  method = "dens",
+  ...
 )
 }
 \arguments{
@@ -19,8 +20,10 @@
 
 \item{method}{method of plotting image distribution}
 
-\item{image_type}{image object type (only supports largeImage and is set as
-default)}
+\item{...}{additional params to pass}
+}
+\value{
+density or histogram plot
 }
 \description{
 Plot smoothed curve of giotto largeImage intensity values

@@ -4,7 +4,7 @@
 \alias{estimateImageBg}
 \title{estimateImageBg}
 \usage{
-estimateImageBg(mg_object, top_color_range = 1:50)
+estimateImageBg(mg_object, top_color_range = seq_len(50))
 }
 \arguments{
 \item{mg_object}{magick image or Giotto image object}
@@ -15,5 +15,13 @@ estimateImageBg(mg_object, top_color_range = 1:50)
 vector of pixel color frequencies and an associated barplot
 }
 \description{
-helps to estimate which color is the background color of your plot
+helps to estimate which color is the background color of your
+plot
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g_image <- getGiottoImage(g, name = "image")
+mgimg <- as(g_image, "giottoImage")
+
+estimateImageBg(mgimg)
 }

@@ -19,3 +19,8 @@ names and locations of available data as data.table
 \description{
 return the available spatial enrichment results
 }
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+list_spatial_enrichments(g)
+}

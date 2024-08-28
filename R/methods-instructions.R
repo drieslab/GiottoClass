@@ -3,17 +3,54 @@
 NULL
 
 # docs ----------------------------------------------------------- #
-#' @title Access giotto instructions
-#' @name instructions-generic
+#' @title Giotto instructions
+#' @name giotto_instructions
 #' @aliases instructions instructions<-
-#' @description Retrieve or set giotto instructions. Specific instructions can
-#' be replaced using the \code{field} param. Additionally, when using
-#' instructions<-, \code{initialize()} will be called on the giotto object if
-#' initialize param is TRUE
+#' @description 
+#' Giotto instructions are default settings that are applied at the `giotto`
+#' object level. Once added to an object, they affect the way that the object
+#' behaves. You can create a `giottoInstructions` object using 
+#' `createGiottoInstructions()` and add them to the `giotto` object during
+#' creation or using the `instructions()` generic. Specific settings can be
+#' replaced or retrieved using the `param` argument. Additionally, when using
+#' `instructions<-()` as a replacement function, `initialize()` will be called 
+#' on the `giotto` object if `initialize = TRUE`.
+#' 
+#' If no `giottoInstructions` object is provided during `giotto` object 
+#' creation, then a default one will be created during `giotto` object 
+#' initialization.
+#' 
 #' @inheritParams data_access_params
 #' @param param Specific param in instructions to access or modify
-#' @param initialize (boolean, default = TRUE) whether to initialize the giotto object
+#' @param initialize (boolean, default = TRUE) whether to initialize the giotto
+#' object
 #' @param value value to set
+#' @returns `giottoInstructions`, instructions settings, or `giotto` objects
+#' with modified instructions
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#'
+#' # get instructions
+#' instrs <- instructions(g)
+#' force(instrs)
+#' 
+#' # get single instructions param
+#' instructions(g, "show_plot")
+#' 
+#' # replace single instruction param
+#' instructions(g, "show_plot") <- FALSE
+#' instructions(g, "show_plot")
+#' 
+#' # replace multiple instruction params
+#' instructions(g)
+#' instructions(g, c("show_plot", "dpi")) <- list(TRUE, 600)
+#' instructions(g)
+#' 
+#' # replace instructions
+#' i <- createGiottoInstructions()
+#' instructions(g) <- i
+#' instructions(g)
+#' 
 NULL
 
 #' @title Active spatial unit
@@ -23,6 +60,10 @@ NULL
 #' default spatial unit that the giotto object uses.
 #' @inheritParams data_access_params
 #' @param value spat_unit to set as default
+#' @returns active spatial unit
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' activeSpatUnit(g)
 NULL
 
 #' @title Active feature type
@@ -32,6 +73,10 @@ NULL
 #' default feature type that the giotto object uses.
 #' @inheritParams data_access_params
 #' @param value feat_type to set as default
+#' @returns active feature type
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' activeFeatType(g)
 NULL
 
 # ---------------------------------------------------------------- #
@@ -40,7 +85,7 @@ NULL
 # instructions() method ####
 
 # Get instructions object
-#' @rdname instructions-generic
+#' @rdname giotto_instructions
 #' @export
 setMethod(
     "instructions", signature(gobject = "giotto", param = "missing"),
@@ -50,11 +95,14 @@ setMethod(
 )
 
 # Set instructions object
-#' @rdname instructions-generic
+#' @rdname giotto_instructions
 #' @export
 setMethod(
     "instructions<-",
-    signature(gobject = "giotto", param = "missing", initialize = "missing", value = "ANY"),
+    signature(
+        gobject = "giotto",
+        param = "missing", initialize = "missing", value = "ANY"
+    ),
     function(gobject, initialize, value) {
         gobject <- replaceGiottoInstructions(gobject,
             instructions = value,
@@ -63,11 +111,14 @@ setMethod(
         return(gobject)
     }
 )
-#' @rdname instructions-generic
+#' @rdname giotto_instructions
 #' @export
 setMethod(
     "instructions<-",
-    signature(gobject = "giotto", param = "missing", initialize = "logical", value = "ANY"),
+    signature(
+        gobject = "giotto",
+        param = "missing", initialize = "logical", value = "ANY"
+    ),
     function(gobject, initialize, value) {
         gobject <- replaceGiottoInstructions(gobject,
             instructions = value,
@@ -78,22 +129,28 @@ setMethod(
 )
 
 # Get specific field
-#' @rdname instructions-generic
+#' @rdname giotto_instructions
 #' @export
 setMethod(
     "instructions", signature(gobject = "giotto", param = "character"),
     function(gobject, param) {
         instrs <- showGiottoInstructions(gobject = gobject)
-        return(readGiottoInstructions(giotto_instructions = instrs, param = param))
+        return(readGiottoInstructions(
+            giotto_instructions = instrs,
+            param = param
+        ))
     }
 )
 
 # Set specific field
-#' @rdname instructions-generic
+#' @rdname giotto_instructions
 #' @export
 setMethod(
     "instructions<-",
-    signature(gobject = "giotto", param = "character", initialize = "missing", value = "ANY"),
+    signature(
+        gobject = "giotto",
+        param = "character", initialize = "missing", value = "ANY"
+    ),
     function(gobject, param, initialize, value) {
         gobject <- changeGiottoInstructions(
             gobject = gobject,
@@ -105,11 +162,14 @@ setMethod(
         return(gobject)
     }
 )
-#' @rdname instructions-generic
+#' @rdname giotto_instructions
 #' @export
 setMethod(
     "instructions<-",
-    signature(gobject = "giotto", param = "character", initialize = "logical", value = "ANY"),
+    signature(
+        gobject = "giotto",
+        param = "character", initialize = "logical", value = "ANY"
+    ),
     function(gobject, param, initialize, value) {
         gobject <- changeGiottoInstructions(
             gobject = gobject,
@@ -153,8 +213,14 @@ setMethod(
 
 
 ## activeFeatType ####
-setGeneric("activeFeatType", function(gobject, ...) standardGeneric("activeFeatType"))
-setGeneric("activeFeatType<-", function(gobject, ..., value) standardGeneric("activeFeatType<-"))
+setGeneric(
+    "activeFeatType",
+    function(gobject, ...) standardGeneric("activeFeatType")
+)
+setGeneric(
+    "activeFeatType<-",
+    function(gobject, ..., value) standardGeneric("activeFeatType<-")
+)
 
 #' @rdname activeFeatType-generic
 #' @export

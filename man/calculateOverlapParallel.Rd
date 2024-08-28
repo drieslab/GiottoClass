@@ -18,7 +18,8 @@ calculateOverlapParallel(
 \arguments{
 \item{gobject}{giotto object}
 
-\item{name_overlap}{name for the overlap results (default to feat_info parameter)}
+\item{name_overlap}{name for the overlap
+results (default to feat_info parameter)}
 
 \item{spatial_info}{polygon information}
 
@@ -26,7 +27,8 @@ calculateOverlapParallel(
 
 \item{poly_ID_names}{list of poly_IDs to use}
 
-\item{polygon_group_size}{number of polygons to process per parallelization group}
+\item{polygon_group_size}{number of polygons to process per
+parallelization group}
 
 \item{return_gobject}{return giotto object (default: TRUE)}
 
@@ -36,11 +38,19 @@ calculateOverlapParallel(
 giotto object or spatVector with overlapping information
 }
 \description{
-calculate overlap between cellular structures (polygons) and features (points)
+calculate overlap between cellular
+structures (polygons) and features (points)
 }
 \details{
-parallel follows the future approach. This means that plan(multisession) does not work,
-since the underlying terra objects are internal C pointers. plan(multicore) is also not supported for
+parallel follows the future approach. This means that
+plan(multisession) does not work,
+since the underlying terra objects are internal C pointers.
+plan(multicore) is also not supported for
 Rstudio users.
+}
+\examples{
+g <- GiottoData::loadGiottoMini("vizgen")
+
+calculateOverlapParallel(g, spatial_info = "z1")
 }
 \concept{overlap}

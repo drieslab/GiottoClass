@@ -12,6 +12,9 @@ create_spat_locs_obj(
   misc = NULL
 )
 }
+\value{
+spat_locs_obj
+}
 \description{
 create_spat_locs_obj
 }

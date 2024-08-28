@@ -18,11 +18,19 @@ list_spatial_grids_names(
 
 \item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
 
-\item{return_uniques}{return unique nesting names (ignores if final object exists/is correct class)}
+\item{return_uniques}{return unique nesting
+names (ignores if final object exists/is correct class)}
 }
 \value{
 vector with names of available spatial grids names
 }
 \description{
-return the available spatial grids name for a given spatial unit that are attached to the Giotto object
+return the available spatial grids name for a given spatial
+unit that are attached to the Giotto object
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g <- createSpatialGrid(g, sdimx_stepsize = 5, sdimy_stepsize = 5)
+
+list_spatial_grids_names(g, spat_unit = "cell", feat_type = "rna")
 }

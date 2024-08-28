@@ -35,6 +35,9 @@ createSpatialFeaturesKNNnetwork_dbscan(
 
 \item{...}{additional parameters to pass to \code{\link[dbscan]{kNN}}}
 }
+\value{
+kNN spatial feature network
+}
 \description{
 to create a feature kNN spatial network using dbscan
 }

@@ -46,15 +46,18 @@ createGiottoImage(
 
 \item{image_transformations}{vector of sequential image transformations}
 
-\item{negative_y}{Map image to negative y spatial values if TRUE during automatic
-alignment. Meaning that origin is in upper left instead of lower left.}
+\item{negative_y}{Map image to negative y spatial values if TRUE during
+automatic alignment. Meaning that origin is in upper left instead of lower
+left.}
 
 \item{do_manual_adj}{(default = FALSE) flag to use manual adj values instead
 of automatic alignment when given a gobject or spatlocs}
 
-\item{xmax_adj, xmin_adj, ymax_adj, ymin_adj}{adjustment of the maximum or maximum x or y-value to align the image}
+\item{xmax_adj, xmin_adj, ymax_adj, ymin_adj}{adjustment of the maximum or
+maximum x or y-value to align the image}
 
-\item{scale_factor}{scaling of image dimensions relative to spatial coordinates}
+\item{scale_factor}{scaling of image dimensions relative to spatial
+coordinates}
 
 \item{x_shift, y_shift}{shift image along x or y axes}
 
@@ -62,7 +65,8 @@ of automatic alignment when given a gobject or spatlocs}
 
 \item{order}{perform scaling or adjustments and shifts first}
 
-\item{xmin_set, xmax_set, ymin_set, ymax_set}{values to override image minmax spatial anchors when doing adjustments}
+\item{xmin_set, xmax_set, ymin_set, ymax_set}{values to override image minmax
+spatial anchors when doing adjustments}
 
 \item{verbose}{be verbose}
 }
@@ -70,11 +74,20 @@ of automatic alignment when given a gobject or spatlocs}
 a giottoImage object
 }
 \description{
-Creates a giotto image that can be added to a Giotto object and/or used to add an image to the spatial plotting functions
+Creates a giotto image that can be added to a Giotto object
+and/or used to add an image to the spatial plotting functions
 }
 \details{
 image_transformations: transformation options from magick library
 [\strong{flip_x_axis}] flip x-axis (\code{\link[magick]{image_flop}})
 [\strong{flip_y_axis}] flip y-axis (\code{\link[magick]{image_flip}})
-Example: image_transformations = c(flip_x_axis, flip_y_axis); first flip x-axis and then y-axis
+Example: image_transformations = c(flip_x_axis, flip_y_axis); first flip
+x-axis and then y-axis
+}
+\examples{
+image_test <- system.file("extdata/toy_intensity.tif",
+    package = "GiottoClass"
+)
+
+createGiottoImage(mg_object = image_test)
 }

@@ -39,8 +39,15 @@ Function to set a spatial location slot
 }
 \details{
 Spatial information will be set to the nested location described
-by their tagged spat_unit and name information. An alternative location can also
-be specified through the respective params in this function.
+by their tagged spat_unit and name information. An alternative location can
+also be specified through the respective params in this function.
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+x <- getSpatialLocations(g, output = "data.table")
+sl <- data.frame(cell_ID = x$cell_ID, sdimx = rnorm(624), sdimy = rnorm(624))
+
+setSpatialLocations(gobject = g, x = createSpatLocsObj(sl, name = "raw"))
 }
 \seealso{
 Other spatial location data accessor functions: 

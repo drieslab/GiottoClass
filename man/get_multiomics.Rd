@@ -29,6 +29,15 @@ A multiomics integration result (e.g. theta_weighted_matrix from WNN)
 \description{
 Get a multiomics integration result from a Giotto object
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g <- setMultiomics(
+    gobject = g, result = matrix(rnorm(100), nrow = 10),
+    spat_unit = "cell", feat_type = "rna_protein"
+)
+
+get_multiomics(gobject = g, spat_unit = "cell", feat_type = "rna_protein")
+}
 \seealso{
 Other multiomics accessor functions: 
 \code{\link{getMultiomics}()},

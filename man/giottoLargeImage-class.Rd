@@ -5,19 +5,29 @@
 \alias{giottoLargeImage-class}
 \alias{giottoLargeImage}
 \title{S4 giottoLargeImage Class}
+\value{
+giottoLargeImage
+}
 \description{
-class to handle images too large to load in normally through magick
+Image class for Giotto that uses \pkg{terra} \code{SpatRaster} as
+a backend. If images are loaded from a file on disk then they are worked
+with lazily, where only the values needed at any moment are loaded/sampled
+into memory. Since \code{SpatRaster} objects are C pointers, \code{giottoLargeImage}
+and inheriting classes need to run \code{reconnect()} after loading from a
+saved object.
 }
 \section{Slots}{
 
 \describe{
 \item{\code{name}}{name of large Giotto image}
 
-\item{\code{raster_object}}{terra raster object}
+\item{\code{raster_object}}{terra \code{SpatRaster} object}
 
-\item{\code{extent}}{tracks the extent of the raster object. Note that most processes should rely on the extent of the raster object instead of this.}
+\item{\code{extent}}{tracks the extent of the raster object. Note that most
+processes should rely on the extent of the raster object instead of this.}
 
-\item{\code{overall_extent}}{terra extent object covering the original extent of image}
+\item{\code{overall_extent}}{terra extent object covering the original extent of
+image}
 
 \item{\code{scale_factor}}{image scaling relative to spatial locations}
 
@@ -38,4 +48,8 @@ class to handle images too large to load in normally through magick
 \item{\code{OS_platform}}{Operating System to run Giotto analysis on}
 }}
 
+\examples{
+giottoLargeImage()
+
+}
 \concept{giotto object image}

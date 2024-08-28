@@ -5,6 +5,9 @@
 \alias{featMetaObj-class}
 \alias{featMetaObj}
 \title{S4 featMetaObj}
+\value{
+featMetaObj
+}
 \description{
 Framework to store feature metadata
 }
@@ -19,6 +22,10 @@ Framework to store feature metadata
 
 \item{\code{feat_type}}{feature type of aggregated expression (e.g. 'rna', 'protein')}
 
-\item{\code{provenance}}{origin data of aggregated expression information (if applicable)}
+\item{\code{provenance}}{origin data of aggregated expression
+information (if applicable)}
 }}
 
+\examples{
+GiottoData::loadSubObjectMini("featMetaObj")
+}

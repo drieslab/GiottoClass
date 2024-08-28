@@ -33,17 +33,19 @@ updateGiottoImageMG(
 
 \item{giottoImage}{\code{image} object to directly update}
 
-\item{xmax_adj, xmin_adj, ymax_adj, ymin_adj}{adjust image boundaries by increasing
-maximum and decreasing minimum bounds respectively of xy bounds}
+\item{xmax_adj, xmin_adj, ymax_adj, ymin_adj}{adjust image boundaries by
+increasing maximum and decreasing minimum bounds respectively of xy bounds}
 
 \item{x_shift, y_shift}{shift entire image along xy axes}
 
-\item{scale_factor}{set \code{scale_x} and \code{scale_y} params at the same time}
+\item{scale_factor}{set \code{scale_x} and \code{scale_y} params at the
+same time}
 
-\item{scale_x, scale_y}{independently scale x or y axis image mapping from coordinate origin}
+\item{scale_x, scale_y}{independently scale x or y axis image mapping from
+coordinate origin}
 
-\item{order}{order of operations between fine adjustments (adjustment and shift
-parameters) and scaling}
+\item{order}{order of operations between fine
+adjustments (adjustment and shift parameters) and scaling}
 
 \item{xmin_set}{set image xmin boundary. Applied before adjustments}
 
@@ -53,17 +55,27 @@ parameters) and scaling}
 
 \item{ymax_set}{set image ymax boundary. Applied before adjustments}
 
-\item{return_gobject}{return a \code{giotto} object if \code{TRUE}, a giotto
-\code{image} object if \code{FALSE}}
+\item{return_gobject}{return a \code{giotto} object if \code{TRUE}, a
+giotto \code{image} object if \code{FALSE}}
 
 \item{verbose}{be verbose}
 }
 \value{
-a \code{giotto} object or an updated giotto \code{image} object if
-\code{return_gobject = FALSe}
+a \code{giotto} object or an updated giotto \code{image} object
+if \code{return_gobject = FALSe}
 }
 \description{
-Updates the boundaries of a giotto \code{image} object attached to
-a \code{giotto} object if both \code{gobject} and \code{image_name} params
-are given. Alternatively can directly accept and return as \code{image}
+Updates the boundaries of a giotto \code{image} object attached
+to a \code{giotto} object if both \code{gobject} and \code{image_name}
+params are given. Alternatively can directly accept and return
+as \code{image}
+}
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+g_image <- convertGiottoLargeImageToMG(g,
+    largeImage_name = "image",
+    return_gobject = FALSE
+)
+
+updateGiottoImageMG(g, giottoImage = g_image)
 }

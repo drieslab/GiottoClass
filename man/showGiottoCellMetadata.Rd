@@ -17,6 +17,11 @@ prints the name and small subset of available metadata
 \description{
 shows the available cell metadata
 }
+\examples{
+g <- GiottoData::loadGiottoMini("visium")
+
+showGiottoCellMetadata(g)
+}
 \seealso{
 Other functions to show data in giotto object: 
 \code{\link{showGiottoDimRed}()},

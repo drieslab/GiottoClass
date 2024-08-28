@@ -5,6 +5,9 @@
 \alias{giotto-class}
 \alias{giotto}
 \title{S4 giotto Class}
+\value{
+giotto object
+}
 \description{
 \pkg{Giotto}'s core object that encapsulates all the components
 of a spatial-omic project and facilitates analyses.
@@ -12,11 +15,13 @@ of a spatial-omic project and facilitates analyses.
 \details{
 [\strong{initialize}]
 The \code{giotto} class has a robust \code{initialize()} method that is automatically
-called upon setting data into the object, updates of the \code{giottoInstructions},
-and loading of saved objects. It performs the following steps:
+called upon setting data into the object, updates of
+the \code{giottoInstructions}, and loading of saved objects.
+It performs the following steps:
 \enumerate{
 \item Update the object and subobjects for class definition changes if needed
-\item Ensure a set of \code{giottoInstructions} are available, otherwise generate defaults
+\item Ensure a set of \code{giottoInstructions} are available, otherwise generate
+defaults
 \item Ensure a giotto python environment is accessible when the options
 giotto.has_conda and giotto.use_conda are TRUE
 \item Check the active spat_unit and feat_type
@@ -63,9 +68,7 @@ protein, metabolites, ... that are provided in the expression slot.}
 
 \item{\code{nn_network}}{nearest neighbor network in igraph format}
 
-\item{\code{images}}{slot to store giotto images}
-
-\item{\code{largeImages}}{slot to store giottoLargeImage objects}
+\item{\code{images}}{slot to store giotto image objects}
 
 \item{\code{parameters}}{slot to save parameters that have been used}
 
@@ -82,4 +85,7 @@ protein, metabolites, ... that are provided in the expression slot.}
 \item{\code{h5_file}}{path to h5 file}
 }}
 
+\examples{
+giotto()
+}
 \concept{giotto object}
