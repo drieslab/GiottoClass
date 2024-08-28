@@ -512,12 +512,16 @@ installGiottoEnvironment <- function(
 ) {
     
     ## 1. check and install miniconda locally if necessary
-    conda_path <- reticulate::conda_binary(conda = conda)
+    conda_found <- .check_conda(conda = conda, error = FALSE)
 
     # install miniconda if needed
-    if (!file.exists(conda_path) || isTRUE(force_miniconda)) {
+    if (isFALSE(conda_found) || isTRUE(force_miniconda)) {
         vmsg(.v = verbose, .initial = " ", 
              "|---- install local miniconda ----|")
+        
+        if (identical(conda, "auto")) {
+            conda_path <- reticulate::miniconda_path()
+        }
         
         reticulate::install_miniconda(
             path = conda_path,
@@ -648,7 +652,7 @@ set_giotto_python_path <- function(
             "python version :", getOption("giotto.py_active_ver") 
         ))
     }
-    
+
     # get path in order of DECREASING priority #
     # ---------------------------------------- #
     found <- vector(mode = "numeric")
@@ -1045,6 +1049,31 @@ checkPythonPackage <- function(package_name = NULL,
 
 # common internals ####
 
+
+# determine if a conda binary is accessible by reticulate
+# return path to binary if found
+# return FALSE if `error` != TRUE ignoring, reticulate's thrown error
+# 
+# param conda - what conda path to use.
+# param error - whether to stop execution when conda not found
+.check_conda <- function(conda = "auto", error = TRUE) {
+    res <- try(reticulate::conda_binary(conda = conda), silent = TRUE)
+    if (inherits(res, "try-error")) res <- FALSE
+    
+    if (isFALSE(res) && isTRUE(error)) {
+        stop(wrap_txt(
+            "Unable to find a conda binary. 
+            Use `installGiottoEnvironment()` or install a custom conda."),
+            call. = FALSE
+        )
+    }
+    return(res)
+}
+
+
+
+
+
 # construct path to miniconda executable when the python directory is given
 # python directory should be provided in the same way as
 # `reticulate::miniconda_path()` where it is one level above the `envs`
@@ -1092,9 +1121,12 @@ checkPythonPackage <- function(package_name = NULL,
     gsub(remove, "", python_path)
 }
 
+# first function in detection path to check conda envs
 # if found, return the fullpath
 # if not, return without modification
 .envname_to_pypath <- function(envname, must_exist = TRUE) {
+    .check_conda()
+    
     envs <- reticulate::conda_list()
     enames <- envs$name
     epaths <- envs$python
