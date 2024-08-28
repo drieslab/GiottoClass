@@ -41,8 +41,66 @@ jobs:
           _R_CHECK_RD_XREFS: false
         with:
           dependencies: '"hard"' # do not use suggested dependencies
-          extra-packages: any::pkgdown, any::scattermore, any::exactextractr, local::.
+          extra-packages: |
+            any::pkgdown
+            any::rcmdcheck
+            any::testthat
+            any::knitr
+            any::rmarkdown
+            any::rlang
+            any::R.utils
+            any::qs
+            any::sp
+            any::stars
+            any::raster
+            any::sf
+            any::scattermore
+            any::exactextractr
+            any::RTriangle
+            any::geometry
+            any::qs
+            any::future.apply
+            any::Biobase
+            any::chihaya
+            any::DelayedArray
+            any::DelayedMatrixStats
+            any::HDF5Array
+            any::plotly
+            any::rgl
+            any::rhdf5
+            any::S4Vectors
+            any::ScaledMatrix
+            any::XML
+            any::Seurat
+            any::SeuratObject
+            any::SingleCellExperiment
+            any::SpatialExperiment
+            any::STexampleData
+            any::SummarizedExperiment
+            github::drieslab/GiottoData
           needs: website
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: setup giotto_env
+        shell: Rscript {0}
+        run: |
+          if (!GiottoClass::checkGiottoEnvironment()) {
+            GiottoClass::installGiottoEnvironment()
+          }
+
+          reticulate::conda_install(
+            envname = 'giotto_env',
+            packages = 'scanpy',
+            pip = TRUE
+          )
+          
+          path_to_python <- GiottoClass::set_giotto_python_path()
+          
+          writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
+                     Sys.getenv("GITHUB_ENV"))
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
