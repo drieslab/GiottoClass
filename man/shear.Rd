@@ -8,6 +8,7 @@
 \alias{shear,giottoPolygon-method}
 \alias{shear,giottoLargeImage-method}
 \alias{shear,giottoAffineImage-method}
+\alias{shear,affine2d-method}
 \title{Apply a shear tranform}
 \usage{
 \S4method{shear}{spatLocsObj}(x, fx = 0, fy = 0, x0, y0, ...)
@@ -21,6 +22,8 @@
 \S4method{shear}{giottoLargeImage}(x, fx = 0, fy = 0, x0, y0, ...)
 
 \S4method{shear}{giottoAffineImage}(x, fx = 0, fy = 0, x0, y0, ...)
+
+\S4method{shear}{affine2d}(x, fx = 0, fy = 0, x0, y0, ...)
 }
 \arguments{
 \item{x}{object}

@@ -1,4 +1,25 @@
 
+# GiottoClass 0.3.5 (2024/08/28)
+
+## breaking changes
+- `set_giotto_python_path()` will now also initialize python env to set by default and print which python env is active, but otherwise do nothing if any python env has already been initialized.
+- deprecated `readGiottoInstructions()`, `showGiottoInstructions()`, `changeGiottoInstructions()`, `replaceGiottoInstructions()` in favor of `instructions()` generic
+
+## bug fixes
+- intensity images now automatically scale to estimated highest value
+- `giottoPolygon` `plot()` default `max_poly` raised to `1e6`
+- `giottoInstructions` no longer lose class when specific params are replaced
+- `ometif_to_tif()` now checks for _imagecodecs_ package as well
+- `anndataToGiotto()` and `giottoToAnndata` now check for _anndata_ package as well.
+- fix `joinGiottoObjects()` `"z_stack"` join method
+- fix error in documentation [#214](https://github.com/drieslab/GiottoClass/issues/214) by shaojunyu
+- fix error in `installGiottoEnvironment()` [#1006](https://github.com/drieslab/Giotto/issues/1006) by 13954380607
+
+## enhancements
+- `print()` method for `giottoInstructions`
+- `rbind()` for `spatLocsObj`
+
+
 # GiottoClass 0.3.4 (2024/08/04)
 
 ## bug fixes

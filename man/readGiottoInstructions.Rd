@@ -2,7 +2,7 @@
 % Please edit documentation in R/instructions.R
 \name{readGiottoInstructions}
 \alias{readGiottoInstructions}
-\title{Read giotto instructions associated with giotto object}
+\title{deprecated}
 \usage{
 readGiottoInstructions(giotto_instructions, param = NULL, default)
 }
@@ -27,3 +27,4 @@ readGiottoInstructions(
     param = "show_plot"
 )
 }
+\keyword{internal}

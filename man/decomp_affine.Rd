@@ -21,6 +21,9 @@ needed to perform them as a list of class \code{affine}. Works only for 2D
 transforms. Logic from \url{https://math.stackexchange.com/a/3521141}
 }
 \examples{
+# load example data
+sl <- GiottoData::loadSubObjectMini("spatLocsObj")
+
 # affine transform matrices
 m <- diag(rep(1, 3))
 shear_m <- trans_m <- m
@@ -44,16 +47,16 @@ force(a)
 
 # perform piecewise transforms with decomp
 
-sl_shear_piecewise <- sl \%>\%
-    spin(GiottoUtils::degrees(s$rotate), x0 = 0, y0 = 0) \%>\%
-    shear(fx = s$shear[["x"]], fy = s$shear[["y"]], x0 = 0, y0 = 0) \%>\%
-    rescale(fx = s$scale[["x"]], fy = s$scale[["y"]], x0 = 0, y0 = 0) \%>\%
+sl_shear_piecewise <- sl |>
+    spin(GiottoUtils::degrees(s$rotate), x0 = 0, y0 = 0) |>
+    shear(fx = s$shear[["x"]], fy = s$shear[["y"]], x0 = 0, y0 = 0) |>
+    rescale(fx = s$scale[["x"]], fy = s$scale[["y"]], x0 = 0, y0 = 0) |>
     spatShift(dx = s$translate[["x"]], dy = s$translate[["y"]])
 
-sl_aff_piecewise <- sl \%>\%
-    spin(GiottoUtils::degrees(a$rotate), x0 = 0, y0 = 0) \%>\%
-    shear(fx = a$shear[["x"]], fy = a$shear[["y"]], x0 = 0, y0 = 0) \%>\%
-    rescale(fx = a$scale[["x"]], fy = a$scale[["y"]], x0 = 0, y0 = 0) \%>\%
+sl_aff_piecewise <- sl |>
+    spin(GiottoUtils::degrees(a$rotate), x0 = 0, y0 = 0) |>
+    shear(fx = a$shear[["x"]], fy = a$shear[["y"]], x0 = 0, y0 = 0) |>
+    rescale(fx = a$scale[["x"]], fy = a$scale[["y"]], x0 = 0, y0 = 0) |>
     spatShift(dx = a$translate[["x"]], dy = a$translate[["y"]])
     
 plot(affine(sl, shear_m))

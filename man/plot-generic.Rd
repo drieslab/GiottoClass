@@ -36,7 +36,7 @@
   x,
   point_size = 0.6,
   type = c("poly", "centroid"),
-  max_poly = getOption("giotto.plot_max_poly", 10000),
+  max_poly = getOption("giotto.plot_max_poly", 1e+06),
   ...
 )
 

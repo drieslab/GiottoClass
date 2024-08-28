@@ -175,10 +175,10 @@ check_py_for_scanpy <- function() {
 #' anndata object, a list of key_added terms may be provided. If converting an
 #' anndata object from giottoToAnnData, a .txt file may be provided, which was
 #' generated in that function,
-#' i.e. {spat_unit}_{feat_type}_spatial_network_keys_added.txt
+#' i.e. \{spat_unit\}_\{feat_type\}_spatial_network_keys_added.txt
 #' Cannot be the same as n_key_added.
 #' @param delaunay_spat_net binary parameter for spatial network. If TRUE, the
-#' spatial network is a deluanay network.
+#' spatial network is a delaunay network.
 #' @param spat_unit desired spatial unit to use for conversion, default NULL
 #' @param feat_type desired feature type to use for conversion, default NULL
 #' @param h5_file name to create and on-disk HDF5 file
@@ -187,7 +187,7 @@ check_py_for_scanpy <- function() {
 #' @param env_name name of environment containing python_path executable
 #'
 #' @details Function in beta. Converts a .h5ad file into a Giotto object.
-#' The returned Giotto Object will take default insructions with the
+#' The returned Giotto Object will take default instructions with the
 #' exception of the python path, which may be customized.
 #' See \code{\link{changeGiottoInstructions}} to modify instructions after
 #' creation.
@@ -222,11 +222,13 @@ anndataToGiotto <- function(
         }
     }
 
-    # Required step to properly initialize reticualte
+    # Required step to properly initialize reticulate
     instrs <- createGiottoInstructions(python_path = python_path)
 
-    scanpy_installed <- checkPythonPackage("scanpy", env_to_use = env_name)
-    # should trigger a stop() downstream if not installed
+    package_check(
+        pkg_name = c("anndata", "scanpy"), 
+        repository = c("pip:anndata", "pip:scanpy")
+    )
 
     # Import ad2g, a python module for parsing anndata
     ad2g_path <- system.file("python", "ad2g.py", package = "GiottoClass")
@@ -613,7 +615,10 @@ giottoToAnnData <- function(
         stop(wrap_msg("Please provide a valid Giotto Object for conversion."))
     }
 
-    scanpy_installed <- checkPythonPackage("scanpy", env_to_use = env_name)
+    package_check(
+        pkg_name = c("anndata", "scanpy"), 
+        repository = c("pip:anndata", "pip:scanpy")
+    )
 
     # Python module import
     g2ad_path <- system.file("python", "g2ad.py", package = "GiottoClass")
@@ -3378,20 +3383,22 @@ giottoMasterToSuite <- function(
 #'
 #' @param spatialdata_path path to SpatialData object
 #' @param n_key_added equivalent of "key_added" argument from scanpy.pp.neighbors().
-#'                    If multiple spatial networks are in the anndata object, a list of key_added
-#'                    terms may be provided.
-#'                    If converting an anndata object from giottoToAnnData, a .txt file may be
-#'                    provided, which was generated in that function,
-#'                          i.e. {spat_unit}_{feat_type}_nn_network_keys_added.txt
-#'                    Cannot be "spatial". This becomes the name of the nearest network in the gobject.
-#' @param spatial_n_key_added equivalent of "key_added" argument from squidpy.gr.spatial_neighbors.
-#'                            If multiple spatial networks are in the anndata object, a list of key_added
-#'                            terms may be provided.
-#'                            If converting an anndata object from giottoToAnnData, a .txt file may be
-#'                            provided, which was generated in that function,
-#'                                i.e. {spat_unit}_{feat_type}_spatial_network_keys_added.txt
-#'                            Cannot be the same as n_key_added.
-#' @param delaunay_spat_net binary parameter for spatial network. If TRUE, the spatial network is a delaunay network.
+#' If multiple spatial networks are in the anndata object, a list of key_added
+#' terms may be provided.
+#' If converting an anndata object from giottoToAnnData, a .txt file may be
+#' provided, which was generated in that function,
+#'       i.e. \{spat_unit\}_\{feat_type\}_nn_network_keys_added.txt
+#' Cannot be "spatial". This becomes the name of the nearest network in the gobject.
+#' @param spatial_n_key_added 
+#' equivalent of "key_added" argument from squidpy.gr.spatial_neighbors.
+#' If multiple spatial networks are in the anndata object, a list of key_added
+#' terms may be provided.
+#' If converting an anndata object from giottoToAnnData, a .txt file may be
+#' provided, which was generated in that function,
+#'     i.e. \{spat_unit\}_\{feat_type\}_spatial_network_keys_added.txt
+#' Cannot be the same as n_key_added.
+#' @param delaunay_spat_net binary parameter for spatial network. If TRUE, 
+#' the spatial network is a delaunay network.
 #' @param spat_unit desired spatial unit for conversion, default NULL
 #' @param feat_type desired feature type for conversion, default NULL
 #' @param python_path path to python executable within a conda/miniconda environment
@@ -3441,7 +3448,10 @@ spatialdataToGiotto <- function(
     )
 
     # Check spatialdata dependencies
-    spatialdata_installed <- checkPythonPackage(package_name = "spatialdata", env_to_use = env_name)
+    package_check(
+        pkg_name = "spatialdata",
+        repository = "pip:spatialdata"
+    )
 
     # Import sd2g, a python module for parsing SpatialData
     sd2g_path <- system.file("python", "sd2g.py", package = "GiottoClass")
@@ -3743,7 +3753,10 @@ giottoToSpatialData <- function(
     instrs <- createGiottoInstructions(python_path = python_path)
 
     # Check spatialdata dependencies
-    spatialdata_installed <- checkPythonPackage(package_name = "spatialdata", env_to_use = env_name)
+    package_check(
+        pkg_name = "spatialdata",
+        repository = "pip:spatialdata"
+    )
 
     # Import sd2g, a python module for parsing SpatialData
     g2sd_path <- system.file("python", "g2sd.py", package = "GiottoClass")

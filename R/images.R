@@ -2644,22 +2644,30 @@ distGiottoImage <- function(
 #' gimg <- createGiottoLargeImage(f, use_rast_ext = TRUE)
 #'
 #' density(gimg)
+NULL
+
+#' @rdname density
 #' @export
 setMethod(
     "density", signature("giottoLargeImage"),
     function(x, show_max = TRUE, ...) {
-        a <- list(x = x@raster_object, ...)
-        res <- do.call(terra::density, args = a)
-
-        if (isFALSE(a$plot)) {
-            return(res)
-        }
-
-        if (isTRUE(show_max)) {
-            graphics::abline(v = x@max_window, col = "red")
-        }
+        a <- get_args_list(...)
+        do.call(.density_giottolargeimage, args = a)
     }
 )
+
+.density_giottolargeimage <- function(x, show_max = TRUE, ...) {
+    a <- list(x = x@raster_object, ...)
+    res <- do.call(terra::density, args = a)
+    
+    if (isFALSE(a$plot)) {
+        return(res)
+    }
+    
+    if (isTRUE(show_max)) {
+        graphics::abline(v = x@max_window, col = "red")
+    }
+}
 
 
 #' @name hist
@@ -2677,6 +2685,9 @@ setMethod(
 #' gimg <- createGiottoLargeImage(f, use_rast_ext = TRUE, verbose = FALSE)
 #'
 #' hist(gimg)
+NULL
+
+#' @rdname hist
 #' @export
 setMethod(
     "hist", signature("giottoLargeImage"),
@@ -2745,7 +2756,11 @@ ometif_to_tif <- function(input_file,
     a <- list(input_file = input_file)
 
     # get tifffile py
-    package_check("tifffile", repository = "pip:tifffile")
+    package_check(
+        pkg_name = c("tifffile", "imagecodecs"), 
+        repository = c("pip:tifffile", "pip:imagecodecs")
+    )
+    
     ometif2tif_path <- system.file(
         "python", "ometif_convert.py",
         package = "GiottoClass"

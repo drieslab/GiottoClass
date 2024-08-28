@@ -13,9 +13,6 @@ rbind2_giotto_polygon_hetero(x, y, new_name, add_list_ID = TRUE)
 
 \item{add_list_ID}{whether to include the name of the
 origin \code{giottoPolygons} as a new 'list_ID' attribute}
-
-\item{poly_names}{sorted polygon names to be used in the
-combined \code{giottoPolygon} object}
 }
 \value{
 giottoPolygon

@@ -1,6 +1,28 @@
 #' @include classes.R
 NULL
 
+#' @name as.character
+#' @title Create a text representation of an object
+#' @description
+#' Create a text representation of an object
+#' @param x object
+#' @param ... additional params to pass (none implemented)
+#' @examples
+#' img <- GiottoData::loadSubObjectMini("giottoLargeImage")
+#' as.character(img)
+#' 
+NULL
+
+#' @name show
+#' @title Show methods for Giotto classes
+#' @description Show methods for Giotto classes
+#' @param object object to show
+#' @keywords internal
+#' @examples
+#' sl <- data.frame(seq(10), seq(10), letters[seq(10)]) |>
+#'     createSpatLocsObj(verbose = FALSE)
+#' show(sl)
+NULL
 
 # ------------------------------------------------------ #
 
@@ -9,12 +31,7 @@ NULL
 
 # Giotto ####
 
-#' show method for giotto class
-#' @param object giotto object
-#' @aliases show,giotto-method
-#' @docType methods
-#' @returns giotto object or subobject
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show",
     signature = "giotto",
@@ -136,6 +153,7 @@ setMethod(
 
 
 # packedGiotto ####
+#' @rdname show
 setMethod(
     "show", signature(object = "packedGiotto"),
     function(object) {
@@ -157,11 +175,7 @@ setMethod(
 
 ## exprObj ####
 
-#' show method for exprObj class
-#' @param object expression object
-#' @aliases show,exprObj-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show", signature("exprObj"), function(object) {
         .show_class_and_name(object)
@@ -222,6 +236,7 @@ setMethod(
 
 
 ## cellMetaObj ####
+#' @rdname show
 setMethod("show", signature("cellMetaObj"), function(object) {
     cat("An object of class", class(object), "\n")
     .show_spat_and_feat(object)
@@ -234,6 +249,7 @@ setMethod("show", signature("cellMetaObj"), function(object) {
 
 
 ## featMetaObj ####
+#' @rdname show
 setMethod("show", signature("featMetaObj"), function(object) {
     cat("An object of class", class(object), "\n")
     .show_spat_and_feat(object)
@@ -255,10 +271,7 @@ setMethod("show", signature("featMetaObj"), function(object) {
 ## dimObj ####
 
 #' Show method for dimObj class
-#' @param object dimension reduction object
-#' @aliases show,dimObj-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show", signature("dimObj"), function(object) {
         .show_class_and_name(object)
@@ -299,10 +312,7 @@ setMethod(
 
 ## nnNetObj ####
 #' Show method for nnNetObj class
-#' @param object nearest neigbor network object
-#' @aliases show,nnNetObj-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show", signature("nnNetObj"), function(object) {
         .show_class_and_name(object)
@@ -343,16 +353,13 @@ setMethod(
 ## spatLocsObj ####
 
 #' show method for spatLocsObj class
-#' @param object spatial locations object
-#' @aliases show,spatLocsObj-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod("show", signature("spatLocsObj"), function(object) {
     .show_class_and_name(object)
     .show_spat(object)
     .show_prov(object)
+    cat("dimensions:", dim(object), '\npreview   :\n')
     
-    cat("   ------------------------\n\npreview:\n")
     if (!is.null(slot(object, "coordinates"))) {
         show(head(slot(object, "coordinates"), 3L))
     }
@@ -385,10 +392,7 @@ setMethod("show", signature("spatLocsObj"), function(object) {
 ## spatialNetworkObj ####
 
 #' show method for spatialNetworkObj class
-#' @param object spatial network object
-#' @aliases show,spatialNetworkObj-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show", signature("spatialNetworkObj"), function(object) {
         .show_class_and_name(object)
@@ -425,10 +429,7 @@ setMethod(
 ## spatialGridObj ####
 
 #' show method for spatialGridObj class
-#' @param object spatial grid object
-#' @aliases show,spatialGridObj-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show", signature("spatialGridObj"), function(object) {
         # define for data.table
@@ -515,10 +516,7 @@ setMethod(
 ## spatEnrObj ####
 
 #' show method for spatEnrObj class
-#' @param object spatial locations object
-#' @aliases show,spatEnrObj-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show", signature("spatEnrObj"), function(object) {
         .show_class_and_name(object)
@@ -565,6 +563,7 @@ setMethod(
 
 
 ## giottoPolygon ####
+#' @rdname show
 setMethod("show", signature = "giottoPolygon", function(object) {
     cat("An object of class giottoPolygon\n")
     .show_spat(object)
@@ -598,6 +597,7 @@ setMethod("show", signature = "giottoPolygon", function(object) {
 
 
 ## packedGiottoPolygon ####
+#' @rdname show
 setMethod(
     "show", signature(object = "packedGiottoPolygon"),
     function(object) {
@@ -617,6 +617,7 @@ setMethod(
 
 
 ## giottoPoints ####
+#' @rdname show
 setMethod("show", signature = "giottoPoints", function(object) {
     cat("An object of class giottoPoints\n")
     .show_feat(object)
@@ -637,6 +638,7 @@ setMethod("show", signature = "giottoPoints", function(object) {
 
 
 ## packedGiottoPoints ####
+#' @rdname show
 setMethod(
     "show", signature(object = "packedGiottoPoints"),
     function(object) {
@@ -660,10 +662,7 @@ setMethod(
 ## giottoImage ####
 
 #' show method for giottoImage class
-#' @param object giottoImage object
-#' @aliases show,giottoImage-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show",
     signature = "giottoImage",
@@ -721,7 +720,9 @@ setMethod(
     }
 )
 
-# internal
+
+#' @rdname as.character
+#' @export
 setMethod("as.character", signature("giottoImage"), function(x, ...) {
     sprintf("<%s> %s", class(x), objName(x))
 })
@@ -736,10 +737,7 @@ setMethod("as.character", signature("giottoImage"), function(x, ...) {
 # giottoLargeImage ####
 
 #' show method for giottoLargeImage class
-#' @param object giottoLargeImage object
-#' @aliases show,giottoLargeImage-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show",
     signature = "giottoLargeImage",
@@ -780,7 +778,7 @@ setMethod(
 
 
 
-#' @rdname show-methods
+#' @rdname show
 setMethod("show", signature("affine2d"), function(object) {
     cat("<affine2d>\n")
     .anchor_print <- function() {
@@ -808,7 +806,8 @@ setMethod("show", signature("affine2d"), function(object) {
 })
 
 
-# internal
+#' @rdname as.character
+#' @export
 setMethod("as.character", signature("giottoLargeImage"), function(x, ...) {
     sprintf("<%s> %s", class(x), objName(x))
 })

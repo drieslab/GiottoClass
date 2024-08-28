@@ -2,7 +2,7 @@
 % Please edit documentation in R/instructions.R
 \name{replaceGiottoInstructions}
 \alias{replaceGiottoInstructions}
-\title{Replace all giotto instructions in giotto object}
+\title{deprecated}
 \usage{
 replaceGiottoInstructions(gobject, instructions = NULL, init_gobject = TRUE)
 }
@@ -30,3 +30,4 @@ replaceGiottoInstructions(
     instructions = createGiottoInstructions()
 )
 }
+\keyword{internal}

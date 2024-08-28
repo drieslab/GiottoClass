@@ -14,6 +14,7 @@
 \alias{ncol,metaData-method}
 \alias{ncol,enrData-method}
 \alias{ncol,dimObj-method}
+\alias{dim,spatLocsObj-method}
 \alias{dim,exprData-method}
 \alias{dim,metaData-method}
 \alias{dim,enrData-method}
@@ -46,6 +47,8 @@
 
 \S4method{ncol}{dimObj}(x)
 
+\S4method{dim}{spatLocsObj}(x)
+
 \S4method{dim}{exprData}(x)
 
 \S4method{dim}{metaData}(x)
@@ -67,40 +70,9 @@ numeric
 \description{
 Find the dimensions of an object
 }
-\section{Functions}{
-\itemize{
-\item \code{nrow(giottoPoints)}: Find rows of giottoPoints object
-
-\item \code{nrow(giottoPolygon)}: Find rows of giottoPolygon object
-
-\item \code{nrow(spatLocsObj)}: Find rows of giotto S4s with data.table
-based \code{coordinates} slots
-
-\item \code{nrow(exprData)}: Find rows of giotto S4s with data.table
-based \code{coordinates} slots
-
-\item \code{nrow(metaData)}: Find rows of giotto S4s with data.table
-based \code{coordinates} slots
-
-\item \code{nrow(spatialNetworkObj)}: Find rows of spatialNetworkObj
-
-\item \code{ncol(exprData)}: Find cols of giotto S4s with Matrix
-based \code{exprMat} slots
-
-\item \code{ncol(metaData)}: Find cols of giotto S4s with data.table
-based \code{metaDT} slots
-
-\item \code{ncol(enrData)}: Find cols of giotto S4s with enrData
-
-\item \code{dim(exprData)}: Find dimensions of giotto S4s with Matrix
-based \code{exprMat} slots
-
-\item \code{dim(metaData)}: Find dimensions of giotto S4s with data.table
-based \code{metaDT} slots
-
-}}
 \examples{
 g <- GiottoData::loadSubObjectMini("giottoPoints")
 
 nrow(g)
 }
+\keyword{internal}
