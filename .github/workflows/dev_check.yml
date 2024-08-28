@@ -87,7 +87,7 @@ jobs:
       - name: setup giotto_env
         shell: Rscript {0}
         run: |
-          if (!GiottoClass::checkGiottoEnvironment(envname = "giotto_env")) {
+          if (!GiottoClass::checkGiottoEnvironment()) {
             GiottoClass::installGiottoEnvironment()
           }
 
