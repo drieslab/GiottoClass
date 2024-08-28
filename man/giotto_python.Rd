@@ -37,8 +37,8 @@ removeGiottoEnvironment(
 set_giotto_python_path(python_path = NULL, verbose = NULL, initialize = TRUE)
 }
 \arguments{
-\item{envname}{character. (optional) The name of or path to a miniconda or
-conda environment directory or python executable. When using
+\item{envname}{character. (optional) The name of a miniconda or conda
+environment OR path to a python executable. When using
 \code{installGiottoEnvironment()}, the default is \code{"giotto_env"}}
 
 \item{mini_install_path}{(optional) desired miniconda installation location.
@@ -78,12 +78,17 @@ entirely through \pkg{reticulate}.
 
 \strong{Creating an environment}
 
-\code{installGiottoEnvironment()} can be used to create a default environment
-called \code{giotto_env} that includes some commonly used python packages. See
-the \strong{python versions} section for specific packages and version numbers.
+\code{installGiottoEnvironment()} can be used to create a default miniconda
+environment called \code{giotto_env} that includes some commonly used python
+packages. See the \strong{python versions} section for specific packages and
+version numbers.
 
-Custom environments managed through \pkg{reticulate} are also compatible
+Custom environments manageable through \pkg{reticulate} are also compatible
 and can be hooked into by Giotto after creation.
+
+\code{checkGiottoEnvironment()} can be used in order to test if an envname or
+full python path is accessible by Giotto. It will also check the
+\code{"giotto.py_path"} option.
 
 \strong{Choosing environments}
 
@@ -93,15 +98,16 @@ R session must be restarted.
 
 Whenever any of the following happens for the first time in a session:
 \itemize{
-\item \code{giotto} object creation
+\item \code{giotto} object creation (due to creation of a default
+\code{giottoInstructions})
 \item \code{giottoInstructions} creation (\code{createGiottoInstructions()})
-\item \code{GiottoClass::set_giotto_python_path()} is called (most straightforward)
+\item \code{GiottoClass::set_giotto_python_path()} is called (most direct)
 }
 
-Giotto automatically detects AND activates a python environment based on the
-following defaults in decreasing priority:
+For the above, Giotto automatically detects AND activates a python
+environment based on the following defaults in decreasing priority:
 \enumerate{
-\item User provided (when \code{python_path} is not \code{NULL})
+\item User provided (when \code{python_path} param is not \code{NULL})
 \item Any provided path or envname in option \code{"giotto.py_path"}
 \item Default expected giotto environment location based on
 \code{\link[reticulate:miniconda_path]{reticulate::miniconda_path()}}
@@ -110,14 +116,12 @@ following defaults in decreasing priority:
 }
 
 This behavior is mediated by the \code{set_giotto_python_path()} utility
-function, which will find an environment and then initialize it. You can
-also call \code{checkGiottoEnvironment()} in order to detect if there is an
-environment usable by Giotto without initializing.
+function, which will find an environment and then initialize it.
 }
 \section{Functions}{
 \itemize{
 \item \code{checkGiottoEnvironment()}: \itemize{
-\item Based on \code{envname}, detect if there a conda or miniconda installation
+\item Based on \code{envname}, detect if there a conda or miniconda environment
 accessible by \pkg{Giotto}. By default, the \code{envname} \code{"giotto_env"}, then
 the option \code{"giotto.py_path"} is checked, but an alternative can be
 provided.

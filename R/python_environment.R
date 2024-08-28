@@ -10,13 +10,17 @@
 #' 
 #' **Creating an environment**
 #' 
-#' `installGiottoEnvironment()` can be used to create a default environment
-#' called `giotto_env` that includes some commonly used python packages. See
-#' the **python versions** section for specific packages and version numbers.
+#' `installGiottoEnvironment()` can be used to create a default miniconda
+#' environment called `giotto_env` that includes some commonly used python 
+#' packages. See the **python versions** section for specific packages and 
+#' version numbers.
 #' 
-#' Custom environments managed through \pkg{reticulate} are also compatible
+#' Custom environments manageable through \pkg{reticulate} are also compatible
 #' and can be hooked into by Giotto after creation.
 #' 
+#' `checkGiottoEnvironment()` can be used in order to test if an envname or
+#' full python path is accessible by Giotto. It will also check the
+#' `"giotto.py_path"` option.
 #' 
 #' **Choosing environments**
 #' 
@@ -26,14 +30,15 @@
 #' 
 #' Whenever any of the following happens for the first time in a session:
 #' 
-#' - `giotto` object creation
+#' - `giotto` object creation (due to creation of a default 
+#' `giottoInstructions`)
 #' - `giottoInstructions` creation (`createGiottoInstructions()`)
-#' - `GiottoClass::set_giotto_python_path()` is called (most straightforward)
+#' - `GiottoClass::set_giotto_python_path()` is called (most direct)
 #' 
-#' Giotto automatically detects AND activates a python environment based on the
-#' following defaults in decreasing priority:
+#' For the above, Giotto automatically detects AND activates a python 
+#' environment based on the following defaults in decreasing priority:
 #' 
-#'   1. User provided (when `python_path` is not `NULL`)
+#'   1. User provided (when `python_path` param is not `NULL`)
 #'   2. Any provided path or envname in option `"giotto.py_path"`
 #'   3. Default expected giotto environment location based on 
 #'   [reticulate::miniconda_path()]
@@ -41,9 +46,7 @@
 #'   5. System default python environment
 #'   
 #' This behavior is mediated by the `set_giotto_python_path()` utility
-#' function, which will find an environment and then initialize it. You can 
-#' also call `checkGiottoEnvironment()` in order to detect if there is an
-#' environment usable by Giotto without initializing.
+#' function, which will find an environment and then initialize it.
 #' 
 #' 
 #' # python versions
@@ -86,8 +89,8 @@
 #' 
 #' \preformatted{conda env create -n giotto_env -f ./genv.yml}
 #' 
-#' @param envname character. (optional) The name of or path to a miniconda or
-#' conda environment directory or python executable. When using 
+#' @param envname character. (optional) The name of a miniconda or conda
+#' environment OR path to a python executable. When using 
 #' `installGiottoEnvironment()`, the default is `"giotto_env"`
 #' @param conda either "auto" (default) to allow reticulate to handle it, or
 #' the full filepath to the conda executable. You can also set the option
@@ -107,7 +110,7 @@ NULL
 
 #' @describeIn giotto_python
 #' 
-#' - Based on `envname`, detect if there a conda or miniconda installation
+#' - Based on `envname`, detect if there a conda or miniconda environment
 #' accessible by \pkg{Giotto}. By default, the `envname` `"giotto_env"`, then
 #' the option `"giotto.py_path"` is checked, but an alternative can be 
 #' provided. 
@@ -152,6 +155,17 @@ checkGiottoEnvironment <- function(
     } else {
         envname <- envname %null% getOption("giotto.py_path")
         envname <- envname %null% "giotto_env"
+    }
+    
+    if (!file.exists(envname) && isFALSE(.check_conda(error = FALSE))) {
+        # - a conda binary must be detected to use an envname
+        # - if an envname is not provided, the full path to the python binary
+        # is needed
+        vmsg(.v = verbose, "Unable to find a conda binary. 
+            Use `installGiottoEnvironment()` or install a custom conda.")
+        return(FALSE)
+        # this is also checked in set_giotto_python_path() within
+        # .envname_to_pypath(), but that throws an error instead.
     }
 
     py_path <- set_giotto_python_path(
