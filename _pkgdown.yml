@@ -4,6 +4,8 @@ url: https://drieslab.github.io/GiottoClass/
 authors:
   Ruben Dries:
     href: https://www.drieslab.com
+  Jiaji George Chen:
+    href: https://github.com/jiajic
   Guo-Cheng Yuan:
     href: https://labs.icahn.mssm.edu/yuanlab/
   Joselyn C. Chávez-Fuentes:
@@ -122,6 +124,7 @@ reference:
   - getMultiomics
   - getNearestNetwork
   - getGiottoImage
+  - spatValues
 - subtitle: Setters
   desc: Set (and replace) Giotto-native data objects in a Giotto Object
 - contents:
@@ -206,12 +209,7 @@ reference:
 - title: Instructions
   desc: Set instructions for Giotto Object behavior
 - contents:
-  - instructions-generic
   - createGiottoInstructions
-  - showGiottoInstructions
-  - readGiottoInstructions
-  - changeGiottoInstructions
-  - replaceGiottoInstructions
 - title: Subset
   desc: Subsetting the Giotto Object
 - contents:
@@ -313,12 +311,14 @@ reference:
   - ext
   - flip
   - crop
-  - transpose-generic
+  - transpose
   - spin
   - spatShift
-  - wrap
   - rescale
+  - shear
+  - affine
   - rescalePolygons
+  - wrap
 - subtitle: Querying
   desc: Spatial querying
   contents:
@@ -327,9 +327,11 @@ reference:
   desc: Standard generics for Giotto exported classes
 - contents:
   - plot-generic
-  - extract-methods
+  - subset_bracket
+  - replace_bracket
+  - subset_dollar
+  - replace_dollar
   - rbind-generic
-  - show,giotto-method
   - row-plus-colnames-generic
   - dimnames
   - dims-generic
@@ -357,6 +359,8 @@ reference:
   - as.points
   - as.polygons
   - as.data.table
+  - as.matrix
+  - as.character
   - r_spatial_conversions
 - title: Python
   desc: Giotto python environment
@@ -377,13 +381,17 @@ reference:
   - convertGiottoLargeImageToMG
   - estimateImageBg
   - distGiottoImage
-  - plot_auto_largeImage_resample
-  - add_img_array_alpha
+  - density
+  - hist
+  - ometif_to_tif
+  - ometif_metadata
+  - reconnect
   - changeImageBg
   - writeGiottoLargeImage
   - updateGiottoImage
   - updateGiottoImageMG
   - updateGiottoLargeImage
+  - add_img_array_alpha
 - title: History
   desc: Functions for logging Giotto Object history
 - contents:
@@ -437,4 +445,7 @@ reference:
   - annotateSpatialGrid
   - annotate_spatlocs_with_spatgrid_2D
   - annotate_spatlocs_with_spatgrid_3D
-
+- title: internal
+  desc: hidden items
+  contents:
+  - zoom
