@@ -36,6 +36,8 @@ jobs:
           dependencies: '"hard"' # do not use suggested dependencies
           install-pandoc: false
           extra-packages: |
+            github::drieslab/GiottoData
+            any::covr
             any::rcmdcheck
             any::testthat
             any::rlang
@@ -70,7 +72,7 @@ jobs:
             any::SpatialExperiment
             any::STexampleData
             any::SummarizedExperiment
-            github::drieslab/GiottoData
+
           needs: coverage
 
       - uses: actions/setup-python@v5
