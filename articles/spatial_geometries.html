@@ -5,76 +5,48 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="GiottoClass">
 <title>Giotto spatial geometry classes • GiottoClass</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/JetBrains_Mono-0.4.9/font.css" rel="stylesheet">
-<!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Giotto spatial geometry classes">
-<meta property="og:description" content="GiottoClass">
-<meta property="og:image" content="https://drieslab.github.io/GiottoClass/logo.png">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Giotto spatial geometry classes">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Documentation</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Documentation</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/spatial_geometries.html">Spatial Geometry Objects</a>
-    <a class="dropdown-item" href="../articles/image_tools.html">Images</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/spatial_geometries.html">Spatial Geometry Objects</a></li>
+    <li><a class="dropdown-item" href="../articles/image_tools.html">Images</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">News</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://drieslab.github.io/Giotto/">Suite</a>
-</li>
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/drieslab/GiottoClass/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://drieslab.github.io/Giotto/">Suite</a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/drieslab/GiottoClass/" aria-label="github"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -86,7 +58,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Giotto spatial geometry classes</h1>
             
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/drieslab/Giotto/blob/website/vignettes/spatial_geometries.Rmd" class="external-link"><code>vignettes/spatial_geometries.Rmd</code></a></small>
       <div class="d-none name"><code>spatial_geometries.Rmd</code></div>
     </div>
 
@@ -95,7 +67,16 @@
 <div class="section level2">
 <h2 id="overview">1. Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p><em>GiottoClass</em> represents spatial polygons and points respectively as S4 classes <code>giottoPolygon</code> and <code>giottoPoints</code>. These objects are built on top of <em>terra</em> <code>SpatVectors</code> in order to represent spatial biology. They also respond to many of terra’s generics, with some enhancements. Both objects have a <code>spatVector</code> slot that contains the main information. This common slot is inherited from the <code>VIRTUAL</code> <code>terraVectData</code> class, however this naming may be subject to change as other data representations are added.</p>
+<p><em>GiottoClass</em> represents spatial polygons and points
+respectively as S4 classes <code>giottoPolygon</code> and
+<code>giottoPoints</code>. These objects are built on top of
+<em>terra</em> <code>SpatVectors</code> in order to represent spatial
+biology. They also respond to many of terra’s generics, with some
+enhancements. Both objects have a <code>spatVector</code> slot that
+contains the main information. This common slot is inherited from the
+<code>VIRTUAL</code> <code>terraVectData</code> class, however this
+naming may be subject to change as other data representations are
+added.</p>
 <p>The structures of these classes are:</p>
 <pre><code>terraVectData
 \- spatVector
@@ -112,40 +93,71 @@ giottoPoints
 \- networks             (feature network)
 \- feat_type            (object name/feat_type)
 \- unique_ID_cache      (cache of feature IDs)</code></pre>
-<p>Of note are the <code>unique_ID_cache</code> slots which are used to get around the memory usage incurred when frequently accessing the <code>SpatVectors</code> attributes. The caches should be updated after modifications to the object. This is automatically performed when using <code>[]</code> subsetting.</p>
+<p>Of note are the <code>unique_ID_cache</code> slots which are used to
+get around the memory usage incurred when frequently accessing the
+<code>SpatVectors</code> attributes. The caches should be updated after
+modifications to the object. This is automatically performed when using
+<code>[]</code> subsetting.</p>
 </div>
 <div class="section level2">
 <h2 id="polygon-object-creation">2.1 Polygon object creation<a class="anchor" aria-label="anchor" href="#polygon-object-creation"></a>
 </h2>
-<p><code><a href="../reference/createGiottoPolygon.html">createGiottoPolygon()</a></code> accepts a number of inputs, including filepaths to spatial files such as .wkt, .shp, or .GeoJSON or mask image files of common formats such as .tif or .png. After reading in these files, they are passed to the respective methods for <code>SpatVector</code> and <code>SpatRaster</code> (mask image).</p>
-<p><code>data.frame-like</code> inputs are also allowed as long as they are formatted similarly to <em>terra’s</em> <code>matrix</code> representation of polygon geometries, with at least the following columns.</p>
+<p><code><a href="../reference/createGiottoPolygon.html">createGiottoPolygon()</a></code> accepts a number of inputs,
+including filepaths to spatial files such as .wkt, .shp, or .GeoJSON or
+mask image files of common formats such as .tif or .png. After reading
+in these files, they are passed to the respective methods for
+<code>SpatVector</code> and <code>SpatRaster</code> (mask image).</p>
+<p><code>data.frame-like</code> inputs are also allowed as long as they
+are formatted similarly to <em>terra’s</em> <code>matrix</code>
+representation of polygon geometries, with at least the following
+columns.</p>
 <ul>
 <li>
 <code>geom</code>: integer identifier for each polygon</li>
 <li>
-<code>part</code>: integer identifier for each part of the polygon, in the case of a multi polygon</li>
+<code>part</code>: integer identifier for each part of the polygon,
+in the case of a multi polygon</li>
 <li>
 <code>x</code>: numeric x coordinate of a polygon vertex</li>
 <li>
 <code>y</code>: numeric y coordinate of a polygon vertex</li>
 <li>
-<code>hole</code>: integer identifier for each hole within a polygon</li>
+<code>hole</code>: integer identifier for each hole within a
+polygon</li>
 <li>
-<code>poly_ID</code>: standard Giotto identifier for the polygon. Akin to cell_ID</li>
+<code>poly_ID</code>: standard Giotto identifier for the polygon.
+Akin to cell_ID</li>
 </ul>
-<p>Additional columns can be included as other attributes, but a set of <code>poly_ID</code>s are required.</p>
-<p><em>For de-novo generation of simple polygon arrays, see the documentation for <code><a href="../reference/polyStamp.html">polyStamp()</a></code> and <code><a href="../reference/tessellate.html">tessellate()</a></code></em></p>
+<p>Additional columns can be included as other attributes, but a set of
+<code>poly_ID</code>s are required.</p>
+<p><em>For de-novo generation of simple polygon arrays, see the
+documentation for <code><a href="../reference/polyStamp.html">polyStamp()</a></code> and
+<code><a href="../reference/tessellate.html">tessellate()</a></code></em></p>
 </div>
 <div class="section level2">
 <h2 id="points-object-creation">2.2 Points object creation<a class="anchor" aria-label="anchor" href="#points-object-creation"></a>
 </h2>
-<p>There are relatively fewer input methods for <code>giottoPoints</code> since they currently tend to be provided as flat files as opposed to spatial-specific formats. <code><a href="../reference/createGiottoPoints.html">createGiottoPoints()</a></code> works with with <code>data.frame-like</code> inputs with at least columns for x-coordinate, y-coordinate, and ID information. The first two detected numeric columns are expected to be x and y respectively. The first character column is assumed to be the feat_IDs. <em>terra</em> <code>SpatVector</code> inputs are also accepted.</p>
-<p>A helpful parameter is <code>split_keyword</code> which accepts a list of regex keywords to pull matched features into separate <code>giottoPoints</code> objects. This is useful in situations where multiple feature modalities and/or QC targets are provided together and would interfere with each other if analyzed together. (see examples in <code><a href="../reference/createGiottoPoints.html">createGiottoPoints()</a></code> documentation)</p>
+<p>There are relatively fewer input methods for
+<code>giottoPoints</code> since they currently tend to be provided as
+flat files as opposed to spatial-specific formats.
+<code><a href="../reference/createGiottoPoints.html">createGiottoPoints()</a></code> works with with
+<code>data.frame-like</code> inputs with at least columns for
+x-coordinate, y-coordinate, and ID information. The first two detected
+numeric columns are expected to be x and y respectively. The first
+character column is assumed to be the feat_IDs. <em>terra</em>
+<code>SpatVector</code> inputs are also accepted.</p>
+<p>A helpful parameter is <code>split_keyword</code> which accepts a
+list of regex keywords to pull matched features into separate
+<code>giottoPoints</code> objects. This is useful in situations where
+multiple feature modalities and/or QC targets are provided together and
+would interfere with each other if analyzed together. (see examples in
+<code><a href="../reference/createGiottoPoints.html">createGiottoPoints()</a></code> documentation)</p>
 </div>
 <div class="section level2">
 <h2 id="subsetting">3. Subsetting<a class="anchor" aria-label="anchor" href="#subsetting"></a>
 </h2>
-<p><code>giottoPoints</code> and <code>giottoPolygons</code> can be subset either by logical vectors or by ID.</p>
+<p><code>giottoPoints</code> and <code>giottoPolygons</code> can be
+subset either by logical vectors or by ID.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://drieslab.github.io/GiottoClass/">GiottoClass</a></span><span class="op">)</span></span>
 <span><span class="va">gpoly</span> <span class="op">&lt;-</span> <span class="fu">GiottoData</span><span class="fu">::</span><span class="fu"><a href="https://drieslab.github.io/GiottoData/reference/loadSubObjectMini.html" class="external-link">loadSubObjectMini</a></span><span class="op">(</span><span class="st">"giottoPolygon"</span><span class="op">)</span></span>
@@ -231,7 +243,8 @@ giottoPoints
 <span><span class="co">##  values      :     Fn1        0          166</span></span>
 <span><span class="co">##                    Fn1        0          181</span></span>
 <span><span class="co">##                    Fn1        0          195</span></span></code></pre>
-<p><code>$</code> extraction can be used to pull attributes of these objects as vectors</p>
+<p><code>$</code> extraction can be used to pull attributes of these
+objects as vectors</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gpoly</span><span class="op">$</span><span class="va">poly_ID</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "100210519278873141813371229408401071444"</span></span>
@@ -244,7 +257,15 @@ giottoPoints
 <div class="section level2">
 <h2 id="conversion-to-data-table">4. Conversion to data.table<a class="anchor" aria-label="anchor" href="#conversion-to-data-table"></a>
 </h2>
-<p><em>GiottoClass</em> has a set of functions for converting <code>giottoPoints</code> and <code>giottoPolygon</code> objects between spatial classes using <code><a href="../reference/r_spatial_conversions.html">as.sf()</a></code>, <code><a href="../reference/r_spatial_conversions.html">as.sp()</a></code>, <code><a href="../reference/r_spatial_conversions.html">as.stars()</a></code>, and <code><a href="../reference/r_spatial_conversions.html">as.terra()</a></code>. <em>terra</em>-based <code>giottoPoints</code> and <code>giottoPolygon</code> objects can also be converted into <code>data.table</code> for geometry manipulation. This method largely piggybacks off <em>terra</em>’s <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code> and adds support for <code>geom = "XY"</code> for polygon geometry.</p>
+<p><em>GiottoClass</em> has a set of functions for converting
+<code>giottoPoints</code> and <code>giottoPolygon</code> objects between
+spatial classes using <code><a href="../reference/r_spatial_conversions.html">as.sf()</a></code>, <code><a href="../reference/r_spatial_conversions.html">as.sp()</a></code>,
+<code><a href="../reference/r_spatial_conversions.html">as.stars()</a></code>, and <code><a href="../reference/r_spatial_conversions.html">as.terra()</a></code>.
+<em>terra</em>-based <code>giottoPoints</code> and
+<code>giottoPolygon</code> objects can also be converted into
+<code>data.table</code> for geometry manipulation. This method largely
+piggybacks off <em>terra</em>’s <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code> and adds
+support for <code>geom = "XY"</code> for polygon geometry.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gpoly_dt</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">gpoly</span>, geom <span class="op">=</span> <span class="st">"XY"</span><span class="op">)</span></span>
 <span><span class="va">gpoints_dt</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">gpoints</span>, geom <span class="op">=</span> <span class="st">"XY"</span><span class="op">)</span></span>
@@ -292,7 +313,10 @@ giottoPoints
 <span><span class="co">## 79759: Adcyap1r1        1        80341 6900.024 -5007.432</span></span>
 <span><span class="co">## 79760:   Slc17a7        1        80342 6900.026 -4924.840</span></span>
 <span><span class="co">## 79761:     Cldn5        1        80343 6900.030 -4746.916</span></span></code></pre>
-<p>These tables can then be either re-ingested using <code><a href="../reference/createGiottoPolygon.html">createGiottoPolygon()</a></code> and <code><a href="../reference/createGiottoPoints.html">createGiottoPoints()</a></code> or converted to <code>SpatVector</code> using <code><a href="../reference/as.polygons.html">as.polygons()</a></code> or <code><a href="../reference/as.points.html">as.points()</a></code></p>
+<p>These tables can then be either re-ingested using
+<code><a href="../reference/createGiottoPolygon.html">createGiottoPolygon()</a></code> and <code><a href="../reference/createGiottoPoints.html">createGiottoPoints()</a></code>
+or converted to <code>SpatVector</code> using <code><a href="../reference/as.polygons.html">as.polygons()</a></code>
+or <code><a href="../reference/as.points.html">as.points()</a></code></p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="../reference/as.polygons.html">as.polygons</a></span><span class="op">(</span><span class="va">gpoly_dt</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##  class       : SpatVector </span></span>
@@ -325,20 +349,40 @@ giottoPoints
 <div class="section level2">
 <h2 id="centroids">5. Centroids<a class="anchor" aria-label="anchor" href="#centroids"></a>
 </h2>
-<p>Centroids information are carried by <code>giottoPolygon</code> objects in the <code>spatVectorCentroids</code> slot. The <code><a href="../reference/centroids-generic.html">centroids()</a></code> generic from <em>terra</em> pulls from this slot if the information already exists. Otherwise, it calculates and returns a set of centroids for the polygons as <code>SpatVector</code> points. The <code>append_gpolygon</code> param makes it so that the <code>giottoPolygon</code> with the centroids info appended is returned instead.</p>
+<p>Centroids information are carried by <code>giottoPolygon</code>
+objects in the <code>spatVectorCentroids</code> slot. The
+<code><a href="../reference/centroids-generic.html">centroids()</a></code> generic from <em>terra</em> pulls from this
+slot if the information already exists. Otherwise, it calculates and
+returns a set of centroids for the polygons as <code>SpatVector</code>
+points. The <code>append_gpolygon</code> param makes it so that the
+<code>giottoPolygon</code> with the centroids info appended is returned
+instead.</p>
 </div>
 <div class="section level2">
 <h2 id="overlaps">6.1 Overlaps<a class="anchor" aria-label="anchor" href="#overlaps"></a>
 </h2>
-<p>Overlaps are sets of features overlapped by the polygons. <code>calculateOverlaps()</code> is a generic function that performs this overlapping between polygons and points and polygons and raster (intensity) data.</p>
+<p>Overlaps are sets of features overlapped by the polygons.
+<code>calculateOverlaps()</code> is a generic function that performs
+this overlapping between polygons and points and polygons and raster
+(intensity) data.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gpoly</span><span class="op">@</span><span class="va">overlaps</span> <span class="op">&lt;-</span> <span class="cn">NULL</span> <span class="co"># reset overlaps info</span></span>
 <span><span class="va">gpoly</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateOverlap.html">calculateOverlap</a></span><span class="op">(</span><span class="va">gpoly</span>, <span class="va">gpoints</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">gimg</span> <span class="op">&lt;-</span> <span class="fu">GiottoData</span><span class="fu">::</span><span class="fu"><a href="https://drieslab.github.io/GiottoData/reference/loadSubObjectMini.html" class="external-link">loadSubObjectMini</a></span><span class="op">(</span><span class="st">"giottoLargeImage"</span><span class="op">)</span></span>
 <span><span class="va">gpoly</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateOverlap.html">calculateOverlap</a></span><span class="op">(</span><span class="va">gpoly</span>, <span class="va">gimg</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>Overlaps are stored as a <code>list</code> under the <code>giottoPolygon</code> <code>overlaps</code> slot, separated by modalities. This list can be retrieved using <code><a href="../reference/overlaps-generic.html">overlaps()</a></code>. In the case of overlapped points geometries, the list items are points <code>SpatVector</code> objects. The <code>poly_ID</code> column tracks which polygon is overlapping the point feature as designated by <code>feat_ID</code> and <code>feat_ID_uniq</code>. <code>NA</code> values mean that the feature was not overlapped.</p>
-<p>For overlaps intensities, the results are stored as <code>data.tables</code> in a nested <code>list</code> called <code>intensity</code> under the main <code>overlaps</code> <code>list</code>.</p>
+<p>Overlaps are stored as a <code>list</code> under the
+<code>giottoPolygon</code> <code>overlaps</code> slot, separated by
+modalities. This list can be retrieved using <code><a href="../reference/overlaps-generic.html">overlaps()</a></code>. In
+the case of overlapped points geometries, the list items are points
+<code>SpatVector</code> objects. The <code>poly_ID</code> column tracks
+which polygon is overlapping the point feature as designated by
+<code>feat_ID</code> and <code>feat_ID_uniq</code>. <code>NA</code>
+values mean that the feature was not overlapped.</p>
+<p>For overlaps intensities, the results are stored as
+<code>data.tables</code> in a nested <code>list</code> called
+<code>intensity</code> under the main <code>overlaps</code>
+<code>list</code>.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">gpoly</span><span class="op">@</span><span class="va">overlaps</span><span class="op">$</span><span class="va">rna</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##  class       : SpatVector </span></span>
@@ -371,13 +415,15 @@ giottoPoints
 <div class="section level2">
 <h2 id="overlaps-to-matrix">6.2 Overlaps to matrix<a class="anchor" aria-label="anchor" href="#overlaps-to-matrix"></a>
 </h2>
-<p>Overlap results can be converted into expression matrices using <code><a href="../reference/overlapToMatrix.html">overlapToMatrix()</a></code></p>
+<p>Overlap results can be converted into expression matrices using
+<code><a href="../reference/overlapToMatrix.html">overlapToMatrix()</a></code></p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># points, rna modality (default)</span></span>
 <span><span class="va">rna_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/overlapToMatrix.html">overlapToMatrix</a></span><span class="op">(</span><span class="va">gpoly</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning: [overlapToMatrix] expected col_names and row_names not provided together.</span></span>
-<span><span class="co">##  Points aggregation Matrix output may be missing some cols and rows where no</span></span>
-<span><span class="co">##  detections were found.</span></span></code></pre>
+<pre><code><span><span class="co">## Warning: [overlapToMatrix] expected col_names and row_names</span></span>
+<span><span class="co">##  not provided together. Points aggregation Matrix output</span></span>
+<span><span class="co">##  may be missing some cols and rows where no detections</span></span>
+<span><span class="co">##  were found.</span></span></code></pre>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">rna_mat</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## 3 x 3 sparse Matrix of class "dgCMatrix"</span></span>
@@ -406,8 +452,8 @@ giottoPoints
 <span><span class="co">## mini_dataset_dapi_z0                                  613670</span></span></code></pre>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.3.3 (2024-02-29)</span></span>
-<span><span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
+<pre><code><span><span class="co">## R version 4.4.1 (2024-06-14)</span></span>
+<span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">## Running under: Ubuntu 22.04.4 LTS</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Matrix products: default</span></span>
@@ -427,54 +473,58 @@ giottoPoints
 <span><span class="co">## [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">## [1] GiottoClass_0.2.3</span></span>
+<span><span class="co">## [1] GiottoClass_0.3.5</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##  [1] sass_0.4.9           utf8_1.2.4           class_7.3-22        </span></span>
-<span><span class="co">##  [4] KernSmooth_2.23-22   gtools_3.9.5         lattice_0.22-5      </span></span>
-<span><span class="co">##  [7] digest_0.6.35        magrittr_2.0.3       evaluate_0.23       </span></span>
-<span><span class="co">## [10] grid_4.3.3           fastmap_1.1.1        jsonlite_1.8.8      </span></span>
-<span><span class="co">## [13] Matrix_1.6-5         e1071_1.7-14         backports_1.4.1     </span></span>
-<span><span class="co">## [16] DBI_1.2.2            scattermore_1.2      GiottoData_0.2.7.0  </span></span>
-<span><span class="co">## [19] purrr_1.0.2          fansi_1.0.6          scales_1.3.0        </span></span>
-<span><span class="co">## [22] codetools_0.2-19     textshaping_0.3.7    jquerylib_0.1.4     </span></span>
-<span><span class="co">## [25] cli_3.6.2            rlang_1.1.3          units_0.8-5         </span></span>
-<span><span class="co">## [28] munsell_0.5.0        cachem_1.0.8         yaml_2.3.8          </span></span>
-<span><span class="co">## [31] tools_4.3.3          raster_3.6-26        memoise_2.0.1       </span></span>
-<span><span class="co">## [34] GiottoUtils_0.1.6    checkmate_2.3.1      colorspace_2.1-0    </span></span>
-<span><span class="co">## [37] ggplot2_3.5.0        exactextractr_0.10.0 vctrs_0.6.5         </span></span>
-<span><span class="co">## [40] R6_2.5.1             proxy_0.4-27         classInt_0.4-10     </span></span>
-<span><span class="co">## [43] lifecycle_1.0.4      fs_1.6.3             ragg_1.3.0          </span></span>
-<span><span class="co">## [46] pkgconfig_2.0.3      desc_1.4.3           pkgdown_2.0.7       </span></span>
-<span><span class="co">## [49] terra_1.7-71         bslib_0.6.1          pillar_1.9.0        </span></span>
-<span><span class="co">## [52] gtable_0.3.4         data.table_1.15.2    glue_1.7.0          </span></span>
-<span><span class="co">## [55] Rcpp_1.0.12          sf_1.0-15            systemfonts_1.0.6   </span></span>
-<span><span class="co">## [58] xfun_0.42            tibble_3.2.1         highr_0.10          </span></span>
-<span><span class="co">## [61] knitr_1.45           htmltools_0.5.7      rmarkdown_2.26      </span></span>
-<span><span class="co">## [64] compiler_4.3.3       sp_2.1-3</span></span></code></pre>
+<span><span class="co">##  [1] gtable_0.3.5         raster_3.6-26        xfun_0.47           </span></span>
+<span><span class="co">##  [4] bslib_0.8.0          ggplot2_3.5.1        htmlwidgets_1.6.4   </span></span>
+<span><span class="co">##  [7] Biobase_2.64.0       lattice_0.22-6       vctrs_0.6.5         </span></span>
+<span><span class="co">## [10] tools_4.4.1          generics_0.1.3       stats4_4.4.1        </span></span>
+<span><span class="co">## [13] proxy_0.4-27         tibble_3.2.1         fansi_1.0.6         </span></span>
+<span><span class="co">## [16] GiottoData_0.2.14    highr_0.11           pkgconfig_2.0.3     </span></span>
+<span><span class="co">## [19] R.oo_1.26.0          KernSmooth_2.23-24   Matrix_1.7-0        </span></span>
+<span><span class="co">## [22] data.table_1.16.0    checkmate_2.3.2      desc_1.4.3          </span></span>
+<span><span class="co">## [25] S4Vectors_0.42.1     lifecycle_1.0.4      compiler_4.4.1      </span></span>
+<span><span class="co">## [28] deldir_2.0-4         GiottoUtils_0.1.11   textshaping_0.4.0   </span></span>
+<span><span class="co">## [31] munsell_0.5.1        terra_1.7-78         codetools_0.2-20    </span></span>
+<span><span class="co">## [34] scattermore_1.2      class_7.3-22         htmltools_0.5.8.1   </span></span>
+<span><span class="co">## [37] sass_0.4.9           yaml_2.3.10          exactextractr_0.10.0</span></span>
+<span><span class="co">## [40] pkgdown_2.1.0        pillar_1.9.0         jquerylib_0.1.4     </span></span>
+<span><span class="co">## [43] R.utils_2.12.3       classInt_0.4-10      cachem_1.1.0        </span></span>
+<span><span class="co">## [46] dbscan_1.2-0         magick_2.8.4         gtools_3.9.5        </span></span>
+<span><span class="co">## [49] tidyselect_1.2.1     digest_0.6.37        sf_1.0-16           </span></span>
+<span><span class="co">## [52] dplyr_1.1.4          fastmap_1.2.0        grid_4.4.1          </span></span>
+<span><span class="co">## [55] colorspace_2.1-1     cli_3.6.3            magrittr_2.0.3      </span></span>
+<span><span class="co">## [58] utf8_1.2.4           e1071_1.7-14         scales_1.3.0        </span></span>
+<span><span class="co">## [61] backports_1.5.0      sp_2.1-4             rmarkdown_2.28      </span></span>
+<span><span class="co">## [64] XVector_0.44.0       matrixStats_1.3.0    igraph_2.0.3        </span></span>
+<span><span class="co">## [67] reticulate_1.38.0    ragg_1.3.2           png_0.1-8           </span></span>
+<span><span class="co">## [70] R.methodsS3_1.8.2    evaluate_0.24.0      knitr_1.48          </span></span>
+<span><span class="co">## [73] IRanges_2.38.1       rlang_1.1.4          Rcpp_1.0.13         </span></span>
+<span><span class="co">## [76] DBI_1.2.3            glue_1.7.0           BiocGenerics_0.50.0 </span></span>
+<span><span class="co">## [79] jsonlite_1.8.8       R6_2.5.1             units_0.8-5         </span></span>
+<span><span class="co">## [82] systemfonts_1.1.0    fs_1.6.4             zlibbioc_1.50.0</span></span></code></pre>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p>
-<p>Developed by <a href="https://www.drieslab.com" class="external-link">Ruben Dries</a>, Jiaji George Chen, <a href="https://labs.icahn.mssm.edu/yuanlab/" class="external-link">Guo-Cheng Yuan</a>, Matthew O’Brien, <a href="https://josschavezf.github.io" class="external-link">Joselyn C. Chávez-Fuentes</a>, Edward Ruiz.</p>
+  <p>Developed by <a href="https://www.drieslab.com" class="external-link">Ruben Dries</a>, <a href="https://github.com/jiajic" class="external-link">Jiaji George Chen</a>, <a href="https://labs.icahn.mssm.edu/yuanlab/" class="external-link">Guo-Cheng Yuan</a>, Matthew O’Brien, <a href="https://josschavezf.github.io" class="external-link">Joselyn C. Chávez-Fuentes</a>, Edward Ruiz.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>

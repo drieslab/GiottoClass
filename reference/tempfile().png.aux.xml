@@ -1,0 +1,46 @@
+<PAMDataset>
+  <GeoTransform>  2.0005000000000000e+03,  1.9711934156378600e+01,  0.0000000000000000e+00, -2.3807500000000000e+03,  0.0000000000000000e+00, -1.9473837209302324e+01</GeoTransform>
+  <Metadata domain="IMAGE_STRUCTURE">
+    <MDI key="INTERLEAVE">PIXEL</MDI>
+  </Metadata>
+  <PAMRasterBand band="1">
+    <Description>deg_image2_1</Description>
+    <NoDataValue>2.55000000000000E+02</NoDataValue>
+    <Metadata>
+      <MDI key="STATISTICS_MAXIMUM">133</MDI>
+      <MDI key="STATISTICS_MEAN">-9999</MDI>
+      <MDI key="STATISTICS_MINIMUM">36</MDI>
+      <MDI key="STATISTICS_STDDEV">-9999</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="2">
+    <Description>deg_image2_2</Description>
+    <NoDataValue>2.55000000000000E+02</NoDataValue>
+    <Metadata>
+      <MDI key="STATISTICS_MAXIMUM">134</MDI>
+      <MDI key="STATISTICS_MEAN">-9999</MDI>
+      <MDI key="STATISTICS_MINIMUM">20</MDI>
+      <MDI key="STATISTICS_STDDEV">-9999</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="3">
+    <Description>deg_image2_3</Description>
+    <NoDataValue>2.55000000000000E+02</NoDataValue>
+    <Metadata>
+      <MDI key="STATISTICS_MAXIMUM">132</MDI>
+      <MDI key="STATISTICS_MEAN">-9999</MDI>
+      <MDI key="STATISTICS_MINIMUM">41</MDI>
+      <MDI key="STATISTICS_STDDEV">-9999</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="4">
+    <Description>deg_image2_4</Description>
+    <NoDataValue>2.55000000000000E+02</NoDataValue>
+    <Metadata>
+      <MDI key="STATISTICS_MAXIMUM">255</MDI>
+      <MDI key="STATISTICS_MEAN">-9999</MDI>
+      <MDI key="STATISTICS_MINIMUM">255</MDI>
+      <MDI key="STATISTICS_STDDEV">-9999</MDI>
+    </Metadata>
+  </PAMRasterBand>
+</PAMDataset>
