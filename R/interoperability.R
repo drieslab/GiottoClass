@@ -3355,9 +3355,12 @@ spatialdataToGiotto <- function(
     )
 
     # Attach hires image
-    raster <- terra::rast(extract_image(sdata))
-    giotto_image <- createGiottoLargeImage(raster)
-    gobject <- addGiottoLargeImage(gobject = gobject, largeImages = c(giotto_image))
+    extracted_images <- extract_image(sdata)
+    extract_image_names <- extract_image_names(sdata)
+
+    raster_image_list <- lapply(extracted_images, terra::rast)
+    large_image_list <- createGiottoLargeImageList(raster_image_list, names = extract_image_names)
+    gobject <- addGiottoLargeImage(gobject = gobject, largeImages = large_image_list)
 
     # Attach metadata
     cm <- readCellMetadata(cm)
@@ -3463,7 +3466,7 @@ spatialdataToGiotto <- function(
             vert <- unique(x = c(nn_dt$from_cell_ID, nn_dt$to_cell_ID))
             nn_network_igraph <- igraph::graph_from_data_frame(nn_dt[, .(from_cell_ID, to_cell_ID, weight, distance)], directed = TRUE, vertices = vert)
 
-            nn_info <- extract_NN_info(adata = adata, key_added = n_key_added_it)
+            nn_info <- extract_NN_info(sdata = sdata, key_added = n_key_added_it)
 
             net_type <- "kNN" # anndata default
             if (("sNN" %in% n_key_added_it) & !is.null(n_key_added_it)) {
@@ -3587,6 +3590,35 @@ spatialdataToGiotto <- function(
             )
         }
     }
+
+    ### Layers
+    lay_names <- extract_layer_names(sdata)
+    if (!is.null(lay_names)) {
+        for (l_n in lay_names) {
+            lay <- extract_layered_data(sdata, layer_name = l_n)
+            if ("data.frame" %in% class(lay)) {
+                names(lay) <- fID
+                row.names(lay) <- cID
+            } else {
+                lay@Dimnames[[1]] <- fID
+                lay@Dimnames[[2]] <- cID
+            }
+            layExprObj <- createExprObj(lay, name = l_n)
+            gobject <- set_expression_values(
+                gobject = gobject,
+                spat_unit = spat_unit,
+                feat_type = feat_type,
+                name = l_n,
+                values = layExprObj
+            )
+        }
+    }
+
+    gobject <- update_giotto_params(
+        gobject = gobject,
+        description = "_AnnData_Conversion"
+    )
+
     return(gobject)
 }
 
@@ -3646,29 +3678,32 @@ giottoToSpatialData <- function(
         save_directory = temp
     )
 
-    # Extract GiottoImage
-    gimg <- getGiottoImage(gobject, image_type = "largeImage")
-
-    # Temporarily save the image to disk
-    writeGiottoLargeImage(
-        giottoLargeImage = gimg,
-        gobject = gobject,
-        largeImage_name = "largeImage",
-        filename = "temp_image.png",
-        dataType = NULL,
-        max_intensity = NULL,
-        overwrite = TRUE,
-        verbose = TRUE
-    )
+    # Extract GiottoImage only if an image exists
+    image_exists <- NULL
+    if (length(slot(gobject, "images")) > 0) {
+        image_exists <- TRUE
+        gimg_list <- slot(gobject, "images")
+        for (i in seq_along(gimg_list)) {
+            img_name <- slot(gimg_list[[i]], "name")
+            writeGiottoLargeImage(
+                giottoLargeImage = gimg_list[[i]],
+                gobject = gobject,
+                largeImage_name = img_name,
+                filename = paste0(temp, img_name, ".png"),
+                dataType = NULL,
+                max_intensity = NULL,
+                overwrite = TRUE,
+                verbose = TRUE
+            )
+        }
+    }
     
     spat_locs <- getSpatialLocations(gobject, output="data.table")
 
     # Create SpatialData object
-    createSpatialData(temp, spat_locs, spot_radius, save_directory)
+    createSpatialData(temp, spat_locs, spot_radius, save_directory, image_exists)
 
     # Delete temporary files and folders
-    unlink("temp_image.png")
-    unlink("temp_image.png.aux.xml")
     unlink(temp, recursive = TRUE)
 
     # Successful Conversion
