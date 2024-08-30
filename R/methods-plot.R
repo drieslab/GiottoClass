@@ -504,9 +504,8 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
     ))]
     a$x <- giottoLargeImage@raster_object
 
-
     # Determine likely image bitdepth
-    if (is.null(max_intensity)) {
+    if (is.null(max_intensity) || is.na(max_intensity)) {
         bitDepth <- ceiling(log(x = giottoLargeImage@max_intensity, base = 2))
         # Assign discovered bitdepth as max_intensity
         max_intensity <- 2^bitDepth - 1
