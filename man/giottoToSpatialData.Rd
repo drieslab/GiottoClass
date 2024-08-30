@@ -30,14 +30,11 @@ giottoToSpatialData(
 \item{save_directory}{directory in which the SpatialData object will be saved}
 }
 \value{
-SpatialData object in the form of
+SpatialData object saved on disk.
 }
 \description{
 Converts a Giotto object to SpatialData object
 }
 \details{
-Function in beta. Converts a .h5ad file into a Giotto object.
-The returned Giotto Object will take default insructions with the
-exception of the python path, which may be customized.
-See \code{\link{changeGiottoInstructions}} to modify instructions after creation.
+Function in beta. Converts and saves a Giotto object in SpatialData format on disk.
 }

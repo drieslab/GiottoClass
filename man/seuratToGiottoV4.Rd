@@ -39,5 +39,11 @@ stored in it.
 \description{
 Convert a Seurat V4 object to a Giotto object
 }
+\examples{
+m_expression <- Matrix::Matrix(rnorm(100), nrow = 10, sparse = TRUE)
+s <- Seurat::CreateSeuratObject(counts = m_expression)
+
+seuratToGiottoV5(s, spatial_assay = "RNA")
+}
 \keyword{interoperability}
 \keyword{seurat}

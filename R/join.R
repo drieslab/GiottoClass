@@ -44,9 +44,8 @@
 #' @name .join_spatlocs
 #' @keywords internal
 #' @noRd
-.join_spatlocs <- function(dt_list) {
-    final_list <- do.call("rbind", dt_list) # breaks DT reference
-    return(final_list)
+.join_spatlocs <- function(x) {
+    do.call("rbind", x) # breaks DT reference
 }
 
 #' @title .join_cell_meta
@@ -491,7 +490,7 @@ joinGiottoObjects <- function(gobject_list,
 
             # spatial shifts
             if (join_method == "z_stack") {
-                spatShift(sl, dz = z_vals[gobj_i])
+                sl <- spatShift(sl, dz = z_vals[gobj_i])
             }
             return(sl)
         })
@@ -647,7 +646,7 @@ joinGiottoObjects <- function(gobject_list,
     } else {
         for (exprObj_i in seq(nrow(avail_expr))) {
             expr_list <- lapply(updated_object_list, function(gobj) {
-                get_expression_values(
+                getExpression(
                     gobject = gobj,
                     spat_unit = avail_expr$spat_unit[[exprObj_i]],
                     feat_type = avail_expr$feat_type[[exprObj_i]],
@@ -687,7 +686,6 @@ joinGiottoObjects <- function(gobject_list,
 
 
 
-
     ## spatial locations
     vmsg(.v = verbose, "3. spatial locations")
 
@@ -708,16 +706,11 @@ joinGiottoObjects <- function(gobject_list,
             warning(wrap_txt("spatial locations: provenance mismatch"))
         }
 
-        combspatlocs <- .join_spatlocs(dt_list = lapply(
-            sl_list,
-            function(sl) sl[]
-        ))
-        sl_list[[1]][] <- combspatlocs
+        combspatlocs <- .join_spatlocs(x = sl_list)
 
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        comb_gobject <- set_spatial_locations(comb_gobject,
-            spatlocs = sl_list[[1]],
-            set_defaults = FALSE
+        comb_gobject <- setGiotto(
+            comb_gobject, combspatlocs, initialize = FALSE, verbose = FALSE
         )
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
     }
@@ -889,7 +882,7 @@ joinGiottoObjects <- function(gobject_list,
 
     ## If no feature_metadata exists, then generate now
     if (is.null(list_cell_metadata(comb_gobject))) {
-        comb_gobject <- init_feat_metadata()
+        comb_gobject <- init_feat_metadata(comb_gobject)
     }
 
 

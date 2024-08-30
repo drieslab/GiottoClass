@@ -20,7 +20,8 @@ test_that("Not found exprObj returns error", {
     expect_error(
         getExpression(giotto_object,
             spat_unit = "none",
-            feat_type = "none", values = "raw"
+            feat_type = "none", 
+            values = "raw"
         )
     )
 })
@@ -31,8 +32,7 @@ test_that("Not found CellMetadata returns error", {
         getCellMetadata(
             giotto_object,
             spat_unit = "none",
-            feat_type = "none",
-            values = "raw"
+            feat_type = "none"
         )
     )
 })

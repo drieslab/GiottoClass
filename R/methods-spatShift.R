@@ -140,6 +140,7 @@ setMethod(
     function(x, dx = 0, dy = 0, dz = 0, copy_obj = TRUE, ...) {
         argslist <- get_args_list()
         argslist$x <- x[]
+        argslist$geom = c("sdimx", "sdimy", "sdimz")
 
         # pass to data.frame method
         x[] <- do.call(spatShift, argslist)
@@ -162,7 +163,7 @@ setMethod(
             spatlocs = x,
             dx = dx, dy = dy, dz = dz,
             copy_obj = copy_obj,
-            geom = geom, ...
+            geom = geom
         )
 
         return(x)
@@ -232,7 +233,25 @@ setMethod(
     }
 )
 
+#' @rdname spatShift
+#' @export
+setMethod("spatShift", signature("giottoAffineImage"),
+          function(x, dx = 0, dy = 0, ...) {
+              x@affine <- spatShift(x@affine, dx = dx, dy = dy, ...)
+              return(initialize(x))
+          })
 
+#' @rdname spatShift
+#' @export
+setMethod(
+    "spatShift", signature("affine2d"),
+    function(x, dx = 0, dy = 0, ...) {
+        aff <- x@affine
+        aff[seq(2), 3] <- aff[seq(2), 3] + c(dx, dy)
+        x@affine <- aff
+        return(initialize(x))
+    }
+)
 
 
 
@@ -267,21 +286,22 @@ setMethod(
 
     if (is.null(names(geom))) names(geom) <- xyz
     if (!all(names(geom) %in% xyz)) stop("geom value names not recognized")
+    geom_col <- geom # avoid name collisions with terra "geom" ID column
 
-    spatlocs[, (geom[["x"]]) := get(geom[["x"]]) + dx]
-    spatlocs[, (geom[["y"]]) := get(geom[["y"]]) + dy]
+    spatlocs[, (geom_col[["x"]]) := get(geom_col[["x"]]) + dx]
+    spatlocs[, (geom_col[["y"]]) := get(geom_col[["y"]]) + dy]
     if (dz == 0) return(spatlocs) # return early if no z shift
 
-    if (geom[["z"]] %in% colnames(spatlocs)) {
+    if (geom_col[["z"]] %in% colnames(spatlocs)) {
         # existing z info
-        spatlocs[, (geom[["z"]]) := get(geom[["z"]]) + dz]
+        spatlocs[, (geom_col[["z"]]) := get(geom_col[["z"]]) + dz]
     } else {
         # initialize z info
-        spatlocs[, (geom[["z"]]) := dz]
+        spatlocs[, (geom_col[["z"]]) := dz]
     }
 
     # fix col ordering
-    data.table::setcolorder(spatlocs, c(geom, "cell_ID"))
+    data.table::setcolorder(spatlocs, c(geom_col, "cell_ID"))
 
     return(spatlocs)
 }
@@ -428,13 +448,14 @@ setMethod(
     if (copy_obj) gpoly@spatVector <- terra::deepcopy(gpoly@spatVector)
 
     if (!all(dx == 0, dy == 0)) {
-        gpoly <- .do_gpoly(gpoly,
-                           what = terra::shift,
-                           args = list(
-                               dx = dx,
-                               dy = dy,
-                               ...
-                           )
+        gpoly <- .do_gpoly(
+            gpoly,
+            what = terra::shift,
+            args = list(
+                dx = dx,
+                dy = dy,
+                ...
+           )
         )
     }
     gpoly

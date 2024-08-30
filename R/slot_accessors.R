@@ -284,7 +284,7 @@ set_cell_id <- function(gobject,
         # get cell ID values
         if (spat_unit %in% expr_avail$spat_unit) { # preferred from expression
 
-            cell_IDs <- spatIDs(get_expression_values(
+            cell_IDs <- spatIDs(getExpression(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = expr_avail$feat_type[[1L]],
@@ -424,7 +424,7 @@ set_feat_id <- function(gobject,
 
         if (feat_type %in% expr_avail$feat_type) { # preferred from expression
 
-            feat_IDs <- featIDs(get_expression_values(
+            feat_IDs <- featIDs(getExpression(
                 gobject = gobject,
                 spat_unit = expr_avail$spat_unit[[1L]],
                 feat_type = feat_type,
@@ -1428,17 +1428,18 @@ set_feature_metadata <- function(gobject,
 #'
 #' getExpression(g)
 #' @export
-getExpression <- function(gobject,
-    values = NULL,
-    spat_unit = NULL,
-    feat_type = NULL,
-    output = c("exprObj", "matrix"),
-    set_defaults = TRUE) {
-    # 0. Check input
+getExpression <- function(
+        gobject,
+        values = NULL,
+        spat_unit = NULL,
+        feat_type = NULL,
+        output = c("exprObj", "matrix"),
+        set_defaults = TRUE) {
+    
+  
+  # 0. Check input
     assert_giotto(gobject)
     output <- match.arg(output, choices = c("exprObj", "matrix"))
-
-
 
     # 1. Set feat_type and spat_unit
     if (isTRUE(set_defaults)) {
@@ -1495,16 +1496,24 @@ getExpression <- function(gobject,
 #' 'exprObj' (default) for the exprObj itself are allowed.
 #' @returns exprObj or matrix depending on output param
 #' @export
-get_expression_values <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    values = NULL,
-    output = c("exprObj", "matrix"),
-    set_defaults = TRUE) {
+get_expression_values <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        values = c('raw', 'normalized', 'scaled'),
+        output = c("exprObj", "matrix"),
+        set_defaults = TRUE) {
+
     deprecate_soft("3.3.0", "get_expression_values()", "getExpression()")
 
     assert_giotto(gobject)
 
+    ## check parameters
+    values <- match.arg(
+      arg = values,
+      choices = unique(c("raw", "normalized", "scaled", values))
+    )
+    
     output <- match.arg(output, choices = c("exprObj", "matrix"))
 
     # 1. Set feat_type and spat_unit
@@ -1520,6 +1529,7 @@ get_expression_values <- function(gobject,
         )
     }
 
+    
     # 2. Find object
     potential_values <- list_expression_names(
         gobject = gobject,

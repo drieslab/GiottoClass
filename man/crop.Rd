@@ -3,6 +3,7 @@
 \name{crop}
 \alias{crop}
 \alias{crop,giottoLargeImage-method}
+\alias{crop,giottoAffineImage-method}
 \alias{crop,spatLocsObj-method}
 \alias{crop,spatialNetworkObj-method}
 \alias{crop,giottoPoints-method}
@@ -10,6 +11,8 @@
 \title{Crop to a spatial subset}
 \usage{
 \S4method{crop}{giottoLargeImage}(x, y, ...)
+
+\S4method{crop}{giottoAffineImage}(x, y, ...)
 
 \S4method{crop}{spatLocsObj}(x, y, ...)
 

@@ -166,11 +166,42 @@
 }
 
 
+# from a spatvector, get the centroid xy values as a numeric vector
+.get_centroid_xy <- function(x) {
+    res <- centroids(x) %>% ext() %>% .ext_to_num_vec()
+    res[c(1L, 3L)]
+}
 
+# create a polygon of the extent.
+# useful for plotting and figuring out how the full data will behave spatially
+.bound_poly <- function(x) {
+    res <- ext(x) %>% as.polygons()
+    res$id <- "bound"
+    return(res)
+}
 
-
-
-
+# create a spatLocsObj of 3 corner pixel locations from a magick object input.
+# used to help with calculation of control coordinates for affine distorts
+.magick_image_corners <- function(x) {
+    checkmate::assert_class(x, "magick-image")
+    im_info <- magick::image_info(x)
+    
+    # generate spatLocsObj as a set of control points for magick distort. #
+    # ------------------------------------------------------------------- #
+    # - magick uses 0.5 to refer to the center of pixels
+    # - 3 points are needed for an affine distort
+    # pt1: bottom left
+    # pt2: top left
+    # pt3: bottom right
+    spatLocsObj(
+        name = "mg_ctrl_coords",
+        coordinates = data.table::data.table(
+            cell_ID = letters[seq_len(3)],
+            sdimx = c(0.5, 0.5, im_info$width - 0.5),
+            sdimy = c(0.5, im_info$height - 0.5, 0.5)
+        )
+    )
+}
 
 
 

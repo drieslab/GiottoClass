@@ -1,6 +1,28 @@
 #' @include classes.R
 NULL
 
+#' @name as.character
+#' @title Create a text representation of an object
+#' @description
+#' Create a text representation of an object
+#' @param x object
+#' @param ... additional params to pass (none implemented)
+#' @examples
+#' img <- GiottoData::loadSubObjectMini("giottoLargeImage")
+#' as.character(img)
+#' 
+NULL
+
+#' @name show
+#' @title Show methods for Giotto classes
+#' @description Show methods for Giotto classes
+#' @param object object to show
+#' @keywords internal
+#' @examples
+#' sl <- data.frame(seq(10), seq(10), letters[seq(10)]) |>
+#'     createSpatLocsObj(verbose = FALSE)
+#' show(sl)
+NULL
 
 # ------------------------------------------------------ #
 
@@ -9,12 +31,7 @@ NULL
 
 # Giotto ####
 
-#' show method for giotto class
-#' @param object giotto object
-#' @aliases show,giotto-method
-#' @docType methods
-#' @returns giotto object or subobject
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show",
     signature = "giotto",
@@ -136,6 +153,7 @@ setMethod(
 
 
 # packedGiotto ####
+#' @rdname show
 setMethod(
     "show", signature(object = "packedGiotto"),
     function(object) {
@@ -157,18 +175,14 @@ setMethod(
 
 ## exprObj ####
 
-#' show method for exprObj class
-#' @param object expression object
-#' @aliases show,exprObj-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show", signature("exprObj"), function(object) {
-        show_class_and_name(object)
+        .show_class_and_name(object)
 
         # print spat/feat and provenance info
-        show_spat_and_feat(object)
-        show_prov(object)
+        .show_spat_and_feat(object)
+        .show_prov(object)
 
         cat("\ncontains:\n")
         # preview matrix
@@ -222,10 +236,11 @@ setMethod(
 
 
 ## cellMetaObj ####
+#' @rdname show
 setMethod("show", signature("cellMetaObj"), function(object) {
     cat("An object of class", class(object), "\n")
-    show_spat_and_feat(object)
-    show_prov(object)
+    .show_spat_and_feat(object)
+    .show_prov(object)
     cat("\n")
     if (!is.null(object[])) print(head(object[], 3L))
 })
@@ -234,10 +249,11 @@ setMethod("show", signature("cellMetaObj"), function(object) {
 
 
 ## featMetaObj ####
+#' @rdname show
 setMethod("show", signature("featMetaObj"), function(object) {
     cat("An object of class", class(object), "\n")
-    show_spat_and_feat(object)
-    show_prov(object)
+    .show_spat_and_feat(object)
+    .show_prov(object)
     cat("\n")
     if (!is.null(object[])) print(head(object[], 3L))
 })
@@ -255,13 +271,10 @@ setMethod("show", signature("featMetaObj"), function(object) {
 ## dimObj ####
 
 #' Show method for dimObj class
-#' @param object dimension reduction object
-#' @aliases show,dimObj-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show", signature("dimObj"), function(object) {
-        show_class_and_name(object)
+        .show_class_and_name(object)
         if (!is.null(object@reduction_method)) {
             cat(
                 "--| Contains dimension reduction generated with:",
@@ -299,13 +312,10 @@ setMethod(
 
 ## nnNetObj ####
 #' Show method for nnNetObj class
-#' @param object nearest neigbor network object
-#' @aliases show,nnNetObj-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show", signature("nnNetObj"), function(object) {
-        show_class_and_name(object)
+        .show_class_and_name(object)
         if (!is.null(object@nn_type)) {
             cat(
                 "--| Contains nearest neighbor network generated with:",
@@ -343,40 +353,32 @@ setMethod(
 ## spatLocsObj ####
 
 #' show method for spatLocsObj class
-#' @param object spatial locations object
-#' @aliases show,spatLocsObj-method
-#' @docType methods
-#' @rdname show-methods
-setMethod(
-    f = "show", signature("spatLocsObj"), function(object) {
-        sdimx <- sdimy <- NULL
-
-        show_class_and_name(object)
-        show_spat(object)
-        show_prov(object)
-
-        cat("   ------------------------\n\npreview:\n")
-        if (!is.null(slot(object, "coordinates"))) {
-            show(head(slot(object, "coordinates"), 3L))
-        }
-
-        cat("\nranges:\n")
-
-        col_names <- colnames(object)
-        coord_cols <- col_names[col_names %in% c("sdimx", "sdimy", "sdimz")]
-
-        try(
-            expr = print(vapply(
-                slot(object, "coordinates")[, c(coord_cols), with = FALSE],
-                range,
-                FUN.VALUE = numeric(2L)
-            )),
-            silent = TRUE
-        )
-
-        cat("\n")
+#' @rdname show
+setMethod("show", signature("spatLocsObj"), function(object) {
+    .show_class_and_name(object)
+    .show_spat(object)
+    .show_prov(object)
+    cat("dimensions:", dim(object), '\npreview   :\n')
+    
+    if (!is.null(slot(object, "coordinates"))) {
+        show(head(slot(object, "coordinates"), 3L))
     }
-)
+    
+    # print ranges if possible
+    cat("\nranges:\n")
+    col_names <- colnames(slot(object, "coordinates"))
+    coord_cols <- col_names[col_names %in% c("sdimx", "sdimy", "sdimz")]
+    
+    try(
+        expr = print(vapply(
+            slot(object, "coordinates")[, c(coord_cols), with = FALSE],
+            range,
+            FUN.VALUE = numeric(2L)
+        )),
+        silent = TRUE
+    )
+    cat("\n")
+})
 
 
 
@@ -390,18 +392,15 @@ setMethod(
 ## spatialNetworkObj ####
 
 #' show method for spatialNetworkObj class
-#' @param object spatial network object
-#' @aliases show,spatialNetworkObj-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show", signature("spatialNetworkObj"), function(object) {
-        show_class_and_name(object)
+        .show_class_and_name(object)
         if (!is.na(object@method)) {
             cat("Contains spatial network generated with:", object@method, "\n")
         }
-        show_spat(object)
-        show_prov(object)
+        .show_spat(object)
+        .show_prov(object)
 
         if (!is.null(object@networkDT)) {
             cat("  ", nrow(object@networkDT), "connections (filtered)\n")
@@ -430,16 +429,13 @@ setMethod(
 ## spatialGridObj ####
 
 #' show method for spatialGridObj class
-#' @param object spatial grid object
-#' @aliases show,spatialGridObj-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show", signature("spatialGridObj"), function(object) {
         # define for data.table
         x_start <- x_end <- y_start <- y_end <- z_start <- z_end <- NULL
 
-        show_class_and_name(object)
+        .show_class_and_name(object)
         cat('Contains annotations for spatial unit: "',
             slot(object, "spat_unit"), '"',
             sep = ""
@@ -520,15 +516,12 @@ setMethod(
 ## spatEnrObj ####
 
 #' show method for spatEnrObj class
-#' @param object spatial locations object
-#' @aliases show,spatEnrObj-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show", signature("spatEnrObj"), function(object) {
-        show_class_and_name(object)
-        show_spat_and_feat(object)
-        show_prov(object)
+        .show_class_and_name(object)
+        .show_spat_and_feat(object)
+        .show_prov(object)
 
         cat("   ------------------------\n\npreview:\n")
         if (!is.null(slot(object, "enrichDT"))) {
@@ -570,9 +563,10 @@ setMethod(
 
 
 ## giottoPolygon ####
+#' @rdname show
 setMethod("show", signature = "giottoPolygon", function(object) {
     cat("An object of class giottoPolygon\n")
-    show_spat(object)
+    .show_spat(object)
     cat("Spatial Information:\n")
     print(object@spatVector)
 
@@ -603,6 +597,7 @@ setMethod("show", signature = "giottoPolygon", function(object) {
 
 
 ## packedGiottoPolygon ####
+#' @rdname show
 setMethod(
     "show", signature(object = "packedGiottoPolygon"),
     function(object) {
@@ -622,9 +617,10 @@ setMethod(
 
 
 ## giottoPoints ####
+#' @rdname show
 setMethod("show", signature = "giottoPoints", function(object) {
     cat("An object of class giottoPoints\n")
-    show_feat(object)
+    .show_feat(object)
     cat("Feature Information:\n")
     print(object@spatVector)
 
@@ -642,6 +638,7 @@ setMethod("show", signature = "giottoPoints", function(object) {
 
 
 ## packedGiottoPoints ####
+#' @rdname show
 setMethod(
     "show", signature(object = "packedGiottoPoints"),
     function(object) {
@@ -665,10 +662,7 @@ setMethod(
 ## giottoImage ####
 
 #' show method for giottoImage class
-#' @param object giottoImage object
-#' @aliases show,giottoImage-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show",
     signature = "giottoImage",
@@ -726,7 +720,9 @@ setMethod(
     }
 )
 
-# internal
+
+#' @rdname as.character
+#' @export
 setMethod("as.character", signature("giottoImage"), function(x, ...) {
     sprintf("<%s> %s", class(x), objName(x))
 })
@@ -741,25 +737,22 @@ setMethod("as.character", signature("giottoImage"), function(x, ...) {
 # giottoLargeImage ####
 
 #' show method for giottoLargeImage class
-#' @param object giottoLargeImage object
-#' @aliases show,giottoLargeImage-method
-#' @docType methods
-#' @rdname show-methods
+#' @rdname show
 setMethod(
     f = "show",
     signature = "giottoLargeImage",
     definition = function(object) {
         if (is.null(object@raster_object)) {
-            cat("NULL giottoLargeImage")
+            cat("NULL", class(object))
         } else {
             e <- ext(object)
             img_dim <- dim(object)[c(2, 1, 3)] # x, y, layers
             x_scalefactor <- diff(e[c(1, 2)]) / img_dim[1]
             y_scalefactor <- diff(e[c(3, 4)]) / img_dim[2]
 
-            show_class_and_name(object)
-            cat("Image extent            :", show_ext(object))
-            cat("Original image extent   :", show_ext(object@overall_extent))
+            .show_class_and_name(object)
+            cat("Image extent            :", .show_ext(object))
+            cat("Original image extent   :", .show_ext(object@overall_extent))
             cat(
                 "Scale factor            :",
                 paste(x_scalefactor, y_scalefactor, sep = ", "), "(x, y)\n"
@@ -783,7 +776,38 @@ setMethod(
     }
 )
 
-# internal
+
+
+#' @rdname show
+setMethod("show", signature("affine2d"), function(object) {
+    cat("<affine2d>\n")
+    .anchor_print <- function() {
+        paste(object@anchor, collapse = ", ") %>%
+            paste(" (xmin, xmax, ymin, ymax)")
+    }
+    .rad_val_show <- function() {
+        paste(object@rotate, " (rad)")
+    }
+    .xy_val_show <- function(x) {
+        paste(x, collapse = ", ") %>%
+            paste(" (x, y)")
+    }
+    
+    showlist <- list()
+    showlist$anchor <- .anchor_print()
+    for (tf in object@order) {
+        if (tf == "rotate") {
+            showlist$rotate <- .rad_val_show()
+            next
+        }
+        showlist[[tf]] <- .xy_val_show(slot(object, tf))
+    }
+    GiottoUtils::print_list(showlist)
+})
+
+
+#' @rdname as.character
+#' @export
 setMethod("as.character", signature("giottoLargeImage"), function(x, ...) {
     sprintf("<%s> %s", class(x), objName(x))
 })
@@ -796,7 +820,7 @@ setMethod("as.character", signature("giottoLargeImage"), function(x, ...) {
 # show helpers ####
 
 #' @noRd
-show_class_and_name <- function(object) {
+.show_class_and_name <- function(object) {
     cat("An object of class ", class(object), ' : \"',
         objName(object), '\"\n',
         sep = ""
@@ -804,32 +828,32 @@ show_class_and_name <- function(object) {
 }
 
 #' @noRd
-show_spat_and_feat <- function(object) {
-    show_spat(object)
-    show_feat(object)
+.show_spat_and_feat <- function(object) {
+    .show_spat(object)
+    .show_feat(object)
     # cat(paste0('for spatial unit: "', spatUnit(object),
     # '" and feature type: "', featType(object),'" \n'))
 }
 
 #' @noRd
-show_spat <- function(object) {
+.show_spat <- function(object) {
     cat(paste0('spat_unit : "', spatUnit(object), '\"\n'))
 }
 
 #' @noRd
-show_feat <- function(object) {
+.show_feat <- function(object) {
     cat(paste0('feat_type : "', featType(object), '\"\n'))
 }
 
 #' @noRd
-show_prov <- function(object) {
+.show_prov <- function(object) {
     if (!is.null(object@provenance)) {
         cat("provenance:", object@provenance, "\n")
     }
 }
 
 #' @noRd
-show_ext <- function(object) {
+.show_ext <- function(object) {
     paste0(
         paste0(ext(object)[], collapse = (", ")),
         " (xmin, xmax, ymin, ymax)\n"

@@ -108,7 +108,7 @@ setMethod(
     }
 )
 
-#' @describeIn flip Flip a giottoPolygon object
+#' @rdname flip
 #' @export
 setMethod(
     "flip", signature(x = "giottoPolygon"),
@@ -117,7 +117,7 @@ setMethod(
     }
 )
 
-#' @describeIn flip Flip a giottoPoints object
+#' @rdname flip
 #' @export
 setMethod(
     "flip", signature(x = "giottoPoints"),
@@ -126,7 +126,7 @@ setMethod(
     }
 )
 
-#' @describeIn flip Flip a spatLocsObj
+#' @rdname flip
 #' @export
 setMethod(
     "flip", signature(x = "spatLocsObj"),
@@ -135,7 +135,7 @@ setMethod(
     }
 )
 
-#' @describeIn flip Flip a spatialNetworkObj
+#' @rdname flip
 #' @export
 setMethod(
     "flip", signature(x = "spatialNetworkObj"),
@@ -145,7 +145,7 @@ setMethod(
 )
 
 # TODO apply as instructions for lazy eval after crop/resampling
-#' @describeIn flip Flip a giottoLargeImage
+#' @rdname flip
 #' @export
 setMethod(
     "flip", signature(x = "giottoLargeImage"),
@@ -154,7 +154,7 @@ setMethod(
     }
 )
 
-#' @describeIn flip Flip a SpatExtent
+#' @rdname flip
 #' @export
 setMethod(
     "flip", signature(x = "SpatExtent"),
@@ -163,6 +163,54 @@ setMethod(
     }
 )
 
+#' @rdname flip
+#' @export
+setMethod("flip", signature("giottoLargeImage"), function(
+        x, direction = "vertical", x0 = 0, y0 = 0
+) {
+    a <- get_args_list()
+    a$x <- as(x, "giottoAffineImage") # convert to giottoAffineImage
+    res <- do.call(flip, args = a)
+    return(res)
+})
+
+#' @rdname flip
+#' @export
+setMethod("flip", signature("giottoAffineImage"), function(
+        x, direction = "vertical", x0 = 0, y0 = 0
+) {
+    a <- get_args_list()
+    a$x <- x@affine
+    # update affine
+    x@affine <- do.call(flip, args = a)
+    
+    return(initialize(x))
+})
+
+#' @rdname flip
+#' @export
+setMethod("flip", signature("affine2d"), function(
+        x, direction = "vertical", x0 = 0, y0 = 0
+) {
+    direction <- match.arg(direction, choices = c("vertical", "horizontal"))
+
+    aff <- x@affine
+    switch(direction,
+        "vertical" = {
+            flip_m <- diag(c(1, -1))
+            xyshift <- c(0, y0 * 2) + .aff_shift_2d(aff) * c(1, -1)
+        },
+        "horizontal" = {
+            flip_m <- diag(c(-1, 1))
+            xyshift <- c(x0 * 2, 0) + .aff_shift_2d(aff) * c(-1, 1)
+        }
+    )
+    .aff_linear_2d(aff) <- .aff_linear_2d(aff) %*% flip_m
+    .aff_shift_2d(aff) <- xyshift
+    
+    x@affine <- aff
+    return(initialize(x))
+})
 
 
 # internals ####

@@ -7,6 +7,9 @@
 \alias{spin,giottoPoints-method}
 \alias{spin,spatLocsObj-method}
 \alias{spin,data.frame-method}
+\alias{spin,giottoLargeImage-method}
+\alias{spin,giottoAffineImage-method}
+\alias{spin,affine2d-method}
 \title{Spin an object}
 \usage{
 \S4method{spin}{giotto}(x, angle, x0 = NULL, y0 = NULL, spat_unit = ":all:", feat_type = ":all:")
@@ -37,6 +40,12 @@
   xz_angle = NULL,
   geom = c("sdimx", "sdimy", "sdimz")
 )
+
+\S4method{spin}{giottoLargeImage}(x, angle = NULL, x0 = NULL, y0 = NULL, ...)
+
+\S4method{spin}{giottoAffineImage}(x, angle = NULL, x0 = NULL, y0 = NULL, ...)
+
+\S4method{spin}{affine2d}(x, angle = NULL, x0 = NULL, y0 = NULL)
 }
 \arguments{
 \item{x}{object}
@@ -67,12 +76,15 @@ Overrides angle param}
 
 \item{geom}{character. Named vector of colnames of x, y, (z) coordinate
 columns. Default is \code{c("sdimx", "sdimy", "sdimz")}}
+
+\item{...}{additional params to pass}
 }
 \value{
 spun object
 }
 \description{
-Spin (rotate) an object spatially (limited to xy rotations)
+Spin (rotate) an object spatially (usually limited to xy
+rotations)
 }
 \examples{
 g <- GiottoData::loadSubObjectMini("spatLocsObj")

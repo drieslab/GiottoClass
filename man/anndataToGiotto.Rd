@@ -23,7 +23,7 @@ anndataToGiotto(
 neighbors(). If multiple spatial networks are in the anndata object, a list
 of key_added terms may be provided. If converting an anndata object from
 giottoToAnnData, a .txt file may be provided, which was generated in that
-function, i.e. {spat_unit}_{feat_type}_nn_network_keys_added.txt. Cannot
+function, i.e. \{spat_unit\}_\{feat_type\}_nn_network_keys_added.txt. Cannot
 be "spatial". This becomes the name of the nearest network in the gobject.}
 
 \item{spatial_n_key_added}{equivalent of "key_added" argument from
@@ -31,15 +31,15 @@ squidpy.gr.spatial_neighbors. If multiple spatial networks are in the
 anndata object, a list of key_added terms may be provided. If converting an
 anndata object from giottoToAnnData, a .txt file may be provided, which was
 generated in that function,
-i.e. {spat_unit}_{feat_type}_spatial_network_keys_added.txt
+i.e. \{spat_unit\}_\{feat_type\}_spatial_network_keys_added.txt
 Cannot be the same as n_key_added.}
 
 \item{delaunay_spat_net}{binary parameter for spatial network. If TRUE, the
 spatial network is a delaunay network.}
 
-\item{spat_unit}{desired spatial unit for conversion, default NULL}
+\item{spat_unit}{desired spatial unit to use for conversion, default NULL}
 
-\item{feat_type}{desired feature type for conversion, default NULL}
+\item{feat_type}{desired feature type to use for conversion, default NULL}
 
 \item{h5_file}{name to create and on-disk HDF5 file}
 
@@ -57,7 +57,7 @@ Giotto object
 }
 \details{
 Function in beta. Converts a .h5ad file into a Giotto object.
-The returned Giotto Object will take default insructions with the
+The returned Giotto Object will take default instructions with the
 exception of the python path, which may be customized.
 See \code{\link{changeGiottoInstructions}} to modify instructions after
 creation.

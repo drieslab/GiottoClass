@@ -1,8 +1,80 @@
 
-# GiottoClass 0.3.2
+# GiottoClass 0.3.6 (2024/08/30)
+
+## bug fixes
+- fix `dimnames()` for some subobjects
+
+## enhancements
+- python packages to install through pip is now settable in `installGiottoEnvironment()`
+
+# GiottoClass 0.3.5 (2024/08/28)
+
+## breaking changes
+- `set_giotto_python_path()` will now also initialize python env to set by default and print which python env is active, but otherwise do nothing if any python env has already been initialized.
+- deprecated `readGiottoInstructions()`, `showGiottoInstructions()`, `changeGiottoInstructions()`, `replaceGiottoInstructions()` in favor of `instructions()` generic
+
+## bug fixes
+- intensity images now automatically scale to estimated highest value
+- `giottoPolygon` `plot()` default `max_poly` raised to `1e6`
+- `giottoInstructions` no longer lose class when specific params are replaced
+- `ometif_to_tif()` now checks for _imagecodecs_ package as well
+- `anndataToGiotto()` and `giottoToAnndata` now check for _anndata_ package as well.
+- fix `joinGiottoObjects()` `"z_stack"` join method
+- fix error in documentation [#214](https://github.com/drieslab/GiottoClass/issues/214) by shaojunyu
+- fix error in `installGiottoEnvironment()` [#1006](https://github.com/drieslab/Giotto/issues/1006) by 13954380607
+
+## enhancements
+- `print()` method for `giottoInstructions`
+- `rbind()` for `spatLocsObj`
+
+
+# GiottoClass 0.3.4 (2024/08/04)
+
+## bug fixes
+- hotfix anndata matrix support [#216](https://github.com/drieslab/GiottoClass/issues/216) by wwang-chcn
+
+# GiottoClass 0.3.3 (2024/07/29)
+
+## bug fixes
+- fix flipping issue with `giottoAffineImage` for certain affine transforms
+
+## enhancements
+- `missing` method for `affine()` instantiates an `affine2d` object
+
+# GiottoClass 0.3.2 (2024/07/26)
+
+## breaking changes
+- python environment installation and how it relates to default settings such as .condarc may have changed.
+- `giottoImage` `name` slot now requires `character` and will not accept `NULL`
+
+## bug fixes
+- `loadGiotto()` no longer errors with similarly named spat_units or feat_types (e.g. "cell" and "new_cell" would previously throw an error)
+- fix in `giottoToSpatialExperiment()`
+- fix for `giottoToSeuratV5` for cosmx mini dataset [#989](https://github.com/drieslab/Giotto/issues/989) by guillermoturiel
+- fix issue with prints in `createGiottoCosMxObject()` [#960](https://github.com/drieslab/Giotto/issues/960) by GBeattie
 
 ## enhancements
 - `verbose` param for `createNearestNetwork()`
+- `checkGiottoEnvironment()` in addition to full filepaths, also now supports name of environment or installation directory
+- `installGiottoEnvironment()`, `removeGiottoEnvironment()` now have `conda` param for setting path to conda executable and `envname` param for specifying environment by name
+- `installGiottoEnvironment()` now has `confirm` param for skipping path input checks
+- `t()` for `giotto` now affects images as well.
+
+## new
+- `affine()` for `giottoPolygon`, `giottoPoints`, `spatLocsObj`, `giotto`
+- `shear()` for `giottoPoints`, `giottoPolygon`, `spatLocsObj`, `affine2d`
+- `affine2d` class for accumulating linear transforms to be used with `affine()`
+- `initialize()`, `[`, `$`, `show()`, `plot()`, methods for `affine2d`
+- `spin()`, `rescale`, `spatShift()`, `affine()`, `flip()`, `shear()` `t()` methods for `affine2d`
+- `giottoAffineImage` class for just-in-time affine transformed images
+- `initialize()`, method for `giottoLargeImage`
+- `initialize()`, `ext()`, `crop()`, `rescale()`, `spatShift()`, `plot()`, methods for `giottoAffineImage`
+- `rescale()` method for `giottoImage`
+- `spin()`, `shear()`, `affine()`, `flip()`, `t()` methods for `giottoAffineImage` and `giottoLargeImage` (which converts to `giottoAffineImage`)
+- `as()` conversion from `giottoLargeImage` to `giottoAffineImage`
+- `.get_centroid_xy()` internal for getting numeric centroid xy values of any object that responds to `ext()`
+- `.bound_poly()` internal for generating a dummy polygon from the extent of any object that responds to `ext()`
+- `.aff_shift_2d()`, `.aff_shift_2d<-()`, `.aff_linear_2d`, `.aff_linear_2d()<-` internals for accessing and manipulating affine matrices
 
 
 # GiottoClass 0.3.1 (2024/05/21)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/instructions.R
 \name{changeGiottoInstructions}
 \alias{changeGiottoInstructions}
-\title{Change giotto instruction(s) associated with giotto object}
+\title{deprecated}
 \usage{
 changeGiottoInstructions(
   gobject,
@@ -39,3 +39,4 @@ changeGiottoInstructions(
     new_values = TRUE
 )
 }
+\keyword{internal}

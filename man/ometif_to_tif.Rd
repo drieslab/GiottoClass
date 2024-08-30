@@ -31,3 +31,8 @@ Simple converter from .ome.tif to .tif format. Utilizes the python
 \pkg{tifffile} package. Performs image conversions one page at a time.
 Wrap this in a for loop or lapply for more than one image or page.
 }
+\seealso{
+Other ometif utility functions: 
+\code{\link{ometif_metadata}()}
+}
+\concept{ometif utility functions}
