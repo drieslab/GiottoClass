@@ -686,7 +686,6 @@ joinGiottoObjects <- function(gobject_list,
 
 
 
-
     ## spatial locations
     vmsg(.v = verbose, "3. spatial locations")
 
