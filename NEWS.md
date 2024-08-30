@@ -1,4 +1,12 @@
 
+# GiottoClass 0.3.6 (2024/08/30)
+
+## bug fixes
+- fix `dimnames()` for some subobjects
+
+## enhancements
+- python packages to install through pip is now settable in `installGiottoEnvironment()`
+
 # GiottoClass 0.3.5 (2024/08/28)
 
 ## breaking changes
