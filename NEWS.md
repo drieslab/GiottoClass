@@ -3,9 +3,10 @@
 
 ## bug fixes
 - fix `dimnames()` for some subobjects
+- fix `joinGiottoObject()` for gobjects with only poly and point data [#233](https://github.com/drieslab/GiottoClass/issues/233)
 
 ## enhancements
-- python packages to install through pip is now settable in `installGiottoEnvironment()`
+- python packages to install through pip is now settable in `installGiottoEnvironment()` [#224](https://github.com/drieslab/GiottoClass/issues/224)
 
 # GiottoClass 0.3.5 (2024/08/28)
 
