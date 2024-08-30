@@ -28,17 +28,17 @@ def read_spatialdata_from_path(sd_path = None):
 # Extract gene expression
 def extract_expression(sdata = None):
     expr = sdata.table.X.transpose().todense()
-    expr_df = pd.DataFrame(expr, index=sdata.table.var['gene_ids'].index, columns=sdata.table.obs['array_row'].index)
+    expr_df = pd.DataFrame(expr, index=sdata.table.var.index, columns=sdata.table.obs.index)
     return expr_df
 
 # Extract cell IDs
 def extract_cell_IDs(sdata = None):
-    cell_IDs = sdata.table.obs['array_row'].index.tolist()
+    cell_IDs = sdata.table.obs.index.tolist()
     return cell_IDs
 
 # Extract feature IDs
 def extract_feat_IDs(sdata = None):
-    feat_IDs = sdata.table.var['gene_ids'].index.tolist()
+    feat_IDs = sdata.table.var.index.tolist()
     return feat_IDs
 
 # Metadata
@@ -124,17 +124,23 @@ def parse_obsm_for_spat_locs(sdata = None):
     spat_locs["sdimy"] = -1 * spat_locs["sdimy"]
     return spat_locs
 
-# Extract hires image
+# Extract images
 def extract_image(sdata = None):
-    # Find SpatialData image name for hires image
-    for key in sdata.images.keys():
-        if "hires" in key:
-            hires_image_name = key
+    # Retrieve the list of images
+    image_list = list(sdata.images.keys())
 
     # Extract image from SpatialData and convert it to numpy array
-    hires_image = sdata.images[hires_image_name]
-    hires_image_array = np.transpose(hires_image.compute().data, (1, 2, 0))  # Transpose to (y, x, c)
-    return hires_image_array
+    extracted_images = []
+    for image_key in image_list:
+        image = sdata.images[image_key]
+        image_array = np.transpose(image.compute().data, (1, 2, 0))  # Transpose to (y, x, c)
+        extracted_images.append(image_array)
+    return extracted_images
+
+# Extract image names
+def extract_image_names(sdata = None):
+    image_names = list(sdata.images.keys())
+    return image_names
 
 # Extract PCA
 def extract_pca(sdata = None):
@@ -240,7 +246,6 @@ def extract_NN_connectivities(sdata = None, key_added = None):
     for nk in nn_key_list:
         if "connectivities" in nk:
             connectivities = sdata.table.obsp[nk]
-
     return connectivities
 
 def extract_NN_distances(sdata = None, key_added = None):
@@ -318,7 +323,7 @@ def find_SN_keys(sdata = None, key_added = None):
         with open(key_added) as f:
             for line in f.readlines():
                 line = line.strip()
-                line_key_added = line + suffix
+                line_key_added = line + "_" + suffix
                 line_keys.append(line_key_added)
         for key in line_keys:
             map_keys = sdata.table.uns[key].keys()
