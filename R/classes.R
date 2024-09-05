@@ -345,6 +345,8 @@ setClass("spatFeatData",
 )
 
 
+# OLDCLASS ####
+setOldClass("giottoInstructions")
 
 
 

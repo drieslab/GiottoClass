@@ -5,12 +5,15 @@
 \alias{giotto_instructions}
 \alias{instructions}
 \alias{instructions<-}
+\alias{instructions,missing,missing-method}
 \alias{instructions,giotto,missing-method}
+\alias{instructions,giotto,character-method}
+\alias{instructions,giottoInstructions,character-method}
 \alias{instructions<-,giotto,missing,missing-method}
 \alias{instructions<-,giotto,missing,logical-method}
-\alias{instructions,giotto,character-method}
 \alias{instructions<-,giotto,character,missing-method}
 \alias{instructions<-,giotto,character,logical-method}
+\alias{instructions<-,giottoInstructions,character,ANY-method}
 \title{Giotto instructions}
 \usage{
 createGiottoInstructions(
@@ -30,17 +33,23 @@ createGiottoInstructions(
   no_python_warn = FALSE
 )
 
+\S4method{instructions}{missing,missing}(gobject, param, ...)
+
 \S4method{instructions}{giotto,missing}(gobject)
+
+\S4method{instructions}{giotto,character}(gobject, param)
+
+\S4method{instructions}{giottoInstructions,character}(gobject, param)
 
 \S4method{instructions}{giotto,missing,missing}(gobject, initialize) <- value
 
 \S4method{instructions}{giotto,missing,logical}(gobject, initialize) <- value
 
-\S4method{instructions}{giotto,character}(gobject, param)
-
 \S4method{instructions}{giotto,character,missing}(gobject, param, initialize) <- value
 
 \S4method{instructions}{giotto,character,logical}(gobject, param, initialize) <- value
+
+\S4method{instructions}{giottoInstructions,character,ANY}(gobject, param) <- value
 }
 \arguments{
 \item{python_path}{path to python binary to use or directory one level
@@ -77,12 +86,12 @@ been detected}
 
 \item{gobject}{giotto object}
 
+\item{param}{Specific param in instructions to access or modify}
+
 \item{initialize}{(boolean, default = TRUE) whether to initialize the giotto
 object}
 
 \item{value}{value to set}
-
-\item{param}{Specific param in instructions to access or modify}
 }
 \value{
 \code{giottoInstructions}, instructions settings, or \code{giotto} objects
@@ -112,7 +121,7 @@ force(instrs)
 # get single instructions param
 instructions(g, "show_plot")
 
-# replace single instruction param
+# replace an instruction param
 instructions(g, "show_plot") <- FALSE
 instructions(g, "show_plot")
 

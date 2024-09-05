@@ -37,7 +37,7 @@ NULL
 #' # get single instructions param
 #' instructions(g, "show_plot")
 #' 
-#' # replace single instruction param
+#' # replace an instruction param
 #' instructions(g, "show_plot") <- FALSE
 #' instructions(g, "show_plot")
 #' 
@@ -84,6 +84,15 @@ NULL
 
 # instructions() method ####
 
+# create instructions object
+#' @rdname giotto_instructions
+#' @export
+setMethod(
+    "instructions", signature(gobject = "missing", param = "missing"),
+    function(...) createGiottoInstructions(...)
+)
+
+
 # Get instructions object
 #' @rdname giotto_instructions
 #' @export
@@ -93,6 +102,30 @@ setMethod(
         return(showGiottoInstructions(gobject))
     }
 )
+
+
+# Get specific field
+#' @rdname giotto_instructions
+#' @export
+setMethod(
+    "instructions", signature(gobject = "giotto", param = "character"),
+    function(gobject, param) {
+        instrs <- showGiottoInstructions(gobject = gobject)
+        return(readGiottoInstructions(
+            giotto_instructions = instrs,
+            param = param
+        ))
+    }
+)
+
+#' @rdname giotto_instructions
+#' @export
+setMethod(
+    "instructions", 
+    signature(gobject = "giottoInstructions", param = "character"),
+    function(gobject, param) gobject[[param]]
+)
+
 
 # Set instructions object
 #' @rdname giotto_instructions
@@ -128,19 +161,6 @@ setMethod(
     }
 )
 
-# Get specific field
-#' @rdname giotto_instructions
-#' @export
-setMethod(
-    "instructions", signature(gobject = "giotto", param = "character"),
-    function(gobject, param) {
-        instrs <- showGiottoInstructions(gobject = gobject)
-        return(readGiottoInstructions(
-            giotto_instructions = instrs,
-            param = param
-        ))
-    }
-)
 
 # Set specific field
 #' @rdname giotto_instructions
@@ -181,7 +201,18 @@ setMethod(
         return(gobject)
     }
 )
-
+#' @rdname giotto_instructions
+#' @export
+setMethod(
+    "instructions<-",
+    signature(
+        gobject = "giottoInstructions", param = "character", value = "ANY"
+    ),
+    function(gobject, param, value) {
+        gobject[[param]] <- value
+        return(gobject)
+    }
+)
 
 
 
