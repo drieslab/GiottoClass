@@ -25,10 +25,14 @@ NULL
 #' @param initialize (boolean, default = TRUE) whether to initialize the giotto
 #' object
 #' @param value value to set
+#' @param \dots params to pass to `createGiottoInstructions()`
 #' @returns `giottoInstructions`, instructions settings, or `giotto` objects
 #' with modified instructions
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
+#'
+#' # create instructions
+#' ins <- instructions()
 #'
 #' # get instructions
 #' instrs <- instructions(g)
