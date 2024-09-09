@@ -45,9 +45,11 @@ Other multiomics accessor functions:
 \code{\link{set_multiomics}()}
 
 Other functions to get data from giotto object: 
+\code{\link{getCellMetadata}()},
 \code{\link{getDimReduction}()},
 \code{\link{getExpression}()},
 \code{\link{getFeatureInfo}()},
+\code{\link{getFeatureMetadata}()},
 \code{\link{getGiottoImage}()},
 \code{\link{getNearestNetwork}()},
 \code{\link{getPolygonInfo}()},

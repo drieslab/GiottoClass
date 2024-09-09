@@ -636,6 +636,7 @@ get_cell_metadata <- function(gobject,
 #' @returns a data.table or cellMetaObj
 #' @description Get cell metadata from giotto object
 #' @seealso pDataDT
+#' @family functions to get data from giotto object
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
@@ -1048,6 +1049,7 @@ get_feature_metadata <- function(gobject,
 #' @param copy_obj whether to perform a deepcopy of the data.table information
 #' @returns a data.table or featMetaObj
 #' @description Get feature metadata from giotto object
+#' @family functions to get data from giotto object
 #' @seealso fDataDT
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")

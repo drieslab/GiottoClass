@@ -50,8 +50,10 @@ Other dimensional reduction data accessor functions:
 \code{\link{setDimReduction}()}
 
 Other functions to get data from giotto object: 
+\code{\link{getCellMetadata}()},
 \code{\link{getExpression}()},
 \code{\link{getFeatureInfo}()},
+\code{\link{getFeatureMetadata}()},
 \code{\link{getGiottoImage}()},
 \code{\link{getMultiomics}()},
 \code{\link{getNearestNetwork}()},

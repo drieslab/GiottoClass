@@ -44,9 +44,11 @@ Other spatial grid data accessor functions:
 \code{\link{setSpatialGrid}()}
 
 Other functions to get data from giotto object: 
+\code{\link{getCellMetadata}()},
 \code{\link{getDimReduction}()},
 \code{\link{getExpression}()},
 \code{\link{getFeatureInfo}()},
+\code{\link{getFeatureMetadata}()},
 \code{\link{getGiottoImage}()},
 \code{\link{getMultiomics}()},
 \code{\link{getNearestNetwork}()},
