@@ -88,6 +88,8 @@ been detected}
 
 \item{param}{Specific param in instructions to access or modify}
 
+\item{\dots}{params to pass to \code{createGiottoInstructions()}}
+
 \item{initialize}{(boolean, default = TRUE) whether to initialize the giotto
 object}
 
@@ -113,6 +115,9 @@ initialization.
 }
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
+
+# create instructions
+ins <- instructions()
 
 # get instructions
 instrs <- instructions(g)

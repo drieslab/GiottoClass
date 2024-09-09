@@ -50,9 +50,7 @@ getSpatialNetwork(g)
 }
 \seealso{
 Other spatial network data accessor functions: 
-\code{\link{get_spatialNetwork}()},
-\code{\link{setSpatialNetwork}()},
-\code{\link{set_spatialNetwork}()}
+\code{\link{setSpatialNetwork}()}
 
 Other functions to get data from giotto object: 
 \code{\link{getDimReduction}()},
@@ -65,16 +63,7 @@ Other functions to get data from giotto object:
 \code{\link{getSpatialEnrichment}()},
 \code{\link{getSpatialGrid}()},
 \code{\link{getSpatialLocations}()},
-\code{\link{get_NearestNetwork}()},
-\code{\link{get_dimReduction}()},
-\code{\link{get_feature_info}()},
-\code{\link{get_giottoImage}()},
-\code{\link{get_multiomics}()},
-\code{\link{get_polygon_info}()},
-\code{\link{get_spatialGrid}()},
-\code{\link{get_spatialNetwork}()},
-\code{\link{get_spatial_enrichment}()},
-\code{\link{get_spatial_locations}()}
+\code{\link{get_multiomics}()}
 }
 \concept{functions to get data from giotto object}
 \concept{spatial network data accessor functions}
