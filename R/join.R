@@ -684,19 +684,18 @@ joinGiottoObjects <- function(gobject_list,
         wrap_msg("available_spat_info: \n")
         wrap_msg(available_spat_info)
     }
-    
+
     for (spat_info in available_spat_info) {
         savelist_vector <- list()
         savelist_centroids <- list()
         for (gobj_i in seq_along(updated_object_list)) {
-            spat_information_vector <- updated_object_list[[
-                gobj_i
-            ]]@spatial_info[[spat_info]]@spatVector
-            savelist_vector[[gobj_i]] <- spat_information_vector
+            gpoly <- getPolygonInfo(
+                updated_object_list[[gobj_i]], return_giottoPolygon = TRUE
+            )
+            spat_information_vector <- gpoly[]
+            spat_information_centroids <- centroids(gpoly)
             
-            spat_information_centroids <- updated_object_list[[
-                gobj_i
-            ]]@spatial_info[[spat_info]]@spatVectorCentroids
+            savelist_vector[[gobj_i]] <- spat_information_vector
             savelist_centroids[[gobj_i]] <- spat_information_centroids
             
             # TODO: add overlaps
