@@ -2139,19 +2139,14 @@ seuratToGiottoV4 <- function(
             }
 
             if (verbose) message("Copying nearest neighbour networks")
-            nnNetObj <- GiottoClass::createNearestNetObj(
+            nnNetObj <- createNearestNetObj(
                 name = names(sobject@graphs)[i],
                 network = sobjIgraph
             )
             return(nnNetObj)
         })
 
-        for (i in seq_along(nnNetObj_list)) {
-            gobject <- GiottoClass::set_NearestNetwork(
-                gobject = gobject,
-                nn_network = nnNetObj_list[[i]]
-            )
-        }
+        gobject <- setGiotto(gobject, nnNetObj_list)
     }
     gobject <- createGiottoObject(exp,
         spatial_locs = spat_loc,
@@ -2538,19 +2533,14 @@ seuratToGiottoV5 <- function(
             }
 
             if (verbose) message("Copying nearest neighbour networks")
-            nnNetObj <- GiottoClass::createNearestNetObj(
+            nnNetObj <- createNearestNetObj(
                 name = names(sobject@graphs)[i],
                 network = sobjIgraph
             )
             return(nnNetObj)
         })
 
-        for (i in seq_along(nnNetObj_list)) {
-            gobject <- GiottoClass::set_NearestNetwork(
-                gobject = gobject,
-                nn_network = nnNetObj_list[[i]]
-            )
-        }
+        gobject <- setGiotto(gobject, nnNetObj_list)
     }
     gobject <- addCellMetadata(
       gobject = gobject, new_metadata = cell_metadata,
