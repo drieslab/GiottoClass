@@ -1,5 +1,8 @@
 
-# GiottoClass 0.3.6 (2024/08/30)
+# GiottoClass 0.4.0 (2024/08/30)
+
+## breaking changes
+- stop exporting deprecated internal accessors
 
 ## bug fixes
 - fix `dimnames()` for some subobjects
