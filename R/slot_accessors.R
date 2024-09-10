@@ -692,7 +692,9 @@ setCellMetadata <- function(gobject,
     feat_type = NULL,
     provenance = NULL,
     verbose = TRUE,
-    initialize = TRUE) {
+    check_preqs = TRUE,
+    initialize = TRUE,
+    ...) {
     assert_giotto(gobject)
     if (!methods::hasArg(x)) {
         stop(wrap_txt("x param (data to set) must be given",
@@ -701,9 +703,11 @@ setCellMetadata <- function(gobject,
     }
 
     # check hierarchical slots
-    used_su <- list_cell_id_names(gobject)
-    if (is.null(used_su)) {
-        stop(wrap_txt("Add expression or spatial (polygon) information first"))
+    if (check_preqs) {
+        used_su <- list_cell_id_names(gobject)
+        if (is.null(used_su)) {
+            stop(wrap_txt("Add expression or spatial (polygon) information first"))
+        }
     }
 
     # 1. Determine user inputs
@@ -1110,7 +1114,8 @@ setFeatureMetadata <- function(gobject,
     feat_type = NULL,
     provenance = NULL,
     verbose = TRUE,
-    initialize = TRUE) {
+    initialize = TRUE,
+    ...) {
     assert_giotto(gobject)
     if (!methods::hasArg(x)) {
         stop(wrap_txt("x param (data to set) must be given",
@@ -1674,7 +1679,8 @@ setExpression <- function(gobject,
     name = "raw",
     provenance = NULL,
     verbose = TRUE,
-    initialize = TRUE) {
+    initialize = TRUE,
+    ...) {
     assert_giotto(gobject)
     if (!methods::hasArg(x)) {
         stop(wrap_txt("x param (data to set) must be given"))
@@ -2042,7 +2048,8 @@ setMultiomics <- function(gobject = NULL,
     feat_type = NULL,
     integration_method = "WNN",
     result_name = "theta_weighted_matrix",
-    verbose = TRUE) {
+    verbose = TRUE,
+    ...) {
     if (!"giotto" %in% class(gobject)) {
         wrap_msg("Unable to set multiomics info to non-Giotto object.")
         stop(wrap_txt("Please provide a Giotto object to the gobject argument.",
@@ -2433,20 +2440,22 @@ setSpatialLocations <- function(gobject,
     name = "raw",
     provenance = NULL,
     verbose = TRUE,
-    initialize = TRUE) {
+    check_preqs = TRUE,
+    initialize = TRUE,
+    ...) {
     checkmate::assert_class(gobject, "giotto")
     if (!methods::hasArg(x)) {
         stop(wrap_txt("x (data to set) param must be given"))
     }
 
-
     # check hierarchical slots
-    avail_ex <- list_expression(gobject)
-    avail_si <- list_spatial_info(gobject)
-    if (is.null(avail_ex) & is.null(avail_si)) {
-        stop(wrap_txt("Add expression or spatial (polygon) information first"))
+    if (check_preqs) {
+        avail_ex <- list_expression(gobject)
+        avail_si <- list_spatial_info(gobject)
+        if (is.null(avail_ex) && is.null(avail_si)) {
+            stop(wrap_txt("Add expression or spatial (polygon) information first"))
+        }
     }
-
 
     # 1. Determine user inputs
     nospec_unit <- ifelse(is.null(spat_unit), yes = TRUE, no = FALSE)
@@ -2873,7 +2882,9 @@ setDimReduction <- function(gobject,
     reduction_method = c("pca", "umap", "tsne"),
     provenance = NULL,
     verbose = TRUE,
-    initialize = TRUE) {
+    check_preqs = TRUE,
+    initialize = TRUE,
+    ...) {
     assert_giotto(gobject)
     reduction <- match.arg(reduction, choices = c("cells", "feats"))
     # reduction_method = match.arg(reduction_method,
@@ -2882,12 +2893,11 @@ setDimReduction <- function(gobject,
         stop(wrap_txt("x (data to set) param must be given"))
     }
 
-
     # check hierarchical slots
-    avail_ex <- list_expression(gobject)
-    if (is.null(avail_ex)) stop(wrap_txt("Add expression information first"))
-
-
+    if (check_preqs) {
+        avail_ex <- list_expression(gobject)
+        if (is.null(avail_ex)) stop(wrap_txt("Add expression information first"))
+    }
 
     # 1. Determine user inputs
     nospec_unit <- ifelse(is.null(spat_unit), yes = TRUE, no = FALSE)
@@ -3371,20 +3381,22 @@ setNearestNetwork <- function(gobject,
     nn_type = "sNN",
     name = "sNN.pca",
     provenance = NULL,
+    check_preqs = TRUE,
     verbose = TRUE,
-    initialize = TRUE) {
+    initialize = TRUE,
+    ...) {
     assert_giotto(gobject)
     if (!methods::hasArg(x)) {
         stop(wrap_txt("x (data to set) param must be given"))
     }
 
-
     # check hierarchical slots
-    avail_dr <- list_dim_reductions(gobject)
-    if (is.null(avail_dr)) {
-        stop(wrap_txt("Add dimension reduction information first"))
+    if (check_preqs) {
+        avail_dr <- list_dim_reductions(gobject)
+        if (is.null(avail_dr)) {
+            stop(wrap_txt("Add dimension reduction information first"))
+        }
     }
-
 
     # 1. Determine user inputs
     nospec_unit <- ifelse(is.null(spat_unit), yes = TRUE, no = FALSE)
@@ -3884,7 +3896,9 @@ setSpatialNetwork <- function(gobject,
     name = NULL,
     provenance = NULL,
     verbose = TRUE,
-    initialize = TRUE) {
+    check_preqs = TRUE,
+    initialize = TRUE,
+    ...) {
     assert_giotto(gobject)
     if (!methods::hasArg(x)) {
         stop(wrap_txt("x param (data to set) must be given"))
@@ -3892,13 +3906,11 @@ setSpatialNetwork <- function(gobject,
 
 
     # check hierarchical slots
-    avail_ex <- list_expression(gobject)
-    avail_sl <- list_spatial_locations(gobject)
-    if (is.null(avail_ex)) {
-        stop(wrap_txt("Add expression and spatial location information first"))
-    }
-    if (is.null(avail_sl)) {
-        stop(wrap_txt("Add spatial location information first"))
+    if (check_preqs) {
+        avail_sl <- list_spatial_locations(gobject)
+        if (is.null(avail_sl)) {
+            stop(wrap_txt("Add spatial location information first"))
+        }
     }
 
 
@@ -4368,7 +4380,8 @@ setSpatialGrid <- function(gobject,
     feat_type = NULL,
     name = NULL,
     verbose = TRUE,
-    set_defaults = TRUE) {
+    set_defaults = TRUE,
+    ...) {
     # Pass to internal function
     gobject <- set_spatialGrid(
         gobject = gobject,
@@ -4586,7 +4599,8 @@ setPolygonInfo <- function(gobject,
     name = "cell",
     centroids_to_spatlocs = FALSE,
     verbose = TRUE,
-    initialize = TRUE) {
+    initialize = TRUE,
+    ...) {
     # data.table vars
     poly_ID <- y <- NULL
 
@@ -5049,7 +5063,8 @@ setFeatureInfo <- function(gobject,
     x,
     feat_type = NULL,
     verbose = TRUE,
-    initialize = TRUE) {
+    initialize = TRUE,
+    ...) {
     assert_giotto(gobject)
     if (!methods::hasArg(x)) {
         stop(wrap_txt("x param (data to set) must be given"))
@@ -5487,20 +5502,24 @@ setSpatialEnrichment <- function(gobject,
     name = "enrichment",
     provenance = NULL,
     verbose = TRUE,
-    initialize = TRUE) {
+    check_preqs = TRUE,
+    initialize = TRUE,
+    ...) {
     assert_giotto(gobject)
     if (!methods::hasArg(x)) {
         stop(wrap_txt("x param (data to set) must be given"))
     }
 
     # check hierarchical slots
-    avail_ex <- list_expression(gobject)
-    avail_sl <- list_spatial_locations(gobject)
-    if (is.null(avail_ex)) {
-        stop(wrap_txt("Add expression and spatial information first"))
-    }
-    if (is.null(avail_sl)) {
-        stop(wrap_txt("Add spatial location information first"))
+    if (check_preqs) {
+        avail_ex <- list_expression(gobject)
+        avail_sl <- list_spatial_locations(gobject)
+        if (is.null(avail_ex)) {
+            stop(wrap_txt("Add expression and spatial information first"))
+        }
+        if (is.null(avail_sl)) {
+            stop(wrap_txt("Add spatial location information first"))
+        }
     }
 
     # 1. determine user inputs
