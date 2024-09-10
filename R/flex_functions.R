@@ -183,7 +183,7 @@ t_flex <- function(mymatrix) {
     } else if (inherits(mymatrix, "Matrix")) {
         return(Matrix::t(mymatrix))
     } else if(inherits(mymatrix, 'dbMatrix')) {
-        return(dbMatrix::t(mymatrix))
+        return(t(mymatrix))
     } else if (inherits(mymatrix, "spatLocsObj")) {
         return(t(mymatrix))
     } else if (inherits(mymatrix, "spatialNetworkObj")) {
