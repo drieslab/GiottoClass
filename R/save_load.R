@@ -367,8 +367,10 @@ loadGiotto <- function(path_to_folder,
     if (isTRUE(getOption("giotto.use_conda", TRUE))) {
         identified_python_path <- set_giotto_python_path(
             python_path = python_path,
-            verbose = verbose
+            verbose = verbose,
+            initialize = FALSE
         )
+        vmsg(.v = verbose, .is_debug = TRUE, identified_python_path)
         gobject <- changeGiottoInstructions(
             gobject = gobject,
             params = c("python_path"),

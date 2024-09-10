@@ -11,11 +11,14 @@ NULL
 # See documentation in classes.R
 #' @noRd
 #' @keywords internal
-setMethod("initialize", signature("giotto"), function(.Object, ...) {
-    .Object <- methods::callNextMethod()
+setMethod("initialize", signature("giotto"), 
+          function(.Object, ..., initialize = TRUE) {
+    .Object <- methods::callNextMethod(.Object, ...)
+    if (!initialize) return(.Object)
     .Object <- updateGiottoObject(.Object)
 
-
+    vmsg(.is_debug = TRUE, .initial = "  ",  "!!giotto.initialize run!!")
+    
     # DT vars
     spat_unit <- feat_type <- NULL
 
