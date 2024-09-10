@@ -22,84 +22,82 @@
 #' @returns giotto object
 #' @export
 
-gefToGiotto <- function(
-    gef_file,
-    bin_size = "bin100",
-    verbose = FALSE,
-    h5_file = NULL) {
-    # data.table vars
-    genes <- gene_idx <- x <- y <- sdimx <- sdimy <- cell_ID <- bin_ID <-
-        count <- i.bin_ID <- NULL
-
-    # package check
-    package_check(pkg_name = "rhdf5", repository = "Bioc")
-    if (!file.exists(gef_file)) stop("File path to .gef file does not exist")
-
-    # check if proper bin_size is selected. These are determined in SAW pipeline
-    wrap_msg("1. gefToGiotto() begin... \n")
-    bin_size_options <- c("bin1", "bin10", "bin20", "bin50", "bin100", "bin200")
-    if (!(bin_size %in% bin_size_options)) {
-        stop("Please select valid bin size, see ?gefToGiotto for details.")
-    }
-
-    # 1. read .gef file at specific bin size
-    geneExpData <- rhdf5::h5read(
-        file = gef_file,
-        name = paste0("geneExp/", bin_size)
-    )
-    geneDT <- data.table::as.data.table(geneExpData[["gene"]])
-
-    exprDT <- data.table::as.data.table(geneExpData[["expression"]])
-    exprDT[, count := lapply(.SD, as.integer), .SDcols = "count"]
-    data.table::setorder(exprDT, x, y) # sort by x, y coords (ascending)
-    geneDT <- data.table::as.data.table(geneExpData[["gene"]])
-
-    if (isTRUE(verbose)) wrap_msg("finished reading in .gef", bin_size, "\n")
-
-    # 2. create spatial locations
-    if (isTRUE(verbose)) wrap_msg("2. create spatial_locations... \n")
-    cell_locations <- unique(exprDT[, c("x", "y")], by = c("x", "y"))
-    cell_locations[, bin_ID := as.factor(seq_len(nrow(cell_locations)))]
-    cell_locations[, cell_ID := paste0("cell_", bin_ID)]
-    data.table::setcolorder(cell_locations, c("x", "y", "cell_ID", "bin_ID"))
-    # ensure first non-numerical col is cell_ID
-    if (isTRUE(verbose)) wrap_msg(nrow(cell_locations), " bins in total \n")
-    if (isTRUE(verbose)) wrap_msg("finished spatial_locations \n")
-
-    # 3. create expression matrix
-    if (isTRUE(verbose)) wrap_msg("3. create expression matrix... \n")
-    exprDT[, genes := as.character(rep(x = geneDT$gene, geneDT$count))]
-    exprDT[, gene_idx := as.integer(factor(exprDT$genes,
-        levels = unique(exprDT$genes)
-    ))]
-
-    # merge on x,y and populate based on bin_ID values in cell_locations
-    exprDT[cell_locations, cell_ID := i.bin_ID, on = .(x, y)]
-    exprDT$cell_ID <- as.integer(exprDT$cell_ID)
-
-    expMatrix <- Matrix::sparseMatrix(
-        i = exprDT$gene_idx,
-        j = exprDT$cell_ID,
-        x = exprDT$count
-    )
-
-    colnames(expMatrix) <- cell_locations$cell_ID
-    rownames(expMatrix) <- geneDT$gene
-    rm(exprDT)
-    if (isTRUE(verbose)) wrap_msg("finished expression matrix")
-
-    # 4. create minimal giotto object
-    if (isTRUE(verbose)) wrap_msg("4. create giotto object... \n")
-    stereo <- createGiottoObject(
-        expression = expMatrix,
-        spatial_locs = cell_locations,
-        verbose = FALSE,
-        h5_file = h5_file
-    )
-    if (isTRUE(verbose)) wrap_msg("finished giotto object... \n")
-
-    wrap_msg("gefToGiotto() finished \n")
-    return(stereo)
+gefToGiotto <- function(gef_file,
+                        bin_size = "bin100",
+                        verbose = FALSE,
+                        h5_file = NULL) {
+   # data.table vars
+   genes <- gene_idx <- x <- y <- sdimx <- sdimy <- cell_ID <- bin_ID <-
+   count <- i.bin_ID <- NULL
+   
+   # package check
+   package_check(pkg_name = "rhdf5", repository = "Bioc")
+   if (!file.exists(gef_file)) stop("File path to .gef file does not exist")
+   
+   # check if proper bin_size is selected. These are determined in SAW pipeline
+   wrap_msg("gefToGiotto() begin...")
+   bin_size_options <- c("bin1", "bin10", "bin20", "bin50", "bin100", "bin200")
+   if (!(bin_size %in% bin_size_options)) {
+      stop("Please select valid bin size, see ?gefToGiotto for details.")
+   }
+   
+   # 1. read .gef file at specific bin size
+   exprDT <- rhdf5::h5read(
+      file = gef_file,
+      name = paste0("geneExp/", bin_size, "/expression")
+   )
+   data.table::setDT(exprDT)
+   exprDT[, cell_id := paste0("cell_", x, "_", y)]
+   
+   if (verbose) wrap_msg("\n finished reading in .gef", bin_size, "\n")
+   
+   # 2. create spatial locations
+   if (verbose) wrap_msg("\n create spatial_locations... \n")
+   cell_locations <- unique(exprDT[, c("x", "y")], by = c("x", "y"))
+   cell_locations[, cell_ID := paste0("cell_", x, "_", y)]
+   if (verbose) wrap_msg("\n",nrow(cell_locations), " bins in total \n")
+   if (verbose) wrap_msg("\n finished spatial_locations \n")
+   
+   # 3. create expression matrix
+   if (verbose) wrap_msg("\n create expression matrix... \n")
+   geneDT <- rhdf5::h5read(
+      file = gef_file,
+      name = paste0("geneExp/", bin_size, "/gene")
+   )
+   data.table::setDT(geneDT)
+   
+   # Map genes to expression data
+   exprDT[, genes := rep(geneDT$gene, geneDT$count)]
+   
+   # Create gene and cell indices
+   exprDT[, `:=`(
+      gene_idx = as.integer(factor(genes)),
+      cell_idx = as.integer(factor(cell_id))
+   )]
+   
+   gene_names <- levels(factor(exprDT$genes))
+   cell_names <- levels(factor(exprDT$cell_id))
+   
+   expMatrix <- Matrix::sparseMatrix(
+      i = exprDT$gene_idx,
+      j = exprDT$cell_idx,
+      x = exprDT$count,
+      dimnames = list(gene_names, cell_names)
+   )
+   if (verbose) wrap_msg("\n finished expression matrix")
+   
+   # 4. create minimal giotto object
+   if (verbose) wrap_msg("\n create giotto object... \n")
+   stereo <- createGiottoObject(
+      expression = expMatrix,
+      spatial_locs = cell_locations,
+      verbose = FALSE,
+      h5_file = h5_file
+   )
+   if (verbose) wrap_msg("\n finished giotto object... \n")
+   
+   wrap_msg("finished \n")
+   return(stereo)
 }
 
 
