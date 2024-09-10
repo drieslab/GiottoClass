@@ -11,7 +11,7 @@ name: R-CMD-check
 
 on:
   pull_request:
-    types: closed
+    types: opened
     branches: [ "main" ]
 
 permissions:
@@ -64,9 +64,9 @@ jobs:
             any::testthat
             any::rlang
             any::R.utils
-            any::remotes
             any::knitr
             any::rmarkdown
+            any::qs
             any::sp
             any::stars
             any::raster
@@ -77,14 +77,46 @@ jobs:
             any::geometry
             any::qs
             any::future.apply
+            any::Biobase
+            any::chihaya
+            any::DelayedArray
+            any::DelayedMatrixStats
+            any::HDF5Array
+            any::plotly
+            any::rgl
+            any::rhdf5
+            any::S4Vectors
+            any::ScaledMatrix
+            any::XML
+            any::Seurat
+            any::SeuratObject
+            any::SingleCellExperiment
+            any::SpatialExperiment
+            any::STexampleData
+            any::SummarizedExperiment
             github::drieslab/GiottoData
 
-      - name: Test python env build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: setup giotto_env
+        shell: Rscript {0}
         run: |
           if (!GiottoClass::checkGiottoEnvironment()) {
             GiottoClass::installGiottoEnvironment()
           }
-        shell: Rscript {0}
+          
+          reticulate::conda_install(
+            envname = 'giotto_env',
+            packages = 'scanpy',
+            pip = TRUE
+          )
+          
+          path_to_python <- GiottoClass::set_giotto_python_path()
+          
+          writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
+                     Sys.getenv("GITHUB_ENV"))
 
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2

@@ -1,4 +1,55 @@
 
+# GiottoClass 0.4.0 (2024/08/30)
+
+## breaking changes
+- stop exporting deprecated internal accessors
+
+## bug fixes
+- fix `dimnames()` for some subobjects
+- fix `joinGiottoObject()` for gobjects with only poly and point data [#233](https://github.com/drieslab/GiottoClass/issues/233)
+
+## enhancements
+- python packages to install through pip is now settable in `installGiottoEnvironment()` [#224](https://github.com/drieslab/GiottoClass/issues/224)
+- `instructions()` with no args will now call `createGiottoInstructions()`. You can also supply named args.
+- `instructions(gobject, param)` and `instructions(gobject, param)<-` will now work for `giottoInstructions` objects for convenience.
+
+
+
+
+# GiottoClass 0.3.5 (2024/08/28)
+
+## breaking changes
+- `set_giotto_python_path()` will now also initialize python env to set by default and print which python env is active, but otherwise do nothing if any python env has already been initialized.
+- deprecated `readGiottoInstructions()`, `showGiottoInstructions()`, `changeGiottoInstructions()`, `replaceGiottoInstructions()` in favor of `instructions()` generic
+
+## bug fixes
+- intensity images now automatically scale to estimated highest value
+- `giottoPolygon` `plot()` default `max_poly` raised to `1e6`
+- `giottoInstructions` no longer lose class when specific params are replaced
+- `ometif_to_tif()` now checks for _imagecodecs_ package as well
+- `anndataToGiotto()` and `giottoToAnndata` now check for _anndata_ package as well.
+- fix `joinGiottoObjects()` `"z_stack"` join method
+- fix error in documentation [#214](https://github.com/drieslab/GiottoClass/issues/214) by shaojunyu
+- fix error in `installGiottoEnvironment()` [#1006](https://github.com/drieslab/Giotto/issues/1006) by 13954380607
+
+## enhancements
+- `print()` method for `giottoInstructions`
+- `rbind()` for `spatLocsObj`
+
+
+# GiottoClass 0.3.4 (2024/08/04)
+
+## bug fixes
+- hotfix anndata matrix support [#216](https://github.com/drieslab/GiottoClass/issues/216) by wwang-chcn
+
+# GiottoClass 0.3.3 (2024/07/29)
+
+## bug fixes
+- fix flipping issue with `giottoAffineImage` for certain affine transforms
+
+## enhancements
+- `missing` method for `affine()` instantiates an `affine2d` object
+
 # GiottoClass 0.3.2 (2024/07/26)
 
 ## breaking changes

@@ -351,7 +351,8 @@ createGiottoObject <- function(expression,
             dummySpatLocObj <- createSpatLocsObj(
                 name = "raw",
                 coordinates = spatial_locs,
-                spat_unit = spat_unit
+                spat_unit = spat_unit,
+                provenance = spat_unit
             )
 
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###

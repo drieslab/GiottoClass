@@ -3,7 +3,7 @@ lifecycle_opt <- getOption("lifecycle_verbosity")
 options("lifecycle_verbosity" = "quiet")
 
 # ignore conda
-options("giotto.has_conda" = FALSE)
+options("giotto.use_conda" = FALSE)
 
 
 # load data to test

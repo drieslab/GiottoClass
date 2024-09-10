@@ -3,23 +3,58 @@
 NULL
 
 # docs ----------------------------------------------------------- #
-#' @title Access giotto instructions
-#' @name instructions-generic
+#' @title Giotto instructions
+#' @name giotto_instructions
 #' @aliases instructions instructions<-
-#' @description Retrieve or set giotto instructions. Specific instructions can
-#' be replaced using the \code{field} param. Additionally, when using
-#' instructions<-, \code{initialize()} will be called on the giotto object if
-#' initialize param is TRUE
+#' @description 
+#' Giotto instructions are default settings that are applied at the `giotto`
+#' object level. Once added to an object, they affect the way that the object
+#' behaves. You can create a `giottoInstructions` object using 
+#' `createGiottoInstructions()` and add them to the `giotto` object during
+#' creation or using the `instructions()` generic. Specific settings can be
+#' replaced or retrieved using the `param` argument. Additionally, when using
+#' `instructions<-()` as a replacement function, `initialize()` will be called 
+#' on the `giotto` object if `initialize = TRUE`.
+#' 
+#' If no `giottoInstructions` object is provided during `giotto` object 
+#' creation, then a default one will be created during `giotto` object 
+#' initialization.
+#' 
 #' @inheritParams data_access_params
 #' @param param Specific param in instructions to access or modify
 #' @param initialize (boolean, default = TRUE) whether to initialize the giotto
 #' object
 #' @param value value to set
-#' @returns giotto instructions
+#' @param \dots params to pass to `createGiottoInstructions()`
+#' @returns `giottoInstructions`, instructions settings, or `giotto` objects
+#' with modified instructions
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
-#' showGiottoInstructions(g)
+#' # create instructions
+#' ins <- instructions()
+#'
+#' # get instructions
+#' instrs <- instructions(g)
+#' force(instrs)
+#' 
+#' # get single instructions param
+#' instructions(g, "show_plot")
+#' 
+#' # replace an instruction param
+#' instructions(g, "show_plot") <- FALSE
+#' instructions(g, "show_plot")
+#' 
+#' # replace multiple instruction params
+#' instructions(g)
+#' instructions(g, c("show_plot", "dpi")) <- list(TRUE, 600)
+#' instructions(g)
+#' 
+#' # replace instructions
+#' i <- createGiottoInstructions()
+#' instructions(g) <- i
+#' instructions(g)
+#' 
 NULL
 
 #' @title Active spatial unit
@@ -53,8 +88,17 @@ NULL
 
 # instructions() method ####
 
+# create instructions object
+#' @rdname giotto_instructions
+#' @export
+setMethod(
+    "instructions", signature(gobject = "missing", param = "missing"),
+    function(...) createGiottoInstructions(...)
+)
+
+
 # Get instructions object
-#' @rdname instructions-generic
+#' @rdname giotto_instructions
 #' @export
 setMethod(
     "instructions", signature(gobject = "giotto", param = "missing"),
@@ -63,8 +107,32 @@ setMethod(
     }
 )
 
+
+# Get specific field
+#' @rdname giotto_instructions
+#' @export
+setMethod(
+    "instructions", signature(gobject = "giotto", param = "character"),
+    function(gobject, param) {
+        instrs <- showGiottoInstructions(gobject = gobject)
+        return(readGiottoInstructions(
+            giotto_instructions = instrs,
+            param = param
+        ))
+    }
+)
+
+#' @rdname giotto_instructions
+#' @export
+setMethod(
+    "instructions", 
+    signature(gobject = "giottoInstructions", param = "character"),
+    function(gobject, param) gobject[[param]]
+)
+
+
 # Set instructions object
-#' @rdname instructions-generic
+#' @rdname giotto_instructions
 #' @export
 setMethod(
     "instructions<-",
@@ -80,7 +148,7 @@ setMethod(
         return(gobject)
     }
 )
-#' @rdname instructions-generic
+#' @rdname giotto_instructions
 #' @export
 setMethod(
     "instructions<-",
@@ -97,22 +165,9 @@ setMethod(
     }
 )
 
-# Get specific field
-#' @rdname instructions-generic
-#' @export
-setMethod(
-    "instructions", signature(gobject = "giotto", param = "character"),
-    function(gobject, param) {
-        instrs <- showGiottoInstructions(gobject = gobject)
-        return(readGiottoInstructions(
-            giotto_instructions = instrs,
-            param = param
-        ))
-    }
-)
 
 # Set specific field
-#' @rdname instructions-generic
+#' @rdname giotto_instructions
 #' @export
 setMethod(
     "instructions<-",
@@ -131,7 +186,7 @@ setMethod(
         return(gobject)
     }
 )
-#' @rdname instructions-generic
+#' @rdname giotto_instructions
 #' @export
 setMethod(
     "instructions<-",
@@ -150,7 +205,18 @@ setMethod(
         return(gobject)
     }
 )
-
+#' @rdname giotto_instructions
+#' @export
+setMethod(
+    "instructions<-",
+    signature(
+        gobject = "giottoInstructions", param = "character", value = "ANY"
+    ),
+    function(gobject, param, value) {
+        gobject[[param]] <- value
+        return(gobject)
+    }
+)
 
 
 

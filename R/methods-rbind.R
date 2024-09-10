@@ -1,6 +1,10 @@
 #' @include generics.R
 NULL
 
+# NOTE: 
+# rbind2 methods will only work if the object already has nrow and dim
+# generics defined.
+
 # docs ----------------------------------------------------------- #
 #' @title Combine objects by rows (Giotto-related)
 #' @name rbind-generic
@@ -18,7 +22,30 @@ NULL
 NULL
 # ---------------------------------------------------------------- #
 
+#' @rdname rbind-generic
+#' @export
+setMethod(
+    "rbind2", signature(x = "spatLocsObj", y = "spatLocsObj"),
+    function(x, y, ...) {
 
+        # catch same IDs
+        if (any(duplicated(c(spatIDs(x), spatIDs(y))))) {
+            stop("rbind: `spatLocsObj` with the same IDs cannot be joined", 
+                 call. = FALSE)
+        }
+
+        # if one is 3d, ensure both are 3d
+        x3 <- .is_3d_spatlocs(x)
+        y3 <- .is_3d_spatlocs(y)
+        if (any(c(x3, y3)) && !(x3 && y3)) {
+            if (!x3) x <- .make_spatlocs_3d(x)
+            if (!y3) y <- .make_spatlocs_3d(y)
+        }
+        
+        x[] <- rbind(x[], y[])
+        return(x)
+    }
+)
 
 #' @describeIn rbind-generic Append giottoPolygon objects
 #' @export
@@ -56,11 +83,32 @@ setMethod("rbind", "giottoPolygon", function(..., deparse.level = 1) {
 })
 
 
+setMethod("rbind", "spatLocsObj", function(..., deparse.level = 1) {
+    if (nargs() <= 2L) {
+        rbind2(...)
+    } else {
+        xs <- list(...)
+        rbind2(xs[[1L]], do.call(Recall, xs[-1L]))
+    }
+})
 
 
 
 
 # internals ####
+
+.is_3d_spatlocs <- function(x) {
+    "sdimz" %in% colnames(x)
+}
+
+.make_spatlocs_3d <- function(x, z_val = 0) {
+    x[][["sdimz"]] <- z_val
+    data.table::setcolorder(x[], c("sdimx", "sdimy", "sdimz"))
+    return(x)
+}
+
+
+
 #' @title Append giotto polygons of the same name
 #' @name rbind2_giotto_polygon_homo
 #' @description Append two giotto polygons together of the same name.
@@ -107,8 +155,6 @@ rbind2_giotto_polygon_homo <- function(x, y) {
 #' also becomes a combination of both previous names
 #' @param x \code{giottoPolygon} 1
 #' @param y \code{giottoPolygon} 2
-#' @param poly_names sorted polygon names to be used in the
-#' combined \code{giottoPolygon} object
 #' @param add_list_ID whether to include the name of the
 #' origin \code{giottoPolygons} as a new 'list_ID' attribute
 #' @returns giottoPolygon

@@ -36,6 +36,7 @@
 #' @importMethodsFrom terra as.polygons as.points
 #' @importMethodsFrom terra nrow ncol
 #' @importMethodsFrom terra zoom
+#' @importMethodsFrom terra hist density
 #' @importClassesFrom terra SpatExtent
 #' @importClassesFrom terra SpatVector
 #' @import GiottoUtils

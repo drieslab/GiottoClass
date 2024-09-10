@@ -52,18 +52,16 @@ setNearestNetwork(gobject = g, x = dimred)
 }
 \seealso{
 Other expression space nearest network accessor functions: 
-\code{\link{getNearestNetwork}()},
-\code{\link{get_NearestNetwork}()},
-\code{\link{set_NearestNetwork}()}
+\code{\link{getNearestNetwork}()}
 
 Other functions to set data in giotto object: 
-\code{\link{get_cell_id}()},
 \code{\link{get_feat_id}()},
 \code{\link{setCellMetadata}()},
 \code{\link{setDimReduction}()},
 \code{\link{setExpression}()},
 \code{\link{setFeatureInfo}()},
 \code{\link{setFeatureMetadata}()},
+\code{\link{setGiotto}()},
 \code{\link{setGiottoImage}()},
 \code{\link{setMultiomics}()},
 \code{\link{setPolygonInfo}()},
@@ -71,21 +69,8 @@ Other functions to set data in giotto object:
 \code{\link{setSpatialGrid}()},
 \code{\link{setSpatialLocations}()},
 \code{\link{setSpatialNetwork}()},
-\code{\link{set_NearestNetwork}()},
-\code{\link{set_cell_id}()},
-\code{\link{set_cell_metadata}()},
-\code{\link{set_dimReduction}()},
-\code{\link{set_expression_values}()},
 \code{\link{set_feat_id}()},
-\code{\link{set_feature_info}()},
-\code{\link{set_feature_metadata}()},
-\code{\link{set_giottoImage}()},
-\code{\link{set_multiomics}()},
-\code{\link{set_polygon_info}()},
-\code{\link{set_spatialGrid}()},
-\code{\link{set_spatialNetwork}()},
-\code{\link{set_spatial_enrichment}()},
-\code{\link{set_spatial_locations}()}
+\code{\link{set_multiomics}()}
 }
 \concept{expression space nearest network accessor functions}
 \concept{functions to set data in giotto object}

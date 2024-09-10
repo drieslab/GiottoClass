@@ -76,12 +76,15 @@ Overrides angle param}
 
 \item{geom}{character. Named vector of colnames of x, y, (z) coordinate
 columns. Default is \code{c("sdimx", "sdimy", "sdimz")}}
+
+\item{...}{additional params to pass}
 }
 \value{
 spun object
 }
 \description{
-Spin (rotate) an object spatially (limited to xy rotations)
+Spin (rotate) an object spatially (usually limited to xy
+rotations)
 }
 \examples{
 g <- GiottoData::loadSubObjectMini("spatLocsObj")

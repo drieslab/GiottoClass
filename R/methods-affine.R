@@ -150,8 +150,15 @@ setMethod(
     }
 )
 
+# * missing, missing ####
+#' @rdname affine
+#' @export
+setMethod("affine", signature(x = "missing", y = "missing"), function(x) {
+    new("affine2d", affine = diag(c(1, 1)))
+})
 
-# * ANY ####
+
+# * ANY, missing ####
 #' @rdname affine
 #' @export
 setMethod("affine", signature(x = "ANY", y = "missing"), function(x) {
@@ -337,12 +344,21 @@ setMethod("affine", signature(x = "affine2d", y = "matrix"), function(
 .gaffine_realize_magick <- function(x, size = 5e5, ...) {
     mg <- .spatraster_sample_values(x, output = "magick", size = size, ...)
     aff <- x@affine
+    
+    # create a dummy spatLocsObj to act as control points
+    # pt1: bottom left
+    # pt2: top left
+    # pt3: bottom right
     dummy_sl <- .magick_image_corners(mg)
-    aff_dummy_sl <- affine(dummy_sl, .aff_linear_2d(aff)) %>%
+    aff_dummy_sl <- dummy_sl %>%
+        affine(.aff_linear_2d(aff)) %>%
         flip() %>%
-        rescale(fx = 1 / aff$scale[["x"]], fy = 1 / aff$scale[["y"]])
-    # no rescaling should be performed at this step. Otherwise magick
+        rescale(fx = 1 / abs(aff$scale[["x"]]), #*see below
+                fy = 1 / abs(aff$scale[["y"]]))
+    # *no scaling should be performed at this step. Otherwise magick
     # will generate a differently sized image during distortion
+    # To prevent the scaling change, we use the decomposed scale values.
+    # However, flips ARE desired, so we make sure the use the abs() values.
     
     .sl_to_mat <- function(x) {
         x[][, c("sdimx", "sdimy")] %>% t()
@@ -396,6 +412,9 @@ setMethod("affine", signature(x = "affine2d", y = "matrix"), function(
 #' @returns a list of transforms information.
 #' @keywords internal
 #' @examples
+#' # load example data
+#' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
+#' 
 #' # affine transform matrices
 #' m <- diag(rep(1, 3))
 #' shear_m <- trans_m <- m
@@ -419,16 +438,16 @@ setMethod("affine", signature(x = "affine2d", y = "matrix"), function(
 #' 
 #' # perform piecewise transforms with decomp
 #' 
-#' sl_shear_piecewise <- sl %>%
-#'     spin(GiottoUtils::degrees(s$rotate), x0 = 0, y0 = 0) %>%
-#'     shear(fx = s$shear[["x"]], fy = s$shear[["y"]], x0 = 0, y0 = 0) %>%
-#'     rescale(fx = s$scale[["x"]], fy = s$scale[["y"]], x0 = 0, y0 = 0) %>%
+#' sl_shear_piecewise <- sl |>
+#'     spin(GiottoUtils::degrees(s$rotate), x0 = 0, y0 = 0) |>
+#'     shear(fx = s$shear[["x"]], fy = s$shear[["y"]], x0 = 0, y0 = 0) |>
+#'     rescale(fx = s$scale[["x"]], fy = s$scale[["y"]], x0 = 0, y0 = 0) |>
 #'     spatShift(dx = s$translate[["x"]], dy = s$translate[["y"]])
 #' 
-#' sl_aff_piecewise <- sl %>%
-#'     spin(GiottoUtils::degrees(a$rotate), x0 = 0, y0 = 0) %>%
-#'     shear(fx = a$shear[["x"]], fy = a$shear[["y"]], x0 = 0, y0 = 0) %>%
-#'     rescale(fx = a$scale[["x"]], fy = a$scale[["y"]], x0 = 0, y0 = 0) %>%
+#' sl_aff_piecewise <- sl |>
+#'     spin(GiottoUtils::degrees(a$rotate), x0 = 0, y0 = 0) |>
+#'     shear(fx = a$shear[["x"]], fy = a$shear[["y"]], x0 = 0, y0 = 0) |>
+#'     rescale(fx = a$scale[["x"]], fy = a$scale[["y"]], x0 = 0, y0 = 0) |>
 #'     spatShift(dx = a$translate[["x"]], dy = a$translate[["y"]])
 #'     
 #' plot(affine(sl, shear_m))
