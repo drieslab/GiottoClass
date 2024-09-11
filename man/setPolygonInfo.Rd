@@ -10,7 +10,8 @@ setPolygonInfo(
   name = "cell",
   centroids_to_spatlocs = FALSE,
   verbose = TRUE,
-  initialize = TRUE
+  initialize = TRUE,
+  ...
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ to additionally set them as a set of spatial locations (default = FALSE)}
 
 \item{initialize}{(default = FALSE) whether to initialize the gobject before
 returning}
+
+\item{...}{additional params to pass}
 }
 \value{
 giotto object

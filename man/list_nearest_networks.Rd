@@ -21,7 +21,8 @@ list_nearest_networks(
 
 \item{nn_type}{nearest neighbor method (e.g. "sNN", "kNN")}
 
-\item{return_uniques}{return unique nesting names (ignores if final object exists/is correct class)}
+\item{return_uniques}{return unique nesting names (ignores if final object
+exists/is correct class)}
 }
 \value{
 names and locations of nearest neighbor networks as a data.table

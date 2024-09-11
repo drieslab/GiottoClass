@@ -40,6 +40,8 @@
 \alias{[,giottoPolygon,missing,gIndex,missing-method}
 \alias{[,terraVectData,gIndex,gIndex,missing-method}
 \alias{[,affine2d,missing,missing,missing-method}
+\alias{[,giotto,missing,gIndex,missing-method}
+\alias{[,giotto,gIndex,gIndex,missing-method}
 \title{Subset part of an object with \code{[}}
 \usage{
 \S4method{[}{gdtData,gIndex,gIndex,missing}(x, i, j)
@@ -117,6 +119,10 @@
 \S4method{[}{terraVectData,gIndex,gIndex,missing}(x, i, j)
 
 \S4method{[}{affine2d,missing,missing,missing}(x, i, j)
+
+\S4method{[}{giotto,missing,gIndex,missing}(x, i, j, ..., drop = TRUE)
+
+\S4method{[}{giotto,gIndex,gIndex,missing}(x, i, j, spat_unit = NULL, feat_type = NULL, ..., drop)
 }
 \arguments{
 \item{x}{Giotto S4 object to subset information from}

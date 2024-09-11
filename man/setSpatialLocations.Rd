@@ -11,7 +11,9 @@ setSpatialLocations(
   name = "raw",
   provenance = NULL,
   verbose = TRUE,
-  initialize = TRUE
+  check_preqs = TRUE,
+  initialize = TRUE,
+  ...
 )
 }
 \arguments{
@@ -28,8 +30,13 @@ specified set of spatial locations data.}
 
 \item{verbose}{be verbose}
 
+\item{check_preqs}{logical. Require pre-requisite data to be present.
+(default = TRUE)}
+
 \item{initialize}{(default = FALSE) whether to initialize the gobject before
 returning}
+
+\item{...}{additional params to pass}
 }
 \value{
 giotto object

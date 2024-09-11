@@ -12,8 +12,10 @@ setNearestNetwork(
   nn_type = "sNN",
   name = "sNN.pca",
   provenance = NULL,
+  check_preqs = TRUE,
   verbose = TRUE,
-  initialize = TRUE
+  initialize = TRUE,
+  ...
 )
 }
 \arguments{
@@ -33,10 +35,15 @@ yet supported.}
 
 \item{provenance}{provenance information (optional)}
 
+\item{check_preqs}{logical. Require pre-requisite data to be present.
+(default = TRUE)}
+
 \item{verbose}{be verbose}
 
 \item{initialize}{(default = FALSE) whether to initialize the gobject before
 returning}
+
+\item{...}{additional params to pass}
 }
 \value{
 giotto object

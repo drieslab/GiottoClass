@@ -31,7 +31,8 @@ object (default = TRUE)}
 
 \item{verbose}{be verbose}
 
-\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
+\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE
+only when
 expression and spat_info are not expected to exist.}
 
 \item{simplify}{logical. Whether or not to take object out of a list when

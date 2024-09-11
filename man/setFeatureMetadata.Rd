@@ -11,7 +11,8 @@ setFeatureMetadata(
   feat_type = NULL,
   provenance = NULL,
   verbose = TRUE,
-  initialize = TRUE
+  initialize = TRUE,
+  ...
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ reset a specified set of feature metadata in the giotto object.}
 
 \item{initialize}{(default = FALSE) whether to initialize the gobject before
 returning}
+
+\item{...}{additional params to pass}
 }
 \value{
 giotto object

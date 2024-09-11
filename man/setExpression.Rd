@@ -13,7 +13,8 @@ setExpression(
   name = "raw",
   provenance = NULL,
   verbose = TRUE,
-  initialize = TRUE
+  initialize = TRUE,
+  ...
 )
 }
 \arguments{
@@ -35,6 +36,8 @@ information for the giotto object. Pass NULL to remove an expression object}
 
 \item{initialize}{(default = FALSE) whether to initialize the gobject before
 returning}
+
+\item{...}{additional params to pass}
 }
 \value{
 giotto object

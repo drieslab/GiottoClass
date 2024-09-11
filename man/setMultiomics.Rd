@@ -11,7 +11,8 @@ setMultiomics(
   feat_type = NULL,
   integration_method = "WNN",
   result_name = "theta_weighted_matrix",
-  verbose = TRUE
+  verbose = TRUE,
+  ...
 )
 }
 \arguments{

@@ -14,7 +14,9 @@ setDimReduction(
   reduction_method = c("pca", "umap", "tsne"),
   provenance = NULL,
   verbose = TRUE,
-  initialize = TRUE
+  check_preqs = TRUE,
+  initialize = TRUE,
+  ...
 )
 }
 \arguments{
@@ -37,8 +39,13 @@ specified set of dimension reduction information from the gobject}
 
 \item{verbose}{be verbose}
 
+\item{check_preqs}{logical. Require pre-requisite data to be present.
+(default = TRUE)}
+
 \item{initialize}{(default = FALSE) whether to initialize the gobject before
 returning}
+
+\item{...}{additional params to pass}
 }
 \value{
 giotto object

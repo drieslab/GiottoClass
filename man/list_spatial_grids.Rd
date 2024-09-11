@@ -18,7 +18,8 @@ list_spatial_grids(
 
 \item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
 
-\item{return_uniques}{return unique nesting names (ignores if final object exists/is correct class)}
+\item{return_uniques}{return unique nesting names (ignores if final object
+exists/is correct class)}
 }
 \value{
 data.table of names and locations of available spatial grids.
