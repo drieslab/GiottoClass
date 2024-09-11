@@ -13,7 +13,7 @@
 - python packages to install through pip is now settable in `installGiottoEnvironment()` [#224](https://github.com/drieslab/GiottoClass/issues/224)
 - `instructions()` with no args will now call `createGiottoInstructions()`. You can also supply named args.
 - `instructions(gobject, param)` and `instructions(gobject, param)<-` will now work for `giottoInstructions` objects for convenience.
-
+- `[` and `subset()` for `giotto` see `?GiottoClass::subset_giotto`
 
 
 

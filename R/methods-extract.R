@@ -85,6 +85,35 @@ NULL
 #' @seealso [subset_bracket] [replace_bracket] [replace_dollar]
 NULL
 
+#' @title Subset a `giotto` object
+#' @name subset_giotto
+#' @aliases `[.giotto`
+#' @description Subset a giotto object with `[` or `subset()` generic.
+#' @param x a `giotto` object
+#' @param feat_ids,i character vector. Feature IDs to subset the object for.
+#' @param cell_ids,j character vector. Cell/spatial IDs to subset the object 
+#' for.
+#' @param drop not used
+#' @param spat_unit character. Subset affects these spatial unit(s).
+#' @param feat_type character. Subset affects these feature type(s).
+#' @param \dots additional args to pass (none implemented)
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#' 
+#' # `[` examples
+#' g[1:5]
+#' g[, 2:10]
+#' g[1:5, 2:10]
+#' g[c(TRUE,FALSE),]
+#' 
+#' # subset() examples
+#' subset(g, nr_feats > 300)
+#' subset(g, nr_feats > 300, 
+#'     cell_ids = c("GAATCGCCGGACACGG-1", "GAGGGCATCGCGTATC-1")
+#' )
+#' subset(g, Gfap + Gna12 > 10)
+#' 
+NULL
 
 # --------------------------------------------------------------------------- #
 
@@ -262,6 +291,7 @@ setMethod("$", signature("affine2d"), function(x, name) {
 
 
 # [ S4 access generic ####
+
 
 ## * gdtData ####
 
@@ -1057,3 +1087,247 @@ setMethod(
         return(initialize(x))
     }
 )
+
+
+
+
+
+# giotto subsets ####
+
+
+
+
+
+#' @rdname subset_giotto
+#' @export
+setMethod(
+    "[", signature(x = "giotto", i = "gIndex", j = "missing", drop = "missing"),
+    function(x, i, ..., drop) {
+        subset(x, feat_ids = i, ...)
+    }
+)
+
+#' @rdname subset_bracket
+#' @export
+setMethod(
+    "[", signature(x = "giotto", i = "missing", j = "gIndex", drop = "missing"),
+    function(x, j, ..., drop) {
+        subset(x, cell_ids = j, ...)
+    })
+
+#' @rdname subset_bracket
+#' @export
+setMethod(
+    "[", signature(x = "giotto", i = "gIndex", j = "gIndex", drop = "missing"),
+    function(x, i, j, spat_unit = NULL, feat_type = NULL, ..., drop) {
+        subset(x, feat_ids = i, cell_ids = j, ...)
+    })
+
+
+#' @rdname subset_giotto
+#' @param subset Logical expression evaluated in expression values
+#' @param expression_values character. Name of which expression values to use
+#'   with `subset` param.. If kept as NULL, the first one will be defaulted to.
+#' @export
+setMethod("subset", signature("giotto"), function(
+        x, 
+        subset,
+        feat_ids = NULL,
+        cell_ids = NULL,
+        spat_unit = NULL, 
+        feat_type = NULL, 
+        expression_values = NULL, 
+        ...
+) {
+    spat_unit = set_default_spat_unit(
+        x, spat_unit
+    )
+    feat_type = set_default_feat_type(
+        x, spat_unit = spat_unit, feat_type = feat_type
+    )
+    
+    # setup vars for subsetting IDs
+    fids <- NULL
+    sids <- NULL
+    
+    # indexing and specified IDs
+    if (!is.null(feat_ids)) {
+        if (is.numeric(feat_ids) || is.logical(feat_ids)) {
+            fx <- fDataDT(x,
+                spat_unit = spat_unit,
+                feat_type = feat_type
+            )
+            if (is.logical(feat_ids)) {
+                fn <- nrow(fx)
+                if (length(feat_ids) != fn) {
+                    feat_ids <- rep_len(feat_ids, length.out = fn)
+                }
+            }
+            fids <- fx[feat_ids]$feat_ID
+        } else if (is.character(feat_ids)) {
+            fids <- feat_ids
+        } else if (is.factor(feat_ids)) {
+            fids <- as.character(fids)
+        }
+    }
+
+    if (!is.null(cell_ids)) {
+        if (is.numeric(cell_ids) || is.logical(cell_ids)) {
+            cx <- pDataDT(x,
+                spat_unit = spat_unit,
+                feat_type = feat_type
+            )
+            if (is.logical(cell_ids)) {
+                cn <- nrow(cx)
+                if (length(cell_ids) != cn) {
+                    cell_ids <- rep_len(cell_ids, length.out = cn)
+                }
+            }
+            sids <- cx[cell_ids]$cell_ID
+        } else if (is.character(cell_ids)) {
+            sids <- cell_ids
+        } else if (is.factor(cell_ids)) {
+            sids <- as.character(sids)
+        }
+    }
+
+    # expression evals ------------------------------------------------- #
+    sub_s <- substitute(subset)
+
+    if (!missing(sub_s)) {
+        vars <- all.vars(sub_s)
+        vals <- lapply(vars, function(v) {
+            spatValues(x, 
+                feats = v,
+                expression_values = expression_values,
+                spat_unit = spat_unit,
+                feat_type = feat_type,
+                verbose = FALSE
+            )
+        })
+        .dtjoin <- function(x, y) {
+            data.table::`[.data.table`(x, y, on = "cell_ID")
+        }
+        vals_dt <- Reduce(.dtjoin, vals)
+        if (identical(getOption("giotto.verbose"), "debug")) {
+            message("data.table used in subset")
+            print(vals_dt)
+        }
+        sids_s <- subset.data.frame(vals_dt, subset = eval(sub_s))$cell_ID
+        
+        if (is.null(sids)) {
+            sids <- sids_s
+        } else {
+            checkmate::assert_character(sids)
+            sids <- intersect(sids_s, sids)
+        }
+    }
+
+    subsetGiotto(x,
+        spat_unit = ":all:",
+        feat_type = ":all:",
+        feat_ids = fids,
+        cell_ids = sids
+    )
+})
+
+
+
+
+
+#' @name sliceGiotto
+#' @title Slice `giotto` object by `spat_unit` and `feat_type`
+#' @description Extract specific spatial units and feature types from a
+#' `giotto` object as independent `giotto` objects.
+#' @param gobject `giotto` object
+#' @param spat_unit character vector. Spatial units to slice out. ":all:"
+#' means keeping all of them in the output
+#' @param feat_type character vector. Feature types to slice out. ":all:"
+#' means keeping all of them in the output
+#' @param verbose be verbose
+#' @returns `giotto` object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' res <- sliceGiotto(g, spat_unit = "aggregate")
+#' force(res)
+#' @seealso [subsetGiotto()] [subset_giotto]
+#' @export
+sliceGiotto <- function(
+        gobject, spat_unit = ":all:", feat_type = ":all:", verbose = FALSE
+) {
+    
+    spat_unit <- spat_unit %null% ":all:"
+    feat_type <- feat_type %null% ":all:"
+    
+    if (identical(spat_unit, ":all:") && identical(feat_type, ":all:")) {
+        return(x) # return early if no slicing needed
+    }
+    
+    # data lists
+    spat_only <- .giotto_datalist(x, 
+                                  c("spatial_info", "spatial_locs", "spatial_network")
+    )
+    
+    feat_only <- .giotto_datalist(x, c("feat_info"))
+    
+    spat_feat <- .giotto_datalist(x,
+                                  c(
+                                      "expression", "cell_metadata", "feat_metadata",
+                                      "spatial_enrichment", 
+                                      "nn_network", "dimension_reduction",
+                                      "multiomics"
+                                  )
+    )
+    
+    # select data
+    if (!identical(spat_unit, ":all:")) { # select if not all
+        spat_only <- spat_only[spatUnit(spat_only) %in% spat_unit]
+        spat_feat <- spat_feat[spatUnit(spat_feat) %in% spat_unit]
+    }
+    
+    if (!identical(feat_type, ":all:")) {
+        feat_only <- feat_only[featType(feat_only) %in% feat_type]
+        spat_feat <- spat_feat[featType(spat_feat) %in% feat_type]
+    }
+    
+    # combine selected data
+    datalist <- c(spat_only, feat_only, spat_feat)
+    
+    g <- giotto(
+        images = x@images,
+        parameters = x@parameters,
+        instructions = x@instructions,
+        offset_file = x@offset_file,
+        versions = x@versions,
+        join_info = x@join_info,
+        h5_file = x@h5_file,
+        initialize = FALSE
+    )
+    g <- setGiotto(g,
+                   datalist,
+                   initialize = FALSE,
+                   check_preqs = FALSE,
+                   verbose = FALSE
+    )
+    
+    return(initialize(g))
+}
+
+
+
+# internals ####
+
+.giotto_datalist <- function(x, slots = c(
+    "spatial_info", "spatial_locs", "spatial_network", 
+    "feat_info",
+    "expression", "cell_metadata", "feat_metadata",
+    "spatial_enrichment", 
+    "nn_network", "dimension_reduction",
+    "multiomics"
+)) {
+    lapply(slots, function(gslot) methods::slot(x, gslot)) |>
+        unlist(recursive = TRUE, use.names = FALSE)
+}
+
+
+
