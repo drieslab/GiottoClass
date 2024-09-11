@@ -14,9 +14,10 @@
 #'
 #' list_giotto_data(gobject = g, slot = "expression")
 #' @export
-list_giotto_data <- function(gobject = NULL,
-    slot = NULL,
-    ...) {
+list_giotto_data <- function(
+        gobject = NULL,
+        slot = NULL,
+        ...) {
     if (slot == "expression") {
         return(list_expression(gobject = gobject, ...))
     }
@@ -67,9 +68,10 @@ list_giotto_data <- function(gobject = NULL,
 #'
 #' list_expression(g)
 #' @export
-list_expression <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL) {
+list_expression <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL) {
     availableExpr <- data.table()
     for (spatial_unit in names(gobject@expression)) {
         for (feature_type in names(gobject@expression[[spatial_unit]])) {
@@ -124,9 +126,10 @@ list_expression <- function(gobject,
 #'
 #' list_expression_names(g, spat_unit = "cell", feat_type = "rna")
 #' @export
-list_expression_names <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL) {
+list_expression_names <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
     if (is.null(feat_type)) stop("feat_type must be given\n")
 
@@ -179,10 +182,11 @@ list_feat_id_names <- function(gobject) {
 #'
 #' list_cell_metadata(g)
 #' @export
-list_cell_metadata <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    return_uniques = FALSE) {
+list_cell_metadata <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        return_uniques = FALSE) {
     availableCMet <- data.table()
     uniques <- list()
     for (spatial_unit in names(gobject@cell_metadata)) {
@@ -239,10 +243,11 @@ list_cell_metadata <- function(gobject,
 #'
 #' list_feat_metadata(g)
 #' @export
-list_feat_metadata <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    return_uniques = FALSE) {
+list_feat_metadata <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        return_uniques = FALSE) {
     availableFMet <- data.table()
     uniques <- list()
     for (spatial_unit in names(gobject@feat_metadata)) {
@@ -299,9 +304,10 @@ list_feat_metadata <- function(gobject,
 #'
 #' list_spatial_locations(g)
 #' @export
-list_spatial_locations <- function(gobject,
-    spat_unit = NULL,
-    return_uniques = FALSE) {
+list_spatial_locations <- function(
+        gobject,
+        spat_unit = NULL,
+        return_uniques = FALSE) {
     availableSpatLocs <- data.table()
     uniques <- list()
     for (spatial_unit in names(gobject@spatial_locs)) {
@@ -358,8 +364,9 @@ list_spatial_locations <- function(gobject,
 #'
 #' list_spatial_locations_names(g, spat_unit = "cell")
 #' @export
-list_spatial_locations_names <- function(gobject,
-    spat_unit = NULL) {
+list_spatial_locations_names <- function(
+        gobject,
+        spat_unit = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
 
     spatlocs_names <- names(gobject@spatial_locs[[spat_unit]])
@@ -379,9 +386,10 @@ list_spatial_locations_names <- function(gobject,
 #'
 #' list_spatial_enrichments(g)
 #' @export
-list_spatial_enrichments <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL) {
+list_spatial_enrichments <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL) {
     availableSpatEnr <- data.table()
 
     for (spatial_unit in names(gobject@spatial_enrichment)) {
@@ -441,9 +449,10 @@ list_spatial_enrichments <- function(gobject,
 #'
 #' list_spatial_enrichments_names(g, spat_unit = "aggregate", feat_type = "rna")
 #' @export
-list_spatial_enrichments_names <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL) {
+list_spatial_enrichments_names <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
     if (is.null(feat_type)) stop("feat_type must be given\n")
 
@@ -468,11 +477,12 @@ list_spatial_enrichments_names <- function(gobject,
 #'
 #' list_dim_reductions(g)
 #' @export
-list_dim_reductions <- function(gobject,
-    data_type = NULL,
-    spat_unit = NULL,
-    feat_type = NULL,
-    dim_type = NULL) {
+list_dim_reductions <- function(
+        gobject,
+        data_type = NULL,
+        spat_unit = NULL,
+        feat_type = NULL,
+        dim_type = NULL) {
     availableDimRed <- data.table()
     for (dataType in names(slot(gobject, "dimension_reduction"))) {
         for (spatUnit in
@@ -555,11 +565,12 @@ list_dim_reductions <- function(gobject,
 #'     dim_type = "pca"
 #' )
 #' @export
-list_dim_reductions_names <- function(gobject,
-    data_type = "cells",
-    spat_unit = NULL,
-    feat_type = NULL,
-    dim_type = NULL) {
+list_dim_reductions_names <- function(
+        gobject,
+        data_type = "cells",
+        spat_unit = NULL,
+        feat_type = NULL,
+        dim_type = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
     if (is.null(feat_type)) stop("feat_type must be given\n")
     if (is.null(dim_type)) stop("dim_type must be given\n")
@@ -582,11 +593,12 @@ list_dim_reductions_names <- function(gobject,
 #'
 #' list_nearest_networks(g)
 #' @export
-list_nearest_networks <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    nn_type = NULL,
-    return_uniques = FALSE) {
+list_nearest_networks <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        nn_type = NULL,
+        return_uniques = FALSE) {
     # TODO remove uniques
 
     availableNN <- data.table()
@@ -670,10 +682,11 @@ list_nearest_networks <- function(gobject,
 #'     nn_type = "sNN"
 #' )
 #' @export
-list_nearest_networks_names <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    nn_type = NULL) {
+list_nearest_networks_names <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        nn_type = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
     if (is.null(feat_type)) stop("feat_type must be given\n")
     if (is.null(nn_type)) stop("nn_type must be given\n")
@@ -792,9 +805,10 @@ list_feature_info_names <- function(gobject) {
 #'
 #' list_spatial_networks(g)
 #' @export
-list_spatial_networks <- function(gobject,
-    spat_unit = NULL,
-    return_uniques = FALSE) {
+list_spatial_networks <- function(
+        gobject,
+        spat_unit = NULL,
+        return_uniques = FALSE) {
     availableSpatNetworks <- data.table()
     uniques <- list()
     for (spatial_unit in names(gobject@spatial_network)) {
@@ -848,8 +862,9 @@ list_spatial_networks <- function(gobject,
 #'
 #' list_spatial_networks_names(g, spat_unit = "cell")
 #' @export
-list_spatial_networks_names <- function(gobject,
-    spat_unit = NULL) {
+list_spatial_networks_names <- function(
+        gobject,
+        spat_unit = NULL) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
 
     spat_network_names <- names(gobject@spatial_network[[spat_unit]])
@@ -873,10 +888,11 @@ list_spatial_networks_names <- function(gobject,
 #'
 #' list_spatial_grids(g)
 #' @export
-list_spatial_grids <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    return_uniques = FALSE) {
+list_spatial_grids <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        return_uniques = FALSE) {
     availableSpatGrids <- data.table()
     uniques <- list()
     for (spatial_unit in names(gobject@spatial_grid)) {
@@ -948,10 +964,11 @@ list_spatial_grids <- function(gobject,
 #'
 #' list_spatial_grids_names(g, spat_unit = "cell", feat_type = "rna")
 #' @export
-list_spatial_grids_names <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    return_uniques = FALSE) {
+list_spatial_grids_names <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        return_uniques = FALSE) {
     if (is.null(spat_unit)) stop("spat_unit must be given\n")
     if (is.null(feat_type)) stop("feat_type must be given\n")
 
@@ -973,8 +990,9 @@ list_spatial_grids_names <- function(gobject,
 #' list_images(g)
 #' list_images(g, img_type = "largeImage")
 #' @export
-list_images <- function(gobject,
-    img_type = NULL) {
+list_images <- function(
+        gobject,
+        img_type = NULL) {
     img_info <- lapply(
         slot(gobject, "images"),
         function(img) {
@@ -1024,8 +1042,9 @@ list_images <- function(gobject,
 #' list_images_names(g)
 #' list_images_names(g, img_type = "largeImage")
 #' @export
-list_images_names <- function(gobject,
-    img_type = NULL) {
+list_images_names <- function(
+        gobject,
+        img_type = NULL) {
     if (!is.null(img_type)) {
         img_type <- match.arg(img_type, choices = c("image", "largeImage"))
     }

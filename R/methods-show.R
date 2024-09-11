@@ -10,7 +10,7 @@ NULL
 #' @examples
 #' img <- GiottoData::loadSubObjectMini("giottoLargeImage")
 #' as.character(img)
-#' 
+#'
 NULL
 
 #' @name show
@@ -358,17 +358,17 @@ setMethod("show", signature("spatLocsObj"), function(object) {
     .show_class_and_name(object)
     .show_spat(object)
     .show_prov(object)
-    cat("dimensions:", dim(object), '\npreview   :\n')
-    
+    cat("dimensions:", dim(object), "\npreview   :\n")
+
     if (!is.null(slot(object, "coordinates"))) {
         show(head(slot(object, "coordinates"), 3L))
     }
-    
+
     # print ranges if possible
     cat("\nranges:\n")
     col_names <- colnames(slot(object, "coordinates"))
     coord_cols <- col_names[col_names %in% c("sdimx", "sdimy", "sdimz")]
-    
+
     try(
         expr = print(vapply(
             slot(object, "coordinates")[, c(coord_cols), with = FALSE],
@@ -792,7 +792,7 @@ setMethod("show", signature("affine2d"), function(object) {
         paste(x, collapse = ", ") %>%
             paste(" (x, y)")
     }
-    
+
     showlist <- list()
     showlist$anchor <- .anchor_print()
     for (tf in object@order) {

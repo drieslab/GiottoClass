@@ -4,10 +4,16 @@
 \alias{subset_giotto}
 \alias{`[.giotto`}
 \alias{[,giotto,gIndex,missing,missing-method}
+\alias{[,giotto,missing,gIndex,missing-method}
+\alias{[,giotto,gIndex,gIndex,missing-method}
 \alias{subset,giotto-method}
 \title{Subset a \code{giotto} object}
 \usage{
 \S4method{[}{giotto,gIndex,missing,missing}(x, i, j, ..., drop = TRUE)
+
+\S4method{[}{giotto,missing,gIndex,missing}(x, i, j, ..., drop = TRUE)
+
+\S4method{[}{giotto,gIndex,gIndex,missing}(x, i, j, spat_unit = NULL, feat_type = NULL, ..., drop)
 
 \S4method{subset}{giotto}(
   x,
@@ -27,16 +33,16 @@
 
 \item{drop}{not used}
 
+\item{spat_unit}{character. Subset affects these spatial unit(s).}
+
+\item{feat_type}{character. Subset affects these feature type(s).}
+
 \item{subset}{Logical expression evaluated in expression values}
 
 \item{feat_ids, i}{character vector. Feature IDs to subset the object for.}
 
 \item{cell_ids, j}{character vector. Cell/spatial IDs to subset the object
 for.}
-
-\item{spat_unit}{character. Subset affects these spatial unit(s).}
-
-\item{feat_type}{character. Subset affects these feature type(s).}
 
 \item{expression_values}{character. Name of which expression values to use
 with \code{subset} param.. If kept as NULL, the first one will be defaulted to.}
@@ -51,11 +57,11 @@ g <- GiottoData::loadGiottoMini("visium")
 g[1:5]
 g[, 2:10]
 g[1:5, 2:10]
-g[c(TRUE,FALSE),]
+g[c(TRUE, FALSE), ]
 
 # subset() examples
 subset(g, nr_feats > 300)
-subset(g, nr_feats > 300, 
+subset(g, nr_feats > 300,
     cell_ids = c("GAATCGCCGGACACGG-1", "GAGGGCATCGCGTATC-1")
 )
 subset(g, Gfap + Gna12 > 10)

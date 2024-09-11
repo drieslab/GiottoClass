@@ -30,6 +30,8 @@ integration (e.g. theta weighted values from runWNN)}
 \item{result_name}{Default = 'theta_weighted_matrix'}
 
 \item{verbose}{be verbose}
+
+\item{...}{additional params to pass}
 }
 \value{
 A giotto object

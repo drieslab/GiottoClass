@@ -79,7 +79,7 @@ setMethod(
                 x <- setFeatureInfo(x, pt, verbose = FALSE, initialize = FALSE)
             }
         }
-        
+
         # images ----------------------------------------------------------- #
         imgs <- get_giotto_image_list(x)
         if (!is.null(imgs)) {
@@ -154,7 +154,7 @@ setMethod("t", signature("giottoAffineImage"), function(x) {
     aff <- x@affine
     # update affine
     x@affine <- t(aff)
-    
+
     return(initialize(x))
 })
 

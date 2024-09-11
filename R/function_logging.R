@@ -18,10 +18,11 @@
 #'
 #' update_giotto_params(g, toplevel = 1)
 #' @export
-update_giotto_params <- function(gobject,
-    description = "_test",
-    return_gobject = TRUE,
-    toplevel = 2) {
+update_giotto_params <- function(
+        gobject,
+        description = "_test",
+        return_gobject = TRUE,
+        toplevel = 2) {
     parameters_list <- gobject@parameters
     number_of_rounds <- length(parameters_list)
     update_name <- paste0(number_of_rounds, description)

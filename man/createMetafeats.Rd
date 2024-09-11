@@ -136,8 +136,10 @@ g <- createMetafeats(
 # These custom functions must be summary functions, as in, they must
 # produce only a single numeric output from many
 custom_stat <- function(x) {
-    if (max(x) == 0) return(0)
-    return(mean(x/max(x)))
+    if (max(x) == 0) {
+        return(0)
+    }
+    return(mean(x / max(x)))
 }
 g <- createMetafeats(
     gobject = g,

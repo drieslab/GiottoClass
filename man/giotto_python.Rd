@@ -226,23 +226,25 @@ checkGiottoEnvironment()
 # use environment name
 checkGiottoEnvironment("giotto_env")
 
-# full path 
+# full path
 # (use this if a different install location specified with .condarc)
 if (FALSE) {
-checkGiottoEnvironment(
-    "/Users/example/Library/r-miniconda-arm64/envs/giotto_env/bin/pythonw"
-)
+    checkGiottoEnvironment(
+        "/Users/example/Library/r-miniconda-arm64/envs/giotto_env/bin/pythonw"
+    )
 }
 if (FALSE) {
-# default environment installation
-installGiottoEnvironment()
+    # default environment installation
+    installGiottoEnvironment()
 
-# install to alternate location
-temp_env <- tempdir()
-installGiottoEnvironment(mini_install_path = temp_env)
+    # install to alternate location
+    temp_env <- tempdir()
+    installGiottoEnvironment(mini_install_path = temp_env)
 }
 
 # detect AND initialize a python environment
-set_giotto_python_path()
+if (FALSE) {
+    set_giotto_python_path()
+}
 }
 \keyword{internal}

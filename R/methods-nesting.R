@@ -155,7 +155,8 @@ setMethod("objName", signature("giottoImage"), function(x) x@name)
 setMethod("objName<-", signature = "list", function(x, value) {
     if (length(x) != length(value)) {
         stop("Number of names to set must be the same as the length of list",
-             call. = FALSE)
+            call. = FALSE
+        )
     }
     lapply(seq_along(x), function(i) {
         y <- x[[i]]
@@ -292,7 +293,8 @@ assign_listnames_2_obj <- function(obj_list) {
         stop("<assign_listnames_2_obj> List has no names\n")
     }
     obj_index <- which(vapply(
-        obj_list, inherits, "nameData", FUN.VALUE = logical(1L)
+        obj_list, inherits, "nameData",
+        FUN.VALUE = logical(1L)
     ))
     list_obj_names <- list_names[obj_index]
 

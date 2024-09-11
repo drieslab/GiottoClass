@@ -6,13 +6,14 @@
 #' @description Subset expression data from giotto object
 #' @keywords internal
 #' @noRd
-.subset_expression_data <- function(gobject,
-    feat_type = ":all:",
-    spat_unit = ":all:",
-    spat_unit_fsub = ":all:",
-    feat_type_ssub = ":all:",
-    cell_ids = NULL,
-    feat_ids = NULL) {
+.subset_expression_data <- function(
+        gobject,
+        feat_type = ":all:",
+        spat_unit = ":all:",
+        spat_unit_fsub = ":all:",
+        feat_type_ssub = ":all:",
+        cell_ids = NULL,
+        feat_ids = NULL) {
     # DT vars
     subset_cells <- subset_feats <- NULL
 
@@ -134,9 +135,10 @@
 #' @description Subset location data from giotto object
 #' @keywords internal
 #' @noRd
-.subset_spatial_locations <- function(gobject,
-    spat_unit = ":all:",
-    cell_ids = NULL) {
+.subset_spatial_locations <- function(
+        gobject,
+        spat_unit = ":all:",
+        cell_ids = NULL) {
     if (isTRUE(spat_unit == ":all:")) spat_unit <- NULL
     avail_locs <- list_spatial_locations(gobject, spat_unit = spat_unit)
 
@@ -182,10 +184,11 @@
 #' @param cell_ids cell ids to keep
 #' @keywords internal
 #' @noRd
-.subset_cell_metadata <- function(gobject,
-    spat_unit = ":all:",
-    feat_type_ssub = ":all:",
-    cell_ids = NULL) {
+.subset_cell_metadata <- function(
+        gobject,
+        spat_unit = ":all:",
+        feat_type_ssub = ":all:",
+        cell_ids = NULL) {
     # cell meta contains cell (row) by meta (col)
     # only uses cell_ids subsetting
 
@@ -237,10 +240,11 @@
 #' @param feat_ids feature ids to keep
 #' @keywords internal
 #' @noRd
-.subset_feature_metadata <- function(gobject,
-    feat_type = ":all:",
-    spat_unit_fsub = ":all:",
-    feat_ids = NULL) {
+.subset_feature_metadata <- function(
+        gobject,
+        feat_type = ":all:",
+        spat_unit_fsub = ":all:",
+        feat_ids = NULL) {
     if (isTRUE(spat_unit_fsub == ":all:")) spat_unit_fsub <- NULL
     if (isTRUE(feat_type == ":all:")) feat_type <- NULL
     avail_fm <- list_feat_metadata(
@@ -289,9 +293,10 @@
 #' spat_unit
 #' @keywords internal
 #' @noRd
-.subset_spatial_network <- function(gobject,
-    spat_unit = ":all:",
-    cell_ids = NULL) {
+.subset_spatial_network <- function(
+        gobject,
+        spat_unit = ":all:",
+        cell_ids = NULL) {
     # DT vars
     to <- from <- NULL
 
@@ -338,13 +343,14 @@
 #' @description Subset dimension reduction results from giotto object
 #' @keywords internal
 #' @noRd
-.subset_dimension_reduction <- function(gobject,
-    spat_unit = ":all:",
-    feat_type = ":all:",
-    spat_unit_fsub = ":all:",
-    feat_type_ssub = ":all:",
-    cell_ids = NULL,
-    feat_ids = NULL) {
+.subset_dimension_reduction <- function(
+        gobject,
+        spat_unit = ":all:",
+        feat_type = ":all:",
+        spat_unit_fsub = ":all:",
+        feat_type_ssub = ":all:",
+        cell_ids = NULL,
+        feat_ids = NULL) {
     # find available dim reductions
 
 
@@ -435,10 +441,11 @@
 #' @description Subset nearest network results from giotto object
 #' @keywords internal
 #' @noRd
-.subset_nearest_network <- function(gobject,
-    spat_unit = ":all:",
-    feat_type_ssub = ":all:",
-    cell_ids = NULL) {
+.subset_nearest_network <- function(
+        gobject,
+        spat_unit = ":all:",
+        feat_type_ssub = ":all:",
+        cell_ids = NULL) {
     if (isTRUE(feat_type_ssub == ":all:")) feat_type_ssub <- NULL
     if (isTRUE(spat_unit == ":all:")) spat_unit <- NULL
     avail_nn <- list_nearest_networks(
@@ -485,10 +492,11 @@
 #' @description Subset spatial enrichment results from giotto object
 #' @keywords internal
 #' @noRd
-.subset_spatial_enrichment <- function(gobject,
-    spat_unit = ":all:",
-    feat_type_ssub = ":all:",
-    cell_ids = NULL) {
+.subset_spatial_enrichment <- function(
+        gobject,
+        spat_unit = ":all:",
+        feat_type_ssub = ":all:",
+        cell_ids = NULL) {
     if (isTRUE(feat_type_ssub == ":all:")) feat_type_ssub <- NULL
     if (isTRUE(spat_unit == ":all:")) spat_unit <- NULL
     avail_enr <- list_spatial_enrichments(
@@ -546,13 +554,14 @@
 #' @param feat_ids character. feat ids to keep
 #' @keywords internal
 #' @noRd
-.subset_spatial_info_data <- function(spatial_info,
-    cell_ids = NULL,
-    poly_info = "cell",
-    feat_type = NULL,
-    feat_ids = NULL,
-    # poly_whitelist = NULL,
-    verbose = TRUE) {
+.subset_spatial_info_data <- function(
+        spatial_info,
+        cell_ids = NULL,
+        poly_info = "cell",
+        feat_type = NULL,
+        feat_ids = NULL,
+        # poly_whitelist = NULL,
+        verbose = TRUE) {
     if (isTRUE(poly_info == ":all:")) poly_info <- names(spatial_info)
 
     # set feat type
@@ -644,14 +653,15 @@
 #' @param verbose be verbose
 #' @keywords internal
 #' @noRd
-.subset_feature_info_data <- function(feat_info,
-    feat_ids = NULL,
-    feat_type = "rna",
-    x_min = NULL,
-    x_max = NULL,
-    y_min = NULL,
-    y_max = NULL,
-    verbose = FALSE) {
+.subset_feature_info_data <- function(
+        feat_info,
+        feat_ids = NULL,
+        feat_type = "rna",
+        x_min = NULL,
+        x_max = NULL,
+        y_min = NULL,
+        y_max = NULL,
+        verbose = FALSE) {
     if (isTRUE(feat_type == ":all:")) feat_type <- names(feat_info)
 
     res_list <- list()
@@ -730,20 +740,21 @@
 #' extracted
 #' @returns giotto object
 #' @keywords internal
-.subset_giotto <- function(gobject,
-    spat_unit = ":all:",
-    feat_type = "rna", # see note below
-    spat_unit_fsub = ":all:",
-    feat_type_ssub = ":all:",
-    cell_ids = NULL,
-    feat_ids = NULL,
-    poly_info = spat_unit,
-    x_max = NULL,
-    x_min = NULL,
-    y_max = NULL,
-    y_min = NULL,
-    verbose = FALSE,
-    toplevel_params = 2) {
+.subset_giotto <- function(
+        gobject,
+        spat_unit = ":all:",
+        feat_type = "rna", # see note below
+        spat_unit_fsub = ":all:",
+        feat_type_ssub = ":all:",
+        cell_ids = NULL,
+        feat_ids = NULL,
+        poly_info = spat_unit,
+        x_max = NULL,
+        x_min = NULL,
+        y_max = NULL,
+        y_min = NULL,
+        verbose = FALSE,
+        toplevel_params = 2) {
     # NOTE:
     # spat_unit = ':all:', but feat_type is hardcoded to 'rna'
     # This is since most people will be running analyses that look at rna
@@ -1013,21 +1024,22 @@
 # because of possible differences in the centroid placements across different
 # sets of polygons. As such, the polygons to remove through poly_info MUST have
 # matching poly_IDs for the aggregate spat_unit being used in the subset.
-.subset_giotto_locs <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    feat_type_ssub = ":all:",
-    spat_loc_name = NULL,
-    x_max = NULL,
-    x_min = NULL,
-    y_max = NULL,
-    y_min = NULL,
-    z_max = NULL,
-    z_min = NULL,
-    poly_info = NULL,
-    return_gobject = TRUE,
-    verbose = FALSE,
-    toplevel_params = 5L) {
+.subset_giotto_locs <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        feat_type_ssub = ":all:",
+        spat_loc_name = NULL,
+        x_max = NULL,
+        x_min = NULL,
+        y_max = NULL,
+        y_min = NULL,
+        z_max = NULL,
+        z_min = NULL,
+        poly_info = NULL,
+        return_gobject = TRUE,
+        verbose = FALSE,
+        toplevel_params = 5L) {
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
         spat_unit = spat_unit
@@ -1201,21 +1213,22 @@
 # the names of a named list style input.
 # Since polygons are provided through named list, any polygons with no matching
 # aggregate information should be subsetted with subsetGiottoLocsSubcellular().
-.subset_giotto_locs_multi <- function(gobject,
-    spat_unit = ":all:",
-    feat_type = NULL,
-    feat_type_ssub = ":all:",
-    spat_loc_name = NULL,
-    x_max = NULL,
-    x_min = NULL,
-    y_max = NULL,
-    y_min = NULL,
-    z_max = NULL,
-    z_min = NULL,
-    poly_info = NULL,
-    return_gobject = TRUE,
-    verbose = TRUE,
-    toplevel_params = 5L) {
+.subset_giotto_locs_multi <- function(
+        gobject,
+        spat_unit = ":all:",
+        feat_type = NULL,
+        feat_type_ssub = ":all:",
+        spat_loc_name = NULL,
+        x_max = NULL,
+        x_min = NULL,
+        y_max = NULL,
+        y_min = NULL,
+        z_max = NULL,
+        z_min = NULL,
+        poly_info = NULL,
+        return_gobject = TRUE,
+        verbose = TRUE,
+        toplevel_params = 5L) {
     if (!is.null(spat_unit)) checkmate::assert_character(spat_unit)
     if (!is.null(feat_type)) checkmate::assert_character(feat_type)
     # poly_info check is more detailed and performed below
@@ -1407,18 +1420,19 @@
 #'
 #' subsetGiotto(g, cell_ids = c("AACTCGATGGCGCAGT-1", "GGCTGGCTAGCTTAAA-1"))
 #' @export
-subsetGiotto <- function(gobject,
-    spat_unit = ":all:",
-    feat_type = "rna",
-    cell_ids = NULL,
-    feat_ids = NULL,
-    poly_info = NULL,
-    all_spat_units = NULL,
-    all_feat_types = NULL,
-    spat_unit_fsub = ":all:",
-    feat_type_ssub = ":all:",
-    verbose = FALSE,
-    toplevel_params = 2) {
+subsetGiotto <- function(
+        gobject,
+        spat_unit = ":all:",
+        feat_type = "rna",
+        cell_ids = NULL,
+        feat_ids = NULL,
+        poly_info = NULL,
+        all_spat_units = NULL,
+        all_feat_types = NULL,
+        spat_unit_fsub = ":all:",
+        feat_type_ssub = ":all:",
+        verbose = FALSE,
+        toplevel_params = 2) {
     # handle deprecations
     if (!is.null(all_spat_units)) {
         if (all_spat_units) {
@@ -1506,21 +1520,22 @@ subsetGiotto <- function(gobject,
 #'
 #' subsetGiottoLocs(g, x_max = 4000, y_max = -1000)
 #' @export
-subsetGiottoLocs <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    feat_type_ssub = ":all:",
-    spat_loc_name = NULL,
-    x_max = NULL,
-    x_min = NULL,
-    y_max = NULL,
-    y_min = NULL,
-    z_max = NULL,
-    z_min = NULL,
-    poly_info = NULL,
-    return_gobject = TRUE,
-    verbose = FALSE,
-    toplevel_params = 5) {
+subsetGiottoLocs <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        feat_type_ssub = ":all:",
+        spat_loc_name = NULL,
+        x_max = NULL,
+        x_min = NULL,
+        y_max = NULL,
+        y_min = NULL,
+        z_max = NULL,
+        z_min = NULL,
+        poly_info = NULL,
+        return_gobject = TRUE,
+        verbose = FALSE,
+        toplevel_params = 5) {
     args_list <- get_args_list()
 
     if (length(spat_unit) > 1L ||
@@ -1547,20 +1562,21 @@ subsetGiottoLocs <- function(gobject,
 #' spat units
 #' @returns giotto object
 #' @export
-subsetGiottoLocsMulti <- function(gobject,
-    spat_unit = ":all:",
-    feat_type = NULL,
-    feat_type_ssub = ":all:",
-    spat_loc_name = NULL,
-    x_max = NULL,
-    x_min = NULL,
-    y_max = NULL,
-    y_min = NULL,
-    z_max = NULL,
-    z_min = NULL,
-    poly_info = NULL,
-    return_gobject = TRUE,
-    verbose = TRUE) {
+subsetGiottoLocsMulti <- function(
+        gobject,
+        spat_unit = ":all:",
+        feat_type = NULL,
+        feat_type_ssub = ":all:",
+        spat_loc_name = NULL,
+        x_max = NULL,
+        x_min = NULL,
+        y_max = NULL,
+        y_min = NULL,
+        z_max = NULL,
+        z_min = NULL,
+        poly_info = NULL,
+        return_gobject = TRUE,
+        verbose = TRUE) {
     # deprecation
     warning(wrap_txt(
         "subsetGiottoLocsMulti() is deprecated. Use subsetGiottoLocs() in
@@ -1591,16 +1607,17 @@ subsetGiottoLocsMulti <- function(gobject,
 #' issue and can be directly spatially subset.
 #' @returns giotto object
 #' @export
-subsetGiottoLocsSubcellular <- function(gobject,
-    poly_info = NULL,
-    feat_type = NULL,
-    x_min = NULL,
-    x_max = NULL,
-    y_min = NULL,
-    y_max = NULL,
-    z_max = NULL,
-    z_min = NULL,
-    verbose = FALSE) {
+subsetGiottoLocsSubcellular <- function(
+        gobject,
+        poly_info = NULL,
+        feat_type = NULL,
+        x_min = NULL,
+        x_max = NULL,
+        y_min = NULL,
+        y_max = NULL,
+        z_max = NULL,
+        z_min = NULL,
+        verbose = FALSE) {
     checkmate::assert_class(gobject, "giotto")
     if (!is.null(poly_info)) checkmate::assert_character(poly_info)
     if (!is.null(feat_type)) checkmate::assert_character(feat_type)
@@ -1731,13 +1748,12 @@ subsetGiottoLocsSubcellular <- function(gobject,
 
 # helpers ####
 
-.valid_spat_subset_params <- function(
-        x_min = NULL,
-        x_max = NULL,
-        y_min = NULL,
-        y_max = NULL,
-        z_min = NULL,
-        z_max = NULL) {
+.valid_spat_subset_params <- function(x_min = NULL,
+    x_max = NULL,
+    y_min = NULL,
+    y_max = NULL,
+    z_min = NULL,
+    z_max = NULL) {
     # Check spatial params
     spatError <- NULL
     if (!is.null(x_min) && !is.null(x_max)) {
@@ -1777,18 +1793,19 @@ subsetGiottoLocsSubcellular <- function(gobject,
 #   feat_type is used in case combined_metadata needs to be generated
 #   feat_type_ssub allows finer control over which aggregate information is
 #     also subset for cell_ids within the spatial subset.
-.subset_giotto_polygons_workflow <- function(gobject,
-    return_gobject,
-    spat_unit,
-    feat_type,
-    poly_info,
-    feat_type_ssub,
-    x_min,
-    x_max,
-    y_min,
-    y_max,
-    verbose,
-    toplevel_params = 4L) {
+.subset_giotto_polygons_workflow <- function(
+        gobject,
+        return_gobject,
+        spat_unit,
+        feat_type,
+        poly_info,
+        feat_type_ssub,
+        x_min,
+        x_max,
+        y_min,
+        y_max,
+        verbose,
+        toplevel_params = 4L) {
     checkmate::assert_character(spat_unit, len = 1L)
     if (isTRUE(spat_unit == ":all:")) {
         stop(wrap_txt(
@@ -1853,10 +1870,11 @@ subsetGiottoLocsSubcellular <- function(gobject,
 #' are present within the giottoPolygon object
 #' @keywords internal
 #' @noRd
-.subset_giotto_polygon_object <- function(gpolygon,
-    cell_ids = NULL,
-    feat_ids = NULL,
-    feat_type = NULL) {
+.subset_giotto_polygon_object <- function(
+        gpolygon,
+        cell_ids = NULL,
+        feat_ids = NULL,
+        feat_type = NULL) {
     # cell ID only subsets
     if (!is.null(cell_ids)) {
         if (!is.null(gpolygon@spatVector)) {
@@ -1924,13 +1942,14 @@ subsetGiottoLocsSubcellular <- function(gobject,
 #' @details Subset on feature ids and on x,y coordinates
 #' @keywords internal
 #' @noRd
-.subset_giotto_points_object <- function(gpoints,
-    feat_ids = NULL,
-    x_min = NULL,
-    x_max = NULL,
-    y_min = NULL,
-    y_max = NULL,
-    verbose = FALSE) {
+.subset_giotto_points_object <- function(
+        gpoints,
+        feat_ids = NULL,
+        x_min = NULL,
+        x_max = NULL,
+        y_min = NULL,
+        y_max = NULL,
+        verbose = FALSE) {
     # data.table vars
     x <- y <- feat_ID <- NULL
 

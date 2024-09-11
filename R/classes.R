@@ -462,13 +462,13 @@ updateGiottoObject <- function(gobject) {
     if (!methods::.hasSlot(x, "largeImages")) {
         return(x)
     }
-    
+
     # transfer largeImages slot contents to images slot
     lgimg_list <- attr(x, "largeImages")
 
     # remove slot
     attr(x, "largeImages") <- NULL
-    
+
     # if @largeImages was empty, expect `\001NULL\001` of class `name`
     # the object can be returned early now that @largeImages is stripped
     if (inherits(lgimg_list, "name")) {
@@ -494,7 +494,7 @@ updateGiottoObject <- function(gobject) {
     }
 
     x@images <- c(x@images, lgimg_list)
-        
+
     return(x)
 }
 
@@ -1663,12 +1663,12 @@ giottoLargeImage <- setClass(
 #' @title S4 giottoAffineImage Class
 #' @description
 #' Class extending `giottoLargeImage`. When `shear()` or `spin()` operations
-#' are performed on  
-#' 
-#' 
+#' are performed on
+#'
+#'
 #' @slot affine contains `affine2d` object allowing lazily performed spatial
 #' transforms
-#' @slot funs list of functions associated with the object. Primarily to 
+#' @slot funs list of functions associated with the object. Primarily to
 #' perform the delayed/lazy operations
 setClass(
     "giottoAffineImage",

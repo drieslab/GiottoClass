@@ -95,5 +95,3 @@ setMethod("dimnames", signature(x = "enrData"), function(x) dimnames(x[]))
 #' @rdname dimnames
 #' @export
 setMethod("dimnames", signature(x = "dimObj"), function(x) dimnames(x[]))
-
-

@@ -1,7 +1,7 @@
 #' @include generics.R
 NULL
 
-# NOTE: 
+# NOTE:
 # rbind2 methods will only work if the object already has nrow and dim
 # generics defined.
 
@@ -27,11 +27,11 @@ NULL
 setMethod(
     "rbind2", signature(x = "spatLocsObj", y = "spatLocsObj"),
     function(x, y, ...) {
-
         # catch same IDs
         if (any(duplicated(c(spatIDs(x), spatIDs(y))))) {
-            stop("rbind: `spatLocsObj` with the same IDs cannot be joined", 
-                 call. = FALSE)
+            stop("rbind: `spatLocsObj` with the same IDs cannot be joined",
+                call. = FALSE
+            )
         }
 
         # if one is 3d, ensure both are 3d
@@ -41,7 +41,7 @@ setMethod(
             if (!x3) x <- .make_spatlocs_3d(x)
             if (!y3) y <- .make_spatlocs_3d(y)
         }
-        
+
         x[] <- rbind(x[], y[])
         return(x)
     }
