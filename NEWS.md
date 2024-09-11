@@ -7,6 +7,7 @@
 ## bug fixes
 - fix `dimnames()` for some subobjects
 - fix `joinGiottoObject()` for gobjects with only poly and point data [#233](https://github.com/drieslab/GiottoClass/issues/233)
+- fix subsetting error due to expression `matrix` drop to `numeric` when only one cell is left
 
 ## enhancements
 - python packages to install through pip is now settable in `installGiottoEnvironment()` [#224](https://github.com/drieslab/GiottoClass/issues/224)

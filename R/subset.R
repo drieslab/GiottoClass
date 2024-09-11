@@ -84,14 +84,18 @@
         if (isTRUE(avail_ex[ex_i]$subset_cells) &&
             !isTRUE(avail_ex[ex_i]$subset_feats)) {
             filter_bool_cells <- spatIDs(ex) %in% cell_ids
-            ex[] <- .finalize_expr_subset(ex[][, filter_bool_cells])
+            ex[] <- .finalize_expr_subset(
+                ex[][, filter_bool_cells, drop = FALSE]
+            )
         }
 
         ## feat only subsets
         if (!isTRUE(avail_ex[ex_i]$subset_cells) &&
             isTRUE(avail_ex[ex_i]$subset_feats)) {
             filter_bool_feats <- featIDs(ex) %in% feat_ids
-            ex[] <- .finalize_expr_subset(ex[][filter_bool_feats, ])
+            ex[] <- .finalize_expr_subset(
+                ex[][filter_bool_feats, , drop = FALSE]
+            )
         }
 
         ## cell and feat subsets
@@ -101,7 +105,8 @@
             filter_bool_feats <- featIDs(ex) %in% feat_ids
             ex[] <- .finalize_expr_subset(ex[][
                 filter_bool_feats,
-                filter_bool_cells
+                filter_bool_cells,
+                drop = FALSE
             ])
         }
 
