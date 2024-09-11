@@ -1256,7 +1256,7 @@ setMethod("subset", signature("giotto"), function(x,
 sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", verbose = FALSE) {
     spat_unit <- spat_unit %null% ":all:"
     feat_type <- feat_type %null% ":all:"
-    x <- giotto # shorter name
+    x <- gobject # shorter name
 
     if (identical(spat_unit, ":all:") && identical(feat_type, ":all:")) {
         return(x) # return early if no slicing needed
