@@ -88,14 +88,19 @@ NULL
 #' @title Subset a `giotto` object
 #' @name subset_giotto
 #' @aliases `[.giotto`
-#' @description Subset a giotto object with `[` or `subset()` generic.
+#' @description Subset a giotto object with `[` or `subset()` generic. The
+#' implementation is different from [subsetGiotto()] in that all spatial units
+#' will always be affected. The feature type to subset can be specified.
 #' @param x a `giotto` object
 #' @param feat_ids,i character vector. Feature IDs to subset the object for.
 #' @param cell_ids,j character vector. Cell/spatial IDs to subset the object
 #' for.
 #' @param drop not used
-#' @param spat_unit character. Subset affects these spatial unit(s).
-#' @param feat_type character. Subset affects these feature type(s).
+#' @param spat_unit character. Controls which spatial unit to pull subsetting
+#' information from when using `cell_ids`/`j` and `subset` params. However,
+#' all spatial units will always be affected by the subset.
+#' @param feat_type character. Subset affects these feature type(s). Default
+#' is `"rna"`
 #' @param \dots additional args to pass (none implemented)
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
@@ -1226,7 +1231,7 @@ setMethod("subset", signature("giotto"), function(x,
 
     subsetGiotto(x,
         spat_unit = ":all:",
-        feat_type = ":all:",
+        feat_type = feat_type,
         feat_ids = fids,
         cell_ids = sids
     )

@@ -33,9 +33,12 @@
 
 \item{drop}{not used}
 
-\item{spat_unit}{character. Subset affects these spatial unit(s).}
+\item{spat_unit}{character. Controls which spatial unit to pull subsetting
+information from when using \code{cell_ids}/\code{j} and \code{subset} params. However,
+all spatial units will always be affected by the subset.}
 
-\item{feat_type}{character. Subset affects these feature type(s).}
+\item{feat_type}{character. Subset affects these feature type(s). Default
+is \code{"rna"}}
 
 \item{subset}{Logical expression evaluated in expression values}
 
@@ -48,7 +51,9 @@ for.}
 with \code{subset} param.. If kept as NULL, the first one will be defaulted to.}
 }
 \description{
-Subset a giotto object with \code{[} or \code{subset()} generic.
+Subset a giotto object with \code{[} or \code{subset()} generic. The
+implementation is different from \code{\link[=subsetGiotto]{subsetGiotto()}} in that all spatial units
+will always be affected. The feature type to subset can be specified.
 }
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
