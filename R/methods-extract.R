@@ -1320,6 +1320,30 @@ sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", verbo
 }
 
 
+#' @name as.list
+#' @title Coerce to a list
+#' @description Generic to coerce to a list if possible
+#' @param x the object to coerce
+#' @param slots character vector. Which data slots to include in list. See
+#'   details
+#' @param \dots additional arguments
+#' @details
+#' * Giotto method - the slots argument currently accepts any or multiple of:
+#' `"spatial_info", "spatial_locs", "spatial_network", "feat_info",
+#' "expression", "cell_metadata", "feat_metadata", "spatial_enrichment",
+#' "nn_network", "dimension_reduction", "multiomics"`
+#' @export
+setMethod("as.list", signature("giotto"), function(x, slots, ...) {
+    dataslots <- c(
+        "spatial_info", "spatial_locs", "spatial_network", "feat_info",
+        "expression", "cell_metadata", "feat_metadata", "spatial_enrichment",
+        "nn_network", "dimension_reduction", "multiomics"
+    )
+    if (missing(slots)) slots <- dataslots
+    slots <- match.arg(slots, choices = dataslots, several.ok = TRUE)
+    do.call(.giotto_datalist, list(x = x, slots = slots))
+})
+
 
 # internals ####
 

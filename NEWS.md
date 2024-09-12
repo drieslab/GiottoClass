@@ -18,6 +18,7 @@
 
 ## new
 - `sliceGiotto()` for pulling out specific spatial units and feature types as independent `giotto` objects
+- `as.list()` method for `giotto` to dump the data as a list of subobjects
 
 
 # GiottoClass 0.3.5 (2024/08/28)
