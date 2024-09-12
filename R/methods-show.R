@@ -40,8 +40,9 @@ setMethod(
 
         cat("An object of class", class(object), "\n")
 
-
         # active spat_unit and feat_type
+        nspat <- NULL
+        nfeat <- NULL
         active_su <- try(instructions(object, "active_spat_unit"),
             silent = TRUE
         )
@@ -50,9 +51,17 @@ setMethod(
         )
         if (!inherits(active_su, "try-error")) {
             cat(">Active spat_unit: ", active_su, "\n")
+            nspat <- length(spatIDs(object, spat_unit = active_su))
         }
         if (!inherits(active_ft, "try-error")) {
             cat(">Active feat_type: ", active_ft, "\n")
+            nfeat <- length(featIDs(object, feat_type = active_ft))
+        }
+        
+        if (!is.null(nspat) || !is.null(nfeat)) {
+            cat(sprintf("dimensions    : %d, %d (features, cells)\n",
+                        nfeat %null% NA_integer_,
+                        nspat %null% NA_integer_))
         }
 
 
