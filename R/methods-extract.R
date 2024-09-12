@@ -1340,9 +1340,21 @@ setMethod("as.list", signature("giotto"), function(x, slots, ...) {
         "nn_network", "dimension_reduction", "multiomics"
     )
     if (missing(slots)) slots <- dataslots
+    do.call(as.list.giotto, list(x = x, slots = slots, ...))
+})
+
+#' @rdname hidden_funs
+#' @export
+as.list.giotto <- function(x, slots, ...) {
+    dataslots <- c(
+        "spatial_info", "spatial_locs", "spatial_network", "feat_info",
+        "expression", "cell_metadata", "feat_metadata", "spatial_enrichment",
+        "nn_network", "dimension_reduction", "multiomics"
+    )
+    if (missing(slots)) slots <- dataslots
     slots <- match.arg(slots, choices = dataslots, several.ok = TRUE)
     do.call(.giotto_datalist, list(x = x, slots = slots))
-})
+}
 
 
 # internals ####
