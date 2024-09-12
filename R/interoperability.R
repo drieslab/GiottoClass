@@ -22,84 +22,82 @@
 #' @returns giotto object
 #' @export
 
-gefToGiotto <- function(
-    gef_file,
-    bin_size = "bin100",
-    verbose = FALSE,
-    h5_file = NULL) {
-    # data.table vars
-    genes <- gene_idx <- x <- y <- sdimx <- sdimy <- cell_ID <- bin_ID <-
-        count <- i.bin_ID <- NULL
-
-    # package check
-    package_check(pkg_name = "rhdf5", repository = "Bioc")
-    if (!file.exists(gef_file)) stop("File path to .gef file does not exist")
-
-    # check if proper bin_size is selected. These are determined in SAW pipeline
-    wrap_msg("1. gefToGiotto() begin... \n")
-    bin_size_options <- c("bin1", "bin10", "bin20", "bin50", "bin100", "bin200")
-    if (!(bin_size %in% bin_size_options)) {
-        stop("Please select valid bin size, see ?gefToGiotto for details.")
-    }
-
-    # 1. read .gef file at specific bin size
-    geneExpData <- rhdf5::h5read(
-        file = gef_file,
-        name = paste0("geneExp/", bin_size)
-    )
-    geneDT <- data.table::as.data.table(geneExpData[["gene"]])
-
-    exprDT <- data.table::as.data.table(geneExpData[["expression"]])
-    exprDT[, count := lapply(.SD, as.integer), .SDcols = "count"]
-    data.table::setorder(exprDT, x, y) # sort by x, y coords (ascending)
-    geneDT <- data.table::as.data.table(geneExpData[["gene"]])
-
-    if (isTRUE(verbose)) wrap_msg("finished reading in .gef", bin_size, "\n")
-
-    # 2. create spatial locations
-    if (isTRUE(verbose)) wrap_msg("2. create spatial_locations... \n")
-    cell_locations <- unique(exprDT[, c("x", "y")], by = c("x", "y"))
-    cell_locations[, bin_ID := as.factor(seq_len(nrow(cell_locations)))]
-    cell_locations[, cell_ID := paste0("cell_", bin_ID)]
-    data.table::setcolorder(cell_locations, c("x", "y", "cell_ID", "bin_ID"))
-    # ensure first non-numerical col is cell_ID
-    if (isTRUE(verbose)) wrap_msg(nrow(cell_locations), " bins in total \n")
-    if (isTRUE(verbose)) wrap_msg("finished spatial_locations \n")
-
-    # 3. create expression matrix
-    if (isTRUE(verbose)) wrap_msg("3. create expression matrix... \n")
-    exprDT[, genes := as.character(rep(x = geneDT$gene, geneDT$count))]
-    exprDT[, gene_idx := as.integer(factor(exprDT$genes,
-        levels = unique(exprDT$genes)
-    ))]
-
-    # merge on x,y and populate based on bin_ID values in cell_locations
-    exprDT[cell_locations, cell_ID := i.bin_ID, on = .(x, y)]
-    exprDT$cell_ID <- as.integer(exprDT$cell_ID)
-
-    expMatrix <- Matrix::sparseMatrix(
-        i = exprDT$gene_idx,
-        j = exprDT$cell_ID,
-        x = exprDT$count
-    )
-
-    colnames(expMatrix) <- cell_locations$cell_ID
-    rownames(expMatrix) <- geneDT$gene
-    rm(exprDT)
-    if (isTRUE(verbose)) wrap_msg("finished expression matrix")
-
-    # 4. create minimal giotto object
-    if (isTRUE(verbose)) wrap_msg("4. create giotto object... \n")
-    stereo <- createGiottoObject(
-        expression = expMatrix,
-        spatial_locs = cell_locations,
-        verbose = FALSE,
-        h5_file = h5_file
-    )
-    if (isTRUE(verbose)) wrap_msg("finished giotto object... \n")
-
-    wrap_msg("gefToGiotto() finished \n")
-    return(stereo)
+gefToGiotto <- function(gef_file,
+                        bin_size = "bin100",
+                        verbose = FALSE,
+                        h5_file = NULL) {
+   # data.table vars
+   genes <- gene_idx <- x <- y <- sdimx <- sdimy <- cell_ID <- bin_ID <-
+   count <- i.bin_ID <- NULL
+   
+   # package check
+   package_check(pkg_name = "rhdf5", repository = "Bioc")
+   if (!file.exists(gef_file)) stop("File path to .gef file does not exist")
+   
+   # check if proper bin_size is selected. These are determined in SAW pipeline
+   wrap_msg("gefToGiotto() begin...")
+   bin_size_options <- c("bin1", "bin10", "bin20", "bin50", "bin100", "bin200")
+   if (!(bin_size %in% bin_size_options)) {
+      stop("Please select valid bin size, see ?gefToGiotto for details.")
+   }
+   
+   # 1. read .gef file at specific bin size
+   exprDT <- rhdf5::h5read(
+      file = gef_file,
+      name = paste0("geneExp/", bin_size, "/expression")
+   )
+   data.table::setDT(exprDT)
+   exprDT[, cell_id := paste0("cell_", x, "_", y)]
+   
+   if (verbose) wrap_msg("\n finished reading in .gef", bin_size, "\n")
+   
+   # 2. create spatial locations
+   if (verbose) wrap_msg("\n create spatial_locations... \n")
+   cell_locations <- unique(exprDT[, c("x", "y")], by = c("x", "y"))
+   cell_locations[, cell_ID := paste0("cell_", x, "_", y)]
+   if (verbose) wrap_msg("\n",nrow(cell_locations), " bins in total \n")
+   if (verbose) wrap_msg("\n finished spatial_locations \n")
+   
+   # 3. create expression matrix
+   if (verbose) wrap_msg("\n create expression matrix... \n")
+   geneDT <- rhdf5::h5read(
+      file = gef_file,
+      name = paste0("geneExp/", bin_size, "/gene")
+   )
+   data.table::setDT(geneDT)
+   
+   # Map genes to expression data
+   exprDT[, genes := rep(geneDT$gene, geneDT$count)]
+   
+   # Create gene and cell indices
+   exprDT[, `:=`(
+      gene_idx = as.integer(factor(genes)),
+      cell_idx = as.integer(factor(cell_id))
+   )]
+   
+   gene_names <- levels(factor(exprDT$genes))
+   cell_names <- levels(factor(exprDT$cell_id))
+   
+   expMatrix <- Matrix::sparseMatrix(
+      i = exprDT$gene_idx,
+      j = exprDT$cell_idx,
+      x = as.integer(exprDT$count),
+      dimnames = list(gene_names, cell_names)
+   )
+   if (verbose) wrap_msg("\n finished expression matrix")
+   
+   # 4. create minimal giotto object
+   if (verbose) wrap_msg("\n create giotto object... \n")
+   stereo <- createGiottoObject(
+      expression = expMatrix,
+      spatial_locs = cell_locations,
+      verbose = FALSE,
+      h5_file = h5_file
+   )
+   if (verbose) wrap_msg("\n finished giotto object... \n")
+   
+   wrap_msg("finished \n")
+   return(stereo)
 }
 
 
@@ -2139,19 +2137,14 @@ seuratToGiottoV4 <- function(
             }
 
             if (verbose) message("Copying nearest neighbour networks")
-            nnNetObj <- GiottoClass::createNearestNetObj(
+            nnNetObj <- createNearestNetObj(
                 name = names(sobject@graphs)[i],
                 network = sobjIgraph
             )
             return(nnNetObj)
         })
 
-        for (i in seq_along(nnNetObj_list)) {
-            gobject <- GiottoClass::set_NearestNetwork(
-                gobject = gobject,
-                nn_network = nnNetObj_list[[i]]
-            )
-        }
+        gobject <- setGiotto(gobject, nnNetObj_list)
     }
     gobject <- createGiottoObject(exp,
         spatial_locs = spat_loc,
@@ -2538,19 +2531,14 @@ seuratToGiottoV5 <- function(
             }
 
             if (verbose) message("Copying nearest neighbour networks")
-            nnNetObj <- GiottoClass::createNearestNetObj(
+            nnNetObj <- createNearestNetObj(
                 name = names(sobject@graphs)[i],
                 network = sobjIgraph
             )
             return(nnNetObj)
         })
 
-        for (i in seq_along(nnNetObj_list)) {
-            gobject <- GiottoClass::set_NearestNetwork(
-                gobject = gobject,
-                nn_network = nnNetObj_list[[i]]
-            )
-        }
+        gobject <- setGiotto(gobject, nnNetObj_list)
     }
     gobject <- addCellMetadata(
       gobject = gobject, new_metadata = cell_metadata,
@@ -3485,9 +3473,12 @@ spatialdataToGiotto <- function(
     )
 
     # Attach hires image
-    raster <- terra::rast(extract_image(sdata))
-    giotto_image <- createGiottoLargeImage(raster)
-    gobject <- addGiottoLargeImage(gobject = gobject, largeImages = c(giotto_image))
+    extracted_images <- extract_image(sdata)
+    extract_image_names <- extract_image_names(sdata)
+
+    raster_image_list <- lapply(extracted_images, terra::rast)
+    large_image_list <- createGiottoLargeImageList(raster_image_list, names = extract_image_names)
+    gobject <- addGiottoLargeImage(gobject = gobject, largeImages = large_image_list)
 
     # Attach metadata
     cm <- readCellMetadata(cm)
@@ -3593,7 +3584,7 @@ spatialdataToGiotto <- function(
             vert <- unique(x = c(nn_dt$from_cell_ID, nn_dt$to_cell_ID))
             nn_network_igraph <- igraph::graph_from_data_frame(nn_dt[, .(from_cell_ID, to_cell_ID, weight, distance)], directed = TRUE, vertices = vert)
 
-            nn_info <- extract_NN_info(adata = adata, key_added = n_key_added_it)
+            nn_info <- extract_NN_info(sdata = sdata, key_added = n_key_added_it)
 
             net_type <- "kNN" # anndata default
             if (("sNN" %in% n_key_added_it) & !is.null(n_key_added_it)) {
@@ -3717,6 +3708,35 @@ spatialdataToGiotto <- function(
             )
         }
     }
+
+    ### Layers
+    lay_names <- extract_layer_names(sdata)
+    if (!is.null(lay_names)) {
+        for (l_n in lay_names) {
+            lay <- extract_layered_data(sdata, layer_name = l_n)
+            if ("data.frame" %in% class(lay)) {
+                names(lay) <- fID
+                row.names(lay) <- cID
+            } else {
+                lay@Dimnames[[1]] <- fID
+                lay@Dimnames[[2]] <- cID
+            }
+            layExprObj <- createExprObj(lay, name = l_n)
+            gobject <- set_expression_values(
+                gobject = gobject,
+                spat_unit = spat_unit,
+                feat_type = feat_type,
+                name = l_n,
+                values = layExprObj
+            )
+        }
+    }
+
+    gobject <- update_giotto_params(
+        gobject = gobject,
+        description = "_AnnData_Conversion"
+    )
+
     return(gobject)
 }
 
@@ -3779,29 +3799,32 @@ giottoToSpatialData <- function(
         save_directory = temp
     )
 
-    # Extract GiottoImage
-    gimg <- getGiottoImage(gobject, image_type = "largeImage")
-
-    # Temporarily save the image to disk
-    writeGiottoLargeImage(
-        giottoLargeImage = gimg,
-        gobject = gobject,
-        largeImage_name = "largeImage",
-        filename = "temp_image.png",
-        dataType = NULL,
-        max_intensity = NULL,
-        overwrite = TRUE,
-        verbose = TRUE
-    )
+  # Extract GiottoImage only if an image exists
+    image_exists <- NULL
+    if (length(slot(gobject, "images")) > 0) {
+        image_exists <- TRUE
+        gimg_list <- slot(gobject, "images")
+        for (i in seq_along(gimg_list)) {
+            img_name <- slot(gimg_list[[i]], "name")
+            writeGiottoLargeImage(
+                giottoLargeImage = gimg_list[[i]],
+                gobject = gobject,
+                largeImage_name = img_name,
+                filename = paste0(temp, img_name, ".png"),
+                dataType = NULL,
+                max_intensity = NULL,
+                overwrite = TRUE,
+                verbose = TRUE
+            )
+        }
+    }
 
     spat_locs <- getSpatialLocations(gobject, output="data.table")
 
     # Create SpatialData object
-    createSpatialData(temp, spat_locs, spot_radius, save_directory)
+    createSpatialData(temp, spat_locs, spot_radius, save_directory, image_exists)
 
     # Delete temporary files and folders
-    unlink("temp_image.png")
-    unlink("temp_image.png.aux.xml")
     unlink(temp, recursive = TRUE)
 
     # Successful Conversion

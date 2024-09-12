@@ -4,6 +4,7 @@
 #' @param x giottoSubobject to set
 #' @param verbose be verbose
 #' @param \dots additional params to pass to specific Giotto setter functions
+#' @family functions to set data in giotto object
 #' @returns giottoSubobject
 #' @examples
 #' g <- createGiottoObject()

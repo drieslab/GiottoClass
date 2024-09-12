@@ -1,4 +1,21 @@
 
+# GiottoClass 0.4.0 (2024/08/30)
+
+## breaking changes
+- stop exporting deprecated internal accessors
+
+## bug fixes
+- fix `dimnames()` for some subobjects
+- fix `joinGiottoObject()` for gobjects with only poly and point data [#233](https://github.com/drieslab/GiottoClass/issues/233)
+
+## enhancements
+- python packages to install through pip is now settable in `installGiottoEnvironment()` [#224](https://github.com/drieslab/GiottoClass/issues/224)
+- `instructions()` with no args will now call `createGiottoInstructions()`. You can also supply named args.
+- `instructions(gobject, param)` and `instructions(gobject, param)<-` will now work for `giottoInstructions` objects for convenience.
+
+
+
+
 # GiottoClass 0.3.5 (2024/08/28)
 
 ## breaking changes

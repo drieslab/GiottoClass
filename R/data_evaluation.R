@@ -83,11 +83,13 @@ evaluate_input <- function(type, x, ...) {
 #' @keywords internal
 #' @returns sparse matrix
 #' @noRd
+
 .evaluate_expr_matrix <- function(inputmatrix,
     sparse = TRUE,
     cores = determine_cores(),
     feat_type = "rna",
-    expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
+    expression_matrix_class = c("dgCMatrix", "DelayedArray", "dbSparseMatrix")) {
+
     if (inherits(inputmatrix, "character")) {
         inputmatrix <- path.expand(inputmatrix)
         mymatrix <- readExprMatrix(inputmatrix,
@@ -95,7 +97,9 @@ evaluate_input <- function(type, x, ...) {
             expression_matrix_class = expression_matrix_class,
             feat_type = feat_type
         )
-    } else if (expression_matrix_class[1] == "DelayedArray") {
+    } else if (expression_matrix_class[1] == "dbSparseMatrix") {
+    mymatrix <- inputmatrix
+  } else if (expression_matrix_class[1] == "DelayedArray") {
         mymatrix <- DelayedArray::DelayedArray(inputmatrix)
     } else if (inherits(inputmatrix, "Matrix")) {
         mymatrix <- inputmatrix
@@ -131,7 +135,8 @@ evaluate_input <- function(type, x, ...) {
     } else {
         .gstop(
             "expression input needs to be a path to matrix-like data or an",
-            "object of class 'Matrix', 'data.table', 'data.frame' or 'matrix'"
+            "object of class 'Matrix', 'data.table', 'data.frame', 'matrix'",
+      "'DelayedMatrix' or 'dbSparseMatrix'."
         )
     }
 

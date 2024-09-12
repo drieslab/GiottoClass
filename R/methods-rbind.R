@@ -33,7 +33,7 @@ setMethod(
             stop("rbind: `spatLocsObj` with the same IDs cannot be joined", 
                  call. = FALSE)
         }
-        
+
         # if one is 3d, ensure both are 3d
         x3 <- .is_3d_spatlocs(x)
         y3 <- .is_3d_spatlocs(y)

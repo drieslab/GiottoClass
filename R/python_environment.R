@@ -275,6 +275,8 @@ checkGiottoEnvironment <- function(
 #' @title .install_giotto_environment_specific
 #' @description installation of giotto environment
 #' @param packages_to_install python packages to install with giotto env
+#' @param pip_packages python packages mush installed with pip, only names
+#' are needed
 #' @param python_version python version to install
 #' @param mini_install_path directory to install the environment to.
 #' @param create_dir whether to create the directory specified by
@@ -288,8 +290,9 @@ checkGiottoEnvironment <- function(
 .install_giotto_environment_specific <- function(packages_to_install = c(
         "pandas", "networkx", "python-igraph",
         "leidenalg", "python-louvain", "python.app",
-        "scikit-learn"
+        "scikit-learn", "smfishhmrf", "session-info"
     ),
+    pip_packages = c("python-louvain", "smfishhmrf", "session-info"),
     python_version = "3.10.2",
     mini_install_path = NULL,
     confirm = TRUE,
@@ -359,18 +362,15 @@ checkGiottoEnvironment <- function(
         )]
     }
 
-    # python-louvain must be installed with pip, not with conda-forge
+    # some python packages must be installed with pip, not with conda-forge
     # `pip_packages` will be installed with pip
     # `forge_packages` will be installed with conda-forge
-    forge_packages <- packages_to_install
-    py_lou <-"python-louvain"
-    pip_packages <- c("smfishhmrf", "session-info")
-    if (py_lou %in% packages_to_install) {
-        pip_packages <- c(pip_packages, py_lou)
-        forge_packages <- forge_packages[
-            forge_packages != py_lou
-        ]
-    }
+    pip_pkg_indices <- grep(paste0(
+        "^(", paste(pip_packages, collapse = "|"),
+        ")"
+    ), packages_to_install, ignore.case = TRUE)
+    forge_packages <- packages_to_install[-pip_pkg_indices]
+    pip_packages <- packages_to_install[pip_pkg_indices]
     
     ## create conda env ##
     ## ---------------- ##
@@ -419,8 +419,9 @@ checkGiottoEnvironment <- function(
         packages_to_install = c(
             "pandas", "networkx", "python-igraph",
             "leidenalg", "python-louvain", "python.app",
-            "scikit-learn"
+            "scikit-learn", "smfishhmrf", "session-info"
         ),
+        pip_packages = c("python-louvain", "smfishhmrf", "session-info"),
         python_version = "3.10.2",
         mini_install_path = NULL,
         confirm = TRUE,
@@ -462,6 +463,7 @@ checkGiottoEnvironment <- function(
     # install giotto environment
     .install_giotto_environment_specific(
         packages_to_install = packages_to_install,
+        pip_packages = pip_packages,
         python_version = python_version,
         mini_install_path = mini_install_path,
         confirm = confirm,
@@ -485,6 +487,8 @@ checkGiottoEnvironment <- function(
 #' environment with a .yml
 #' - Returns `NULL`
 #' @param packages_to_install python modules (packages) to install for Giotto.
+#' @param pip_packages python packages mush installed with pip, only names
+#' are needed
 #' @param python_version python version to use within the giotto conda
 #' environment. Default is v3.10.2
 #' @param mini_install_path (optional) desired miniconda installation location.
@@ -513,8 +517,11 @@ installGiottoEnvironment <- function(
         "leidenalg==0.9.0",
         "python-louvain==0.16",
         "python.app==1.4",
-        "scikit-learn==1.1.3"
+        "scikit-learn==1.1.3",
+        "smfishhmrf",
+        "session-info"
     ),
+    pip_packages = c("python-louvain", "smfishhmrf", "session-info"),
     python_version = "3.10.2",
     mini_install_path = NULL,
     confirm = TRUE,
@@ -551,6 +558,7 @@ installGiottoEnvironment <- function(
     .install_giotto_environment(
         force_environment = force_environment,
         packages_to_install = packages_to_install,
+        pip_packages = pip_packages,
         python_version = python_version,
         mini_install_path =  mini_install_path,
         confirm = confirm,

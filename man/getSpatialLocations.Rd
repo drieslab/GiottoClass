@@ -50,14 +50,14 @@ getSpatialLocations(g)
 }
 \seealso{
 Other spatial location data accessor functions: 
-\code{\link{get_spatial_locations}()},
-\code{\link{setSpatialLocations}()},
-\code{\link{set_spatial_locations}()}
+\code{\link{setSpatialLocations}()}
 
 Other functions to get data from giotto object: 
+\code{\link{getCellMetadata}()},
 \code{\link{getDimReduction}()},
 \code{\link{getExpression}()},
 \code{\link{getFeatureInfo}()},
+\code{\link{getFeatureMetadata}()},
 \code{\link{getGiottoImage}()},
 \code{\link{getMultiomics}()},
 \code{\link{getNearestNetwork}()},
@@ -65,16 +65,7 @@ Other functions to get data from giotto object:
 \code{\link{getSpatialEnrichment}()},
 \code{\link{getSpatialGrid}()},
 \code{\link{getSpatialNetwork}()},
-\code{\link{get_NearestNetwork}()},
-\code{\link{get_dimReduction}()},
-\code{\link{get_feature_info}()},
-\code{\link{get_giottoImage}()},
-\code{\link{get_multiomics}()},
-\code{\link{get_polygon_info}()},
-\code{\link{get_spatialGrid}()},
-\code{\link{get_spatialNetwork}()},
-\code{\link{get_spatial_enrichment}()},
-\code{\link{get_spatial_locations}()}
+\code{\link{get_multiomics}()}
 }
 \concept{functions to get data from giotto object}
 \concept{spatial location data accessor functions}

@@ -41,14 +41,14 @@ getPolygonInfo(g)
 }
 \seealso{
 Other polygon info data accessor functions: 
-\code{\link{get_polygon_info}()},
-\code{\link{setPolygonInfo}()},
-\code{\link{set_polygon_info}()}
+\code{\link{setPolygonInfo}()}
 
 Other functions to get data from giotto object: 
+\code{\link{getCellMetadata}()},
 \code{\link{getDimReduction}()},
 \code{\link{getExpression}()},
 \code{\link{getFeatureInfo}()},
+\code{\link{getFeatureMetadata}()},
 \code{\link{getGiottoImage}()},
 \code{\link{getMultiomics}()},
 \code{\link{getNearestNetwork}()},
@@ -56,16 +56,7 @@ Other functions to get data from giotto object:
 \code{\link{getSpatialGrid}()},
 \code{\link{getSpatialLocations}()},
 \code{\link{getSpatialNetwork}()},
-\code{\link{get_NearestNetwork}()},
-\code{\link{get_dimReduction}()},
-\code{\link{get_feature_info}()},
-\code{\link{get_giottoImage}()},
-\code{\link{get_multiomics}()},
-\code{\link{get_polygon_info}()},
-\code{\link{get_spatialGrid}()},
-\code{\link{get_spatialNetwork}()},
-\code{\link{get_spatial_enrichment}()},
-\code{\link{get_spatial_locations}()}
+\code{\link{get_multiomics}()}
 }
 \concept{functions to get data from giotto object}
 \concept{polygon info data accessor functions}

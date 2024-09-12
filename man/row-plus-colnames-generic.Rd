@@ -12,6 +12,7 @@
 \alias{colnames,dimObj-method}
 \alias{rownames,exprObj-method}
 \alias{rownames,dimObj-method}
+\alias{rownames,metaData-method}
 \title{Row and column names}
 \usage{
 \S4method{colnames}{exprObj}(x)
@@ -29,6 +30,8 @@
 \S4method{rownames}{exprObj}(x)
 
 \S4method{rownames}{dimObj}(x)
+
+\S4method{rownames}{metaData}(x)
 }
 \arguments{
 \item{x}{object}
@@ -44,3 +47,4 @@ g <- GiottoData::loadSubObjectMini("exprObj")
 
 colnames(g)
 }
+\keyword{internal}

@@ -16,7 +16,9 @@ checkGiottoEnvironment(
 
 installGiottoEnvironment(
   packages_to_install = c("pandas==1.5.1", "networkx==2.8.8", "python-igraph==0.10.2",
-    "leidenalg==0.9.0", "python-louvain==0.16", "python.app==1.4", "scikit-learn==1.1.3"),
+    "leidenalg==0.9.0", "python-louvain==0.16", "python.app==1.4", "scikit-learn==1.1.3",
+    "smfishhmrf", "session-info"),
+  pip_packages = c("python-louvain", "smfishhmrf", "session-info"),
   python_version = "3.10.2",
   mini_install_path = NULL,
   confirm = TRUE,
@@ -47,6 +49,9 @@ Default is chosen by \code{reticulate::install_miniconda()}}
 \item{verbose}{be verbose}
 
 \item{packages_to_install}{python modules (packages) to install for Giotto.}
+
+\item{pip_packages}{python packages mush installed with pip, only names
+are needed}
 
 \item{python_version}{python version to use within the giotto conda
 environment. Default is v3.10.2}
