@@ -385,7 +385,7 @@ setMethod(
         # SLOT CHECKS ####
         
         # option to skip checks
-        if (!getOption("giotto.check_valid")) return(.Object)
+        if (!getOption("giotto.check_valid", TRUE)) return(.Object)
         
         vmsg(.is_debug = TRUE, .initial = "  ", "!!giotto validity run!!")
 

@@ -706,7 +706,7 @@ setCellMetadata <- function(
     }
 
     # check hierarchical slots
-    if (check_preqs && getOption("giotto.check_valid")) {
+    if (check_preqs && getOption("giotto.check_valid", TRUE)) {
         used_su <- list_cell_id_names(gobject)
         if (is.null(used_su)) {
             stop(wrap_txt("Add expression or spatial (polygon) information first"))
@@ -2439,7 +2439,7 @@ setSpatialLocations <- function(
     }
 
     # check hierarchical slots
-    if (check_preqs && getOption("giotto.check_valid")) {
+    if (check_preqs && getOption("giotto.check_valid", TRUE)) {
         avail_ex <- list_expression(gobject)
         avail_si <- list_spatial_info(gobject)
         if (is.null(avail_ex) && is.null(avail_si)) {
@@ -2876,7 +2876,7 @@ setDimReduction <- function(
     }
 
     # check hierarchical slots
-    if (check_preqs && getOption("giotto.check_valid")) {
+    if (check_preqs && getOption("giotto.check_valid", TRUE)) {
         avail_ex <- list_expression(gobject)
         if (is.null(avail_ex)) stop(wrap_txt("Add expression information first"))
     }
@@ -3362,7 +3362,7 @@ setNearestNetwork <- function(
     }
 
     # check hierarchical slots
-    if (check_preqs && getOption("giotto.check_valid")) {
+    if (check_preqs && getOption("giotto.check_valid", TRUE)) {
         avail_dr <- list_dim_reductions(gobject)
         if (is.null(avail_dr)) {
             stop(wrap_txt("Add dimension reduction information first"))
@@ -3870,7 +3870,7 @@ setSpatialNetwork <- function(
 
 
     # check hierarchical slots
-    if (check_preqs && getOption("giotto.check_valid")) {
+    if (check_preqs && getOption("giotto.check_valid", TRUE)) {
         avail_sl <- list_spatial_locations(gobject)
         if (is.null(avail_sl)) {
             stop(wrap_txt("Add spatial location information first"))
@@ -5434,7 +5434,7 @@ setSpatialEnrichment <- function(
     }
 
     # check hierarchical slots
-    if (check_preqs && getOption("giotto.check_valid")) {
+    if (check_preqs && getOption("giotto.check_valid", TRUE)) {
         avail_ex <- list_expression(gobject)
         avail_sl <- list_spatial_locations(gobject)
         if (is.null(avail_ex)) {
