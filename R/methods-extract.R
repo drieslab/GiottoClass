@@ -1212,7 +1212,7 @@ setMethod("subset", signature("giotto"), function(x,
             )
         })
         .dtjoin <- function(x, y) {
-            data.table::`[.data.table`(x, y, on = "cell_ID")
+            x[y, on = "cell_ID"]
         }
         vals_dt <- Reduce(.dtjoin, vals)
         if (identical(getOption("giotto.verbose"), "debug")) {
