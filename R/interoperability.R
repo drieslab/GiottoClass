@@ -81,7 +81,7 @@ gefToGiotto <- function(gef_file,
    expMatrix <- Matrix::sparseMatrix(
       i = exprDT$gene_idx,
       j = exprDT$cell_idx,
-      x = exprDT$count,
+      x = as.integer(exprDT$count),
       dimnames = list(gene_names, cell_names)
    )
    if (verbose) wrap_msg("\n finished expression matrix")
