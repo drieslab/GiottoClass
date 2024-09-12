@@ -382,6 +382,12 @@ setMethod(
         }
 
 
+        # SLOT CHECKS ####
+        
+        # option to skip checks
+        if (!getOption("giotto.check_valid")) return(.Object)
+        
+        vmsg(.is_debug = TRUE, .initial = "  ", "!!giotto validity run!!")
 
         ## Metadata ##
         ## ------------- ##
@@ -456,8 +462,6 @@ setMethod(
         if (!is.null(avail_si) & !is.null(avail_sl)) {
             .check_spatial_info(gobject = .Object)
         }
-
-
 
 
 

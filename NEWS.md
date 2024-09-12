@@ -1,5 +1,5 @@
 
-# GiottoClass 0.4.0 (2024/08/30)
+# GiottoClass 0.4.0
 
 ## breaking changes
 - stop exporting deprecated internal accessors
@@ -11,10 +11,13 @@
 
 ## enhancements
 - python packages to install through pip is now settable in `installGiottoEnvironment()` [#224](https://github.com/drieslab/GiottoClass/issues/224)
+- `giotto` `initialize()` slot checking behavior can be toggled now using `'giotto.check_valid'` option. [#946](https://github.com/drieslab/Giotto/issues/946) by rbutleriii
 - `instructions()` with no args will now call `createGiottoInstructions()`. You can also supply named args.
 - `instructions(gobject, param)` and `instructions(gobject, param)<-` will now work for `giottoInstructions` objects for convenience.
 - `[` and `subset()` for `giotto` see `?GiottoClass::subset_giotto`
 
+## new
+- `sliceGiotto()` for pulling out specific spatial units and feature types as independent `giotto` objects
 
 
 # GiottoClass 0.3.5 (2024/08/28)
