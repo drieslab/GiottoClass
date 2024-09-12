@@ -15,16 +15,8 @@
 # the documentation, but this should be fine.
 
 
-# Hidden funs ####
 
-#' @name hidden_funs
-#' @title Hidden functions
-#' @description Hidden dummy documentation for functions that are either
-#' implicit or not worth documenting. These are often generics or duplicate
-#' methods written in S3 and S4, but documented here so that they can be
-#' exported
-#' @keywords internal
-NULL
+
 
 
 
