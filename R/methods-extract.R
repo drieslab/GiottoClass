@@ -126,6 +126,16 @@ NULL
 
 ## * coordDataDT ####
 
+setMethod(
+    "$", signature("giotto"), function(x, name) {
+        spatValues(x, feats = name)[[name]]
+    }
+)
+
+.DollarNames.giotto <- function(x, pattern) {
+    colnames(pDataDT(x))
+}
+
 #' @rdname subset_dollar
 #' @section \code{`$`} methods:
 #'   Select by colname from giotto S4 data.table coordinates slot.
@@ -1101,7 +1111,7 @@ setMethod(
 
 
 
-
+# * [ ####
 
 #' @rdname subset_giotto
 #' @export
@@ -1125,10 +1135,62 @@ setMethod(
 #' @export
 setMethod(
     "[", signature(x = "giotto", i = "gIndex", j = "gIndex", drop = "missing"),
-    function(x, i, j, spat_unit = NULL, feat_type = NULL, ..., drop) {
+    function(x, i, j, ..., drop) {
         subset(x, feat_ids = i, cell_ids = j, ...)
     }
 )
+
+setMethod(
+    "[", signature(x = "giotto", i = "missing", j = "missing", drop = "missing"),
+    function(x, ...) {
+        x[[...]]
+    }
+)
+
+# * [[ ####
+setMethod(
+    "[[", signature(x = "giotto", i = "missing", j = "missing"),
+    function(x, spat_unit = NULL, feat_type = NULL, ...) {
+        as.list(
+            x, spat_unit = spat_unit, feat_type = feat_type, ...
+        )
+    }
+)
+
+setMethod(
+    "[[", signature(x = "giotto", i = "character", j = "missing"),
+    function(x, i, spat_unit = NULL, feat_type = NULL,  ...) {
+        as.list(
+            x, slots = i, spat_unit = spat_unit, feat_type = feat_type, ...
+        )
+    }
+)
+
+setMethod(
+    "[[", signature(x = "giotto", i = "missing", j = "character"),
+    function(x, j, spat_unit = NULL, feat_type = NULL,  ...) {
+        as.list(x, 
+            name = j,
+            spat_unit = spat_unit, 
+            feat_type = feat_type, 
+            ...
+        )
+    }
+)
+
+setMethod(
+    "[[", signature(x = "giotto", i = "character", j = "character"),
+    function(x, i, j, spat_unit = NULL, feat_type = NULL,  ...) {
+        as.list(x, 
+            slots = i, 
+            name = j, 
+            spat_unit = spat_unit, 
+            feat_type = feat_type,
+            ...
+        )
+    }
+)
+
 
 
 #' @rdname subset_giotto
@@ -1258,7 +1320,9 @@ setMethod("subset", signature("giotto"), function(x,
 #' force(res)
 #' @seealso [subsetGiotto()] [subset_giotto]
 #' @export
-sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", verbose = FALSE) {
+sliceGiotto <- function(
+        gobject, spat_unit = ":all:", feat_type = ":all:", verbose = FALSE
+) {
     spat_unit <- spat_unit %null% ":all:"
     feat_type <- feat_type %null% ":all:"
     x <- gobject # shorter name
@@ -1267,23 +1331,17 @@ sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", verbo
         return(x) # return early if no slicing needed
     }
 
-    # data lists
-    spat_only <- .giotto_datalist(
-        x,
-        c("spatial_info", "spatial_locs", "spatial_network")
+    # data slots
+    spat_only_slots <- c("spatial_info", "spatial_locs", "spatial_network")
+    feat_only_slots <- c("feat_info")
+    spat_feat_slots <- c(
+        "expression", "cell_metadata", "feat_metadata", "spatial_enrichment",
+        "nn_network", "dimension_reduction", "multiomics"
     )
-
-    feat_only <- .giotto_datalist(x, c("feat_info"))
-
-    spat_feat <- .giotto_datalist(
-        x,
-        c(
-            "expression", "cell_metadata", "feat_metadata",
-            "spatial_enrichment",
-            "nn_network", "dimension_reduction",
-            "multiomics"
-        )
-    )
+    
+    spat_only <- x[[spat_only_slots]]
+    feat_only <- x[[feat_only_slots]]
+    spat_feat <- x[[spat_feat_slots]]
 
     # select data
     if (!identical(spat_unit, ":all:")) { # select if not all
@@ -1320,6 +1378,7 @@ sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", verbo
     return(initialize(g))
 }
 
+# * as.list ####
 
 #' @name as.list
 #' @title Coerce to a list
@@ -1334,28 +1393,47 @@ sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", verbo
 #' "expression", "cell_metadata", "feat_metadata", "spatial_enrichment",
 #' "nn_network", "dimension_reduction", "multiomics"`
 #' @export
-setMethod("as.list", signature("giotto"), function(x, slots, ...) {
+setMethod("as.list", signature("giotto"), function(
+        x, slots, spat_unit = NULL, feat_type = NULL, name = NULL, ...
+) {
     dataslots <- c(
         "spatial_info", "spatial_locs", "spatial_network", "feat_info",
         "expression", "cell_metadata", "feat_metadata", "spatial_enrichment",
-        "nn_network", "dimension_reduction", "multiomics"
+        "nn_network", "dimension_reduction", "multiomics", "images"
     )
+    
+    .giotto_datalist <- function(x, slots) {
+        lapply(slots, function(gslot) methods::slot(x, gslot)) |>
+            unlist(recursive = TRUE, use.names = FALSE)
+    }
+    
     if (missing(slots)) slots <- dataslots
     slots <- match.arg(slots, choices = dataslots, several.ok = TRUE)
-    do.call(.giotto_datalist, list(x = x, slots = slots))
+    res <- do.call(.giotto_datalist, list(x = x, slots = slots))
+    
+    if (!is.null(name)) {
+        res <- .dbrkt_on_filter(res, name)
+    }
+    if (!is.null(spat_unit)) {
+        res <- .dbrkt_su_filter(res, spat_unit)
+    }
+    if (!is.null(feat_type)) {
+        res <- .dbrkt_ft_filter(res, feat_type)
+    }
+    return(res)
 })
 
 
 # internals ####
+# suspend slot checking until all items in list are supplied
 
-.giotto_datalist <- function(x, slots = c(
-        "spatial_info", "spatial_locs", "spatial_network",
-        "feat_info",
-        "expression", "cell_metadata", "feat_metadata",
-        "spatial_enrichment",
-        "nn_network", "dimension_reduction",
-        "multiomics"
-    )) {
-    lapply(slots, function(gslot) methods::slot(x, gslot)) |>
-        unlist(recursive = TRUE, use.names = FALSE)
+
+.dbrkt_su_filter <- function(x, y) {
+    x[spatUnit(x) %in% y || inherits(x, "giottoLargeImage")]
+}
+.dbrkt_ft_filter <- function(x, y) {
+    x[featType(x) %in% y || inherits(x, "giottoLargeImage")]
+}
+.dbrkt_on_filter <- function(x, y) {
+    x[objName(x) %in% y]
 }
