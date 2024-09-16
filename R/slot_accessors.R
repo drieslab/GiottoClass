@@ -2660,19 +2660,25 @@ get_dimReduction <- function(
         spat_unit = NULL,
         feat_type = NULL,
         reduction = c("cells", "feats"),
-        reduction_method = c("pca", "umap", "tsne"),
-        name = "pca",
+        reduction_method = NULL,
+        name = NULL,
         output = c("dimObj", "matrix"),
         set_defaults = TRUE) {
-    assert_giotto(gobject)
+    checkmate::assert_class(x, "giotto")
 
     # to be deprecated ('data.table' -> 'matrix')
     if (!identical(output, c("dimObj", "matrix"))) {
         if (output == "data.table") output <- "matrix"
     }
+    ## check parameters
     output <- match.arg(output, choices = c("dimObj", "matrix"))
-
-    # Set feat_type and spat_unit
+    reduction <- match.arg(arg = reduction, choices = c("cells", "feats"))
+    reduction_method <- match.arg(
+        arg = reduction_method,
+        choices = unique(c("pca", "umap", "tsne", reduction_method))
+    )
+    
+    # 1. Set feat_type and spat_unit
     if (isTRUE(set_defaults)) {
         spat_unit <- set_default_spat_unit(
             gobject = gobject,
@@ -2685,37 +2691,34 @@ get_dimReduction <- function(
         )
     }
 
-    ## check parameters
-    reduction <- match.arg(arg = reduction, choices = c("cells", "feats"))
-    reduction_method <- match.arg(
-        arg = reduction_method,
-        choices = unique(c("pca", "umap", "tsne", reduction_method))
+    # 2. Find object
+    potential_drs <- list_dim_reductions_names(
+        gobject = gobject,
+        spat_unit = spat_unit,
+        feat_type = feat_type,
+        data_type = reduction,
+        dim_type = reduction_method
     )
-
-    ## check reduction
-    reduction_res <- slot(gobject, "dimension_reduction")[[reduction]][[spat_unit]][[feat_type]]
-    if (is.null(reduction_res)) {
-        stop("No dimension reduction for ", reduction, " has been applied \n")
+    
+    if (is.null(name)) name <- potential_drs[[1L]]
+    if (is.null(name)) {
+        stop(wrap_txt(sprintf(
+            "No dimension reduction for \"%s\" has been applied\n", reduction
+        )), call. = FALSE)
     }
-
-    ## check method
-    reduction_res <- reduction_res[[reduction_method]]
-    if (is.null(reduction_res)) {
-        stop(reduction_method, " has not been performed on this dataset \n")
+    
+    if (!name %in% potential_drs) {
+        stop(wrap_txt(errWidth = TRUE,
+            "Requested dimension reduction not found",
+            sprintf(
+                "[spat_unit:\"%s\"] [feat_type:\"%s\"] [name: \"%s\"]",
+                spat_unit, feat_type, name
+            )
+        ))
     }
-
-    ## check name for method
-    reduction_res <- reduction_res[[name]]
-    if (is.null(reduction_res)) {
-        stop(
-            name, ": this name is not available for method: ",
-            reduction_method, "\n"
-        )
-    }
-
-    ## S3 backwards compatibility
-    if (!isS4(reduction_res)) reduction_res <- S3toS4dimObj(reduction_res)
-    silent <- validObject(reduction_res) # variable hides TRUE print
+    
+    # get info from slot nesting
+    reduction_res <- gobject@dimension_reduction[[reduction]][[spat_unit]][[feat_type]][[reduction_method]][[name]]
 
     ## return object or coordinates
     if (output == "dimObj") {
@@ -2751,8 +2754,8 @@ getDimReduction <- function(
         spat_unit = NULL,
         feat_type = NULL,
         reduction = c("cells", "feats"),
-        reduction_method = c("pca", "umap", "tsne"),
-        name = "pca",
+        reduction_method = NULL,
+        name = NULL,
         output = c("dimObj", "matrix"),
         set_defaults = TRUE) {
     # pass to internal
