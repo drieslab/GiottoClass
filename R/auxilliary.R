@@ -113,16 +113,19 @@ fDataDT <- function(
 ## Feature & Cell metadata functions ####
 
 
-#' @title Annotate giotto clustering
+#' @title Annotate Giotto object
 #' @name annotateGiotto
-#' @description Converts cluster results into a user provided annotation.
-#' @param gobject giotto object
+#' @description Map user provided annotations/labels based on another
+#' existing metadata column (usually clustering labels)
+#' @param gobject `giotto` object
 #' @param spat_unit spatial unit
 #' @param feat_type feature type
-#' @param annotation_vector named annotation vector (names = cluster ids)
-#' @param cluster_column cluster column to convert to annotation names
+#' @param annotation_vector named `character` vector. Vector names are labels 
+#' in the cluster column. Labels to assign are the vector values.
+#' @param cluster_column `character`. Cell metaadata column to map annotation
+#'  values based on.
 #' @param name new name for annotation column
-#' @returns giotto object
+#' @returns `giotto` object
 #' @details You need to specify which (cluster) column you want to annotate
 #' and you need to provide an annotation vector like this:
 #' \itemize{
@@ -172,7 +175,7 @@ annotateGiotto <- function(
     # data.table: set global variable
     temp_cluster_name <- NULL
 
-    if (is.null(annotation_vector) | is.null(cluster_column)) {
+    if (is.null(annotation_vector) || is.null(cluster_column)) {
         stop("\n You need to provide both a named annotation vector and
             the corresponding cluster column  \n")
     }
@@ -196,6 +199,7 @@ annotateGiotto <- function(
     missing_annotations <- uniq_clusters[!uniq_clusters %in% uniq_names]
     no_matching_annotations <- uniq_names[!uniq_names %in% uniq_clusters]
 
+    # stop if not all clusters in cluster column got a mapped annotation value
     if (length(missing_annotations) > 0) {
         wrap_msg(
             "Not all clusters have an accompanying annotation in the
@@ -228,11 +232,8 @@ annotateGiotto <- function(
 
     data.table::setnames(cell_metadata[], old = "temp_cluster_name", new = name)
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    gobject <- setCellMetadata(
-        gobject = gobject,
-        x = cell_metadata,
-        verbose = FALSE,
-        initialize = FALSE
+    gobject <- setGiotto(gobject, cell_metadata, 
+        verbose = FALSE, initialize = FALSE
     )
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
