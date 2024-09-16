@@ -38,8 +38,6 @@
 #' expression and spat_info are not expected to exist.
 #' @param copy_obj whether to deep copy/duplicate when getting the object
 #' (default = TRUE)
-#' @param check_preqs logical. Require pre-requisite data to be present.
-#' (default = TRUE)
 #' @param initialize (default = FALSE) whether to initialize the gobject before
 #' returning
 #' @param \dots additional params to pass

@@ -11,7 +11,6 @@ setSpatialLocations(
   name = "raw",
   provenance = NULL,
   verbose = TRUE,
-  check_preqs = TRUE,
   initialize = TRUE,
   ...
 )
@@ -29,9 +28,6 @@ specified set of spatial locations data.}
 \item{provenance}{provenance information (optional)}
 
 \item{verbose}{be verbose}
-
-\item{check_preqs}{logical. Require pre-requisite data to be present.
-(default = TRUE)}
 
 \item{initialize}{(default = FALSE) whether to initialize the gobject before
 returning}

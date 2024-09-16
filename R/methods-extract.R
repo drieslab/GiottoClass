@@ -1312,7 +1312,6 @@ sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", verbo
     g <- setGiotto(g,
         datalist,
         initialize = FALSE,
-        check_preqs = FALSE,
         verbose = FALSE
     )
 

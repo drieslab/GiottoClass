@@ -12,7 +12,6 @@ setNearestNetwork(
   nn_type = "sNN",
   name = "sNN.pca",
   provenance = NULL,
-  check_preqs = TRUE,
   verbose = TRUE,
   initialize = TRUE,
   ...
@@ -34,9 +33,6 @@ set of nearest neighbor network information from the gobject}
 yet supported.}
 
 \item{provenance}{provenance information (optional)}
-
-\item{check_preqs}{logical. Require pre-requisite data to be present.
-(default = TRUE)}
 
 \item{verbose}{be verbose}
 

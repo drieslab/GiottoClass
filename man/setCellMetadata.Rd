@@ -11,7 +11,6 @@ setCellMetadata(
   feat_type = NULL,
   provenance = NULL,
   verbose = TRUE,
-  check_preqs = TRUE,
   initialize = TRUE,
   ...
 )
@@ -29,9 +28,6 @@ reset a specified set of cell metadata in the giotto object.}
 \item{provenance}{provenance information (optional)}
 
 \item{verbose}{be verbose}
-
-\item{check_preqs}{logical. Require pre-requisite data to be present.
-(default = TRUE)}
 
 \item{initialize}{(default = FALSE) whether to initialize the gobject before
 returning}

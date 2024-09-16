@@ -22,9 +22,6 @@ expression and spat_info are not expected to exist.}
 \item{copy_obj}{whether to deep copy/duplicate when getting the object
 (default = TRUE)}
 
-\item{check_preqs}{logical. Require pre-requisite data to be present.
-(default = TRUE)}
-
 \item{initialize}{(default = FALSE) whether to initialize the gobject before
 returning}
 

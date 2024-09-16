@@ -695,7 +695,6 @@ setCellMetadata <- function(
         feat_type = NULL,
         provenance = NULL,
         verbose = TRUE,
-        check_preqs = TRUE,
         initialize = TRUE,
         ...) {
     assert_giotto(gobject)
@@ -706,7 +705,7 @@ setCellMetadata <- function(
     }
 
     # check hierarchical slots
-    if (check_preqs && getOption("giotto.check_valid", TRUE)) {
+    if (getOption("giotto.check_valid", TRUE)) {
         used_su <- list_cell_id_names(gobject)
         if (is.null(used_su)) {
             stop(wrap_txt("Add expression or spatial (polygon) information first"))
@@ -2430,7 +2429,6 @@ setSpatialLocations <- function(
         name = "raw",
         provenance = NULL,
         verbose = TRUE,
-        check_preqs = TRUE,
         initialize = TRUE,
         ...) {
     checkmate::assert_class(gobject, "giotto")
@@ -2439,7 +2437,7 @@ setSpatialLocations <- function(
     }
 
     # check hierarchical slots
-    if (check_preqs && getOption("giotto.check_valid", TRUE)) {
+    if (getOption("giotto.check_valid", TRUE)) {
         avail_ex <- list_expression(gobject)
         avail_si <- list_spatial_info(gobject)
         if (is.null(avail_ex) && is.null(avail_si)) {
@@ -2864,7 +2862,6 @@ setDimReduction <- function(
         reduction_method = c("pca", "umap", "tsne"),
         provenance = NULL,
         verbose = TRUE,
-        check_preqs = TRUE,
         initialize = TRUE,
         ...) {
     assert_giotto(gobject)
@@ -2876,7 +2873,7 @@ setDimReduction <- function(
     }
 
     # check hierarchical slots
-    if (check_preqs && getOption("giotto.check_valid", TRUE)) {
+    if (getOption("giotto.check_valid", TRUE)) {
         avail_ex <- list_expression(gobject)
         if (is.null(avail_ex)) stop(wrap_txt("Add expression information first"))
     }
@@ -3352,7 +3349,6 @@ setNearestNetwork <- function(
         nn_type = "sNN",
         name = "sNN.pca",
         provenance = NULL,
-        check_preqs = TRUE,
         verbose = TRUE,
         initialize = TRUE,
         ...) {
@@ -3362,7 +3358,7 @@ setNearestNetwork <- function(
     }
 
     # check hierarchical slots
-    if (check_preqs && getOption("giotto.check_valid", TRUE)) {
+    if (getOption("giotto.check_valid", TRUE)) {
         avail_dr <- list_dim_reductions(gobject)
         if (is.null(avail_dr)) {
             stop(wrap_txt("Add dimension reduction information first"))
@@ -3860,7 +3856,6 @@ setSpatialNetwork <- function(
         name = NULL,
         provenance = NULL,
         verbose = TRUE,
-        check_preqs = TRUE,
         initialize = TRUE,
         ...) {
     assert_giotto(gobject)
@@ -3870,7 +3865,7 @@ setSpatialNetwork <- function(
 
 
     # check hierarchical slots
-    if (check_preqs && getOption("giotto.check_valid", TRUE)) {
+    if (getOption("giotto.check_valid", TRUE)) {
         avail_sl <- list_spatial_locations(gobject)
         if (is.null(avail_sl)) {
             stop(wrap_txt("Add spatial location information first"))
@@ -5425,7 +5420,6 @@ setSpatialEnrichment <- function(
         name = "enrichment",
         provenance = NULL,
         verbose = TRUE,
-        check_preqs = TRUE,
         initialize = TRUE,
         ...) {
     assert_giotto(gobject)
@@ -5434,7 +5428,7 @@ setSpatialEnrichment <- function(
     }
 
     # check hierarchical slots
-    if (check_preqs && getOption("giotto.check_valid", TRUE)) {
+    if (getOption("giotto.check_valid", TRUE)) {
         avail_ex <- list_expression(gobject)
         avail_sl <- list_spatial_locations(gobject)
         if (is.null(avail_ex)) {
