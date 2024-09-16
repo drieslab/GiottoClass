@@ -15,6 +15,7 @@
 - `instructions()` with no args will now call `createGiottoInstructions()`. You can also supply named args.
 - `instructions(gobject, param)` and `instructions(gobject, param)<-` will now work for `giottoInstructions` objects for convenience.
 - `[` and `subset()` for `giotto` see `?GiottoClass::subset_giotto`
+- `objName()`, `spatUnit()`, `featType()` generics now return `NA_character_` instead of erroring when used on unsupported classes.
 
 ## new
 - `sliceGiotto()` for pulling out specific spatial units and feature types as independent `giotto` objects

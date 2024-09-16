@@ -64,6 +64,11 @@ NULL
 
 # spatUnit ####
 
+# default for unknown types
+setMethod("spatUnit", signature("ANY"), function(x) {
+    NA_character_
+})
+
 #' @rdname spatUnit-generic
 #' @export
 setMethod("spatUnit", signature("list"), function(x) {
@@ -103,6 +108,12 @@ setMethod("spatUnit<-", signature("giottoPolygon"), function(x, value) {
 
 # featType ####
 
+# default for unknown types
+setMethod("featType", signature("ANY"), function(x) {
+    NA_character_
+})
+
+
 #' @rdname featType-generic
 #' @export
 setMethod("featType", signature("list"), function(x) {
@@ -128,19 +139,24 @@ setMethod("featType<-", signature = "featData", function(x, value) {
 
 # objName ####
 
+# default for unknown types
 #' @rdname objName-generic
 #' @export
-setMethod("objName", signature = "list", function(x) {
+setMethod("objName", signature("ANY"), function(x) NA_character_)
+
+#' @rdname objName-generic
+#' @export
+setMethod("objName", signature("list"), function(x) {
     vapply(x, objName, FUN.VALUE = character(1L), USE.NAMES = FALSE)
 })
 
 #' @describeIn objName-generic Get name information
 #' @export
-setMethod("objName", signature = "nameData", function(x) x@name)
+setMethod("objName", signature("nameData"), function(x) x@name)
 
 #' @describeIn objName-generic Get name giottoPoints
 #' @export
-setMethod("objName", signature = "giottoPoints", function(x) x@feat_type)
+setMethod("objName", signature("giottoPoints"), function(x) x@feat_type)
 
 #' @rdname objName-generic
 #' @export
