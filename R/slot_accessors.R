@@ -6067,8 +6067,9 @@ setGiottoImage <- function(
 #' @export
 spatValues <- function(
         gobject, spat_unit = NULL, feat_type = NULL, feats,
-        expression_values = NULL, spat_enr_name = NULL, poly_info = NULL,
-        verbose = NULL, debug = FALSE) {
+        expression_values = NULL, spat_loc_name = NULL, spat_enr_name = NULL, 
+        poly_info = NULL, dim_reduction_to_use = NULL, 
+        dim_reduction_name = NULL, verbose = NULL, debug = FALSE) {
     checkmate::assert_class(gobject, "giotto")
     checkmate::assert_character(feats)
 
@@ -6146,6 +6147,32 @@ spatValues <- function(
         }
         return(NULL)
     }
+    check_spatloc <- function(vals) {# %%%%%%%%%%%%%% SPAT LOC %%%%%%
+        if (!is.null(vals)) {
+            return(vals)
+        }
+        sl <- getSpatialLocations(
+            gobject = gobject,
+            spat_unit = spat_unit,
+            name = spat_loc_name,
+            output = "spatLocsObj",
+            copy_obj = FALSE,
+            set_defaults = TRUE # try to guess name
+        )
+        if (is.null(sl)) return(NULL)
+        if (all(feats %in% colnames(sl[]))) {
+            vals <- sl[][, unique(c("cell_ID", feats)), with = FALSE]
+            vmsg(
+                .v = verbose,
+                sprintf(
+                    "Getting values from [%s][%s] spatial locations",
+                    spatUnit(sl), objName(sl)
+                )
+            )
+            return(vals)
+        }
+        return(NULL)
+    }
     check_spatenr <- function(vals) { # %%%%%%%%%%%%%% SPAT ENR %%%%%%
         if (!is.null(vals)) {
             return(vals)
@@ -6169,6 +6196,38 @@ spatValues <- function(
                 sprintf(
                     "Getting values from [%s][%s][%s] spatial enrichment",
                     spatUnit(enr), featType(enr), objName(enr)
+                )
+            )
+            return(vals)
+        }
+        return(NULL)
+    }
+    check_dimred <- function(vals) {# %%%%%%%%%%%%%% DIM RED %%%%%%
+        if (!is.null(vals)) {
+            return(vals)
+        }
+        dr <- getDimReduction(
+            gobject = gobject,
+            spat_unit = spat_unit,
+            feat_type = feat_type,
+            reduction = "cells",
+            name = dim_reduction_name,
+            reduction_method = dim_reduction_to_use,
+            output = "dimObj",
+            set_defaults = TRUE # try to guess reduc. method and name
+        )
+        if (is.null(dr)) return(NULL)
+        if (all(feats %in% colnames(dr[]))) {
+            vals <- dr[][, feats, drop = FALSE] |>
+                as.matrix() |>
+                data.table::as.data.table(keep.rownames = TRUE)
+            data.table::setnames(vals, old = "rn", new = "cell_ID")
+            vmsg(
+                .v = verbose,
+                sprintf(
+                    "Getting values from [%s][%s][%s][%s] dim reduction",
+                    spatUnit(dr), featType(dr), 
+                    dr@reduction_method, objName(dr)
                 )
             )
             return(vals)
@@ -6215,15 +6274,21 @@ spatValues <- function(
     # set nextcheck if location is known -------------------------------- #
     nextcheck <- NULL
     if (!is.null(spat_enr_name)) nextcheck <- "spatial enrichment"
+    if (!is.null(spat_loc_name)) nextcheck <- "spatial locations"
     if (!is.null(expression_values)) nextcheck <- "cell expression"
     if (!is.null(poly_info)) nextcheck <- "polygon info"
+    if (!is.null(dim_reduction_name) || !is.null(dim_reduction_to_use)) {
+        nextcheck <- "dimension reduction"
+    }
 
     # set order of checks if location not known ------------------------- #
     if (is.null(nextcheck)) {
         nextcheck <- c(
             "cell expression",
             "cell metadata",
+            "spatial locations",
             "spatial enrichment",
+            "dimension reduction",
             "polygon info"
         )
     }
@@ -6265,7 +6330,9 @@ spatValues <- function(
             "cell expression" = err_handler(check_expr(vals), data),
             "cell metadata" = err_handler(check_cellmeta(vals), data),
             "spatial enrichment" = err_handler(check_spatenr(vals), data),
-            "polygon info" = err_handler(check_polyinfo(vals), data)
+            "polygon info" = err_handler(check_polyinfo(vals), data),
+            "spatial locations" = err_handler(check_spatloc(vals), data),
+            "dimension reduction" = err_handler(check_dimred(vals), data)
         )
     }
 
