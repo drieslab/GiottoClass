@@ -2664,7 +2664,7 @@ get_dimReduction <- function(
         name = NULL,
         output = c("dimObj", "matrix"),
         set_defaults = TRUE) {
-    checkmate::assert_class(x, "giotto")
+    checkmate::assert_class(gobject, "giotto")
 
     # to be deprecated ('data.table' -> 'matrix')
     if (!identical(output, c("dimObj", "matrix"))) {
