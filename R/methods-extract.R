@@ -1287,11 +1287,13 @@ sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", verbo
 
     # select data
     if (!identical(spat_unit, ":all:")) { # select if not all
+        activeSpatUnit(x) <- spat_unit[[1L]]
         spat_only <- spat_only[spatUnit(spat_only) %in% spat_unit]
         spat_feat <- spat_feat[spatUnit(spat_feat) %in% spat_unit]
     }
 
     if (!identical(feat_type, ":all:")) {
+        activeFeatType(x) <- feat_type[[1L]]
         feat_only <- feat_only[featType(feat_only) %in% feat_type]
         spat_feat <- spat_feat[featType(spat_feat) %in% feat_type]
     }
