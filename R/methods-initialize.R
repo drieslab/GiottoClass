@@ -15,7 +15,7 @@ setMethod(
     "initialize", signature("giotto"),
     function(.Object, ..., initialize = TRUE) {
         .Object <- methods::callNextMethod(.Object, ...)
-        if (!initialize) {
+        if (!initialize || isFALSE(getOption("giotto.init", TRUE))) {
             return(.Object)
         }
         .Object <- updateGiottoObject(.Object)
