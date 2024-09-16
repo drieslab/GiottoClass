@@ -4,7 +4,7 @@
 \alias{as.list}
 \title{Coerce to a list}
 \usage{
-\S4method{as.list}{giotto}(x, slots, ...)
+\S4method{as.list}{giotto}(x, slots, spat_unit = NULL, feat_type = NULL, name = NULL, ...)
 }
 \arguments{
 \item{x}{the object to coerce}
