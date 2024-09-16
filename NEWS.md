@@ -11,7 +11,8 @@
 
 ## enhancements
 - python packages to install through pip is now settable in `installGiottoEnvironment()` [#224](https://github.com/drieslab/GiottoClass/issues/224)
-- `giotto` `initialize()` slot checking behavior can be toggled now using `'giotto.check_valid'` option. [#946](https://github.com/drieslab/Giotto/issues/946) by rbutleriii
+- `giotto` `initialize()` and slot checking behavior can be toggled now using `'giotto.init'` and `'giotto.check_valid'` options. [#946](https://github.com/drieslab/Giotto/issues/946) by rbutleriii
+- `setGiotto()` now only initializes and performs checks once all items are added if a `list` input is provided.
 - `instructions()` with no args will now call `createGiottoInstructions()`. You can also supply named args.
 - `instructions(gobject, param)` and `instructions(gobject, param)<-` will now work for `giottoInstructions` objects for convenience.
 - `[` and `subset()` for `giotto` see `?GiottoClass::subset_giotto`
