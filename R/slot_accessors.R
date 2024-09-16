@@ -6018,9 +6018,15 @@ setGiottoImage <- function(
 #' the giotto object
 #' @param expression_values character. (optional) Name of expression information
 #' to use
+#' @param spat_loc_name character. (optional) Name of spatial locations
+#' information to use
 #' @param spat_enr_name character. (optional) Name of spatial enrichments to
 #' use
 #' @param poly_info character. (optional) Name of polygons to use
+#' @param dim_reduction_to_use character. (optional) Which type of dimension
+#' reduction to use
+#' @param dim_reduction_name character. (optional) Name of dimension reduction
+#' to use
 #' @param verbose verbosity
 #' @param debug logical. (default = FALSE) See details.
 #' @returns A data.table with a cell_ID column and whichever feats were
@@ -6030,13 +6036,15 @@ setGiottoImage <- function(
 #' spatValues searches through the set of available information within the
 #' `giotto` object for matches to `feats`. The current search order is
 #' \enumerate{
-#'   \item cell expression
+#'   \item{cell expression}
 #'   \item{cell metadata}
+#'   \item{spatial locations}
 #'   \item{spatial enrichment}
+#'   \item{dimension reduction}
 #'   \item{polygon info}
 #' }
 #' If a specific name for one of the types of information is provided via a
-#' param such as `expression_values`, `spat_enr_name`, `poly_info`, then
+#' param such as `expression_values`, `spat_enr_name`, etc, then
 #' the search will only be performed on that type of data.\cr\cr
 #' **\[debug\]**\cr
 #' This function uses Giotto's accessor functions which can usually throw errors
@@ -6066,10 +6074,18 @@ setGiottoImage <- function(
 #'
 #' @export
 spatValues <- function(
-        gobject, spat_unit = NULL, feat_type = NULL, feats,
-        expression_values = NULL, spat_loc_name = NULL, spat_enr_name = NULL, 
-        poly_info = NULL, dim_reduction_to_use = NULL, 
-        dim_reduction_name = NULL, verbose = NULL, debug = FALSE) {
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        feats,
+        expression_values = NULL,
+        spat_loc_name = NULL,
+        spat_enr_name = NULL, 
+        poly_info = NULL,
+        dim_reduction_to_use = NULL, 
+        dim_reduction_name = NULL,
+        verbose = NULL, 
+        debug = FALSE) {
     checkmate::assert_class(gobject, "giotto")
     checkmate::assert_character(feats)
 

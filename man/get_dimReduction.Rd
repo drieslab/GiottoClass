@@ -9,8 +9,8 @@ get_dimReduction(
   spat_unit = NULL,
   feat_type = NULL,
   reduction = c("cells", "feats"),
-  reduction_method = c("pca", "umap", "tsne"),
-  name = "pca",
+  reduction_method = NULL,
+  name = NULL,
   output = c("dimObj", "matrix"),
   set_defaults = TRUE
 )

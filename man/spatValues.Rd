@@ -10,8 +10,11 @@ spatValues(
   feat_type = NULL,
   feats,
   expression_values = NULL,
+  spat_loc_name = NULL,
   spat_enr_name = NULL,
   poly_info = NULL,
+  dim_reduction_to_use = NULL,
+  dim_reduction_name = NULL,
   verbose = NULL,
   debug = FALSE
 )
@@ -29,10 +32,19 @@ the giotto object}
 \item{expression_values}{character. (optional) Name of expression information
 to use}
 
+\item{spat_loc_name}{character. (optional) Name of spatial locations
+information to use}
+
 \item{spat_enr_name}{character. (optional) Name of spatial enrichments to
 use}
 
 \item{poly_info}{character. (optional) Name of polygons to use}
+
+\item{dim_reduction_to_use}{character. (optional) Which type of dimension
+reduction to use}
+
+\item{dim_reduction_name}{character. (optional) Name of dimension reduction
+to use}
 
 \item{verbose}{verbosity}
 
@@ -55,13 +67,15 @@ slot it checks, see details.
 spatValues searches through the set of available information within the
 \code{giotto} object for matches to \code{feats}. The current search order is
 \enumerate{
-\item cell expression
+\item{cell expression}
 \item{cell metadata}
+\item{spatial locations}
 \item{spatial enrichment}
+\item{dimension reduction}
 \item{polygon info}
 }
 If a specific name for one of the types of information is provided via a
-param such as \code{expression_values}, \code{spat_enr_name}, \code{poly_info}, then
+param such as \code{expression_values}, \code{spat_enr_name}, etc, then
 the search will only be performed on that type of data.\cr\cr
 \strong{[debug]}\cr
 This function uses Giotto's accessor functions which can usually throw errors
