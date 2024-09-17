@@ -1429,10 +1429,10 @@ setMethod("as.list", signature("giotto"), function(
 
 
 .dbrkt_su_filter <- function(x, y) {
-    x[spatUnit(x) %in% y || inherits(x, "giottoLargeImage")]
+    x[spatUnit(x) %in% y | inherits(x, "giottoLargeImage")]
 }
 .dbrkt_ft_filter <- function(x, y) {
-    x[featType(x) %in% y || inherits(x, "giottoLargeImage")]
+    x[featType(x) %in% y | inherits(x, "giottoLargeImage")]
 }
 .dbrkt_on_filter <- function(x, y) {
     x[objName(x) %in% y]
