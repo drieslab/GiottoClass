@@ -250,6 +250,7 @@ setMethod("show", signature("cellMetaObj"), function(object) {
     cat("An object of class", class(object), "\n")
     .show_spat_and_feat(object)
     .show_prov(object)
+    .show_dim(object)
     cat("\n")
     if (!is.null(object[])) print(head(object[], 3L))
 })
@@ -859,6 +860,12 @@ setMethod("as.character", signature("giottoLargeImage"), function(x, ...) {
     if (!is.null(object@provenance)) {
         cat("provenance:", object@provenance, "\n")
     }
+}
+
+#' @noRd 
+.show_dim <- function(object) {
+    d <- dim(object)
+    cat(sprintf("dimensions: %d %d \n", d[1], d[2]))
 }
 
 #' @noRd

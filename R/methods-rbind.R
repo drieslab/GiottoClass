@@ -25,14 +25,32 @@ NULL
 #' @rdname rbind-generic
 #' @export
 setMethod(
+    "rbind2", signature(x = "cellMetaObj", y = "cellMetaObj"), 
+    function(x, y, ...) {
+        .check_id_dups(x, y, type = "spat")
+        
+        x[] <- rbind(x[], y[], fill = TRUE)
+        return(x)
+    })
+
+#' @rdname rbind-generic
+#' @export
+setMethod(
+    "rbind2", signature(x = "featMetaObj", y = "featMetaObj"), 
+    function(x, y, ...) {
+        .check_id_dups(x, y, type = "feat")
+        
+        x[] <- rbind(x[], y[], fill = TRUE)
+        return(x)
+    })
+
+#' @rdname rbind-generic
+#' @export
+setMethod(
     "rbind2", signature(x = "spatLocsObj", y = "spatLocsObj"),
     function(x, y, ...) {
         # catch same IDs
-        if (any(duplicated(c(spatIDs(x), spatIDs(y))))) {
-            stop("rbind: `spatLocsObj` with the same IDs cannot be joined",
-                call. = FALSE
-            )
-        }
+        .check_id_dups(x, y, type = "spat")
 
         # if one is 3d, ensure both are 3d
         x3 <- .is_3d_spatlocs(x)
@@ -71,6 +89,7 @@ setMethod(
 )
 
 
+
 if (!isGeneric("rbind")) setGeneric("rbind", signature = "...")
 
 setMethod("rbind", "giottoPolygon", function(..., deparse.level = 1) {
@@ -94,8 +113,21 @@ setMethod("rbind", "spatLocsObj", function(..., deparse.level = 1) {
 
 
 
-
 # internals ####
+
+.check_id_dups <- function(x, y, type = c("spat", "feat")) {
+    type <- match.arg(type, choices = c("spat", "feat"))
+    .id <- switch(type,
+        "spat" = spatIDs,
+        "feat" = featIDs
+    )
+    
+    if (any(duplicated(c(.id(x), .id(y))))) {
+        stop(sprintf("rbind: `%s` with the same IDs cannot be joined", class(x)),
+             call. = FALSE
+        )
+    }
+}
 
 .is_3d_spatlocs <- function(x) {
     "sdimz" %in% colnames(x)

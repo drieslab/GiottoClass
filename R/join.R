@@ -52,9 +52,8 @@
 #' @name .join_cell_meta
 #' @keywords internal
 #' @noRd
-.join_cell_meta <- function(dt_list) {
-    final_list <- do.call("rbind", dt_list)
-    return(final_list)
+.join_cell_meta <- function(obj_list) {
+    do.call("rbind", obj_list)
 }
 
 #' @title .join_feat_meta
@@ -806,28 +805,14 @@ joinGiottoObjects <- function(
             for (gobj_i in seq_along(updated_object_list)) {
                 cellmeta <- updated_object_list[[
                     gobj_i
-                ]]@cell_metadata[[spat_unit]][[feat_type]][]
+                ]]@cell_metadata[[spat_unit]][[feat_type]]
                 savelist[[gobj_i]] <- cellmeta
             }
-            combcellmeta <- .join_cell_meta(dt_list = savelist)
-
-            S4_cell_meta <- getCellMetadata(
-                gobject = first_obj,
-                spat_unit = spat_unit,
-                feat_type = feat_type,
-                copy_obj = TRUE,
-                set_defaults = FALSE,
-                output = "cellMetaObj"
-            )
-            S4_cell_meta[] <- combcellmeta
+            combcellmeta <- .join_cell_meta(obj_list = savelist)
 
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-            comb_gobject <- setCellMetadata(
-                gobject = comb_gobject,
-                x = S4_cell_meta,
-                initialize = FALSE,
-                verbose = FALSE
-            )
+            comb_gobject <- setGiotto(comb_gobject, combcellmeta,
+                                      verbose = FALSE, initialize = FALSE)
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
     }
