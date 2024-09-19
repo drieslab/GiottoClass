@@ -20,7 +20,7 @@
 \alias{featIDs,spatEnrObj-method}
 \title{Spatial and feature IDs}
 \usage{
-\S4method{spatIDs}{giotto}(x, spat_unit = NULL, ...)
+\S4method{spatIDs}{giotto}(x, spat_unit = NULL, subset, ...)
 
 \S4method{spatIDs}{exprObj}(x, ...)
 
@@ -38,7 +38,7 @@
 
 \S4method{spatIDs}{nnNetObj}(x, ...)
 
-\S4method{featIDs}{giotto}(x, feat_type = NULL, ...)
+\S4method{featIDs}{giotto}(x, feat_type = NULL, subset, ...)
 
 \S4method{featIDs}{exprObj}(x, ...)
 
@@ -53,7 +53,11 @@
 
 \item{spat_unit}{(optional) specify which spatial unit}
 
-\item{...}{additional parameters to pass}
+\item{subset}{logical expression to find a subset of features.}
+
+\item{\dots}{additional params to pass when used with the \code{subset} param.
+For \code{spatID()}, these pass to \code{\link[=spatValues]{spatValues()}}. For \code{featID()}, these
+currently only pass to \code{fDataDT()}.}
 
 \item{use_cache}{use cached IDs if available (gpoly and gpoints only)}
 
@@ -63,7 +67,7 @@ only (currently gpoly and gpoints only)}
 \item{feat_type}{(optional) specify which feature type}
 }
 \value{
-spatIDs and featIDs
+character vector of cell/spatial IDs or feature IDs
 }
 \description{
 Get the cell
@@ -85,7 +89,15 @@ expected IDs within all \code{giotto} slots, and not always the exact set or
 ordering.
 }
 \examples{
-g <- GiottoData::loadSubObjectMini("giottoPoints")
+g <- GiottoData::loadGiottoMini("vis")
+spatIDs(g)
+spatIDs(g, subset = nr_feats <= 200)
+spatIDs(g, subset = Dim.1 > 25, dim_reduction_to_use = "umap")
 
 featIDs(g)
+featIDs(g, subset = nr_cells < 100)
+
+gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
+featIDs(gpoints)
+
 }

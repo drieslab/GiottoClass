@@ -29,7 +29,8 @@
 \arguments{
 \item{x}{a \code{giotto} object}
 
-\item{\dots}{additional args to pass (none implemented)}
+\item{\dots}{additional params to pass to \code{spatValues} used with the
+subset param}
 
 \item{drop}{not used}
 
@@ -40,15 +41,14 @@
 \item{cell_ids, j}{character vector. Cell/spatial IDs to subset the object
 for.}
 
-\item{spat_unit}{character. Controls which spatial unit to pull subsetting
-information from when using \code{cell_ids}/\code{j} and \code{subset} params. However,
-all spatial units will always be affected by the subset.}
+\item{spat_unit}{}
 
 \item{feat_type}{character. Subset affects these feature type(s). Default
 is \code{"rna"}}
 
-\item{expression_values}{character. Name of which expression values to use
-with \code{subset} param.. If kept as NULL, the first one will be defaulted to.}
+\item{feat_ids}{feature IDs to select}
+
+\item{cell_ids}{cell/spatial IDs to select}
 }
 \description{
 Subset a giotto object with \code{[} or \code{subset()} generic. The
