@@ -20,7 +20,7 @@
 \alias{featIDs,spatEnrObj-method}
 \title{Spatial and feature IDs}
 \usage{
-\S4method{spatIDs}{giotto}(x, spat_unit = NULL, subset, ...)
+\S4method{spatIDs}{giotto}(x, spat_unit = NULL, subset, quote = TRUE, ...)
 
 \S4method{spatIDs}{exprObj}(x, ...)
 
@@ -38,7 +38,7 @@
 
 \S4method{spatIDs}{nnNetObj}(x, ...)
 
-\S4method{featIDs}{giotto}(x, feat_type = NULL, subset, ...)
+\S4method{featIDs}{giotto}(x, feat_type = NULL, subset, quote = TRUE, ...)
 
 \S4method{featIDs}{exprObj}(x, ...)
 
@@ -54,6 +54,11 @@
 \item{spat_unit}{(optional) specify which spatial unit}
 
 \item{subset}{logical expression to find a subset of features.}
+
+\item{quote}{logical. If \code{TRUE}, the \code{subset} param will be quoted with
+\code{substitute()}. Set this to \code{FALSE} when calling from a function, although
+that may not be recommended since NSE output can be unexpected when not used
+interactively.}
 
 \item{\dots}{additional params to pass when used with the \code{subset} param.
 For \code{spatID()}, these pass to \code{\link[=spatValues]{spatValues()}}. For \code{featID()}, these

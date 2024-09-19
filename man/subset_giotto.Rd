@@ -22,7 +22,7 @@
   cell_ids = NULL,
   spat_unit = NULL,
   feat_type = NULL,
-  expression_values = NULL,
+  quote = TRUE,
   ...
 )
 }
@@ -41,10 +41,17 @@ subset param}
 \item{cell_ids, j}{character vector. Cell/spatial IDs to subset the object
 for.}
 
-\item{spat_unit}{}
+\item{spat_unit}{character. Controls which spatial unit to pull subsetting
+information from when using \code{cell_ids}/\code{j} and \code{subset} params. However,
+all spatial units will always be affected by the subset.}
 
 \item{feat_type}{character. Subset affects these feature type(s). Default
 is \code{"rna"}}
+
+\item{quote}{logical. If \code{TRUE}, the \code{subset} param will be quoted with
+\code{substitute()}. Set this to \code{FALSE} when calling from a function, although
+that may not be recommended since NSE output can be unexpected when not used
+interactively.}
 
 \item{feat_ids}{feature IDs to select}
 
