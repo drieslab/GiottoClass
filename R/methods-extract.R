@@ -1194,9 +1194,12 @@ setMethod(
 
 
 #' @rdname subset_giotto
+#' @param feat_ids feature IDs to select
+#' @param cell_ids cell/spatial IDs to select
+#' @param spat_unit 
 #' @param subset Logical expression evaluated in expression values
-#' @param expression_values character. Name of which expression values to use
-#'   with `subset` param.. If kept as NULL, the first one will be defaulted to.
+#' @param \dots additional params to pass to `spatValues` used with the
+#' subset param
 #' @export
 setMethod("subset", signature("giotto"), function(x,
     subset,
@@ -1267,10 +1270,10 @@ setMethod("subset", signature("giotto"), function(x,
         vals <- lapply(vars, function(v) {
             spatValues(x,
                 feats = v,
-                expression_values = expression_values,
                 spat_unit = spat_unit,
                 feat_type = feat_type,
-                verbose = FALSE
+                verbose = FALSE,
+                ...
             )
         })
         .dtjoin <- function(x, y) {
