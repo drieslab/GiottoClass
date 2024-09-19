@@ -20,7 +20,7 @@
 \alias{featIDs,spatEnrObj-method}
 \title{Spatial and feature IDs}
 \usage{
-\S4method{spatIDs}{giotto}(x, spat_unit = NULL, subset, quote = TRUE, ...)
+\S4method{spatIDs}{giotto}(x, spat_unit = NULL, subset, negate = FALSE, quote = TRUE, ...)
 
 \S4method{spatIDs}{exprObj}(x, ...)
 
@@ -38,7 +38,7 @@
 
 \S4method{spatIDs}{nnNetObj}(x, ...)
 
-\S4method{featIDs}{giotto}(x, feat_type = NULL, subset, quote = TRUE, ...)
+\S4method{featIDs}{giotto}(x, feat_type = NULL, subset, negate = FALSE, quote = TRUE, ...)
 
 \S4method{featIDs}{exprObj}(x, ...)
 
@@ -54,6 +54,9 @@
 \item{spat_unit}{(optional) specify which spatial unit}
 
 \item{subset}{logical expression to find a subset of features.}
+
+\item{negate}{logical. if \code{TRUE} all IDs that are \strong{not} in the \code{subset}
+are selected}
 
 \item{quote}{logical. If \code{TRUE}, the \code{subset} param will be quoted with
 \code{substitute()}. Set this to \code{FALSE} when calling from a function, although

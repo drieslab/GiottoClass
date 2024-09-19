@@ -1197,12 +1197,14 @@ setMethod(
 #' @param feat_ids feature IDs to select
 #' @param cell_ids cell/spatial IDs to select
 #' @param subset Logical expression evaluated in expression values
-#' @param \dots additional params to pass to `spatValues` used with the
-#' subset param
+#' @param negate logical. if `TRUE` all IDs that are **not** in the `subset` 
+#' are selected
 #' @param quote logical. If `TRUE`, the `subset` param will be quoted with 
 #' `substitute()`. Set this to `FALSE` when calling from a function, although 
 #' that may not be recommended since NSE output can be unexpected when not used
 #' interactively.
+#' @param \dots additional params to pass to `spatValues` used with the
+#' subset param
 #' @export
 setMethod("subset", signature("giotto"), function(x,
     subset,
@@ -1210,6 +1212,7 @@ setMethod("subset", signature("giotto"), function(x,
     cell_ids = NULL,
     spat_unit = NULL,
     feat_type = NULL,
+    negate = FALSE,
     quote = TRUE,
     ...) {
     spat_unit <- set_default_spat_unit(
@@ -1268,6 +1271,7 @@ setMethod("subset", signature("giotto"), function(x,
     # expression evals ------------------------------------------------- #
     if (quote) sub_s <- substitute(subset)
     else sub_s <- subset
+    if (negate) sub_s <- call("!", sub_s)
 
     if (!missing(sub_s)) {
         vars <- all.vars(sub_s)

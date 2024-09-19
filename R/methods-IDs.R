@@ -25,6 +25,8 @@ NULL
 #' @aliases spatIDs featIDs
 #' @param x an object
 #' @param subset logical expression to find a subset of features.
+#' @param negate logical. if `TRUE` all IDs that are **not** in the `subset` 
+#' are selected
 #' @param quote logical. If `TRUE`, the `subset` param will be quoted with 
 #' `substitute()`. Set this to `FALSE` when calling from a function, although 
 #' that may not be recommended since NSE output can be unexpected when not used
@@ -59,7 +61,7 @@ NULL
 #' @export
 setMethod(
     "spatIDs", signature(x = "giotto"),
-    function(x, spat_unit = NULL, subset, quote = TRUE, ...) {
+    function(x, spat_unit = NULL, subset, negate = FALSE, quote = TRUE, ...) {
 
         if (missing(subset)) {
             res <- as.character(get_cell_id(gobject = x, spat_unit, ...))
@@ -68,6 +70,7 @@ setMethod(
         
         if (quote) sub_s <- substitute(subset)
         else sub_s <- subset
+        if (negate) sub_s <- call("!", sub_s)
         vars <- all.vars(sub_s)
         vals <- lapply(vars, function(v) {
             spatValues(x,
@@ -179,13 +182,14 @@ setMethod(
 #' @export
 setMethod(
     "featIDs", signature(x = "giotto"),
-    function(x, feat_type = NULL, subset, quote = TRUE, ...) {
+    function(x, feat_type = NULL, subset, negate = FALSE, quote = TRUE, ...) {
         if (missing(subset)) {
             res <- as.character(get_feat_id(gobject = x, feat_type, ...))
             return(res)
         }
         if (quote) sub_s <- substitute(subset)
         else sub_s <- subset
+        if (negate) sub_s <- call("!", sub_s)
         fx <- fDataDT(x, feat_type = feat_type, ...)
         fids <- subset.data.frame(fx, subset = eval(sub_s))$feat_ID
         return(fids)

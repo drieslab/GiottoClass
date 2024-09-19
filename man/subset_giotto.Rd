@@ -22,6 +22,7 @@
   cell_ids = NULL,
   spat_unit = NULL,
   feat_type = NULL,
+  negate = FALSE,
   quote = TRUE,
   ...
 )
@@ -47,6 +48,9 @@ all spatial units will always be affected by the subset.}
 
 \item{feat_type}{character. Subset affects these feature type(s). Default
 is \code{"rna"}}
+
+\item{negate}{logical. if \code{TRUE} all IDs that are \strong{not} in the \code{subset}
+are selected}
 
 \item{quote}{logical. If \code{TRUE}, the \code{subset} param will be quoted with
 \code{substitute()}. Set this to \code{FALSE} when calling from a function, although
