@@ -767,7 +767,7 @@ giottoToAnnData <- function(gobject = NULL,
     # Feat Metadata
     for (su in spat_unit) {
         for (ft in names(gobject@expression[[su]])) {
-            cmeta <- get_cell_metadata(
+            cmeta <- getCellMetadata(
                 gobject = gobject,
                 spat_unit = su,
                 feat_type = ft,
@@ -775,7 +775,7 @@ giottoToAnnData <- function(gobject = NULL,
                 set_defaults = FALSE
             )
 
-            fm <- get_feature_metadata(
+            fm <- getFeatureMetadata(
                 gobject = gobject,
                 spat_unit = su,
                 feat_type = ft,
@@ -1289,7 +1289,7 @@ giottoToSeuratV4 <- function(gobject,
         }
         # add cell metadata
         meta_cells <- data.table::setDF(
-            get_cell_metadata(
+          getCellMetadata(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = assay_use,
@@ -1307,7 +1307,7 @@ giottoToSeuratV4 <- function(gobject,
         )
         # add feature metadata
         meta_genes <- data.table::setDF(
-            get_feature_metadata(
+          getFeatureMetadata(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = assay_use,
@@ -1477,7 +1477,14 @@ giottoToSeuratV5 <- function(gobject,
         gobject = gobject,
         spat_unit = spat_unit
     )
-
+    assay_names <- names(gobject@expression$cell)
+    
+    # Identify assays with spaces and replace with underscores
+    new_assay_names <- gsub(" ", "_", assay_names)
+    
+    # Apply the new names to the gobject expression slot
+    names(gobject@expression$cell) <- new_assay_names
+    
     # verify if optional package is installed
     package_check(pkg_name = "Seurat", repository = "CRAN")
     loadNamespace("Seurat")
@@ -1569,8 +1576,9 @@ giottoToSeuratV5 <- function(gobject,
         }
 
         # add cell metadata
+        names(gobject@cell_metadata$cell) <- gsub(" ", "_", names(gobject@cell_metadata$cell))
         meta_cells <- data.table::setDF(
-            get_cell_metadata(
+          getCellMetadata(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = assay_use,
@@ -1579,21 +1587,22 @@ giottoToSeuratV5 <- function(gobject,
             )
         )
         rownames(meta_cells) <- meta_cells$cell_ID
-        meta_cells <- meta_cells[, -which(colnames(meta_cells) == "cell_ID")]
+        meta_cells <- meta_cells[, -which(colnames(meta_cells) == "cell_ID"), drop = FALSE]
         if (ncol(meta_cells) > 0) {
             colnames(meta_cells) <- paste0(
                 assay_use, "_",
                 colnames(meta_cells)
             )
-        }
         sobj <- Seurat::AddMetaData(sobj,
             metadata = meta_cells[Seurat::Cells(sobj), ],
             col.name = names(meta_cells)
         )
-
+        }
+        
         # add feature metadata
+        names(gobject@feat_metadata$cell) <- gsub(" ", "_", names(gobject@feat_metadata$cell))
         meta_genes <- data.table::setDF(
-            get_feature_metadata(
+          getFeatureMetadata(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = assay_use,
@@ -1602,15 +1611,14 @@ giottoToSeuratV5 <- function(gobject,
             )
         )
         rownames(meta_genes) <- meta_genes$feat_ID
-        for (i in seq_along(sobj@assays)) {
-            # Check if assay_slot has @meta.data or @meta.features
-            if ("meta.data" %in% slotNames(sobj@assays[[i]])) {
-                sobj@assays[[i]]@meta.data <- meta_genes
-            } else if ("meta.features" %in% slotNames(sobj@assays[[i]])) {
-                sobj@assays[[i]]@meta.features <- meta_genes
-            } else {
-                warning(paste("No suitable metadata slot found for assay", i))
-            }
+        if ("meta.data" %in% slotNames(sobj@assays[[assay_use]])) {
+          sobj@assays[[assay_use]]@meta.data <- meta_genes
+          message(paste("Meta data updated for assay:", assay_use))
+        } else if ("meta.features" %in% slotNames(sobj@assays[[assay_use]])) {
+          sobj@assays[[assay_use]]@meta.features <- meta_genes
+          message(paste("Meta features updated for assay:", assay_use))
+        } else {
+          warning(paste("No suitable metadata slot found for assay", assay_use))
         }
 
         # dim reduction
@@ -2331,15 +2339,18 @@ seuratToGiottoV5 <- function(sobject,
         }
         # Subcellular
         name <- names(sobject@images)
-        # if (!is.null(subcellular_assay)){
         if (length(sobject@assays[[subcellular_assay]]) == 1) {
+          if (!is.null(Seurat::Images(
+            object = sobject,
+            assay = spatial_assay
+          ))) {
             spat_coord <- Seurat::GetTissueCoordinates(sobject)
             colnames(spat_coord) <- c("sdimx", "sdimy")
             spat_coord$cell_ID <- rownames(spat_coord)
             exp <- exp[, c(intersect(spat_coord$cell_ID, colnames(exp)))]
             spat_loc <- spat_coord
+          }
         }
-        # }
         if (!length(sobject@images) == 0) {
             for (i in names(sobject@images)) {
                 if ("molecules" %in% names(sobject@images[[i]]) == TRUE) {
