@@ -157,6 +157,7 @@ setMethod(
     }
 )
 
+#' @export
 .DollarNames.giotto <- function(x, pattern) {
     colnames(pDataDT(x))
 }
