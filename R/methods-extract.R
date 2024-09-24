@@ -120,6 +120,31 @@ NULL
 #'
 NULL
 
+#' @title Subset `giotto` subobjects
+#' @name subset_giotto_subobjects
+#' @aliases `[[.giotto`
+#' @description
+#' Subset a `giotto` object with `[[` to disassemble it into a list of Giotto
+#' S4 subobjects. If `drop` is `FALSE`, the selected subobjects
+#' will be reassembled into a new `giotto` object. Note that indexing within 
+#' the `[[` filters for only those subobjects that have those attributes.
+#' This may remove some unexpected information. For specifically splitting the
+#' `giotto` object by spatial unit and/or feature type while keeping all
+#' expected information, use [sliceGiotto()]
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' force(g)
+#' 
+#' # return as lists of subobjects with drop = TRUE (default)
+#' g[[, "raw"]]
+#' g[["expression", spat_unit = "aggregate"]]
+#' 
+#' # return as a subset giotto object with drop = FALSE
+#' g[[, "raw", drop = FALSE]]
+#' g[[spat_unit = "aggregate", drop = FALSE]]
+#' 
+NULL
+
 # --------------------------------------------------------------------------- #
 
 # $ S4 access generic ####
@@ -1148,46 +1173,103 @@ setMethod(
 )
 
 # * [[ ####
+
+#' @rdname subset_giotto_subobjects
+#' @export
 setMethod(
     "[[", signature(x = "giotto", i = "missing", j = "missing"),
-    function(x, spat_unit = NULL, feat_type = NULL, ...) {
-        as.list(
+    function(x, spat_unit = NULL, feat_type = NULL, drop = TRUE, ...) {
+        res <- as.list(
             x, spat_unit = spat_unit, feat_type = feat_type, ...
         )
+        if (drop) return(res)
+        else {
+            g <- giotto(initialize = FALSE, instructions = instructions(x))
+            g <- setGiotto(g, res, verbose = FALSE)
+            if (!is.null(spat_unit)) activeSpatUnit(g) <- spat_unit[[1]]
+            if (!is.null(feat_type)) activeFeatType(g) <- feat_type[[1]]
+            return(g)
+        }
     }
 )
 
+#' @rdname subset_giotto_subobjects
+#' @export
 setMethod(
     "[[", signature(x = "giotto", i = "character", j = "missing"),
-    function(x, i, spat_unit = NULL, feat_type = NULL,  ...) {
-        as.list(
+    function(x, i, spat_unit = NULL, feat_type = NULL, drop = TRUE, ...) {
+        res <- as.list(
             x, slots = i, spat_unit = spat_unit, feat_type = feat_type, ...
         )
+        if (drop) return(res)
+        else {
+            g <- giotto(initialize = FALSE, instructions = instructions(x))
+            g <- setGiotto(g, res, verbose = FALSE)
+            if (!is.null(spat_unit)) activeSpatUnit(g) <- spat_unit[[1]]
+            if (!is.null(feat_type)) activeFeatType(g) <- feat_type[[1]]
+            return(g)
+        }
     }
 )
 
+#' @rdname subset_giotto_subobjects
+#' @export
 setMethod(
     "[[", signature(x = "giotto", i = "missing", j = "character"),
-    function(x, j, spat_unit = NULL, feat_type = NULL,  ...) {
-        as.list(x, 
+    function(x, j, spat_unit = NULL, feat_type = NULL, drop = TRUE, ...) {
+        res <- as.list(x, 
             name = j,
             spat_unit = spat_unit, 
             feat_type = feat_type, 
             ...
         )
+        if (drop) return(res)
+        else {
+            g <- giotto(initialize = FALSE, instructions = instructions(x))
+            g <- setGiotto(g, res, verbose = FALSE)
+            if (!is.null(spat_unit)) activeSpatUnit(g) <- spat_unit[[1]]
+            if (!is.null(feat_type)) activeFeatType(g) <- feat_type[[1]]
+            if (is.null(activeSpatUnit(g))) {
+                su <- spatUnit(res)
+                activeSpatUnit(g) <- su[!is.na(su)][[1L]]
+            }
+            if (is.null(activeFeatType(g))) {
+                ft <- featType(res)
+                activeFeatType(g) <- ft[!is.na(ft)][[1L]]
+            }
+            return(g)
+        }
     }
 )
 
+#' @rdname subset_giotto_subobjects
+#' @export
 setMethod(
     "[[", signature(x = "giotto", i = "character", j = "character"),
-    function(x, i, j, spat_unit = NULL, feat_type = NULL,  ...) {
-        as.list(x, 
+    function(x, i, j, spat_unit = NULL, feat_type = NULL, drop = TRUE, ...) {
+        res <- as.list(x, 
             slots = i, 
             name = j, 
             spat_unit = spat_unit, 
             feat_type = feat_type,
             ...
         )
+        if (drop) return(res)
+        else {
+            g <- giotto(initialize = FALSE, instructions = instructions(x))
+            g <- setGiotto(g, res, verbose = FALSE)
+            if (!is.null(spat_unit)) activeSpatUnit(g) <- spat_unit[[1]]
+            if (!is.null(feat_type)) activeFeatType(g) <- feat_type[[1]]
+            if (is.null(activeSpatUnit(g))) {
+                su <- spatUnit(res)
+                activeSpatUnit(g) <- su[!is.na(su)][[1L]]
+            }
+            if (is.null(activeFeatType(g))) {
+                ft <- featType(res)
+                activeFeatType(g) <- ft[!is.na(ft)][[1L]]
+            }
+            return(g)
+        }
     }
 )
 
