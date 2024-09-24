@@ -6,9 +6,6 @@ giotto_obj <- GiottoData::loadGiottoMini("visium")
 seurat_obj <- giottoToSeuratV5(giotto_obj)
 spe_obj <- giottoToSpatialExperiment(giotto_obj)
 
-Seurat_obj2 <- SeuratData::LoadData("stxBrain", type = "anterior1" )
-giotto_obj2 <- seuratToGiottoV5(Seurat_obj2)
-
 giotto_obj_roundtrip <- seuratToGiottoV5(seurat_obj, "rna")
 
 test_that("giottotoseurat function handles basic conversion", {
