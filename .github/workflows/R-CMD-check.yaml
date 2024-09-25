@@ -54,13 +54,17 @@ jobs:
         run: |
           Rscript -e "install.packages('pak')"
           
+      - name: Install remotes
+        run: |
+          Rscript -e "install.packages('remotes')"
+      
       - name: Install GiottoUtils
         run: |
-          Rscript -e "pak::pkg_install('drieslab/GiottoUtils@dev')"
+          Rscript -e "remotes::install_github('drieslab/GiottoUtils@dev')"
       
       - name: Install GiottoData
         run: |
-          Rscript -e "pak::pkg_install('drieslab/GiottoData')"
+          Rscript -e "remotes::install_github('drieslab/GiottoData')"
           
       - name: Install rcmdcheck
         run: |
@@ -158,10 +162,6 @@ jobs:
       - name: Install HDF5Array
         run: |
           Rscript -e "BiocManager::install('HDF5Array')"
-          
-      - name: Install remotes
-        run: |
-          Rscript -e "BiocManager::install('remotes')"
           
       - name: Install rgl
         run: |
