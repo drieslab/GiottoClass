@@ -2,6 +2,7 @@
 
 S3method(.DollarNames,affine2d)
 S3method(.DollarNames,dimObj)
+S3method(.DollarNames,giotto)
 S3method(.DollarNames,metaData)
 S3method(.DollarNames,spatEnrObj)
 S3method(.DollarNames,spatLocsObj)
