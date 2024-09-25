@@ -65,6 +65,8 @@ NULL
 # spatUnit ####
 
 # default for unknown types
+#' @describeIn spatUnit-generic Get spatial unit information
+#' @export
 setMethod("spatUnit", signature("ANY"), function(x) {
     NA_character_
 })
@@ -109,6 +111,8 @@ setMethod("spatUnit<-", signature("giottoPolygon"), function(x, value) {
 # featType ####
 
 # default for unknown types
+#' @describeIn featType-generic Get feature type information
+#' @export
 setMethod("featType", signature("ANY"), function(x) {
     NA_character_
 })

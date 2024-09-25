@@ -157,7 +157,7 @@ NULL
 # $ S4 access generic ####
 
 ## * coordDataDT ####
-
+#' @describeIn subset_dollar Subset giotto object
 setMethod(
     "$", signature("giotto"), function(x, name) {
         spatValues(x, feats = name)[[name]]
@@ -1173,6 +1173,7 @@ setMethod(
     }
 )
 
+#' @describeIn subset_giotto Subset giotto objects
 setMethod(
     "[", signature(x = "giotto", i = "missing", j = "missing", drop = "missing"),
     function(x, ...) {
@@ -1481,6 +1482,7 @@ sliceGiotto <- function(
 
 #' @name as.list
 #' @title Coerce to a list
+#' @aliases as.list,giotto
 #' @description Generic to coerce to a list if possible
 #' @param x the object to coerce
 #' @param slots character vector. Which data slots to include in list. See

@@ -4,6 +4,7 @@
 \alias{spatUnit-generic}
 \alias{spatUnit}
 \alias{spatUnit<-}
+\alias{spatUnit,ANY-method}
 \alias{spatUnit,list-method}
 \alias{spatUnit,spatData-method}
 \alias{spatUnit,giottoPolygon-method}
@@ -11,6 +12,8 @@
 \alias{spatUnit<-,giottoPolygon-method}
 \title{Spatial unit information}
 \usage{
+\S4method{spatUnit}{ANY}(x)
+
 \S4method{spatUnit}{list}(x)
 
 \S4method{spatUnit}{spatData}(x)
@@ -34,6 +37,8 @@ access and set spat_unit slot of S4 subobject
 }
 \section{Functions}{
 \itemize{
+\item \code{spatUnit(ANY)}: Get spatial unit information
+
 \item \code{spatUnit(spatData)}: Get spatial unit information
 
 \item \code{spatUnit(giottoPolygon)}: Get spatial unit information
