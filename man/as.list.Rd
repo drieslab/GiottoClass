@@ -20,6 +20,9 @@ details}
 
 \item{\dots}{additional arguments}
 }
+\value{
+list
+}
 \description{
 Generic to coerce to a list if possible
 }

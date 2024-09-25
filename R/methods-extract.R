@@ -1494,6 +1494,7 @@ sliceGiotto <- function(
 #' `"spatial_info", "spatial_locs", "spatial_network", "feat_info",
 #' "expression", "cell_metadata", "feat_metadata", "spatial_enrichment",
 #' "nn_network", "dimension_reduction", "multiomics"`
+#' @returns list
 #' @export
 setMethod("as.list", signature("giotto"), function(
         x, slots, spat_unit = NULL, feat_type = NULL, name = NULL, ...
