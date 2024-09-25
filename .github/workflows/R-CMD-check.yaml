@@ -195,15 +195,12 @@ jobs:
         run: |
           Rscript -e "BiocManager::install('SummarizedExperiment')"
 
+      - name: Run BiocCheck
+        run: |
+          Rscript -e "BiocCheck::BiocCheck()"
+      
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
           
-      
-
-      - name: Run BiocCheck
-        run: |
-          Rscript -e "BiocCheck::BiocCheck()"
-
-
