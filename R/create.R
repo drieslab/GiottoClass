@@ -1297,8 +1297,8 @@ create_expr_obj <- function(
         provenance = NULL,
         misc = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_expr_obj()",
-        with = "Giotto::createExprObj()"
+        what = "create_expr_obj()",
+        with = "createExprObj()"
     )
 
     if (is.null(exprMat)) exprMat <- matrix()
@@ -1370,8 +1370,8 @@ create_cell_meta_obj <- function(
         feat_type = "rna",
         provenance = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_cell_meta_obj()",
-        with = "Giotto::createCellMetaObj()"
+        what = "create_cell_meta_obj()",
+        with = "createCellMetaObj()"
     )
 
     if (is.null(col_desc)) col_desc <- NA_character_
@@ -1450,8 +1450,8 @@ create_feat_meta_obj <- function(
         feat_type = "rna",
         provenance = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_feat_meta_obj()",
-        with = "Giotto::createFeatMetaObj()"
+        what = "create_feat_meta_obj()",
+        with = "createFeatMetaObj()"
     )
 
     if (is.null(col_desc)) col_desc <- NA_character_
@@ -1541,8 +1541,8 @@ create_dim_obj <- function(
         misc = NULL,
         my_rownames = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_dim_obj()",
-        with = "Giotto::createDimObj()"
+        what = "create_dim_obj()",
+        with = "createDimObj()"
     )
 
     if (is.null(reduction_method)) reduction_method <- NA_character_
@@ -1638,8 +1638,8 @@ create_nn_net_obj <- function(
         provenance = NULL,
         misc = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_nn_net_obj()",
-        with = "Giotto::createNearestNetObj()"
+        what = "create_nn_net_obj()",
+        with = "createNearestNetObj()"
     )
 
     if (is.null(nn_type)) nn_type <- NA_character_
@@ -1717,8 +1717,8 @@ create_spat_locs_obj <- function(
         provenance = NULL,
         misc = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_spat_locs_obj()",
-        with = "Giotto::createSpatLocsObj()"
+        what = "create_spat_locs_obj()",
+        with = "createSpatLocsObj()"
     )
 
     # DT vars
@@ -1826,8 +1826,8 @@ create_spat_net_obj <- function(
         provenance = NULL,
         misc = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_spat_net_obj()",
-        with = "Giotto::createSpatNetObj()"
+        what = "create_spat_net_obj()",
+        with = "createSpatNetObj()"
     )
 
     if (is.null(method)) method <- NA_character_
@@ -1912,8 +1912,8 @@ create_spat_enr_obj <- function(
         provenance = NULL,
         misc = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_spat_enr_obj()",
-        with = "Giotto::createSpatEnrObj()"
+        what = "create_spat_enr_obj()",
+        with = "createSpatEnrObj()"
     )
 
     if (is.null(method)) method <- NA_character_

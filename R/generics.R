@@ -64,7 +64,6 @@ setGeneric("reconnect", function(x, ...) standardGeneric("reconnect"))
 if (!isGeneric("nrow")) setOldClass("nrow")
 if (!isGeneric("ncol")) setOldClass("ncol")
 if (!isGeneric("dim")) setOldClass("dim")
-# if(!isGeneric('t')) setOldClass('t', where = as.environment("package:Giotto"))
 
 ## colnames and rownames generics ####
 if (!isGeneric("colnames")) setOldClass("colnames")

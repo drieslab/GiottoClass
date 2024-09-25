@@ -507,7 +507,7 @@ updateGiottoObject <- function(gobject) {
 # ! Any slot modifications should also be reflected in packedGiotto class !
 
 #' @title S4 giotto Class
-#' @description \pkg{Giotto}'s core object that encapsulates all the components
+#' @description Giotto's core object that encapsulates all the components
 #' of a spatial-omic project and facilitates analyses.
 #' @concept giotto object
 #' @slot expression expression information
