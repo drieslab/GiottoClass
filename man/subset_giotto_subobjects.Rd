@@ -17,6 +17,21 @@
 
 \S4method{[[}{giotto,character,character}(x, i, j, spat_unit = NULL, feat_type = NULL, drop = TRUE, ...)
 }
+\arguments{
+\item{x}{giotto object}
+
+\item{spat_unit}{spatial unit (e.g. "cell")}
+
+\item{feat_type}{feature type to use (e.g. "rna", "protein")}
+
+\item{drop}{logical. Default = TRUE}
+
+\item{\dots}{additional arguments}
+
+\item{i}{character. Indicates the slot name}
+
+\item{j}{character. Indicates the subobject name}
+}
 \description{
 Subset a \code{giotto} object with \code{[[} to disassemble it into a list of Giotto
 S4 subobjects. If \code{drop} is \code{FALSE}, the selected subobjects
