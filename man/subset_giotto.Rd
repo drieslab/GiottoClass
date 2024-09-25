@@ -56,10 +56,6 @@ are selected}
 \code{substitute()}. Set this to \code{FALSE} when calling from a function, although
 that may not be recommended since NSE output can be unexpected when not used
 interactively.}
-
-\item{feat_ids}{feature IDs to select}
-
-\item{cell_ids}{cell/spatial IDs to select}
 }
 \description{
 Subset a giotto object with \code{[} or \code{subset()} generic. The
