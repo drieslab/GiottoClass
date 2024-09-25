@@ -140,6 +140,58 @@ jobs:
       - name: Install Seurat
         run: |
           Rscript -e "BiocManager::install('Seurat')"
+      
+      - name: Install chihaya
+        run: |
+          Rscript -e "BiocManager::install('chihaya')"
+      
+      - name: Install DelayedArray
+        run: |
+          Rscript -e "BiocManager::install('DelayedArray')"
+          
+      - name: Install DelayedMatrixStats
+        run: |
+          Rscript -e "BiocManager::install('DelayedMatrixStats')"
+          
+      - name: Install HDF5Array
+        run: |
+          Rscript -e "BiocManager::install('HDF5Array')"
+          
+      - name: Install remotes
+        run: |
+          Rscript -e "BiocManager::install('remotes')"
+          
+      - name: Install rgl
+        run: |
+          Rscript -e "BiocManager::install('rgl')"
+          
+      - name: Install rhdf5
+        run: |
+          Rscript -e "BiocManager::install('rhdf5')"
+      
+      - name: Install S4Vectors
+        run: |
+          Rscript -e "BiocManager::install('S4Vectors')"
+      
+      - name: Install ScaledMatrix
+        run: |
+          Rscript -e "BiocManager::install('ScaledMatrix')"
+          
+      - name: Install SingleCellExperiment
+        run: |
+          Rscript -e "BiocManager::install('SingleCellExperiment')"
+          
+      - name: Install SpatialExperiment
+        run: |
+          Rscript -e "BiocManager::install('SpatialExperiment')"
+      
+      - name: Install STexampleData
+        run: |
+          Rscript -e "BiocManager::install('STexampleData')"
+      
+      - name: Install SummarizedExperiment
+        run: |
+          Rscript -e "BiocManager::install('SummarizedExperiment')"
 
       - uses: r-lib/actions/check-r-package@v2
         with:
