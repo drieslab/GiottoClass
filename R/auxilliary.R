@@ -1346,7 +1346,6 @@ calculateMetaTableCells <- function(
 #'     name = "norm_scaled_mean_metafeat"
 #' )
 #' showGiottoSpatEnrichments(g)
-#' @seealso [GiottoVisuals::spatCellPlot()]
 #' @export
 createMetafeats <- function(
         gobject,
