@@ -131,6 +131,13 @@ NULL
 #' This may remove some unexpected information. For specifically splitting the
 #' `giotto` object by spatial unit and/or feature type while keeping all
 #' expected information, use [sliceGiotto()]
+#' @param x giotto object
+#' @param spat_unit spatial unit (e.g. "cell")
+#' @param feat_type feature type to use (e.g. "rna", "protein")
+#' @param i character. Indicates the slot name
+#' @param j character. Indicates the subobject name
+#' @param drop logical. Default = TRUE
+#' @param \dots additional arguments
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' force(g)
@@ -1277,8 +1284,6 @@ setMethod(
 
 
 #' @rdname subset_giotto
-#' @param feat_ids feature IDs to select
-#' @param cell_ids cell/spatial IDs to select
 #' @param subset Logical expression evaluated in expression values
 #' @param negate logical. if `TRUE` all IDs that are **not** in the `subset` 
 #' are selected
@@ -1480,6 +1485,9 @@ sliceGiotto <- function(
 #' @param x the object to coerce
 #' @param slots character vector. Which data slots to include in list. See
 #'   details
+#' @param spat_unit spatial unit (e.g. "cell")
+#' @param feat_type feature type to use (e.g. "rna", "protein")
+#' @param name name of the elements to select from the slot
 #' @param \dots additional arguments
 #' @details
 #' * Giotto method - the slots argument currently accepts any or multiple of:

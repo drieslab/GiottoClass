@@ -12,6 +12,12 @@
 \item{slots}{character vector. Which data slots to include in list. See
 details}
 
+\item{spat_unit}{spatial unit (e.g. "cell")}
+
+\item{feat_type}{feature type to use (e.g. "rna", "protein")}
+
+\item{name}{name of the elements to select from the slot}
+
 \item{\dots}{additional arguments}
 }
 \description{
