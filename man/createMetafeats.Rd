@@ -161,6 +161,3 @@ g <- createMetafeats(
 )
 showGiottoSpatEnrichments(g)
 }
-\seealso{
-\code{\link[GiottoVisuals:spatCellPlot]{GiottoVisuals::spatCellPlot()}}
-}
