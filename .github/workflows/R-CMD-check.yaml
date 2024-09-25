@@ -56,7 +56,7 @@ jobs:
           
       - name: Install GiottoUtils
         run: |
-          Rscript -e "pak::pkg_install('drieslab/GiottoUtils')"
+          Rscript -e "pak::pkg_install('drieslab/GiottoUtils@dev')"
       
       - name: Install GiottoData
         run: |
