@@ -60,6 +60,9 @@ are selected}
 that may not be recommended since NSE output can be unexpected when not used
 interactively.}
 }
+\value{
+giotto object
+}
 \description{
 Subset a giotto object with \code{[} or \code{subset()} generic. The
 implementation is different from \code{\link[=subsetGiotto]{subsetGiotto()}} in that all spatial units
@@ -85,5 +88,4 @@ subset(g, nr_feats > 300,
     cell_ids = c("GAATCGCCGGACACGG-1", "GAGGGCATCGCGTATC-1")
 )
 subset(g, Gfap + Gna12 > 10)
-
 }

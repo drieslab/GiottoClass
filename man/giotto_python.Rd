@@ -75,6 +75,9 @@ executable.}
 
 \item{initialize}{force initialization of set python path. Default = TRUE.}
 }
+\value{
+installed Giotto environment
+}
 \description{
 Giotto has several functions that utilize python packages. To
 facilitate this, utilities are provided for creating, removing, and
@@ -241,7 +244,6 @@ if (FALSE) {
     temp_env <- tempdir()
     installGiottoEnvironment(mini_install_path = temp_env)
 }
-
 # detect AND initialize a python environment
 if (FALSE) {
     set_giotto_python_path()

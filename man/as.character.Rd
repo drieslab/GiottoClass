@@ -15,6 +15,9 @@
 
 \item{...}{additional params to pass (none implemented)}
 }
+\value{
+character
+}
 \description{
 Create a text representation of an object
 }

@@ -117,7 +117,7 @@ NULL
 #'     cell_ids = c("GAATCGCCGGACACGG-1", "GAGGGCATCGCGTATC-1")
 #' )
 #' subset(g, Gfap + Gna12 > 10)
-#'
+#' @returns giotto object
 NULL
 
 #' @title Subset `giotto` subobjects
@@ -149,7 +149,7 @@ NULL
 #' # return as a subset giotto object with drop = FALSE
 #' g[[, "raw", drop = FALSE]]
 #' g[[spat_unit = "aggregate", drop = FALSE]]
-#' 
+#' @returns giotto subobject
 NULL
 
 # --------------------------------------------------------------------------- #

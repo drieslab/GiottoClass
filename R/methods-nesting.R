@@ -273,6 +273,7 @@ NULL
 #' @param force_replace logical. default = FALSE. Whether to replace the
 #' names of objects for which the name already has a name for
 #' @keywords internal
+#' @returns list
 assign_objnames_2_list <- function(obj_list, force_replace = FALSE) {
     if (is.null(obj_list)) {
         return(obj_list)

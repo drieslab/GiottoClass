@@ -1670,6 +1670,7 @@ giottoLargeImage <- setClass(
 #' transforms
 #' @slot funs list of functions associated with the object. Primarily to
 #' perform the delayed/lazy operations
+#' @returns giottoAffineImage
 setClass(
     "giottoAffineImage",
     contains = c("giottoLargeImage"),

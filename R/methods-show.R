@@ -7,6 +7,7 @@ NULL
 #' Create a text representation of an object
 #' @param x object
 #' @param ... additional params to pass (none implemented)
+#' @returns character
 #' @examples
 #' img <- GiottoData::loadSubObjectMini("giottoLargeImage")
 #' as.character(img)
@@ -628,6 +629,7 @@ setMethod(
 
 ## giottoPoints ####
 #' @rdname show
+#' @returns giotto slot
 setMethod("show", signature = "giottoPoints", function(object) {
     cat("An object of class giottoPoints\n")
     .show_feat(object)

@@ -500,7 +500,7 @@ checkGiottoEnvironment <- function(envname = NULL,
 #'     temp_env <- tempdir()
 #'     installGiottoEnvironment(mini_install_path = temp_env)
 #' }
-#'
+#' @returns installed Giotto environment
 #' @export
 installGiottoEnvironment <- function(
         packages_to_install = c(
