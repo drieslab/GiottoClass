@@ -117,7 +117,7 @@ NULL
 #'     cell_ids = c("GAATCGCCGGACACGG-1", "GAGGGCATCGCGTATC-1")
 #' )
 #' subset(g, Gfap + Gna12 > 10)
-#'
+#' @returns giotto object
 NULL
 
 #' @title Subset `giotto` subobjects
@@ -149,7 +149,7 @@ NULL
 #' # return as a subset giotto object with drop = FALSE
 #' g[[, "raw", drop = FALSE]]
 #' g[[spat_unit = "aggregate", drop = FALSE]]
-#' 
+#' @returns giotto subobject
 NULL
 
 # --------------------------------------------------------------------------- #
@@ -157,7 +157,7 @@ NULL
 # $ S4 access generic ####
 
 ## * coordDataDT ####
-
+#' @describeIn subset_dollar Subset giotto object
 setMethod(
     "$", signature("giotto"), function(x, name) {
         spatValues(x, feats = name)[[name]]
@@ -1173,6 +1173,7 @@ setMethod(
     }
 )
 
+#' @describeIn subset_giotto Subset giotto objects
 setMethod(
     "[", signature(x = "giotto", i = "missing", j = "missing", drop = "missing"),
     function(x, ...) {
@@ -1481,6 +1482,7 @@ sliceGiotto <- function(
 
 #' @name as.list
 #' @title Coerce to a list
+#' @aliases as.list,giotto
 #' @description Generic to coerce to a list if possible
 #' @param x the object to coerce
 #' @param slots character vector. Which data slots to include in list. See
@@ -1494,6 +1496,7 @@ sliceGiotto <- function(
 #' `"spatial_info", "spatial_locs", "spatial_network", "feat_info",
 #' "expression", "cell_metadata", "feat_metadata", "spatial_enrichment",
 #' "nn_network", "dimension_reduction", "multiomics"`
+#' @returns list
 #' @export
 setMethod("as.list", signature("giotto"), function(
         x, slots, spat_unit = NULL, feat_type = NULL, name = NULL, ...

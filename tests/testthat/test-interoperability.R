@@ -1,5 +1,4 @@
 library(testthat)
-library(Giotto)
 library(Seurat)
 
 giotto_obj <- GiottoData::loadGiottoMini("visium")

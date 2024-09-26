@@ -2,6 +2,7 @@
 % Please edit documentation in R/methods-extract.R
 \name{as.list}
 \alias{as.list}
+\alias{as.list,giotto}
 \title{Coerce to a list}
 \usage{
 \S4method{as.list}{giotto}(x, slots, spat_unit = NULL, feat_type = NULL, name = NULL, ...)
@@ -19,6 +20,9 @@ details}
 \item{name}{name of the elements to select from the slot}
 
 \item{\dots}{additional arguments}
+}
+\value{
+list
 }
 \description{
 Generic to coerce to a list if possible

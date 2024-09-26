@@ -32,6 +32,9 @@
 
 \item{j}{character. Indicates the subobject name}
 }
+\value{
+giotto subobject
+}
 \description{
 Subset a \code{giotto} object with \code{[[} to disassemble it into a list of Giotto
 S4 subobjects. If \code{drop} is \code{FALSE}, the selected subobjects
@@ -52,5 +55,4 @@ g[["expression", spat_unit = "aggregate"]]
 # return as a subset giotto object with drop = FALSE
 g[[, "raw", drop = FALSE]]
 g[[spat_unit = "aggregate", drop = FALSE]]
-
 }

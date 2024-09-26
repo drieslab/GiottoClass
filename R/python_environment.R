@@ -1,7 +1,7 @@
 #' @title Giotto python environment
 #' @name giotto_python
 #' @description
-#' \pkg{Giotto} has several functions that utilize python packages. To
+#' Giotto has several functions that utilize python packages. To
 #' facilitate this, utilities are provided for creating, removing, and
 #' attaching python environments. Python environments are currently handled
 #' entirely through \pkg{reticulate}.
@@ -82,7 +82,7 @@
 #' repository for advanced installation and convenience. To install the most
 #' up-to-date Giotto environment using a .yml file, open a shell compatible
 #' with conda/miniconda and navigate to the directory specified by
-#' `system.file(package = "Giotto", "python/configuration")`. Once in this
+#' system.file(package = "Giotto", "python/configuration"). Once in this
 #' directory, run the following to create your environment in one step:
 #'
 #' \preformatted{conda env create -n giotto_env -f ./genv.yml}
@@ -109,10 +109,10 @@ NULL
 #' @describeIn giotto_python
 #'
 #' - Based on `envname`, detect if there a conda or miniconda environment
-#' accessible by \pkg{Giotto}. By default, the `envname` `"giotto_env"`, then
+#' accessible by Giotto. By default, the `envname` `"giotto_env"`, then
 #' the option `"giotto.py_path"` is checked, but an alternative can be
 #' provided.
-#' - Setting `envname` as `":auto:"` will let  \pkg{Giotto} autodetect a python
+#' - Setting `envname` as `":auto:"` will let  Giotto autodetect a python
 #' env to use. See section for `set_giotto_python_path()` for details on the
 #' autodetection.
 #' - Returns `TRUE` if an env is detected and accessible by Giotto. `FALSE`
@@ -475,7 +475,7 @@ checkGiottoEnvironment <- function(envname = NULL,
 #' \pkg{reticulate}. By default, the envname used will be `"giotto_env"`. If
 #' another name is used, you will have to provide that envname at the start of
 #' a session (see **Choosing an environment** above). \cr This includes a
-#' miniconda installation and also a set of python packages that \pkg{Giotto}
+#' miniconda installation and also a set of python packages that Giotto
 #' may often use. See details for further information on setting up an
 #' environment with a .yml
 #' - Returns `NULL`
@@ -500,7 +500,7 @@ checkGiottoEnvironment <- function(envname = NULL,
 #'     temp_env <- tempdir()
 #'     installGiottoEnvironment(mini_install_path = temp_env)
 #' }
-#'
+#' @returns installed Giotto environment
 #' @export
 installGiottoEnvironment <- function(
         packages_to_install = c(
