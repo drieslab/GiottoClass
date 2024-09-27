@@ -1480,9 +1480,10 @@ sliceGiotto <- function(
 
 # * as.list ####
 
-#' @name as.list
+#' @rdname as.list
 #' @title Coerce to a list
-#' @aliases as.list,giotto
+#' @docType methods
+#' @method as.list giotto
 #' @description Generic to coerce to a list if possible
 #' @param x the object to coerce
 #' @param slots character vector. Which data slots to include in list. See
@@ -1497,7 +1498,7 @@ sliceGiotto <- function(
 #' "expression", "cell_metadata", "feat_metadata", "spatial_enrichment",
 #' "nn_network", "dimension_reduction", "multiomics"`
 #' @returns list
-#' @export
+#' @exportMethod as.list
 setMethod("as.list", signature("giotto"), function(
         x, slots, spat_unit = NULL, feat_type = NULL, name = NULL, ...
 ) {
