@@ -50,8 +50,13 @@ update_giotto_params <- function(
 #' objHistory(g)
 #' @export
 objHistory <- function(object) {
+    p <- object@parameters
+    
     message("Steps and parameters used:")
-    message(object@parameters)
+    for(i in seq_along(p)) {
+        message(sprintf("<%s>", names(p)[[i]]))
+        GiottoUtils::print_list(p[[i]], pre = "  ")
+    }
     invisible(x = object@parameters)
 }
 
