@@ -11,7 +11,7 @@
 #' @param description description of function run
 #' @param return_gobject logical. Whether the giotto object should be returned
 #' @param toplevel expected relative stackframe where call that is being
-#' recorded was made
+#' recorded was made. If negative, param recording is skipped
 #' @returns giotto object or list of parameters
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
@@ -22,6 +22,8 @@ update_giotto_params <- function(gobject,
     description = "_test",
     return_gobject = TRUE,
     toplevel = 2) {
+    if (toplevel < 0) return(gobject) # skip if toplevel negative
+    
     parameters_list <- gobject@parameters
     number_of_rounds <- length(parameters_list)
     update_name <- paste0(number_of_rounds, description)
