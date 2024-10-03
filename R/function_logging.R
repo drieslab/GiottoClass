@@ -42,19 +42,32 @@ update_giotto_params <- function(gobject,
 #' @name objHistory
 #' @description Print and return giotto object history
 #' @param object giotto object
+#' @param summarized logical. whether print should be summarized
 #' @returns list
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' objHistory(g)
 #' @export
-objHistory <- function(object) {
+objHistory <- function(object, summarized = FALSE) {
     p <- object@parameters
-    
-    message("Steps and parameters used:")
-    for(i in seq_along(p)) {
-        message(sprintf("<%s>", names(p)[[i]]))
-        GiottoUtils::print_list(p[[i]], pre = "  ")
+
+    if (summarized) {
+        message("Processing steps:")
+        for (step in names(p)) {
+            message(step)
+            sub_step <- p[[step]]
+            if (any(grepl("name", names(sub_step)) == TRUE)) {
+                selected_names <- grep("name", names(sub_step), value = TRUE)
+                wrap_msg("\t name info: ", sub_step[selected_names])
+            }
+        }
+    } else {
+        message("Steps and parameters used:")
+        for (i in seq_along(p)) {
+            cat(GiottoUtils::color_blue(sprintf("<%s>\n", names(p)[[i]])))
+            GiottoUtils::print_list(p[[i]], pre = "  ")
+        }
     }
     invisible(x = object@parameters)
 }
@@ -73,6 +86,13 @@ objHistory <- function(object) {
 #' showProcessingSteps(g)
 #' @export
 showProcessingSteps <- function(gobject) {
+    deprecate_warn(
+        when = "0.4.0",
+        what = "showProcessingSteps()",
+        with = "objHistory()",
+        details = "objHistory with arg `summarized = TRUE` replaces this functionality"
+    )
+
     parameters <- gobject@parameters
 
     message("Processing steps:")
