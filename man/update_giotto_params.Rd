@@ -19,7 +19,7 @@ update_giotto_params(
 \item{return_gobject}{logical. Whether the giotto object should be returned}
 
 \item{toplevel}{expected relative stackframe where call that is being
-recorded was made}
+recorded was made. If negative, param recording is skipped}
 }
 \value{
 giotto object or list of parameters
