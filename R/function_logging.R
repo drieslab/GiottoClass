@@ -48,6 +48,7 @@ update_giotto_params <- function(gobject,
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' objHistory(g)
+#' objHistory(g, summarized = TRUE)
 #' @export
 objHistory <- function(object, summarized = FALSE) {
     p <- object@parameters
