@@ -234,7 +234,9 @@ setMethod("ext", signature("giottoAffineImage"), function(x, ...) {
     ext(x@extent)
 })
 
-
+#' @rdname ext
+#' @export
+setMethod("ext", signature("affine2d"), function(x, ...) ext(x@anchor))
 
 
 
@@ -335,4 +337,11 @@ setMethod("ext<-", signature(
     x@boundaries <- adj
 
     return(x)
+})
+
+#' @rdname ext
+#' @export
+setMethod("ext<-", signature("affine2d"), function(x, value) {
+    x@anchor <- .ext_to_num_vec(value)
+    return(initialize(x))
 })
