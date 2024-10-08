@@ -15,7 +15,7 @@
 - `setGiotto()` now only initializes and performs checks once all items are added if a `list` input is provided.
 - `instructions()` with no args will now call `createGiottoInstructions()`. You can also supply named args.
 - `instructions(gobject, param)` and `instructions(gobject, param)<-` will now work for `giottoInstructions` objects for convenience.
-- `[`, `[[`, `$`, and `subset()` for `giotto` see `?GiottoClass::subset_giotto`
+- `[`, `[[`, `$`, `$<-`, and `subset()` for `giotto` see `?GiottoClass::subset_giotto`
 - `subset` for `spatIDs()` and `featIDs()`
 - `objName()`, `spatUnit()`, `featType()` generics now return `NA_character_` instead of erroring when used on unsupported classes.
 

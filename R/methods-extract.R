@@ -156,11 +156,20 @@ NULL
 
 # $ S4 access generic ####
 
-## * coordDataDT ####
+
 #' @describeIn subset_dollar Subset giotto object
 setMethod(
     "$", signature("giotto"), function(x, name) {
         spatValues(x, feats = name)[[name]]
+    }
+)
+
+#' @rdname replace_dollar
+setMethod(
+    "$<-", signature("giotto"), function(x, name, value) {
+        cx <- getCellMetadata(x, output = "data.table", copy_obj = FALSE)
+        cx[, (name) := value]
+        return(x)
     }
 )
 
@@ -169,6 +178,8 @@ setMethod(
     colnames(pDataDT(x))
 }
 
+
+## * coordDataDT ####
 #' @rdname subset_dollar
 #' @section \code{`$`} methods:
 #'   Select by colname from giotto S4 data.table coordinates slot.
