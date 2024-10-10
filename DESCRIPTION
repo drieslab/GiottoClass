@@ -141,6 +141,7 @@ Collate:
     'slot_show.R'
     'spatial_query.R'
     'spatial_structures.R'
+    'split.R'
     'stitch_coordinates.R'
     'subset.R'
     'suite_reexports.R'
