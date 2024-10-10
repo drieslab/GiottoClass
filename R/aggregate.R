@@ -1350,11 +1350,10 @@ setMethod(
 
         # ensure data exists
         if (is.null(overlaps_data)) {
-            .gstop(
+            stop(wrap_txt(
                 "No overlaps found between", objName(x), "and", feat_info, "
-        Please run calculateOverlap() first.",
-                .n = 2L
-            )
+                Please run calculateOverlap() first."
+            ), call. = FALSE)
         }
 
         argslist <- list(
