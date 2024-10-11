@@ -619,9 +619,7 @@ joinGiottoObjects <- function(
 
 
     ## expression and feat IDs
-    ## if no expression matrices are provided, then just combine all feature IDs
     vmsg(.v = verbose, "2. expression data")
-
     avail_expr <- list_expression(gobject = first_obj)
 
     if (!is.null(avail_expr)) {
@@ -650,13 +648,6 @@ joinGiottoObjects <- function(
             comb_gobject <- set_expression_values(
                 gobject = comb_gobject,
                 values = expr_list[[1]],
-                set_defaults = FALSE
-            )
-
-            comb_gobject <- set_feat_id(
-                gobject = comb_gobject,
-                feat_type = avail_expr$feat_type[[exprObj_i]],
-                feat_IDs = combmat[["sort_all_feats"]],
                 set_defaults = FALSE
             )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
