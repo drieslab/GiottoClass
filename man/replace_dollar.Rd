@@ -3,25 +3,25 @@
 \name{replace_dollar}
 \alias{replace_dollar}
 \alias{`$<-`}
-\alias{$<-,giotto-method}
-\alias{$<-,coordDataDT-method}
-\alias{$<-,spatEnrObj-method}
-\alias{$<-,dimObj-method}
-\alias{$<-,metaData-method}
-\alias{$<-,terraVectData-method}
+\alias{$<-,giotto,ANY-method}
+\alias{$<-,coordDataDT,ANY-method}
+\alias{$<-,spatEnrObj,ANY-method}
+\alias{$<-,dimObj,ANY-method}
+\alias{$<-,metaData,ANY-method}
+\alias{$<-,terraVectData,ANY-method}
 \title{Replace part of an object with \verb{$<-}}
 \usage{
-\S4method{$}{giotto}(x, name) <- value
+\S4method{$}{giotto,ANY}(x, name) <- value
 
-\S4method{$}{coordDataDT}(x, name) <- value
+\S4method{$}{coordDataDT,ANY}(x, name) <- value
 
-\S4method{$}{spatEnrObj}(x, name) <- value
+\S4method{$}{spatEnrObj,ANY}(x, name) <- value
 
-\S4method{$}{dimObj}(x, name) <- value
+\S4method{$}{dimObj,ANY}(x, name) <- value
 
-\S4method{$}{metaData}(x, name) <- value
+\S4method{$}{metaData,ANY}(x, name) <- value
 
-\S4method{$}{terraVectData}(x, name) <- value
+\S4method{$}{terraVectData,ANY}(x, name) <- value
 }
 \arguments{
 \item{x}{Giotto S4 object to replace columns from}
