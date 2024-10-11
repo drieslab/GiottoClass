@@ -624,20 +624,7 @@ joinGiottoObjects <- function(
 
     avail_expr <- list_expression(gobject = first_obj)
 
-    if (is.null(avail_expr)) {
-        ## feat IDS
-        for (feat in first_features) {
-            combined_feat_ID <- unique(unlist(all_feat_ID_list[[feat]]))
-            ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-            comb_gobject <- set_feat_id(
-                gobject = comb_gobject,
-                feat_type = feat,
-                feat_IDs = combined_feat_ID,
-                set_defaults = FALSE
-            )
-            ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        }
-    } else {
+    if (!is.null(avail_expr)) {
         for (exprObj_i in seq(nrow(avail_expr))) {
             expr_list <- lapply(updated_object_list, function(gobj) {
                 getExpression(
