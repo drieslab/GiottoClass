@@ -6005,7 +6005,6 @@ setGiottoImage <- function(
 #' @name spatValues
 #' @title Giotto object spatial values
 #' @description
-#' `r GiottoUtils::lifecycle_badge("experimental")`\cr
 #' Retrieve specific values from the `giotto` object for a specific `spat_unit`
 #' and `feat_type`. Values are returned as a data.table with the features
 #' requested and a `cell_ID` column. This function may be updated in the future
@@ -6089,6 +6088,7 @@ spatValues <- function(
     checkmate::assert_class(gobject, "giotto")
     checkmate::assert_character(feats)
 
+    a <- get_args_list()
 
     # defaults
     spat_unit <- set_default_spat_unit(
@@ -6100,6 +6100,18 @@ spatValues <- function(
         spat_unit = spat_unit,
         feat_type = feat_type
     )
+    
+    # multi spat_unit access
+    if (length(spat_unit) > 1) {
+        dt_list <- lapply(spat_unit, function(spat) {
+            a$spat_unit <- spat
+            res <- do.call(spatValues, args = a)
+            res[, spat_unit := spat]
+        })
+        combtable <- Reduce(rbind, dt_list)
+        data.table::setcolorder(combtable, c("cell_ID", "spat_unit"))
+        return(combtable)
+    }
 
 
     # checker closures ------------------------------------------------- #

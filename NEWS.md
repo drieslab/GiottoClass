@@ -20,6 +20,7 @@
 - `objName()`, `spatUnit()`, `featType()` generics now return `NA_character_` instead of erroring when used on unsupported classes.
 - `ext()` and `ext<-()` can now be used to get and set extent of `affine2d`
 - `rownames()`, `colnames()`, `dimnames()` for `giotto`
+- `spatValues()` can get values from multiple spatial units.
 
 ## new
 - `sliceGiotto()` for pulling out specific spatial units and feature types as independent `giotto` objects
