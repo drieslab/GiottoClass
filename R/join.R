@@ -707,7 +707,6 @@ joinGiottoObjects <- function(
 
 
     for (feat in first_features) {
-        # for(feat in comb_gobject@expression_feat) {
 
         savelist_vector <- list()
 
