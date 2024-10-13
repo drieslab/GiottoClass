@@ -292,7 +292,7 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
         if (is.null(l$pch)) l$pch <- "."
     }
     do.call("plot", append(l, list(x = nodes$sdimx_begin, y = nodes$sdimy_begin)))
-    segments(
+    graphics::segments(
         x0 = x[]$sdimx_begin, y0 = x[]$sdimy_begin,
         x1 = x[]$sdimx_end, y1 = x[]$sdimy_end,
         col = line_col, lty = line_type, lwd = line_width
@@ -787,7 +787,7 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
     do.call(scattermore::scattermoreplot, args_list)
     legend(
         x = "topright",
-        inset = c(-1.3 / dev.size()[1], 0),
+        inset = c(-1.3 / grDevices::dev.size()[1], 0),
         legend = feats,
         col = feat_colors,
         bty = "n",

@@ -1,26 +1,21 @@
-#' @importFrom checkmate assert_character
-#' @importFrom matrixStats colSds
+# All @import tags for GiottoClass should be declared in this dummy documentation #
+
 #' @importFrom methods new
 #' @importFrom methods as
 #' @importFrom methods rbind2
 #' @importFrom methods setMethod
 #' @importFrom methods show
 #' @importFrom methods initialize
-#' @importFrom methods slot
-#' @importFrom methods slot<-
+#' @importFrom methods slot slot<-
 #' @importFrom methods slotNames
 #' @importFrom methods validObject
-#' @importFrom graphics segments
 #' @importFrom graphics legend par rect
-#' @importFrom grDevices dev.size
-#' @importFrom stats cor
 #' @importMethodsFrom terra spin
 #' @importMethodsFrom terra flip
 #' @importMethodsFrom terra rescale
 #' @importMethodsFrom Matrix t
 #' @importMethodsFrom terra t
-#' @importMethodsFrom terra ext
-#' @importMethodsFrom terra ext<-
+#' @importMethodsFrom terra ext ext<-
 #' @importMethodsFrom terra plot
 #' @importMethodsFrom terra wrap
 #' @importMethodsFrom terra vect
@@ -36,5 +31,4 @@
 #' @import data.table
 #' @import utils
 #' @importFrom utils .DollarNames
-
 NULL
