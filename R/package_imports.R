@@ -1,11 +1,4 @@
-#' @import data.table
-#' @import dbscan
-#' @import deldir
-#' @import magick
-#' @import reticulate
-#' @import sp
 #' @importFrom checkmate assert_character
-#' @importFrom igraph graph_from_data_frame
 #' @importFrom matrixStats colSds
 #' @importFrom methods new
 #' @importFrom methods as

@@ -109,7 +109,6 @@ gefToGiotto <- function(
 
 #' @title Check Scanpy Installation
 #' @name check_py_for_scanpy
-#' @import reticulate
 #' @returns character
 #' @description checks current python environment for scanpy 1.9.0
 #' @keywords internal
@@ -2929,7 +2928,6 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
 #' networks. This can be a vector of multiple network names.
 #' @param verbose A boolean value specifying if progress messages should
 #' be displayed or not. Default \code{TRUE}.
-#' @import data.table
 #' @returns Giotto object
 #' @examples
 #' \dontrun{
