@@ -1119,6 +1119,50 @@ setMethod(
     }
 )
 
+# * giottoLargeImage ####
+#' @rdname subset_bracket
+#' @export
+setMethod(
+    "[",
+    signature(x = "giottoLargeImage", i = "missing", j = "missing", drop = "missing"),
+    function(x, i, j) {
+        x@raster_object
+    }
+)
+
+#' @rdname replace_bracket
+#' @export
+setMethod(
+    "[<-",
+    signature(x = "giottoLargeImage", i = "missing", j = "missing", value = "ANY"),
+    function(x, i, j, value) {
+        x@raster_object <- value
+        return(initialize(x))
+    }
+)
+
+# * giottoImage ####
+#' @rdname subset_bracket
+#' @export
+setMethod(
+    "[",
+    signature(x = "giottoImage", i = "missing", j = "missing", drop = "missing"),
+    function(x, i, j) {
+        x@mg_object
+    }
+)
+
+#' @rdname replace_bracket
+#' @export
+setMethod(
+    "[<-",
+    signature(x = "giottoImage", i = "missing", j = "missing", value = "ANY"),
+    function(x, i, j, value) {
+        x@mg_object <- value
+        return(initialize(x))
+    }
+)
+
 #' @rdname subset_bracket
 #' @export
 setMethod(
