@@ -237,7 +237,11 @@ setMethod(
     }
 )
 
-
+#' @rdname as.points
+#' @export
+setMethod("as.points", signature("spatLocsObj"), function(x, ...) {
+    vect(x[], geom = c("sdimx", "sdimy"))
+})
 
 
 
