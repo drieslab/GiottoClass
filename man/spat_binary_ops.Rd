@@ -60,6 +60,4 @@ if (FALSE) {
   # takes a long time so don't run in checks
   plot(snap(gpoly1, tolerance = 0.2))
 }
-
-
 }
