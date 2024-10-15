@@ -18,15 +18,15 @@
 #' @importMethodsFrom terra ext ext<-
 #' @importMethodsFrom terra plot
 #' @importMethodsFrom terra wrap
-#' @importMethodsFrom terra vect
-#' @importMethodsFrom terra crop
-#' @importMethodsFrom terra as.data.frame
-#' @importMethodsFrom terra as.polygons as.points
-#' @importMethodsFrom terra nrow ncol
 #' @importMethodsFrom terra zoom
+#' @importMethodsFrom terra crop
+#' @importMethodsFrom terra vect
+#' @importMethodsFrom terra relate
+#' @importMethodsFrom terra union intersect symdif snap
+#' @importMethodsFrom terra as.data.frame as.polygons as.points
+#' @importMethodsFrom terra nrow ncol
 #' @importMethodsFrom terra hist density
-#' @importClassesFrom terra SpatExtent
-#' @importClassesFrom terra SpatVector
+#' @importClassesFrom terra SpatExtent SpatVector
 #' @import GiottoUtils
 #' @import data.table
 #' @import utils

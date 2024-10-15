@@ -30,9 +30,6 @@ setClassUnion("nullOrDatatable", c("NULL", "data.table"))
 #' @noRd
 setClassUnion("gIndex", c("numeric", "logical", "character"))
 
-
-
-
 # VIRTUAL CLASSES ####
 
 
@@ -1730,3 +1727,19 @@ setClass(
 #     weight = 'numeric'
 #   )
 # )
+
+
+
+
+
+
+# giottoSpatial ####
+
+setClassUnion(
+    name = "giottoSpatial", c("giottoPolygon", "giottoPoints", "spatLocsObj")
+)
+
+setClassUnion(
+    name = "spatialClasses", c("giottoSpatial", "SpatVector")
+)
+
