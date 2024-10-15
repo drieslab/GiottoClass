@@ -43,7 +43,6 @@ Imports:
     matrixStats (>= 0.55.0),
     methods,
     reticulate (>= 1.25),
-    sp,
     stats,
     terra (>= 1.7-39)
 Suggests: 
@@ -72,6 +71,7 @@ Suggests:
     SeuratObject,
     sf,
     SingleCellExperiment,
+    sp,
     SpatialExperiment,
     stars,
     STexampleData,
