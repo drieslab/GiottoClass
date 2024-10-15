@@ -3,9 +3,12 @@
 \name{as.points}
 \alias{as.points}
 \alias{as.points,data.frame-method}
+\alias{as.points,spatLocsObj-method}
 \title{Coerce to SpatVector points}
 \usage{
 \S4method{as.points}{data.frame}(x, include_values = TRUE, specific_values = NULL)
+
+\S4method{as.points}{spatLocsObj}(x, ...)
 }
 \arguments{
 \item{x}{SpatRaster, SpatVector, SpatExtent, or correctly formatted

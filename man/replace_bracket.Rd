@@ -35,6 +35,8 @@
 \alias{[<-,giottoPolygon,missing,missing,ANY-method}
 \alias{[<-,giottoPolygon,missing,missing,}
 \alias{[<-,giottoPolygon,missing,missing-method}
+\alias{[<-,giottoLargeImage,missing,missing,ANY-method}
+\alias{[<-,giottoImage,missing,missing,ANY-method}
 \alias{[<-,affine2d,missing,missing,ANY-method}
 \alias{[<-,affine2d,missing,missing,}
 \alias{[<-,affine2d,missing,missing-method}
@@ -59,6 +61,10 @@
 \S4method{[}{giottoPoints,missing,missing,ANY}(x, i, j) <- value
 
 \S4method{[}{giottoPolygon,missing,missing,ANY}(x, i, j) <- value
+
+\S4method{[}{giottoLargeImage,missing,missing,ANY}(x, i, j) <- value
+
+\S4method{[}{giottoImage,missing,missing,ANY}(x, i, j) <- value
 
 \S4method{[}{affine2d,missing,missing,ANY}(x, i, j) <- value
 }
