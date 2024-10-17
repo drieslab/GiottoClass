@@ -9,6 +9,7 @@
 - fix `joinGiottoObject()` for gobjects with only poly and point data [#233](https://github.com/drieslab/GiottoClass/issues/233)
 - fix `joinGiottoObject()` for gobjects with image intensity overlaps features
 - fix subsetting error due to expression `matrix` drop to `numeric` when only one cell is left
+- `shift_vertical_step` and `shift_horizontal_step` args in `createGiottoPolygonsFromMask()` when numeric now shift by steps based on the dims of the image instead of just by the numerical value provided.
 
 ## enhancements
 - python packages to install through pip is now settable in `installGiottoEnvironment()` [#224](https://github.com/drieslab/GiottoClass/issues/224)
@@ -22,6 +23,8 @@
 - `ext()` and `ext<-()` can now be used to get and set extent of `affine2d`
 - `rownames()`, `colnames()`, `dimnames()` for `giotto`
 - `spatValues()` can get values from multiple spatial units.
+- `createGiottoPolygonsFromMask()` now works with anything `terra::rast()` can read
+- `createGiottoLargeImage()` now works with anything `terra::rast()` can read
 
 ## new
 - `sliceGiotto()` for pulling out specific spatial units and feature types as independent `giotto` objects
