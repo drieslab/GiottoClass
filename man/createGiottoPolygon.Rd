@@ -121,7 +121,8 @@ poly_IDs. Default = "cell_". See \emph{ID_fmt} section.}
 \item{copy_dt}{(default TRUE) if segmdfr is provided as dt, this determines
 whether a copy is made}
 
-\item{maskfile}{path to mask file}
+\item{maskfile}{path to mask file, a terra \code{SpatRaster}, or some other
+data class readable by \code{\link[terra:rast]{terra::rast()}}}
 
 \item{segmdfr}{data.frame-like object with polygon coordinate
 information (x, y, poly_ID) with x and y being vertex information for the

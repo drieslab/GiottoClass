@@ -2418,7 +2418,8 @@ setMethod(
 
 
 #' @rdname createGiottoPolygon
-#' @param maskfile path to mask file
+#' @param maskfile path to mask file, a terra `SpatRaster`, or some other
+#' data class readable by [terra::rast()]
 #' @param mask_method how the mask file defines individual segmentation
 #' annotations. See *mask_method* section
 #' @param name character. Name to assign created `giottoPolygon`
@@ -2521,15 +2522,16 @@ createGiottoPolygonsFromMask <- function(maskfile,
 
     # if maskfile input is not a spatraster, read it in as spatraster
     # if it is spatraster, skip
-    if (!inherits(maskfile, "SpatRaster")) {
+    if (inherits(maskfile, "SpatRaster")) {
+        terra_rast <- maskfile
+    } else if (is.character(maskfile)) {
         # check if mask file exists
         maskfile <- path.expand(maskfile)
-        if (!file.exists(maskfile)) {
-            stop("path : ", maskfile, " does not exist \n")
-        }
+        checkmate::assert_file_exists(maskfile)
         terra_rast <- .create_terra_spatraster(maskfile)
     } else {
-        terra_rast <- maskfile
+        # assume some other class readable by terra::rast()
+        terra_rast <- .create_terra_spatraster(maskfile)
     }
 
     # create polygons from mask
@@ -2627,14 +2629,14 @@ createGiottoPolygonsFromMask <- function(maskfile,
     if (identical(shift_vertical_step, TRUE)) {
         shift_vertical_step <- rast_dimensions[1] # nrows of raster
     } else if (is.numeric(shift_vertical_step)) {
-        shift_vertical_step <- shift_vertical_step
+        shift_vertical_step <- rast_dimensions[1] * shift_vertical_step
     } else {
         shift_vertical_step <- 0
     }
     if (identical(shift_horizontal_step, TRUE)) {
         shift_horizontal_step <- rast_dimensions[2] # ncols of raster
     } else if (is.numeric(shift_horizontal_step)) {
-        shift_horizontal_step <- shift_horizontal_step
+        shift_horizontal_step <- rast_dimensions[2] * shift_horizontal_step
     } else {
         shift_horizontal_step <- 0
     }
