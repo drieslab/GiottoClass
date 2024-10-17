@@ -30,6 +30,7 @@
 - `sliceGiotto()` for pulling out specific spatial units and feature types as independent `giotto` objects
 - `splitGiotto()` for splitting a Giotto object into a list of Giotto objects based on a cell metadata column
 - `as.list()` method for `giotto` to dump the data as a list of subobjects
+- `XY()` and `XY<-()` for accessing and setting coordinate values of subobjects as `matrix`
 
 
 # GiottoClass 0.3.5 (2024/08/28)
