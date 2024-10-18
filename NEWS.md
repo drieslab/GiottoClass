@@ -10,6 +10,7 @@
 - fix `joinGiottoObject()` for gobjects with image intensity overlaps features
 - fix subsetting error due to expression `matrix` drop to `numeric` when only one cell is left
 - `shift_vertical_step` and `shift_horizontal_step` args in `createGiottoPolygonsFromMask()` when numeric now shift by steps based on the dims of the image instead of just by the numerical value provided.
+- fix feature metadata not being mixedsorted after join
 
 ## enhancements
 - python packages to install through pip is now settable in `installGiottoEnvironment()` [#224](https://github.com/drieslab/GiottoClass/issues/224)

@@ -4,18 +4,16 @@
 #' @name .join_expression_matrices
 #' @keywords internal
 #' @noRd
-.join_expression_matrices <- function(matrix_list) {
+.join_expression_matrices <- function(matrix_list, feat_ids = NULL) {
+    
     # find all features
-    final_feats <- list()
-    for (matr_i in seq_len(length(matrix_list))) {
-        rowfeats <- rownames(matrix_list[[matr_i]])
-        final_feats[[matr_i]] <- rowfeats
+    if (is.null(feat_ids)) {
+        final_feats <- lapply(matrix_list, rownames)
+        final_feats <- unique(unlist(final_feats))
+    } else {
+        final_feats <- feat_ids
     }
-
-    final_feats <- unique(unlist(final_feats))
     final_feats <- mixedsort(final_feats)
-
-
 
     # extend matrices with missing ids
     final_mats <- list()
@@ -60,8 +58,19 @@
 #' @name .join_feat_meta
 #' @keywords internal
 #' @noRd
-.join_feat_meta <- function(dt_list) {
+.join_feat_meta <- function(dt_list, feat_ids = NULL) {
     feat_ID <- NULL
+
+    if (!is.null(feat_ids)) {
+        dt_list <- lapply(dt_list, function(dt) {
+            dt <- dt[feat_ID %in% feat_ids]
+            missing_feat <- dt[, feat_ids[!feat_ids %in% feat_ID]]
+            if (length(missing_feat) > 0L) {
+                dt_append <- data.table::data.table(feat_ID = missing_feat)
+                dt <- rbind(dt, dt_append, fill = TRUE)
+            }
+        })
+    }
 
     comb_meta <- do.call("rbind", c(dt_list, fill = TRUE))
     comb_meta <- unique(comb_meta)
@@ -77,8 +86,12 @@
             "feature metadata: multiple versions of metadata for:\n",
             dup_feats,
             "\n First entry will be selected for joined object."
+            # "first" is based on gobject order
         ))
     }
+    
+    # order by feat_ID
+    comb_meta <- comb_meta[mixedorder(feat_ID)]
 
     return(comb_meta)
 }
