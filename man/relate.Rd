@@ -64,10 +64,21 @@ absence of a specific spatial relationships between the geometries in
 x and y.
 }
 \examples{
-sl <- GiottoData::loadSubObjectMini("spatLocsObj")
-gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
-gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
+g <- GiottoData::loadGiottoMini("viz")
+activeSpatUnit(g) <- "aggregate"
+sl <- g[["spatial_locs"]][[1]]
+gpoints <- g[["spatial_info]][[1]]
+gpoly <- g[["feat_info]][[1]]
 
 relate(gpoints, gpoly, relation = "intersects")
 relate(gpoints, gpoly, relation = "intersects", use_names = FALSE)
+
+selection <- system.file("extdata/viz_interactive_select.csv",
+    package = "GiottoClass"
+)
+select_polys <- createGiottoPolygon(data.table::fread(selection))
+res <- relate(g, select_polys, relation = "intersects")
+g[,res[y == "polygon1", x]]
+g[,res[y == "polygon2", x]]
+g[,res[y == "polygon3", x]]
 }
