@@ -3,6 +3,7 @@
 \name{relate}
 \alias{relate}
 \alias{relate,giottoSpatial,giottoSpatial-method}
+\alias{relate,giotto,giottoSpatial-method}
 \title{Spatial relationships between geometries}
 \usage{
 \S4method{relate}{giottoSpatial,giottoSpatial}(
@@ -11,9 +12,19 @@
   relation,
   pairs = TRUE,
   na.rm = TRUE,
-  output = c("data.table", "list", "matrix"),
+  output = c("data.table", "matrix"),
   use_names = TRUE,
   ...
+)
+
+\S4method{relate}{giotto,giottoSpatial}(
+  x,
+  y,
+  ...,
+  what = c("polygon", "spatlocs", "points"),
+  spat_unit = NULL,
+  feat_type = NULL,
+  spat_locs_name = NULL
 )
 }
 \arguments{
@@ -34,6 +45,15 @@ only possible when \code{pairs=TRUE}}
 the IDs of the geometries will be used.}
 
 \item{...}{additional args to pass}
+
+\item{what}{character. Which type of spatial data in the \code{giotto} object to
+relate. One of "polygon", "spatlocs", "points"}
+
+\item{spat_unit}{spatial unit}
+
+\item{feat_type}{feature type}
+
+\item{spat_locs_name}{name of spatlocs to use if what = "spatlocs"}
 }
 \value{
 \code{data.table} if \code{output="data.table"}. \code{matrix} if \code{output="matrix"}
@@ -49,4 +69,5 @@ gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
 gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
 
 relate(gpoints, gpoly, relation = "intersects")
+relate(gpoints, gpoly, relation = "intersects", use_names = FALSE)
 }
