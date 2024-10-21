@@ -910,6 +910,10 @@
         # # aggregate spatial locations and expression information
         # #
         # # Should only be checked for cell_ids subsets
+        
+        if (isTRUE(poly_info, ":all:")) {
+            poly_info <- list_spatial_info_names(gobject)
+        }
 
         for (select_poly_info in poly_info) {
             # For each entry entry in poly_info, subset using cell_ids.
