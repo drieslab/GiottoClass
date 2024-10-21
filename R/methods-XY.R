@@ -28,6 +28,8 @@
 #' plot(gpoly)
 #' XY(gpoly) <- m3 / 2
 #' plot(gpoly)
+#' 
+#' XY(gpoly[1:10]) # vertices from first 10 polys
 NULL
 # ---------------------------------------------------------------- #
 

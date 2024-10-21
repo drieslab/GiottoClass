@@ -911,8 +911,14 @@
         # #
         # # Should only be checked for cell_ids subsets
         
-        if (isTRUE(poly_info, ":all:")) {
-            poly_info <- list_spatial_info_names(gobject)
+        attached_polys <- list_spatial_info_names(gobject)
+        
+        if (is.null(poly_info)) {
+            poly_info <- spat_unit[spat_unit %in% attached_polys]
+        }
+        
+        if (isTRUE(poly_info == ":all:")) {
+            poly_info <- attached_polys
         }
 
         for (select_poly_info in poly_info) {
@@ -1430,7 +1436,7 @@ subsetGiotto <- function(
         feat_type = "rna",
         cell_ids = NULL,
         feat_ids = NULL,
-        poly_info = NULL,
+        poly_info = spat_unit,
         all_spat_units = NULL,
         all_feat_types = NULL,
         spat_unit_fsub = ":all:",
