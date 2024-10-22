@@ -2418,7 +2418,8 @@ setMethod(
 
 
 #' @rdname createGiottoPolygon
-#' @param maskfile path to mask file
+#' @param maskfile path to mask file, a terra `SpatRaster`, or some other
+#' data class readable by [terra::rast()]
 #' @param mask_method how the mask file defines individual segmentation
 #' annotations. See *mask_method* section
 #' @param name character. Name to assign created `giottoPolygon`
@@ -2521,15 +2522,16 @@ createGiottoPolygonsFromMask <- function(maskfile,
 
     # if maskfile input is not a spatraster, read it in as spatraster
     # if it is spatraster, skip
-    if (!inherits(maskfile, "SpatRaster")) {
+    if (inherits(maskfile, "SpatRaster")) {
+        terra_rast <- maskfile
+    } else if (is.character(maskfile)) {
         # check if mask file exists
         maskfile <- path.expand(maskfile)
-        if (!file.exists(maskfile)) {
-            stop("path : ", maskfile, " does not exist \n")
-        }
+        checkmate::assert_file_exists(maskfile)
         terra_rast <- .create_terra_spatraster(maskfile)
     } else {
-        terra_rast <- maskfile
+        # assume some other class readable by terra::rast()
+        terra_rast <- .create_terra_spatraster(maskfile)
     }
 
     # create polygons from mask
@@ -2627,14 +2629,14 @@ createGiottoPolygonsFromMask <- function(maskfile,
     if (identical(shift_vertical_step, TRUE)) {
         shift_vertical_step <- rast_dimensions[1] # nrows of raster
     } else if (is.numeric(shift_vertical_step)) {
-        shift_vertical_step <- shift_vertical_step
+        shift_vertical_step <- rast_dimensions[1] * shift_vertical_step
     } else {
         shift_vertical_step <- 0
     }
     if (identical(shift_horizontal_step, TRUE)) {
         shift_horizontal_step <- rast_dimensions[2] # ncols of raster
     } else if (is.numeric(shift_horizontal_step)) {
-        shift_horizontal_step <- shift_horizontal_step
+        shift_horizontal_step <- rast_dimensions[2] * shift_horizontal_step
     } else {
         shift_horizontal_step <- 0
     }
@@ -3174,7 +3176,8 @@ createGiottoImage <- function(
 #' @name createGiottoLargeImage
 #' @description Creates a large giotto image that can be added to a Giotto
 #' subcellular object. Generates deep copy of SpatRaster
-#' @param raster_object terra SpatRaster image object
+#' @param raster_object filepath to an image, a terra `SpatRaster` or, other format
+#' openable via [terra::rast()]
 #' @param name name for the image
 #' @param negative_y Map image to negative y spatial values if TRUE. Meaning
 #' that origin is in upper left instead of lower left.
@@ -3216,42 +3219,25 @@ createGiottoLargeImage <- function(
     # create minimum giotto
     g_imageL <- new("giottoLargeImage", name = name)
 
-
     ## 1. check raster object and load as SpatRaster if necessary
-    if (!inherits(raster_object, "SpatRaster")) {
-        if (file.exists(raster_object)) {
-            g_imageL@file_path <- raster_object
-            raster_object <- .create_terra_spatraster(
-                image_path = raster_object
-            )
-        } else {
-            stop("raster_object needs to be a 'SpatRaster' object from the
-                terra package or \n an existing path that can be read by
-                terra::rast()")
-        }
-    }
-
-    # Prevent updates to original raster object input
-    if (getNamespaceVersion("terra") >= "1.15-12") {
+    if (inherits(raster_object, "SpatRaster")) {
+        # Prevent updates to original raster object input
         raster_object <- terra::deepcopy(raster_object)
+    } else if (is.character(raster_object)) {
+        checkmate::assert_file_exists(raster_object)
+        g_imageL@file_path <- raster_object
+        raster_object <- .create_terra_spatraster(raster_object)
     } else {
-        # raster_object = terra::copy(raster_object)
-        if (isTRUE(verbose)) {
-            warning("\n If largeImage was created from a terra raster object,
-                    manipulations to the giotto image may be reflected in the
-                    raster object as well. Update terra to >= 1.15-12 to avoid
-                    this issue. \n")
-        }
+        # assume class readable by terra rast
+        raster_object <- .create_terra_spatraster(raster_object)
     }
 
 
     ## 2. image bound spatial extent
-    if (use_rast_ext == TRUE) {
+    if (use_rast_ext) {
         extent <- terra::ext(raster_object)
-        if (verbose == TRUE) {
-            wrap_msg("use_rast_ext == TRUE, extent from input raster_object will
-                be used.")
-        }
+        vmsg(.v = verbose, "use_rast_ext == TRUE
+        extent from input raster_object will be used.")
     }
 
     # By extent object (priority)

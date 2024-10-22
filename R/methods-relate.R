@@ -13,11 +13,23 @@
 #' the IDs of the geometries will be used.
 #' @returns `data.table` if `output="data.table"`. `matrix` if `output="matrix"`
 #' @examples
-#' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
-#' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
-#' gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
+#' g <- GiottoData::loadGiottoMini("viz")
+#' activeSpatUnit(g) <- "aggregate"
+#' sl <- g[["spatial_locs"]][[1]]
+#' gpoints <- g[["spatial_info]][[1]]
+#' gpoly <- g[["feat_info]][[1]]
 #'
 #' relate(gpoints, gpoly, relation = "intersects")
+#' relate(gpoints, gpoly, relation = "intersects", use_names = FALSE)
+#' 
+#' selection <- system.file("extdata/viz_interactive_select.csv",
+#'     package = "GiottoClass"
+#' )
+#' select_polys <- createGiottoPolygon(data.table::fread(selection))
+#' res <- relate(g, select_polys, relation = "intersects")
+#' g[,res[y == "polygon1", x]]
+#' g[,res[y == "polygon2", x]]
+#' g[,res[y == "polygon3", x]]
 NULL
 # ---------------------------------------------------------------- #
 
@@ -29,7 +41,7 @@ setMethod(
     function(x, y, relation, 
         pairs = TRUE, 
         na.rm = TRUE,
-        output = c("data.table", "list", "matrix"), 
+        output = c("data.table", "matrix"), 
         use_names = TRUE, 
         ...) {
         output <- match.arg(output, choices = c("data.table", "matrix"))
@@ -53,6 +65,55 @@ setMethod(
             }
         }
         
+        return(res)
+    }
+)
+
+#' @rdname relate
+#' @param what character. Which type of spatial data in the `giotto` object to
+#' relate. One of "polygon", "spatlocs", "points"
+#' @param spat_unit spatial unit
+#' @param feat_type feature type
+#' @param spat_locs_name name of spatlocs to use if what = "spatlocs"
+#' @export
+setMethod(
+    "relate", signature(x = "giotto", y = "giottoSpatial"),
+    function(x, y, ..., 
+             what = c("polygon", "spatlocs", "points"), 
+             spat_unit = NULL,
+             feat_type = NULL,
+             spat_locs_name = NULL) {
+        
+        what <- match.arg(what, c("polygon", "spatlocs", "points"))
+        
+        spat_unit <- set_default_spat_unit(x, spat_unit = spat_unit)
+        feat_type <- set_default_feat_type(
+            x, spat_unit = spat_unit, feat_type = feat_type
+        )
+        
+        x <- switch(what,
+            "polygon" = {
+                getPolygonInfo(x, 
+                    polygon_name = spat_unit, 
+                    return_giottoPolygon = TRUE
+                )
+            },
+            "points" = {
+                getFeatureInfo(x, 
+                    feat_type = feat_type,
+                    return_giottoPoints = TRUE
+                )
+            },
+            "spatlocs" = {
+                getSpatialLocations(x,
+                    spat_unit = spat_unit,
+                    output = "spatLocsObj",
+                    name = spat_locs_name
+                )
+            }
+        )
+        
+        res <- relate(x, y, ...)
         return(res)
     }
 )

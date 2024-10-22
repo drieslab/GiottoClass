@@ -1450,7 +1450,8 @@ setMethod("subset", signature("giotto"), function(x,
         spat_unit = ":all:",
         feat_type = feat_type,
         feat_ids = fids,
-        cell_ids = sids
+        cell_ids = sids,
+        poly_info = spat_unit
     )
 })
 
