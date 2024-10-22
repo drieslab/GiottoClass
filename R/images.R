@@ -285,14 +285,19 @@ get_adj_rescale_img <- function(
 # can be loaded in with terra or used with getOption("viewer")() downstream
 # based on magick:::image_preview()
 # accepts a single `magick-image` object
-.magick_preview <- function(x, tempname = "preview") {
+# only returns depth 8 images. DO NOT use for analyzed values
+.magick_preview <- function(x, 
+    basename = "preview",
+    filename = NULL) {
     stopifnot(inherits(x, "magick-image"))
     stopifnot(length(x) == 1L)
     format <- tolower(magick::image_info(x[1])$format)
-    tmp <- file.path(tempdir(), paste(tempname, format, sep = "."))
+    if (is.null(filename)) {
+        filename <- file.path(tempdir(), paste(basename, format, sep = "."))
+    }
     vmsg(.is_debug = TRUE, "`.magick_preview()` saving as", format)
-    magick::image_write(x, path = tmp, format = format, depth = 8)
-    return(tmp)
+    magick::image_write(x, path = filename, format = format, depth = 8)
+    return(filename)
 }
 
 #' @title addGiottoImageMG
@@ -2740,6 +2745,18 @@ add_img_array_alpha <- function(
     return(x_alpha)
 }
 
+
+
+
+
+# doDeferred ####
+
+#' @export
+setMethod(
+    "doDeferred", signature("giottoAffineImage"), 
+    function(x, size = 5e5, filename = NULL, ...) {
+    x@funs$realize_magick(filename = filename, size = size, ...)
+})
 
 
 
