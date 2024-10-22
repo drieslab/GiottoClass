@@ -29,5 +29,5 @@ affimg <- spin(gimg, 45) # lazily performs affine
 gimg2 <- doDeferred(affimg, size = 5e5)
 # **This is mainly intended for visualization.**
 # This process saves with image depth of 8.
-# Untransformed values are preferred for analysis
+# Spatially transformed raster values are not preferred for analysis
 }

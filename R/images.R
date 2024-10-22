@@ -2771,7 +2771,7 @@ NULL
 #' gimg2 <- doDeferred(affimg, size = 5e5)
 #' # **This is mainly intended for visualization.**
 #' # This process saves with image depth of 8.
-#' # Untransformed values are preferred for analysis
+#' # Spatially transformed raster values are not preferred for analysis
 #' @export
 setMethod(
     "doDeferred", signature("giottoAffineImage"), 
