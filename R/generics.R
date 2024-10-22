@@ -69,6 +69,11 @@ setGeneric("copy",
 )
 
 
+# lazy operations ####
+setGeneric("doDeferred", function(x, ...) standardGeneric("doDeferred"))
+
+
+
 # spatial operations ####
 setGeneric(
     "calculateOverlap",
