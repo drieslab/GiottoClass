@@ -5,11 +5,15 @@
 \alias{giottoAffineImage-class}
 \title{S4 giottoAffineImage Class}
 \value{
-giottoAffineImage
+\code{giottoAffineImage}
 }
 \description{
 Class extending \code{giottoLargeImage}. When \code{shear()} or \code{spin()} operations
-are performed on
+are performed on a \code{giottoLargeImage}, this class is instantiated. It
+provides a way of storing the affine transformation and also lazily
+performing it when required for a plotting preview. It is possible to force
+the deferred affine transform using \code{doDeferred()} and return a processed
+\code{giottoLargeImage}.
 }
 \section{Slots}{
 
@@ -18,6 +22,6 @@ are performed on
 transforms}
 
 \item{\code{funs}}{list of functions associated with the object. Primarily to
-perform the delayed/lazy operations}
+perform the delayed/lazy operation}
 }}
 

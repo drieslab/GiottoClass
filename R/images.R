@@ -2751,6 +2751,27 @@ add_img_array_alpha <- function(
 
 # doDeferred ####
 
+#' @name doDeferred
+#' @title Perform deferred/lazy operations
+#' @description Force deferred/lazy operations.
+#' @param x object to force deferred operations in
+#' @param ... additional args to pass
+NULL
+
+#' @rdname doDeferred
+#' @param size numeric. Minimum number of image pixels to render when 
+#' evaluating
+#' @param filename character. Full filepath to write the rendered image to. If
+#' `NULL`, a file in `tempdir()` will be generated.
+#' @examples
+#' gimg <- GiottoData::loadSubObjectMini("giottoLargeImage")
+#' affimg <- spin(gimg, 45) # lazily performs affine
+#' 
+#' # force the affine operation and render the output with at least 5e5 px
+#' gimg2 <- doDeferred(affimg, size = 5e5)
+#' # **This is mainly intended for visualization.**
+#' # This process saves with image depth of 8.
+#' # Untransformed values are preferred for analysis
 #' @export
 setMethod(
     "doDeferred", signature("giottoAffineImage"), 
