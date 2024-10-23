@@ -84,6 +84,38 @@ setGeneric(
     function(x, ...) standardGeneric("overlapToMatrix")
 )
 
+# expression value normalization
+#' @title Normalize an object
+#' @name normalize
+#' @description Generics for normalizing an object containing measured values.
+#' `normalize()` is intended as the central API for accessing
+#' normalization workflows. Specific methods should be defined for it to
+#' help with pre or post processing specific to a matrix class type.
+#' The other generics are specific normalization generics made available for 
+#' other packages to attach methods, which may differ depending on the input
+#' matrix. No methods for normalization are exported from GiottoClass.
+#' @param object,x a data object
+#' @param ... additional arguments, for use in specific methods
+#' @returns An object of the same class containing the normalized data
+#' @export normalize
+setGeneric("normalize", function(object, ...) standardGeneric("normalize"))
+#' @rdname normalize
+#' @export norm_lib
+setGeneric("norm_lib", function(x, ...) standardGeneric("norm_lib"))
+#' @rdname normalize
+#' @export norm_log
+setGeneric("norm_log", function(x, ...) standardGeneric("norm_log"))
+#' @rdname normalize
+#' @export norm_quantile
+setGeneric("norm_quantile", function(x, ...) standardGeneric("norm_quantile"))
+#' @rdname normalize
+#' @export norm_pearson
+setGeneric("norm_pearson", function(x, ...) standardGeneric("norm_pearson"))
+#' @rdname normalize
+#' @export norm_osmfish
+setGeneric("norm_osmfish", function(x, ...) standardGeneric("norm_osmfish"))
+
+
 # Methods and documentations found in methods-spatShift.R
 setGeneric("spatShift", function(x, ...) standardGeneric("spatShift"))
 setGeneric("affine", function(x, y, ...) standardGeneric("affine"))
@@ -93,6 +125,7 @@ setGeneric("XY<-", function(x, ..., value) standardGeneric("XY<-"))
 
 # Methods and documentations found in methods-overlaps.R
 setGeneric("overlaps", function(x, ...) standardGeneric("overlaps"))
+
 
 
 # Giotto subnesting ####
