@@ -11,4 +11,5 @@
     init_option("giotto.py_path", NULL)
     init_option("giotto.init", TRUE)
     init_option("giotto.check_valid", TRUE)
+    init_option("giotto.plotengine3d", "plotly")
 }
