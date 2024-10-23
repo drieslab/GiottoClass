@@ -1164,8 +1164,8 @@
         if (is.null(x_max)) x_max <- max(comb_metadata[["sdimx"]])
         if (is.null(x_min)) x_min <- min(comb_metadata[["sdimx"]])
 
-        comb_metadata <- comb_metadata[get("sdimx") < x_max &
-            get("sdimx") > x_min]
+        comb_metadata <- comb_metadata[get("sdimx") <= x_max &
+            get("sdimx") >= x_min]
     }
 
     # y spatial dimension
@@ -1173,8 +1173,8 @@
         if (is.null(y_max)) y_max <- max(comb_metadata[["sdimy"]])
         if (is.null(y_min)) y_min <- min(comb_metadata[["sdimy"]])
 
-        comb_metadata <- comb_metadata[get("sdimy") < y_max &
-            get("sdimy") > y_min]
+        comb_metadata <- comb_metadata[get("sdimy") <= y_max &
+            get("sdimy") >= y_min]
     }
 
     # z spatial dimension
@@ -1182,8 +1182,8 @@
         if (is.null(z_max)) z_max <- max(comb_metadata[["sdimz"]])
         if (is.null(z_min)) z_min <- min(comb_metadata[["sdimz"]])
 
-        comb_metadata <- comb_metadata[get("sdimz") < z_max &
-            get("sdimz") > z_min]
+        comb_metadata <- comb_metadata[get("sdimz") <= z_max &
+            get("sdimz") >= z_min]
     }
 
     if (return_gobject) {
