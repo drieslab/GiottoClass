@@ -159,6 +159,7 @@
 ## bug fixes
 - fix `saveGiotto` with `overwrite = TRUE` [#870](https://github.com/drieslab/Giotto/issues/870) by rbutlerii
 - fix `plot()` method param passing for `giottoLargeImage`. Ensure access to terra params
+- fix non-inclusive subsetting when not all minmax values are supplied to `subsetGiottoLocs()` 
 
 ## enhancements
 - `createGiottoPoints` `data.frame` method can now select which columns to use with `x_colname`, `y_colname`, `feat_ID_colname` params
