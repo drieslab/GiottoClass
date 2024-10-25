@@ -96,7 +96,6 @@ setMethod(
 setMethod(
     "plot", signature(x = "giottoAffineImage", y = "missing"),
     function(x, ...) {
-        browser()
         .plot_giottoaffineimage(x, ...)
     }
 )

@@ -709,6 +709,7 @@ loadGiotto <- function(
 
         gobject@images[[img]]@raster_object <- spatRaster
         gobject@images[[img]]@file_path <- load_img
+        gobject@images[[img]] <- initialize(gobject@images[[img]])
     }
 
     return(gobject)
