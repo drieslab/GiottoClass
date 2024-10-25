@@ -11,6 +11,8 @@
 - fix subsetting error due to expression `matrix` drop to `numeric` when only one cell is left
 - `shift_vertical_step` and `shift_horizontal_step` args in `createGiottoPolygonsFromMask()` when numeric now shift by steps based on the dims of the image instead of just by the numerical value provided.
 - fix feature metadata not being mixedsorted after join
+- fix non-inclusive subsetting when not all minmax values are supplied to `subsetGiottoLocs()` 
+- fix `giottoAffineImage` loading after being saved
 
 ## enhancements
 - python packages to install through pip is now settable in `installGiottoEnvironment()` [#224](https://github.com/drieslab/GiottoClass/issues/224)
@@ -159,7 +161,6 @@
 ## bug fixes
 - fix `saveGiotto` with `overwrite = TRUE` [#870](https://github.com/drieslab/Giotto/issues/870) by rbutlerii
 - fix `plot()` method param passing for `giottoLargeImage`. Ensure access to terra params
-- fix non-inclusive subsetting when not all minmax values are supplied to `subsetGiottoLocs()` 
 
 ## enhancements
 - `createGiottoPoints` `data.frame` method can now select which columns to use with `x_colname`, `y_colname`, `feat_ID_colname` params
