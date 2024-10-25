@@ -18,11 +18,13 @@ NULL
 
 
 
-
+# * giottoImage ####
 
 #' @describeIn plot-generic Plot \emph{magick}-based giottoImage object. ... param passes to \code{\link{.plot_giottoimage_mg}}
 #' @export
 setMethod("plot", signature(x = "giottoImage", y = "missing"), function(x, y, ...) .plot_giottoimage_mg(giottoImage = x, ...))
+
+# * giottoLargeImage ####
 
 #' @describeIn plot-generic Plot \emph{terra}-based giottoLargeImage object. ... param passes to \code{\link{.plot_giottolargeimage}}
 #' @param col character. Colors. The default is grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1)
@@ -87,14 +89,19 @@ setMethod(
     }
 )
 
+# * giottoAffineImage ####
+
 #' @rdname plot-generic
 #' @export
 setMethod(
     "plot", signature(x = "giottoAffineImage", y = "missing"),
     function(x, ...) {
+        browser()
         .plot_giottoaffineimage(x, ...)
     }
 )
+
+# * giottoPolygon ####
 
 #' @describeIn plot-generic Plot \emph{terra}-based giottoPolygon object. ... param passes to \code{\link[terra]{plot}}
 #' @param point_size size of points when plotting giottoPolygon object centroids
@@ -129,6 +136,8 @@ setMethod(
         .plot_giotto_polygon(x = x, point_size = point_size, type = type, ...)
     }
 )
+
+# * giottoPoints ####
 
 #' @describeIn plot-generic \emph{terra}-based giottoPoint object. ... param passes to \code{\link[terra]{plot}}
 #' @param point_size size of points when plotting giottoPoints
@@ -204,6 +213,7 @@ setMethod(
     }
 )
 
+# * spatLocsObj ####
 
 #' @describeIn plot-generic Plot a spatLocsObj
 #' @examples
@@ -226,6 +236,7 @@ setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) 
     }
 })
 
+# * dimObj ####
 
 #' @describeIn plot-generic Plot a dimObj
 #' @param dims dimensions to plot
@@ -256,6 +267,7 @@ setMethod(
     }
 )
 
+# * spatialNetworkObj ####
 
 #' @describeIn plot-generic Plot a spatialNetworkObj
 #' @export
@@ -299,6 +311,7 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
     )
 })
 
+# * affine2d ####
 
 #' @describeIn plot-generic Plot a affine2d. blue is start, red is end
 #' @export
