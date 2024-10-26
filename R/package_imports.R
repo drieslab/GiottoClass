@@ -15,7 +15,7 @@
 #' @importMethodsFrom terra rescale
 #' @importMethodsFrom Matrix t
 #' @importMethodsFrom terra t
-#' @importMethodsFrom terra ext ext<-
+#' @importMethodsFrom terra ext ext<- convHull minCircle minRect
 #' @importMethodsFrom terra plot
 #' @importMethodsFrom terra wrap
 #' @importMethodsFrom terra zoom

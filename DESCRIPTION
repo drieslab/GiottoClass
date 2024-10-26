@@ -44,7 +44,7 @@ Imports:
     methods,
     reticulate (>= 1.25),
     stats,
-    terra (>= 1.7-39)
+    terra (>= 1.7-41)
 Suggests: 
     Biobase,
     chihaya,
@@ -109,6 +109,7 @@ Collate:
     'methods-affine.R'
     'methods-centroids.R'
     'methods-coerce.R'
+    'methods-convHull.R'
     'methods-copy.R'
     'methods-crop.R'
     'methods-dims.R'
