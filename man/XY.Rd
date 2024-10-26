@@ -40,7 +40,7 @@
 terra geometry matrix should be included.}
 }
 \value{
-same class as \code{x}
+\code{XY()} returns \code{matrix}. \verb{XY<-()} returns same class as \code{x}
 }
 \description{
 Directly get and set the xy(z) coordinates of spatial

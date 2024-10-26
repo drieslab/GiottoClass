@@ -8,7 +8,7 @@
 #' @param x object
 #' @param value matrix. xy(z) coordinates to set
 #' @param ... additional args to pass
-#' @returns same class as `x`
+#' @returns `XY()` returns `matrix`. `XY<-()` returns same class as `x`
 #' @examples
 #' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
 #' gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
