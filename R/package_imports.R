@@ -27,6 +27,7 @@
 #' @importMethodsFrom terra nrow ncol
 #' @importMethodsFrom terra hist density
 #' @importClassesFrom terra SpatExtent SpatVector
+#' @importMethodsFrom terra area
 #' @import GiottoUtils
 #' @import data.table
 #' @import utils

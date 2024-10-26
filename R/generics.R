@@ -90,7 +90,9 @@ setGeneric("affine", function(x, y, ...) standardGeneric("affine"))
 setGeneric("shear", function(x, ...) standardGeneric("shear"))
 setGeneric("XY", function(x, ...) standardGeneric("XY"))
 setGeneric("XY<-", function(x, ..., value) standardGeneric("XY<-"))
-setGeneric("area", function(x, ...) standardGeneric("area"))
+if (!isGeneric("area")) {
+    setGeneric("area", function(x, ...) standardGeneric("area"))
+}
 
 # Methods and documentations found in methods-overlaps.R
 setGeneric("overlaps", function(x, ...) standardGeneric("overlaps"))
