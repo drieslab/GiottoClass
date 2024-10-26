@@ -84,12 +84,13 @@ setGeneric(
     function(x, ...) standardGeneric("overlapToMatrix")
 )
 
-# Methods and documentations found in methods-spatShift.R
+
 setGeneric("spatShift", function(x, ...) standardGeneric("spatShift"))
 setGeneric("affine", function(x, y, ...) standardGeneric("affine"))
 setGeneric("shear", function(x, ...) standardGeneric("shear"))
 setGeneric("XY", function(x, ...) standardGeneric("XY"))
 setGeneric("XY<-", function(x, ..., value) standardGeneric("XY<-"))
+setGeneric("area", function(x, ...) standardGeneric("area"))
 
 # Methods and documentations found in methods-overlaps.R
 setGeneric("overlaps", function(x, ...) standardGeneric("overlaps"))

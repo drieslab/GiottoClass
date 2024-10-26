@@ -106,6 +106,7 @@ Collate:
     'methods-IDs.R'
     'methods-XY.R'
     'methods-affine.R'
+    'methods-area.R'
     'methods-centroids.R'
     'methods-coerce.R'
     'methods-convHull.R'
