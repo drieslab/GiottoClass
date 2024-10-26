@@ -36,6 +36,7 @@
 - `as.list()` method for `giotto` to dump the data as a list of subobjects
 - `XY()` and `XY<-()` for accessing and setting coordinate values of subobjects as `matrix`
 - terra `convHull()`, `minRect()`, `minCircle()` for Giotto spatial vector classes
+- `area()` for `SpatVector` and `giottoPolygon`
 
 
 # GiottoClass 0.3.5 (2024/08/28)
