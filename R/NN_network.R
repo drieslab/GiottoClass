@@ -331,7 +331,7 @@ createNetwork <- function(x,
     )
 
     geometry_obj <- list("delaunay_simplex_mat" = delaunay_simplex_mat)
-    edge_combs <- utils::combn(x = ncol(delaunay_simplex_mat), m = 2L)
+    edge_combs <- combn(x = ncol(delaunay_simplex_mat), m = 2L)
     delaunay_edges <- data.table::as.data.table(apply(
         edge_combs,
         MARGIN = 1L, function(comb) delaunay_simplex_mat[, comb]

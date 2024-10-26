@@ -393,13 +393,13 @@ set_feat_id <- function(
 
     if (isTRUE(set_defaults)) {
         if (identical(feat_IDs, "initialize")) {
-            spat_unit <- suppressWarnings(
+            spat_unit <- handle_warnings(
                 # expected to be missing sometimes with init
                 set_default_spat_unit(
                     gobject = gobject,
                     spat_unit = NULL
                 )
-            )
+            )$result
         } else {
             spat_unit <- set_default_spat_unit(
                 gobject = gobject,

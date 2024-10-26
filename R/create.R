@@ -161,7 +161,7 @@ createGiottoObject <- function(
     #     "trendsceek", "multinet", "RTriangle", "FactoMineR"
     # )
     #
-    # pack_index <- extra_packages %in% rownames(utils::installed.packages())
+    # pack_index <- extra_packages %in% rownames(installed.packages())
     # extra_installed_packages <- extra_packages[pack_index]
     # extra_not_installed_packages <- extra_packages[!pack_index]
     #
