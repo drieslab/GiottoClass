@@ -344,7 +344,7 @@ loadGiotto <- function(path_to_folder,
 
     ## 4. images
     # compatibility for pre-v0.3.0
-    gobject <- .update_image_slot(gobject)
+    gobject <- .update_image_slot(gobject) # merge largeImages slot to images
     gobject <- .load_giotto_images(
         gobject = gobject,
         path_to_folder = path_to_folder,
@@ -709,6 +709,7 @@ loadGiotto <- function(path_to_folder,
 
         gobject@images[[img]]@raster_object <- spatRaster
         gobject@images[[img]]@file_path <- load_img
+        gobject@images[[img]] <- .update_giotto_image(gobject@images[[img]])
         gobject@images[[img]] <- initialize(gobject@images[[img]])
     }
 
