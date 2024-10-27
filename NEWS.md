@@ -1,5 +1,5 @@
 
-# GiottoClass 0.4.0
+# GiottoClass 0.4.0 (2024/10/27)
 
 ## breaking changes
 - stop exporting deprecated internal accessors
