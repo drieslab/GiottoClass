@@ -12,7 +12,8 @@
 #' mgimg <- as(g_image, "giottoImage")
 #'
 #' a <- convert_mgImage_to_array_DT(mgimg)
-#' force(a);force(a)
+#' force(a)
+#' force(a)
 #' @export
 convert_mgImage_to_array_DT <- function(mg_object) {
     if (inherits(mg_object, "giottoImage")) {
@@ -195,7 +196,7 @@ changeImageBg <- function(mg_object,
 get_img_minmax <- function(mg_img,
     negative_y = TRUE) {
     deprecate_soft(what = "get_img_minmax()", with = "ext()", when = "0.3.1")
-    
+
     # Get magick object dimensions. xmin and ymax assumed to be 0.
     info <- magick::image_info(mg_img)
     img_xmax <- info$width # width
@@ -236,13 +237,14 @@ get_adj_rescale_img <- function(img_minmax,
     spatial_locs,
     scale_factor = 1) {
     deprecate_warn(
-        "0.3.1", what = "get_adj_rescale_img()",
+        "0.3.1",
+        what = "get_adj_rescale_img()",
         details = c(
             "this is too specific to the inner workings of `giottoImage`",
             "We can simply use `ext<-` to set a new extent instead of this."
         )
     )
-    
+
     # Expand scale_factor if needed
     if (length(scale_factor) == 1) {
         scale_factor <- c(x = scale_factor, y = scale_factor)
@@ -277,17 +279,23 @@ get_adj_rescale_img <- function(img_minmax,
 }
 
 # save a magick image to disk and return the filepath
-# can be loaded in with terra or used with getOption("viewer")() downstream 
+# can be loaded in with terra or used with getOption("viewer")() downstream
 # based on magick:::image_preview()
 # accepts a single `magick-image` object
-.magick_preview <- function(x, tempname = "preview") {
+# only returns depth 8 images. DO NOT use for analyzed values
+.magick_preview <- function(
+        x,
+        basename = "preview",
+        filename = NULL) {
     stopifnot(inherits(x, "magick-image"))
     stopifnot(length(x) == 1L)
     format <- tolower(magick::image_info(x[1])$format)
-    tmp <- file.path(tempdir(), paste(tempname, format, sep = "."))
+    if (is.null(filename)) {
+        filename <- file.path(tempdir(), paste(basename, format, sep = "."))
+    }
     vmsg(.is_debug = TRUE, "`.magick_preview()` saving as", format)
-    image_write(x, path = tmp, format = format, depth = 8)
-    return(tmp)
+    magick::image_write(x, path = filename, format = format, depth = 8)
+    return(filename)
 }
 
 #' @title addGiottoImageMG
@@ -674,7 +682,7 @@ reconnect_giottoImage_MG <- function(
 #' @keywords internal
 #' @returns spatRaster object
 .create_terra_spatraster <- function(image_path) {
-    raster_object <- try(suppressWarnings(terra::rast(x = image_path)))
+    raster_object <- try(handle_warnings(terra::rast(x = image_path))$result)
     if (inherits(raster_object, "try-error")) {
         stop(raster_object, " can not be read by terra::rast() \n")
     }
@@ -2027,8 +2035,8 @@ plotGiottoImage <- function(gobject = NULL,
             gobject = gobject,
             name = image_name
         )
-        if (inherits(img_obj, "giottoLargeImage")) image_type = "largeImage"
-        if (inherits(img_obj, "giottoImage")) image_type = "image"
+        if (inherits(img_obj, "giottoLargeImage")) image_type <- "largeImage"
+        if (inherits(img_obj, "giottoImage")) image_type <- "image"
     }
     if (!is.null(giottoImage)) {
         img_obj <- giottoImage
@@ -2659,11 +2667,11 @@ setMethod(
 .density_giottolargeimage <- function(x, show_max = TRUE, ...) {
     a <- list(x = x@raster_object, ...)
     res <- do.call(terra::density, args = a)
-    
+
     if (isFALSE(a$plot)) {
         return(res)
     }
-    
+
     if (isTRUE(show_max)) {
         graphics::abline(v = x@max_window, col = "red")
     }
@@ -2730,6 +2738,40 @@ add_img_array_alpha <- function(x,
 
 
 
+
+# doDeferred ####
+
+#' @name doDeferred
+#' @title Perform deferred/lazy operations
+#' @description Force deferred/lazy operations.
+#' @param x object to force deferred operations in
+#' @param ... additional args to pass
+NULL
+
+#' @rdname doDeferred
+#' @param size numeric. Minimum number of image pixels to render when
+#' evaluating
+#' @param filename character. Full filepath to write the rendered image to. If
+#' `NULL`, a file in `tempdir()` will be generated.
+#' @examples
+#' gimg <- GiottoData::loadSubObjectMini("giottoLargeImage")
+#' affimg <- spin(gimg, 45) # lazily performs affine
+#'
+#' # force the affine operation and render the output with at least 5e5 px
+#' gimg2 <- doDeferred(affimg, size = 5e5)
+#' # **This is mainly intended for visualization.**
+#' # This process saves with image depth of 8.
+#' # Spatially transformed raster values are not preferred for analysis
+#' @export
+setMethod(
+    "doDeferred", signature("giottoAffineImage"),
+    function(x, size = 5e5, filename = NULL, ...) {
+        x@funs$realize_magick(filename = filename, size = size, ...)
+    }
+)
+
+
+
 # converters ####
 
 
@@ -2757,10 +2799,10 @@ ometif_to_tif <- function(input_file,
 
     # get tifffile py
     package_check(
-        pkg_name = c("tifffile", "imagecodecs"), 
+        pkg_name = c("tifffile", "imagecodecs"),
         repository = c("pip:tifffile", "pip:imagecodecs")
     )
-    
+
     ometif2tif_path <- system.file(
         "python", "ometif_convert.py",
         package = "GiottoClass"
@@ -2819,15 +2861,13 @@ ometif_to_tif <- function(input_file,
 #' @param output character. One of "data.frame" to return a data.frame of the
 #' attributes information of the xml node, "xmL" for an xml2 representation
 #' of the node, "list" for an R native list (note that many items in the
-#' list may have overlapping names that make indexing difficult), or 
+#' list may have overlapping names that make indexing difficult), or
 #' "structure" to invisibly return NULL, but print the structure of the XML
 #' document or node.
 #' @returns list of image metadata information
 #' @family ometif utility functions
 #' @export
-ometif_metadata <- function(
-        path, node = NULL, output = c("data.frame", "xml", "list", "structure")
-) {
+ometif_metadata <- function(path, node = NULL, output = c("data.frame", "xml", "list", "structure")) {
     checkmate::assert_file_exists(path)
     package_check(
         pkg_name = c("tifffile", "xml2"),
@@ -2837,25 +2877,26 @@ ometif_metadata <- function(
     TIF <- reticulate::import("tifffile", convert = TRUE, delay_load = TRUE)
     img <- TIF$TiffFile(path)
     output <- match.arg(
-        output, choices = c("data.frame", "xml", "list", "structure")
+        output,
+        choices = c("data.frame", "xml", "list", "structure")
     )
     x <- xml2::read_xml(img$ome_metadata)
 
     if (!is.null(node)) {
         node <- paste(node, collapse = "/")
         x <- xml2::xml_find_all(
-            x, sprintf("//d1:%s", node), 
+            x, sprintf("//d1:%s", node),
             ns = xml2::xml_ns(x)
         )
     }
-        
+
     switch(output,
         "data.frame" = {
-            x = Reduce("rbind", xml2::xml_attrs(x))
+            x <- Reduce("rbind", xml2::xml_attrs(x))
             rownames(x) <- NULL
             x <- as.data.frame(x)
             return(x)
-        }, 
+        },
         "xml" = return(x),
         "list" = return(xml2::as_list(x)),
         "structure" = {
@@ -2864,7 +2905,3 @@ ometif_metadata <- function(
         }
     )
 }
-
-
-
-

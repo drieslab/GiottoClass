@@ -33,9 +33,9 @@ NULL
 #' @export
 setMethod(
     "rescale", signature("giotto"),
-    function(x, fx = 1, fy = fx, x0, y0, spat_unit = ":all:",
-             feat_type = ":all:", images = ":all:"
-    ) {
+    function(
+        x, fx = 1, fy = fx, x0, y0, spat_unit = ":all:",
+        feat_type = ":all:", images = ":all:") {
         # scalefactor settings
         a <- list(fx = fx, fy = fy)
 
@@ -138,7 +138,7 @@ setMethod(
         imgs <- getGiottoImage(x, name = images)
         if (!is.null(imgs)) {
             if (!inherits(imgs, "list")) imgs <- list(imgs)
-            for(img in imgs) {
+            for (img in imgs) {
                 img <- do.call(rescale, args = c(list(x = img), a))
                 x <- setGiottoImage(x, img, verbose = FALSE)
             }
@@ -243,21 +243,23 @@ setMethod("rescale", signature("giottoLargeImage"), function(x, fx = 1, fy = fx,
 
 #' @rdname rescale
 #' @export
-setMethod("rescale", signature("giottoAffineImage"), 
-          function(x, fx = 1, fy = fx, x0, y0) {
-    a <- get_args_list()
-    a$x <- x@affine
-    # update affine
-    x@affine <- do.call(rescale, args = a)
-    
-    return(initialize(x))
-})
+setMethod(
+    "rescale", signature("giottoAffineImage"),
+    function(x, fx = 1, fy = fx, x0, y0) {
+        a <- get_args_list()
+        a$x <- x@affine
+        # update affine
+        x@affine <- do.call(rescale, args = a)
+
+        return(initialize(x))
+    }
+)
 
 #' @rdname rescale
 #' @export
 setMethod("rescale", signature("affine2d"), function(x, fx = 1, fy = fx, x0, y0) {
     a <- get_args_list()
-    
+
     # update linear
     scale_m <- diag(c(fx, fy))
     old_aff <- new_aff <- x@affine
@@ -270,19 +272,19 @@ setMethod("rescale", signature("affine2d"), function(x, fx = 1, fy = fx, x0, y0)
     a$x <- affine(d, old_aff)
     # perform new transform
     post <- do.call(rescale, args = a)
-    
+
     # perform affine & transform without shifts
     b <- a
     b$x0 <- b$y0 <- 0
     b$x <- affine(d, .aff_linear_2d(old_aff))
     pre <- do.call(rescale, args = b)
-    
+
     # find xyshift by comparing tfs so far vs new tf
     xyshift <- .get_centroid_xy(post) - .get_centroid_xy(pre)
-    
+
     # update translate
     .aff_shift_2d(new_aff) <- xyshift
-    
+
     x@affine <- new_aff
     return(initialize(x))
 })

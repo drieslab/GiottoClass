@@ -3,6 +3,7 @@
 \name{replace_dollar}
 \alias{replace_dollar}
 \alias{`$<-`}
+\alias{$<-,giotto-method}
 \alias{$<-,coordDataDT-method}
 \alias{$<-,spatEnrObj-method}
 \alias{$<-,dimObj-method}
@@ -10,6 +11,8 @@
 \alias{$<-,terraVectData-method}
 \title{Replace part of an object with \verb{$<-}}
 \usage{
+\S4method{$}{giotto}(x, name) <- value
+
 \S4method{$}{coordDataDT}(x, name) <- value
 
 \S4method{$}{spatEnrObj}(x, name) <- value

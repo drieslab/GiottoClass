@@ -159,11 +159,11 @@ createGiottoObject <- function(expression,
     #     "scran", "MAST", "png", "tiff", "biomaRt",
     #     "trendsceek", "multinet", "RTriangle", "FactoMineR"
     # )
-    # 
-    # pack_index <- extra_packages %in% rownames(utils::installed.packages())
+    #
+    # pack_index <- extra_packages %in% rownames(installed.packages())
     # extra_installed_packages <- extra_packages[pack_index]
     # extra_not_installed_packages <- extra_packages[!pack_index]
-    # 
+    #
     # if (any(pack_index == FALSE) == TRUE) {
     #     wrap_msg(
     #         "Consider to install these (optional) packages to run all possible",
@@ -351,7 +351,8 @@ createGiottoObject <- function(expression,
             dummySpatLocObj <- createSpatLocsObj(
                 name = "raw",
                 coordinates = spatial_locs,
-                spat_unit = spat_unit
+                spat_unit = spat_unit,
+                provenance = spat_unit
             )
 
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -817,11 +818,14 @@ createGiottoObjectSubcellular <- function(
         # generate named list of giottoPoints objects
         points_res <- .extract_points_list(pointslist = gpoints)
         gobject <- setGiotto(
-            gobject, points_res, verbose = FALSE, initialize = FALSE
+            gobject, points_res,
+            verbose = FALSE, initialize = FALSE
         )
 
-        vmsg(.v = verbose, 
-             "4. Finished extracting spatial feature information")
+        vmsg(
+            .v = verbose,
+            "4. Finished extracting spatial feature information"
+        )
 
         ## expression features ##
         ## ------------------- ##
@@ -953,9 +957,11 @@ createGiottoObjectSubcellular <- function(
                             name = networkname,
                             network = network,
                             spat_unit = names(
-                                slot(gobject, "spatial_info"))[[1]],
+                                slot(gobject, "spatial_info")
+                            )[[1]],
                             provenance = names(
-                                slot(gobject, "spatial_info"))[[1]]
+                                slot(gobject, "spatial_info")
+                            )[[1]]
                         ) # assumed
 
                         ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -1000,7 +1006,8 @@ createGiottoObjectSubcellular <- function(
 
                 if (inherits(grid, c("data.table", "data.frame"))) {
                     if (all(c(
-                        "x_start", "y_start", "x_end", "y_end", "gr_name") %in% 
+                        "x_start", "y_start", "x_end", "y_end", "gr_name"
+                    ) %in%
                         colnames(grid))) {
                         if (!inherits(grid, "data.table")) {
                             grid <- data.table::setDT(grid)
@@ -1085,7 +1092,8 @@ createGiottoObjectSubcellular <- function(
             dim_red <- dimension_reduction[[dim_i]]
 
             if (all(c(
-                "type", "name", "reduction_method", "coordinates", "misc") %in% 
+                "type", "name", "reduction_method", "coordinates", "misc"
+            ) %in%
                 names(dim_red))) {
                 coord_data <- dim_red[["coordinates"]]
 
@@ -1163,7 +1171,7 @@ createGiottoObjectSubcellular <- function(
         default_base <- "image"
         images <- lapply(seq_along(images), function(img_i) {
             im <- images[[img_i]]
-            
+
             # already in giotto format
             if (inherits(im, c("giottoImage", "giottoLargeImage"))) {
                 return(im)
@@ -1287,8 +1295,8 @@ create_expr_obj <- function(name = "test",
     provenance = NULL,
     misc = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_expr_obj()",
-        with = "Giotto::createExprObj()"
+        what = "create_expr_obj()",
+        with = "createExprObj()"
     )
 
     if (is.null(exprMat)) exprMat <- matrix()
@@ -1358,8 +1366,8 @@ create_cell_meta_obj <- function(metaDT = NULL,
     feat_type = "rna",
     provenance = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_cell_meta_obj()",
-        with = "Giotto::createCellMetaObj()"
+        what = "create_cell_meta_obj()",
+        with = "createCellMetaObj()"
     )
 
     if (is.null(col_desc)) col_desc <- NA_character_
@@ -1436,8 +1444,8 @@ create_feat_meta_obj <- function(metaDT = NULL,
     feat_type = "rna",
     provenance = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_feat_meta_obj()",
-        with = "Giotto::createFeatMetaObj()"
+        what = "create_feat_meta_obj()",
+        with = "createFeatMetaObj()"
     )
 
     if (is.null(col_desc)) col_desc <- NA_character_
@@ -1525,8 +1533,8 @@ create_dim_obj <- function(name = "test",
     misc = NULL,
     my_rownames = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_dim_obj()",
-        with = "Giotto::createDimObj()"
+        what = "create_dim_obj()",
+        with = "createDimObj()"
     )
 
     if (is.null(reduction_method)) reduction_method <- NA_character_
@@ -1620,8 +1628,8 @@ create_nn_net_obj <- function(name = "test",
     provenance = NULL,
     misc = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_nn_net_obj()",
-        with = "Giotto::createNearestNetObj()"
+        what = "create_nn_net_obj()",
+        with = "createNearestNetObj()"
     )
 
     if (is.null(nn_type)) nn_type <- NA_character_
@@ -1697,8 +1705,8 @@ create_spat_locs_obj <- function(name = "test",
     provenance = NULL,
     misc = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_spat_locs_obj()",
-        with = "Giotto::createSpatLocsObj()"
+        what = "create_spat_locs_obj()",
+        with = "createSpatLocsObj()"
     )
 
     # DT vars
@@ -1804,8 +1812,8 @@ create_spat_net_obj <- function(name = "test",
     provenance = NULL,
     misc = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_spat_net_obj()",
-        with = "Giotto::createSpatNetObj()"
+        what = "create_spat_net_obj()",
+        with = "createSpatNetObj()"
     )
 
     if (is.null(method)) method <- NA_character_
@@ -1888,8 +1896,8 @@ create_spat_enr_obj <- function(name = "test",
     provenance = NULL,
     misc = NULL) {
     deprecate_soft("3.3.0",
-        what = "Giotto::create_spat_enr_obj()",
-        with = "Giotto::createSpatEnrObj()"
+        what = "create_spat_enr_obj()",
+        with = "createSpatEnrObj()"
     )
 
     if (is.null(method)) method <- NA_character_
@@ -2387,7 +2395,8 @@ setMethod(
 
 
 #' @rdname createGiottoPolygon
-#' @param maskfile path to mask file
+#' @param maskfile path to mask file, a terra `SpatRaster`, or some other
+#' data class readable by [terra::rast()]
 #' @param mask_method how the mask file defines individual segmentation
 #' annotations. See *mask_method* section
 #' @param name character. Name to assign created `giottoPolygon`
@@ -2491,15 +2500,16 @@ createGiottoPolygonsFromMask <- function(
 
     # if maskfile input is not a spatraster, read it in as spatraster
     # if it is spatraster, skip
-    if (!inherits(maskfile, "SpatRaster")) {
+    if (inherits(maskfile, "SpatRaster")) {
+        terra_rast <- maskfile
+    } else if (is.character(maskfile)) {
         # check if mask file exists
         maskfile <- path.expand(maskfile)
-        if (!file.exists(maskfile)) {
-            stop("path : ", maskfile, " does not exist \n")
-        }
+        checkmate::assert_file_exists(maskfile)
         terra_rast <- .create_terra_spatraster(maskfile)
     } else {
-        terra_rast <- maskfile
+        # assume some other class readable by terra::rast()
+        terra_rast <- .create_terra_spatraster(maskfile)
     }
 
     # create polygons from mask
@@ -2597,14 +2607,14 @@ createGiottoPolygonsFromMask <- function(
     if (identical(shift_vertical_step, TRUE)) {
         shift_vertical_step <- rast_dimensions[1] # nrows of raster
     } else if (is.numeric(shift_vertical_step)) {
-        shift_vertical_step <- shift_vertical_step
+        shift_vertical_step <- rast_dimensions[1] * shift_vertical_step
     } else {
         shift_vertical_step <- 0
     }
     if (identical(shift_horizontal_step, TRUE)) {
         shift_horizontal_step <- rast_dimensions[2] # ncols of raster
     } else if (is.numeric(shift_horizontal_step)) {
-        shift_horizontal_step <- shift_horizontal_step
+        shift_horizontal_step <- rast_dimensions[2] * shift_horizontal_step
     } else {
         shift_horizontal_step <- 0
     }
@@ -3140,7 +3150,8 @@ createGiottoImage <- function(gobject = NULL,
 #' @name createGiottoLargeImage
 #' @description Creates a large giotto image that can be added to a Giotto
 #' subcellular object. Generates deep copy of SpatRaster
-#' @param raster_object terra SpatRaster image object
+#' @param raster_object filepath to an image, a terra `SpatRaster` or, other format
+#' openable via [terra::rast()]
 #' @param name name for the image
 #' @param negative_y Map image to negative y spatial values if TRUE. Meaning
 #' that origin is in upper left instead of lower left.
@@ -3181,42 +3192,25 @@ createGiottoLargeImage <- function(raster_object,
     # create minimum giotto
     g_imageL <- new("giottoLargeImage", name = name)
 
-
     ## 1. check raster object and load as SpatRaster if necessary
-    if (!inherits(raster_object, "SpatRaster")) {
-        if (file.exists(raster_object)) {
-            g_imageL@file_path <- raster_object
-            raster_object <- .create_terra_spatraster(
-                image_path = raster_object
-            )
-        } else {
-            stop("raster_object needs to be a 'SpatRaster' object from the
-                terra package or \n an existing path that can be read by
-                terra::rast()")
-        }
-    }
-
-    # Prevent updates to original raster object input
-    if (getNamespaceVersion("terra") >= "1.15-12") {
+    if (inherits(raster_object, "SpatRaster")) {
+        # Prevent updates to original raster object input
         raster_object <- terra::deepcopy(raster_object)
+    } else if (is.character(raster_object)) {
+        checkmate::assert_file_exists(raster_object)
+        g_imageL@file_path <- raster_object
+        raster_object <- .create_terra_spatraster(raster_object)
     } else {
-        # raster_object = terra::copy(raster_object)
-        if (isTRUE(verbose)) {
-            warning("\n If largeImage was created from a terra raster object,
-                    manipulations to the giotto image may be reflected in the
-                    raster object as well. Update terra to >= 1.15-12 to avoid
-                    this issue. \n")
-        }
+        # assume class readable by terra rast
+        raster_object <- .create_terra_spatraster(raster_object)
     }
 
 
     ## 2. image bound spatial extent
-    if (use_rast_ext == TRUE) {
+    if (use_rast_ext) {
         extent <- terra::ext(raster_object)
-        if (verbose == TRUE) {
-            wrap_msg("use_rast_ext == TRUE, extent from input raster_object will
-                be used.")
-        }
+        vmsg(.v = verbose, "use_rast_ext == TRUE
+        extent from input raster_object will be used.")
     }
 
     # By extent object (priority)

@@ -168,7 +168,9 @@
 
 # from a spatvector, get the centroid xy values as a numeric vector
 .get_centroid_xy <- function(x) {
-    res <- centroids(x) %>% ext() %>% .ext_to_num_vec()
+    res <- centroids(x) %>%
+        ext() %>%
+        .ext_to_num_vec()
     res[c(1L, 3L)]
 }
 
@@ -185,7 +187,7 @@
 .magick_image_corners <- function(x) {
     checkmate::assert_class(x, "magick-image")
     im_info <- magick::image_info(x)
-    
+
     # generate spatLocsObj as a set of control points for magick distort. #
     # ------------------------------------------------------------------- #
     # - magick uses 0.5 to refer to the center of pixels

@@ -28,7 +28,8 @@ getNearestNetwork(
 \item{output}{return a giotto \code{nnNetObj}, \code{igraph}, \code{data.table} object.
 Default 'nnNetObj'}
 
-\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
+\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE
+only when
 expression and spat_info are not expected to exist.}
 }
 \value{
@@ -44,14 +45,14 @@ getNearestNetwork(gobject = g)
 }
 \seealso{
 Other expression space nearest network accessor functions: 
-\code{\link{get_NearestNetwork}()},
-\code{\link{setNearestNetwork}()},
-\code{\link{set_NearestNetwork}()}
+\code{\link{setNearestNetwork}()}
 
 Other functions to get data from giotto object: 
+\code{\link{getCellMetadata}()},
 \code{\link{getDimReduction}()},
 \code{\link{getExpression}()},
 \code{\link{getFeatureInfo}()},
+\code{\link{getFeatureMetadata}()},
 \code{\link{getGiottoImage}()},
 \code{\link{getMultiomics}()},
 \code{\link{getPolygonInfo}()},
@@ -59,16 +60,7 @@ Other functions to get data from giotto object:
 \code{\link{getSpatialGrid}()},
 \code{\link{getSpatialLocations}()},
 \code{\link{getSpatialNetwork}()},
-\code{\link{get_NearestNetwork}()},
-\code{\link{get_dimReduction}()},
-\code{\link{get_feature_info}()},
-\code{\link{get_giottoImage}()},
-\code{\link{get_multiomics}()},
-\code{\link{get_polygon_info}()},
-\code{\link{get_spatialGrid}()},
-\code{\link{get_spatialNetwork}()},
-\code{\link{get_spatial_enrichment}()},
-\code{\link{get_spatial_locations}()}
+\code{\link{get_multiomics}()}
 }
 \concept{expression space nearest network accessor functions}
 \concept{functions to get data from giotto object}

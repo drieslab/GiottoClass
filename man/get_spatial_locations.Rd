@@ -31,7 +31,8 @@ object (default = TRUE)}
 
 \item{verbose}{be verbose}
 
-\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
+\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE
+only when
 expression and spat_info are not expected to exist.}
 
 \item{simplify}{logical. Whether or not to take object out of a list when
@@ -43,33 +44,3 @@ data.table with coordinates or spatLocsObj depending on \code{output}
 \description{
 Function to get a spatial location data.table
 }
-\seealso{
-Other spatial location data accessor functions: 
-\code{\link{getSpatialLocations}()},
-\code{\link{setSpatialLocations}()},
-\code{\link{set_spatial_locations}()}
-
-Other functions to get data from giotto object: 
-\code{\link{getDimReduction}()},
-\code{\link{getExpression}()},
-\code{\link{getFeatureInfo}()},
-\code{\link{getGiottoImage}()},
-\code{\link{getMultiomics}()},
-\code{\link{getNearestNetwork}()},
-\code{\link{getPolygonInfo}()},
-\code{\link{getSpatialEnrichment}()},
-\code{\link{getSpatialGrid}()},
-\code{\link{getSpatialLocations}()},
-\code{\link{getSpatialNetwork}()},
-\code{\link{get_NearestNetwork}()},
-\code{\link{get_dimReduction}()},
-\code{\link{get_feature_info}()},
-\code{\link{get_giottoImage}()},
-\code{\link{get_multiomics}()},
-\code{\link{get_polygon_info}()},
-\code{\link{get_spatialGrid}()},
-\code{\link{get_spatialNetwork}()},
-\code{\link{get_spatial_enrichment}()}
-}
-\concept{functions to get data from giotto object}
-\concept{spatial location data accessor functions}

@@ -64,6 +64,13 @@ NULL
 
 # spatUnit ####
 
+# default for unknown types
+#' @describeIn spatUnit-generic Get spatial unit information
+#' @export
+setMethod("spatUnit", signature("ANY"), function(x) {
+    NA_character_
+})
+
 #' @rdname spatUnit-generic
 #' @export
 setMethod("spatUnit", signature("list"), function(x) {
@@ -103,6 +110,14 @@ setMethod("spatUnit<-", signature("giottoPolygon"), function(x, value) {
 
 # featType ####
 
+# default for unknown types
+#' @describeIn featType-generic Get feature type information
+#' @export
+setMethod("featType", signature("ANY"), function(x) {
+    NA_character_
+})
+
+
 #' @rdname featType-generic
 #' @export
 setMethod("featType", signature("list"), function(x) {
@@ -128,19 +143,24 @@ setMethod("featType<-", signature = "featData", function(x, value) {
 
 # objName ####
 
+# default for unknown types
 #' @rdname objName-generic
 #' @export
-setMethod("objName", signature = "list", function(x) {
+setMethod("objName", signature("ANY"), function(x) NA_character_)
+
+#' @rdname objName-generic
+#' @export
+setMethod("objName", signature("list"), function(x) {
     vapply(x, objName, FUN.VALUE = character(1L), USE.NAMES = FALSE)
 })
 
 #' @describeIn objName-generic Get name information
 #' @export
-setMethod("objName", signature = "nameData", function(x) x@name)
+setMethod("objName", signature("nameData"), function(x) x@name)
 
 #' @describeIn objName-generic Get name giottoPoints
 #' @export
-setMethod("objName", signature = "giottoPoints", function(x) x@feat_type)
+setMethod("objName", signature("giottoPoints"), function(x) x@feat_type)
 
 #' @rdname objName-generic
 #' @export
@@ -155,7 +175,8 @@ setMethod("objName", signature("giottoImage"), function(x) x@name)
 setMethod("objName<-", signature = "list", function(x, value) {
     if (length(x) != length(value)) {
         stop("Number of names to set must be the same as the length of list",
-             call. = FALSE)
+            call. = FALSE
+        )
     }
     lapply(seq_along(x), function(i) {
         y <- x[[i]]
@@ -252,6 +273,7 @@ NULL
 #' @param force_replace logical. default = FALSE. Whether to replace the
 #' names of objects for which the name already has a name for
 #' @keywords internal
+#' @returns list
 assign_objnames_2_list <- function(obj_list, force_replace = FALSE) {
     if (is.null(obj_list)) {
         return(obj_list)
@@ -292,7 +314,8 @@ assign_listnames_2_obj <- function(obj_list) {
         stop("<assign_listnames_2_obj> List has no names\n")
     }
     obj_index <- which(vapply(
-        obj_list, inherits, "nameData", FUN.VALUE = logical(1L)
+        obj_list, inherits, "nameData",
+        FUN.VALUE = logical(1L)
     ))
     list_obj_names <- list_names[obj_index]
 

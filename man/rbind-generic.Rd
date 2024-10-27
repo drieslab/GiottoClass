@@ -2,10 +2,16 @@
 % Please edit documentation in R/methods-rbind.R
 \name{rbind-generic}
 \alias{rbind-generic}
+\alias{rbind2,cellMetaObj,cellMetaObj-method}
+\alias{rbind2,featMetaObj,featMetaObj-method}
 \alias{rbind2,spatLocsObj,spatLocsObj-method}
 \alias{rbind2,giottoPolygon,giottoPolygon-method}
 \title{Combine objects by rows (Giotto-related)}
 \usage{
+\S4method{rbind2}{cellMetaObj,cellMetaObj}(x, y, ...)
+
+\S4method{rbind2}{featMetaObj,featMetaObj}(x, y, ...)
+
 \S4method{rbind2}{spatLocsObj,spatLocsObj}(x, y, ...)
 
 \S4method{rbind2}{giottoPolygon,giottoPolygon}(x, y, add_list_ID = TRUE, ...)

@@ -4,11 +4,14 @@
 \alias{featType-generic}
 \alias{featType}
 \alias{featType<-}
+\alias{featType,ANY-method}
 \alias{featType,list-method}
 \alias{featType,featData-method}
 \alias{featType<-,featData-method}
 \title{Feature type information}
 \usage{
+\S4method{featType}{ANY}(x)
+
 \S4method{featType}{list}(x)
 
 \S4method{featType}{featData}(x)
@@ -28,6 +31,8 @@ access and set feat_type slot of S4 subobject
 }
 \section{Functions}{
 \itemize{
+\item \code{featType(ANY)}: Get feature type information
+
 \item \code{featType(featData)}: Get feature type information
 
 \item \code{featType(featData) <- value}: Set feature type information

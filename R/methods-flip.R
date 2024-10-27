@@ -165,9 +165,7 @@ setMethod(
 
 #' @rdname flip
 #' @export
-setMethod("flip", signature("giottoLargeImage"), function(
-        x, direction = "vertical", x0 = 0, y0 = 0
-) {
+setMethod("flip", signature("giottoLargeImage"), function(x, direction = "vertical", x0 = 0, y0 = 0) {
     a <- get_args_list()
     a$x <- as(x, "giottoAffineImage") # convert to giottoAffineImage
     res <- do.call(flip, args = a)
@@ -176,22 +174,18 @@ setMethod("flip", signature("giottoLargeImage"), function(
 
 #' @rdname flip
 #' @export
-setMethod("flip", signature("giottoAffineImage"), function(
-        x, direction = "vertical", x0 = 0, y0 = 0
-) {
+setMethod("flip", signature("giottoAffineImage"), function(x, direction = "vertical", x0 = 0, y0 = 0) {
     a <- get_args_list()
     a$x <- x@affine
     # update affine
     x@affine <- do.call(flip, args = a)
-    
+
     return(initialize(x))
 })
 
 #' @rdname flip
 #' @export
-setMethod("flip", signature("affine2d"), function(
-        x, direction = "vertical", x0 = 0, y0 = 0
-) {
+setMethod("flip", signature("affine2d"), function(x, direction = "vertical", x0 = 0, y0 = 0) {
     direction <- match.arg(direction, choices = c("vertical", "horizontal"))
 
     aff <- x@affine
@@ -207,7 +201,7 @@ setMethod("flip", signature("affine2d"), function(
     )
     .aff_linear_2d(aff) <- .aff_linear_2d(aff) %*% flip_m
     .aff_shift_2d(aff) <- xyshift
-    
+
     x@affine <- aff
     return(initialize(x))
 })

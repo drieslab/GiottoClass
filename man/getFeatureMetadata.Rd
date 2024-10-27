@@ -24,7 +24,8 @@ getFeatureMetadata(
 
 \item{copy_obj}{whether to perform a deepcopy of the data.table information}
 
-\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
+\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE
+only when
 expression and spat_info are not expected to exist.}
 }
 \value{
@@ -40,4 +41,20 @@ getFeatureMetadata(g)
 }
 \seealso{
 fDataDT
+
+Other functions to get data from giotto object: 
+\code{\link{getCellMetadata}()},
+\code{\link{getDimReduction}()},
+\code{\link{getExpression}()},
+\code{\link{getFeatureInfo}()},
+\code{\link{getGiottoImage}()},
+\code{\link{getMultiomics}()},
+\code{\link{getNearestNetwork}()},
+\code{\link{getPolygonInfo}()},
+\code{\link{getSpatialEnrichment}()},
+\code{\link{getSpatialGrid}()},
+\code{\link{getSpatialLocations}()},
+\code{\link{getSpatialNetwork}()},
+\code{\link{get_multiomics}()}
 }
+\concept{functions to get data from giotto object}

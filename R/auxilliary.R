@@ -111,16 +111,19 @@ fDataDT <- function(gobject,
 ## Feature & Cell metadata functions ####
 
 
-#' @title Annotate giotto clustering
+#' @title Annotate Giotto object
 #' @name annotateGiotto
-#' @description Converts cluster results into a user provided annotation.
-#' @param gobject giotto object
+#' @description Map user provided annotations/labels based on another
+#' existing metadata column (usually clustering labels)
+#' @param gobject `giotto` object
 #' @param spat_unit spatial unit
 #' @param feat_type feature type
-#' @param annotation_vector named annotation vector (names = cluster ids)
-#' @param cluster_column cluster column to convert to annotation names
+#' @param annotation_vector named `character` vector. Vector names are labels
+#' in the cluster column. Labels to assign are the vector values.
+#' @param cluster_column `character`. Cell metaadata column to map annotation
+#'  values based on.
 #' @param name new name for annotation column
-#' @returns giotto object
+#' @returns `giotto` object
 #' @details You need to specify which (cluster) column you want to annotate
 #' and you need to provide an annotation vector like this:
 #' \itemize{
@@ -169,7 +172,7 @@ annotateGiotto <- function(gobject,
     # data.table: set global variable
     temp_cluster_name <- NULL
 
-    if (is.null(annotation_vector) | is.null(cluster_column)) {
+    if (is.null(annotation_vector) || is.null(cluster_column)) {
         stop("\n You need to provide both a named annotation vector and
             the corresponding cluster column  \n")
     }
@@ -193,6 +196,7 @@ annotateGiotto <- function(gobject,
     missing_annotations <- uniq_clusters[!uniq_clusters %in% uniq_names]
     no_matching_annotations <- uniq_names[!uniq_names %in% uniq_clusters]
 
+    # stop if not all clusters in cluster column got a mapped annotation value
     if (length(missing_annotations) > 0) {
         wrap_msg(
             "Not all clusters have an accompanying annotation in the
@@ -225,11 +229,8 @@ annotateGiotto <- function(gobject,
 
     data.table::setnames(cell_metadata[], old = "temp_cluster_name", new = name)
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    gobject <- setCellMetadata(
-        gobject = gobject,
-        x = cell_metadata,
-        verbose = FALSE,
-        initialize = FALSE
+    gobject <- setGiotto(gobject, cell_metadata,
+        verbose = FALSE, initialize = FALSE
     )
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
@@ -1309,8 +1310,10 @@ calculateMetaTableCells <- function(gobject,
 #' # These custom functions must be summary functions, as in, they must
 #' # produce only a single numeric output from many
 #' custom_stat <- function(x) {
-#'     if (max(x) == 0) return(0)
-#'     return(mean(x/max(x)))
+#'     if (max(x) == 0) {
+#'         return(0)
+#'     }
+#'     return(mean(x / max(x)))
 #' }
 #' g <- createMetafeats(
 #'     gobject = g,
@@ -1331,7 +1334,6 @@ calculateMetaTableCells <- function(gobject,
 #'     name = "norm_scaled_mean_metafeat"
 #' )
 #' showGiottoSpatEnrichments(g)
-#' @seealso [GiottoVisuals::spatCellPlot()]
 #' @export
 createMetafeats <- function(gobject,
     spat_unit = NULL,
@@ -1342,9 +1344,7 @@ createMetafeats <- function(gobject,
     rescale_to = NULL,
     name = paste0("metafeat_", ifelse(is.function(stat), "custom", stat)),
     return_gobject = TRUE,
-    verbose = NULL
-) {
-
+    verbose = NULL) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject, spat_unit = spat_unit
@@ -1486,9 +1486,7 @@ createMetafeats <- function(gobject,
 # Which metafeature/cluster to assign the feature(s) to is encoded by which
 # numbers are named that feature.
 # `expr_values` should be a matrix-like
-.calc_metafeat_vec <- function(
-        x, expr_values, stat_fun, verbose = NULL
-) {
+.calc_metafeat_vec <- function(x, expr_values, stat_fun, verbose = NULL) {
     res_list <- list()
     clusters <- mixedsort(unique(x))
 
@@ -1498,7 +1496,8 @@ createMetafeats <- function(gobject,
         # subset to features requested for cluster
         selected_feats <- names(x[x == clus_id])
         sub_mat <- expr_values[
-            rownames(expr_values) %in% selected_feats, , drop = FALSE
+            rownames(expr_values) %in% selected_feats, ,
+            drop = FALSE
         ]
 
         # calculate score
@@ -1517,9 +1516,7 @@ createMetafeats <- function(gobject,
 # cluster/metafeature and feature to assign respectively. A third `w` numeric
 # col can be provided which is a weight to apply to the values before
 # performing the stat_fun score calculation.
-.calc_metafeat_dt <- function(
-        x, expr_values, stat_fun, verbose = NULL
-) {
+.calc_metafeat_dt <- function(x, expr_values, stat_fun, verbose = NULL) {
     # NSE vars
     clus <- feat <- w <- NULL
 
@@ -1533,7 +1530,8 @@ createMetafeats <- function(gobject,
         # subset to features requested for cluster
         selected_feats <- x[clus == clus_id, feat]
         sub_mat <- expr_values[
-            rownames(expr_values) %in% selected_feats, , drop = FALSE
+            rownames(expr_values) %in% selected_feats, ,
+            drop = FALSE
         ]
         expr_feats <- rownames(sub_mat) # subset of `selected_feats` from `x`
 

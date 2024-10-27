@@ -39,6 +39,8 @@
 \alias{[,giottoPolygon,character,missing,missing-method}
 \alias{[,giottoPolygon,missing,gIndex,missing-method}
 \alias{[,terraVectData,gIndex,gIndex,missing-method}
+\alias{[,giottoLargeImage,missing,missing,missing-method}
+\alias{[,giottoImage,missing,missing,missing-method}
 \alias{[,affine2d,missing,missing,missing-method}
 \title{Subset part of an object with \code{[}}
 \usage{
@@ -115,6 +117,10 @@
 \S4method{[}{giottoPolygon,missing,gIndex,missing}(x, i, j)
 
 \S4method{[}{terraVectData,gIndex,gIndex,missing}(x, i, j)
+
+\S4method{[}{giottoLargeImage,missing,missing,missing}(x, i, j)
+
+\S4method{[}{giottoImage,missing,missing,missing}(x, i, j)
 
 \S4method{[}{affine2d,missing,missing,missing}(x, i, j)
 }

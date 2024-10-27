@@ -61,6 +61,9 @@
 \arguments{
 \item{object}{object to show}
 }
+\value{
+giotto slot
+}
 \description{
 Show methods for Giotto classes
 }

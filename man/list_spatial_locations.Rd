@@ -11,7 +11,8 @@ list_spatial_locations(gobject, spat_unit = NULL, return_uniques = FALSE)
 
 \item{spat_unit}{spatial unit (e.g. "cell")}
 
-\item{return_uniques}{return unique nesting names (ignores if final object exists/is correct class)}
+\item{return_uniques}{return unique nesting names (ignores if final object
+exists/is correct class)}
 }
 \value{
 names and locations of available data.table as data.table

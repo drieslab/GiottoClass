@@ -11,11 +11,13 @@
 \alias{ext,giottoImage-method}
 \alias{ext,giotto-method}
 \alias{ext,giottoAffineImage-method}
+\alias{ext,affine2d-method}
 \alias{ext<-,giottoPoints,SpatExtent-method}
 \alias{ext<-,giottoPolygon,SpatExtent-method}
 \alias{ext<-,giottoLargeImage,SpatExtent-method}
 \alias{ext<-,ANY,ANY-method}
 \alias{ext<-,giottoImage,SpatExtent-method}
+\alias{ext<-,affine2d,ANY-method}
 \title{Get a SpatExtent}
 \usage{
 \S4method{ext}{spatLocsObj}(x, ...)
@@ -43,6 +45,8 @@
 
 \S4method{ext}{giottoAffineImage}(x, ...)
 
+\S4method{ext}{affine2d}(x, ...)
+
 \S4method{ext}{giottoPoints,SpatExtent}(x) <- value
 
 \S4method{ext}{giottoPolygon,SpatExtent}(x) <- value
@@ -52,6 +56,8 @@
 \S4method{ext}{ANY,ANY}(x) <- value
 
 \S4method{ext}{giottoImage,SpatExtent}(x) <- value
+
+\S4method{ext}{affine2d,ANY}(x) <- value
 }
 \arguments{
 \item{x}{spatial object}
