@@ -1,6 +1,7 @@
 # docs ----------------------------------------------------------- #
 #' @title Convex hull, minimal bounding rotated rectangle, and minimal bounding circle
 #' @name convHull
+#' @aliases minRect minCircle
 #' @description Get the convex hull, the minimal bounding rotated rectangle,
 #' or minimal bounding circle of a Giotto spatial object or terra SpatVector
 #' @param x any of giotto image, giottoPolygon, giottoPoints, spatLocsObj, SpatVector
@@ -24,48 +25,36 @@ NULL
 # ---------------------------------------------------------------- #
 
 #' @rdname convHull
-#' @usage
-#' ## S4 method for signatures 'spatLocsObj', 'giottoPolygon', 'giottoPoints'
-#' convHull(x, by = "")
 #' @export
-setMethod("convHull", signature("spatLocsObj"), function(x, by = "") {
-    convHull(x = as.points(x), by = by)
+setMethod("convHull", signature("spatLocsObj"), function(x, by = "", ...) {
+    convHull(x = as.points(x), by = by, ...)
 })
 #' @rdname convHull
-#' @usage NULL
 #' @export
-setMethod("convHull", signature("giottoSpatial"), function(x, by = "") {
-    convHull(x[], by = by)
+setMethod("convHull", signature("giottoSpatial"), function(x, by = "", ...) {
+    convHull(x[], by = by, ...)
 })
 
 
 #' @rdname convHull
-#' @usage
-#' ## S4 method for signatures 'spatLocsObj', 'giottoPolygon', 'giottoPoints'
-#' minRect(x, by = "")
 #' @export
-setMethod("minRect", signature("spatLocsObj"), function(x, by = "") {
-    minRect(x = as.points(x), by = by)
+setMethod("minRect", signature("spatLocsObj"), function(x, by = "", ...) {
+    minRect(x = as.points(x), by = by, ...)
 })
 #' @rdname convHull
-#' @usage NULL
 #' @export
-setMethod("minRect", signature("giottoSpatial"), function(x, by = "") {
-    minRect(x[], by = by)
+setMethod("minRect", signature("giottoSpatial"), function(x, by = "", ...) {
+    minRect(x[], by = by, ...)
 })
 
 
 #' @rdname convHull
-#' @usage
-#' ## S4 method for signatures 'spatLocsObj', 'giottoPolygon', 'giottoPoints'
-#' minCircle(x, by = "")
 #' @export
-setMethod("minCircle", signature("spatLocsObj"), function(x, by = "") {
-    minCircle(x = as.points(x), by = by)
+setMethod("minCircle", signature("spatLocsObj"), function(x, by = "", ...) {
+    minCircle(x = as.points(x), by = by, ...)
 })
 #' @rdname convHull
-#' @usage NULL
 #' @export
-setMethod("minCircle", signature("giottoSpatial"), function(x, by = "") {
-    minCircle(x[], by = by)
+setMethod("minCircle", signature("giottoSpatial"), function(x, by = "", ...) {
+    minCircle(x[], by = by, ...)
 })
