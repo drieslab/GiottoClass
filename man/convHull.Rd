@@ -2,6 +2,8 @@
 % Please edit documentation in R/methods-convHull.R
 \name{convHull}
 \alias{convHull}
+\alias{minRect}
+\alias{minCircle}
 \alias{convHull,spatLocsObj-method}
 \alias{convHull,giottoSpatial-method}
 \alias{minRect,spatLocsObj-method}
@@ -10,14 +12,17 @@
 \alias{minCircle,giottoSpatial-method}
 \title{Convex hull, minimal bounding rotated rectangle, and minimal bounding circle}
 \usage{
-## S4 method for signatures 'spatLocsObj', 'giottoPolygon', 'giottoPoints'
-convHull(x, by = "")
+\S4method{convHull}{spatLocsObj}(x, by = "", ...)
 
-## S4 method for signatures 'spatLocsObj', 'giottoPolygon', 'giottoPoints'
-minRect(x, by = "")
+\S4method{convHull}{giottoSpatial}(x, by = "", ...)
 
-## S4 method for signatures 'spatLocsObj', 'giottoPolygon', 'giottoPoints'
-minCircle(x, by = "")
+\S4method{minRect}{spatLocsObj}(x, by = "", ...)
+
+\S4method{minRect}{giottoSpatial}(x, by = "", ...)
+
+\S4method{minCircle}{spatLocsObj}(x, by = "", ...)
+
+\S4method{minCircle}{giottoSpatial}(x, by = "", ...)
 }
 \arguments{
 \item{x}{any of giotto image, giottoPolygon, giottoPoints, spatLocsObj, SpatVector}
