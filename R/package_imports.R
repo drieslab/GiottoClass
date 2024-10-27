@@ -22,7 +22,7 @@
 #' @importMethodsFrom terra crop
 #' @importMethodsFrom terra vect
 #' @importMethodsFrom terra relate
-#' @importMethodsFrom terra union intersect symdif snap
+#' @importMethodsFrom terra union erase intersect symdif snap
 #' @importMethodsFrom terra as.data.frame as.polygons as.points
 #' @importMethodsFrom terra nrow ncol
 #' @importMethodsFrom terra hist density
