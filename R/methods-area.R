@@ -9,10 +9,10 @@
 #' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
 #' gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
 #' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
-#' 
+#'
 #' # area of polygons
 #' area(gpoly)
-#' 
+#'
 #' # area of the convex hull
 #' area(convHull(sl))
 #' feature_hulls <- convHull(gpoints, by = "feat_ID")

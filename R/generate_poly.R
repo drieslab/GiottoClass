@@ -40,13 +40,12 @@
 #'
 #' @seealso [generate_grid] [tessellate]
 #' @export
-polyStamp <- function(
-        stamp_dt,
-        spatlocs,
-        id_col = "cell_ID",
-        x_col = "sdimx",
-        y_col = "sdimy",
-        verbose = TRUE) {
+polyStamp <- function(stamp_dt,
+    spatlocs,
+    id_col = "cell_ID",
+    x_col = "sdimx",
+    y_col = "sdimy",
+    verbose = TRUE) {
     # data.table vars
     spatlocs_idx <- rel_vertices_idx <- poly_ID <- NULL
 
@@ -121,9 +120,8 @@ polyStamp <- function(
 #' @examples
 #' circleVertices(radius = 10)
 #' @export
-circleVertices <- function(
-        radius,
-        npoints = 25) {
+circleVertices <- function(radius,
+    npoints = 25) {
     a <- seq(0, 2 * pi, length.out = npoints + 1)
     x <- radius * cos(a)
     y <- radius * sin(a)
@@ -250,14 +248,13 @@ hexVertices <- function(radius, major_axis = c("v", "h")) {
 #' plot(x)
 #' @concept spatial location
 #' @export
-tessellate <- function(
-        extent,
-        shape = c("hexagon", "square"),
-        shape_size = NULL,
-        gap = 0,
-        radius = NULL,
-        id_prefix = "ID_",
-        name = "grid") {
+tessellate <- function(extent,
+    shape = c("hexagon", "square"),
+    shape_size = NULL,
+    gap = 0,
+    radius = NULL,
+    id_prefix = "ID_",
+    name = "grid") {
     if (is.null(radius) && is.null(shape_size)) stop("shape_size must be given")
     if (!is.null(radius)) shape_size <- radius * 2
 
@@ -402,10 +399,9 @@ orthoGrid <- function(extent, ccd, id_prefix = "ID_") {
 #' plot(x)
 #' @concept spatial location
 #' @export
-makePseudoVisium <- function(
-        extent = NULL,
-        micron_size = 1,
-        name = "pseudo_visium") {
+makePseudoVisium <- function(extent = NULL,
+    micron_size = 1,
+    name = "pseudo_visium") {
     e <- ext(extent)[]
 
     # Visium default scale parameters

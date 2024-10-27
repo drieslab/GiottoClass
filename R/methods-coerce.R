@@ -86,8 +86,9 @@ NULL
 #' @rdname as.data.table
 #' @method as.data.table SpatVector
 #' @export
-as.data.table.SpatVector <- function(x, keep.rownames = FALSE, geom = NULL,
-    include_values = TRUE, ...) {
+as.data.table.SpatVector <- function(
+        x, keep.rownames = FALSE, geom = NULL,
+        include_values = TRUE, ...) {
     # if looking for polygon XY...
     if (terra::is.polygons(x)) {
         if (!is.null(geom)) {
@@ -208,8 +209,9 @@ methods::setAs("giottoLargeImage", "array", function(from) {
 #' @export
 setMethod(
     "as.polygons", signature("data.frame"),
-    function(x, include_values = TRUE, specific_values = NULL,
-    sort_geom = FALSE) {
+    function(
+        x, include_values = TRUE, specific_values = NULL,
+        sort_geom = FALSE) {
         .dt_to_spatvector_polygon(
             dt = data.table::setDT(x),
             include_values = include_values,
@@ -546,9 +548,8 @@ setMethod(
 #' @returns data.table
 #' @description  convert spatVector to data.table
 #' @keywords internal
-.spatvector_to_dt <- function(
-        spatvector,
-        include_values = TRUE) {
+.spatvector_to_dt <- function(spatvector,
+    include_values = TRUE) {
     # NSE var
     geom <- NULL
 
@@ -577,11 +578,10 @@ setMethod(
 #' 'geom', 'part', and 'hole' columns.
 #' @returns polygon spatVector
 #' @keywords internal
-.dt_to_spatvector_polygon <- function(
-        dt,
-        include_values = TRUE,
-        specific_values = NULL,
-        sort_geom = FALSE) {
+.dt_to_spatvector_polygon <- function(dt,
+    include_values = TRUE,
+    specific_values = NULL,
+    sort_geom = FALSE) {
     # DT vars
     geom <- NULL
 
@@ -641,10 +641,9 @@ setMethod(
 #' include_values == TRUE
 #' @returns spatVector for points
 #' @keywords internal
-.dt_to_spatvector_points <- function(
-        dt,
-        include_values = TRUE,
-        specific_values = NULL) {
+.dt_to_spatvector_points <- function(dt,
+    include_values = TRUE,
+    specific_values = NULL) {
     all_colnames <- colnames(dt)
     geom_values <- c("geom", "part", "x", "y", "hole")
     other_values <- all_colnames[!all_colnames %in% geom_values]

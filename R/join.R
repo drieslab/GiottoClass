@@ -5,7 +5,6 @@
 #' @keywords internal
 #' @noRd
 .join_expression_matrices <- function(matrix_list, feat_ids = NULL) {
-    
     # find all features
     if (is.null(feat_ids)) {
         final_feats <- lapply(matrix_list, rownames)
@@ -89,7 +88,7 @@
             # "first" is based on gobject order
         ))
     }
-    
+
     # order by feat_ID
     comb_meta <- comb_meta[mixedorder(feat_ID)]
 
@@ -195,17 +194,16 @@
 #' )
 #'
 #' @export
-joinGiottoObjects <- function(
-        gobject_list,
-        gobject_names = NULL,
-        join_method = c("shift", "z_stack", "no_change"),
-        z_vals = 1000,
-        x_shift = NULL,
-        y_shift = NULL,
-        x_padding = NULL,
-        y_padding = NULL,
-        dry_run = FALSE,
-        verbose = FALSE) {
+joinGiottoObjects <- function(gobject_list,
+    gobject_names = NULL,
+    join_method = c("shift", "z_stack", "no_change"),
+    z_vals = 1000,
+    x_shift = NULL,
+    y_shift = NULL,
+    x_padding = NULL,
+    y_padding = NULL,
+    dry_run = FALSE,
+    verbose = FALSE) {
     # NSE vars
     sdimz <- cell_ID <- sdimx <- sdimy <- name <- NULL
 
@@ -720,13 +718,12 @@ joinGiottoObjects <- function(
 
 
     for (feat in first_features) {
-
         savelist_vector <- list()
 
         for (gobj_i in seq_along(updated_object_list)) {
-            updated_feat_info <- 
+            updated_feat_info <-
                 updated_object_list[[gobj_i]]@feat_info[[feat]]
-            
+
             if (!is.null(updated_feat_info)) {
                 spat_point_vector <- updated_feat_info@spatVector
             } else {
@@ -804,7 +801,8 @@ joinGiottoObjects <- function(
 
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             comb_gobject <- setGiotto(comb_gobject, combcellmeta,
-                                      verbose = FALSE, initialize = FALSE)
+                verbose = FALSE, initialize = FALSE
+            )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
     }

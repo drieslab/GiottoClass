@@ -383,10 +383,12 @@ setMethod(
 
 
         # SLOT CHECKS ####
-        
+
         # option to skip checks
-        if (!getOption("giotto.check_valid", TRUE)) return(.Object)
-        
+        if (!getOption("giotto.check_valid", TRUE)) {
+            return(.Object)
+        }
+
         vmsg(.is_debug = TRUE, .initial = "  ", "!!giotto validity run!!")
 
         ## Metadata ##
@@ -862,9 +864,8 @@ init_cell_and_feat_IDs <- function(gobject) {
 #' and feature type in the giotto object.
 #' @returns cellMetaObjs
 #' @keywords internal
-init_cell_metadata <- function(
-        gobject,
-        provenance = NULL) {
+init_cell_metadata <- function(gobject,
+    provenance = NULL) {
     # data.table vars
     spat_unit <- feat_type <- NULL
 
@@ -932,9 +933,8 @@ init_cell_metadata <- function(
 #' @param provenance provenance information (optional)
 #' @returns featMetaObjs
 #' @keywords internal
-init_feat_metadata <- function(
-        gobject,
-        provenance = NULL) {
+init_feat_metadata <- function(gobject,
+    provenance = NULL) {
     # data.table vars
     spat_unit <- feat_type <- NULL
 

@@ -59,9 +59,10 @@ NULL
 #' to affect all can be used.
 #' @export
 setMethod(
-    "affine", signature(x = "giotto", y = "matrix"), function(x, y, inv = FALSE,
-    spat_unit = ":all:", feat_type = ":all:", images = ":all:",
-    ...) {
+    "affine", signature(x = "giotto", y = "matrix"), function(
+        x, y, inv = FALSE,
+        spat_unit = ":all:", feat_type = ":all:", images = ":all:",
+        ...) {
         a <- list(y = y, inv = inv, ...)
 
         spat_unit <- set_default_spat_unit(
@@ -245,8 +246,7 @@ setMethod("affine", signature(x = "giottoAffineImage", y = "matrix"), function(x
 # * affine2d, matrix ####
 #' @rdname affine
 #' @export
-setMethod("affine", signature(x = "affine2d", y = "matrix"), function(
-        x, y, inv = FALSE, ...) {
+setMethod("affine", signature(x = "affine2d", y = "matrix"), function(x, y, inv = FALSE, ...) {
     a <- get_args_list()
     # update linear
     m <- .aff_linear_2d(y)

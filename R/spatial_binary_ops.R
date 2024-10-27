@@ -14,20 +14,20 @@
 #' gpoly1 <- GiottoData::loadSubObjectMini("giottoPolygon")
 #' epoly <- as.polygons(ext(c(6600, 6800, -5000, -4800)))
 #' gpoly2 <- spatShift(gpoly1, dx = 20)
-#' 
+#'
 #' plot(gpoly1)
 #' plot(gpoly1 - gpoly2)
 #' plot(gpoly1 - epoly)
-#' 
+#'
 #' plot(gpoly1 + epoly)
-#' 
+#'
 #' plot(symdif(gpoly1, epoly))
-#' 
+#'
 #' plot(intersect(gpoly1, epoly))
-#' 
+#'
 #' if (FALSE) {
-#'   # takes a long time so don't run in checks
-#'   plot(snap(gpoly1, tolerance = 0.2))
+#'     # takes a long time so don't run in checks
+#'     plot(snap(gpoly1, tolerance = 0.2))
 #' }
 NULL
 # ---------------------------------------------------------------- #
@@ -136,5 +136,3 @@ setMethod("intersect", signature(x = "spatialClasses", y = "spatialClasses"), fu
     x0@unique_ID_cache <- spatIDs(x0, use_cache = FALSE, uniques = TRUE)
     return(x0)
 })
-
-

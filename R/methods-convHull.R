@@ -1,7 +1,7 @@
 # docs ----------------------------------------------------------- #
 #' @title Convex hull, minimal bounding rotated rectangle, and minimal bounding circle
 #' @name convHull
-#' @description Get the convex hull, the minimal bounding rotated rectangle, 
+#' @description Get the convex hull, the minimal bounding rotated rectangle,
 #' or minimal bounding circle of a Giotto spatial object or terra SpatVector
 #' @param x any of giotto image, giottoPolygon, giottoPoints, spatLocsObj, SpatVector
 #' @param by character (variable name), to get a new geometry for groups of input geometries
@@ -9,16 +9,16 @@
 #' @examples
 #' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
 #' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
-#' 
+#'
 #' h <- convHull(sl)
 #' plot(h)
-#' 
+#'
 #' r <- minRect(sl)
 #' plot(r)
-#' 
+#'
 #' circ <- minCircle(gpoints, by = "feat_ID")
 #' plot(circ, border = rainbow(100))
-#' 
+#'
 #' @returns SpatVector
 NULL
 # ---------------------------------------------------------------- #
@@ -69,5 +69,3 @@ setMethod("minCircle", signature("spatLocsObj"), function(x, by = "") {
 setMethod("minCircle", signature("giottoSpatial"), function(x, by = "") {
     minCircle(x[], by = by)
 })
-
-

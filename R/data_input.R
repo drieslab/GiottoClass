@@ -23,12 +23,11 @@
 #'
 #' readExprMatrix(paste0(temporal_dir, "/mymatrix.csv"))
 #' @export
-readExprMatrix <- function(
-        path,
-        cores = determine_cores(),
-        transpose = FALSE,
-        feat_type = "rna",
-        expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
+readExprMatrix <- function(path,
+    cores = determine_cores(),
+    transpose = FALSE,
+    feat_type = "rna",
+    expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
     # check if path is a character vector and exists
     if (!is.character(path)) stop("path needs to be character vector")
     if (!file.exists(path)) stop("the path: ", path, " does not exist")
@@ -99,14 +98,13 @@ readExprMatrix <- function(
 #'
 #' readExprData(paste0(temporal_dir, "/mymatrix.csv"))
 #' @export
-readExprData <- function(
-        data_list,
-        sparse = TRUE,
-        cores = determine_cores(),
-        default_feat_type = NULL,
-        verbose = TRUE,
-        provenance = NULL,
-        expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
+readExprData <- function(data_list,
+    sparse = TRUE,
+    cores = determine_cores(),
+    default_feat_type = NULL,
+    verbose = TRUE,
+    provenance = NULL,
+    expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
     .read_expression_data(
         expr_list = data_list,
         sparse = sparse,
@@ -121,15 +119,14 @@ readExprData <- function(
 
 #' @keywords internal
 #' @noRd
-.read_expression_data <- function(
-        expr_list = NULL,
-        sparse = TRUE,
-        cores = determine_cores(),
-        default_spat_unit = NULL,
-        default_feat_type = NULL,
-        verbose = TRUE,
-        provenance = NULL,
-        expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
+.read_expression_data <- function(expr_list = NULL,
+    sparse = TRUE,
+    cores = determine_cores(),
+    default_spat_unit = NULL,
+    default_feat_type = NULL,
+    verbose = TRUE,
+    provenance = NULL,
+    expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
     # import box characters
     ch <- box_chars()
 
@@ -363,12 +360,11 @@ readExprData <- function(
 #'
 #' readCellMetadata(paste0(temporal_dir, "/metadata.csv"))
 #' @export
-readCellMetadata <- function(
-        data_list,
-        default_spat_unit = NULL,
-        default_feat_type = NULL,
-        provenance = NULL,
-        verbose = TRUE) {
+readCellMetadata <- function(data_list,
+    default_spat_unit = NULL,
+    default_feat_type = NULL,
+    provenance = NULL,
+    verbose = TRUE) {
     .read_cell_metadata(
         metadata = data_list,
         default_spat_unit = default_spat_unit,
@@ -389,12 +385,11 @@ readCellMetadata <- function(
 #' @param verbose be verbose
 #' @returns cell metadata
 #' @keywords internal
-.read_cell_metadata <- function(
-        metadata,
-        default_spat_unit = NULL,
-        default_feat_type = NULL,
-        provenance = NULL,
-        verbose = TRUE) {
+.read_cell_metadata <- function(metadata,
+    default_spat_unit = NULL,
+    default_feat_type = NULL,
+    provenance = NULL,
+    verbose = TRUE) {
     # data.table vars
     cell_ID <- NULL
 
@@ -553,12 +548,11 @@ readCellMetadata <- function(
 #'
 #' readFeatMetadata(paste0(temporal_dir, "/metadata.csv"))
 #' @export
-readFeatMetadata <- function(
-        data_list,
-        default_spat_unit = NULL,
-        default_feat_type = NULL,
-        provenance = NULL,
-        verbose = TRUE) {
+readFeatMetadata <- function(data_list,
+    default_spat_unit = NULL,
+    default_feat_type = NULL,
+    provenance = NULL,
+    verbose = TRUE) {
     .read_feature_metadata(
         metadata = data_list,
         default_spat_unit = NULL,
@@ -573,12 +567,11 @@ readFeatMetadata <- function(
 
 #' @keywords internal
 #' @noRd
-.read_feature_metadata <- function(
-        metadata,
-        default_spat_unit = NULL,
-        default_feat_type = NULL,
-        provenance = NULL,
-        verbose = TRUE) {
+.read_feature_metadata <- function(metadata,
+    default_spat_unit = NULL,
+    default_feat_type = NULL,
+    provenance = NULL,
+    verbose = TRUE) {
     # data.table vars
     cell_ID <- NULL
 
@@ -745,12 +738,11 @@ readFeatMetadata <- function(
 #'
 #' readSpatLocsData(paste0(temporal_dir, "/spatlocs.csv"))
 #' @export
-readSpatLocsData <- function(
-        data_list,
-        default_spat_unit = NULL,
-        provenance = NULL,
-        cores = determine_cores(),
-        verbose = TRUE) {
+readSpatLocsData <- function(data_list,
+    default_spat_unit = NULL,
+    provenance = NULL,
+    cores = determine_cores(),
+    verbose = TRUE) {
     spatLocsObj_list <- .read_spatial_location_data(
         spat_loc_list = data_list,
         default_spat_unit = default_spat_unit,
@@ -765,12 +757,11 @@ readSpatLocsData <- function(
 
 
 #' @noRd
-.read_spatial_location_data <- function(
-        spat_loc_list,
-        default_spat_unit = NULL,
-        provenance = NULL,
-        cores = determine_cores(),
-        verbose = TRUE) {
+.read_spatial_location_data <- function(spat_loc_list,
+    default_spat_unit = NULL,
+    provenance = NULL,
+    cores = determine_cores(),
+    verbose = TRUE) {
     # data.table vars
     cell_ID <- NULL
 
@@ -952,11 +943,10 @@ readSpatLocsData <- function(
 #'
 #' readSpatNetData(x)
 #' @export
-readSpatNetData <- function(
-        data_list,
-        default_spat_unit = NULL,
-        provenance = NULL,
-        verbose = TRUE) {
+readSpatNetData <- function(data_list,
+    default_spat_unit = NULL,
+    provenance = NULL,
+    verbose = TRUE) {
     .read_spatial_networks(
         spatial_network = data_list,
         default_spat_unit = default_spat_unit,
@@ -970,11 +960,10 @@ readSpatNetData <- function(
 
 #' @keywords internal
 #' @noRd
-.read_spatial_networks <- function(
-        spatial_network,
-        default_spat_unit = NULL,
-        provenance = NULL,
-        verbose = TRUE) {
+.read_spatial_networks <- function(spatial_network,
+    default_spat_unit = NULL,
+    provenance = NULL,
+    verbose = TRUE) {
     if (is.null(spatial_network)) {
         wrap_msg("No spatial networks are provided")
         return(NULL)
@@ -1135,12 +1124,11 @@ readSpatNetData <- function(
 #'
 #' readSpatEnrichData(x)
 #' @export
-readSpatEnrichData <- function(
-        data_list,
-        default_spat_unit = NULL,
-        default_feat_type = NULL,
-        provenance = NULL,
-        verbose = TRUE) {
+readSpatEnrichData <- function(data_list,
+    default_spat_unit = NULL,
+    default_feat_type = NULL,
+    provenance = NULL,
+    verbose = TRUE) {
     .read_spatial_enrichment(
         spatial_enrichment = data_list,
         default_spat_unit = default_spat_unit,
@@ -1155,12 +1143,11 @@ readSpatEnrichData <- function(
 
 #' @keywords internal
 #' @noRd
-.read_spatial_enrichment <- function(
-        spatial_enrichment,
-        default_spat_unit = NULL,
-        default_feat_type = NULL,
-        provenance = NULL,
-        verbose = TRUE) {
+.read_spatial_enrichment <- function(spatial_enrichment,
+    default_spat_unit = NULL,
+    default_feat_type = NULL,
+    provenance = NULL,
+    verbose = TRUE) {
     if (is.null(spatial_enrichment)) {
         message("No spatial enrichment results are provided")
         return(NULL)
@@ -1436,13 +1423,12 @@ readSpatEnrichData <- function(
 #'
 #' readDimReducData(x)
 #' @export
-readDimReducData <- function(
-        data_list,
-        default_spat_unit = NULL,
-        default_feat_type = NULL,
-        reduction = c("cells", "feats"),
-        provenance = NULL,
-        verbose = TRUE) {
+readDimReducData <- function(data_list,
+    default_spat_unit = NULL,
+    default_feat_type = NULL,
+    reduction = c("cells", "feats"),
+    provenance = NULL,
+    verbose = TRUE) {
     reduction <- match.arg(reduction, choices = c("cells", "feats"))
 
     .read_dimension_reduction(
@@ -1459,13 +1445,12 @@ readDimReducData <- function(
 
 #' @keywords internal
 #' @noRd
-.read_dimension_reduction <- function(
-        dimension_reduction,
-        default_spat_unit = NULL,
-        default_feat_type = NULL,
-        reduction = c("cells", "feats"),
-        provenance = NULL,
-        verbose = TRUE) {
+.read_dimension_reduction <- function(dimension_reduction,
+    default_spat_unit = NULL,
+    default_feat_type = NULL,
+    reduction = c("cells", "feats"),
+    provenance = NULL,
+    verbose = TRUE) {
     reduction <- match.arg(reduction, choices = c("cells", "feats"))
 
     if (is.null(dimension_reduction)) {
@@ -1748,12 +1733,11 @@ readDimReducData <- function(
 #'
 #' readNearestNetData(x)
 #' @export
-readNearestNetData <- function(
-        data_list,
-        default_spat_unit = NULL,
-        default_feat_type = NULL,
-        provenance = NULL,
-        verbose = TRUE) {
+readNearestNetData <- function(data_list,
+    default_spat_unit = NULL,
+    default_feat_type = NULL,
+    provenance = NULL,
+    verbose = TRUE) {
     .read_nearest_networks(
         nn_network = data_list,
         default_spat_unit = default_spat_unit,
@@ -1767,12 +1751,11 @@ readNearestNetData <- function(
 
 #' @keywords internal
 #' @noRd
-.read_nearest_networks <- function(
-        nn_network,
-        default_spat_unit = NULL,
-        default_feat_type = NULL,
-        provenance = NULL,
-        verbose = TRUE) {
+.read_nearest_networks <- function(nn_network,
+    default_spat_unit = NULL,
+    default_feat_type = NULL,
+    provenance = NULL,
+    verbose = TRUE) {
     if (is.null(nn_network)) {
         message("No nearest network results are provided")
         return(NULL)
@@ -2059,14 +2042,13 @@ readNearestNetData <- function(
 #'
 #' readPolygonData(x)
 #' @export
-readPolygonData <- function(
-        data_list,
-        default_name = "cell",
-        input = "guess",
-        polygon_mask_list_params = NULL,
-        polygon_dfr_list_params = NULL,
-        calc_centroids = FALSE,
-        verbose = TRUE) {
+readPolygonData <- function(data_list,
+    default_name = "cell",
+    input = "guess",
+    polygon_mask_list_params = NULL,
+    polygon_dfr_list_params = NULL,
+    calc_centroids = FALSE,
+    verbose = TRUE) {
     if (is.null(data_list)) {
         message("No polygon data/spatial info is provided")
         return(NULL)
@@ -2135,13 +2117,12 @@ readPolygonData <- function(
 #' @param verbose be verbose
 #' @keywords internal
 #' @noRd
-.extract_polygon_list <- function(
-        polygonlist,
-        input = "guess",
-        default_name = "cell",
-        polygon_mask_list_params,
-        polygon_dfr_list_params,
-        verbose = TRUE) {
+.extract_polygon_list <- function(polygonlist,
+    input = "guess",
+    default_name = "cell",
+    polygon_mask_list_params,
+    polygon_dfr_list_params,
+    verbose = TRUE) {
     named_list <- FALSE
 
     # if polygonlist is not a named list
@@ -2269,9 +2250,8 @@ readPolygonData <- function(
 #'
 #' g <- addGiottoPolygons(gobject = g, gpolygons = list(x))
 #' @export
-addGiottoPolygons <- function(
-        gobject,
-        gpolygons) {
+addGiottoPolygons <- function(gobject,
+    gpolygons) {
     # check input
     assert_giotto(gobject)
 
@@ -2327,9 +2307,8 @@ addGiottoPolygons <- function(
 #'
 #' readFeatData(list(x))
 #' @export
-readFeatData <- function(
-        data_list,
-        verbose = TRUE) {
+readFeatData <- function(data_list,
+    verbose = TRUE) {
     if (is.null(data_list)) {
         message("No feature info is provided")
         return(NULL)
@@ -2354,9 +2333,8 @@ readFeatData <- function(
 #' @keywords internal
 #' @returns name list of `giottoPoints` objects
 #' @noRd
-.extract_points_list <- function(
-        pointslist,
-        verbose = TRUE) {
+.extract_points_list <- function(pointslist,
+    verbose = TRUE) {
     named_list <- FALSE
 
     # if pointslist is not a named list
@@ -2469,9 +2447,8 @@ NULL
 #'
 #' g <- addGiottoPoints(gobject = g, gpoints = list(x_points))
 #' @export
-addGiottoPoints <- function(
-        gobject,
-        gpoints) {
+addGiottoPoints <- function(gobject,
+    gpoints) {
     # check input
     if (!inherits(gobject, "giotto")) {
         stop("gobject needs to be a giotto object")
