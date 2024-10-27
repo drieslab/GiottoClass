@@ -57,7 +57,7 @@ plot(symdif(gpoly1, epoly))
 plot(intersect(gpoly1, epoly))
 
 if (FALSE) {
-  # takes a long time so don't run in checks
-  plot(snap(gpoly1, tolerance = 0.2))
+    # takes a long time so don't run in checks
+    plot(snap(gpoly1, tolerance = 0.2))
 }
 }
