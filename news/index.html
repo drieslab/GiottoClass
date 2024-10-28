@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,78 @@
       <small>Source: <a href="https://github.com/drieslab/Giotto/blob/website/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.0" id="giottoclass-040-20241027">GiottoClass 0.4.0 (2024/10/27)<a class="anchor" aria-label="anchor" href="#giottoclass-040-20241027"></a></h2>
+<div class="section level3">
+<h3 id="breaking-changes-0-4-0">breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-4-0"></a></h3>
+<ul><li>stop exporting deprecated internal accessors</li>
+<li>terra requirement raised to 1.7.41 for <code><a href="../reference/convHull.html">minCircle()</a></code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-0-4-0">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-0"></a></h3>
+<ul><li>fix <code><a href="../reference/dimnames.html">dimnames()</a></code> for some subobjects</li>
+<li>fix <code>joinGiottoObject()</code> for gobjects with only poly and point data <a href="https://github.com/drieslab/GiottoClass/issues/233" class="external-link">#233</a>
+</li>
+<li>fix <code>joinGiottoObject()</code> for gobjects with image intensity overlaps features</li>
+<li>fix subsetting error due to expression <code>matrix</code> drop to <code>numeric</code> when only one cell is left</li>
+<li>
+<code>shift_vertical_step</code> and <code>shift_horizontal_step</code> args in <code><a href="../reference/createGiottoPolygon.html">createGiottoPolygonsFromMask()</a></code> when numeric now shift by steps based on the dims of the image instead of just by the numerical value provided.</li>
+<li>fix feature metadata not being mixedsorted after join</li>
+<li>fix non-inclusive subsetting when not all minmax values are supplied to <code><a href="../reference/subsetGiottoLocs.html">subsetGiottoLocs()</a></code>
+</li>
+<li>fix <code>giottoAffineImage</code> loading after being saved</li>
+</ul></div>
+<div class="section level3">
+<h3 id="enhancements-0-4-0">enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-4-0"></a></h3>
+<ul><li>python packages to install through pip is now settable in <code><a href="../reference/giotto_python.html">installGiottoEnvironment()</a></code> <a href="https://github.com/drieslab/GiottoClass/issues/224" class="external-link">#224</a>
+</li>
+<li>
+<code>giotto</code> <code><a href="https://rdrr.io/r/methods/new.html" class="external-link">initialize()</a></code> and slot checking behavior can be toggled now using <code>'giotto.init'</code> and <code>'giotto.check_valid'</code> options. <a href="https://github.com/drieslab/Giotto/issues/946" class="external-link">#946</a> by rbutleriii</li>
+<li>
+<code><a href="../reference/setGiotto.html">setGiotto()</a></code> now only initializes and performs checks once all items are added if a <code>list</code> input is provided.</li>
+<li>
+<code><a href="../reference/giotto_instructions.html">instructions()</a></code> with no args will now call <code><a href="../reference/giotto_instructions.html">createGiottoInstructions()</a></code>. You can also supply named args.</li>
+<li>
+<code>instructions(gobject, param)</code> and <code>instructions(gobject, param)&lt;-</code> will now work for <code>giottoInstructions</code> objects for convenience.</li>
+<li>
+<code>[</code>, <code>[[</code>, <code>$</code>, <code>$&lt;-</code>, and <code><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset()</a></code> for <code>giotto</code> see <code><a href="../reference/subset_giotto.html">?GiottoClass::subset_giotto</a></code>
+</li>
+<li>
+<code>subset</code> for <code><a href="../reference/spatIDs-generic.html">spatIDs()</a></code> and <code><a href="../reference/spatIDs-generic.html">featIDs()</a></code>
+</li>
+<li>
+<code><a href="../reference/objName-generic.html">objName()</a></code>, <code><a href="../reference/spatUnit-generic.html">spatUnit()</a></code>, <code><a href="../reference/featType-generic.html">featType()</a></code> generics now return <code>NA_character_</code> instead of erroring when used on unsupported classes.</li>
+<li>
+<code><a href="../reference/ext.html">ext()</a></code> and <code>ext&lt;-()</code> can now be used to get and set extent of <code>affine2d</code>
+</li>
+<li>
+<code><a href="../reference/row-plus-colnames-generic.html">rownames()</a></code>, <code><a href="../reference/row-plus-colnames-generic.html">colnames()</a></code>, <code><a href="../reference/dimnames.html">dimnames()</a></code> for <code>giotto</code>
+</li>
+<li>
+<code><a href="../reference/spatValues.html">spatValues()</a></code> can get values from multiple spatial units.</li>
+<li>
+<code><a href="../reference/createGiottoPolygon.html">createGiottoPolygonsFromMask()</a></code> now works with anything <code><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">terra::rast()</a></code> can read</li>
+<li>
+<code><a href="../reference/createGiottoLargeImage.html">createGiottoLargeImage()</a></code> now works with anything <code><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">terra::rast()</a></code> can read</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-0-4-0">new<a class="anchor" aria-label="anchor" href="#new-0-4-0"></a></h3>
+<ul><li>
+<code><a href="../reference/sliceGiotto.html">sliceGiotto()</a></code> for pulling out specific spatial units and feature types as independent <code>giotto</code> objects</li>
+<li>
+<code><a href="../reference/splitGiotto.html">splitGiotto()</a></code> for splitting a Giotto object into a list of Giotto objects based on a cell metadata column</li>
+<li>
+<code><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list()</a></code> method for <code>giotto</code> to dump the data as a list of subobjects</li>
+<li>
+<code><a href="../reference/XY.html">XY()</a></code> and <code>XY&lt;-()</code> for accessing and setting coordinate values of subobjects as <code>matrix</code>
+</li>
+<li>terra <code><a href="../reference/convHull.html">convHull()</a></code>, <code><a href="../reference/convHull.html">minRect()</a></code>, <code><a href="../reference/convHull.html">minCircle()</a></code> for Giotto spatial vector classes</li>
+<li>
+<code><a href="../reference/area.html">area()</a></code> for <code>SpatVector</code> and <code>giottoPolygon</code>
+</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.5" id="giottoclass-035-20240828">GiottoClass 0.3.5 (2024/08/28)<a class="anchor" aria-label="anchor" href="#giottoclass-035-20240828"></a></h2>
 <div class="section level3">
@@ -438,7 +510,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

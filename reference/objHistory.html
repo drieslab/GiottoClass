@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,7 +42,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">objHistory</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">objHistory</span><span class="op">(</span><span class="va">object</span>, summarized <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -51,6 +51,10 @@
 
 <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>giotto object</p></dd>
+
+
+<dt id="arg-summarized">summarized<a class="anchor" aria-label="anchor" href="#arg-summarized"></a></dt>
+<dd><p>logical. whether print should be summarized</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -78,7 +82,287 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">objHistory</span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Steps and parameters used:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> c(gobject = "mini_visium", expression_values = "raw", norm_methods = "standard", library_size_norm = "TRUE", scalefactor = "6000", log_norm = "TRUE", log_offset = "1", logbase = "2", scale_feats = "TRUE", scale_cells = "TRUE", scale_order = "first_feats", theta = "100", update_slot = "scaled", verbose = "T")c(gobject = "gobject", spat_unit = "spat_unit", feat_type = "feat_type", cell_ids = "selected_cell_ids", feat_ids = "selected_feat_ids", poly_info = "poly_info", spat_unit_fsub = "spat_unit_fsub", feat_type_ssub = "feat_type_ssub", verbose = "verbose", toplevel_params = "2")c(gobject = "mini_visium", expression_values = "raw", expression_threshold = "1", feat_det_in_min_cells = "5", min_det_feats_per_cell = "20", spat_unit_fsub = ":all:", feat_type_ssub = ":all:", tag_cells = "FALSE", tag_cell_name = "tag", tag_feats = "FALSE", tag_feats_name = "tag", verbose = "T")c(gobject = "mini_visium", expression_values = "normalized", detection_threshold = "0", return_gobject = "TRUE", verbose = "TRUE")c(gobject = "mini_visium", expression_values = "normalized", detection_threshold = "0", return_gobject = "TRUE", verbose = "TRUE")c(gobject = "mini_visium", expression_values = "normalized", method = "cov_groups", reverse_log_scale = "FALSE", logbase = "2", expression_threshold = "0", nr_expression_groups = "20", zscore_threshold = "1.5", HVFname = "hvf", difference_in_cov = "0.1", var_threshold = "1.5", set_seed = "TRUE", seed_number = "1234", save_param = "list()", default_save_name = "HVFplot", return_gobject = "TRUE", verbose = "TRUE")c(gobject = "mini_visium", expression_values = "normalized", reduction = "cells", return_gobject = "TRUE", center = "TRUE", scale_unit = "TRUE", ncp = "100", method = "irlba", method_params = "BiocParallel::SerialParam()", rev = "FALSE", set_seed = "TRUE", seed_number = "1234", verbose = "TRUE", ... = "")c(gobject = "mini_visium", expression_values = "normalized", reduction = "cells", dim_reduction_to_use = "pca", dimensions_to_use = "1:10", return_gobject = "TRUE", n_neighbors = "40", n_components = "2", n_epochs = "400", min_dist = "0.01", n_threads = "NA", spread = "5", set_seed = "TRUE", seed_number = "1234", verbose = "TRUE", toplevel_params = "2", ... = "")c(gobject = "mini_visium", expression_values = "normalized", reduction = "cells", dim_reduction_to_use = "pca", dimensions_to_use = "1:10", return_gobject = "TRUE", dims = "2", perplexity = "30", theta = "0.5", do_PCA_first = "FALSE", set_seed = "TRUE", seed_number = "1234", verbose = "TRUE", ... = "")c(gobject = "mini_visium", type = "sNN", dim_reduction_to_use = "pca", dimensions_to_use = "1:5", expression_values = "normalized", return_gobject = "TRUE", k = "10", minimum_shared = "5", top_shared = "3", verbose = "TRUE", ... = "")c(gobject = "mini_visium", name = "leiden_clus", nn_network_to_use = "sNN", network_name = "sNN.pca", resolution = "0.1", weight_col = "weight", partition_type = "RBConfigurationVertexPartition", n_iterations = "1000", return_gobject = "TRUE", set_seed = "TRUE", seed_number = "1234")c(`dimensions used` = "dimensions: sdimx and sdimy", method = "deldir", `maximum distance threshold` = "auto", `name of spatial network` = "Delaunay_network")c(`k neighbours` = "10", `dimensions used` = "all", `maximum distance threshold` = "400", `name of spatial network` = "spatial_network")c(gobject = "mini_visium", expression_values = "normalized", feat_clusters = "cluster_genes", stat = "mean", name = "cluster_metagene", return_gobject = "TRUE")c(gobject = "mini_visium", expression_values = "normalized", reduction = "cells", name = "custom_pca", feats_to_use = "my_spatial_genes", return_gobject = "TRUE", center = "TRUE", scale_unit = "TRUE", ncp = "100", method = "irlba", method_params = "BiocParallel::SerialParam()", rev = "FALSE", set_seed = "TRUE", seed_number = "1234", verbose = "TRUE", ... = "")c(gobject = "mini_visium", expression_values = "normalized", reduction = "cells", dim_reduction_to_use = "pca", dim_reduction_name = "custom_pca", dimensions_to_use = "1:20", name = "custom_umap", return_gobject = "TRUE", n_neighbors = "40", n_components = "2", n_epochs = "400", min_dist = "0.01", n_threads = "NA", spread = "5", set_seed = "TRUE", seed_number = "1234", verbose = "TRUE", toplevel_params = "2", ... = "")c(gobject = "mini_visium", type = "sNN", dim_reduction_to_use = "pca", dim_reduction_name = "custom_pca", dimensions_to_use = "1:20", expression_values = "normalized", name = "custom_NN", return_gobject = "TRUE", k = "5", minimum_shared = "5", top_shared = "3", verbose = "TRUE", ... = "")c(gobject = "mini_visium", name = "custom_leiden", nn_network_to_use = "sNN", network_name = "custom_NN", resolution = "0.15", weight_col = "weight", partition_type = "RBConfigurationVertexPartition", n_iterations = "1000", return_gobject = "TRUE", set_seed = "TRUE", seed_number = "1234")c(`method used` = "DWLS", `deconvolution name` = "DWLS", `expression values` = "normalized", logbase = "2", `cluster column used` = "leiden_clus", `number of cells per spot` = "50", `used cut off` = "2")c(`method used` = "DWLS", `deconvolution name` = "DWLS", `expression values` = "normalized", logbase = "2", `cluster column used` = "leiden_clus", `number of cells per spot` = "50", `used cut off` = "2")c(`method used` = "DWLS", `deconvolution name` = "DWLS", `expression values` = "normalized", logbase = "2", `cluster column used` = "leiden_clus", `number of cells per spot` = "50", `used cut off` = "2")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;0_normalize&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject           : mini_visium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression_values : raw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   norm_methods      : standard</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   library_size_norm : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   scalefactor       : 6000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   log_norm          : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   log_offset        : 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   logbase           : 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   scale_feats       : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   scale_cells       : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   scale_order       : first_feats</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   theta             : 100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   update_slot       : scaled</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   verbose           : T</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;1_subset&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject         : gobject</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   spat_unit       : spat_unit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   feat_type       : feat_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   cell_ids        : selected_cell_ids</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   feat_ids        : selected_feat_ids</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   poly_info       : poly_info</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   spat_unit_fsub  : spat_unit_fsub</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   feat_type_ssub  : feat_type_ssub</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   verbose         : verbose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   toplevel_params : 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;2_filter&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject                : mini_visium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression_values      : raw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression_threshold   : 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   feat_det_in_min_cells  : 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_det_feats_per_cell : 20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   spat_unit_fsub         : :all:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   feat_type_ssub         : :all:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   tag_cells              : FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   tag_cell_name          : tag</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   tag_feats              : FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   tag_feats_name         : tag</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   verbose                : T</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;3_feat_stats&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject             : mini_visium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression_values   : normalized</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   detection_threshold : 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   return_gobject      : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   verbose             : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;4_cell_stats&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject             : mini_visium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression_values   : normalized</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   detection_threshold : 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   return_gobject      : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   verbose             : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;5_hvf&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject              : mini_visium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression_values    : normalized</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   method               : cov_groups</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   reverse_log_scale    : FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   logbase              : 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression_threshold : 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nr_expression_groups : 20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   zscore_threshold     : 1.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   HVFname              : hvf</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   difference_in_cov    : 0.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   var_threshold        : 1.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   set_seed             : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seed_number          : 1234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   save_param           : list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   default_save_name    : HVFplot</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   return_gobject       : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   verbose              : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;6_pca&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject           : mini_visium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression_values : normalized</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   reduction         : cells</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   return_gobject    : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   center            : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   scale_unit        : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ncp               : 100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   method            : irlba</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   method_params     : BiocParallel::SerialParam()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   rev               : FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   set_seed          : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seed_number       : 1234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   verbose           : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ...               : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;7_umap&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject              : mini_visium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression_values    : normalized</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   reduction            : cells</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dim_reduction_to_use : pca</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dimensions_to_use    : 1:10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   return_gobject       : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n_neighbors          : 40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n_components         : 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n_epochs             : 400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_dist             : 0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n_threads            : NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   spread               : 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   set_seed             : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seed_number          : 1234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   verbose              : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   toplevel_params      : 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ...                  : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;8_tsne&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject              : mini_visium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression_values    : normalized</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   reduction            : cells</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dim_reduction_to_use : pca</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dimensions_to_use    : 1:10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   return_gobject       : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dims                 : 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   perplexity           : 30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   theta                : 0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   do_PCA_first         : FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   set_seed             : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seed_number          : 1234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   verbose              : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ...                  : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;9_nn_network&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject              : mini_visium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   type                 : sNN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dim_reduction_to_use : pca</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dimensions_to_use    : 1:5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression_values    : normalized</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   return_gobject       : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   k                    : 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   minimum_shared       : 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   top_shared           : 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   verbose              : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ...                  : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;10_cluster&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject           : mini_visium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   name              : leiden_clus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nn_network_to_use : sNN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   network_name      : sNN.pca</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   resolution        : 0.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   weight_col        : weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   partition_type    : RBConfigurationVertexPartition</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n_iterations      : 1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   return_gobject    : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   set_seed          : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seed_number       : 1234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;11_delaunay_spatial_network&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dimensions used            : dimensions: sdimx and sdimy</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   method                     : deldir</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   maximum distance threshold : auto</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   name of spatial network    : Delaunay_network</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;12_spatial_network&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   k neighbours               : 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dimensions used            : all</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   maximum distance threshold : 400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   name of spatial network    : spatial_network</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;13_create_metafeat&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject           : mini_visium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression_values : normalized</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   feat_clusters     : cluster_genes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   stat              : mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   name              : cluster_metagene</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   return_gobject    : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;14_pca&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject           : mini_visium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression_values : normalized</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   reduction         : cells</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   name              : custom_pca</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   feats_to_use      : my_spatial_genes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   return_gobject    : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   center            : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   scale_unit        : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ncp               : 100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   method            : irlba</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   method_params     : BiocParallel::SerialParam()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   rev               : FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   set_seed          : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seed_number       : 1234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   verbose           : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ...               : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;15_umap&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject              : mini_visium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression_values    : normalized</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   reduction            : cells</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dim_reduction_to_use : pca</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dim_reduction_name   : custom_pca</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dimensions_to_use    : 1:20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   name                 : custom_umap</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   return_gobject       : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n_neighbors          : 40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n_components         : 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n_epochs             : 400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_dist             : 0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n_threads            : NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   spread               : 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   set_seed             : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seed_number          : 1234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   verbose              : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   toplevel_params      : 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ...                  : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;16_nn_network&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject              : mini_visium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   type                 : sNN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dim_reduction_to_use : pca</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dim_reduction_name   : custom_pca</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dimensions_to_use    : 1:20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression_values    : normalized</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   name                 : custom_NN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   return_gobject       : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   k                    : 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   minimum_shared       : 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   top_shared           : 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   verbose              : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ...                  : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;17_cluster&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gobject           : mini_visium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   name              : custom_leiden</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nn_network_to_use : sNN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   network_name      : custom_NN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   resolution        : 0.15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   weight_col        : weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   partition_type    : RBConfigurationVertexPartition</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n_iterations      : 1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   return_gobject    : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   set_seed          : TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seed_number       : 1234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;18_spatial_deconvolution&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   method used              : DWLS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   deconvolution name       : DWLS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression values        : normalized</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   logbase                  : 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   cluster column used      : leiden_clus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   number of cells per spot : 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   used cut off             : 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;19_spatial_deconvolution&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   method used              : DWLS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   deconvolution name       : DWLS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression values        : normalized</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   logbase                  : 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   cluster column used      : leiden_clus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   number of cells per spot : 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   used cut off             : 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;20_spatial_deconvolution&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   method used              : DWLS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   deconvolution name       : DWLS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expression values        : normalized</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   logbase                  : 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   cluster column used      : leiden_clus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   number of cells per spot : 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   used cut off             : 2</span>
+<span class="r-in"><span><span class="fu">objHistory</span><span class="op">(</span><span class="va">g</span>, summarized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing steps:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 0_normalize</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 1_subset</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 2_filter</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> name info: tag tag</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 3_feat_stats</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 4_cell_stats</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 5_hvf</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> name info: hvf HVFplot</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 6_pca</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 7_umap</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8_tsne</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9_nn_network</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10_cluster</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> name info: leiden_clus sNN.pca</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 11_delaunay_spatial_network</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> name info: Delaunay_network</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 12_spatial_network</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> name info: spatial_network</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 13_create_metafeat</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> name info: cluster_metagene</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 14_pca</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> name info: custom_pca</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 15_umap</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> name info: custom_pca custom_umap</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 16_nn_network</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> name info: custom_pca custom_NN</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 17_cluster</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> name info: custom_leiden custom_NN</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 18_spatial_deconvolution</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> name info: DWLS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 19_spatial_deconvolution</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> name info: DWLS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 20_spatial_deconvolution</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> name info: DWLS</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -90,7 +374,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

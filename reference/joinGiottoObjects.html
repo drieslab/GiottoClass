@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -179,12 +179,13 @@ joining.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  Other non numeric columns will be removed</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">joinGiottoObjects</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    gobject_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>    gobject_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    gobject_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"g1"</span>, <span class="st">"g2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> An object of class giotto </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &gt;Active spat_unit:  cell </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &gt;Active feat_type:  rna </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dimensions    : 10, 20 (features, cells)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [SUBCELLULAR INFO]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [AGGREGATE INFO]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> expression -----------------------</span>
@@ -220,7 +221,7 @@ joining.</p></li>
 <span class="r-plt img"><img src="joinGiottoObjects-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># place them right next to each other</span></span></span>
-<span class="r-in"><span><span class="co"># note that this means generated spatial networks will be more likely to </span></span></span>
+<span class="r-in"><span><span class="co"># note that this means generated spatial networks will be more likely to</span></span></span>
 <span class="r-in"><span><span class="co"># link across the datasets</span></span></span>
 <span class="r-in"><span><span class="fu">joinGiottoObjects</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">viz</span>, <span class="va">viz</span><span class="op">)</span>,</span></span>
@@ -241,6 +242,12 @@ joining.</p></li>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>spatial locations have been modified.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>  Relevant spatial networks may need to be</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>  regenerated</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>spat_unit: z1 spatloc name: raw</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>  cell IDs in spatial locations are missing from spatial</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>  polygon info</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>spat_unit: aggregate spatloc name: raw</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>  cell IDs in spatial locations are missing from spatial</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>  polygon info</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -253,7 +260,7 @@ joining.</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

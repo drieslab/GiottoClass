@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -367,7 +367,7 @@
       </dl><dl><dt>
 
           <code><a href="spatValues.html">spatValues()</a></code>
-          <span class="badge lifecycle lifecycle-experimental">experimental</span>
+
         </dt>
         <dd>Giotto object spatial values</dd>
       </dl></div><div class="section level2">
@@ -777,7 +777,7 @@
           <code><a href="annotateGiotto.html">annotateGiotto()</a></code>
 
         </dt>
-        <dd>Annotate giotto clustering</dd>
+        <dd>Annotate Giotto object</dd>
       </dl><dl><dt>
 
           <code><a href="removeCellAnnotation.html">removeCellAnnotation()</a></code>
@@ -827,7 +827,7 @@
 
       <dl><dt>
 
-          <code><a href="giotto_instructions.html">createGiottoInstructions()</a></code> <code><a href="giotto_instructions.html">instructions(<i>&lt;giotto&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="giotto_instructions.html">`instructions&lt;-`(<i>&lt;giotto&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="giotto_instructions.html">`instructions&lt;-`(<i>&lt;giotto&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;logical&gt;</i>)</a></code> <code><a href="giotto_instructions.html">instructions(<i>&lt;giotto&gt;</i>,<i>&lt;character&gt;</i>)</a></code> <code><a href="giotto_instructions.html">`instructions&lt;-`(<i>&lt;giotto&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="giotto_instructions.html">`instructions&lt;-`(<i>&lt;giotto&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;logical&gt;</i>)</a></code>
+          <code><a href="giotto_instructions.html">createGiottoInstructions()</a></code> <code><a href="giotto_instructions.html">instructions(<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="giotto_instructions.html">instructions(<i>&lt;giotto&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="giotto_instructions.html">instructions(<i>&lt;giotto&gt;</i>,<i>&lt;character&gt;</i>)</a></code> <code><a href="giotto_instructions.html">instructions(<i>&lt;giottoInstructions&gt;</i>,<i>&lt;character&gt;</i>)</a></code> <code><a href="giotto_instructions.html">`instructions&lt;-`(<i>&lt;giotto&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="giotto_instructions.html">`instructions&lt;-`(<i>&lt;giotto&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;logical&gt;</i>)</a></code> <code><a href="giotto_instructions.html">`instructions&lt;-`(<i>&lt;giotto&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="giotto_instructions.html">`instructions&lt;-`(<i>&lt;giotto&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;logical&gt;</i>)</a></code> <code><a href="giotto_instructions.html">`instructions&lt;-`(<i>&lt;giottoInstructions&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code>
 
         </dt>
         <dd>Giotto instructions</dd>
@@ -867,9 +867,9 @@
         </dt>
         <dd>Subset raw subcellular information by location</dd>
       </dl></div><div class="section level2">
-      <h2 id="join">Join<a class="anchor" aria-label="anchor" href="#join"></a></h2>
+      <h2 id="join-and-split">Join and Split<a class="anchor" aria-label="anchor" href="#join-and-split"></a></h2>
 
-      <div class="section-desc"><p>Joining multiple Giotto Objects</p></div>
+      <div class="section-desc"><p>Joining and Splitting Giotto Objects</p></div>
 
 
     </div><div class="section level2">
@@ -883,6 +883,18 @@
 
         </dt>
         <dd>Join giotto objects</dd>
+      </dl><dl><dt>
+
+          <code><a href="splitGiotto.html">splitGiotto()</a></code>
+
+        </dt>
+        <dd>Split a Giotto Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="sliceGiotto.html">sliceGiotto()</a></code>
+
+        </dt>
+        <dd>Slice <code>giotto</code> object by <code>spat_unit</code> and <code>feat_type</code></dd>
       </dl></div><div class="section level2">
       <h2 id="poly-generation">Poly Generation<a class="anchor" aria-label="anchor" href="#poly-generation"></a></h2>
 
@@ -1249,12 +1261,6 @@
         <dd>combineMetadata</dd>
       </dl><dl><dt>
 
-          <code><a href="combineSpatialCellFeatureInfo.html">combineSpatialCellFeatureInfo()</a></code>
-
-        </dt>
-        <dd>combineSpatialCellFeatureInfo</dd>
-      </dl><dl><dt>
-
           <code><a href="combineSpatialCellMetadataInfo.html">combineSpatialCellMetadataInfo()</a></code>
 
         </dt>
@@ -1485,10 +1491,16 @@
 
       <dl><dt>
 
-          <code><a href="ext.html">ext(<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="ext.html">ext(<i>&lt;giottoPolygon&gt;</i>)</a></code> <code><a href="ext.html">ext(<i>&lt;giottoPoints&gt;</i>)</a></code> <code><a href="ext.html">ext(<i>&lt;spatialNetworkObj&gt;</i>)</a></code> <code><a href="ext.html">ext(<i>&lt;giottoLargeImage&gt;</i>)</a></code> <code><a href="ext.html">ext(<i>&lt;giottoImage&gt;</i>)</a></code> <code><a href="ext.html">ext(<i>&lt;giotto&gt;</i>)</a></code> <code><a href="ext.html">ext(<i>&lt;giottoAffineImage&gt;</i>)</a></code> <code><a href="ext.html">`ext&lt;-`(<i>&lt;giottoPoints&gt;</i>,<i>&lt;SpatExtent&gt;</i>)</a></code> <code><a href="ext.html">`ext&lt;-`(<i>&lt;giottoPolygon&gt;</i>,<i>&lt;SpatExtent&gt;</i>)</a></code> <code><a href="ext.html">`ext&lt;-`(<i>&lt;giottoLargeImage&gt;</i>,<i>&lt;SpatExtent&gt;</i>)</a></code> <code><a href="ext.html">`ext&lt;-`(<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="ext.html">`ext&lt;-`(<i>&lt;giottoImage&gt;</i>,<i>&lt;SpatExtent&gt;</i>)</a></code>
+          <code><a href="ext.html">ext(<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="ext.html">ext(<i>&lt;giottoPolygon&gt;</i>)</a></code> <code><a href="ext.html">ext(<i>&lt;giottoPoints&gt;</i>)</a></code> <code><a href="ext.html">ext(<i>&lt;spatialNetworkObj&gt;</i>)</a></code> <code><a href="ext.html">ext(<i>&lt;giottoLargeImage&gt;</i>)</a></code> <code><a href="ext.html">ext(<i>&lt;giottoImage&gt;</i>)</a></code> <code><a href="ext.html">ext(<i>&lt;giotto&gt;</i>)</a></code> <code><a href="ext.html">ext(<i>&lt;giottoAffineImage&gt;</i>)</a></code> <code><a href="ext.html">ext(<i>&lt;affine2d&gt;</i>)</a></code> <code><a href="ext.html">`ext&lt;-`(<i>&lt;giottoPoints&gt;</i>,<i>&lt;SpatExtent&gt;</i>)</a></code> <code><a href="ext.html">`ext&lt;-`(<i>&lt;giottoPolygon&gt;</i>,<i>&lt;SpatExtent&gt;</i>)</a></code> <code><a href="ext.html">`ext&lt;-`(<i>&lt;giottoLargeImage&gt;</i>,<i>&lt;SpatExtent&gt;</i>)</a></code> <code><a href="ext.html">`ext&lt;-`(<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="ext.html">`ext&lt;-`(<i>&lt;giottoImage&gt;</i>,<i>&lt;SpatExtent&gt;</i>)</a></code> <code><a href="ext.html">`ext&lt;-`(<i>&lt;affine2d&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code>
 
         </dt>
         <dd>Get a SpatExtent</dd>
+      </dl><dl><dt>
+
+          <code><a href="XY.html">XY(<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="XY.html">`XY&lt;-`(<i>&lt;spatLocsObj&gt;</i>,<i>&lt;matrix&gt;</i>)</a></code> <code><a href="XY.html">XY(<i>&lt;giottoPoints&gt;</i>)</a></code> <code><a href="XY.html">`XY&lt;-`(<i>&lt;giottoPoints&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="XY.html">XY(<i>&lt;giottoPolygon&gt;</i>)</a></code> <code><a href="XY.html">`XY&lt;-`(<i>&lt;giottoPolygon&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="XY.html">XY(<i>&lt;SpatVector&gt;</i>)</a></code> <code><a href="XY.html">`XY&lt;-`(<i>&lt;SpatVector&gt;</i>,<i>&lt;matrix&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Spatial coordinates</dd>
       </dl><dl><dt>
 
           <code><a href="flip.html">flip(<i>&lt;giotto&gt;</i>)</a></code> <code><a href="flip.html">flip(<i>&lt;giottoPolygon&gt;</i>)</a></code> <code><a href="flip.html">flip(<i>&lt;giottoPoints&gt;</i>)</a></code> <code><a href="flip.html">flip(<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="flip.html">flip(<i>&lt;spatialNetworkObj&gt;</i>)</a></code> <code><a href="flip.html">flip(<i>&lt;giottoLargeImage&gt;</i>)</a></code> <code><a href="flip.html">flip(<i>&lt;SpatExtent&gt;</i>)</a></code> <code><a href="flip.html">flip(<i>&lt;giottoAffineImage&gt;</i>)</a></code> <code><a href="flip.html">flip(<i>&lt;affine2d&gt;</i>)</a></code>
@@ -1539,6 +1551,30 @@
         <dd>Affine transformations</dd>
       </dl><dl><dt>
 
+          <code><a href="area.html">area(<i>&lt;giottoPolygon&gt;</i>)</a></code> <code><a href="area.html">area(<i>&lt;SpatVector&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Get the area of individual polygons</dd>
+      </dl><dl><dt>
+
+          <code><a href="convHull.html">convHull(<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="convHull.html">convHull(<i>&lt;giottoSpatial&gt;</i>)</a></code> <code><a href="convHull.html">minRect(<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="convHull.html">minRect(<i>&lt;giottoSpatial&gt;</i>)</a></code> <code><a href="convHull.html">minCircle(<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="convHull.html">minCircle(<i>&lt;giottoSpatial&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Convex hull, minimal bounding rotated rectangle, and minimal bounding circle</dd>
+      </dl><dl><dt>
+
+          <code><a href="relate.html">relate(<i>&lt;giottoSpatial&gt;</i>,<i>&lt;giottoSpatial&gt;</i>)</a></code> <code><a href="relate.html">relate(<i>&lt;giotto&gt;</i>,<i>&lt;giottoSpatial&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Spatial relationships between geometries</dd>
+      </dl><dl><dt>
+
+          <code><a href="spatial_binary_ops.html">erase(<i>&lt;spatialClasses&gt;</i>,<i>&lt;spatialClasses&gt;</i>)</a></code> <code><a href="spatial_binary_ops.html">snap(<i>&lt;giottoSpatial&gt;</i>)</a></code> <code><a href="spatial_binary_ops.html">symdif(<i>&lt;spatialClasses&gt;</i>,<i>&lt;spatialClasses&gt;</i>)</a></code> <code><a href="spatial_binary_ops.html">union(<i>&lt;spatialClasses&gt;</i>,<i>&lt;spatialClasses&gt;</i>)</a></code> <code><a href="spatial_binary_ops.html">intersect(<i>&lt;spatialClasses&gt;</i>,<i>&lt;spatialClasses&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Spatial binary operations</dd>
+      </dl><dl><dt>
+
           <code><a href="rescalePolygons.html">rescalePolygons()</a></code>
 
         </dt>
@@ -1585,49 +1621,61 @@
         <dd>Preview a Giotto spatial object</dd>
       </dl><dl><dt>
 
-          <code><a href="subset_bracket.html">`[`(<i>&lt;gdtData&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;gdtData&gt;</i>,<i>&lt;logical&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;gdtData&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;gdtData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;numeric&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;gdtData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;logical&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;coordDataDT&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;coordDataDT&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;coordDataDT&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;coordDataDT&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;coordDataDT&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPoints&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;metaData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;metaData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;metaData&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;metaData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;dimObj&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;dimObj&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;exprData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;exprData&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;exprData&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;exprData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;spatNetData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;nnData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;enrData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;enrData&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;enrData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;enrData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;spatGridData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPoints&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPoints&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPoints&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPolygon&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPolygon&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPolygon&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPolygon&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;terraVectData&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;affine2d&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code>
+          <code><a href="subset_bracket.html">`[`(<i>&lt;gdtData&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;gdtData&gt;</i>,<i>&lt;logical&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;gdtData&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;gdtData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;numeric&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;gdtData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;logical&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;coordDataDT&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;coordDataDT&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;coordDataDT&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;coordDataDT&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;coordDataDT&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPoints&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;metaData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;metaData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;metaData&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;metaData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;dimObj&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;dimObj&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;exprData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;exprData&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;exprData&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;exprData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;spatNetData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;nnData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;enrData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;enrData&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;enrData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;enrData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;spatGridData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPoints&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPoints&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPoints&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPolygon&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPolygon&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPolygon&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoPolygon&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;terraVectData&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoLargeImage&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;giottoImage&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_bracket.html">`[`(<i>&lt;affine2d&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code>
 
         </dt>
         <dd>Subset part of an object with <code>[</code></dd>
       </dl><dl><dt>
 
-          <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;coordDataDT&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;metaData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;dimObj&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;exprData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;spatNetData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;nnData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;enrData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;spatGridData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;giottoPoints&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;giottoPolygon&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;affine2d&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code>
+          <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;coordDataDT&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;metaData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;dimObj&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;exprData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;spatNetData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;nnData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;enrData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;spatGridData&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;giottoPoints&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;giottoPolygon&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;giottoLargeImage&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;giottoImage&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="replace_bracket.html">`[&lt;-`(<i>&lt;affine2d&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code>
 
         </dt>
         <dd>Replace part of an object with <code>[&lt;-</code></dd>
       </dl><dl><dt>
 
-          <code><a href="subset_dollar.html">`$`(<i>&lt;coordDataDT&gt;</i>)</a></code> <code><a href="subset_dollar.html">`$`(<i>&lt;spatEnrObj&gt;</i>)</a></code> <code><a href="subset_dollar.html">`$`(<i>&lt;dimObj&gt;</i>)</a></code> <code><a href="subset_dollar.html">`$`(<i>&lt;metaData&gt;</i>)</a></code> <code><a href="subset_dollar.html">`$`(<i>&lt;terraVectData&gt;</i>)</a></code> <code><a href="subset_dollar.html">`$`(<i>&lt;affine2d&gt;</i>)</a></code>
+          <code><a href="subset_giotto.html">`[`(<i>&lt;giotto&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_giotto.html">`[`(<i>&lt;giotto&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_giotto.html">`[`(<i>&lt;giotto&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;gIndex&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_giotto.html">`[`(<i>&lt;giotto&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_giotto.html">subset(<i>&lt;giotto&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Subset a <code>giotto</code> object</dd>
+      </dl><dl><dt>
+
+          <code><a href="subset_giotto_subobjects.html">`[[`(<i>&lt;giotto&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_giotto_subobjects.html">`[[`(<i>&lt;giotto&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="subset_giotto_subobjects.html">`[[`(<i>&lt;giotto&gt;</i>,<i>&lt;missing&gt;</i>,<i>&lt;character&gt;</i>)</a></code> <code><a href="subset_giotto_subobjects.html">`[[`(<i>&lt;giotto&gt;</i>,<i>&lt;character&gt;</i>,<i>&lt;character&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Subset <code>giotto</code> subobjects</dd>
+      </dl><dl><dt>
+
+          <code><a href="subset_dollar.html">`$`(<i>&lt;giotto&gt;</i>)</a></code> <code><a href="subset_dollar.html">`$`(<i>&lt;coordDataDT&gt;</i>)</a></code> <code><a href="subset_dollar.html">`$`(<i>&lt;spatEnrObj&gt;</i>)</a></code> <code><a href="subset_dollar.html">`$`(<i>&lt;dimObj&gt;</i>)</a></code> <code><a href="subset_dollar.html">`$`(<i>&lt;metaData&gt;</i>)</a></code> <code><a href="subset_dollar.html">`$`(<i>&lt;terraVectData&gt;</i>)</a></code> <code><a href="subset_dollar.html">`$`(<i>&lt;affine2d&gt;</i>)</a></code>
 
         </dt>
         <dd>Subset part of an object with <code>$</code></dd>
       </dl><dl><dt>
 
-          <code><a href="replace_dollar.html">`$&lt;-`(<i>&lt;coordDataDT&gt;</i>)</a></code> <code><a href="replace_dollar.html">`$&lt;-`(<i>&lt;spatEnrObj&gt;</i>)</a></code> <code><a href="replace_dollar.html">`$&lt;-`(<i>&lt;dimObj&gt;</i>)</a></code> <code><a href="replace_dollar.html">`$&lt;-`(<i>&lt;metaData&gt;</i>)</a></code> <code><a href="replace_dollar.html">`$&lt;-`(<i>&lt;terraVectData&gt;</i>)</a></code>
+          <code><a href="replace_dollar.html">`$&lt;-`(<i>&lt;giotto&gt;</i>)</a></code> <code><a href="replace_dollar.html">`$&lt;-`(<i>&lt;coordDataDT&gt;</i>)</a></code> <code><a href="replace_dollar.html">`$&lt;-`(<i>&lt;spatEnrObj&gt;</i>)</a></code> <code><a href="replace_dollar.html">`$&lt;-`(<i>&lt;dimObj&gt;</i>)</a></code> <code><a href="replace_dollar.html">`$&lt;-`(<i>&lt;metaData&gt;</i>)</a></code> <code><a href="replace_dollar.html">`$&lt;-`(<i>&lt;terraVectData&gt;</i>)</a></code>
 
         </dt>
         <dd>Replace part of an object with <code>$&lt;-</code></dd>
       </dl><dl><dt>
 
-          <code><a href="rbind-generic.html">rbind2(<i>&lt;spatLocsObj&gt;</i>,<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="rbind-generic.html">rbind2(<i>&lt;giottoPolygon&gt;</i>,<i>&lt;giottoPolygon&gt;</i>)</a></code>
+          <code><a href="rbind-generic.html">rbind2(<i>&lt;cellMetaObj&gt;</i>,<i>&lt;cellMetaObj&gt;</i>)</a></code> <code><a href="rbind-generic.html">rbind2(<i>&lt;featMetaObj&gt;</i>,<i>&lt;featMetaObj&gt;</i>)</a></code> <code><a href="rbind-generic.html">rbind2(<i>&lt;spatLocsObj&gt;</i>,<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="rbind-generic.html">rbind2(<i>&lt;giottoPolygon&gt;</i>,<i>&lt;giottoPolygon&gt;</i>)</a></code>
 
         </dt>
         <dd>Combine objects by rows (Giotto-related)</dd>
       </dl><dl><dt>
 
-          <code><a href="row-plus-colnames-generic.html">colnames(<i>&lt;exprObj&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">colnames(<i>&lt;cellMetaObj&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">colnames(<i>&lt;featMetaObj&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">colnames(<i>&lt;spatEnrObj&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">colnames(<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">colnames(<i>&lt;dimObj&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">rownames(<i>&lt;exprObj&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">rownames(<i>&lt;dimObj&gt;</i>)</a></code>
+          <code><a href="row-plus-colnames-generic.html">colnames(<i>&lt;giotto&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">colnames(<i>&lt;exprObj&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">colnames(<i>&lt;cellMetaObj&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">colnames(<i>&lt;featMetaObj&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">colnames(<i>&lt;spatEnrObj&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">colnames(<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">colnames(<i>&lt;dimObj&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">rownames(<i>&lt;giotto&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">rownames(<i>&lt;exprObj&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">rownames(<i>&lt;dimObj&gt;</i>)</a></code> <code><a href="row-plus-colnames-generic.html">rownames(<i>&lt;metaData&gt;</i>)</a></code>
 
         </dt>
         <dd>Row and column names</dd>
       </dl><dl><dt>
 
-          <code><a href="dimnames.html">dimnames(<i>&lt;exprObj&gt;</i>)</a></code> <code><a href="dimnames.html">dimnames(<i>&lt;dimObj&gt;</i>)</a></code>
+          <code><a href="dimnames.html">dimnames(<i>&lt;giotto&gt;</i>)</a></code> <code><a href="dimnames.html">dimnames(<i>&lt;exprObj&gt;</i>)</a></code> <code><a href="dimnames.html">dimnames(<i>&lt;dimObj&gt;</i>)</a></code> <code><a href="dimnames.html">dimnames(<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="dimnames.html">dimnames(<i>&lt;metaData&gt;</i>)</a></code> <code><a href="dimnames.html">dimnames(<i>&lt;enrData&gt;</i>)</a></code>
 
         </dt>
         <dd>Dimnames of an object</dd>
       </dl><dl><dt>
 
-          <code><a href="dims-generic.html">nrow(<i>&lt;giottoPoints&gt;</i>)</a></code> <code><a href="dims-generic.html">nrow(<i>&lt;giottoPolygon&gt;</i>)</a></code> <code><a href="dims-generic.html">nrow(<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="dims-generic.html">nrow(<i>&lt;exprData&gt;</i>)</a></code> <code><a href="dims-generic.html">nrow(<i>&lt;metaData&gt;</i>)</a></code> <code><a href="dims-generic.html">nrow(<i>&lt;spatialNetworkObj&gt;</i>)</a></code> <code><a href="dims-generic.html">nrow(<i>&lt;enrData&gt;</i>)</a></code> <code><a href="dims-generic.html">nrow(<i>&lt;dimObj&gt;</i>)</a></code> <code><a href="dims-generic.html">ncol(<i>&lt;exprData&gt;</i>)</a></code> <code><a href="dims-generic.html">ncol(<i>&lt;metaData&gt;</i>)</a></code> <code><a href="dims-generic.html">ncol(<i>&lt;enrData&gt;</i>)</a></code> <code><a href="dims-generic.html">ncol(<i>&lt;dimObj&gt;</i>)</a></code> <code><a href="dims-generic.html">dim(<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="dims-generic.html">dim(<i>&lt;exprData&gt;</i>)</a></code> <code><a href="dims-generic.html">dim(<i>&lt;metaData&gt;</i>)</a></code> <code><a href="dims-generic.html">dim(<i>&lt;enrData&gt;</i>)</a></code> <code><a href="dims-generic.html">dim(<i>&lt;giottoLargeImage&gt;</i>)</a></code> <code><a href="dims-generic.html">dim(<i>&lt;giottoPolygon&gt;</i>)</a></code> <code><a href="dims-generic.html">dim(<i>&lt;giottoPoints&gt;</i>)</a></code>
+          <code><a href="dims-generic.html">nrow(<i>&lt;giotto&gt;</i>)</a></code> <code><a href="dims-generic.html">nrow(<i>&lt;giottoPoints&gt;</i>)</a></code> <code><a href="dims-generic.html">nrow(<i>&lt;giottoPolygon&gt;</i>)</a></code> <code><a href="dims-generic.html">nrow(<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="dims-generic.html">nrow(<i>&lt;exprData&gt;</i>)</a></code> <code><a href="dims-generic.html">nrow(<i>&lt;metaData&gt;</i>)</a></code> <code><a href="dims-generic.html">nrow(<i>&lt;spatialNetworkObj&gt;</i>)</a></code> <code><a href="dims-generic.html">nrow(<i>&lt;enrData&gt;</i>)</a></code> <code><a href="dims-generic.html">nrow(<i>&lt;dimObj&gt;</i>)</a></code> <code><a href="dims-generic.html">ncol(<i>&lt;giotto&gt;</i>)</a></code> <code><a href="dims-generic.html">ncol(<i>&lt;exprData&gt;</i>)</a></code> <code><a href="dims-generic.html">ncol(<i>&lt;metaData&gt;</i>)</a></code> <code><a href="dims-generic.html">ncol(<i>&lt;enrData&gt;</i>)</a></code> <code><a href="dims-generic.html">ncol(<i>&lt;dimObj&gt;</i>)</a></code> <code><a href="dims-generic.html">dim(<i>&lt;giotto&gt;</i>)</a></code> <code><a href="dims-generic.html">dim(<i>&lt;spatLocsObj&gt;</i>)</a></code> <code><a href="dims-generic.html">dim(<i>&lt;exprData&gt;</i>)</a></code> <code><a href="dims-generic.html">dim(<i>&lt;metaData&gt;</i>)</a></code> <code><a href="dims-generic.html">dim(<i>&lt;enrData&gt;</i>)</a></code> <code><a href="dims-generic.html">dim(<i>&lt;giottoLargeImage&gt;</i>)</a></code> <code><a href="dims-generic.html">dim(<i>&lt;giottoPolygon&gt;</i>)</a></code> <code><a href="dims-generic.html">dim(<i>&lt;giottoPoints&gt;</i>)</a></code>
 
         </dt>
         <dd>Dimensions of giotto objects</dd>
@@ -1662,13 +1710,13 @@
         <dd>Active spatial unit</dd>
       </dl><dl><dt>
 
-          <code><a href="featType-generic.html">featType(<i>&lt;list&gt;</i>)</a></code> <code><a href="featType-generic.html">featType(<i>&lt;featData&gt;</i>)</a></code> <code><a href="featType-generic.html">`featType&lt;-`(<i>&lt;featData&gt;</i>)</a></code>
+          <code><a href="featType-generic.html">featType(<i>&lt;ANY&gt;</i>)</a></code> <code><a href="featType-generic.html">featType(<i>&lt;list&gt;</i>)</a></code> <code><a href="featType-generic.html">featType(<i>&lt;featData&gt;</i>)</a></code> <code><a href="featType-generic.html">`featType&lt;-`(<i>&lt;featData&gt;</i>)</a></code>
 
         </dt>
         <dd>Feature type information</dd>
       </dl><dl><dt>
 
-          <code><a href="spatUnit-generic.html">spatUnit(<i>&lt;list&gt;</i>)</a></code> <code><a href="spatUnit-generic.html">spatUnit(<i>&lt;spatData&gt;</i>)</a></code> <code><a href="spatUnit-generic.html">spatUnit(<i>&lt;giottoPolygon&gt;</i>)</a></code> <code><a href="spatUnit-generic.html">`spatUnit&lt;-`(<i>&lt;spatData&gt;</i>)</a></code> <code><a href="spatUnit-generic.html">`spatUnit&lt;-`(<i>&lt;giottoPolygon&gt;</i>)</a></code>
+          <code><a href="spatUnit-generic.html">spatUnit(<i>&lt;ANY&gt;</i>)</a></code> <code><a href="spatUnit-generic.html">spatUnit(<i>&lt;list&gt;</i>)</a></code> <code><a href="spatUnit-generic.html">spatUnit(<i>&lt;spatData&gt;</i>)</a></code> <code><a href="spatUnit-generic.html">spatUnit(<i>&lt;giottoPolygon&gt;</i>)</a></code> <code><a href="spatUnit-generic.html">`spatUnit&lt;-`(<i>&lt;spatData&gt;</i>)</a></code> <code><a href="spatUnit-generic.html">`spatUnit&lt;-`(<i>&lt;giottoPolygon&gt;</i>)</a></code>
 
         </dt>
         <dd>Spatial unit information</dd>
@@ -1680,7 +1728,7 @@
         <dd>Provenance information</dd>
       </dl><dl><dt>
 
-          <code><a href="objName-generic.html">objName(<i>&lt;list&gt;</i>)</a></code> <code><a href="objName-generic.html">objName(<i>&lt;nameData&gt;</i>)</a></code> <code><a href="objName-generic.html">objName(<i>&lt;giottoPoints&gt;</i>)</a></code> <code><a href="objName-generic.html">objName(<i>&lt;giottoLargeImage&gt;</i>)</a></code> <code><a href="objName-generic.html">objName(<i>&lt;giottoImage&gt;</i>)</a></code> <code><a href="objName-generic.html">`objName&lt;-`(<i>&lt;list&gt;</i>)</a></code> <code><a href="objName-generic.html">`objName&lt;-`(<i>&lt;nameData&gt;</i>)</a></code> <code><a href="objName-generic.html">`objName&lt;-`(<i>&lt;giottoImage&gt;</i>)</a></code> <code><a href="objName-generic.html">`objName&lt;-`(<i>&lt;giottoLargeImage&gt;</i>)</a></code> <code><a href="objName-generic.html">`objName&lt;-`(<i>&lt;giottoPoints&gt;</i>)</a></code>
+          <code><a href="objName-generic.html">objName(<i>&lt;ANY&gt;</i>)</a></code> <code><a href="objName-generic.html">objName(<i>&lt;list&gt;</i>)</a></code> <code><a href="objName-generic.html">objName(<i>&lt;nameData&gt;</i>)</a></code> <code><a href="objName-generic.html">objName(<i>&lt;giottoPoints&gt;</i>)</a></code> <code><a href="objName-generic.html">objName(<i>&lt;giottoLargeImage&gt;</i>)</a></code> <code><a href="objName-generic.html">objName(<i>&lt;giottoImage&gt;</i>)</a></code> <code><a href="objName-generic.html">`objName&lt;-`(<i>&lt;list&gt;</i>)</a></code> <code><a href="objName-generic.html">`objName&lt;-`(<i>&lt;nameData&gt;</i>)</a></code> <code><a href="objName-generic.html">`objName&lt;-`(<i>&lt;giottoImage&gt;</i>)</a></code> <code><a href="objName-generic.html">`objName&lt;-`(<i>&lt;giottoLargeImage&gt;</i>)</a></code> <code><a href="objName-generic.html">`objName&lt;-`(<i>&lt;giottoPoints&gt;</i>)</a></code>
 
         </dt>
         <dd>Giotto object name information</dd>
@@ -1738,7 +1786,13 @@
 
       <dl><dt>
 
-          <code><a href="as.points.html">as.points(<i>&lt;data.frame&gt;</i>)</a></code>
+          <code><a href="as.list.html">as.list(<i>&lt;giotto&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Coerce to a list</dd>
+      </dl><dl><dt>
+
+          <code><a href="as.points.html">as.points(<i>&lt;data.frame&gt;</i>)</a></code> <code><a href="as.points.html">as.points(<i>&lt;spatLocsObj&gt;</i>)</a></code>
 
         </dt>
         <dd>Coerce to SpatVector points</dd>
@@ -1971,6 +2025,12 @@
 
         </dt>
         <dd>smoothGiottoPolygons</dd>
+      </dl><dl><dt>
+
+          <code><a href="doDeferred.html">doDeferred(<i>&lt;giottoAffineImage&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Perform deferred/lazy operations</dd>
       </dl></div><div class="section level2">
       <h2 id="deprecated">Deprecated<a class="anchor" aria-label="anchor" href="#deprecated"></a></h2>
 
@@ -1990,76 +2050,16 @@
         <dd>Get spatial grid</dd>
       </dl><dl><dt>
 
-          <code><a href="get_NearestNetwork.html">get_NearestNetwork()</a></code>
-
-        </dt>
-        <dd>Get nearest network</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_dimReduction.html">get_dimReduction()</a></code>
-
-        </dt>
-        <dd>Get dimension reduction</dd>
-      </dl><dl><dt>
-
           <code><a href="get_distance.html">get_distance()</a></code>
 
         </dt>
         <dd>get_distance</dd>
       </dl><dl><dt>
 
-          <code><a href="get_expression_values.html">get_expression_values()</a></code>
-
-        </dt>
-        <dd>get_expression_values</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_feature_info.html">get_feature_info()</a></code>
-
-        </dt>
-        <dd>Get feature info</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_giottoImage.html">get_giottoImage()</a></code>
-
-        </dt>
-        <dd>Get giotto image object</dd>
-      </dl><dl><dt>
-
           <code><a href="get_multiomics.html">get_multiomics()</a></code>
 
         </dt>
         <dd>Get multiomics integration results</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_polygon_info.html">get_polygon_info()</a></code>
-
-        </dt>
-        <dd>Get polygon info</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_spatialGrid.html">get_spatialGrid()</a></code>
-
-        </dt>
-        <dd>Get spatial grid</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_spatialNetwork.html">get_spatialNetwork()</a></code>
-
-        </dt>
-        <dd>Get spatial network</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_spatial_enrichment.html">get_spatial_enrichment()</a></code>
-
-        </dt>
-        <dd>Get spatial enrichment</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_spatial_locations.html">get_spatial_locations()</a></code>
-
-        </dt>
-        <dd>Get spatial locations</dd>
       </dl><dl><dt>
 
           <code><a href="createSpatialDefaultGrid.html">createSpatialDefaultGrid()</a></code>
@@ -2080,70 +2080,10 @@
         <dd>Set spatial grid</dd>
       </dl><dl><dt>
 
-          <code><a href="set_NearestNetwork.html">set_NearestNetwork()</a></code>
-
-        </dt>
-        <dd>Set nearest network</dd>
-      </dl><dl><dt>
-
-          <code><a href="set_dimReduction.html">set_dimReduction()</a></code>
-
-        </dt>
-        <dd>Set dimension reduction</dd>
-      </dl><dl><dt>
-
-          <code><a href="set_expression_values.html">set_expression_values()</a></code>
-
-        </dt>
-        <dd>Set expression values</dd>
-      </dl><dl><dt>
-
-          <code><a href="set_feature_info.html">set_feature_info()</a></code>
-
-        </dt>
-        <dd>Set feature info</dd>
-      </dl><dl><dt>
-
-          <code><a href="set_giottoImage.html">set_giottoImage()</a></code>
-
-        </dt>
-        <dd>Set giotto image object</dd>
-      </dl><dl><dt>
-
           <code><a href="set_multiomics.html">set_multiomics()</a></code>
 
         </dt>
         <dd>Set multiomics integration results</dd>
-      </dl><dl><dt>
-
-          <code><a href="set_polygon_info.html">set_polygon_info()</a></code>
-
-        </dt>
-        <dd>Set polygon info</dd>
-      </dl><dl><dt>
-
-          <code><a href="set_spatialGrid.html">set_spatialGrid()</a></code>
-
-        </dt>
-        <dd>Set spatial grid</dd>
-      </dl><dl><dt>
-
-          <code><a href="set_spatialNetwork.html">set_spatialNetwork()</a></code>
-
-        </dt>
-        <dd>Set spatial network</dd>
-      </dl><dl><dt>
-
-          <code><a href="set_spatial_enrichment.html">set_spatial_enrichment()</a></code>
-
-        </dt>
-        <dd>Set spatial enrichment</dd>
-      </dl><dl><dt>
-
-          <code><a href="set_spatial_locations.html">set_spatial_locations()</a></code>
-
-        </dt>
-        <dd>Set spatial locations</dd>
       </dl><dl><dt>
 
           <code><a href="generate_grid.html">triGrid()</a></code> <code><a href="generate_grid.html">orthoGrid()</a></code>
@@ -2220,7 +2160,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,8 @@
 <span>  name <span class="op">=</span> <span class="st">"enrichment"</span>,</span>
 <span>  provenance <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  initialize <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  initialize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -91,6 +92,10 @@ a specified set of spatial enrichment information from the gobject.</p></dd>
 <dd><p>(default = FALSE) whether to initialize the gobject before
 returning</p></dd>
 
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>additional params to pass</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -99,17 +104,14 @@ returning</p></dd>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other spatial enrichment data accessor functions:
-<code><a href="getSpatialEnrichment.html">getSpatialEnrichment</a>()</code>,
-<code><a href="get_spatial_enrichment.html">get_spatial_enrichment</a>()</code>,
-<code><a href="set_spatial_enrichment.html">set_spatial_enrichment</a>()</code></p>
+<code><a href="getSpatialEnrichment.html">getSpatialEnrichment</a>()</code></p>
 <p>Other functions to set data in giotto object:
-<code><a href="get_cell_id.html">get_cell_id</a>()</code>,
-<code><a href="get_feat_id.html">get_feat_id</a>()</code>,
 <code><a href="setCellMetadata.html">setCellMetadata</a>()</code>,
 <code><a href="setDimReduction.html">setDimReduction</a>()</code>,
 <code><a href="setExpression.html">setExpression</a>()</code>,
 <code><a href="setFeatureInfo.html">setFeatureInfo</a>()</code>,
 <code><a href="setFeatureMetadata.html">setFeatureMetadata</a>()</code>,
+<code><a href="setGiotto.html">setGiotto</a>()</code>,
 <code><a href="setGiottoImage.html">setGiottoImage</a>()</code>,
 <code><a href="setMultiomics.html">setMultiomics</a>()</code>,
 <code><a href="setNearestNetwork.html">setNearestNetwork</a>()</code>,
@@ -117,21 +119,7 @@ returning</p></dd>
 <code><a href="setSpatialGrid.html">setSpatialGrid</a>()</code>,
 <code><a href="setSpatialLocations.html">setSpatialLocations</a>()</code>,
 <code><a href="setSpatialNetwork.html">setSpatialNetwork</a>()</code>,
-<code><a href="set_NearestNetwork.html">set_NearestNetwork</a>()</code>,
-<code><a href="set_cell_id.html">set_cell_id</a>()</code>,
-<code><a href="set_cell_metadata.html">set_cell_metadata</a>()</code>,
-<code><a href="set_dimReduction.html">set_dimReduction</a>()</code>,
-<code><a href="set_expression_values.html">set_expression_values</a>()</code>,
-<code><a href="set_feat_id.html">set_feat_id</a>()</code>,
-<code><a href="set_feature_info.html">set_feature_info</a>()</code>,
-<code><a href="set_feature_metadata.html">set_feature_metadata</a>()</code>,
-<code><a href="set_giottoImage.html">set_giottoImage</a>()</code>,
-<code><a href="set_multiomics.html">set_multiomics</a>()</code>,
-<code><a href="set_polygon_info.html">set_polygon_info</a>()</code>,
-<code><a href="set_spatialGrid.html">set_spatialGrid</a>()</code>,
-<code><a href="set_spatialNetwork.html">set_spatialNetwork</a>()</code>,
-<code><a href="set_spatial_enrichment.html">set_spatial_enrichment</a>()</code>,
-<code><a href="set_spatial_locations.html">set_spatial_locations</a>()</code></p></div>
+<code><a href="set_multiomics.html">set_multiomics</a>()</code></p></div>
     </div>
 
     <div class="section level2">
@@ -168,7 +156,7 @@ returning</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>
