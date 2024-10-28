@@ -1,6 +1,6 @@
 Package: GiottoClass
 Title: Giotto Suite object definitions and framework
-Version: 0.4.0
+Version: 0.4.1
 Authors@R: c(
 	person("Ruben", "Dries", email = "rubendries@gmail.com",
 		 role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7650-7754")),
@@ -86,6 +86,7 @@ Collate:
     'NN_network.R'
     'aggregate.R'
     'auxilliary.R'
+    'buffer.R'
     'combine_metadata.R'
     'slot_accessors.R'
     'create.R'
