@@ -51,7 +51,6 @@ Other spatial network data accessor functions:
 \code{\link{getSpatialNetwork}()}
 
 Other functions to set data in giotto object: 
-\code{\link{get_feat_id}()},
 \code{\link{setCellMetadata}()},
 \code{\link{setDimReduction}()},
 \code{\link{setExpression}()},
@@ -65,7 +64,6 @@ Other functions to set data in giotto object:
 \code{\link{setSpatialEnrichment}()},
 \code{\link{setSpatialGrid}()},
 \code{\link{setSpatialLocations}()},
-\code{\link{set_feat_id}()},
 \code{\link{set_multiomics}()}
 }
 \concept{functions to set data in giotto object}
