@@ -217,10 +217,12 @@ reference:
   - subsetGiottoLocs
   - subsetGiottoLocsMulti
   - subsetGiottoLocsSubcellular
-- title: Join
-  desc: Joining multiple Giotto Objects
+- title: Join and Split
+  desc: Joining and Splitting Giotto Objects
 - contents:
   - joinGiottoObjects
+  - splitGiotto
+  - sliceGiotto
 - title: Poly Generation
   desc: Creation of polygon shapes and arrays
 - contents:
@@ -281,7 +283,6 @@ reference:
   - combineFeatureData
   - combineFeatureOverlapData
   - combineMetadata
-  - combineSpatialCellFeatureInfo
   - combineSpatialCellMetadataInfo
 - title: Metafeatures
   desc: Metafeature creation
@@ -309,6 +310,7 @@ reference:
   desc: Spatial manipulation and terra-based functions
 - contents:
   - ext
+  - XY
   - flip
   - crop
   - transpose
@@ -317,6 +319,10 @@ reference:
   - rescale
   - shear
   - affine
+  - area
+  - convHull
+  - relate
+  - spatial_binary_ops
   - rescalePolygons
   - wrap
 - subtitle: Querying
@@ -329,6 +335,8 @@ reference:
   - plot-generic
   - subset_bracket
   - replace_bracket
+  - subset_giotto
+  - subset_giotto_subobjects
   - subset_dollar
   - replace_dollar
   - rbind-generic
@@ -356,6 +364,7 @@ reference:
 - title: As
   desc: As coercion functions
 - contents:
+  - as.list,giotto-method
   - as.points
   - as.polygons
   - as.data.table
@@ -403,36 +412,17 @@ reference:
 - contents:
   - polygon_to_raster
   - smoothGiottoPolygons
+  - doDeferred
 - title: Deprecated
   desc: Deprecated and/or less supported older functions. Some of these functions are here for compatibility and internal purposes.
 - contents:
   - getSpatialGrid
-  - get_NearestNetwork
-  - get_dimReduction
   - get_distance
-  - get_expression_values
-  - get_feature_info
-  - get_giottoImage
   - get_multiomics
-  - get_polygon_info
-  - get_spatialGrid
-  - get_spatialNetwork
-  - get_spatial_enrichment
-  - get_spatial_locations
   - createSpatialDefaultGrid
   - createSpatialGrid
   - setSpatialGrid
-  - set_NearestNetwork
-  - set_dimReduction
-  - set_expression_values
-  - set_feature_info
-  - set_giottoImage
   - set_multiomics
-  - set_polygon_info
-  - set_spatialGrid
-  - set_spatialNetwork
-  - set_spatial_enrichment
-  - set_spatial_locations
   - generate_grid
   - cropGiottoLargeImage
   - plotGiottoImage
