@@ -1,5 +1,5 @@
 
-# GiottoClass 0.4.1
+# GiottoClass 0.4.1 (2024/10/28)
 
 ## new
 - `buffer()` for `giottoPolygon`, `giottoPoints`, `spatLocsObj`. Default is to crop by voronoi borders with `settleGeom()`
