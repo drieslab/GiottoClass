@@ -90,6 +90,7 @@ setGeneric("affine", function(x, y, ...) standardGeneric("affine"))
 setGeneric("shear", function(x, ...) standardGeneric("shear"))
 setGeneric("XY", function(x, ...) standardGeneric("XY"))
 setGeneric("XY<-", function(x, ..., value) standardGeneric("XY<-"))
+setGeneric("settleGeom", function(x, ...) standardGeneric("settleGeom"))
 if (!isGeneric("area")) {
     setGeneric("area", function(x, ...) standardGeneric("area"))
 }

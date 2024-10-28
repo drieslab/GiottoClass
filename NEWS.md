@@ -1,4 +1,11 @@
 
+# GiottoClass 0.4.1
+
+## new
+- `buffer()` for `giottoPolygon`, `giottoPoints`, `spatLocsObj`. Default is to crop by voronoi borders with `settleGeom()`
+- `settleGeom()` for `giottoPolygon` and `SpatVector` for finding non overlapping borders determined by voronoi
+
+
 # GiottoClass 0.4.0 (2024/10/27)
 
 ## breaking changes

@@ -85,6 +85,7 @@ Collate:
     'NN_network.R'
     'aggregate.R'
     'auxilliary.R'
+    'buffer.R'
     'combine_metadata.R'
     'slot_accessors.R'
     'create.R'
