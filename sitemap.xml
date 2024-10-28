@@ -44,6 +44,7 @@
 <url><loc>https://drieslab.github.io/GiottoClass/reference/as.matrix.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/as.points.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/as.polygons.html</loc></url>
+<url><loc>https://drieslab.github.io/GiottoClass/reference/buffer.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/calculateMetaTable.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/calculateMetaTableCells.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/calculateOverlap.html</loc></url>
@@ -343,6 +344,7 @@
 <url><loc>https://drieslab.github.io/GiottoClass/reference/set_default_feat_type.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/set_default_spat_unit.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/set_multiomics.html</loc></url>
+<url><loc>https://drieslab.github.io/GiottoClass/reference/settleGeom.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/seuratToGiotto.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/seuratToGiottoV4.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/seuratToGiottoV5.html</loc></url>
