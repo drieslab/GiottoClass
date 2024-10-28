@@ -98,7 +98,7 @@ setMethod("settleGeom", signature("SpatVector"), function(x) {
     
     # Create Voronoi polygons for the points
     # Note: extend parameter ensures Voronoi polygons cover all buffer areas
-    vor <- voronoi(centroids(x), bnd = ext(x) * 1.2)
+    vor <- terra::voronoi(centroids(x), bnd = ext(x) * 1.2)
     # voronoi does not return values in order. Reorder with index
     vor <- terra::sort(vor, v = ".idx")
     
