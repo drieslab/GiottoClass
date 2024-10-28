@@ -208,6 +208,7 @@ read_s4_nesting <- function(x) {
 #' setters for this slot directly retrieve (get) or replace (set) this slot.
 #' @seealso set_cell_id
 #' @keywords internal
+#' @noRd
 get_cell_id <- function(gobject,
     spat_unit = NULL,
     set_defaults = TRUE) {
@@ -251,6 +252,7 @@ get_cell_id <- function(gobject,
 #' on the giotto object.
 #' @seealso get_cell_id
 #' @keywords internal
+#' @noRd
 set_cell_id <- function(gobject,
     spat_unit = NULL,
     cell_IDs,
@@ -331,6 +333,7 @@ set_cell_id <- function(gobject,
 #' @seealso set_feat_id
 #' @family functions to set data in giotto object
 #' @keywords internal
+#' @noRd
 get_feat_id <- function(gobject,
     feat_type = NULL,
     set_defaults = TRUE) {
@@ -380,6 +383,7 @@ get_feat_id <- function(gobject,
 #' @seealso get_feat_id
 #' @family functions to set data in giotto object
 #' @keywords internal
+#' @noRd
 set_feat_id <- function(gobject,
     feat_type = NULL,
     feat_IDs,
@@ -581,7 +585,7 @@ set_feat_id <- function(gobject,
 #' @keywords internal
 #' @description Get cell metadata from giotto object
 #' @returns a data.table or cellMetaObj
-#' @seealso pDataDT
+#' @noRd
 get_cell_metadata <- function(gobject,
     spat_unit = NULL,
     feat_type = NULL,
@@ -775,6 +779,7 @@ setCellMetadata <- function(gobject,
 #' @param verbose be verbose
 #' @returns giotto object
 #' @keywords internal
+#' @noRd
 set_cell_metadata <- function(gobject,
     metadata,
     spat_unit = NULL,
@@ -1001,6 +1006,7 @@ set_cell_metadata <- function(gobject,
 #' @returns a data.table or featMetaObj
 #' @seealso fDataDT
 #' @keywords internal
+#' @noRd
 get_feature_metadata <- function(gobject,
     spat_unit = NULL,
     feat_type = NULL,
@@ -1183,6 +1189,7 @@ setFeatureMetadata <- function(gobject,
 #' @param verbose be verbose
 #' @returns giotto object
 #' @keywords internal
+#' @noRd
 set_feature_metadata <- function(gobject,
     metadata,
     spat_unit = NULL,
@@ -1483,7 +1490,9 @@ getExpression <- function(
 #' @param output what object type to retrieve the expression as. Currently
 #' either matrix' for the matrix object contained in the exprObj or
 #' 'exprObj' (default) for the exprObj itself are allowed.
+#' @keywords internal
 #' @returns exprObj or matrix depending on output param
+#' @noRd
 get_expression_values <- function(
         gobject,
         spat_unit = NULL,
@@ -1743,7 +1752,9 @@ setExpression <- function(gobject,
 #' @param verbose be verbose
 #' @param initialize (default = FALSE) whether to initialize the gobject before
 #' returning. Will be set to TRUE when called by the external
+#' @keywords internal
 #' @returns giotto object
+#' @noRd
 set_expression_values <- function(gobject,
     values,
     spat_unit = NULL,
@@ -2236,6 +2247,7 @@ getSpatialLocations <- function(gobject,
 #' @param simplify logical. Whether or not to take object out of a list when
 #' there is a length of 1.
 #' @returns data.table with coordinates or spatLocsObj depending on \code{output}
+#' @noRd
 get_spatial_locations <- function(gobject,
     spat_unit = NULL,
     spat_loc_name = NULL,
@@ -2506,6 +2518,7 @@ setSpatialLocations <- function(gobject,
 #' the \code{spatLocsObj} will be nested by spat_unit 'nucleus' instead and
 #' its spat_unit slot will be changed to 'nucleus'
 #' @returns giotto object
+#' @noRd
 set_spatial_locations <- function(gobject,
     spatlocs,
     spat_unit = NULL,
@@ -2632,7 +2645,9 @@ set_spatial_locations <- function(gobject,
 #' @param output object type to return as. Either 'dimObj' (default) or 'matrix'
 #' of the embedding coordinates.
 #' @description Function to get a dimension reduction object
+#' @keywords internal
 #' @returns dim reduction object (default) or dim reduction coordinates
+#' @noRd
 get_dimReduction <- function(gobject,
     spat_unit = NULL,
     feat_type = NULL,
@@ -2943,7 +2958,9 @@ setDimReduction <- function(gobject,
 #' @param dimObject dimension object result to set
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
+#' @keywords internal
 #' @returns giotto object
+#' @noRd
 set_dimReduction <- function(gobject,
     dimObject,
     spat_unit = NULL,
@@ -3109,6 +3126,7 @@ set_dimReduction <- function(gobject,
 #' @param network_name name of NN network to be used
 #' @param output return a igraph or data.table object. Default 'igraph'
 #' @returns igraph or data.table object
+#' @noRd
 get_NearestNetwork <- function(gobject,
     spat_unit = NULL,
     feat_type = NULL,
@@ -3419,6 +3437,7 @@ setNearestNetwork <- function(gobject,
 #' @param verbose be verbose
 #' @returns giotto object
 #' @keywords internal
+#' @noRd
 set_NearestNetwork <- function(gobject,
     nn_network,
     spat_unit = NULL,
@@ -3568,6 +3587,7 @@ set_NearestNetwork <- function(gobject,
 #' @param simplify logical. Whether or not to take object out of a list when
 #' there is a length of 1.
 #' @returns spatialNetworkObj of data.table
+#' @noRd
 get_spatialNetwork <- function(gobject,
     spat_unit = NULL,
     name = NULL,
@@ -3913,6 +3933,7 @@ setSpatialNetwork <- function(gobject,
 #' @param spatial_network spatial network
 #' @param verbose be verbose
 #' @returns giotto object
+#' @noRd
 set_spatialNetwork <- function(gobject,
     spatial_network,
     spat_unit = NULL,
@@ -4033,6 +4054,7 @@ set_spatialNetwork <- function(gobject,
 #' @param name name of spatial grid
 #' @param return_grid_Obj return grid object (default = FALSE)
 #' @returns spatialGridObj
+#' @noRd
 get_spatialGrid <- function(gobject,
     spat_unit = NULL,
     feat_type = NULL,
@@ -4173,6 +4195,7 @@ getSpatialGrid <- function(gobject,
 #' @param name name of spatial grid
 #' @param verbose be verbose
 #' @returns giotto object
+#' @noRd
 set_spatialGrid <- function(gobject,
     spatial_grid,
     spat_unit = NULL,
@@ -4314,6 +4337,7 @@ setSpatialGrid <- function(gobject,
 #' @param simplify logical. Whether or not to take object out of a list when
 #' there is a length of 1.
 #' @returns spatVector
+#' @noRd
 get_polygon_info <- function(gobject,
     polygon_name = NULL,
     polygon_overlap = NULL,
@@ -4646,6 +4670,7 @@ setPolygonInfo <- function(gobject,
 #' @param gpolygon giottoPolygon object
 #' @param verbose be verbose
 #' @returns giotto object
+#' @noRd
 set_polygon_info <- function(gobject,
     gpolygon,
     polygon_name = "cell",
@@ -4843,6 +4868,7 @@ getFeatureInfo <- function(gobject = gobject,
 #' @description Get giotto points spatVector
 #' @returns a SpatVector (default) or giottoPoints object depending on value of
 #' return_giottoPoints
+#' @noRd
 get_feature_info <- function(gobject,
     feat_type = NULL,
     set_defaults = TRUE,
@@ -5023,6 +5049,7 @@ setFeatureInfo <- function(gobject,
 #' @param gpolygon typo do not use
 #' @param verbose be verbose
 #' @returns giotto object
+#' @noRd
 set_feature_info <- function(gobject,
     gpoints,
     feat_type = NULL,
@@ -5187,6 +5214,7 @@ set_feature_info <- function(gobject,
 #' @inheritParams data_access_params
 #' @param enrichm_name name of spatial enrichment results. Default "DWLS"
 #' @returns spatEnrObj or data.table with fractions
+#' @noRd
 get_spatial_enrichment <- function(gobject,
     spat_unit = NULL,
     feat_type = NULL,
@@ -5460,6 +5488,7 @@ setSpatialEnrichment <- function(gobject,
 #' @param provenance provenance information (optional)
 #' @param verbose be verbose
 #' @returns giotto object
+#' @noRd
 set_spatial_enrichment <- function(gobject,
     spatenrichment,
     spat_unit = NULL,
@@ -5596,6 +5625,7 @@ set_spatial_enrichment <- function(gobject,
 #' @param name name of giottoImage \code{\link{showGiottoImageNames}}
 #' @returns a giottoImage
 #' @keywords internal
+#' @noRd
 get_giottoImage_MG <- function(gobject,
     name = NULL) {
     g_image_names <- list_images(gobject, img_type = "image")
@@ -5629,6 +5659,7 @@ get_giottoImage_MG <- function(gobject,
 #' @param verbose be verbose
 #' @returns giotto object
 #' @keywords internal
+#' @noRd
 set_giottoImage_MG <- function(gobject,
     image_object,
     name = NULL,
@@ -5668,6 +5699,7 @@ set_giottoImage_MG <- function(gobject,
 #' @param name name of giottoLargeImage \code{\link{showGiottoImageNames}}
 #' @returns a giottoLargeImage
 #' @keywords internal
+#' @noRd
 get_giottoLargeImage <- function(gobject,
     name = NULL) {
     g_image_names <- list_images(gobject, img_type = "largeImage")
@@ -5701,6 +5733,7 @@ get_giottoLargeImage <- function(gobject,
 #' @param verbose be verbose
 #' @returns giotto object
 #' @keywords internal
+#' @noRd
 set_giottoLargeImage <- function(gobject,
     largeImage_object,
     name = NULL,
@@ -5742,6 +5775,7 @@ set_giottoLargeImage <- function(gobject,
 #' @param image_type deprecated
 #' @param name name of a giotto image object \code{\link{showGiottoImageNames}}
 #' @returns a giotto image object
+#' @noRd
 get_giottoImage <- function(gobject = NULL,
     image_type = NULL,
     name = NULL) {
@@ -5842,7 +5876,7 @@ get_giotto_image_list <- function(gobject,
 #' @param name name of giotto image object
 #' @param verbose be verbose
 #' @returns giotto object
-#' @seealso \code{\link{addGiottoImage}}
+#' @noRd
 set_giottoImage <- function(gobject = NULL,
     image = NULL,
     image_type = NULL,
