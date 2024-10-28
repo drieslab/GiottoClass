@@ -321,6 +321,8 @@ reference:
   - affine
   - area
   - convHull
+  - buffer
+  - settleGeom
   - relate
   - spatial_binary_ops
   - rescalePolygons
