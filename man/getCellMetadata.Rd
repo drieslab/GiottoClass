@@ -22,9 +22,11 @@ getCellMetadata(
 
 \item{output}{return as either 'data.table' or 'cellMetaObj'}
 
-\item{copy_obj}{whether to deep copy/duplicate when getting the object (default = TRUE)}
+\item{copy_obj}{whether to deep copy/duplicate when getting the object
+(default = TRUE)}
 
-\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
+\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE
+only when
 expression and spat_info are not expected to exist.}
 }
 \value{
@@ -40,4 +42,20 @@ getCellMetadata(g)
 }
 \seealso{
 pDataDT
+
+Other functions to get data from giotto object: 
+\code{\link{getDimReduction}()},
+\code{\link{getExpression}()},
+\code{\link{getFeatureInfo}()},
+\code{\link{getFeatureMetadata}()},
+\code{\link{getGiottoImage}()},
+\code{\link{getMultiomics}()},
+\code{\link{getNearestNetwork}()},
+\code{\link{getPolygonInfo}()},
+\code{\link{getSpatialEnrichment}()},
+\code{\link{getSpatialGrid}()},
+\code{\link{getSpatialLocations}()},
+\code{\link{getSpatialNetwork}()},
+\code{\link{get_multiomics}()}
 }
+\concept{functions to get data from giotto object}

@@ -18,11 +18,13 @@ NULL
 
 
 
-
+# * giottoImage ####
 
 #' @describeIn plot-generic Plot \emph{magick}-based giottoImage object. ... param passes to \code{\link{.plot_giottoimage_mg}}
 #' @export
 setMethod("plot", signature(x = "giottoImage", y = "missing"), function(x, y, ...) .plot_giottoimage_mg(giottoImage = x, ...))
+
+# * giottoLargeImage ####
 
 #' @describeIn plot-generic Plot \emph{terra}-based giottoLargeImage object. ... param passes to \code{\link{.plot_giottolargeimage}}
 #' @param col character. Colors. The default is grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1)
@@ -86,12 +88,18 @@ setMethod(
     }
 )
 
+# * giottoAffineImage ####
+
 #' @rdname plot-generic
 #' @export
-setMethod("plot", signature(x = "giottoAffineImage", y = "missing"),
-          function(x, ...) {
-              .plot_giottoaffineimage(x, ...)
-          })
+setMethod(
+    "plot", signature(x = "giottoAffineImage", y = "missing"),
+    function(x, ...) {
+        .plot_giottoaffineimage(x, ...)
+    }
+)
+
+# * giottoPolygon ####
 
 #' @describeIn plot-generic Plot \emph{terra}-based giottoPolygon object. ... param passes to \code{\link[terra]{plot}}
 #' @param point_size size of points when plotting giottoPolygon object centroids
@@ -128,6 +136,8 @@ setMethod(
     }
 )
 
+# * giottoPoints ####
+
 #' @describeIn plot-generic \emph{terra}-based giottoPoint object. ... param passes to \code{\link[terra]{plot}}
 #' @param point_size size of points when plotting giottoPoints
 #' @param feats specific features to plot within giottoPoints object
@@ -154,7 +164,7 @@ setMethod(
 #'   "black" and "white" are used.
 #'   * **background** (optional) background color. Usually not used when a
 #'   `col` color mapping is sufficient.
-#' 
+#'
 #' Note that `col` param and other [base::plot()] graphical params are available
 #' through `...`
 #' @examples
@@ -202,6 +212,7 @@ setMethod(
     }
 )
 
+# * spatLocsObj ####
 
 #' @describeIn plot-generic Plot a spatLocsObj
 #' @examples
@@ -224,6 +235,7 @@ setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) 
     }
 })
 
+# * dimObj ####
 
 #' @describeIn plot-generic Plot a dimObj
 #' @param dims dimensions to plot
@@ -254,6 +266,7 @@ setMethod(
     }
 )
 
+# * spatialNetworkObj ####
 
 #' @describeIn plot-generic Plot a spatialNetworkObj
 #' @export
@@ -290,13 +303,14 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
         if (is.null(l$pch)) l$pch <- "."
     }
     do.call("plot", append(l, list(x = nodes$sdimx_begin, y = nodes$sdimy_begin)))
-    segments(
+    graphics::segments(
         x0 = x[]$sdimx_begin, y0 = x[]$sdimy_begin,
         x1 = x[]$sdimx_end, y1 = x[]$sdimy_end,
         col = line_col, lty = line_type, lwd = line_width
     )
 })
 
+# * affine2d ####
 
 #' @describeIn plot-generic Plot a affine2d. blue is start, red is end
 #' @export
@@ -504,9 +518,8 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
     ))]
     a$x <- giottoLargeImage@raster_object
 
-
     # Determine likely image bitdepth
-    if (is.null(max_intensity)) {
+    if (is.null(max_intensity) || is.na(max_intensity)) {
         bitDepth <- ceiling(log(x = giottoLargeImage@max_intensity, base = 2))
         # Assign discovered bitdepth as max_intensity
         max_intensity <- 2^bitDepth - 1
@@ -769,8 +782,7 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
             feat_ID,
             function(feat_i) which(feats == feat_i),
             FUN.VALUE = integer(1L)
-        )
-    ]
+        )]
 
     args_list$x <- dataDT$x
     args_list$y <- dataDT$y
@@ -784,7 +796,7 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
     do.call(scattermore::scattermoreplot, args_list)
     legend(
         x = "topright",
-        inset = c(-1.3 / dev.size()[1], 0),
+        inset = c(-1.3 / grDevices::dev.size()[1], 0),
         legend = feats,
         col = feat_colors,
         bty = "n",

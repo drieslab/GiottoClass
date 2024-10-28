@@ -2,7 +2,7 @@
 % Please edit documentation in R/auxilliary.R
 \name{annotateGiotto}
 \alias{annotateGiotto}
-\title{Annotate giotto clustering}
+\title{Annotate Giotto object}
 \usage{
 annotateGiotto(
   gobject,
@@ -14,23 +14,26 @@ annotateGiotto(
 )
 }
 \arguments{
-\item{gobject}{giotto object}
+\item{gobject}{\code{giotto} object}
 
 \item{spat_unit}{spatial unit}
 
 \item{feat_type}{feature type}
 
-\item{annotation_vector}{named annotation vector (names = cluster ids)}
+\item{annotation_vector}{named \code{character} vector. Vector names are labels
+in the cluster column. Labels to assign are the vector values.}
 
-\item{cluster_column}{cluster column to convert to annotation names}
+\item{cluster_column}{\code{character}. Cell metaadata column to map annotation
+values based on.}
 
 \item{name}{new name for annotation column}
 }
 \value{
-giotto object
+\code{giotto} object
 }
 \description{
-Converts cluster results into a user provided annotation.
+Map user provided annotations/labels based on another
+existing metadata column (usually clustering labels)
 }
 \details{
 You need to specify which (cluster) column you want to annotate

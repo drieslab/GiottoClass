@@ -335,7 +335,7 @@ createNetwork <- function(
     )
 
     geometry_obj <- list("delaunay_simplex_mat" = delaunay_simplex_mat)
-    edge_combs <- utils::combn(x = ncol(delaunay_simplex_mat), m = 2L)
+    edge_combs <- combn(x = ncol(delaunay_simplex_mat), m = 2L)
     delaunay_edges <- data.table::as.data.table(apply(
         edge_combs,
         MARGIN = 1L, function(comb) delaunay_simplex_mat[, comb]
@@ -601,12 +601,12 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
 #'   * **weight:** \eqn{1/(1 + distance)}
 #'   * **shared:** number of shared neighbours
 #'   * **rank:** ranking of pairwise cell neighbours
-#' 
+#'
 #' For sNN networks two additional parameters can be set:
 #'   * **minimum_shared:** minimum number of shared neighbours needed
 #'   * **top_shared:** keep this number of the top shared neighbours,
 #'   irrespective of minimum_shared setting
-#' 
+#'
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
@@ -809,8 +809,10 @@ createNearestNetwork <- function(
         nn_names <- names(gobject@nn_network[[spat_unit]][[type]])
 
         if (name %in% nn_names) {
-            vmsg(.v = verbose, 
-                 name, "has already been used, will be overwritten")
+            vmsg(
+                .v = verbose,
+                name, "has already been used, will be overwritten"
+            )
         }
 
         nnObj <- create_nn_net_obj(

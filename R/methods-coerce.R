@@ -125,16 +125,14 @@ as.data.table.giottoPoints <- function(x, ...) {
 
 #' @rdname as.matrix
 #' @export
-setMethod("as.matrix", signature("spatLocsObj"), function(
-        x, id_rownames = TRUE, ...) {
-
+setMethod("as.matrix", signature("spatLocsObj"), function(x, id_rownames = TRUE, ...) {
     x <- x[] # drop to DT
     spat_cols <- c("sdimx", "sdimy", "sdimz")
     spat_cols <- spat_cols %in% colnames(x)
-    
+
     m <- x[, spat_cols, with = FALSE] %>%
         as.matrix()
-    
+
     if (id_rownames) {
         rownames(m) <- x$cell_ID
     }
@@ -178,11 +176,11 @@ methods::setAs("giottoLargeImage", "giottoAffineImage", function(from) {
     attr(from, "affine") <- new("affine2d")
     attr(from, "funs") <- list()
     attr(from, "class") <- "giottoAffineImage"
-    
+
     initialize(from)
 })
 
-# TODO redo this as `as.array`. 
+# TODO redo this as `as.array`.
 # Careful: There are already usages of this `as()` method in the code
 methods::setAs("giottoLargeImage", "array", function(from) {
     .spatraster_sample_values(
@@ -241,7 +239,11 @@ setMethod(
     }
 )
 
-
+#' @rdname as.points
+#' @export
+setMethod("as.points", signature("spatLocsObj"), function(x) {
+    vect(x[], geom = c("sdimx", "sdimy"))
+})
 
 
 

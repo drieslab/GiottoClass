@@ -5,18 +5,23 @@ from dask_image.imread import imread
 from xarray import DataArray
 import geopandas as gpd
 from shapely.geometry import Point
-import os
+import glob, os
 
 from spatialdata import SpatialData
 from spatialdata.models import Image2DModel, ShapesModel, TableModel
 from spatialdata.transformations.transformations import Identity
 
-def createImageModel():
+def createImageModel(temp):
     images = {}
-    hires_image_path = "temp_image.png"
-    hires_img = imread(hires_image_path).squeeze().transpose(2,0,1)
-    hires_img = DataArray(hires_img, dims=("c","y","x"))
-    images["hires_image"] = Image2DModel.parse(hires_img, transformations={"downscaled_hires": Identity()})
+    image_paths = glob.glob(temp+"*.png")
+    for path in image_paths:
+        image = imread(path).squeeze()
+        if len(image.shape) == 2:
+            image = np.expand_dims(image, axis=-1)
+        image = image.transpose(2,0,1)
+        image = DataArray(image, dims=("c","y","x"))
+        image_name = os.path.splitext(os.path.basename(path))[0]
+        images[image_name] = Image2DModel.parse(image)
     return images
 
 def createShapeModel(spat_locs, spot_radius):
@@ -33,15 +38,19 @@ def createShapeModel(spat_locs, spot_radius):
     return shapes
 
 def createTableModel(temp):
-    alist = os.listdir(temp)[0]
-    adata = ad.read_h5ad(os.path.join(temp, alist))
+    alist = glob.glob(temp+"*.h5ad")
+    adata = ad.read_h5ad(alist[0])
     table = TableModel.parse(adata)
     return table
 
-def createSpatialData(temp, spat_locs, spot_radius, save_directory):
-    images = createImageModel()
+def createSpatialData(temp, spat_locs, spot_radius, save_directory, image_exists):
+    if image_exists:
+        images = createImageModel(temp)
     table = createTableModel(temp)
     shapes = createShapeModel(spat_locs, spot_radius)
-    sd = SpatialData(table = table, images = images)
+    if image_exists:
+        sd = SpatialData(table = table, images = images)
+    else:
+        sd = SpatialData(table = table)
     sd.shapes["Shapes"] = shapes
-    sd.write(save_directory)
+    sd.write(save_directory, overwrite = True)

@@ -4,6 +4,7 @@
 \alias{objName-generic}
 \alias{objName}
 \alias{objName<-}
+\alias{objName,ANY-method}
 \alias{objName,list-method}
 \alias{objName,nameData-method}
 \alias{objName,giottoPoints-method}
@@ -16,6 +17,8 @@
 \alias{objName<-,giottoPoints-method}
 \title{Giotto object name information}
 \usage{
+\S4method{objName}{ANY}(x)
+
 \S4method{objName}{list}(x)
 
 \S4method{objName}{nameData}(x)

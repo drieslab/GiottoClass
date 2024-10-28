@@ -26,7 +26,7 @@
 #'   locations with stitchFieldCoordinates
 #'   4. provide new cell location file
 #'   to \code{\link{createGiottoObject}}
-#' 
+#'
 #' @export
 stitchFieldCoordinates <- function(location_file,
     offset_file,

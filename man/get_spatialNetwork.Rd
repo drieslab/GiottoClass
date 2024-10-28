@@ -26,7 +26,8 @@ get_spatialNetwork(
 'spatialNetworkObj' (default),
 'networkDT' and 'networkDT_before_filter' for data.table outputs.}
 
-\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
+\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE
+only when
 expression and spat_info are not expected to exist.}
 
 \item{copy_obj}{whether to copy/duplicate when getting the
@@ -43,33 +44,3 @@ spatialNetworkObj of data.table
 \description{
 Function to get a spatial network
 }
-\seealso{
-Other spatial network data accessor functions: 
-\code{\link{getSpatialNetwork}()},
-\code{\link{setSpatialNetwork}()},
-\code{\link{set_spatialNetwork}()}
-
-Other functions to get data from giotto object: 
-\code{\link{getDimReduction}()},
-\code{\link{getExpression}()},
-\code{\link{getFeatureInfo}()},
-\code{\link{getGiottoImage}()},
-\code{\link{getMultiomics}()},
-\code{\link{getNearestNetwork}()},
-\code{\link{getPolygonInfo}()},
-\code{\link{getSpatialEnrichment}()},
-\code{\link{getSpatialGrid}()},
-\code{\link{getSpatialLocations}()},
-\code{\link{getSpatialNetwork}()},
-\code{\link{get_NearestNetwork}()},
-\code{\link{get_dimReduction}()},
-\code{\link{get_feature_info}()},
-\code{\link{get_giottoImage}()},
-\code{\link{get_multiomics}()},
-\code{\link{get_polygon_info}()},
-\code{\link{get_spatialGrid}()},
-\code{\link{get_spatial_enrichment}()},
-\code{\link{get_spatial_locations}()}
-}
-\concept{functions to get data from giotto object}
-\concept{spatial network data accessor functions}

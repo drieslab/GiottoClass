@@ -17,7 +17,8 @@ get_feature_info(
 
 \item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
 
-\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
+\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE
+only when
 expression and spat_info are not expected to exist.}
 
 \item{return_giottoPoints}{return as a giottoPoints object}
@@ -32,33 +33,3 @@ return_giottoPoints
 \description{
 Get giotto points spatVector
 }
-\seealso{
-Other feature info data accessor functions: 
-\code{\link{getFeatureInfo}()},
-\code{\link{setFeatureInfo}()},
-\code{\link{set_feature_info}()}
-
-Other functions to get data from giotto object: 
-\code{\link{getDimReduction}()},
-\code{\link{getExpression}()},
-\code{\link{getFeatureInfo}()},
-\code{\link{getGiottoImage}()},
-\code{\link{getMultiomics}()},
-\code{\link{getNearestNetwork}()},
-\code{\link{getPolygonInfo}()},
-\code{\link{getSpatialEnrichment}()},
-\code{\link{getSpatialGrid}()},
-\code{\link{getSpatialLocations}()},
-\code{\link{getSpatialNetwork}()},
-\code{\link{get_NearestNetwork}()},
-\code{\link{get_dimReduction}()},
-\code{\link{get_giottoImage}()},
-\code{\link{get_multiomics}()},
-\code{\link{get_polygon_info}()},
-\code{\link{get_spatialGrid}()},
-\code{\link{get_spatialNetwork}()},
-\code{\link{get_spatial_enrichment}()},
-\code{\link{get_spatial_locations}()}
-}
-\concept{feature info data accessor functions}
-\concept{functions to get data from giotto object}
