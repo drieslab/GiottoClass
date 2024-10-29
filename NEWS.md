@@ -5,6 +5,9 @@
 - `buffer()` for `giottoPolygon`, `giottoPoints`, `spatLocsObj`. Default is to crop by voronoi borders with `settleGeom()`
 - `settleGeom()` for `giottoPolygon` and `SpatVector` for finding non overlapping borders determined by voronoi
 
+## bug fixes
+- fix default method setting in `createNetwork()` for "delaunay" networks
+
 
 # GiottoClass 0.4.0 (2024/10/27)
 
