@@ -143,15 +143,28 @@ createNetwork <- function(
 
     # check params
     type <- match.arg(type, choices = c("sNN", "kNN", "delaunay"))
+    
+    mdef <- c("dbscan", "geometry", "RTriangle", "deldir")
+    if (type %in% c("sNN", "kNN")) {
+        mchoices <- c("dbscan")
+        if (identical(method, mdef)) method <- mchoices
+    }
+    if (type %in% c("delaunay")) {
+        mchoices <- c("geometry", "RTriangle", "deldir")
+        if (identical(method, mdef)) method <- mchoices
+    }
+    
     method <- switch(type,
-        "sNN" = match.arg(method, choices = c("dbscan"), several.ok = TRUE),
-        "kNN" = match.arg(method, choices = c("dbscan"), several.ok = TRUE),
-        "delaunay" = match.arg(
-            method,
-            choices = c("geometry", "RTriangle", "deldir"),
-            several.ok = TRUE
-        )
+        "sNN" = match.arg(method, choices = mchoices, several.ok = TRUE),
+        "kNN" = match.arg(method, choices = mchoices, several.ok = TRUE),
+        "delaunay" = {
+            method <- method[[1L]]
+            match.arg(method, choices = mchoices, several.ok = TRUE)
+        }
     )
+    
+    vmsg(.is_debug = TRUE, sprintf("network\n type: %s\n method: %s",
+                                   type, method))
 
     # get common params
     alist <- list(
