@@ -1,3 +1,11 @@
+# GiottoClass 0.4.2 (2024/10/30)
+
+## bug fixes
+- fix y spacing of `makePseudoVisium()`
+
+## changes
+- `makePseudoVisium()` `micron_scale` (multiplicative scalefactor to get micron scaled values) supercedes `micron_size` which used the inverse.
+
 
 # GiottoClass 0.4.1 (2024/10/28)
 
