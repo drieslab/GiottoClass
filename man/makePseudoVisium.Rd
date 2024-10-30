@@ -33,7 +33,7 @@ spatial extent.
 }
 \details{
 This function generates a pseudo-Visium array of spots across the
-spatial extent provided. The \code{micron_size} param is used to determine the
+spatial extent provided. The \code{micron_scale} param is used to determine the
 scaling of the array relative to the target coordinate system.
 }
 \section{\code{micron_scale}}{

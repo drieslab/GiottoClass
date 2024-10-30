@@ -393,7 +393,7 @@ orthoGrid <- function(extent, ccd, id_prefix = "ID_") {
 #' @param name character. (default is 'pseudo_visium') Name of giottoPolygon
 #' object to create
 #' @details This function generates a pseudo-Visium array of spots across the 
-#' spatial extent provided. The `micron_size` param is used to determine the 
+#' spatial extent provided. The `micron_scale` param is used to determine the 
 #' scaling of the array relative to the target coordinate system.
 #' 
 #' @section `micron_scale`: 
