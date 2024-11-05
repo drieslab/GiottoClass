@@ -12,6 +12,8 @@
 #' @param image_filetype the image filetype to use, see
 #' \code{\link[terra]{writeRaster}}. Default is "PNG". For TIFF outputs, try
 #' "COG"
+#' @param include_feat_coord logical. Whether to keep the feature coordinates
+#' when saving. Dropping them can improve performance for large datasets.
 #' @param verbose be verbose
 #' @param ... additional parameters for \code{\link[terra]{writeRaster}}
 #' @returns Creates a directory with Giotto object information
@@ -31,6 +33,7 @@ saveGiotto <- function(
         method_params = list(),
         overwrite = FALSE,
         image_filetype = "PNG",
+        include_feat_coord = TRUE,
         verbose = TRUE,
         ...) {
     # check params
@@ -44,6 +47,10 @@ saveGiotto <- function(
     ## set directory path and folder
     dir <- normalizePath(dir)
     final_dir <- file.path(dir, foldername)
+    
+    if (isFALSE(include_feat_coord)) {
+        gobject@feat_info <- NULL
+    }
 
     overwriting <- FALSE
     if (dir.exists(final_dir)) {
