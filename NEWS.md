@@ -1,12 +1,7 @@
-# GiottoClass 0.4.4
+# GiottoClass 0.4.3 (2024/11/12)
 
 ## bug fixes
 - fix cell metadata desyncing after `joinGiottoObjects()`
-
-
-# GiottoClass 0.4.3
-
-## bug fixes
 - fix `readExprMatrix()` when IDs are numerical barcodes
 
 ## enhancements
