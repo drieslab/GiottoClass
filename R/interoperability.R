@@ -1465,6 +1465,7 @@ giottoToSeuratV4 <- function(gobject,
 #' @export
 giottoToSeuratV5 <- function(gobject,
     spat_unit = NULL,
+    dataType,
     res_type = c("hires", "lowres", "fullres"),
     ...) {
     # data.table vars
@@ -1795,17 +1796,36 @@ giottoToSeuratV5 <- function(gobject,
                 # since we allow use non-lowres images
             )
             # see https://github.com/satijalab/seurat/issues/3595
-            newV1 <- new(
-                Class = "VisiumV1",
-                image = img_array,
-                scale.factors = scalefactors,
-                coordinates = coord,
-                spot.radius =
+            if (dataType != 0){
+              if(dataType == "xenium"){
+                coord1 <- coord
+                coord$cell_id <- rownames(coord)
+                coord <- coord[, c("cell_id", "imagerow", "imagecol")]
+                segmentations.data <- list(
+                  "centroids" = CreateCentroids(coord1),
+                  "segmentation" = CreateSegmentation(coord)
+                )
+                coords <- CreateFOV(
+                  coords = segmentations.data,
+                  type = c("segmentation", "centroids"),
+                  assay = "rna")
+                fov <- "default_fov"
+                sobj[[fov]] <- coords
+              }else{
+                newV1 <- new(
+                  Class = "VisiumV1",
+                  image = img_array,
+                  scale.factors = scalefactors,
+                  coordinates = coord,
+                  spot.radius =
                     scalef$fiducial * scalef$lowres / max(dim(img_array)),
-                key = paste0(key, "_")
-            )
-
-            sobj@images[[key]] <- newV1
+                  key = paste0(key, "_")
+                )
+                
+                sobj@images[[key]] <- newV1
+              }           
+            } 
+            
         }
     }
 
@@ -2369,50 +2389,54 @@ seuratToGiottoV5 <- function(sobject,
                         gpoints <- createGiottoPoints(mol_spatlocs,
                             feat_type = "rna"
                         )
-                        if ("centroids" %in% names(sobject@images[[i]])) {
-                            centroids_coords <-
-                                sobject@images[[i]]$centroids@coords
-                            centroids_coords <- vect(centroids_coords)
-                            gpolygon <- create_giotto_polygon_object(
-                                name = "cell", spatVector = centroids_coords
-                            )
-                        }
-                        if ("segmentation" %in% names(sobject@images[[i]])) {
-                            polygon_list <- list()
-
-                            for (j in seq(sobject@images[[
-                                i
-                            ]]@boundaries$segmentation@polygons)) {
-                                polygon_info <- sobject@images[[
-                                    i
-                                ]]@boundaries$segmentation@polygons[[j]]
-
-                                # Get coordinates from segmentation
-                                seg_coords <- polygon_info@Polygons[[1]]@coords
-
-                                # Fetch cell_Id from polygon information
-                                cell_ID <- polygon_info@ID
-
-                                # Convert it to SpatVector
-                                seg_coords <- vect(seg_coords)
-
-                                # Create giotto_polygon_object
-                                gpolygon <- create_giotto_polygon_object(
-                                    name = "cell",
-                                    spatVector = centroids_coords,
-                                    spatVectorCentroids = seg_coords
-                                )
-
-                                # Add the cell_ID to the list of polygon names
-                                polygon_list[[cell_ID]] <- gpolygon
-                            }
-                        }
                     }
                 }
+              if ("centroids" %in% names(sobject@images[[i]])) {
+                centroids_coords <-
+                  sobject@images[[i]]$centroids@coords
+                centroids_coords <- vect(centroids_coords)
+                gpolygon <- create_giotto_polygon_object(
+                  name = "cell", spatVector = centroids_coords
+                )
+              }
+              if ("segmentation" %in% names(sobject@images[[i]])) {
+                polygon_list <- list()
+                for (j in seq(sobject@images[[
+                  i
+                ]]@boundaries$segmentation@polygons)) {
+                  polygon_info <- sobject@images[[
+                    i
+                  ]]@boundaries$segmentation@polygons[[j]]
+                  # Get coordinates from segmentation
+                  
+                  seg_coords <- polygon_info@Polygons[[1]]@coords
+                  # Fetch cell_Id from polygon information
+                  cell_ID <- polygon_info@ID
+                  # Convert it to SpatVector
+                  seg_coords <- vect(seg_coords)
+                  # Create giotto_polygon_object
+                  gpolygon <- create_giotto_polygon_object(
+                    name = "cell",
+                    spatVector = centroids_coords,
+                    spatVectorCentroids = seg_coords
+                    
+                  )
+                  # Add the cell_ID to the list of polygon names
+                  polygon_list[[cell_ID]] <- gpolygon
+                }
+                
+              }
+                    
             }
         }
     }
-
+                  
+                  
+            
+    
+                        
+                      
+               
     # Find SueratImages, extract them, and pass to create image
     image_list <- list()
     for (i in names(sobject@images)) {
