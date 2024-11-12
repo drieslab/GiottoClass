@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +50,7 @@
 <span>  method_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  image_filetype <span class="op">=</span> <span class="st">"PNG"</span>,</span>
+<span>  include_feat_coord <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -87,6 +88,11 @@
 <dd><p>the image filetype to use, see
 <code><a href="https://rspatial.github.io/terra/reference/writeRaster.html" class="external-link">writeRaster</a></code>. Default is "PNG". For TIFF outputs, try
 "COG"</p></dd>
+
+
+<dt id="arg-include-feat-coord">include_feat_coord<a class="anchor" aria-label="anchor" href="#arg-include-feat-coord"></a></dt>
+<dd><p>logical. Whether to keep the feature coordinates
+when saving. Dropping them can improve performance for large datasets.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>

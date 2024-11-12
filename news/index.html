@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,20 @@
       <small>Source: <a href="https://github.com/drieslab/Giotto/blob/website/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.3" id="giottoclass-043-20241112">GiottoClass 0.4.3 (2024/11/12)<a class="anchor" aria-label="anchor" href="#giottoclass-043-20241112"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-4-3">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-3"></a></h3>
+<ul><li>fix cell metadata desyncing after <code><a href="../reference/joinGiottoObjects.html">joinGiottoObjects()</a></code>
+</li>
+<li>fix <code><a href="../reference/readExprMatrix.html">readExprMatrix()</a></code> when IDs are numerical barcodes</li>
+</ul></div>
+<div class="section level3">
+<h3 id="enhancements-0-4-3">enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-4-3"></a></h3>
+<ul><li>
+<code><a href="../reference/saveGiotto.html">saveGiotto()</a></code> now has <code>include_feat_coord</code> param. If <code>FALSE</code>, transcript coordinates will be dropped during saving, which will make the object much less memory intensive.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.2" id="giottoclass-042-20241030">GiottoClass 0.4.2 (2024/10/30)<a class="anchor" aria-label="anchor" href="#giottoclass-042-20241030"></a></h2>
 <div class="section level3">
