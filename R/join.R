@@ -528,12 +528,19 @@ joinGiottoObjects <- function(gobject_list,
         # update IDs
         for (spat_unit in names(gobj@cell_metadata)) {
             for (feat_type in names(gobj@cell_metadata[[spat_unit]])) {
-                gobj@cell_metadata[[spat_unit]][[feat_type]]@metaDT[[
-                    "cell_ID"
-                ]] <- gobj@cell_ID[[spat_unit]]
-                gobj@cell_metadata[[spat_unit]][[feat_type]]@metaDT[[
-                    "list_ID"
-                ]] <- gname
+                cx <- getCellMetadata(gobj,
+                    spat_unit = spat_unit,
+                    feat_type = feat_type,
+                    output = "cellMetaObj",
+                    copy_obj = TRUE,
+                    set_defaults = FALSE
+                )
+                
+                cx[][["list_ID"]] <- gname
+                cx[][["cell_ID"]] <- paste0(gname, "-", cx[][["cell_ID"]])
+                gobj <- setGiotto(gobj, cx, 
+                    initialize = FALSE, verbose = FALSE
+                )
             }
         }
 

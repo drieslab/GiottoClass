@@ -9,7 +9,7 @@
   x_colname = NULL,
   y_colname = NULL,
   feat_ID_colname = NULL,
-  verbose = TRUE
+  verbose = NULL
 )
 }
 \arguments{
