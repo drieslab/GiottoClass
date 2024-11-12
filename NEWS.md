@@ -1,10 +1,22 @@
+# GiottoClass 0.4.3 (2024/11/12)
+
+## bug fixes
+- fix cell metadata desyncing after `joinGiottoObjects()`
+- fix `readExprMatrix()` when IDs are numerical barcodes
+
+## enhancements
+- `saveGiotto()` now has `include_feat_coord` param. If `FALSE`, transcript coordinates will be dropped during saving, which will make the object much less memory intensive.
+
+
 # GiottoClass 0.4.2 (2024/10/30)
 
 ## bug fixes
+- fix default method setting in `createNetwork()` for "delaunay" networks
 - fix y spacing of `makePseudoVisium()`
 
 ## changes
-- `makePseudoVisium()` `micron_scale` (multiplicative scalefactor to get micron scaled values) supercedes `micron_size` which used the inverse.
+- `makePseudoVisium()` `micron_scale` (multiplicative scalefactor to get micron 
+  scaled values) supercedes `micron_size` which used the inverse.
 
 
 # GiottoClass 0.4.1 (2024/10/28)
@@ -12,9 +24,6 @@
 ## new
 - `buffer()` for `giottoPolygon`, `giottoPoints`, `spatLocsObj`. Default is to crop by voronoi borders with `settleGeom()`
 - `settleGeom()` for `giottoPolygon` and `SpatVector` for finding non overlapping borders determined by voronoi
-
-## bug fixes
-- fix default method setting in `createNetwork()` for "delaunay" networks
 
 
 # GiottoClass 0.4.0 (2024/10/27)
