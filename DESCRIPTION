@@ -1,6 +1,6 @@
 Package: GiottoClass
 Title: Giotto Suite object definitions and framework
-Version: 0.4.3
+Version: 0.4.4
 Authors@R: c(
 	person("Ruben", "Dries", email = "rubendries@gmail.com",
 		 role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7650-7754")),
@@ -77,7 +77,6 @@ Suggests:
     testthat (>= 3.0.0),
     qs,
     xml2
-Remotes: drieslab/GiottoUtils
 Config/testthat/edition: 3
 Collate: 
     'package_imports.R'
