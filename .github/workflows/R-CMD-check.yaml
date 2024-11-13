@@ -1,0 +1,204 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+name: R-CMD-check.yaml
+
+permissions: read-all
+
+jobs:
+  R-CMD-check:
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: macos-latest,   r: 'release'}
+          - {os: windows-latest, r: 'release'}
+          - {os: ubuntu-latest,   r: 'release'}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+
+      
+
+      - name: Install reticulate
+        run: |
+          Rscript -e "install.packages('reticulate')"
+      
+      - name: Create miniconda
+        run: |
+          Rscript -e "reticulate::install_miniconda()"
+          Rscript -e "reticulate::conda_install(packages = 'scipy')"
+          
+      - name: Install pak
+        run: |
+          Rscript -e "install.packages('pak')"
+          
+      - name: Install remotes
+        run: |
+          Rscript -e "install.packages('remotes')"
+      
+      - name: Install GiottoUtils
+        run: |
+          Rscript -e "remotes::install_github('drieslab/GiottoUtils@dev')"
+      
+      - name: Install GiottoData
+        run: |
+          Rscript -e "remotes::install_github('drieslab/GiottoData')"
+          
+      - name: Install rcmdcheck
+        run: |
+          Rscript -e "install.packages('rcmdcheck')"
+      
+      - name: Install knitr
+        run: |
+          Rscript -e "install.packages('knitr')"
+      
+      - name: Install rmarkdown
+        run: |
+          Rscript -e "install.packages('rmarkdown')"
+      
+      - name: Install testthat
+        run: |
+          Rscript -e "install.packages('testthat')"
+
+      - name: Install BiocCheck
+        run: |
+          Rscript -e "install.packages('BiocManager')"
+          Rscript -e "BiocManager::install('BiocCheck')"
+      
+      - name: Install dbscan
+        run: |
+          Rscript -e "BiocManager::install('dbscan')"
+      
+      - name: Install deldir
+        run: |
+          Rscript -e "BiocManager::install('deldir')"
+      
+      - name: Install igraph
+        run: |
+          Rscript -e "BiocManager::install('igraph')"
+      
+      - name: Install magick
+        run: |
+          Rscript -e "BiocManager::install('magick')"
+      
+      - name: Install matrixStats
+        run: |
+          Rscript -e "BiocManager::install('matrixStats')"
+      
+      - name: Install sp
+        run: |
+          Rscript -e "BiocManager::install('sp')"
+      
+      - name: Install terra
+        run: |
+          Rscript -e "BiocManager::install('terra')"
+      
+      - name: Install scattermore
+        run: |
+          Rscript -e "install.packages('scattermore')"
+      
+      - name: Install exactextractr
+        run: |
+          Rscript -e "install.packages('exactextractr')"
+      
+      - name: Install future.apply
+        run: |
+          Rscript -e "BiocManager::install('future.apply')"
+          
+      - name: Install stars
+        run: |
+          Rscript -e "BiocManager::install('stars')"
+      
+      - name: Install qs
+        run: |
+          Rscript -e "BiocManager::install('qs')"
+      
+      - name: Install RTriangle
+        run: |
+          Rscript -e "BiocManager::install('RTriangle')"
+      
+      - name: Install geometry
+        run: |
+          Rscript -e "BiocManager::install('geometry')"
+      
+      - name: Install Seurat
+        run: |
+          Rscript -e "BiocManager::install('Seurat')"
+      
+      - name: Install chihaya
+        run: |
+          Rscript -e "BiocManager::install('chihaya')"
+      
+      - name: Install DelayedArray
+        run: |
+          Rscript -e "BiocManager::install('DelayedArray')"
+          
+      - name: Install DelayedMatrixStats
+        run: |
+          Rscript -e "BiocManager::install('DelayedMatrixStats')"
+          
+      - name: Install HDF5Array
+        run: |
+          Rscript -e "BiocManager::install('HDF5Array')"
+          
+      - name: Install rgl
+        run: |
+          Rscript -e "BiocManager::install('rgl')"
+          
+      - name: Install rhdf5
+        run: |
+          Rscript -e "BiocManager::install('rhdf5')"
+      
+      - name: Install S4Vectors
+        run: |
+          Rscript -e "BiocManager::install('S4Vectors')"
+      
+      - name: Install ScaledMatrix
+        run: |
+          Rscript -e "BiocManager::install('ScaledMatrix')"
+          
+      - name: Install SingleCellExperiment
+        run: |
+          Rscript -e "BiocManager::install('SingleCellExperiment')"
+          
+      - name: Install SpatialExperiment
+        run: |
+          Rscript -e "BiocManager::install('SpatialExperiment')"
+      
+      - name: Install STexampleData
+        run: |
+          Rscript -e "BiocManager::install('STexampleData')"
+      
+      - name: Install SummarizedExperiment
+        run: |
+          Rscript -e "BiocManager::install('SummarizedExperiment')"
+
+      - name: Run BiocCheck
+        run: |
+          Rscript -e "BiocCheck::BiocCheck()"
+      
+      - name: Run rcmdcheck
+        run: |
+          Rscript -e "rcmdcheck::rcmdcheck()"    

@@ -4,6 +4,9 @@
 \name{giottoAffineImage-class}
 \alias{giottoAffineImage-class}
 \title{S4 giottoAffineImage Class}
+\value{
+giottoAffineImage
+}
 \description{
 Class extending \code{giottoLargeImage}. When \code{shear()} or \code{spin()} operations
 are performed on

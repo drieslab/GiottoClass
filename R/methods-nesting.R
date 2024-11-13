@@ -65,6 +65,8 @@ NULL
 # spatUnit ####
 
 # default for unknown types
+#' @describeIn spatUnit-generic Get spatial unit information
+#' @export
 setMethod("spatUnit", signature("ANY"), function(x) {
     NA_character_
 })
@@ -109,6 +111,8 @@ setMethod("spatUnit<-", signature("giottoPolygon"), function(x, value) {
 # featType ####
 
 # default for unknown types
+#' @describeIn featType-generic Get feature type information
+#' @export
 setMethod("featType", signature("ANY"), function(x) {
     NA_character_
 })
@@ -269,6 +273,7 @@ NULL
 #' @param force_replace logical. default = FALSE. Whether to replace the
 #' names of objects for which the name already has a name for
 #' @keywords internal
+#' @returns list
 assign_objnames_2_list <- function(obj_list, force_replace = FALSE) {
     if (is.null(obj_list)) {
         return(obj_list)

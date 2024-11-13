@@ -9,7 +9,7 @@
 #' @title combineMetadata
 #' @name combineMetadata
 #' @description This function combines the cell metadata with spatial locations
-#' and enrichment results from \code{\link[Giotto]{runSpatialEnrich}}
+#' and enrichment results from runSpatialEnrich.
 #' @param gobject Giotto object
 #' @param spat_unit spatial unit
 #' @param feat_type feature type

@@ -9,7 +9,7 @@
 giotto object
 }
 \description{
-\pkg{Giotto}'s core object that encapsulates all the components
+Giotto's core object that encapsulates all the components
 of a spatial-omic project and facilitates analyses.
 }
 \details{

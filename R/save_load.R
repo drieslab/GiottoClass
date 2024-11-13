@@ -92,7 +92,7 @@ saveGiotto <- function(gobject,
                 )
                 terra::writeVector(
                     x = gobject@feat_info[[feat]]@spatVector,
-                    filename = filename
+                    filename = filename, overwrite = TRUE
                 )
             }
 
@@ -134,7 +134,7 @@ saveGiotto <- function(gobject,
                 )
                 terra::writeVector(
                     gobject@spatial_info[[spatinfo]]@spatVector,
-                    filename = filename
+                    filename = filename, overwrite = TRUE
                 )
             }
 
@@ -162,7 +162,7 @@ saveGiotto <- function(gobject,
                 )
                 terra::writeVector(
                     gobject@spatial_info[[spatinfo]]@spatVectorCentroids,
-                    filename = filename
+                    filename = filename, overwrite = TRUE
                 )
             }
 
@@ -197,7 +197,7 @@ saveGiotto <- function(gobject,
                     )
                     terra::writeVector(
                         gobject@spatial_info[[spatinfo]]@overlaps[[feature]],
-                        filename = filename
+                        filename = filename, overwrite = TRUE
                     )
                 }
             }
@@ -368,7 +368,7 @@ loadGiotto <- function(
         identified_python_path <- set_giotto_python_path(
             python_path = python_path,
             verbose = verbose,
-            initialize = FALSE
+            initialize = TRUE
         )
         vmsg(.v = verbose, .is_debug = TRUE, identified_python_path)
         gobject <- changeGiottoInstructions(

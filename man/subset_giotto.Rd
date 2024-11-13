@@ -6,6 +6,7 @@
 \alias{[,giotto,gIndex,missing,missing-method}
 \alias{[,giotto,missing,gIndex,missing-method}
 \alias{[,giotto,gIndex,gIndex,missing-method}
+\alias{[,giotto,missing,missing,missing-method}
 \alias{subset,giotto-method}
 \title{Subset a \code{giotto} object}
 \usage{
@@ -14,6 +15,8 @@
 \S4method{[}{giotto,missing,gIndex,missing}(x, i, j, ..., drop = TRUE)
 
 \S4method{[}{giotto,gIndex,gIndex,missing}(x, i, j, ..., drop = TRUE)
+
+\S4method{[}{giotto,missing,missing,missing}(x, i, j, ..., drop = TRUE)
 
 \S4method{subset}{giotto}(
   x,
@@ -56,16 +59,20 @@ are selected}
 \code{substitute()}. Set this to \code{FALSE} when calling from a function, although
 that may not be recommended since NSE output can be unexpected when not used
 interactively.}
-
-\item{feat_ids}{feature IDs to select}
-
-\item{cell_ids}{cell/spatial IDs to select}
+}
+\value{
+giotto object
 }
 \description{
 Subset a giotto object with \code{[} or \code{subset()} generic. The
 implementation is different from \code{\link[=subsetGiotto]{subsetGiotto()}} in that all spatial units
 will always be affected. The feature type to subset can be specified.
 }
+\section{Functions}{
+\itemize{
+\item \code{x[i}: Subset giotto objects
+
+}}
 \examples{
 g <- GiottoData::loadGiottoMini("visium")
 
@@ -81,5 +88,4 @@ subset(g, nr_feats > 300,
     cell_ids = c("GAATCGCCGGACACGG-1", "GAGGGCATCGCGTATC-1")
 )
 subset(g, Gfap + Gna12 > 10)
-
 }
