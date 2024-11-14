@@ -1,12 +1,14 @@
-# GiottoClass 0.4.3 (2024/11/12)
+# GiottoClass 0.4.4 (2024/11/14)
 
 ## bug fixes
 - fix cell metadata desyncing after `joinGiottoObjects()`
 - fix `readExprMatrix()` when IDs are numerical barcodes
+- fix `giottoAffineImage` not being detected during `saveGiotto()` image export step.
+- fix `giottoAffineImage` `reconnect()` method
 
 ## enhancements
 - `saveGiotto()` now has `include_feat_coord` param. If `FALSE`, transcript coordinates will be dropped during saving, which will make the object much less memory intensive.
-
+- `saveGiotto()` now has a `export_image` param. If `FALSE`, the image will not be re-exported during the save process. (They can still be reconnected)
 
 # GiottoClass 0.4.2 (2024/10/30)
 
