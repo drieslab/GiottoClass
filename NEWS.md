@@ -1,4 +1,4 @@
-# GiottoClass 0.4.3 (2024/11/12)
+# GiottoClass 0.4.4 (2024/11/14)
 
 ## bug fixes
 - fix cell metadata desyncing after `joinGiottoObjects()`
