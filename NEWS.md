@@ -3,6 +3,7 @@
 ## bug fixes
 - fix cell metadata desyncing after `joinGiottoObjects()`
 - fix `readExprMatrix()` when IDs are numerical barcodes
+- fix `giottoAffineImage` `reconnect()` method
 
 ## enhancements
 - `saveGiotto()` now has `include_feat_coord` param. If `FALSE`, transcript coordinates will be dropped during saving, which will make the object much less memory intensive.
