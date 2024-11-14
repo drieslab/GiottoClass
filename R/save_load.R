@@ -9,6 +9,9 @@
 #' @param method method to save main object
 #' @param method_params additional method parameters for RDS or qs
 #' @param overwrite Overwrite existing folders
+#' @param export_image logical. Write out an image of the format specified by
+#' `image_filetype` when saving a `giottoLargeImage`. 
+#' Future image loads will point to this new file.
 #' @param image_filetype the image filetype to use, see
 #' \code{\link[terra]{writeRaster}}. Default is "PNG". For TIFF outputs, try
 #' "COG"
@@ -32,6 +35,7 @@ saveGiotto <- function(
         method = c("RDS", "qs"),
         method_params = list(),
         overwrite = FALSE,
+        export_image = TRUE,
         image_filetype = "PNG",
         include_feat_coord = TRUE,
         verbose = TRUE,
@@ -63,7 +67,7 @@ saveGiotto <- function(
                     overwrite folder")
             overwriting <- TRUE
             use_dir <- file.path(dir, ".giotto_scratch")
-            dir.create(use_dir, recursive = TRUE)
+            dir.create(use_dir, recursive = TRUE, showWarnings = FALSE)
         }
     } else {
         dir.create(final_dir, recursive = TRUE)
@@ -219,27 +223,35 @@ saveGiotto <- function(
     # only `giottoLargeImages` need to be saved separately
     image_names <- list_images_names(gobject, img_type = "largeImage")
 
-    if (!is.null(image_names)) {
+    if (!is.null(image_names) && export_image) {
         image_dir <- paste0(use_dir, "/", "Images")
         dir.create(image_dir)
         for (image in image_names) {
             vmsg(.v = verbose, "For image information: ", image)
 
-            r <- gobject@images[[image]]@raster_object
+            img <- gobject[["images", image]][[1L]] # extract image
+            r <- img@raster_object
 
             if (!is.null(r)) {
-                # save extent info just in case
-                gobject@images[[image]]@extent <- terra::ext(r)[]
+                # save extent info (needed for non-COG outputs)
+                img@extent <- terra::ext(r)[]
+                # update filepath
+                img@file_path <- filename
 
                 # save raster
-                filename <- paste0(image_dir, "/", image, "_spatRaster")
+                filename <- file.path(image_dir, paste0(image, "_spatRaster"))
                 terra::writeRaster(
                     x = r,
                     filename = filename,
                     filetype = image_filetype,
                     NAflag = NA,
                     overwrite = TRUE
-                ) # test
+                )
+                
+                # update image in gobject
+                gobject <- setGiotto(
+                    gobject, img, verbose = FALSE
+                )
             }
         }
     }
