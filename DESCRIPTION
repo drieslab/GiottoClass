@@ -26,9 +26,9 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Depends:
-    base (>= 4.4.1),
-    utils (>= 4.4.1),
-    R (>= 4.4.1),
+    base (>= 4.4.0),
+    utils (>= 4.4.0),
+    R (>= 4.4.0),
 Imports:
     checkmate,
     data.table (>= 1.12.2),
