@@ -11,7 +11,7 @@
 #' @param overwrite Overwrite existing folders
 #' @param export_image logical. Write out an image of the format specified by
 #' `image_filetype` when saving a `giottoLargeImage`. 
-#' Future image loads will point to this new file.
+#' Future image loads and reconnects will point to this new file.
 #' @param image_filetype the image filetype to use, see
 #' \code{\link[terra]{writeRaster}}. Default is "PNG". For TIFF outputs, try
 #' "COG"
@@ -371,13 +371,8 @@ loadGiotto <- function(path_to_folder,
     )
 
     if (isTRUE(reconnect_giottoImage)) {
-        if (!is.null(list_images(gobject))) {
-            if (list_images(gobject)[img_type == "image", .N] > 0) {
-                gobject <- reconnectGiottoImage(gobject,
-                    reconnect_type = "image"
-                )
-            }
-        }
+        imglist <- lapply(gobject[["images"]], reconnect)
+        gobject <- setGiotto(gobject, imglist, verbose = FALSE)
     }
 
 
@@ -693,6 +688,10 @@ loadGiotto <- function(path_to_folder,
 }
 
 
+# the actual reconnection step is done through reconnect() after this step now
+# .update_giotto_image() <- this is NEEDED for legacy structure support
+# raster reload <- not needed
+# filepath update <- now done after this, but useful for legacy saves
 .load_giotto_images <- function(gobject, path_to_folder, verbose = NULL) {
     vmsg(.v = verbose, "4. read Giotto image information")
     vmsg(
@@ -727,6 +726,8 @@ loadGiotto <- function(path_to_folder,
         spatRaster <- terra::rast(load_img)
 
         gobject@images[[img]]@raster_object <- spatRaster
+        # file path updating now happens during export, but keep this in for
+        # legacy saved object support
         gobject@images[[img]]@file_path <- load_img
         gobject@images[[img]] <- .update_giotto_image(gobject@images[[img]])
         gobject@images[[img]] <- initialize(gobject@images[[img]])

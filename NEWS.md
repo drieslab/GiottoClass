@@ -3,6 +3,7 @@
 ## bug fixes
 - fix cell metadata desyncing after `joinGiottoObjects()`
 - fix `readExprMatrix()` when IDs are numerical barcodes
+- fix `giottoAffineImage` not being detected during `saveGiotto()` image export step.
 - fix `giottoAffineImage` `reconnect()` method
 
 ## enhancements
