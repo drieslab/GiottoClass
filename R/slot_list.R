@@ -980,17 +980,15 @@ list_images <- function(gobject,
         function(img) {
             data.table::data.table(
                 name = objName(img),
-                img_type = class(img)
+                img_type = if (inherits(img, "giottoLargeImage")) {
+                    "largeImage"
+                } else if (inherits(img, "giottoImage")) {
+                    "image"
+                }
             )
         }
     )
     avail_imgs <- data.table::rbindlist(img_info)
-
-    # change to shortnames for img_type
-    if (nrow(avail_imgs) > 0) {
-        avail_imgs[img_type == "giottoLargeImage", img_type := "largeImage"]
-        avail_imgs[img_type == "giottoImage", img_type := "image"]
-    }
 
     # check if a specific category is desired
     if (!is.null(img_type)) {
