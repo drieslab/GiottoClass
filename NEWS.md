@@ -7,7 +7,7 @@
 
 ## enhancements
 - `saveGiotto()` now has `include_feat_coord` param. If `FALSE`, transcript coordinates will be dropped during saving, which will make the object much less memory intensive.
-
+- `saveGiotto()` now has a `export_image` param. If `FALSE`, the image will not be re-exported during the save process. (They can still be reconnected)
 
 # GiottoClass 0.4.2 (2024/10/30)
 
