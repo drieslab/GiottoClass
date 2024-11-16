@@ -33,9 +33,8 @@ NULL
 #' @export
 setMethod(
     "rescale", signature("giotto"),
-    function(
-        x, fx = 1, fy = fx, x0, y0, spat_unit = ":all:",
-        feat_type = ":all:", images = ":all:") {
+    function(x, fx = 1, fy = fx, x0, y0, spat_unit = ":all:",
+    feat_type = ":all:", images = ":all:") {
         # scalefactor settings
         a <- list(fx = fx, fy = fy)
 
@@ -168,8 +167,9 @@ setMethod(
 #' columns. Default is `c("sdimx", "sdimy", "sdimz")`
 setMethod(
     "rescale", signature("data.frame"),
-    function(x, fx = 1, fy = fx, fz = fx, x0, y0, z0,
-    geom = c("sdimx", "sdimy", "sdimz")) {
+    function(
+        x, fx = 1, fy = fx, fz = fx, x0, y0, z0,
+        geom = c("sdimx", "sdimy", "sdimz")) {
         x <- data.table::as.data.table(x)
 
         # find center
@@ -319,10 +319,11 @@ setMethod("rescale", signature("affine2d"), function(x, fx = 1, fy = fx, x0, y0)
 #' be applied to x, y, and z (if available) dimensions or as a vector of named
 #' values for 'x', y', (and 'z').
 #' @keywords internal
-.scale_spatial_locations <- function(spatlocs,
-    scale_factor = c(1, 1, 1),
-    scenter = c(0, 0, 0),
-    geom = c("sdimx", "sdimy", "sdimz")) {
+.scale_spatial_locations <- function(
+        spatlocs,
+        scale_factor = c(1, 1, 1),
+        scenter = c(0, 0, 0),
+        geom = c("sdimx", "sdimy", "sdimz")) {
     checkmate::assert_data_table(spatlocs)
 
     xyz <- c("x", "y", "z")
@@ -380,9 +381,10 @@ setMethod("rescale", signature("affine2d"), function(x, fx = 1, fy = fx, x0, y0)
 #' @returns polygons
 #' @description  rescale individual polygons by a factor x and y
 #' @keywords internal
-.rescale_polygons <- function(spatVector,
-    spatVectorCentroids,
-    fx = 0.5, fy = 0.5) {
+.rescale_polygons <- function(
+        spatVector,
+        spatVectorCentroids,
+        fx = 0.5, fy = 0.5) {
     # DT vars
     poly_ID <- NULL
 
@@ -425,13 +427,14 @@ setMethod("rescale", signature("affine2d"), function(x, fx = 1, fy = fx, x0, y0)
 #'
 #' rescalePolygons(g, poly_info = "aggregate")
 #' @export
-rescalePolygons <- function(gobject,
-    poly_info = "cell",
-    name = "rescaled_cell",
-    fx = 0.5,
-    fy = 0.5,
-    calculate_centroids = TRUE,
-    return_gobject = TRUE) {
+rescalePolygons <- function(
+        gobject,
+        poly_info = "cell",
+        name = "rescaled_cell",
+        fx = 0.5,
+        fy = 0.5,
+        calculate_centroids = TRUE,
+        return_gobject = TRUE) {
     # 1. get polygon information
     original <- get_polygon_info(
         gobject = gobject,
