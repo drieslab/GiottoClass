@@ -1802,10 +1802,10 @@ giottoToSeuratV5 <- function(gobject,
                 coord$cell_id <- rownames(coord)
                 coord <- coord[, c("cell_id", "imagerow", "imagecol")]
                 segmentations.data <- list(
-                  "centroids" = CreateCentroids(coord1),
-                  "segmentation" = CreateSegmentation(coord)
+                  "centroids" = SeuratObject::CreateCentroids(coord1),
+                  "segmentation" = SeuratObject::CreateSegmentation(coord)
                 )
-                coords <- CreateFOV(
+                coords <- SeuratObject::CreateFOV(
                   coords = segmentations.data,
                   type = c("segmentation", "centroids"),
                   assay = "rna")
