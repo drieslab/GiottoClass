@@ -1,3 +1,9 @@
+# GiottoClass 0.4.5
+
+## enhancements
+
+- `spatUnit()<-` and `featType()<-` `list` methods
+
 # GiottoClass 0.4.4 (2024/11/14)
 
 ## bug fixes
