@@ -1,6 +1,6 @@
 Package: GiottoClass
 Title: Giotto Suite object definitions and framework
-Version: 0.4.0
+Version: 0.4.4
 Authors@R: c(
 	person("Ruben", "Dries", email = "rubendries@gmail.com",
 		 role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7650-7754")),
@@ -26,15 +26,13 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Depends:
-    base (>= 4.4.1),
-    utils (>= 4.4.1),
-    R (>= 4.4.1),
+    R (>= 4.4.1)
 Imports:
     checkmate,
     data.table (>= 1.12.2),
     dbscan (>= 1.1-3),
     deldir (>= 1.0.6),
-    GiottoUtils (>= 0.1.10),
+    GiottoUtils (>= 0.2.0),
     graphics,
     grDevices,
     igraph (>= 1.2.4.1),
@@ -43,9 +41,8 @@ Imports:
     matrixStats (>= 0.55.0),
     methods,
     reticulate (>= 1.25),
-    sp,
     stats,
-    terra (>= 1.7-39)
+    terra (>= 1.7-41)
 Suggests: 
     Biobase,
     chihaya,
@@ -57,7 +54,6 @@ Suggests:
     HDF5Array (>= 1.18.1),
     knitr,
     plotly,
-    R.utils,
     raster,
     remotes,
     reshape2,
@@ -73,6 +69,7 @@ Suggests:
     SeuratObject,
     sf,
     SingleCellExperiment,
+    sp,
     SpatialExperiment,
     stars,
     STexampleData,
@@ -88,6 +85,7 @@ Collate:
     'NN_network.R'
     'aggregate.R'
     'auxilliary.R'
+    'buffer.R'
     'combine_metadata.R'
     'slot_accessors.R'
     'create.R'
@@ -106,9 +104,12 @@ Collate:
     'interoperability.R'
     'join.R'
     'methods-IDs.R'
+    'methods-XY.R'
     'methods-affine.R'
+    'methods-area.R'
     'methods-centroids.R'
     'methods-coerce.R'
+    'methods-convHull.R'
     'methods-copy.R'
     'methods-crop.R'
     'methods-dims.R'
@@ -123,6 +124,7 @@ Collate:
     'methods-plot.R'
     'methods-rbind.R'
     'methods-reconnect.R'
+    'methods-relate.R'
     'methods-rescale.R'
     'methods-setGiotto.R'
     'methods-shear.R'
@@ -139,8 +141,10 @@ Collate:
     'slot_check.R'
     'slot_list.R'
     'slot_show.R'
+    'spatial_binary_ops.R'
     'spatial_query.R'
     'spatial_structures.R'
+    'split.R'
     'stitch_coordinates.R'
     'subset.R'
     'suite_reexports.R'

@@ -4,17 +4,21 @@
 \alias{row-plus-colnames-generic}
 \alias{colnames}
 \alias{rownames}
+\alias{colnames,giotto-method}
 \alias{colnames,exprObj-method}
 \alias{colnames,cellMetaObj-method}
 \alias{colnames,featMetaObj-method}
 \alias{colnames,spatEnrObj-method}
 \alias{colnames,spatLocsObj-method}
 \alias{colnames,dimObj-method}
+\alias{rownames,giotto-method}
 \alias{rownames,exprObj-method}
 \alias{rownames,dimObj-method}
 \alias{rownames,metaData-method}
 \title{Row and column names}
 \usage{
+\S4method{colnames}{giotto}(x)
+
 \S4method{colnames}{exprObj}(x)
 
 \S4method{colnames}{cellMetaObj}(x)
@@ -26,6 +30,8 @@
 \S4method{colnames}{spatLocsObj}(x)
 
 \S4method{colnames}{dimObj}(x)
+
+\S4method{rownames}{giotto}(x)
 
 \S4method{rownames}{exprObj}(x)
 

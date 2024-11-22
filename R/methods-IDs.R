@@ -25,14 +25,14 @@ NULL
 #' @aliases spatIDs featIDs
 #' @param x an object
 #' @param subset logical expression to find a subset of features.
-#' @param negate logical. if `TRUE` all IDs that are **not** in the `subset` 
+#' @param negate logical. if `TRUE` all IDs that are **not** in the `subset`
 #' are selected
-#' @param quote logical. If `TRUE`, the `subset` param will be quoted with 
-#' `substitute()`. Set this to `FALSE` when calling from a function, although 
+#' @param quote logical. If `TRUE`, the `subset` param will be quoted with
+#' `substitute()`. Set this to `FALSE` when calling from a function, although
 #' that may not be recommended since NSE output can be unexpected when not used
 #' interactively.
 #' @param \dots additional params to pass when used with the `subset` param.
-#' For `spatID()`, these pass to [spatValues()]. For `featID()`, these 
+#' For `spatID()`, these pass to [spatValues()]. For `featID()`, these
 #' currently only pass to `fDataDT()`.
 #' @returns character vector of cell/spatial IDs or feature IDs
 #' @include classes.R
@@ -41,10 +41,10 @@ NULL
 #' spatIDs(g)
 #' spatIDs(g, subset = nr_feats <= 200)
 #' spatIDs(g, subset = Dim.1 > 25, dim_reduction_to_use = "umap")
-#' 
+#'
 #' featIDs(g)
 #' featIDs(g, subset = nr_cells < 100)
-#' 
+#'
 #' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
 #' featIDs(gpoints)
 #'
@@ -62,14 +62,16 @@ NULL
 setMethod(
     "spatIDs", signature(x = "giotto"),
     function(x, spat_unit = NULL, subset, negate = FALSE, quote = TRUE, ...) {
-
         if (missing(subset)) {
             res <- as.character(get_cell_id(gobject = x, spat_unit, ...))
             return(res)
         }
-        
-        if (quote) sub_s <- substitute(subset)
-        else sub_s <- subset
+
+        if (quote) {
+            sub_s <- substitute(subset)
+        } else {
+            sub_s <- subset
+        }
         if (negate) sub_s <- call("!", sub_s)
         vars <- all.vars(sub_s)
         vals <- lapply(vars, function(v) {
@@ -187,8 +189,11 @@ setMethod(
             res <- as.character(get_feat_id(gobject = x, feat_type, ...))
             return(res)
         }
-        if (quote) sub_s <- substitute(subset)
-        else sub_s <- subset
+        if (quote) {
+            sub_s <- substitute(subset)
+        } else {
+            sub_s <- subset
+        }
         if (negate) sub_s <- call("!", sub_s)
         fx <- fDataDT(x, feat_type = feat_type, ...)
         fids <- subset.data.frame(fx, subset = eval(sub_s))$feat_ID

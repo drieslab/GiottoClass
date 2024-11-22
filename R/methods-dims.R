@@ -22,6 +22,10 @@ NULL
 
 #' @rdname dims-generic
 #' @export
+setMethod("nrow", signature("giotto"), function(x) nrow(fDataDT(x)))
+
+#' @rdname dims-generic
+#' @export
 setMethod(
     "nrow", signature("giottoPoints"),
     function(x) terra::nrow(x@spatVector)
@@ -81,6 +85,10 @@ setMethod("nrow", signature("dimObj"), function(x) nrow(x@coordinates))
 
 #' @rdname dims-generic
 #' @export
+setMethod("ncol", signature("giotto"), function(x) nrow(pDataDT(x)))
+
+#' @rdname dims-generic
+#' @export
 setMethod("ncol", signature("exprData"), function(x) ncol(x@exprMat))
 
 #' @rdname dims-generic
@@ -100,6 +108,12 @@ setMethod("ncol", signature("dimObj"), function(x) ncol(x@coordinates))
 
 
 ## dim() generic ####
+
+#' @rdname dims-generic
+#' @export
+setMethod("dim", signature("giotto"), function(x) {
+    c(nrow(x), ncol(x))
+})
 
 #' @rdname dims-generic
 #' @export

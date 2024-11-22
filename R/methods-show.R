@@ -58,11 +58,13 @@ setMethod(
             cat(">Active feat_type: ", active_ft, "\n")
             nfeat <- length(featIDs(object, feat_type = active_ft))
         }
-        
+
         if (!is.null(nspat) || !is.null(nfeat)) {
-            cat(sprintf("dimensions    : %d, %d (features, cells)\n",
-                        nfeat %null% NA_integer_,
-                        nspat %null% NA_integer_))
+            cat(sprintf(
+                "dimensions    : %d, %d (features, cells)\n",
+                nfeat %null% NA_integer_,
+                nspat %null% NA_integer_
+            ))
         }
 
 
@@ -864,7 +866,7 @@ setMethod("as.character", signature("giottoLargeImage"), function(x, ...) {
     }
 }
 
-#' @noRd 
+#' @noRd
 .show_dim <- function(object) {
     d <- dim(object)
     cat(sprintf("dimensions: %d %d \n", d[1], d[2]))

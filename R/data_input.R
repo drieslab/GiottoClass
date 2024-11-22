@@ -36,7 +36,13 @@ readExprMatrix <- function(
     data.table::setDTthreads(threads = cores)
 
     # read and convert
-    DT <- suppressWarnings(data.table::fread(input = path, nThread = cores))
+    DT <- handle_warnings(
+        data.table::fread(
+            input = path,
+            nThread = cores,
+            colClasses = list(character = 1) # enforce first col character
+        )
+    )$result
     spM <- Matrix::Matrix(as.matrix(DT[, -1]),
         dimnames = list(DT[[1]], colnames(DT[, -1])),
         sparse = TRUE

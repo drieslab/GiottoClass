@@ -8,6 +8,7 @@
 \alias{featType,list-method}
 \alias{featType,featData-method}
 \alias{featType<-,featData-method}
+\alias{featType<-,list-method}
 \title{Feature type information}
 \usage{
 \S4method{featType}{ANY}(x)
@@ -17,6 +18,8 @@
 \S4method{featType}{featData}(x)
 
 \S4method{featType}{featData}(x) <- value
+
+\S4method{featType}{list}(x) <- value
 }
 \arguments{
 \item{x}{a Giotto S4 class subobject with feature type}

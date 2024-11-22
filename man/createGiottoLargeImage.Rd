@@ -22,7 +22,8 @@ createGiottoLargeImage(
 )
 }
 \arguments{
-\item{raster_object}{terra SpatRaster image object}
+\item{raster_object}{filepath to an image, a terra \code{SpatRaster} or, other format
+openable via \code{\link[terra:rast]{terra::rast()}}}
 
 \item{name}{name for the image}
 

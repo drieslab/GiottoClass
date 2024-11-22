@@ -25,24 +25,26 @@ NULL
 #' @rdname rbind-generic
 #' @export
 setMethod(
-    "rbind2", signature(x = "cellMetaObj", y = "cellMetaObj"), 
+    "rbind2", signature(x = "cellMetaObj", y = "cellMetaObj"),
     function(x, y, ...) {
         .check_id_dups(x, y, type = "spat")
-        
+
         x[] <- rbind(x[], y[], fill = TRUE)
         return(x)
-    })
+    }
+)
 
 #' @rdname rbind-generic
 #' @export
 setMethod(
-    "rbind2", signature(x = "featMetaObj", y = "featMetaObj"), 
+    "rbind2", signature(x = "featMetaObj", y = "featMetaObj"),
     function(x, y, ...) {
         .check_id_dups(x, y, type = "feat")
-        
+
         x[] <- rbind(x[], y[], fill = TRUE)
         return(x)
-    })
+    }
+)
 
 #' @rdname rbind-generic
 #' @export
@@ -121,10 +123,10 @@ setMethod("rbind", "spatLocsObj", function(..., deparse.level = 1) {
         "spat" = spatIDs,
         "feat" = featIDs
     )
-    
+
     if (any(duplicated(c(.id(x), .id(y))))) {
         stop(sprintf("rbind: `%s` with the same IDs cannot be joined", class(x)),
-             call. = FALSE
+            call. = FALSE
         )
     }
 }

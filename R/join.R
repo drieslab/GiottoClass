@@ -4,18 +4,15 @@
 #' @name .join_expression_matrices
 #' @keywords internal
 #' @noRd
-.join_expression_matrices <- function(matrix_list) {
+.join_expression_matrices <- function(matrix_list, feat_ids = NULL) {
     # find all features
-    final_feats <- list()
-    for (matr_i in seq_len(length(matrix_list))) {
-        rowfeats <- rownames(matrix_list[[matr_i]])
-        final_feats[[matr_i]] <- rowfeats
+    if (is.null(feat_ids)) {
+        final_feats <- lapply(matrix_list, rownames)
+        final_feats <- unique(unlist(final_feats))
+    } else {
+        final_feats <- feat_ids
     }
-
-    final_feats <- unique(unlist(final_feats))
     final_feats <- mixedsort(final_feats)
-
-
 
     # extend matrices with missing ids
     final_mats <- list()
@@ -60,8 +57,19 @@
 #' @name .join_feat_meta
 #' @keywords internal
 #' @noRd
-.join_feat_meta <- function(dt_list) {
+.join_feat_meta <- function(dt_list, feat_ids = NULL) {
     feat_ID <- NULL
+
+    if (!is.null(feat_ids)) {
+        dt_list <- lapply(dt_list, function(dt) {
+            dt <- dt[feat_ID %in% feat_ids]
+            missing_feat <- dt[, feat_ids[!feat_ids %in% feat_ID]]
+            if (length(missing_feat) > 0L) {
+                dt_append <- data.table::data.table(feat_ID = missing_feat)
+                dt <- rbind(dt, dt_append, fill = TRUE)
+            }
+        })
+    }
 
     comb_meta <- do.call("rbind", c(dt_list, fill = TRUE))
     comb_meta <- unique(comb_meta)
@@ -77,8 +85,12 @@
             "feature metadata: multiple versions of metadata for:\n",
             dup_feats,
             "\n First entry will be selected for joined object."
+            # "first" is based on gobject order
         ))
     }
+
+    # order by feat_ID
+    comb_meta <- comb_meta[mixedorder(feat_ID)]
 
     return(comb_meta)
 }
@@ -517,12 +529,19 @@ joinGiottoObjects <- function(
         # update IDs
         for (spat_unit in names(gobj@cell_metadata)) {
             for (feat_type in names(gobj@cell_metadata[[spat_unit]])) {
-                gobj@cell_metadata[[spat_unit]][[feat_type]]@metaDT[[
-                    "cell_ID"
-                ]] <- gobj@cell_ID[[spat_unit]]
-                gobj@cell_metadata[[spat_unit]][[feat_type]]@metaDT[[
-                    "list_ID"
-                ]] <- gname
+                cx <- getCellMetadata(gobj,
+                    spat_unit = spat_unit,
+                    feat_type = feat_type,
+                    output = "cellMetaObj",
+                    copy_obj = TRUE,
+                    set_defaults = FALSE
+                )
+
+                cx[][["list_ID"]] <- gname
+                cx[][["cell_ID"]] <- paste0(gname, "-", cx[][["cell_ID"]])
+                gobj <- setGiotto(gobj, cx,
+                    initialize = FALSE, verbose = FALSE
+                )
             }
         }
 
@@ -619,25 +638,10 @@ joinGiottoObjects <- function(
 
 
     ## expression and feat IDs
-    ## if no expression matrices are provided, then just combine all feature IDs
     vmsg(.v = verbose, "2. expression data")
-
     avail_expr <- list_expression(gobject = first_obj)
 
-    if (is.null(avail_expr)) {
-        ## feat IDS
-        for (feat in first_features) {
-            combined_feat_ID <- unique(unlist(all_feat_ID_list[[feat]]))
-            ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-            comb_gobject <- set_feat_id(
-                gobject = comb_gobject,
-                feat_type = feat,
-                feat_IDs = combined_feat_ID,
-                set_defaults = FALSE
-            )
-            ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        }
-    } else {
+    if (!is.null(avail_expr)) {
         for (exprObj_i in seq(nrow(avail_expr))) {
             expr_list <- lapply(updated_object_list, function(gobj) {
                 getExpression(
@@ -663,13 +667,6 @@ joinGiottoObjects <- function(
             comb_gobject <- set_expression_values(
                 gobject = comb_gobject,
                 values = expr_list[[1]],
-                set_defaults = FALSE
-            )
-
-            comb_gobject <- set_feat_id(
-                gobject = comb_gobject,
-                feat_type = avail_expr$feat_type[[exprObj_i]],
-                feat_IDs = combmat[["sort_all_feats"]],
                 set_defaults = FALSE
             )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -729,16 +726,16 @@ joinGiottoObjects <- function(
 
 
     for (feat in first_features) {
-        # for(feat in comb_gobject@expression_feat) {
-
         savelist_vector <- list()
 
         for (gobj_i in seq_along(updated_object_list)) {
-            if (is.null(updated_object_list[[gobj_i]]@feat_info)) {
-                spat_point_vector <- NULL
+            updated_feat_info <-
+                updated_object_list[[gobj_i]]@feat_info[[feat]]
+
+            if (!is.null(updated_feat_info)) {
+                spat_point_vector <- updated_feat_info@spatVector
             } else {
-                spat_point_vector <-
-                    updated_object_list[[gobj_i]]@feat_info[[feat]]@spatVector
+                spat_point_vector <- NULL
             }
 
             savelist_vector[[gobj_i]] <- spat_point_vector
@@ -812,7 +809,8 @@ joinGiottoObjects <- function(
 
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             comb_gobject <- setGiotto(comb_gobject, combcellmeta,
-                                      verbose = FALSE, initialize = FALSE)
+                verbose = FALSE, initialize = FALSE
+            )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
     }

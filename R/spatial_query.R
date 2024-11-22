@@ -21,7 +21,7 @@
 #' return polygons clipped by the polygons used to select them. If TRUE, a value
 #' must be provided to \code{name} param to generate a new spatial unit
 #' @returns giottoPolygon
-#' @seealso [spatQueryGiottoSpatLocs()
+#' @seealso [relate()]
 #' @export
 spatQueryGiottoPolygons <- function(
         gobject,

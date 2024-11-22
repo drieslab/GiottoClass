@@ -30,9 +30,6 @@ setClassUnion("nullOrDatatable", c("NULL", "data.table"))
 #' @noRd
 setClassUnion("gIndex", c("numeric", "logical", "character"))
 
-
-
-
 # VIRTUAL CLASSES ####
 
 
@@ -1663,14 +1660,16 @@ giottoLargeImage <- setClass(
 #' @title S4 giottoAffineImage Class
 #' @description
 #' Class extending `giottoLargeImage`. When `shear()` or `spin()` operations
-#' are performed on
-#'
-#'
+#' are performed on a `giottoLargeImage`, this class is instantiated. It
+#' provides a way of storing the affine transformation and also lazily
+#' performing it when required for a plotting preview. It is possible to force
+#' the deferred affine transform using `doDeferred()` and return a processed
+#' `giottoLargeImage`.
 #' @slot affine contains `affine2d` object allowing lazily performed spatial
 #' transforms
 #' @slot funs list of functions associated with the object. Primarily to
-#' perform the delayed/lazy operations
-#' @returns giottoAffineImage
+#' perform the delayed/lazy operation
+#' @returns `giottoAffineImage`
 setClass(
     "giottoAffineImage",
     contains = c("giottoLargeImage"),
@@ -1730,3 +1729,18 @@ setClass(
 #     weight = 'numeric'
 #   )
 # )
+
+
+
+
+
+
+# giottoSpatial ####
+
+setClassUnion(
+    name = "giottoSpatial", c("giottoPolygon", "giottoPoints", "spatLocsObj")
+)
+
+setClassUnion(
+    name = "spatialClasses", c("giottoSpatial", "SpatVector")
+)

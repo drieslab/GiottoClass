@@ -2,6 +2,7 @@
 % Please edit documentation in R/methods-names.R
 \name{dimnames}
 \alias{dimnames}
+\alias{dimnames,giotto-method}
 \alias{dimnames,exprObj-method}
 \alias{dimnames,dimObj-method}
 \alias{dimnames,spatLocsObj-method}
@@ -9,6 +10,8 @@
 \alias{dimnames,enrData-method}
 \title{Dimnames of an object}
 \usage{
+\S4method{dimnames}{giotto}(x)
+
 \S4method{dimnames}{exprObj}(x)
 
 \S4method{dimnames}{dimObj}(x)

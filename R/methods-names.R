@@ -33,6 +33,10 @@ NULL
 
 #' @rdname row-plus-colnames-generic
 #' @export
+setMethod("colnames", signature("giotto"), function(x) x$cell_ID)
+
+#' @rdname row-plus-colnames-generic
+#' @export
 setMethod("colnames", signature(x = "exprObj"), function(x) colnames(x[]))
 
 #' @rdname row-plus-colnames-generic
@@ -57,6 +61,11 @@ setMethod("colnames", signature(x = "dimObj"), function(x) colnames(x[]))
 
 
 
+#' @rdname row-plus-colnames-generic
+#' @export
+setMethod("rownames", signature("giotto"), function(x) {
+    fDataDT(x)$feat_ID
+})
 
 #' @rdname row-plus-colnames-generic
 #' @export
@@ -71,6 +80,12 @@ setMethod("rownames", signature(x = "dimObj"), function(x) rownames(x[]))
 setMethod("rownames", signature(x = "metaData"), function(x) rownames(x[]))
 
 
+
+#' @rdname dimnames
+#' @export
+setMethod("dimnames", signature("giotto"), function(x) {
+    list(rownames(x), colnames(x))
+})
 
 #' @rdname dimnames
 #' @export

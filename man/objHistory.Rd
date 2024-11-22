@@ -4,10 +4,12 @@
 \alias{objHistory}
 \title{Giotto object history}
 \usage{
-objHistory(object)
+objHistory(object, summarized = FALSE)
 }
 \arguments{
 \item{object}{giotto object}
+
+\item{summarized}{logical. whether print should be summarized}
 }
 \value{
 list
@@ -19,4 +21,5 @@ Print and return giotto object history
 g <- GiottoData::loadGiottoMini("visium")
 
 objHistory(g)
+objHistory(g, summarized = TRUE)
 }

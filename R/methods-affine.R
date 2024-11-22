@@ -245,8 +245,7 @@ setMethod("affine", signature(x = "giottoAffineImage", y = "matrix"), function(x
 # * affine2d, matrix ####
 #' @rdname affine
 #' @export
-setMethod("affine", signature(x = "affine2d", y = "matrix"), function(
-        x, y, inv = FALSE, ...) {
+setMethod("affine", signature(x = "affine2d", y = "matrix"), function(x, y, inv = FALSE, ...) {
     a <- get_args_list()
     # update linear
     m <- .aff_linear_2d(y)
