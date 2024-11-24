@@ -78,7 +78,7 @@ selection <- system.file("extdata/viz_interactive_select.csv",
 )
 select_polys <- createGiottoPolygon(data.table::fread(selection))
 res <- relate(g, select_polys, relation = "intersects")
-g[,res[y == "polygon1", x]]
-g[,res[y == "polygon2", x]]
-g[,res[y == "polygon3", x]]
+g[, res[y == "polygon1", x]]
+g[, res[y == "polygon2", x]]
+g[, res[y == "polygon3", x]]
 }

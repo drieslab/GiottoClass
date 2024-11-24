@@ -14,8 +14,9 @@
 #'
 #' set_default_spat_unit(gobject = g, spat_unit = "cell")
 #' @export
-set_default_spat_unit <- function(gobject,
-    spat_unit = NULL) {
+set_default_spat_unit <- function(
+        gobject,
+        spat_unit = NULL) {
     # If a spatial unit is provided, use it directly
     if (!is.null(spat_unit)) {
         if (!inherits(spat_unit, "character")) {
@@ -56,9 +57,10 @@ set_default_spat_unit <- function(gobject,
 #'
 #' set_default_feat_type(gobject = g, spat_unit = "cell", feat_type = "rna")
 #' @export
-set_default_feat_type <- function(gobject,
-    feat_type = NULL,
-    spat_unit) {
+set_default_feat_type <- function(
+        gobject,
+        feat_type = NULL,
+        spat_unit) {
     # if a feature type is provided, use it directly
     if (!is.null(feat_type)) {
         if (!inherits(feat_type, "character")) {

@@ -1744,4 +1744,3 @@ setClassUnion(
 setClassUnion(
     name = "spatialClasses", c("giottoSpatial", "SpatVector")
 )
-

@@ -40,12 +40,13 @@
 #'
 #' @seealso [generate_grid] [tessellate]
 #' @export
-polyStamp <- function(stamp_dt,
-    spatlocs,
-    id_col = "cell_ID",
-    x_col = "sdimx",
-    y_col = "sdimy",
-    verbose = TRUE) {
+polyStamp <- function(
+        stamp_dt,
+        spatlocs,
+        id_col = "cell_ID",
+        x_col = "sdimx",
+        y_col = "sdimy",
+        verbose = TRUE) {
     # data.table vars
     spatlocs_idx <- rel_vertices_idx <- poly_ID <- NULL
 
@@ -120,8 +121,9 @@ polyStamp <- function(stamp_dt,
 #' @examples
 #' circleVertices(radius = 10)
 #' @export
-circleVertices <- function(radius,
-    npoints = 25) {
+circleVertices <- function(
+        radius,
+        npoints = 25) {
     a <- seq(0, 2 * pi, length.out = npoints + 1)
     x <- radius * cos(a)
     y <- radius * sin(a)
@@ -248,13 +250,14 @@ hexVertices <- function(radius, major_axis = c("v", "h")) {
 #' plot(x)
 #' @concept spatial location
 #' @export
-tessellate <- function(extent,
-    shape = c("hexagon", "square"),
-    shape_size = NULL,
-    gap = 0,
-    radius = NULL,
-    id_prefix = "ID_",
-    name = "grid") {
+tessellate <- function(
+        extent,
+        shape = c("hexagon", "square"),
+        shape_size = NULL,
+        gap = 0,
+        radius = NULL,
+        id_prefix = "ID_",
+        name = "grid") {
     if (is.null(radius) && is.null(shape_size)) stop("shape_size must be given")
     if (!is.null(radius)) shape_size <- radius * 2
 
@@ -387,16 +390,16 @@ orthoGrid <- function(extent, ccd, id_prefix = "ID_") {
 #' @param extent SpatExtent or anything else a SpatExtent can be extracted or
 #' created from
 #' @param micron_scale scalefactor needed to convert the target coordinate
-#' space to microns. For supported datasets, this can be found from 
+#' space to microns. For supported datasets, this can be found from
 #' `instructions(gobject, "micron_scale")`. See details.
 #' @param micron_size deprecated. Use `micron_scale`
 #' @param name character. (default is 'pseudo_visium') Name of giottoPolygon
 #' object to create
-#' @details This function generates a pseudo-Visium array of spots across the 
-#' spatial extent provided. The `micron_scale` param is used to determine the 
+#' @details This function generates a pseudo-Visium array of spots across the
+#' spatial extent provided. The `micron_scale` param is used to determine the
 #' scaling of the array relative to the target coordinate system.
-#' 
-#' @section `micron_scale`: 
+#'
+#' @section `micron_scale`:
 #' If `a` is microns and `b` is dataset coordinate units, `micron_scale` is
 #' calculated as `a / b`.
 #' @returns A giottoPolygon for the pseudo-visium spots.
@@ -406,22 +409,22 @@ orthoGrid <- function(extent, ccd, id_prefix = "ID_") {
 #' plot(x)
 #' @concept spatial location
 #' @export
-makePseudoVisium <- function(extent = NULL,
-    micron_scale = 1,
-    micron_size = deprecated(),
-    name = "pseudo_visium") {
-    
+makePseudoVisium <- function(
+        extent = NULL,
+        micron_scale = 1,
+        micron_size = deprecated(),
+        name = "pseudo_visium") {
     if (is_present(micron_size)) {
         micron_size <- 1 / micron_size
     }
-    
+
     micron_scale <- deprecate_param(
         x = micron_size,
         y = micron_scale,
         when = "0.4.2",
         fun = "makePseudoVisium"
     )
-    
+
     e <- ext(extent)[]
 
     # Visium default scale parameters
@@ -439,7 +442,7 @@ makePseudoVisium <- function(extent = NULL,
 
     # Create a grid of y points where the circles will be centered
     y_seq <- seq(
-        e[["ymin"]] + radius, 
+        e[["ymin"]] + radius,
         e[["ymax"]] - radius,
         # should be sqrt(3) or 1.732051, but seems like it was rounded
         by = 1.74 * (cc / 2)

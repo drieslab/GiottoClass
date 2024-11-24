@@ -11,6 +11,7 @@ saveGiotto(
   method = c("RDS", "qs"),
   method_params = list(),
   overwrite = FALSE,
+  export_image = TRUE,
   image_filetype = "PNG",
   include_feat_coord = TRUE,
   verbose = TRUE,
@@ -29,6 +30,10 @@ saveGiotto(
 \item{method_params}{additional method parameters for RDS or qs}
 
 \item{overwrite}{Overwrite existing folders}
+
+\item{export_image}{logical. Write out an image of the format specified by
+\code{image_filetype} when saving a \code{giottoLargeImage}.
+Future image loads and reconnects will point to this new file.}
 
 \item{image_filetype}{the image filetype to use, see
 \code{\link[terra]{writeRaster}}. Default is "PNG". For TIFF outputs, try

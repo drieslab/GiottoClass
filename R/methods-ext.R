@@ -119,16 +119,17 @@ setMethod("ext", signature("giottoImage"), function(x, ...) {
 #' only "images" at the moment, which produces a combined `SpatExtent`
 #' @param verbose be verbose
 #' @export
-setMethod("ext", signature("giotto"), function(x,
-    spat_unit = ":all:",
-    feat_type = ":all:",
-    all_data = TRUE,
-    prefer = c("polygon", "spatlocs", "points", "images"),
-    name = list(
-        spatlocs = ":all:"
-    ),
-    verbose = NULL,
-    ...) {
+setMethod("ext", signature("giotto"), function(
+        x,
+        spat_unit = ":all:",
+        feat_type = ":all:",
+        all_data = TRUE,
+        prefer = c("polygon", "spatlocs", "points", "images"),
+        name = list(
+            spatlocs = ":all:"
+        ),
+        verbose = NULL,
+        ...) {
     data_types <- c("polygon", "spatlocs", "points", "images")
 
     if (!is.null(name)) {

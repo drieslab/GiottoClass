@@ -18,11 +18,10 @@
 #'
 #' update_giotto_params(g, toplevel = 1)
 #' @export
-update_giotto_params <- function(
-        gobject,
-        description = "_test",
-        return_gobject = TRUE,
-        toplevel = 2) {
+update_giotto_params <- function(gobject,
+    description = "_test",
+    return_gobject = TRUE,
+    toplevel = 2) {
     if (toplevel < 0) {
         return(gobject)
     } # skip if toplevel negative
