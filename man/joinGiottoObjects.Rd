@@ -99,7 +99,7 @@ g1 <- createGiottoObject(expression = m1)
 g2 <- createGiottoObject(expression = m2)
 
 joinGiottoObjects(
-    gobject_list = list(g1, g2), 
+    gobject_list = list(g1, g2),
     gobject_names = c("g1", "g2")
 )
 
@@ -113,7 +113,7 @@ joinGiottoObjects(
 )
 
 # place them right next to each other
-# note that this means generated spatial networks will be more likely to 
+# note that this means generated spatial networks will be more likely to
 # link across the datasets
 joinGiottoObjects(
     list(viz, viz),

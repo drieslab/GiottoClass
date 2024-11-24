@@ -14,7 +14,8 @@ setDimReduction(
   reduction_method = c("pca", "umap", "tsne"),
   provenance = NULL,
   verbose = TRUE,
-  initialize = TRUE
+  initialize = TRUE,
+  ...
 )
 }
 \arguments{
@@ -39,6 +40,8 @@ specified set of dimension reduction information from the gobject}
 
 \item{initialize}{(default = FALSE) whether to initialize the gobject before
 returning}
+
+\item{...}{additional params to pass}
 }
 \value{
 giotto object
@@ -58,7 +61,6 @@ Other dimensional reduction data accessor functions:
 \code{\link{getDimReduction}()}
 
 Other functions to set data in giotto object: 
-\code{\link{get_feat_id}()},
 \code{\link{setCellMetadata}()},
 \code{\link{setExpression}()},
 \code{\link{setFeatureInfo}()},
@@ -72,7 +74,6 @@ Other functions to set data in giotto object:
 \code{\link{setSpatialGrid}()},
 \code{\link{setSpatialLocations}()},
 \code{\link{setSpatialNetwork}()},
-\code{\link{set_feat_id}()},
 \code{\link{set_multiomics}()}
 }
 \concept{dimensional reduction data accessor functions}

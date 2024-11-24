@@ -3,6 +3,7 @@
 \name{subset_dollar}
 \alias{subset_dollar}
 \alias{`$`}
+\alias{$,giotto-method}
 \alias{$,coordDataDT-method}
 \alias{$,spatEnrObj-method}
 \alias{$,dimObj-method}
@@ -11,6 +12,8 @@
 \alias{$,affine2d-method}
 \title{Subset part of an object with \code{$}}
 \usage{
+\S4method{$}{giotto}(x, name)
+
 \S4method{$}{coordDataDT}(x, name)
 
 \S4method{$}{spatEnrObj}(x, name)
@@ -35,6 +38,11 @@ vector of values from a requested column
 \description{
 Subset values from a Giotto Class using \code{$} operator.
 }
+\section{Functions}{
+\itemize{
+\item \code{$}: Subset giotto object
+
+}}
 \section{\code{`$`} methods}{
 
 

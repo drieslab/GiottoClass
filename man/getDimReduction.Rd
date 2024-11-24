@@ -9,8 +9,8 @@ getDimReduction(
   spat_unit = NULL,
   feat_type = NULL,
   reduction = c("cells", "feats"),
-  reduction_method = c("pca", "umap", "tsne"),
-  name = "pca",
+  reduction_method = NULL,
+  name = NULL,
   output = c("dimObj", "matrix"),
   set_defaults = TRUE
 )
@@ -31,7 +31,8 @@ getDimReduction(
 \item{output}{object type to return as. Either 'dimObj' (default) or 'matrix'
 of the embedding coordinates.}
 
-\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
+\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE
+only when
 expression and spat_info are not expected to exist.}
 }
 \value{

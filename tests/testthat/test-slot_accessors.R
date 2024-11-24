@@ -20,7 +20,7 @@ test_that("Not found exprObj returns error", {
     expect_error(
         getExpression(giotto_object,
             spat_unit = "none",
-            feat_type = "none", 
+            feat_type = "none",
             values = "raw"
         )
     )
@@ -202,9 +202,12 @@ test_that("Finds NearestNetwork", {
 
 test_that("Finds PolygonInfo", {
     rlang::local_options(lifecycle_verbosity = "quiet")
-    expect_class(getPolygonInfo(giotto_object,
-                                polygon_name = "z0"),
-                 "SpatVector")
+    expect_class(
+        getPolygonInfo(giotto_object,
+            polygon_name = "z0"
+        ),
+        "SpatVector"
+    )
 })
 
 test_that("Finds SpatialEnrichment", {

@@ -11,7 +11,8 @@ setSpatialLocations(
   name = "raw",
   provenance = NULL,
   verbose = TRUE,
-  initialize = TRUE
+  initialize = TRUE,
+  ...
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ specified set of spatial locations data.}
 
 \item{initialize}{(default = FALSE) whether to initialize the gobject before
 returning}
+
+\item{...}{additional params to pass}
 }
 \value{
 giotto object
@@ -54,7 +57,6 @@ Other spatial location data accessor functions:
 \code{\link{getSpatialLocations}()}
 
 Other functions to set data in giotto object: 
-\code{\link{get_feat_id}()},
 \code{\link{setCellMetadata}()},
 \code{\link{setDimReduction}()},
 \code{\link{setExpression}()},
@@ -68,7 +70,6 @@ Other functions to set data in giotto object:
 \code{\link{setSpatialEnrichment}()},
 \code{\link{setSpatialGrid}()},
 \code{\link{setSpatialNetwork}()},
-\code{\link{set_feat_id}()},
 \code{\link{set_multiomics}()}
 }
 \concept{functions to set data in giotto object}

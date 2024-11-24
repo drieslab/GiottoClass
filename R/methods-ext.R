@@ -119,16 +119,17 @@ setMethod("ext", signature("giottoImage"), function(x, ...) {
 #' only "images" at the moment, which produces a combined `SpatExtent`
 #' @param verbose be verbose
 #' @export
-setMethod("ext", signature("giotto"), function(x,
-    spat_unit = ":all:",
-    feat_type = ":all:",
-    all_data = TRUE,
-    prefer = c("polygon", "spatlocs", "points", "images"),
-    name = list(
-        spatlocs = ":all:"
-    ),
-    verbose = NULL,
-    ...) {
+setMethod("ext", signature("giotto"), function(
+        x,
+        spat_unit = ":all:",
+        feat_type = ":all:",
+        all_data = TRUE,
+        prefer = c("polygon", "spatlocs", "points", "images"),
+        name = list(
+            spatlocs = ":all:"
+        ),
+        verbose = NULL,
+        ...) {
     data_types <- c("polygon", "spatlocs", "points", "images")
 
     if (!is.null(name)) {
@@ -233,7 +234,9 @@ setMethod("ext", signature("giottoAffineImage"), function(x, ...) {
     ext(x@extent)
 })
 
-
+#' @rdname ext
+#' @export
+setMethod("ext", signature("affine2d"), function(x, ...) ext(x@anchor))
 
 
 
@@ -334,4 +337,11 @@ setMethod("ext<-", signature(
     x@boundaries <- adj
 
     return(x)
+})
+
+#' @rdname ext
+#' @export
+setMethod("ext<-", signature("affine2d"), function(x, value) {
+    x@anchor <- .ext_to_num_vec(value)
+    return(initialize(x))
 })

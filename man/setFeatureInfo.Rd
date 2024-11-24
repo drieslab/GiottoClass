@@ -4,7 +4,14 @@
 \alias{setFeatureInfo}
 \title{Set feature info}
 \usage{
-setFeatureInfo(gobject, x, feat_type = NULL, verbose = TRUE, initialize = TRUE)
+setFeatureInfo(
+  gobject,
+  x,
+  feat_type = NULL,
+  verbose = TRUE,
+  initialize = TRUE,
+  ...
+)
 }
 \arguments{
 \item{gobject}{giotto object}
@@ -18,6 +25,8 @@ will remove the specified giottoPoints object from the giotto object}
 
 \item{initialize}{(default = FALSE) whether to initialize the gobject before
 returning}
+
+\item{...}{additional params to pass}
 }
 \value{
 giotto object
@@ -36,7 +45,6 @@ Other feature info data accessor functions:
 \code{\link{getFeatureInfo}()}
 
 Other functions to set data in giotto object: 
-\code{\link{get_feat_id}()},
 \code{\link{setCellMetadata}()},
 \code{\link{setDimReduction}()},
 \code{\link{setExpression}()},
@@ -50,7 +58,6 @@ Other functions to set data in giotto object:
 \code{\link{setSpatialGrid}()},
 \code{\link{setSpatialLocations}()},
 \code{\link{setSpatialNetwork}()},
-\code{\link{set_feat_id}()},
 \code{\link{set_multiomics}()}
 }
 \concept{feature info data accessor functions}

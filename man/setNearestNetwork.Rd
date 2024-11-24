@@ -13,7 +13,8 @@ setNearestNetwork(
   name = "sNN.pca",
   provenance = NULL,
   verbose = TRUE,
-  initialize = TRUE
+  initialize = TRUE,
+  ...
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ yet supported.}
 
 \item{initialize}{(default = FALSE) whether to initialize the gobject before
 returning}
+
+\item{...}{additional params to pass}
 }
 \value{
 giotto object
@@ -55,7 +58,6 @@ Other expression space nearest network accessor functions:
 \code{\link{getNearestNetwork}()}
 
 Other functions to set data in giotto object: 
-\code{\link{get_feat_id}()},
 \code{\link{setCellMetadata}()},
 \code{\link{setDimReduction}()},
 \code{\link{setExpression}()},
@@ -69,7 +71,6 @@ Other functions to set data in giotto object:
 \code{\link{setSpatialGrid}()},
 \code{\link{setSpatialLocations}()},
 \code{\link{setSpatialNetwork}()},
-\code{\link{set_feat_id}()},
 \code{\link{set_multiomics}()}
 }
 \concept{expression space nearest network accessor functions}

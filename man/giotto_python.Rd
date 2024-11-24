@@ -75,8 +75,11 @@ executable.}
 
 \item{initialize}{force initialization of set python path. Default = TRUE.}
 }
+\value{
+installed Giotto environment
+}
 \description{
-\pkg{Giotto} has several functions that utilize python packages. To
+Giotto has several functions that utilize python packages. To
 facilitate this, utilities are provided for creating, removing, and
 attaching python environments. Python environments are currently handled
 entirely through \pkg{reticulate}.
@@ -127,10 +130,10 @@ function, which will find an environment and then initialize it.
 \itemize{
 \item \code{checkGiottoEnvironment()}: \itemize{
 \item Based on \code{envname}, detect if there a conda or miniconda environment
-accessible by \pkg{Giotto}. By default, the \code{envname} \code{"giotto_env"}, then
+accessible by Giotto. By default, the \code{envname} \code{"giotto_env"}, then
 the option \code{"giotto.py_path"} is checked, but an alternative can be
 provided.
-\item Setting \code{envname} as \code{":auto:"} will let  \pkg{Giotto} autodetect a python
+\item Setting \code{envname} as \code{":auto:"} will let  Giotto autodetect a python
 env to use. See section for \code{set_giotto_python_path()} for details on the
 autodetection.
 \item Returns \code{TRUE} if an env is detected and accessible by Giotto. \code{FALSE}
@@ -142,7 +145,7 @@ if not. Will not initialize a python environment during detection.
 \pkg{reticulate}. By default, the envname used will be \code{"giotto_env"}. If
 another name is used, you will have to provide that envname at the start of
 a session (see \strong{Choosing an environment} above). \cr This includes a
-miniconda installation and also a set of python packages that \pkg{Giotto}
+miniconda installation and also a set of python packages that Giotto
 may often use. See details for further information on setting up an
 environment with a .yml
 \item Returns \code{NULL}
@@ -212,7 +215,7 @@ Please note that multiple .yml files are provided in the
 repository for advanced installation and convenience. To install the most
 up-to-date Giotto environment using a .yml file, open a shell compatible
 with conda/miniconda and navigate to the directory specified by
-\code{system.file(package = "Giotto", "python/configuration")}. Once in this
+system.file(package = "Giotto", "python/configuration"). Once in this
 directory, run the following to create your environment in one step:
 
 \preformatted{conda env create -n giotto_env -f ./genv.yml}
@@ -226,23 +229,24 @@ checkGiottoEnvironment()
 # use environment name
 checkGiottoEnvironment("giotto_env")
 
-# full path 
+# full path
 # (use this if a different install location specified with .condarc)
 if (FALSE) {
-checkGiottoEnvironment(
-    "/Users/example/Library/r-miniconda-arm64/envs/giotto_env/bin/pythonw"
-)
+    checkGiottoEnvironment(
+        "/Users/example/Library/r-miniconda-arm64/envs/giotto_env/bin/pythonw"
+    )
 }
 if (FALSE) {
-# default environment installation
-installGiottoEnvironment()
+    # default environment installation
+    installGiottoEnvironment()
 
-# install to alternate location
-temp_env <- tempdir()
-installGiottoEnvironment(mini_install_path = temp_env)
+    # install to alternate location
+    temp_env <- tempdir()
+    installGiottoEnvironment(mini_install_path = temp_env)
 }
-
 # detect AND initialize a python environment
-set_giotto_python_path()
+if (FALSE) {
+    set_giotto_python_path()
+}
 }
 \keyword{internal}

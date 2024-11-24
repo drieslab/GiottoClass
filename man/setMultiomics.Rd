@@ -11,7 +11,8 @@ setMultiomics(
   feat_type = NULL,
   integration_method = "WNN",
   result_name = "theta_weighted_matrix",
-  verbose = TRUE
+  verbose = TRUE,
+  ...
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ integration (e.g. theta weighted values from runWNN)}
 \item{result_name}{Default = 'theta_weighted_matrix'}
 
 \item{verbose}{be verbose}
+
+\item{...}{additional params to pass}
 }
 \value{
 A giotto object
@@ -51,7 +54,6 @@ Other multiomics accessor functions:
 \code{\link{set_multiomics}()}
 
 Other functions to set data in giotto object: 
-\code{\link{get_feat_id}()},
 \code{\link{setCellMetadata}()},
 \code{\link{setDimReduction}()},
 \code{\link{setExpression}()},
@@ -65,7 +67,6 @@ Other functions to set data in giotto object:
 \code{\link{setSpatialGrid}()},
 \code{\link{setSpatialLocations}()},
 \code{\link{setSpatialNetwork}()},
-\code{\link{set_feat_id}()},
 \code{\link{set_multiomics}()}
 }
 \concept{functions to set data in giotto object}

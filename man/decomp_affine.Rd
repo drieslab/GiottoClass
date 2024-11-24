@@ -31,7 +31,7 @@ trans_m[seq(2), 3] <- c(200, 300)
 scale_m <- diag(c(2, 3, 1))
 shear_m[2, 1] <- 2
 aff_m <- matrix(c(
-    2, 0.5, 1000, 
+    2, 0.5, 1000,
     -0.3, 3, 20,
     100, 29, 1
 ), nrow = 3, byrow = TRUE)
@@ -58,7 +58,7 @@ sl_aff_piecewise <- sl |>
     shear(fx = a$shear[["x"]], fy = a$shear[["y"]], x0 = 0, y0 = 0) |>
     rescale(fx = a$scale[["x"]], fy = a$scale[["y"]], x0 = 0, y0 = 0) |>
     spatShift(dx = a$translate[["x"]], dy = a$translate[["y"]])
-    
+
 plot(affine(sl, shear_m))
 plot(sl_shear_piecewise)
 plot(affine(sl, aff_m))

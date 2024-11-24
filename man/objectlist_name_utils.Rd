@@ -28,6 +28,9 @@ used when printing verbose messages about what was made unique}
 
 \item{verbose}{be verbose}
 }
+\value{
+list
+}
 \description{
 Name wrangling for subobject lists
 }

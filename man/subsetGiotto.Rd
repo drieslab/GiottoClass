@@ -10,7 +10,7 @@ subsetGiotto(
   feat_type = "rna",
   cell_ids = NULL,
   feat_ids = NULL,
-  poly_info = NULL,
+  poly_info = spat_unit,
   all_spat_units = NULL,
   all_feat_types = NULL,
   spat_unit_fsub = ":all:",

@@ -11,7 +11,7 @@
 #' @param description description of function run
 #' @param return_gobject logical. Whether the giotto object should be returned
 #' @param toplevel expected relative stackframe where call that is being
-#' recorded was made
+#' recorded was made. If negative, param recording is skipped
 #' @returns giotto object or list of parameters
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
@@ -22,6 +22,10 @@ update_giotto_params <- function(gobject,
     description = "_test",
     return_gobject = TRUE,
     toplevel = 2) {
+    if (toplevel < 0) {
+        return(gobject)
+    } # skip if toplevel negative
+
     parameters_list <- gobject@parameters
     number_of_rounds <- length(parameters_list)
     update_name <- paste0(number_of_rounds, description)
@@ -42,15 +46,34 @@ update_giotto_params <- function(gobject,
 #' @name objHistory
 #' @description Print and return giotto object history
 #' @param object giotto object
+#' @param summarized logical. whether print should be summarized
 #' @returns list
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' objHistory(g)
+#' objHistory(g, summarized = TRUE)
 #' @export
-objHistory <- function(object) {
-    message("Steps and parameters used:")
-    message(object@parameters)
+objHistory <- function(object, summarized = FALSE) {
+    p <- object@parameters
+
+    if (summarized) {
+        message("Processing steps:")
+        for (step in names(p)) {
+            message(step)
+            sub_step <- p[[step]]
+            if (any(grepl("name", names(sub_step)) == TRUE)) {
+                selected_names <- grep("name", names(sub_step), value = TRUE)
+                wrap_msg("\t name info: ", sub_step[selected_names])
+            }
+        }
+    } else {
+        message("Steps and parameters used:")
+        for (i in seq_along(p)) {
+            cat(GiottoUtils::color_blue(sprintf("<%s>\n", names(p)[[i]])))
+            GiottoUtils::print_list(p[[i]], pre = "  ")
+        }
+    }
     invisible(x = object@parameters)
 }
 
@@ -68,6 +91,13 @@ objHistory <- function(object) {
 #' showProcessingSteps(g)
 #' @export
 showProcessingSteps <- function(gobject) {
+    deprecate_warn(
+        when = "0.4.0",
+        what = "showProcessingSteps()",
+        with = "objHistory()",
+        details = "objHistory with arg `summarized = TRUE` replaces this functionality"
+    )
+
     parameters <- gobject@parameters
 
     message("Processing steps:")

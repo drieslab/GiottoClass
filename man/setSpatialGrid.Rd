@@ -11,7 +11,8 @@ setSpatialGrid(
   feat_type = NULL,
   name = NULL,
   verbose = TRUE,
-  set_defaults = TRUE
+  set_defaults = TRUE,
+  ...
 )
 }
 \arguments{
@@ -27,8 +28,11 @@ setSpatialGrid(
 
 \item{verbose}{be verbose}
 
-\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE only when
+\item{set_defaults}{set default spat_unit and feat_type. Change to FALSE
+only when
 expression and spat_info are not expected to exist.}
+
+\item{...}{additional params to pass}
 }
 \value{
 giotto object
@@ -48,7 +52,6 @@ Other spatial grid data accessor functions:
 \code{\link{getSpatialGrid}()}
 
 Other functions to set data in giotto object: 
-\code{\link{get_feat_id}()},
 \code{\link{setCellMetadata}()},
 \code{\link{setDimReduction}()},
 \code{\link{setExpression}()},
@@ -62,7 +65,6 @@ Other functions to set data in giotto object:
 \code{\link{setSpatialEnrichment}()},
 \code{\link{setSpatialLocations}()},
 \code{\link{setSpatialNetwork}()},
-\code{\link{set_feat_id}()},
 \code{\link{set_multiomics}()}
 }
 \concept{functions to set data in giotto object}

@@ -21,6 +21,7 @@ g_image <- getGiottoImage(g, name = "image")
 mgimg <- as(g_image, "giottoImage")
 
 a <- convert_mgImage_to_array_DT(mgimg)
-force(a);force(a)
+force(a)
+force(a)
 }
 \keyword{internal}

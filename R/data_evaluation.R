@@ -83,13 +83,12 @@ evaluate_input <- function(type, x, ...) {
 #' @keywords internal
 #' @returns sparse matrix
 #' @noRd
-
-.evaluate_expr_matrix <- function(inputmatrix,
-    sparse = TRUE,
-    cores = determine_cores(),
-    feat_type = "rna",
-    expression_matrix_class = c("dgCMatrix", "DelayedArray", "dbSparseMatrix")) {
-
+.evaluate_expr_matrix <- function(
+        inputmatrix,
+        sparse = TRUE,
+        cores = determine_cores(),
+        feat_type = "rna",
+        expression_matrix_class = c("dgCMatrix", "DelayedArray", "dbSparseMatrix")) {
     if (inherits(inputmatrix, "character")) {
         inputmatrix <- path.expand(inputmatrix)
         mymatrix <- readExprMatrix(inputmatrix,
@@ -164,9 +163,10 @@ evaluate_input <- function(type, x, ...) {
 #' @param cores cores to use if reading in the information
 #' @keywords internal
 #' @noRd
-.evaluate_cell_metadata <- function(metadata,
-    cores = determine_cores(),
-    verbose = TRUE) {
+.evaluate_cell_metadata <- function(
+        metadata,
+        cores = determine_cores(),
+        verbose = TRUE) {
     # data.table vars
     cell_ID <- NULL
 
@@ -224,9 +224,10 @@ evaluate_input <- function(type, x, ...) {
 
 #' @keywords internal
 #' @noRd
-.evaluate_feat_metadata <- function(metadata,
-    cores = determine_cores(),
-    verbose = TRUE) {
+.evaluate_feat_metadata <- function(
+        metadata,
+        cores = determine_cores(),
+        verbose = TRUE) {
     # data.table vars
     feat_ID <- NULL
 
@@ -294,9 +295,10 @@ evaluate_input <- function(type, x, ...) {
 #' @return data.table
 #' @keywords internal
 #' @noRd
-.evaluate_spatial_locations <- function(spatial_locs,
-    cores = determine_cores(),
-    verbose = TRUE) {
+.evaluate_spatial_locations <- function(
+        spatial_locs,
+        cores = determine_cores(),
+        verbose = TRUE) {
     # data.table variables
     cell_ID <- NULL
 
@@ -431,10 +433,11 @@ evaluate_input <- function(type, x, ...) {
 #' compatible with spatEnrObj
 #' @keywords internal
 #' @noRd
-.evaluate_spatial_enrichment <- function(spatial_enrichment,
-    provenance = NULL,
-    cores = determine_cores(),
-    verbose = TRUE) {
+.evaluate_spatial_enrichment <- function(
+        spatial_enrichment,
+        provenance = NULL,
+        cores = determine_cores(),
+        verbose = TRUE) {
     # data.table vars
     cell_ID <- NULL
 
@@ -629,8 +632,9 @@ evaluate_input <- function(type, x, ...) {
 #' 'poly_ID' if necessary.
 #' @keywords internal
 #' @noRd
-.evaluate_gpoly_dfr <- function(input_dt,
-    verbose = TRUE) {
+.evaluate_gpoly_dfr <- function(
+        input_dt,
+        verbose = TRUE) {
     x <- y <- poly_ID <- NULL
 
     # data.frame like object needs to have 2 coordinate columns and
@@ -722,8 +726,9 @@ evaluate_input <- function(type, x, ...) {
 #' @param verbose be verbose
 #' @return list of SpatVector and unique_IDs
 #' @noRd
-.evaluate_gpoly_spatvector <- function(input_sv,
-    verbose = TRUE) {
+.evaluate_gpoly_spatvector <- function(
+        input_sv,
+        verbose = TRUE) {
     # determine sv type
     sv_type <- terra::geomtype(input_sv)
 
@@ -806,11 +811,12 @@ evaluate_input <- function(type, x, ...) {
 #' @return list of SpatVector and unique polygon IDs that it contains
 #' @keywords internal
 #' @noRd
-.evaluate_spatial_info <- function(spatial_info,
-    skip_eval_dfr = FALSE,
-    copy_dt = TRUE,
-    cores = determine_cores(),
-    verbose = TRUE) {
+.evaluate_spatial_info <- function(
+        spatial_info,
+        skip_eval_dfr = FALSE,
+        copy_dt = TRUE,
+        cores = determine_cores(),
+        verbose = TRUE) {
     # NSE vars
     geom <- poly_ID <- NULL
 
@@ -914,10 +920,11 @@ evaluate_input <- function(type, x, ...) {
 #' @return data.table
 #' @keywords internal
 #' @noRd
-.evaluate_feat_info <- function(spatial_feat_info,
-    feat_type,
-    cores = determine_cores(),
-    feat_ID) {
+.evaluate_feat_info <- function(
+        spatial_feat_info,
+        feat_type,
+        cores = determine_cores(),
+        feat_ID) {
     ## 1. load or read spatial information data ##
     if (inherits(spatial_feat_info, "character")) {
         if (!file.exists(spatial_feat_info)) {
