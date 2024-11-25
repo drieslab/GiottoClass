@@ -8,6 +8,7 @@
 \alias{spatUnit,list-method}
 \alias{spatUnit,spatData-method}
 \alias{spatUnit,giottoPolygon-method}
+\alias{spatUnit<-,ANY-method}
 \alias{spatUnit<-,spatData-method}
 \alias{spatUnit<-,giottoPolygon-method}
 \alias{spatUnit<-,list-method}
@@ -20,6 +21,8 @@
 \S4method{spatUnit}{spatData}(x)
 
 \S4method{spatUnit}{giottoPolygon}(x)
+
+\S4method{spatUnit}{ANY}(x) <- value
 
 \S4method{spatUnit}{spatData}(x) <- value
 

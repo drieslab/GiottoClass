@@ -7,6 +7,7 @@
 \alias{featType,ANY-method}
 \alias{featType,list-method}
 \alias{featType,featData-method}
+\alias{featType<-,ANY-method}
 \alias{featType<-,featData-method}
 \alias{featType<-,list-method}
 \title{Feature type information}
@@ -16,6 +17,8 @@
 \S4method{featType}{list}(x)
 
 \S4method{featType}{featData}(x)
+
+\S4method{featType}{ANY}(x) <- value
 
 \S4method{featType}{featData}(x) <- value
 
