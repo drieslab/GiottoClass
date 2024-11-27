@@ -18,7 +18,9 @@ set_default_spat_unit <- function(
         gobject,
         spat_unit = NULL) {
     # If a spatial unit is provided, use it directly
-    if (!is.null(spat_unit)) {
+    null_input <- is.null(spat_unit)
+    na_input <- isTRUE(is.na(spat_unit[[1]]))
+    if (!null_input && !na_input) {
         if (!inherits(spat_unit, "character")) {
             stop("spat_unit input must be character")
         }
@@ -29,7 +31,7 @@ set_default_spat_unit <- function(
     spat_unit <- try(instructions(gobject, "active_spat_unit"), silent = TRUE)
 
     if (inherits(spat_unit, "try-error")) {
-        if (!is.null(gobject@expression) & length(gobject@expression) > 0L) {
+        if (!is.null(gobject@expression) && length(gobject@expression) > 0L) {
             spat_unit <- names(gobject@expression)[[1L]]
         } else if (!is.null(gobject@spatial_info)) {
             spat_unit <- names(gobject@spatial_info)[[1L]]
@@ -62,7 +64,9 @@ set_default_feat_type <- function(
         feat_type = NULL,
         spat_unit) {
     # if a feature type is provided, use it directly
-    if (!is.null(feat_type)) {
+    null_input <- is.null(feat_type)
+    na_input <- isTRUE(is.na(feat_type[[1]]))
+    if (!null_input && !na_input) {
         if (!inherits(feat_type, "character")) {
             stop("feat_type input must be character")
         }
@@ -73,7 +77,7 @@ set_default_feat_type <- function(
     feat_type <- try(instructions(gobject, "active_feat_type"), silent = TRUE)
 
     if (inherits(feat_type, "try-error")) {
-        if (!is.null(gobject@expression) & length(gobject@expression) > 0L) {
+        if (!is.null(gobject@expression) && length(gobject@expression) > 0L) {
             feat_type <- names(gobject@expression[[spat_unit]])[[1L]]
             if (is.null(feat_type)) {
                 warning(wrap_txt("No existing feat_types to default to in given
