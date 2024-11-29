@@ -84,7 +84,7 @@ gefToGiotto <- function(
     )
 
     colnames(expMatrix) <- cell_locations$cell_ID
-    rownames(expMatrix) <- geneDT$gene
+    rownames(expMatrix) <- geneDT$geneName
     rm(exprDT)
     if (isTRUE(verbose)) wrap_msg("finished expression matrix")
 
