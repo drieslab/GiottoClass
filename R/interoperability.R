@@ -54,6 +54,35 @@ gefToGiotto <- function(
     data.table::setorder(exprDT, x, y) # sort by x, y coords (ascending)
     geneDT <- data.table::as.data.table(geneExpData[["gene"]])
 
+    # process duplicated gene symbol    
+    if (any(duplicated(geneDT$geneName))) {
+    duplicated_genes <- unique(geneDT$geneName[duplicated(geneDT$geneName)])
+    cat("Ops!!! Duplicated_genes,processing:sum(count),mean(offset)")
+    # merge
+    for (gene in duplicated_genes) {
+        # indices
+        idx <- which(geneDT$geneName == gene)
+        
+        # 
+        cat("Processing gene:", gene, "\n")
+        cat("Original count values for", gene, ":", geneDT$count[idx], "\n")
+        
+        # update
+        geneDT$count[idx[1]] <- sum(geneDT$count[idx])  # 对重复的 count 求和
+        geneDT$offset[idx[1]] <- mean(geneDT$offset[idx])  # 对重复的 offset 求平均
+        
+        #
+        cat("Updated count for", gene, ":", geneDT$count[idx[1]], "\n")
+        cat("Updated offset for", gene, ":", geneDT$offset[idx[1]], "\n")
+        
+        # 
+        geneDT <- geneDT[-idx[-1], ]
+        
+        # 
+        cat("Deleted duplicate entries for gene:", gene, "\n\n")
+      }
+    }
+  
     if (isTRUE(verbose)) wrap_msg("finished reading in .gef", bin_size, "\n")
 
     # 2. create spatial locations
