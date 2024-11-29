@@ -68,7 +68,7 @@ gefToGiotto <- function(
 
     # 3. create expression matrix
     if (isTRUE(verbose)) wrap_msg("3. create expression matrix... \n")
-    exprDT[, genes := as.character(rep(x = geneDT$gene, geneDT$count))]
+    exprDT[, genes := as.character(rep(x = geneDT$geneName, geneDT$count))]
     exprDT[, gene_idx := as.integer(factor(exprDT$genes,
         levels = unique(exprDT$genes)
     ))]
