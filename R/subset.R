@@ -554,6 +554,9 @@
     # poly_whitelist = NULL,
     verbose = TRUE) {
     if (isTRUE(poly_info == ":all:")) poly_info <- names(spatial_info)
+    
+    # return early if no need to subset
+    if (is.null(cell_ids)) return(spatial_info)
 
     # set feat type
     if (is.null(feat_type)) {
