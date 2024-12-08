@@ -966,18 +966,7 @@
         toplevel = toplevel_params
     )
 
-    ## TODO - this is no longer easily doable since multiple spatial units being
-    ## subset means that cells and feats removed are variable
-    # extra parameters to include
-    # cells_removed = length(filter_bool_cells[filter_bool_cells==FALSE])
-    # feats_removed = length(filter_bool_feats[filter_bool_feats==FALSE])
-
     parameters_list <- parameters_info[["plist"]]
-    # update_name = parameters_info[['newname']]
-    #
-    # parameters_list[[update_name]] = c(parameters_list[[update_name]],
-    #                                    'cells removed' = cells_removed,
-    #                                    'feats removed' = feats_removed)
     gobject@parameters <- parameters_list
 
 
