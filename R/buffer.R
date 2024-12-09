@@ -21,7 +21,7 @@ NULL
 #' @description Settle the boundaries between polygons when they overlap by
 #' splitting both at the point where they touch. Works through intersection
 #' with the voronoi of the centroids.
-#' @param x a `SpatVector` of type "polygons" or object inheriting from 
+#' @param x a `SpatVector` of type "polygons" or object inheriting from
 #' `giottoPolygon`
 #' @returns same class as `x`, with the contained polygons borders settled
 #' in relation to each other.
@@ -89,19 +89,21 @@ setMethod("settleGeom", signature("SpatVector"), function(x) {
     # apply index
     x$.idx <- seq_len(nrow(x))
     names_keep <- c(orig_names, ".idx")
-    
+
     # Find overlapping circles
     overlaps <- relate(x, relation = "overlaps", pairs = TRUE) |>
         as.vector() |>
         unique()
-    if(length(overlaps) == 0L) return(x)  # If no overlaps, return original polys
-    
+    if (length(overlaps) == 0L) {
+        return(x)
+    } # If no overlaps, return original polys
+
     # Create Voronoi polygons for the points
     # Note: extend parameter ensures Voronoi polygons cover all buffer areas
     vor <- terra::voronoi(centroids(x), bnd = ext(x) * 1.2)
     # voronoi does not return values in order. Reorder with index
     vor <- terra::sort(vor, v = ".idx")
-    
+
     # Process each buffer
     reslist <- lapply(overlaps, function(i) {
         terra::intersect(vor[i], x[i])
@@ -114,7 +116,6 @@ setMethod("settleGeom", signature("SpatVector"), function(x) {
     x <- rbind(x, res)
     x <- terra::sort(x, v = ".idx")
     x <- x[, orig_names]
-    
+
     return(x)
 })
-

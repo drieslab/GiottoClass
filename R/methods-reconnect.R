@@ -10,7 +10,7 @@
 #' f <- tempfile()
 #' a <- GiottoData::loadSubObjectMini("giottoLargeImage")
 #' saveRDS(a, f)
-#' 
+#'
 #' b <- readRDS(f) # expected to be null pointer
 #' b <- reconnect(b) # reconnected to source image
 NULL
@@ -22,7 +22,7 @@ NULL
 setMethod("reconnect", signature("giottoAffineImage"), function(x, path = NULL, ...) {
     path <- path %null% slot(x, "file_path")
     .image_path_checks(path)
-    
+
     # replace old raster objects
     raster_object <- .create_terra_spatraster(image_path = path)
     slot(x, "raster_object") <- raster_object
@@ -30,12 +30,12 @@ setMethod("reconnect", signature("giottoAffineImage"), function(x, path = NULL, 
     # inherit tracked extents (image extent and user-facing extent)
     img_ext <- x@affine@anchor
     user_ext <- x@extent
-    
+
     # this method affects multiple slots, including the extent of the image, so do first
-    ext(x) <- user_ext 
+    ext(x) <- user_ext
     # this only affects the image extent, so do second
     ext(x@raster_object) <- img_ext
-    
+
     return(initialize(x))
 })
 

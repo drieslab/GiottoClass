@@ -7,6 +7,7 @@
 giottoToSeuratV5(
   gobject,
   spat_unit = NULL,
+  dataType,
   res_type = c("hires", "lowres", "fullres"),
   ...
 )

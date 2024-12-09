@@ -8,8 +8,10 @@
 \alias{spatUnit,list-method}
 \alias{spatUnit,spatData-method}
 \alias{spatUnit,giottoPolygon-method}
+\alias{spatUnit<-,ANY-method}
 \alias{spatUnit<-,spatData-method}
 \alias{spatUnit<-,giottoPolygon-method}
+\alias{spatUnit<-,list-method}
 \title{Spatial unit information}
 \usage{
 \S4method{spatUnit}{ANY}(x)
@@ -20,9 +22,13 @@
 
 \S4method{spatUnit}{giottoPolygon}(x)
 
+\S4method{spatUnit}{ANY}(x) <- value
+
 \S4method{spatUnit}{spatData}(x) <- value
 
 \S4method{spatUnit}{giottoPolygon}(x) <- value
+
+\S4method{spatUnit}{list}(x) <- value
 }
 \arguments{
 \item{x}{a Giotto S4 class subobject with spatial unit}
