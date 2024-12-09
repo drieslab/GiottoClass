@@ -105,9 +105,8 @@ setMethod("crop", signature("spatialNetworkObj"), function(x, y, ...) {
 #' @export
 setMethod(
     "crop", signature("giottoPoints"),
-    function(
-        x, y, DT = TRUE, xmin = NULL, xmax = NULL,
-        ymin = NULL, ymax = NULL, ...) {
+    function(x, y, DT = TRUE, xmin = NULL, xmax = NULL,
+    ymin = NULL, ymax = NULL, ...) {
         checkmate::assert_logical(DT)
         if (DT) {
             # converting to DT, subsetting, then regeneration of SpatVector with vect()
@@ -166,9 +165,8 @@ setMethod(
 #' @export
 setMethod(
     "crop", signature("giottoPolygon"),
-    function(
-        x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL,
-        ymax = NULL, ...) {
+    function(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL,
+    ymax = NULL, ...) {
         # A. spatVector cropping
         checkmate::assert_logical(DT)
         if (DT) {
@@ -259,10 +257,9 @@ setMethod(
 #
 # returns a numeric vector of the 4 bounds in the order of:
 #   xmin, xmax, ymin, ymax
-.determine_crop_bounds <- function(
-        x, y, missing_y, n_single_bounds,
-        xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL,
-        output = c("numeric", "extent")) {
+.determine_crop_bounds <- function(x, y, missing_y, n_single_bounds,
+    xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL,
+    output = c("numeric", "extent")) {
     # check cropping params
     output <- match.arg(tolower(output), choices = c("numeric", "extent"))
 

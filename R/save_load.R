@@ -10,7 +10,7 @@
 #' @param method_params additional method parameters for RDS or qs
 #' @param overwrite Overwrite existing folders
 #' @param export_image logical. Write out an image of the format specified by
-#' `image_filetype` when saving a `giottoLargeImage`. 
+#' `image_filetype` when saving a `giottoLargeImage`.
 #' Future image loads and reconnects will point to this new file.
 #' @param image_filetype the image filetype to use, see
 #' \code{\link[terra]{writeRaster}}. Default is "PNG". For TIFF outputs, try
@@ -28,18 +28,17 @@
 #'
 #' saveGiotto(gobject = g, dir = tempdir(), overwrite = TRUE)
 #' @export
-saveGiotto <- function(
-        gobject,
-        foldername = "saveGiottoDir",
-        dir = getwd(),
-        method = c("RDS", "qs"),
-        method_params = list(),
-        overwrite = FALSE,
-        export_image = TRUE,
-        image_filetype = "PNG",
-        include_feat_coord = TRUE,
-        verbose = TRUE,
-        ...) {
+saveGiotto <- function(gobject,
+    foldername = "saveGiottoDir",
+    dir = getwd(),
+    method = c("RDS", "qs"),
+    method_params = list(),
+    overwrite = FALSE,
+    export_image = TRUE,
+    image_filetype = "PNG",
+    include_feat_coord = TRUE,
+    verbose = TRUE,
+    ...) {
     # check params
     checkmate::assert_character(foldername)
     checkmate::assert_character(dir)
@@ -51,7 +50,7 @@ saveGiotto <- function(
     ## set directory path and folder
     dir <- normalizePath(dir)
     final_dir <- file.path(dir, foldername)
-    
+
     if (isFALSE(include_feat_coord)) {
         gobject@feat_info <- NULL
     }
@@ -247,10 +246,11 @@ saveGiotto <- function(
                     NAflag = NA,
                     overwrite = TRUE
                 )
-                
+
                 # update image in gobject
                 gobject <- setGiotto(
-                    gobject, img, verbose = FALSE
+                    gobject, img,
+                    verbose = FALSE
                 )
             }
         }
@@ -317,12 +317,13 @@ saveGiotto <- function(
 #'
 #' loadGiotto(path_to_folder = paste0(td, "/saveGiottoDir"))
 #' @export
-loadGiotto <- function(path_to_folder,
-    load_params = list(),
-    reconnect_giottoImage = TRUE,
-    python_path = NULL,
-    init_gobject = TRUE,
-    verbose = TRUE) {
+loadGiotto <- function(
+        path_to_folder,
+        load_params = list(),
+        reconnect_giottoImage = TRUE,
+        python_path = NULL,
+        init_gobject = TRUE,
+        verbose = TRUE) {
     # data.table vars
     img_type <- NULL
 
