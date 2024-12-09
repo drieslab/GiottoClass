@@ -12,4 +12,5 @@
     init_option("giotto.init", TRUE)
     init_option("giotto.check_valid", TRUE)
     init_option("giotto.plotengine3d", "plotly")
+    init_option("giotto.update_param", TRUE)
 }
