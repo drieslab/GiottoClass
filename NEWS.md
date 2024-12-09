@@ -6,6 +6,9 @@
 - `set_default_spat_unit()` and `set_default_feat_type()` now look for defaults when given `NA_character_` inputs as well.
 - `update_giotto_params()` can now be turned off with `options("giotto.update_param" = FALSE)`
 
+## bug fixes
+- fix `giottoToSeuratV5()` Interoperability for Xenium Image
+
 # GiottoClass 0.4.4 (2024/11/14)
 
 ## bug fixes
