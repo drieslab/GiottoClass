@@ -1,4 +1,4 @@
-# GiottoClass 0.4.5
+# GiottoClass 0.4.5 (2024/12/09)
 
 ## enhancements
 
