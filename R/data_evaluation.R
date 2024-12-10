@@ -747,6 +747,10 @@ evaluate_input <- function(type, x, ...) {
     sv_names <- names(input_sv)
     if ("poly_ID" %in% sv_names) {
         poly_ID_col <- which(sv_names == "poly_ID")
+    } else if (ncol(input_sv) == 0L) {
+        poly_ID_col <- 1L
+        input_sv$poly_ID <- as.character(seq_len(nrow(input_sv)))
+        col_classes[[1]] <- "character"
     } else {
         poly_ID_col <- which(col_classes == "character")
         if (length(poly_ID_col) < 1L) {
@@ -822,10 +826,17 @@ evaluate_input <- function(type, x, ...) {
     if (inherits(spatial_info, "character")) {
         spatial_info <- path.expand(spatial_info)
         if (!file.exists(spatial_info)) {
-            .gstop("path to spatial information does not exist")
+            stop("path to spatial information does not exist", call. = FALSE)
         }
-
-        if (any(file_extension(spatial_info) %in% c("shp", "geojson", "wkt"))) {
+        
+        if (tolower(file_extension(spatial_info)) %in% c("geojson", "json")) {
+            package_check("sf", repository = "CRAN")
+            spatial_info <- sf::st_read(spatial_info, quiet = TRUE) |>
+                as.terra() |>
+                terra::makeValid()
+            spatial_info <- .evaluate_gpoly_spatvector(spatial_info)
+            return(spatial_info)
+        } else if (tolower(file_extension(spatial_info)) %in% c("shp", "wkt")) {
             spatial_info <- terra::vect(spatial_info)
             spatial_info <- .evaluate_gpoly_spatvector(spatial_info)
             return(spatial_info)
@@ -853,9 +864,9 @@ evaluate_input <- function(type, x, ...) {
             spatial_info
         ), silent = TRUE)
         if (inherits(spatial_info, "try-error")) {
-            .gstop(
+            stop(
                 "If spatial information is provided then it needs to be a",
-                "file path or a data.frame-like object"
+                "file path or a data.frame-like object", call. = FALSE
             )
         }
     }
