@@ -8,6 +8,8 @@
 
 ## bug fixes
 - fix `giottoToSeuratV5()` Interoperability for Xenium Image
+- fix `createGiottoPolygon()` when no attributes information is provided
+- fix `createGiottoPolygonsFromGeoJSON()` reading from json GeometryCollection type inputs
 
 # GiottoClass 0.4.4 (2024/11/14)
 
