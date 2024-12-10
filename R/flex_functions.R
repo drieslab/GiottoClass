@@ -30,6 +30,8 @@ mean_flex <- function(x, ...) {
         return(Matrix::mean(x, ...)) # replace with sparseMatrixStats
     } else if (inherits(x, "Matrix")) {
         return(Matrix::mean(x, ...))
+    } else if (inherits(x, "dbMatrix")) {
+        return(dbMatrix::mean(x))
     } else {
         return(base::mean(x, ...))
     }
@@ -56,6 +58,8 @@ rowSums_flex <- function(mymatrix) {
         return(Matrix::rowSums(mymatrix)) # replace with sparseMatrixStats
     } else if (inherits(mymatrix, "Matrix")) {
         return(Matrix::rowSums(mymatrix))
+    } else if (inherits(mymatrix, "dbMatrix")) {
+        return(dbMatrix::rowSums(mymatrix))
     } else {
         temp_matrix <- as.matrix(mymatrix)
         temp_res <- matrixStats::rowSums2(temp_matrix)
@@ -86,6 +90,8 @@ rowMeans_flex <- function(mymatrix) {
         return(Matrix::rowMeans(mymatrix)) # replace with sparseMatrixStats
     } else if (inherits(mymatrix, "Matrix")) {
         return(Matrix::rowMeans(mymatrix))
+    } else if (inherits(mymatrix, "dbMatrix")) {
+        return(dbMatrix::rowMeans(mymatrix))
     } else {
         temp_matrix <- as.matrix(mymatrix)
         temp_res <- matrixStats::rowMeans2(temp_matrix)
@@ -115,6 +121,8 @@ colSums_flex <- function(mymatrix) {
         return(Matrix::colSums(mymatrix)) # replace with sparseMatrixStats
     } else if (inherits(mymatrix, "Matrix")) {
         return(Matrix::colSums(mymatrix))
+    } else if (inherits(mymatrix, "dbMatrix")) {
+        return(dbMatrix::colSums(mymatrix))
     } else {
         temp_matrix <- as.matrix(mymatrix)
         temp_res <- matrixStats::colSums2(temp_matrix)
@@ -144,6 +152,8 @@ colMeans_flex <- function(mymatrix) {
         return(Matrix::colMeans(mymatrix)) # replace with sparseMatrixStats
     } else if (inherits(mymatrix, "Matrix")) {
         return(Matrix::colMeans(mymatrix))
+    } else if (inherits(mymatrix, "dbMatrix")) {
+        return(dbMatrix::colMeans(mymatrix))
     } else {
         temp_matrix <- as.matrix(mymatrix)
         temp_res <- matrixStats::colMeans2(temp_matrix)
@@ -172,6 +182,8 @@ t_flex <- function(mymatrix) {
         return(Matrix::t(mymatrix)) # replace with sparseMatrixStats
     } else if (inherits(mymatrix, "Matrix")) {
         return(Matrix::t(mymatrix))
+    } else if(inherits(mymatrix, 'dbMatrix')) {
+        return(t(mymatrix))
     } else if (inherits(mymatrix, "spatLocsObj")) {
         return(t(mymatrix))
     } else if (inherits(mymatrix, "spatialNetworkObj")) {
