@@ -121,7 +121,7 @@ polygon_to_raster <- function(polygon, field = NULL) {
 #' overlaps_z1$rna
 #'
 #' # overlap image to get sum intensities per cell
-#' out_img <- calculateOverlap(gpoly, gimg)
+#' out_img <- calculateOverlap(gpoly, gimg, progress = FALSE)
 #' overlaps_img <- overlaps(out_img)
 #' overlaps_img$intensity
 #'
