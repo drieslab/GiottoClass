@@ -774,6 +774,9 @@ evaluate_input <- function(type, x, ...) {
 
     # strip crs info
     terra::set.crs(input_sv, NULL)
+    
+    # ensure valid
+    input_sv <- terra::makeValid(input_sv)
 
     unique_IDs <- NULL
     if (col_classes[[poly_ID_col]] != "character") {
@@ -831,9 +834,7 @@ evaluate_input <- function(type, x, ...) {
         
         if (tolower(file_extension(spatial_info)) %in% c("geojson", "json")) {
             package_check("sf", repository = "CRAN")
-            spatial_info <- sf::st_read(spatial_info, quiet = TRUE) |>
-                as.terra() |>
-                terra::makeValid()
+            spatial_info <- .try_json_read(spatial_info) # to spatvector
             spatial_info <- .evaluate_gpoly_spatvector(spatial_info)
             return(spatial_info)
         } else if (tolower(file_extension(spatial_info)) %in% c("shp", "wkt")) {
@@ -990,3 +991,94 @@ evaluate_input <- function(type, x, ...) {
             feature ID slot")
     }
 }
+
+
+
+
+# json poly reading ####
+
+.try_json_read_poly <- function(x) {
+    errors <- list()
+    res <- tryCatch(.json_read_custom(x), error = function(e) {
+        errors$custom <- e$message
+    })
+    if (!inherits(res, "character")) return(res)
+
+    res <- tryCatch(terra::vect(x), error = function(e) {
+        errors$terra <- e$message
+    })
+    if (!inherits(res, "character")) return(res)
+    
+    stop(wrap_txtf(
+        "json readers failed.\ncustom: %s\nterra: %s",
+        errors$custom,
+        errors$terra
+    ), call. = FALSE)
+}
+
+.json_read_custom <- function(x) {
+    json_list <- GiottoUtils::read_json(x)
+    type <- json_list$type
+    
+    switch(tolower(type),
+        "featurecollection" = .json_read_feat_collection(json_list),
+        "geometrycollection" = .json_read_geom_collection(json_list)
+    )
+}
+
+
+
+.json_read_feat_collection <- function(x) {
+    vmsg(.is_debug = TRUE, "Reading FeatureCollection")
+    checkmate::assert_list(x)
+    p <- x$features
+    npoly <- length(p)
+    ids <- vapply(p, function(geom) geom$id, FUN.VALUE = character(1L))
+    mat <- lapply(seq_along(p), function(poly_i) {
+        coordslist <- p[[poly_i]]$geometry$coordinates
+        .json_coordslist_to_geommat(coordslist, poly_i)
+    }) |> do.call(what = rbind)
+    
+    sv <- terra::vect(mat, type = "polygon")
+    sv$poly_ID <- ids
+    sv
+}
+
+
+.json_read_geom_collection <- function(x) {
+    vmsg(.is_debug = TRUE, "Reading GeometryCollection")
+    checkmate::assert_list(x)
+    p <- x$geometries
+    npoly <- length(p)
+    
+    mat <- lapply(seq_len(npoly), function(poly_i) {
+        coordslist <- p[[poly_i]]$coordinates
+        .json_coordslist_to_geommat(coordslist, poly_i)
+    }) |>
+        do.call(what = rbind)
+    
+    sv <- terra::vect(mat, type = "polygon")
+    sv$poly_ID <- vapply(x$geometries, 
+        FUN.VALUE = character(1L), 
+        function(geom) geom$cell
+    )
+    sv
+}
+
+.json_coordslist_to_geommat <- function(x, idx) {
+    coords <- unlist(x)
+    nvtx <- length(coords) / 2 # div 2 since these are pairs
+    matrix(
+        c(
+            rep(idx, nvtx),          # geom
+            rep(1L, nvtx),           # part
+            coords[c(TRUE, FALSE)],  # x
+            coords[c(FALSE, TRUE)],  # y
+            rep(0L, nvtx)            # hole
+        ),
+        nrow = nvtx, 
+        ncol = 5,
+        byrow = FALSE
+    )
+}
+
