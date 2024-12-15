@@ -834,7 +834,7 @@ evaluate_input <- function(type, x, ...) {
         
         if (tolower(file_extension(spatial_info)) %in% c("geojson", "json")) {
             package_check("sf", repository = "CRAN")
-            spatial_info <- .try_json_read(spatial_info) # to spatvector
+            spatial_info <- .try_json_read_poly(spatial_info) # to spatvector
             spatial_info <- .evaluate_gpoly_spatvector(spatial_info)
             return(spatial_info)
         } else if (tolower(file_extension(spatial_info)) %in% c("shp", "wkt")) {
@@ -999,7 +999,7 @@ evaluate_input <- function(type, x, ...) {
 
 .try_json_read_poly <- function(x) {
     errors <- list()
-    res <- tryCatch(.json_read_custom(x), error = function(e) {
+    res <- tryCatch(.json_read_poly_custom(x), error = function(e) {
         errors$custom <- e$message
     })
     if (!inherits(res, "character")) return(res)
@@ -1016,19 +1016,19 @@ evaluate_input <- function(type, x, ...) {
     ), call. = FALSE)
 }
 
-.json_read_custom <- function(x) {
+.json_read_poly_custom <- function(x) {
     json_list <- GiottoUtils::read_json(x)
     type <- json_list$type
     
     switch(tolower(type),
-        "featurecollection" = .json_read_feat_collection(json_list),
-        "geometrycollection" = .json_read_geom_collection(json_list)
+        "featurecollection" = .json_read_poly_feat_collection(json_list),
+        "geometrycollection" = .json_read_poly_geom_collection(json_list)
     )
 }
 
 
 
-.json_read_feat_collection <- function(x) {
+.json_read_poly_feat_collection <- function(x) {
     vmsg(.is_debug = TRUE, "Reading FeatureCollection")
     checkmate::assert_list(x)
     p <- x$features
@@ -1036,7 +1036,7 @@ evaluate_input <- function(type, x, ...) {
     ids <- vapply(p, function(geom) geom$id, FUN.VALUE = character(1L))
     mat <- lapply(seq_along(p), function(poly_i) {
         coordslist <- p[[poly_i]]$geometry$coordinates
-        .json_coordslist_to_geommat(coordslist, poly_i)
+        .json_poly_coordslist_to_geommat(coordslist, poly_i)
     }) |> do.call(what = rbind)
     
     sv <- terra::vect(mat, type = "polygon")
@@ -1045,7 +1045,7 @@ evaluate_input <- function(type, x, ...) {
 }
 
 
-.json_read_geom_collection <- function(x) {
+.json_read_poly_geom_collection <- function(x) {
     vmsg(.is_debug = TRUE, "Reading GeometryCollection")
     checkmate::assert_list(x)
     p <- x$geometries
@@ -1053,7 +1053,7 @@ evaluate_input <- function(type, x, ...) {
     
     mat <- lapply(seq_len(npoly), function(poly_i) {
         coordslist <- p[[poly_i]]$coordinates
-        .json_coordslist_to_geommat(coordslist, poly_i)
+        .json_poly_coordslist_to_geommat(coordslist, poly_i)
     }) |>
         do.call(what = rbind)
     
@@ -1065,7 +1065,7 @@ evaluate_input <- function(type, x, ...) {
     sv
 }
 
-.json_coordslist_to_geommat <- function(x, idx) {
+.json_poly_coordslist_to_geommat <- function(x, idx) {
     coords <- unlist(x)
     nvtx <- length(coords) / 2 # div 2 since these are pairs
     matrix(
