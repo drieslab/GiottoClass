@@ -1032,13 +1032,18 @@ evaluate_input <- function(type, x, ...) {
     checkmate::assert_list(x)
     p <- x$features
     npoly <- length(p)
-    ids <- vapply(p, function(geom) geom$id, FUN.VALUE = character(1L))
+    
+    # SpatVector
     mat <- lapply(seq_along(p), function(poly_i) {
         coordslist <- p[[poly_i]]$geometry$coordinates
         .json_poly_coordslist_to_geommat(coordslist, poly_i)
     }) |> do.call(what = rbind)
     sv <- terra::vect(mat, type = "polygon")
-    sv$poly_ID <- ids
+    
+    # fields/attributes
+    fields <- .json_extract_fields(p)
+    if (nrow(fields) > 0L) terra::values(sv) <- fields
+    # return
     sv
 }
 
@@ -1048,16 +1053,18 @@ evaluate_input <- function(type, x, ...) {
     p <- x$geometries
     npoly <- length(p)
     
+    # SpatVector
     mat <- lapply(seq_len(npoly), function(poly_i) {
         coordslist <- p[[poly_i]]$coordinates
         .json_poly_coordslist_to_geommat(coordslist, poly_i)
     }) |>
         do.call(what = rbind)
     sv <- terra::vect(mat, type = "polygon")
-    sv$poly_ID <- vapply(x$geometries, 
-        FUN.VALUE = character(1L), 
-        function(geom) geom$cell
-    )
+    
+    # fields/attributes
+    fields <- .json_extract_fields(p)
+    if (nrow(fields) > 0L) terra::values(sv) <- fields
+    # return
     sv
 }
 
@@ -1078,3 +1085,77 @@ evaluate_input <- function(type, x, ...) {
     )
 }
 
+.json_extract_fields <- function(features) {
+    nfeat <- length(features)
+    
+    # Skip these GeoJSON structural fields
+    skip_fields <- c("coordinates", "type", "bbox")
+    
+    # Initialize results list
+    # fields vectors will be accumulated here
+    all_fields <- list()
+    
+    feat_i <- function(i) {
+        features[[i]]
+    }
+    
+    # Recursive function to process nested fields
+    process_field <- function(feat_fun, field_name) {
+        # get feature data from previous feature function
+        field_data <- feat_fun(1L) # detect from first feature
+        
+        # If it's a list/nested structure
+        if (is.list(field_data)) {
+            subfield_names <- names(field_data)
+            subfield_names <- subfield_names[!subfield_names %in% skip_fields]
+            # ignore any non-named lists/nesting
+            if (length(subfield_names) == 0L) return(NULL)
+            
+            # otherwise, recurse across subnesting
+            for (subfield in subfield_names) {
+                # Create the full field path
+                full_field_name <- paste(
+                    # `%` is used as an uncommon separator for possible cleanup
+                    c(field_name, subfield), collapse = "%"
+                )
+                subfeat_fun <- function(i) {
+                    feat_fun(i)[[subfield]]
+                }
+                process_field(subfeat_fun, full_field_name)
+            }
+        } else {
+            # evaluate actual field values
+            # skip if length > 1 (like array data)
+            if (length(field_data) > 1L) return(NULL)
+            
+            # base case: simple field
+            # return across all features
+            all_fields[[field_name]] <<- lapply(seq_len(nfeat), function(f_i) {
+                feat_fun(f_i)
+            }) |>
+                unlist()
+        }
+    }
+    
+    process_field(feat_fun = feat_i, field_name = NULL)
+    
+    # Convert to data frame
+    result_df <- do.call(data.frame, all_fields)
+    names(result_df) <- .json_extract_fields_prune_names(names(all_fields))
+    return(result_df)
+}
+
+.json_extract_fields_prune_names <- function(x) {
+    if (length(x) == 0L) return(x) # skip if none
+    checkmate::assert_character(x)
+    shortnames <- vapply(
+        strsplit(x, "%"), tail, n = 1L, FUN.VALUE = character(1L)
+    )
+    for (i in seq_along(x)) {
+        if (sum(duplicated(c(shortnames[[i]], x))) > 0) next
+        x[[i]] <- shortnames[[i]]
+    }
+    
+    # final cleanup
+    gsub("%", ".", x)
+}
