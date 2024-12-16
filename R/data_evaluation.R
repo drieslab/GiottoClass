@@ -732,7 +732,12 @@ evaluate_input <- function(type, x, ...) {
     if (sv_type != "polygons") {
         stop('SpatVector is of type "', sv_type, '" instead of "polygons"')
     }
-
+    
+    # 0. process spatvector
+    # strip crs info
+    terra::set.crs(input_sv, NULL)
+    # ensure valid
+    input_sv <- terra::makeValid(input_sv)
 
     col_classes <- vapply(
         sample(x = input_sv, size = 1L),
@@ -771,12 +776,7 @@ evaluate_input <- function(type, x, ...) {
     }
     sv_names[[poly_ID_col]] <- "poly_ID"
     terra::set.names(input_sv, sv_names)
-
-    # strip crs info
-    terra::set.crs(input_sv, NULL)
-    
-    # ensure valid
-    input_sv <- terra::makeValid(input_sv)
+    input_sv[[poly_ID_col]] <- make.unique(`$`(input_sv, poly_ID_col))
 
     unique_IDs <- NULL
     if (col_classes[[poly_ID_col]] != "character") {
