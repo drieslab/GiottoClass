@@ -775,7 +775,8 @@ evaluate_input <- function(type, x, ...) {
     }
     sv_names[[poly_ID_col]] <- "poly_ID"
     terra::set.names(input_sv, sv_names)
-    input_sv[[poly_ID_col]] <- make.unique(`$`(input_sv, poly_ID_col))
+    input_sv[[poly_ID_col]] <- terra::values(input_sv)[[poly_ID_col]] |>
+        make.unique()
 
     unique_IDs <- NULL
     if (col_classes[[poly_ID_col]] != "character") {
