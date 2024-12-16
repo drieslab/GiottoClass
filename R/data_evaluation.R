@@ -725,6 +725,7 @@ evaluate_input <- function(type, x, ...) {
 #' @noRd
 .evaluate_gpoly_spatvector <- function(
         input_sv,
+        make_valid = FALSE,
         verbose = TRUE) {
     # determine sv type
     sv_type <- terra::geomtype(input_sv)
@@ -737,7 +738,7 @@ evaluate_input <- function(type, x, ...) {
     # strip crs info
     terra::set.crs(input_sv, NULL)
     # ensure valid
-    input_sv <- terra::makeValid(input_sv)
+    if (make_valid) input_sv <- terra::makeValid(input_sv)
 
     col_classes <- vapply(
         sample(x = input_sv, size = 1L),
@@ -775,8 +776,11 @@ evaluate_input <- function(type, x, ...) {
     }
     sv_names[[poly_ID_col]] <- "poly_ID"
     terra::set.names(input_sv, sv_names)
-    input_sv[[poly_ID_col]] <- terra::values(input_sv)[[poly_ID_col]] |>
-        make.unique()
+    unique_names <- make.unique(terra::values(input_sv)[[poly_ID_col]])
+    # only select as many names as there are poly geometries.
+    # With `makeValid()`, if a polygon is lost due to the process, the 
+    # attributes table length ends up being longer than the number of geoms.
+    input_sv[[poly_ID_col]] <- unique_names[seq_len(nrow(input_sv))]
 
     unique_IDs <- NULL
     if (col_classes[[poly_ID_col]] != "character") {
@@ -808,6 +812,7 @@ evaluate_input <- function(type, x, ...) {
 #' giottoPolygon creation
 #' @param spatial_info spatial information to evaluate
 #' @param skip_eval_dfr (default FALSE) skip evaluation of data.frame like input
+#' @param make_valid logical. Whether to run `terra::makeValid()`
 #' @param copy_dt (default TRUE) if segmdfr is provided as dt, this determines
 #' whether a copy is made
 #' @param cores how many cores to use
@@ -819,6 +824,7 @@ evaluate_input <- function(type, x, ...) {
         spatial_info,
         skip_eval_dfr = FALSE,
         copy_dt = TRUE,
+        make_valid = FALSE,
         cores = determine_cores(),
         verbose = TRUE) {
     # NSE vars
@@ -833,13 +839,14 @@ evaluate_input <- function(type, x, ...) {
         }
         
         if (tolower(file_extension(spatial_info)) %in% c("geojson", "json")) {
-            package_check("sf", repository = "CRAN")
             spatial_info <- .json_try_read_poly(spatial_info) # to spatvector
-            spatial_info <- .evaluate_gpoly_spatvector(spatial_info)
+            spatial_info <- .evaluate_gpoly_spatvector(
+                spatial_info, make_valid = make_valid, verbose = verbose)
             return(spatial_info)
         } else if (tolower(file_extension(spatial_info)) %in% c("shp", "wkt")) {
             spatial_info <- terra::vect(spatial_info)
-            spatial_info <- .evaluate_gpoly_spatvector(spatial_info)
+            spatial_info <- .evaluate_gpoly_spatvector(
+                spatial_info, make_valid = make_valid, verbose = verbose)
             return(spatial_info)
         } else {
             spatial_info <- data.table::fread(
@@ -856,7 +863,8 @@ evaluate_input <- function(type, x, ...) {
 
         ## 1.3 SpatVector input
     } else if (inherits(spatial_info, "SpatVector")) {
-        spatial_info <- .evaluate_gpoly_spatvector(spatial_info)
+        spatial_info <- .evaluate_gpoly_spatvector(
+            spatial_info, make_valid = make_valid, verbose = verbose)
         return(spatial_info)
 
         ## 1.4 Other inputs
