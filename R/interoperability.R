@@ -1167,7 +1167,7 @@ giottoToAnnData <- function(
 #' @param gobject Giotto object
 #' @param obj_use Giotto object (deprecated, use gobject)
 #' @param spat_unit spatial unit (e.g. 'cell')
-#' @param ... additional params to pass to \code{\link{get_spatial_locations}}
+#' @param ... additional params to pass to \code{\link{getSpatialLocations}}
 #' @returns Seurat object
 #' @export
 giottoToSeurat <- function(
@@ -1190,7 +1190,7 @@ giottoToSeurat <- function(
 #' The default values are 'cell' and 'rna' respectively.
 #' @param gobject Giotto object
 #' @param spat_unit spatial unit (e.g. 'cell')
-#' @param ... additional params to pass to \code{\link{get_spatial_locations}}
+#' @param ... additional params to pass to \code{\link{getSpatialLocations}}
 #' @returns Seurat object
 #' @keywords seurat interoperability
 #' @export
@@ -1464,7 +1464,7 @@ giottoToSeuratV4 <- function(
 #' @param gobject Giotto object
 #' @param spat_unit spatial unit (e.g. 'cell')
 #' @param res_type type of 10x image output resolution
-#' @param ... additional params to pass to \code{\link{get_spatial_locations}}
+#' @param ... additional params to pass to \code{\link{getSpatialLocations}}
 #' @returns Seurat object
 #' @keywords seurat interoperability
 #' @export

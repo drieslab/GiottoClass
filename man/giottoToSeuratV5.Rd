@@ -19,7 +19,7 @@ giottoToSeuratV5(
 
 \item{res_type}{type of 10x image output resolution}
 
-\item{...}{additional params to pass to \code{\link{get_spatial_locations}}}
+\item{...}{additional params to pass to \code{\link{getSpatialLocations}}}
 }
 \value{
 Seurat object
