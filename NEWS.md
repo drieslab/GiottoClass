@@ -1,7 +1,13 @@
+# GiottoClass 0.4.6
+
+## bug fixes
+- fix `calculateOverlap()` when there are duplicate poly_IDs
+- fix poly_ID generation when `terra::makeValid()` increases number of polys
+
+
 # GiottoClass 0.4.5 (2024/12/09)
 
 ## enhancements
-
 - `spatUnit()<-` and `featType()<-` `list` methods
 - `set_default_spat_unit()` and `set_default_feat_type()` now look for defaults when given `NA_character_` inputs as well.
 - `update_giotto_params()` can now be turned off with `options("giotto.update_param" = FALSE)`
