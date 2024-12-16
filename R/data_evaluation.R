@@ -745,7 +745,6 @@ evaluate_input <- function(type, x, ...) {
         FUN.VALUE = character(1L)
     )
 
-
     # 1. detect poly_ID
     ## find poly_ID as either first character col or named column
     ## if neither exist, pick the 1st column
@@ -834,7 +833,7 @@ evaluate_input <- function(type, x, ...) {
         
         if (tolower(file_extension(spatial_info)) %in% c("geojson", "json")) {
             package_check("sf", repository = "CRAN")
-            spatial_info <- .try_json_read_poly(spatial_info) # to spatvector
+            spatial_info <- .json_try_read_poly(spatial_info) # to spatvector
             spatial_info <- .evaluate_gpoly_spatvector(spatial_info)
             return(spatial_info)
         } else if (tolower(file_extension(spatial_info)) %in% c("shp", "wkt")) {
@@ -997,7 +996,7 @@ evaluate_input <- function(type, x, ...) {
 
 # json poly reading ####
 
-.try_json_read_poly <- function(x) {
+.json_try_read_poly <- function(x) {
     errors <- list()
     res <- tryCatch(.json_read_poly_custom(x), error = function(e) {
         errors$custom <<- e$message
@@ -1038,12 +1037,10 @@ evaluate_input <- function(type, x, ...) {
         coordslist <- p[[poly_i]]$geometry$coordinates
         .json_poly_coordslist_to_geommat(coordslist, poly_i)
     }) |> do.call(what = rbind)
-    
     sv <- terra::vect(mat, type = "polygon")
     sv$poly_ID <- ids
     sv
 }
-
 
 .json_read_poly_geom_collection <- function(x) {
     vmsg(.is_debug = TRUE, "Reading GeometryCollection")
@@ -1056,7 +1053,6 @@ evaluate_input <- function(type, x, ...) {
         .json_poly_coordslist_to_geommat(coordslist, poly_i)
     }) |>
         do.call(what = rbind)
-    
     sv <- terra::vect(mat, type = "polygon")
     sv$poly_ID <- vapply(x$geometries, 
         FUN.VALUE = character(1L), 
