@@ -1000,12 +1000,12 @@ evaluate_input <- function(type, x, ...) {
 .try_json_read_poly <- function(x) {
     errors <- list()
     res <- tryCatch(.json_read_poly_custom(x), error = function(e) {
-        errors$custom <- e$message
+        errors$custom <<- e$message
     })
     if (!inherits(res, "character")) return(res)
 
     res <- tryCatch(terra::vect(x), error = function(e) {
-        errors$terra <- e$message
+        errors$terra <<- e$message
     })
     if (!inherits(res, "character")) return(res)
     
