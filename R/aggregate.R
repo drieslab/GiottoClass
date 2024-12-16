@@ -50,7 +50,7 @@ polygon_to_raster <- function(polygon, field = NULL) {
     }
 
     # ensure that field is numerical
-    polygon$poly_i <- seq_len(nrow(unique(polygon[[field]])))
+    polygon$poly_i <- seq_len(nrow(polygon))
     poly_rast <- terra::rasterize(x = polygon, r, field = "poly_i")
 
     poly_ID_vector <- polygon[[field]][, 1]
