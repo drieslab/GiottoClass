@@ -1458,6 +1458,7 @@ giottoToSeuratV4 <- function(gobject,
 #' The default values are 'cell' and 'rna' respectively.
 #' @param gobject Giotto object
 #' @param spat_unit spatial unit (e.g. 'cell')
+#' @param tech technology the dataset is using (e.g. "Visium")
 #' @param res_type type of 10x image output resolution
 #' @param ... additional params to pass to \code{\link{get_spatial_locations}}
 #' @returns Seurat object
@@ -1465,14 +1466,14 @@ giottoToSeuratV4 <- function(gobject,
 #' @export
 giottoToSeuratV5 <- function(gobject,
     spat_unit = NULL,
-    dataType,
+    tech = c("Visium", "Xenium", "Slide-seq"),
     res_type = c("hires", "lowres", "fullres"),
     ...) {
     # data.table vars
     feat_type <- name <- dim_type <- nn_type <- NULL
-
-    res_type <- match.arg(res_type, choices = c("hires", "lowres", "fullres"))
-
+    tech <- match.arg(tech,
+                      choices = c("Visium", "Xenium", "Slide-seq")
+      )
     # set default spat_unit and feat_type to be extracted as a Seurat assay
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -1796,8 +1797,8 @@ giottoToSeuratV5 <- function(gobject,
                 # since we allow use non-lowres images
             )
             # see https://github.com/satijalab/seurat/issues/3595
-            if (dataType != 0){
-              if(dataType == "xenium"){
+            if (tech != 0){
+              if(tech == "Xenium"){
                 coord1 <- coord
                 coord$cell_id <- rownames(coord)
                 coord <- coord[, c("cell_id", "imagerow", "imagecol")]
