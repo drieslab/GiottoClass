@@ -50,7 +50,7 @@ polygon_to_raster <- function(polygon, field = NULL) {
     }
 
     # ensure that field is numerical
-    polygon$poly_i <- seq_len(nrow(unique(polygon[[field]])))
+    polygon$poly_i <- seq_len(nrow(polygon))
     poly_rast <- terra::rasterize(x = polygon, r, field = "poly_i")
 
     poly_ID_vector <- polygon[[field]][, 1]
@@ -121,7 +121,7 @@ polygon_to_raster <- function(polygon, field = NULL) {
 #' overlaps_z1$rna
 #'
 #' # overlap image to get sum intensities per cell
-#' out_img <- calculateOverlap(gpoly, gimg)
+#' out_img <- calculateOverlap(gpoly, gimg, progress = FALSE)
 #' overlaps_img <- overlaps(out_img)
 #' overlaps_img$intensity
 #'
@@ -1350,11 +1350,10 @@ setMethod(
 
         # ensure data exists
         if (is.null(overlaps_data)) {
-            .gstop(
+            stop(wrap_txt(
                 "No overlaps found between", objName(x), "and", feat_info, "
-        Please run calculateOverlap() first.",
-                .n = 2L
-            )
+                Please run calculateOverlap() first."
+            ), call. = FALSE)
         }
 
         argslist <- list(

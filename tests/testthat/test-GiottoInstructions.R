@@ -55,7 +55,8 @@ test_that("instructions returns expected list", {
 
 # change GiottoInstructions
 instructions(gobject,
-             param = c("show_plot", "save_plot")) <- list(FALSE, TRUE)
+    param = c("show_plot", "save_plot")
+) <- list(FALSE, TRUE)
 
 test_that("change GiottoInstructions changes instruction params in object", {
     expect_false(instructions(gobject, param = "show_plot"))

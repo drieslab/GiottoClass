@@ -120,7 +120,7 @@ fDataDT <- function(
 #' @param gobject `giotto` object
 #' @param spat_unit spatial unit
 #' @param feat_type feature type
-#' @param annotation_vector named `character` vector. Vector names are labels 
+#' @param annotation_vector named `character` vector. Vector names are labels
 #' in the cluster column. Labels to assign are the vector values.
 #' @param cluster_column `character`. Cell metaadata column to map annotation
 #'  values based on.
@@ -232,7 +232,7 @@ annotateGiotto <- function(
 
     data.table::setnames(cell_metadata[], old = "temp_cluster_name", new = name)
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    gobject <- setGiotto(gobject, cell_metadata, 
+    gobject <- setGiotto(gobject, cell_metadata,
         verbose = FALSE, initialize = FALSE
     )
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###

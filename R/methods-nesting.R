@@ -85,6 +85,9 @@ setMethod("spatUnit", signature = "spatData", function(x) x@spat_unit)
 #' @export
 setMethod("spatUnit", signature("giottoPolygon"), function(x) x@name)
 
+#' @rdname spatUnit-generic
+#' @export
+setMethod("spatUnit<-", signature("ANY"), function(x, value) x)
 
 #' @describeIn spatUnit-generic Set spatial unit information
 #' @export
@@ -103,7 +106,20 @@ setMethod("spatUnit<-", signature("giottoPolygon"), function(x, value) {
     x
 })
 
-
+#' @rdname spatUnit-generic
+#' @export
+setMethod("spatUnit<-", signature = "list", function(x, value) {
+    if (length(x) != length(value)) {
+        stop("Number of names to set must be the same as the length of list",
+             call. = FALSE
+        )
+    }
+    lapply(seq_along(x), function(i) {
+        y <- x[[i]]
+        spatUnit(y) <- value[[i]]
+        return(y)
+    })
+})
 
 
 
@@ -128,6 +144,9 @@ setMethod("featType", signature("list"), function(x) {
 #' @export
 setMethod("featType", signature = "featData", function(x) x@feat_type)
 
+#' @rdname featType-generic
+#' @export
+setMethod("featType<-", signature("ANY"), function(x, value) x)
 
 #' @describeIn featType-generic Set feature type information
 #' @export
@@ -137,7 +156,20 @@ setMethod("featType<-", signature = "featData", function(x, value) {
     x
 })
 
-
+#' @rdname featType-generic
+#' @export
+setMethod("featType<-", signature = "list", function(x, value) {
+    if (length(x) != length(value)) {
+        stop("Number of names to set must be the same as the length of list",
+             call. = FALSE
+        )
+    }
+    lapply(seq_along(x), function(i) {
+        y <- x[[i]]
+        featType(y) <- value[[i]]
+        return(y)
+    })
+})
 
 
 

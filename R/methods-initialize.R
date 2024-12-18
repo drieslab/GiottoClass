@@ -383,10 +383,12 @@ setMethod(
 
 
         # SLOT CHECKS ####
-        
+
         # option to skip checks
-        if (!getOption("giotto.check_valid", TRUE)) return(.Object)
-        
+        if (!getOption("giotto.check_valid", TRUE)) {
+            return(.Object)
+        }
+
         vmsg(.is_debug = TRUE, .initial = "  ", "!!giotto validity run!!")
 
         ## Metadata ##
@@ -669,9 +671,9 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
         .Object@extent <- .ext_to_num_vec(ext(d))
     }
 
-    .Object@funs$realize_magick <- function(tempname = "preview", size = 5e5) {
+    .Object@funs$realize_magick <- function(filename = NULL, size = 5e5) {
         mg <- .gaffine_realize_magick(.Object, size = size)
-        gimg <- .magick_preview(mg@mg_object, tempname = tempname) %>%
+        gimg <- .magick_preview(mg@mg_object, filename = filename) %>%
             createGiottoLargeImage()
         ext(gimg) <- ext(.Object)
 

@@ -11,7 +11,9 @@ saveGiotto(
   method = c("RDS", "qs"),
   method_params = list(),
   overwrite = FALSE,
+  export_image = TRUE,
   image_filetype = "PNG",
+  include_feat_coord = TRUE,
   verbose = TRUE,
   ...
 )
@@ -29,9 +31,16 @@ saveGiotto(
 
 \item{overwrite}{Overwrite existing folders}
 
+\item{export_image}{logical. Write out an image of the format specified by
+\code{image_filetype} when saving a \code{giottoLargeImage}.
+Future image loads and reconnects will point to this new file.}
+
 \item{image_filetype}{the image filetype to use, see
 \code{\link[terra]{writeRaster}}. Default is "PNG". For TIFF outputs, try
 "COG"}
+
+\item{include_feat_coord}{logical. Whether to keep the feature coordinates
+when saving. Dropping them can improve performance for large datasets.}
 
 \item{verbose}{be verbose}
 

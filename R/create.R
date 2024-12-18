@@ -161,7 +161,7 @@ createGiottoObject <- function(
     #     "trendsceek", "multinet", "RTriangle", "FactoMineR"
     # )
     #
-    # pack_index <- extra_packages %in% rownames(utils::installed.packages())
+    # pack_index <- extra_packages %in% rownames(installed.packages())
     # extra_installed_packages <- extra_packages[pack_index]
     # extra_not_installed_packages <- extra_packages[!pack_index]
     #
@@ -2248,7 +2248,11 @@ create_giotto_points_object <- function(
 #' @param x input. Filepath to a .GeoJSON or a mask image file. Can also be a
 #' data.frame with vertex 'x', 'y', and 'poly_ID' information.
 #' @param name name for polygons
-#' @param calc_centroids calculate centroids for polygons
+#' @param calc_centroids logical. (default `FALSE`) calculate centroids for 
+#' polygons
+#' @param make_valid logical. (default `FALSE`) Whether to run 
+#' [terra::makeValid()] on the geometries. Setting this to `TRUE` may cause
+#' read-in polygon attribute information to become out of sync.
 #' @param verbose be verbose
 #' @returns giottoPolygon
 NULL
@@ -2418,7 +2422,8 @@ setMethod(
 
 
 #' @rdname createGiottoPolygon
-#' @param maskfile path to mask file
+#' @param maskfile path to mask file, a terra `SpatRaster`, or some other
+#' data class readable by [terra::rast()]
 #' @param mask_method how the mask file defines individual segmentation
 #' annotations. See *mask_method* section
 #' @param name character. Name to assign created `giottoPolygon`
@@ -2521,15 +2526,16 @@ createGiottoPolygonsFromMask <- function(maskfile,
 
     # if maskfile input is not a spatraster, read it in as spatraster
     # if it is spatraster, skip
-    if (!inherits(maskfile, "SpatRaster")) {
+    if (inherits(maskfile, "SpatRaster")) {
+        terra_rast <- maskfile
+    } else if (is.character(maskfile)) {
         # check if mask file exists
         maskfile <- path.expand(maskfile)
-        if (!file.exists(maskfile)) {
-            stop("path : ", maskfile, " does not exist \n")
-        }
+        checkmate::assert_file_exists(maskfile)
         terra_rast <- .create_terra_spatraster(maskfile)
     } else {
-        terra_rast <- maskfile
+        # assume some other class readable by terra::rast()
+        terra_rast <- .create_terra_spatraster(maskfile)
     }
 
     # create polygons from mask
@@ -2588,12 +2594,6 @@ createGiottoPolygonsFromMask <- function(maskfile,
         "multiple" = {
             names(terra_polygon) <- "poly_ID"
             if (is.null(poly_IDs)) {
-                # spatVecDT[, geom := naming_fun(ID_fmt, geom)]
-                # spatVecDT[, (val_col) := naming_fun(ID_fmt, get(val_col))]
-                # g_polygon <- createGiottoPolygonsFromDfr(
-                #   segmdfr = spatVecDT[, .(x, y, get(val_col))]
-                # )
-                # g_polygon@spatVector
                 terra_polygon$poly_ID <- naming_fun(
                     ID_fmt,
                     terra_polygon$poly_ID
@@ -2627,14 +2627,14 @@ createGiottoPolygonsFromMask <- function(maskfile,
     if (identical(shift_vertical_step, TRUE)) {
         shift_vertical_step <- rast_dimensions[1] # nrows of raster
     } else if (is.numeric(shift_vertical_step)) {
-        shift_vertical_step <- shift_vertical_step
+        shift_vertical_step <- rast_dimensions[1] * shift_vertical_step
     } else {
         shift_vertical_step <- 0
     }
     if (identical(shift_horizontal_step, TRUE)) {
         shift_horizontal_step <- rast_dimensions[2] # ncols of raster
     } else if (is.numeric(shift_horizontal_step)) {
-        shift_horizontal_step <- shift_horizontal_step
+        shift_horizontal_step <- rast_dimensions[2] * shift_horizontal_step
     } else {
         shift_horizontal_step <- 0
     }
@@ -2719,8 +2719,8 @@ createGiottoPolygonsFromMask <- function(maskfile,
 #' polygon referenced by poly_ID. See details for how columns are selected for
 #' coordinate and ID information.
 #' @param name name for the \code{giottoPolygon} object
-#' @param calc_centroids (default FALSE) calculate centroids for polygons
-#' @param skip_eval_dfr (default FALSE) skip evaluation of provided dataframe
+#' @param skip_eval_dfr logical. (default FALSE) skip evaluation of provided 
+#' dataframe
 #' @param copy_dt (default TRUE) if segmdfr is provided as dt, this determines
 #' whether a copy is made
 #' @param verbose be verbose
@@ -2738,11 +2738,13 @@ createGiottoPolygonsFromDfr <- function(
         segmdfr,
         name = "cell",
         calc_centroids = FALSE,
+        make_valid = FALSE,
         verbose = TRUE,
         skip_eval_dfr = FALSE,
         copy_dt = TRUE) {
     eval_list <- .evaluate_spatial_info(
         spatial_info = segmdfr,
+        make_valid = make_valid,
         skip_eval_dfr = skip_eval_dfr,
         copy_dt = copy_dt,
         verbose = verbose
@@ -2780,7 +2782,6 @@ createGiottoPolygonsFromDfr <- function(
 #' @rdname createGiottoPolygon
 #' @param GeoJSON path to .GeoJSON file
 #' @param name name for the \code{giottoPolygon} object created
-#' @param calc_centroids (default FALSE) calculate centroids for polygons
 #' @param verbose be verbose
 #' @concept polygon
 #' @export
@@ -2788,9 +2789,11 @@ createGiottoPolygonsFromGeoJSON <- function(
         GeoJSON,
         name = "cell",
         calc_centroids = FALSE,
+        make_valid = FALSE,
         verbose = TRUE) {
     eval_list <- .evaluate_spatial_info(
         spatial_info = GeoJSON,
+        make_valid = make_valid,
         verbose = verbose
     )
 
@@ -3174,7 +3177,8 @@ createGiottoImage <- function(
 #' @name createGiottoLargeImage
 #' @description Creates a large giotto image that can be added to a Giotto
 #' subcellular object. Generates deep copy of SpatRaster
-#' @param raster_object terra SpatRaster image object
+#' @param raster_object filepath to an image, a terra `SpatRaster` or, other format
+#' openable via [terra::rast()]
 #' @param name name for the image
 #' @param negative_y Map image to negative y spatial values if TRUE. Meaning
 #' that origin is in upper left instead of lower left.
@@ -3216,42 +3220,25 @@ createGiottoLargeImage <- function(
     # create minimum giotto
     g_imageL <- new("giottoLargeImage", name = name)
 
-
     ## 1. check raster object and load as SpatRaster if necessary
-    if (!inherits(raster_object, "SpatRaster")) {
-        if (file.exists(raster_object)) {
-            g_imageL@file_path <- raster_object
-            raster_object <- .create_terra_spatraster(
-                image_path = raster_object
-            )
-        } else {
-            stop("raster_object needs to be a 'SpatRaster' object from the
-                terra package or \n an existing path that can be read by
-                terra::rast()")
-        }
-    }
-
-    # Prevent updates to original raster object input
-    if (getNamespaceVersion("terra") >= "1.15-12") {
+    if (inherits(raster_object, "SpatRaster")) {
+        # Prevent updates to original raster object input
         raster_object <- terra::deepcopy(raster_object)
+    } else if (is.character(raster_object)) {
+        checkmate::assert_file_exists(raster_object)
+        g_imageL@file_path <- raster_object
+        raster_object <- .create_terra_spatraster(raster_object)
     } else {
-        # raster_object = terra::copy(raster_object)
-        if (isTRUE(verbose)) {
-            warning("\n If largeImage was created from a terra raster object,
-                    manipulations to the giotto image may be reflected in the
-                    raster object as well. Update terra to >= 1.15-12 to avoid
-                    this issue. \n")
-        }
+        # assume class readable by terra rast
+        raster_object <- .create_terra_spatraster(raster_object)
     }
 
 
     ## 2. image bound spatial extent
-    if (use_rast_ext == TRUE) {
+    if (use_rast_ext) {
         extent <- terra::ext(raster_object)
-        if (verbose == TRUE) {
-            wrap_msg("use_rast_ext == TRUE, extent from input raster_object will
-                be used.")
-        }
+        vmsg(.v = verbose, "use_rast_ext == TRUE
+        extent from input raster_object will be used.")
     }
 
     # By extent object (priority)

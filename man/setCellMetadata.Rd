@@ -52,7 +52,6 @@ setCellMetadata(gobject = g, x = createCellMetaObj(m2))
 }
 \seealso{
 Other functions to set data in giotto object: 
-\code{\link{get_feat_id}()},
 \code{\link{setDimReduction}()},
 \code{\link{setExpression}()},
 \code{\link{setFeatureInfo}()},
@@ -66,7 +65,6 @@ Other functions to set data in giotto object:
 \code{\link{setSpatialGrid}()},
 \code{\link{setSpatialLocations}()},
 \code{\link{setSpatialNetwork}()},
-\code{\link{set_feat_id}()},
 \code{\link{set_multiomics}()}
 }
 \concept{functions to set data in giotto object}

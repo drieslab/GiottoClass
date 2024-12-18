@@ -285,14 +285,19 @@ get_adj_rescale_img <- function(
 # can be loaded in with terra or used with getOption("viewer")() downstream
 # based on magick:::image_preview()
 # accepts a single `magick-image` object
-.magick_preview <- function(x, tempname = "preview") {
+# only returns depth 8 images. DO NOT use for analyzed values
+.magick_preview <- function(x,
+    basename = "preview",
+    filename = NULL) {
     stopifnot(inherits(x, "magick-image"))
     stopifnot(length(x) == 1L)
     format <- tolower(magick::image_info(x[1])$format)
-    tmp <- file.path(tempdir(), paste(tempname, format, sep = "."))
+    if (is.null(filename)) {
+        filename <- file.path(tempdir(), paste(basename, format, sep = "."))
+    }
     vmsg(.is_debug = TRUE, "`.magick_preview()` saving as", format)
-    image_write(x, path = tmp, format = format, depth = 8)
-    return(tmp)
+    magick::image_write(x, path = filename, format = format, depth = 8)
+    return(filename)
 }
 
 #' @title addGiottoImageMG
@@ -680,7 +685,7 @@ reconnect_giottoImage_MG <- function(giottoImage,
 #' @keywords internal
 #' @returns spatRaster object
 .create_terra_spatraster <- function(image_path) {
-    raster_object <- try(suppressWarnings(terra::rast(x = image_path)))
+    raster_object <- try(handle_warnings(terra::rast(x = image_path))$result)
     if (inherits(raster_object, "try-error")) {
         stop(raster_object, " can not be read by terra::rast() \n")
     }
@@ -2740,6 +2745,40 @@ add_img_array_alpha <- function(
     return(x_alpha)
 }
 
+
+
+
+
+# doDeferred ####
+
+#' @name doDeferred
+#' @title Perform deferred/lazy operations
+#' @description Force deferred/lazy operations.
+#' @param x object to force deferred operations in
+#' @param ... additional args to pass
+NULL
+
+#' @rdname doDeferred
+#' @param size numeric. Minimum number of image pixels to render when
+#' evaluating
+#' @param filename character. Full filepath to write the rendered image to. If
+#' `NULL`, a file in `tempdir()` will be generated.
+#' @examples
+#' gimg <- GiottoData::loadSubObjectMini("giottoLargeImage")
+#' affimg <- spin(gimg, 45) # lazily performs affine
+#'
+#' # force the affine operation and render the output with at least 5e5 px
+#' gimg2 <- doDeferred(affimg, size = 5e5)
+#' # **This is mainly intended for visualization.**
+#' # This process saves with image depth of 8.
+#' # Spatially transformed raster values are not preferred for analysis
+#' @export
+setMethod(
+    "doDeferred", signature("giottoAffineImage"),
+    function(x, size = 5e5, filename = NULL, ...) {
+        x@funs$realize_magick(filename = filename, size = size, ...)
+    }
+)
 
 
 

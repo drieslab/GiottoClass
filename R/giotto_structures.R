@@ -453,7 +453,7 @@ smoothGiottoPolygons <- function(
     x_colname = NULL,
     y_colname = NULL,
     feat_ID_colname = NULL,
-    verbose = TRUE) {
+    verbose = NULL) {
     x <- data.table::as.data.table(x)
 
     # MANUAL OPTION
@@ -525,27 +525,26 @@ smoothGiottoPolygons <- function(
     }
 
     ## message and force data type
-    if (isTRUE(verbose)) {
-        message(paste0(
-            '  Selecting col "',
-            colnames(x[, feat_ID_col, with = FALSE]),
-            '" as feat_ID column'
-        ))
-    }
+    vmsg(
+        .v = verbose, .initial = "  ",
+        sprintf(
+            "Selecting col \"%s\" as feat_ID column",
+            colnames(x[, feat_ID_col, with = FALSE])
+        )
+    )
     colnames(x)[feat_ID_col] <- "feat_ID"
     if (!inherits(x$feat_ID, "character")) {
         x$feat_ID <- as.character(x$feat_ID) # ensure char
     }
 
-
-    if (isTRUE(verbose)) {
-        message(paste0(
-            '  Selecting cols "',
-            colnames(x[, x_col, with = FALSE]), '" and "',
-            colnames(x[, y_col, with = FALSE]),
-            '" as x and y respectively'
-        ))
-    }
+    vmsg(
+        .v = verbose, .initial = "  ",
+        sprintf(
+            "Selecting cols \"%s\" and \"%s\" as x and y respectively",
+            colnames(x[, x_col, with = FALSE]),
+            colnames(x[, y_col, with = FALSE])
+        )
+    )
     colnames(x)[x_col] <- "x"
     colnames(x)[y_col] <- "y"
     if (!inherits(x$x, "numeric")) x$x <- as.numeric(x$x) # ensure numeric

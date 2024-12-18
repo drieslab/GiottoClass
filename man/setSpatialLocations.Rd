@@ -57,7 +57,6 @@ Other spatial location data accessor functions:
 \code{\link{getSpatialLocations}()}
 
 Other functions to set data in giotto object: 
-\code{\link{get_feat_id}()},
 \code{\link{setCellMetadata}()},
 \code{\link{setDimReduction}()},
 \code{\link{setExpression}()},
@@ -71,7 +70,6 @@ Other functions to set data in giotto object:
 \code{\link{setSpatialEnrichment}()},
 \code{\link{setSpatialGrid}()},
 \code{\link{setSpatialNetwork}()},
-\code{\link{set_feat_id}()},
 \code{\link{set_multiomics}()}
 }
 \concept{functions to set data in giotto object}

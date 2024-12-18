@@ -55,7 +55,6 @@ A data.table with a cell_ID column and whichever feats were
 requested
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}\cr
 Retrieve specific values from the \code{giotto} object for a specific \code{spat_unit}
 and \code{feat_type}. Values are returned as a data.table with the features
 requested and a \code{cell_ID} column. This function may be updated in the future

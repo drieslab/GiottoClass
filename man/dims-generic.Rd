@@ -2,6 +2,7 @@
 % Please edit documentation in R/methods-dims.R
 \name{dims-generic}
 \alias{dims-generic}
+\alias{nrow,giotto-method}
 \alias{nrow,giottoPoints-method}
 \alias{nrow,giottoPolygon-method}
 \alias{nrow,spatLocsObj-method}
@@ -10,10 +11,12 @@
 \alias{nrow,spatialNetworkObj-method}
 \alias{nrow,enrData-method}
 \alias{nrow,dimObj-method}
+\alias{ncol,giotto-method}
 \alias{ncol,exprData-method}
 \alias{ncol,metaData-method}
 \alias{ncol,enrData-method}
 \alias{ncol,dimObj-method}
+\alias{dim,giotto-method}
 \alias{dim,spatLocsObj-method}
 \alias{dim,exprData-method}
 \alias{dim,metaData-method}
@@ -23,6 +26,8 @@
 \alias{dim,giottoPoints-method}
 \title{Dimensions of giotto objects}
 \usage{
+\S4method{nrow}{giotto}(x)
+
 \S4method{nrow}{giottoPoints}(x)
 
 \S4method{nrow}{giottoPolygon}(x)
@@ -39,6 +44,8 @@
 
 \S4method{nrow}{dimObj}(x)
 
+\S4method{ncol}{giotto}(x)
+
 \S4method{ncol}{exprData}(x)
 
 \S4method{ncol}{metaData}(x)
@@ -46,6 +53,8 @@
 \S4method{ncol}{enrData}(x)
 
 \S4method{ncol}{dimObj}(x)
+
+\S4method{dim}{giotto}(x)
 
 \S4method{dim}{spatLocsObj}(x)
 
