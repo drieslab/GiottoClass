@@ -1463,7 +1463,7 @@ giottoToSeuratV4 <- function(
 #' The default values are 'cell' and 'rna' respectively.
 #' @param gobject Giotto object
 #' @param spat_unit spatial unit (e.g. 'cell')
-#' @param tech technology the dataset is using (e.g. "Visium")
+#' @param tech technology the dataset is using (e.g. "Visium","Xenium", "Slide-seq")
 #' @param res_type type of 10x image output resolution
 #' @param ... additional params to pass to \code{\link{getSpatialLocations}}
 #' @returns Seurat object
