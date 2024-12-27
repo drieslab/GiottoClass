@@ -2594,6 +2594,7 @@ seuratToGiottoV5 <- function(
     }
 
     if (exists("gpolygon")) {
+      if(exists("polygon_list"))
         gobject <- addGiottoPolygons(
             gobject = gobject,
             gpolygons = polygon_list
