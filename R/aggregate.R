@@ -380,6 +380,29 @@ setMethod(
     }
 )
 
+#' @rdname calculateOverlap
+#' @export
+setMethod(
+    "calculateOverlap", signature(x = "giottoPolygon", y = "giottoAffineImage"),
+    function(x, y,
+        name_overlap = NULL,
+        poly_subset_ids = NULL,
+        return_gpolygon = TRUE,
+        verbose = TRUE,
+        ...
+    ) {
+        aff <- y@affine
+        calculateOverlap(
+            x = affine(x, aff, inv = TRUE),
+            y = y@raster_object,
+            name_overlap = objName(y),
+            poly_subset_ids = poly_subset_ids,
+            verbose = verbose,
+            ...
+        )
+    }
+)
+
 
 # * giottoPolygon SpatRaster ####
 #' @rdname calculateOverlap
