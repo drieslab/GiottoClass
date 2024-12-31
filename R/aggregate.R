@@ -417,7 +417,7 @@ setMethod(
         verbose = TRUE,
         ...) {
         if (is.null(name_overlap)) {
-            .gstop("calculateOverlap: name_overlap must be given")
+            stop("calculateOverlap: name_overlap must be given", call. = FALSE)
         }
 
         res <- calculateOverlap(
