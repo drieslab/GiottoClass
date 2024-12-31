@@ -777,6 +777,7 @@ setMethod(
                 "(x, y)\n"
             )
             cat("Layers                  :", img_dim[3], "\n")
+            cat("Name                    :", names(object), "\n")
             cat("Estimated max intensity :", object@max_intensity, "\n")
             cat("Estimated min intensity :", object@min_intensity, "\n")
             if (object@is_int == TRUE) {
