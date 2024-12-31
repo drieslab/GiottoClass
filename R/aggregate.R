@@ -463,7 +463,13 @@ setMethod(
         checkmate::assert_true(terra::is.polygons(x))
         GiottoUtils::package_check("exactextractr")
 
+        # channel naming (catch if none or too few)
         image_names <- names(y)
+        nchannel <- terra::nlyr(y)
+        if (is.null(image_names) ||
+            nchannel > 1L && length(unique(image_names)) == 1L) {
+            names(y) <- sprintf("channel_%d", seq_len(nchannel))
+        }
 
         # NSE vars
         coverage_fraction <- NULL
