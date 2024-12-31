@@ -380,6 +380,7 @@ setMethod(
     }
 )
 
+# * giottoPolygon giottoAffineImage ####
 #' @rdname calculateOverlap
 #' @export
 setMethod(
