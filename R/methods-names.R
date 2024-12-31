@@ -110,3 +110,13 @@ setMethod("dimnames", signature(x = "enrData"), function(x) dimnames(x[]))
 #' @rdname dimnames
 #' @export
 setMethod("dimnames", signature(x = "dimObj"), function(x) dimnames(x[]))
+
+
+
+setMethod("names", signature(x = "giottoLargeImage"), function(x) names(x[]))
+setMethod("names<-", signature(x = "giottoLargeImage"), function(x, value) {
+    names(x[]) <- value
+    x
+})
+
+
