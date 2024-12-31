@@ -392,7 +392,7 @@ setMethod(
         ...
     ) {
         aff <- y@affine
-        calculateOverlap(
+        res <- calculateOverlap(
             x = affine(x, aff, inv = TRUE),
             y = y@raster_object,
             name_overlap = objName(y),
@@ -400,6 +400,11 @@ setMethod(
             verbose = verbose,
             ...
         )
+        x@overlaps <- res@overlaps
+        if (is.null(centroids(x))) {
+            x <- centroids(x, append_gpolygon = TRUE)
+        }
+        res
     }
 )
 
