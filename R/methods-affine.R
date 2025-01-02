@@ -284,7 +284,8 @@ setMethod("affine", signature(x = "affine2d", y = "matrix"), function(x, y, inv 
 # 2D only
 .affine_sv <- function(x, geomtype, m, inv = FALSE, ...) {
     m <- as.matrix(m)
-    geomtype <- match.arg(geomtype, c("points", "polygons"))
+    if (terra::geomtype(x) != "none") geomtype <- terra::geomtype(x)
+    else geomtype <- match.arg(geomtype, c("points", "polygons"))
     xdt <- data.table::as.data.table(x, geomtype = geomtype, geom = "XY")
     xdt <- .affine_dt(
         x = xdt, m = m, xcol = "x", ycol = "y", inv = inv, ...
