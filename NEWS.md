@@ -3,6 +3,7 @@
 ## bug fixes
 - fix `calculateOverlap()` when there are duplicate poly_IDs
 - fix poly_ID generation when `terra::makeValid()` increases number of polys
+- fix `giottoPoints`, `giottoPolygon` `as.data.table()` conversion when `row()` = 0
 
 
 # GiottoClass 0.4.5 (2024/12/09)
