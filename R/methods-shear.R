@@ -52,6 +52,7 @@ setMethod("shear", signature("SpatVector"), function(x, fx = 0, fy = 0, x0, y0, 
 setMethod("shear", signature("giottoPoints"), function(x, fx = 0, fy = 0, x0, y0, ...) {
     a <- get_args_list(...)
     a$x <- x[]
+    a$geomtype <- "points"
     res <- do.call(.shear_sv, args = a)
     x[] <- res
     return(x)
@@ -63,6 +64,7 @@ setMethod("shear", signature("giottoPoints"), function(x, fx = 0, fy = 0, x0, y0
 setMethod("shear", signature("giottoPolygon"), function(x, fx = 0, fy = 0, x0, y0, ...) {
     a <- get_args_list(...)
     a$x <- NULL
+    a$geomtype <- "polygons"
     .do_gpoly(x, what = .shear_sv, args = a)
 })
 
@@ -161,13 +163,15 @@ setMethod("shear", signature("affine2d"), function(x, fx = 0, fy = 0, x0, y0, ..
     return(x)
 }
 
-.shear_sv <- function(x, fx = 0, fy = 0, x0, y0, geom = tail(letters, 3L), ...) {
+.shear_sv <- function(
+    x, geomtype, fx = 0, fy = 0, x0, y0, geom = tail(letters, 3L), ...
+) {
     a <- get_args_list(...)
-    gtype <- terra::geomtype(x)
+    geomtype <- match.arg(geomtype, c("points", "polygons"))
     a$x <- data.table::as.data.table(x, geom = "XY")
     res <- do.call(.shear_dt, args = a)
 
-    res <- switch(gtype,
+    res <- switch(geomtype,
         "points" = terra::vect(res, geom = c("x", "y")),
         "polygons" = terra::as.polygons(res)
     )
