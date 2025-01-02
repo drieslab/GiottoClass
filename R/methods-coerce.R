@@ -86,11 +86,38 @@ NULL
 #' @rdname as.data.table
 #' @method as.data.table SpatVector
 #' @export
-as.data.table.SpatVector <- function(x, keep.rownames = FALSE, geom = NULL,
-    include_values = TRUE, ...) {
+as.data.table.SpatVector <- function(
+    x, geomtype, keep.rownames = FALSE, geom = NULL, include_values = TRUE, ...
+) {
     if (isTRUE(toupper(geom) == "XY")) {
-        # if looking for polygon XY...
-        if (terra::is.polygons(x)) {
+        # permit passing of geomtype if needed
+        if (terra::geomtype(x) != "none") geomtype <- terra::geomtype(x)
+        else geomtype <- match.arg(geomtype, c("points", "polygons"))
+        
+        # DF conversion with "XY" not supported by {terra} with nrow 0
+        if (nrow(x) == 0L) {
+            base <- terra::as.data.frame(x[]) |> data.table::setDT()
+            if (geomtype == "polygons") {
+                geom_cols <- data.table::data.table(
+                    geom = integer(),
+                    part = integer(),
+                    x = numeric(),
+                    y = numeric(),
+                    hole = integer()
+                )
+                return(cbind(geom_cols, base))
+            }
+            if (geomtype == "points") {
+                geom_cols <- data.table::data.table(
+                    x = numeric(),
+                    y = numeric()
+                )
+                return(cbind(base, geom_cols))
+            }
+        }
+        
+        # if looking for polygon XY and nrow > 0...
+        if (geomtype == "polygons") {
             return(.spatvector_to_dt(x, include_values = include_values))
         }
     }
@@ -104,37 +131,14 @@ as.data.table.SpatVector <- function(x, keep.rownames = FALSE, geom = NULL,
 #' @method as.data.table giottoPolygon
 #' @export
 as.data.table.giottoPolygon <- function(x, ...) {
-    # DF conversion with "XY" not supported by {terra} with nrow 0
-    # nrow 0 also loses geom type, so specific code has to be here
-    if (nrow(x) == 0L) {
-        base <- terra::as.data.frame(x[]) |> data.table::setDT()
-        geom_cols <- data.table::data.table(
-            geom = integer(),
-            part = integer(),
-            x = numeric(),
-            y = numeric(),
-            hole = integer()
-        )
-        return(cbind(geom_cols, base))
-    }
-    as.data.table(x[], ...)
+    as.data.table(x[], geomtype = "polygons", ...)
 }
 
 #' @rdname as.data.table
 #' @method as.data.table giottoPoints
 #' @export
 as.data.table.giottoPoints <- function(x, ...) {
-    # DF conversion with "XY" not supported by {terra} with nrow 0
-    # nrow 0 also loses geom type, so specific code has to be here
-    if (nrow(x) == 0L) {
-        base <- terra::as.data.frame(x[]) |> data.table::setDT()
-        geom_cols <- data.table::data.table(
-            x = numeric(),
-            y = numeric()
-        )
-        return(cbind(base, geom_cols))
-    }
-    as.data.table(x[], ...)
+    as.data.table(x[], geomtype = "points", ...)
 }
 
 
