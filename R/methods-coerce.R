@@ -7,6 +7,10 @@ NULL
 #' @name as.data.table
 #' @description Coerce to data.table if possible
 #' @param x The object to coerce
+#' @param geomtype character (optional). One of "points" or "polygons". 
+#' Fallback geomtype used when it is not possible for \{terra\} to determine 
+#' the type of geometry an object is. 
+#' (commonly seen when nrow of the object = 0)
 #' @param keep.rownames This argument is ignored
 #' @param geom character or NULL. If not NULL, either "XY", "WKT", or "HEX", to
 #' get the geometry included in coordinates of each point or vertex,
