@@ -405,7 +405,7 @@ setMethod(
         if (is.null(centroids(x))) {
             x <- centroids(x, append_gpolygon = TRUE)
         }
-        res
+        x
     }
 )
 
