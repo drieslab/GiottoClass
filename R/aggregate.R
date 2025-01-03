@@ -372,7 +372,7 @@ setMethod(
         calculateOverlap(
             x = x,
             y = y@raster_object,
-            name_overlap = objName(y),
+            name_overlap = name_overlap %null% objName(y),
             poly_subset_ids = poly_subset_ids,
             verbose = verbose,
             ...
@@ -396,7 +396,7 @@ setMethod(
         res <- calculateOverlap(
             x = affine(x, aff, inv = TRUE),
             y = y@raster_object,
-            name_overlap = objName(y),
+            name_overlap = name_overlap %null% objName(y),
             poly_subset_ids = poly_subset_ids,
             verbose = verbose,
             ...
