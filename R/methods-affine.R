@@ -182,7 +182,7 @@ setMethod("affine", signature(x = "ANY", y = "affine2d"), function(x, y, ...) {
 setMethod(
     "affine", signature(x = "SpatVector", y = "matrix"),
     function(x, y, inv = FALSE, ...) {
-        .affine_sv(x, m = y, inv, ...)
+        .affine_sv(x, m = y, inv = inv, ...)
     }
 )
 
