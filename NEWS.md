@@ -1,6 +1,7 @@
 # GiottoClass 0.4.6 (2025/01/17)
 
 ## bug fixes
+- fix `plot(add = TRUE)` for adding on to rasterized point plots
 - fix `calculateOverlap()` when there are duplicate poly_IDs
 - fix `calculateOverlap()` `giottoPolygon`, `giottoAffineImage` method. (The `giotto`, `missing` method still needs work)
 - fix `calculateOverlap()` `giottoPolygon`, `giottoLargeImage` method that locked `name_overlap` to be `objName()` of `y`
