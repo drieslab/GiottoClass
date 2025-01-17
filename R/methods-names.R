@@ -31,6 +31,21 @@ NULL
 #' dimnames(g)
 NULL
 
+#' @title Names of objects
+#' @name names
+#' @description
+#' Get or set the names of the layers of a `giottoLargeImage`
+#' @param x object
+#' @param value character. Name(s) to set in the object
+#' @returns character or the object being renamed if the replacement function
+#' is used.
+#' @keywords internal
+#' @examples
+#' img <- GiottoData::loadSubObjectMini("giottoLargeImage")
+#' names(img)
+#' names(img) <- "dapi"
+NULL
+
 #' @rdname row-plus-colnames-generic
 #' @export
 setMethod("colnames", signature("giotto"), function(x) x$cell_ID)
@@ -112,8 +127,9 @@ setMethod("dimnames", signature(x = "enrData"), function(x) dimnames(x[]))
 setMethod("dimnames", signature(x = "dimObj"), function(x) dimnames(x[]))
 
 
-
+#' @rdname names
 setMethod("names", signature(x = "giottoLargeImage"), function(x) names(x[]))
+#' @rdname names
 setMethod("names<-", signature(x = "giottoLargeImage"), function(x, value) {
     names(x[]) <- value
     x
