@@ -182,7 +182,12 @@ setMethod("affine", signature(x = "ANY", y = "affine2d"), function(x, y, ...) {
 setMethod(
     "affine", signature(x = "SpatVector", y = "matrix"),
     function(x, y, inv = FALSE, ...) {
-        .affine_sv(x, m = y, inv = inv, ...)
+        a <- list(...)
+        if (terra::geomtype(x) != "none") a$geomtype <- terra::geomtype(x)
+        else a$geomtype <- match.arg(a$geomtype, c("points", "polygons"))
+        a <- c(list(x = x, m = y, inv = inv), a)
+        
+        do.call(.affine_sv, a)
     }
 )
 
