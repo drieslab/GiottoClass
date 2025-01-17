@@ -2619,9 +2619,10 @@ seuratToGiottoV5 <- function(
 
 #' Utility function to convert a Giotto object to a SpatialExperiment object.
 #'
-#' @param giottoObj Input Giotto object to convert to a SpatialExperiment object
+#' @param gobject Input Giotto object to convert to a SpatialExperiment object
 #' @param verbose A boolean value specifying if progress messages should be
 #' displayed or not. Default \code{TRUE}.
+#' @param giottoObj deprecated
 #'
 #' @returns A SpatialExperiment object that contains data from the input Giotto
 #' object.
@@ -2631,7 +2632,16 @@ seuratToGiottoV5 <- function(
 #' giottoToSpatialExperiment(mini_gobject)
 #' }
 #' @export
-giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
+giottoToSpatialExperiment <- function(gobject, 
+    verbose = TRUE,
+    giottoObj = deprecated()
+) {
+    # deprecation
+    gobject <- deprecate_param(giottoObj, gobject, 
+        fun = "giottoToSpatialExperiment", 
+        when = "0.4.6"
+    )
+
     spat_unit <- NULL
 
     # Load required packages
@@ -2646,7 +2656,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
     speList <- list()
 
     # Expression Matrices
-    giottoExpr <- list_expression(giottoObj)
+    giottoExpr <- list_expression(gobject)
 
     # Iterate over spatial units
     spatialUnits <- unique(giottoExpr$spat_unit) # a function to get spat units?
@@ -2663,7 +2673,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
                 )
             }
             exprMat <- getExpression(
-                gobject = giottoObj,
+                gobject = gobject,
                 spat_unit = spatialUnits[su],
                 feat_type = giottoExpr[1]$feat_type,
                 values = giottoExpr[1]$name,
@@ -2707,7 +2717,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
                     ),
                     withDimnames = FALSE
                 ) <- getExpression(
-                    gobject = giottoObj,
+                    gobject = gobject,
                     spat_unit = spatialUnits[su],
                     feat_type = giottoExpr[i]$feat_type,
                     values = giottoExpr[i]$name,
@@ -2717,7 +2727,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
         }
 
         # Cell Metadata to ColData
-        pData <- pDataDT(gobject = giottoObj, spat_unit = spatialUnits[su])
+        pData <- pDataDT(gobject = gobject, spat_unit = spatialUnits[su])
         if (nrow(pData) > 0) {
             if (verbose) {
                 message(
@@ -2736,7 +2746,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
         }
 
         # Feature Metadata to RowData
-        fData <- fDataDT(gobject = giottoObj, spat_unit = spatialUnits[su])
+        fData <- fDataDT(gobject = gobject, spat_unit = spatialUnits[su])
         if (nrow(fData) > 0) {
             if (verbose) {
                 message(
@@ -2753,7 +2763,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
 
         # Spatial Locations to Spatial Coordinates
         spatialLocs <- get_spatial_locations(
-            gobject = giottoObj,
+            gobject = gobject,
             spat_unit = spatialUnits[su],
             output = "data.table"
         )
@@ -2780,7 +2790,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
 
         # DimReductions
         giottoReductions <- list_dim_reductions(
-            gobject = giottoObj,
+            gobject = gobject,
             spat_unit = spatialUnits[su]
         )
         if (!is.null(giottoReductions)) {
@@ -2795,7 +2805,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
                     spe,
                     giottoReductions[i]$name
                 ) <- get_dimReduction(
-                    gobject = giottoObj,
+                    gobject = gobject,
                     reduction = "cells",
                     spat_unit = spatialUnits[su],
                     feat_type = giottoReductions[i]$feat_type,
@@ -2814,7 +2824,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
 
         # NN Graph
         giottoNearestNetworks <- list_nearest_networks(
-            gobject = giottoObj,
+            gobject = gobject,
             spat_unit = spatialUnits[su]
         )
         if (!is.null(giottoNearestNetworks)) {
@@ -2826,7 +2836,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
             }
             for (i in seq(nrow(giottoNearestNetworks))) {
                 nn_network <- get_NearestNetwork(
-                    gobject = giottoObj,
+                    gobject = gobject,
                     spat_unit = spatialUnits[su],
                     nn_network_to_use = giottoNearestNetworks[i]$type,
                     network_name = giottoNearestNetworks[i]$name,
@@ -2854,7 +2864,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
 
         # Spatial Networks
         giottoSpatialNetworks <- list_spatial_networks(
-            gobject = giottoObj,
+            gobject = gobject,
             spat_unit = spatialUnits[su]
         )
         if (!is.null(giottoSpatialNetworks)) {
@@ -2866,7 +2876,7 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
             }
             for (i in seq(nrow(giottoSpatialNetworks))) {
                 sp_network <- get_spatialNetwork(
-                    gobject = giottoObj,
+                    gobject = gobject,
                     spat_unit = spatialUnits[su],
                     name = giottoSpatialNetworks[i]$name,
                     output = "networkDT"
@@ -2892,11 +2902,11 @@ giottoToSpatialExperiment <- function(giottoObj, verbose = TRUE) {
         }
 
         # SpatialImages
-        giottoImages <- list_images(gobject = giottoObj)
+        giottoImages <- list_images(gobject = gobject)
         if (!is.null(giottoImages)) {
             for (i in seq(nrow(giottoImages))) {
                 img <- get_giottoImage(
-                    gobject = giottoObj,
+                    gobject = gobject,
                     image_type = giottoImages[i]$img_type,
                     name = giottoImages[i]$name
                 )
