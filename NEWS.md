@@ -1,9 +1,9 @@
-# GiottoClass 0.4.6
+# GiottoClass 0.4.6 (2025/01/17)
 
 ## bug fixes
 - fix `calculateOverlap()` when there are duplicate poly_IDs
 - fix `calculateOverlap()` `giottoPolygon`, `giottoAffineImage` method. (The `giotto`, `missing` method still needs work)
-- fix `calculateOverlap()` `giottoPolygon`, `giottoLargeImage` method that unintentionally hardcoded `name_overlap` to be `objName()` of `y`
+- fix `calculateOverlap()` `giottoPolygon`, `giottoLargeImage` method that locked `name_overlap` to be `objName()` of `y`
 - fix poly_ID generation when `terra::makeValid()` increases number of polys
 - fix `giottoPoints`, `giottoPolygon` `as.data.table()` conversion when `row()` = 0
 
