@@ -10,6 +10,8 @@
 #'
 #' @param gef_file path to .gef file
 #' @param bin_size bin size to select from .gef file
+#' @param gene_column (optional) character. Which column contains gene names 
+#' within the geneExp information.
 #' @param h5_file name to create and on-disk HDF5 file
 #' @param verbose be verbose
 #'
@@ -24,6 +26,7 @@
 
 gefToGiotto <- function(gef_file,
     bin_size = "bin100",
+    gene_column = NULL,
     verbose = FALSE,
     h5_file = NULL) {
     # data.table vars
@@ -46,12 +49,17 @@ gefToGiotto <- function(gef_file,
         file = gef_file,
         name = paste0("geneExp/", bin_size)
     )
-    geneDT <- data.table::as.data.table(geneExpData[["gene"]])
 
     exprDT <- data.table::as.data.table(geneExpData[["expression"]])
     exprDT[, count := lapply(.SD, as.integer), .SDcols = "count"]
     data.table::setorder(exprDT, x, y) # sort by x, y coords (ascending)
     geneDT <- data.table::as.data.table(geneExpData[["gene"]])
+    
+    # gene_column selection
+    name_to_replace <- gene_column %null% "gene"
+    if (name_to_replace %in% colnames(geneDT)) {
+        data.table::setnames(geneDT, old = name_to_replace, new = "geneName")
+    }
 
     # process duplicated gene symbol    
     if (any(duplicated(geneDT$geneName))) {
