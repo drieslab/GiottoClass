@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,6 +45,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'SpatVector'</span></span>
 <span><span class="fu">as.data.table</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
+<span>  <span class="va">geomtype</span>,</span>
 <span>  keep.rownames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  geom <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  include_values <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -64,6 +65,13 @@
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>The object to coerce</p></dd>
+
+
+<dt id="arg-geomtype">geomtype<a class="anchor" aria-label="anchor" href="#arg-geomtype"></a></dt>
+<dd><p>character (optional). One of "points" or "polygons".
+Fallback geomtype used when it is not possible for {terra} to determine
+the type of geometry an object is.
+(commonly seen when nrow of the object = 0)</p></dd>
 
 
 <dt id="arg-keep-rownames">keep.rownames<a class="anchor" aria-label="anchor" href="#arg-keep-rownames"></a></dt>

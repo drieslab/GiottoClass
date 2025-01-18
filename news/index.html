@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,31 @@
       <small>Source: <a href="https://github.com/drieslab/Giotto/blob/website/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.6" id="giottoclass-046-20250117">GiottoClass 0.4.6 (2025/01/17)<a class="anchor" aria-label="anchor" href="#giottoclass-046-20250117"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-4-6">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-6"></a></h3>
+<ul><li>fix <code><a href="../reference/gefToGiotto.html">gefToGiotto()</a></code> gene column reading <a href="https://github.com/drieslab/GiottoClass/pull/255" class="external-link">#255</a> by cmubioinformatics</li>
+<li>fix <code>plot(add = TRUE)</code> for adding on to rasterized point plots</li>
+<li>fix <code><a href="../reference/calculateOverlap.html">calculateOverlap()</a></code> when there are duplicate poly_IDs</li>
+<li>fix <code><a href="../reference/calculateOverlap.html">calculateOverlap()</a></code> <code>giottoPolygon</code>, <code>giottoAffineImage</code> method. (The <code>giotto</code>, <code>missing</code> method still needs work)</li>
+<li>fix <code><a href="../reference/calculateOverlap.html">calculateOverlap()</a></code> <code>giottoPolygon</code>, <code>giottoLargeImage</code> method that locked <code>name_overlap</code> to be <code><a href="../reference/objName-generic.html">objName()</a></code> of <code>y</code>
+</li>
+<li>fix poly_ID generation when <code><a href="https://rspatial.github.io/terra/reference/is.valid.html" class="external-link">terra::makeValid()</a></code> increases number of polys</li>
+<li>fix <code>giottoPoints</code>, <code>giottoPolygon</code> <code><a href="../reference/as.data.table.html">as.data.table()</a></code> conversion when <code><a href="https://rdrr.io/r/base/row.html" class="external-link">row()</a></code> = 0</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-0-4-6">new<a class="anchor" aria-label="anchor" href="#new-0-4-6"></a></h3>
+<ul><li>
+<code><a href="../reference/names.html">names()</a></code> and <code>names&lt;-()</code> for <code>giottoLargeImage</code> inheriting objects to name image layers</li>
+</ul></div>
+<div class="section level3">
+<h3 id="enhancements-0-4-6">enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-4-6"></a></h3>
+<ul><li>
+<code>make_valid</code> param for <code><a href="../reference/createGiottoPolygon.html">createGiottoPolygonsFromDfr()</a></code> and <code><a href="../reference/createGiottoPolygon.html">createGiottoPolygonsFromGeoJSON()</a></code>
+</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.5" id="giottoclass-045-20241209">GiottoClass 0.4.5 (2024/12/09)<a class="anchor" aria-label="anchor" href="#giottoclass-045-20241209"></a></h2>
 <div class="section level3">

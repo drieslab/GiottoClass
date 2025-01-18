@@ -11,7 +11,7 @@ The default values are 'cell' and 'rna' respectively."><meta property="og:image"
 
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,7 @@ The default values are 'cell' and 'rna' respectively.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">giottoToSeuratV5</span><span class="op">(</span></span>
 <span>  <span class="va">gobject</span>,</span>
 <span>  spat_unit <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">dataType</span>,</span>
+<span>  tech <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Visium"</span>, <span class="st">"Xenium"</span>, <span class="st">"Slide-seq"</span><span class="op">)</span>,</span>
 <span>  res_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hires"</span>, <span class="st">"lowres"</span>, <span class="st">"fullres"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -69,12 +69,16 @@ The default values are 'cell' and 'rna' respectively.</p>
 <dd><p>spatial unit (e.g. 'cell')</p></dd>
 
 
+<dt id="arg-tech">tech<a class="anchor" aria-label="anchor" href="#arg-tech"></a></dt>
+<dd><p>technology the dataset is using (e.g. "Visium","Xenium", "Slide-seq")</p></dd>
+
+
 <dt id="arg-res-type">res_type<a class="anchor" aria-label="anchor" href="#arg-res-type"></a></dt>
 <dd><p>type of 10x image output resolution</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional params to pass to <code>get_spatial_locations</code></p></dd>
+<dd><p>additional params to pass to <code><a href="getSpatialLocations.html">getSpatialLocations</a></code></p></dd>
 
 </dl></div>
     <div class="section level2">
