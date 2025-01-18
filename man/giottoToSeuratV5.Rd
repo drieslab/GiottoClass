@@ -7,7 +7,7 @@
 giottoToSeuratV5(
   gobject,
   spat_unit = NULL,
-  dataType,
+  tech = c("Visium", "Xenium", "Slide-seq"),
   res_type = c("hires", "lowres", "fullres"),
   ...
 )
@@ -17,9 +17,11 @@ giottoToSeuratV5(
 
 \item{spat_unit}{spatial unit (e.g. 'cell')}
 
+\item{tech}{technology the dataset is using (e.g. "Visium","Xenium", "Slide-seq")}
+
 \item{res_type}{type of 10x image output resolution}
 
-\item{...}{additional params to pass to \code{\link{get_spatial_locations}}}
+\item{...}{additional params to pass to \code{\link{getSpatialLocations}}}
 }
 \value{
 Seurat object

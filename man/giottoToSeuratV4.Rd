@@ -11,7 +11,7 @@ giottoToSeuratV4(gobject, spat_unit = NULL, ...)
 
 \item{spat_unit}{spatial unit (e.g. 'cell')}
 
-\item{...}{additional params to pass to \code{\link{get_spatial_locations}}}
+\item{...}{additional params to pass to \code{\link{getSpatialLocations}}}
 }
 \value{
 Seurat object

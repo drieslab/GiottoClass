@@ -620,10 +620,6 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
 .plot_giotto_points_raster <- function(data, feats = NULL, ...) {
     args_list <- list(...)
 
-    opar <- par(no.readonly = TRUE)
-    on.exit(par(opar), add = TRUE)
-
-
     # raster size
     if (is.null(args_list$size)) {
         args_list$size <- c(600, 600)
@@ -686,7 +682,14 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
 #' @param ... additonal params to pass to terra::plot()
 #' @keywords internal
 #' @noRd
-.plot_giotto_points_all <- function(x, size = 600, force_size = FALSE, dens = FALSE, col = NULL, background, ...) {
+.plot_giotto_points_all <- function(x, 
+    size = 600, 
+    force_size = FALSE,
+    dens = FALSE, 
+    col = NULL, 
+    background,
+    ...
+) {
     pargs <- list(...)
     rargs <- list()
     if (!is.null(pargs$ext)) {
@@ -742,14 +745,13 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
 
 
 .plot_giotto_points_one <- function(dataDT, feats, args_list) {
+    
     # NSE vars
     feat_ID <- NULL
 
     if (!feats %in% dataDT[, feat_ID]) {
         .gstop(str_vector(feats), "not found in giottoPoints", .n = 6L)
     }
-
-    par(mar = c(2.7, 3.5, 2, 2))
 
     dataDT <- dataDT[feat_ID == feats] # select single feats's data
     args_list$x <- dataDT$x
@@ -767,6 +769,7 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
 
 
 .plot_giotto_points_several <- function(dataDT, feats, args_list) {
+    
     # NSE vars
     feat_color_idx <- feat_ID <- NULL
 
@@ -775,7 +778,6 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
         .gstop(str_vector(missing_feats), "not found in giottoPoints", .n = 6L)
     }
 
-    par(mar = c(2.7, 3.5, 2, 4))
     feat_colors <- getRainbowColors(length(feats))
 
     data.table::setkey(dataDT, "feat_ID")
@@ -799,14 +801,16 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
     do.call(scattermore::scattermoreplot, args_list)
     legend(
         x = "topright",
-        inset = c(-1.3 / grDevices::dev.size()[1], 0),
         legend = feats,
+        text.col = "white",
         col = feat_colors,
         bty = "n",
         pch = 20,
         cex = 0.6,
+        title.cex = 0.8,
         title = "feat_ID",
-        xpd = TRUE
+        xpd = TRUE,
+        inset = c(0.04, 0.02)
     )
 }
 
