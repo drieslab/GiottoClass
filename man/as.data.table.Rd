@@ -9,6 +9,7 @@
 \usage{
 \method{as.data.table}{SpatVector}(
   x,
+  geomtype,
   keep.rownames = FALSE,
   geom = NULL,
   include_values = TRUE,
@@ -21,6 +22,11 @@
 }
 \arguments{
 \item{x}{The object to coerce}
+
+\item{geomtype}{character (optional). One of "points" or "polygons".
+Fallback geomtype used when it is not possible for \{terra\} to determine
+the type of geometry an object is.
+(commonly seen when nrow of the object = 0)}
 
 \item{keep.rownames}{This argument is ignored}
 

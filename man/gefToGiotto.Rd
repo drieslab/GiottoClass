@@ -4,12 +4,21 @@
 \alias{gefToGiotto}
 \title{Convert gef to Giotto}
 \usage{
-gefToGiotto(gef_file, bin_size = "bin100", verbose = FALSE, h5_file = NULL)
+gefToGiotto(
+  gef_file,
+  bin_size = "bin100",
+  gene_column = NULL,
+  verbose = FALSE,
+  h5_file = NULL
+)
 }
 \arguments{
 \item{gef_file}{path to .gef file}
 
 \item{bin_size}{bin size to select from .gef file}
+
+\item{gene_column}{(optional) character. Which column contains gene names
+within the geneExp information.}
 
 \item{verbose}{be verbose}
 

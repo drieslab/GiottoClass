@@ -1,7 +1,24 @@
+# GiottoClass 0.4.6 (2025/01/17)
+
+## bug fixes
+- fix `gefToGiotto()` gene column reading [#255](https://github.com/drieslab/GiottoClass/pull/255) by cmubioinformatics
+- fix `plot(add = TRUE)` for adding on to rasterized point plots
+- fix `calculateOverlap()` when there are duplicate poly_IDs
+- fix `calculateOverlap()` `giottoPolygon`, `giottoAffineImage` method. (The `giotto`, `missing` method still needs work)
+- fix `calculateOverlap()` `giottoPolygon`, `giottoLargeImage` method that locked `name_overlap` to be `objName()` of `y`
+- fix poly_ID generation when `terra::makeValid()` increases number of polys
+- fix `giottoPoints`, `giottoPolygon` `as.data.table()` conversion when `row()` = 0
+
+## new
+- `names()` and `names<-()` for `giottoLargeImage` inheriting objects to name image layers
+
+## enhancements
+- `make_valid` param for `createGiottoPolygonsFromDfr()` and `createGiottoPolygonsFromGeoJSON()`
+
+
 # GiottoClass 0.4.5 (2024/12/09)
 
 ## enhancements
-
 - `spatUnit()<-` and `featType()<-` `list` methods
 - `set_default_spat_unit()` and `set_default_feat_type()` now look for defaults when given `NA_character_` inputs as well.
 - `update_giotto_params()` can now be turned off with `options("giotto.update_param" = FALSE)`

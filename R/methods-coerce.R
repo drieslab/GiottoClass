@@ -7,6 +7,10 @@ NULL
 #' @name as.data.table
 #' @description Coerce to data.table if possible
 #' @param x The object to coerce
+#' @param geomtype character (optional). One of "points" or "polygons". 
+#' Fallback geomtype used when it is not possible for \{terra\} to determine 
+#' the type of geometry an object is. 
+#' (commonly seen when nrow of the object = 0)
 #' @param keep.rownames This argument is ignored
 #' @param geom character or NULL. If not NULL, either "XY", "WKT", or "HEX", to
 #' get the geometry included in coordinates of each point or vertex,
@@ -86,14 +90,39 @@ NULL
 #' @rdname as.data.table
 #' @method as.data.table SpatVector
 #' @export
-as.data.table.SpatVector <- function(x, keep.rownames = FALSE, geom = NULL,
-    include_values = TRUE, ...) {
-    # if looking for polygon XY...
-    if (terra::is.polygons(x)) {
-        if (!is.null(geom)) {
-            if (geom == "XY") {
-                return(.spatvector_to_dt(x, include_values = include_values))
+as.data.table.SpatVector <- function(
+    x, geomtype, keep.rownames = FALSE, geom = NULL, include_values = TRUE, ...
+) {
+    if (isTRUE(toupper(geom) == "XY")) {
+        # permit passing of geomtype if needed
+        if (terra::geomtype(x) != "none") geomtype <- terra::geomtype(x)
+        else geomtype <- match.arg(geomtype, c("points", "polygons"))
+        
+        # DF conversion with "XY" not supported by {terra} with nrow 0
+        if (nrow(x) == 0L) {
+            base <- terra::as.data.frame(x[]) |> data.table::setDT()
+            if (geomtype == "polygons") {
+                geom_cols <- data.table::data.table(
+                    geom = integer(),
+                    part = integer(),
+                    x = numeric(),
+                    y = numeric(),
+                    hole = integer()
+                )
+                return(cbind(geom_cols, base))
             }
+            if (geomtype == "points") {
+                geom_cols <- data.table::data.table(
+                    x = numeric(),
+                    y = numeric()
+                )
+                return(cbind(base, geom_cols))
+            }
+        }
+        
+        # if looking for polygon XY and nrow > 0...
+        if (geomtype == "polygons") {
+            return(.spatvector_to_dt(x, include_values = include_values))
         }
     }
     # all other conditions: pass to terra then set as DT
@@ -106,14 +135,14 @@ as.data.table.SpatVector <- function(x, keep.rownames = FALSE, geom = NULL,
 #' @method as.data.table giottoPolygon
 #' @export
 as.data.table.giottoPolygon <- function(x, ...) {
-    as.data.table(x[], ...)
+    as.data.table(x[], geomtype = "polygons", ...)
 }
 
 #' @rdname as.data.table
 #' @method as.data.table giottoPoints
 #' @export
 as.data.table.giottoPoints <- function(x, ...) {
-    as.data.table(x[], ...)
+    as.data.table(x[], geomtype = "points", ...)
 }
 
 
