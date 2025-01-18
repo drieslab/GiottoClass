@@ -182,7 +182,12 @@ setMethod("affine", signature(x = "ANY", y = "affine2d"), function(x, y, ...) {
 setMethod(
     "affine", signature(x = "SpatVector", y = "matrix"),
     function(x, y, inv = FALSE, ...) {
-        .affine_sv(x, m = y, inv, ...)
+        a <- list(...)
+        if (terra::geomtype(x) != "none") a$geomtype <- terra::geomtype(x)
+        else a$geomtype <- match.arg(a$geomtype, c("points", "polygons"))
+        a <- c(list(x = x, m = y, inv = inv), a)
+        
+        do.call(.affine_sv, a)
     }
 )
 
@@ -192,7 +197,7 @@ setMethod(
 setMethod(
     "affine", signature(x = "giottoPoints", y = "matrix"),
     function(x, y, inv = FALSE, ...) {
-        x[] <- .affine_sv(x = x[], m = y, inv = inv, ...)
+        x[] <- .affine_sv(x = x[], geomtype = "points", m = y, inv = inv, ...)
         return(x)
     }
 )
@@ -203,7 +208,8 @@ setMethod(
 setMethod(
     "affine", signature(x = "giottoPolygon", y = "matrix"),
     function(x, y, inv = FALSE, ...) {
-        .do_gpoly(x, what = .affine_sv, args = list(m = y, inv = inv, ...))
+        a <- list(geomtype = "polygons", m = y, inv = inv, ...)
+        .do_gpoly(x, what = .affine_sv, args = a)
     }
 )
 
@@ -281,15 +287,16 @@ setMethod("affine", signature(x = "affine2d", y = "matrix"), function(x, y, inv 
 # internals ####
 
 # 2D only
-.affine_sv <- function(x, m, inv = FALSE, ...) {
+.affine_sv <- function(x, geomtype, m, inv = FALSE, ...) {
     m <- as.matrix(m)
-    gtype <- terra::geomtype(x)
-    xdt <- data.table::as.data.table(x, geom = "XY")
+    if (terra::geomtype(x) != "none") geomtype <- terra::geomtype(x)
+    else geomtype <- match.arg(geomtype, c("points", "polygons"))
+    xdt <- data.table::as.data.table(x, geomtype = geomtype, geom = "XY")
     xdt <- .affine_dt(
         x = xdt, m = m, xcol = "x", ycol = "y", inv = inv, ...
     )
 
-    res <- switch(gtype,
+    res <- switch(geomtype,
         "points" = terra::vect(xdt, geom = c("x", "y")),
         "polygons" = terra::as.polygons(xdt)
     )

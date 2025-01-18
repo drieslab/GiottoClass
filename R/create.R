@@ -2248,7 +2248,11 @@ create_giotto_points_object <- function(
 #' @param x input. Filepath to a .GeoJSON or a mask image file. Can also be a
 #' data.frame with vertex 'x', 'y', and 'poly_ID' information.
 #' @param name name for polygons
-#' @param calc_centroids calculate centroids for polygons
+#' @param calc_centroids logical. (default `FALSE`) calculate centroids for 
+#' polygons
+#' @param make_valid logical. (default `FALSE`) Whether to run 
+#' [terra::makeValid()] on the geometries. Setting this to `TRUE` may cause
+#' read-in polygon attribute information to become out of sync.
 #' @param verbose be verbose
 #' @returns giottoPolygon
 NULL
@@ -2590,12 +2594,6 @@ createGiottoPolygonsFromMask <- function(maskfile,
         "multiple" = {
             names(terra_polygon) <- "poly_ID"
             if (is.null(poly_IDs)) {
-                # spatVecDT[, geom := naming_fun(ID_fmt, geom)]
-                # spatVecDT[, (val_col) := naming_fun(ID_fmt, get(val_col))]
-                # g_polygon <- createGiottoPolygonsFromDfr(
-                #   segmdfr = spatVecDT[, .(x, y, get(val_col))]
-                # )
-                # g_polygon@spatVector
                 terra_polygon$poly_ID <- naming_fun(
                     ID_fmt,
                     terra_polygon$poly_ID
@@ -2721,8 +2719,8 @@ createGiottoPolygonsFromMask <- function(maskfile,
 #' polygon referenced by poly_ID. See details for how columns are selected for
 #' coordinate and ID information.
 #' @param name name for the \code{giottoPolygon} object
-#' @param calc_centroids (default FALSE) calculate centroids for polygons
-#' @param skip_eval_dfr (default FALSE) skip evaluation of provided dataframe
+#' @param skip_eval_dfr logical. (default FALSE) skip evaluation of provided 
+#' dataframe
 #' @param copy_dt (default TRUE) if segmdfr is provided as dt, this determines
 #' whether a copy is made
 #' @param verbose be verbose
@@ -2740,11 +2738,13 @@ createGiottoPolygonsFromDfr <- function(
         segmdfr,
         name = "cell",
         calc_centroids = FALSE,
+        make_valid = FALSE,
         verbose = TRUE,
         skip_eval_dfr = FALSE,
         copy_dt = TRUE) {
     eval_list <- .evaluate_spatial_info(
         spatial_info = segmdfr,
+        make_valid = make_valid,
         skip_eval_dfr = skip_eval_dfr,
         copy_dt = copy_dt,
         verbose = verbose
@@ -2782,7 +2782,6 @@ createGiottoPolygonsFromDfr <- function(
 #' @rdname createGiottoPolygon
 #' @param GeoJSON path to .GeoJSON file
 #' @param name name for the \code{giottoPolygon} object created
-#' @param calc_centroids (default FALSE) calculate centroids for polygons
 #' @param verbose be verbose
 #' @concept polygon
 #' @export
@@ -2790,9 +2789,11 @@ createGiottoPolygonsFromGeoJSON <- function(
         GeoJSON,
         name = "cell",
         calc_centroids = FALSE,
+        make_valid = FALSE,
         verbose = TRUE) {
     eval_list <- .evaluate_spatial_info(
         spatial_info = GeoJSON,
+        make_valid = make_valid,
         verbose = verbose
     )
 
