@@ -12,6 +12,8 @@
 \alias{ext,giotto-method}
 \alias{ext,giottoAffineImage-method}
 \alias{ext,affine2d-method}
+\alias{ext<-,spatLocsObj,SpatExtent-method}
+\alias{ext<-,spatialNetworkObj,SpatExtent-method}
 \alias{ext<-,giottoPoints,SpatExtent-method}
 \alias{ext<-,giottoPolygon,SpatExtent-method}
 \alias{ext<-,giottoLargeImage,SpatExtent-method}
@@ -46,6 +48,10 @@
 \S4method{ext}{giottoAffineImage}(x, ...)
 
 \S4method{ext}{affine2d}(x, ...)
+
+\S4method{ext}{spatLocsObj,SpatExtent}(x) <- value
+
+\S4method{ext}{spatialNetworkObj,SpatExtent}(x) <- value
 
 \S4method{ext}{giottoPoints,SpatExtent}(x) <- value
 
