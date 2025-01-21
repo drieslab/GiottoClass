@@ -1,3 +1,9 @@
+# GiottoClass 0.4.7
+
+## bug fixes
+- hotfix `shear()` for `giottoPolygon`
+- fix `ext<-` for `spatLocsObj`
+
 # GiottoClass 0.4.6 (2025/01/17)
 
 ## bug fixes
