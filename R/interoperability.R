@@ -1513,6 +1513,7 @@ giottoToSeuratV5 <- function(gobject,
     ...) {
     # data.table vars
     feat_type <- name <- dim_type <- nn_type <- NULL
+    res_type <- match.arg(res_type, choices = c("hires", "lowres", "fullres"), several.ok = FALSE)
     tech <- match.arg(tech,
                       choices = c("Visium", "Xenium", "Slide-seq")
       )
@@ -1864,11 +1865,11 @@ giottoToSeuratV5 <- function(gobject,
                     scalef$fiducial * scalef$lowres / max(dim(img_array)),
                   key = paste0(key, "_")
                 )
-                
+
                 sobj@images[[key]] <- newV1
-              }           
-            } 
-            
+              }
+            }
+
         }
     }
 
@@ -2453,7 +2454,7 @@ seuratToGiottoV5 <- function(
                     i
                   ]]@boundaries$segmentation@polygons[[j]]
                   # Get coordinates from segmentation
-                  
+
                   seg_coords <- polygon_info@Polygons[[1]]@coords
                   # Fetch cell_Id from polygon information
                   cell_ID <- polygon_info@ID
@@ -2464,24 +2465,24 @@ seuratToGiottoV5 <- function(
                     name = "cell",
                     spatVector = centroids_coords,
                     spatVectorCentroids = seg_coords
-                    
+
                   )
                   # Add the cell_ID to the list of polygon names
                   polygon_list[[cell_ID]] <- gpolygon
                 }
-                
+
               }
-                    
+
             }
         }
     }
-                  
-                  
-            
-    
-                        
-                      
-               
+
+
+
+
+
+
+
     # Find SueratImages, extract them, and pass to create image
     image_list <- list()
     for (i in names(sobject@images)) {
@@ -2669,13 +2670,13 @@ seuratToGiottoV5 <- function(
 #' giottoToSpatialExperiment(mini_gobject)
 #' }
 #' @export
-giottoToSpatialExperiment <- function(gobject, 
+giottoToSpatialExperiment <- function(gobject,
     verbose = TRUE,
     giottoObj = deprecated()
 ) {
     # deprecation
-    gobject <- deprecate_param(giottoObj, gobject, 
-        fun = "giottoToSpatialExperiment", 
+    gobject <- deprecate_param(giottoObj, gobject,
+        fun = "giottoToSpatialExperiment",
         when = "0.4.6"
     )
 
