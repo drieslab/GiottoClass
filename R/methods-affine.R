@@ -344,12 +344,31 @@ setMethod("affine", signature(x = "affine2d", y = "matrix"), function(x, y, inv 
     mg <- .spatraster_sample_values(x, output = "magick", size = size, ...)
     aff <- x@affine
 
+    # account for intrinsic rescale needed to account for ext vs dim differences
+    # terra spatSample() ignores extent dims, and output aspect ratio is the
+    # same as the source image.
+    # Only downscale here.
+    sv_xy_dim <- range(ext(x@raster_object))
+    sv_xy_ratio <- sv_xy_dim / max(sv_xy_dim)
+    mg_info <- magick::image_info(mg)[c("width", "height")]
+    mg_xy_dim <- as.numeric(mg_info)
+    mg_xy_ratio <- mg_xy_dim / max(mg_xy_dim)
+    ext_ratio <- sv_xy_ratio / mg_xy_ratio
+    
     # create a dummy spatLocsObj to act as control points
     # pt1: bottom left
     # pt2: top left
     # pt3: bottom right
     dummy_sl <- .magick_image_corners(mg)
-    aff_dummy_sl <- dummy_sl %>%
+    
+    # account for intrinsic scaling from when ext != dims ratio
+    aff_dummy_sl <- rescale(dummy_sl,
+        fx = ext_ratio[["x"]], 
+        fy = ext_ratio[["y"]], 
+        x0 = 0, y0 = 0
+    )
+    
+    aff_dummy_sl <- aff_dummy_sl %>%
         affine(.aff_linear_2d(aff)) %>%
         flip() %>%
         rescale(

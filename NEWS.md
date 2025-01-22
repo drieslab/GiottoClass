@@ -2,7 +2,8 @@
 
 ## bug fixes
 - hotfix `shear()` for `giottoPolygon`
-- fix `ext<-` for `spatLocsObj`
+- fix {magick} `giottoAffineImage` realization when extent does not match the image dims ratio.
+- fix `ext<-()` for `spatLocsObj`
 - fix `ext<-()` for `giottoAffineImage`
 
 # GiottoClass 0.4.6 (2025/01/17)
