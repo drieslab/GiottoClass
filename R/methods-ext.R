@@ -282,6 +282,12 @@ setMethod("ext<-", signature(x = "giottoLargeImage", value = "SpatExtent"),
     }
 )
 
+#' @rdname ext
+#' @export
+setMethod("ext<-", signature(x = "giottoAffineImage", value = "SpatExtent"),
+    function(x, value) .set_ext_vector(x, value)
+)
+
 # Convert numeric inputs to SpatExtent and have terra deal with inconsistencies
 #' @rdname ext
 #' @export
