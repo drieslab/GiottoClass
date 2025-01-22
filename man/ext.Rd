@@ -17,6 +17,7 @@
 \alias{ext<-,giottoPoints,SpatExtent-method}
 \alias{ext<-,giottoPolygon,SpatExtent-method}
 \alias{ext<-,giottoLargeImage,SpatExtent-method}
+\alias{ext<-,giottoAffineImage,SpatExtent-method}
 \alias{ext<-,ANY,ANY-method}
 \alias{ext<-,giottoImage,SpatExtent-method}
 \alias{ext<-,affine2d,ANY-method}
@@ -58,6 +59,8 @@
 \S4method{ext}{giottoPolygon,SpatExtent}(x) <- value
 
 \S4method{ext}{giottoLargeImage,SpatExtent}(x) <- value
+
+\S4method{ext}{giottoAffineImage,SpatExtent}(x) <- value
 
 \S4method{ext}{ANY,ANY}(x) <- value
 
