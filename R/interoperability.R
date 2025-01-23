@@ -10,7 +10,7 @@
 #'
 #' @param gef_file path to .gef file
 #' @param bin_size bin size to select from .gef file
-#' @param gene_column (optional) character. Which column contains gene names 
+#' @param gene_column (optional) character. Which column contains gene names
 #' within the geneExp information.
 #' @param h5_file name to create and on-disk HDF5 file
 #' @param verbose be verbose
@@ -54,14 +54,14 @@ gefToGiotto <- function(gef_file,
     exprDT[, count := lapply(.SD, as.integer), .SDcols = "count"]
     data.table::setorder(exprDT, x, y) # sort by x, y coords (ascending)
     geneDT <- data.table::as.data.table(geneExpData[["gene"]])
-    
+
     # gene_column selection
     name_to_replace <- gene_column %null% "gene"
     if (name_to_replace %in% colnames(geneDT)) {
         data.table::setnames(geneDT, old = name_to_replace, new = "geneName")
     }
 
-    # process duplicated gene symbol    
+    # process duplicated gene symbol
     if (any(duplicated(geneDT$geneName))) {
     duplicated_genes <- unique(geneDT$geneName[duplicated(geneDT$geneName)])
     cat("Ops!!! Duplicated_genes,processing:sum(count),mean(offset)")
@@ -69,27 +69,27 @@ gefToGiotto <- function(gef_file,
     for (gene in duplicated_genes) {
         # indices
         idx <- which(geneDT$geneName == gene)
-        
-        # 
+
+        #
         cat("Processing gene:", gene, "\n")
         cat("Original count values for", gene, ":", geneDT$count[idx], "\n")
-        
+
         # update
         geneDT$count[idx[1]] <- sum(geneDT$count[idx])  # 对重复的 count 求和
         geneDT$offset[idx[1]] <- mean(geneDT$offset[idx])  # 对重复的 offset 求平均
-        
+
         #
         cat("Updated count for", gene, ":", geneDT$count[idx[1]], "\n")
         cat("Updated offset for", gene, ":", geneDT$offset[idx[1]], "\n")
-        
-        # 
+
+        #
         geneDT <- geneDT[-idx[-1], ]
-        
-        # 
+
+        #
         cat("Deleted duplicate entries for gene:", gene, "\n\n")
       }
     }
-  
+
     if (isTRUE(verbose)) wrap_msg("finished reading in .gef", bin_size, "\n")
 
     # 2. create spatial locations
@@ -1513,6 +1513,8 @@ giottoToSeuratV5 <- function(gobject,
     ...) {
     # data.table vars
     feat_type <- name <- dim_type <- nn_type <- NULL
+    res_type <- match.arg(res_type, choices = c("hires", "lowres", "fullres"),
+                          several.ok = FALSE)
     tech <- match.arg(tech,
                       choices = c("Visium", "Xenium", "Slide-seq")
       )
@@ -1864,11 +1866,11 @@ giottoToSeuratV5 <- function(gobject,
                     scalef$fiducial * scalef$lowres / max(dim(img_array)),
                   key = paste0(key, "_")
                 )
-                
+
                 sobj@images[[key]] <- newV1
-              }           
-            } 
-            
+              }
+            }
+
         }
     }
 
@@ -2453,7 +2455,7 @@ seuratToGiottoV5 <- function(
                     i
                   ]]@boundaries$segmentation@polygons[[j]]
                   # Get coordinates from segmentation
-                  
+
                   seg_coords <- polygon_info@Polygons[[1]]@coords
                   # Fetch cell_Id from polygon information
                   cell_ID <- polygon_info@ID
@@ -2464,24 +2466,24 @@ seuratToGiottoV5 <- function(
                     name = "cell",
                     spatVector = centroids_coords,
                     spatVectorCentroids = seg_coords
-                    
+
                   )
                   # Add the cell_ID to the list of polygon names
                   polygon_list[[cell_ID]] <- gpolygon
                 }
-                
+
               }
-                    
+
             }
         }
     }
-                  
-                  
-            
-    
-                        
-                      
-               
+
+
+
+
+
+
+
     # Find SueratImages, extract them, and pass to create image
     image_list <- list()
     for (i in names(sobject@images)) {
@@ -2669,13 +2671,13 @@ seuratToGiottoV5 <- function(
 #' giottoToSpatialExperiment(mini_gobject)
 #' }
 #' @export
-giottoToSpatialExperiment <- function(gobject, 
+giottoToSpatialExperiment <- function(gobject,
     verbose = TRUE,
     giottoObj = deprecated()
 ) {
     # deprecation
-    gobject <- deprecate_param(giottoObj, gobject, 
-        fun = "giottoToSpatialExperiment", 
+    gobject <- deprecate_param(giottoObj, gobject,
+        fun = "giottoToSpatialExperiment",
         when = "0.4.6"
     )
 
