@@ -77,7 +77,7 @@ setMethod("XY", signature("giottoPoints"), function(x, ...) {
 setMethod(
     "XY<-", signature(x = "giottoPoints", value = "ANY"),
     function(x, ..., value) {
-        XY(x[]) <- value
+        XY(x[], geomtype = "points") <- value
         return(x)
     }
 )
@@ -93,7 +93,7 @@ setMethod("XY", signature("giottoPolygon"), function(x, ...) {
 setMethod(
     "XY<-", signature(x = "giottoPolygon", value = "ANY"),
     function(x, ..., value) {
-        XY(x[]) <- value
+        XY(x[], geomtype = "polygon") <- value
         return(x)
     }
 )
@@ -114,8 +114,12 @@ setMethod("XY", signature("SpatVector"), function(x, include_geom = FALSE, ...) 
 
 #' @rdname XY
 #' @export
-setMethod("XY<-", signature(x = "SpatVector", value = "matrix"), function(x, ..., value) {
-    switch(terra::geomtype(x),
+setMethod("XY<-", signature(x = "SpatVector", value = "matrix"), function(x, geomtype = "points", ..., value) {
+    terra_gtype <- terra::geomtype(x)
+    if (terra::geomtype(x) != "none") geomtype <- terra_gtype
+    geomtype <- match.arg(tolower(geomtype), choices = c("points", "polygons"))
+    
+    switch(geomtype,
         "points" = .xy_sv_points_set(x, ..., value = value),
         "polygons" = .xy_sv_polys_set(x, ..., value = value)
     )
@@ -147,4 +151,5 @@ setMethod("XY<-", signature(x = "SpatVector", value = "matrix"), function(x, ...
         m[, "y"] <- value[, "y"]
         v <- terra::vect(m, type = "polygons", ..., atts = atts)
     }
+    return(v)
 }
