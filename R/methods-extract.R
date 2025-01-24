@@ -4,9 +4,9 @@ NULL
 
 # Documentations ------------------------------------------------------------ #
 
-#' @title Subset part of an object with `[`
+#' @title Subset part of an object with `[` or `[[`
 #' @name subset_bracket
-#' @aliases `[`
+#' @aliases `[`, `[[`
 #' @description Extract values from Giotto classes. Providing empty brackets
 #' such as: `x[]` will usually extract the main contained data representation.
 #' @param x Giotto S4 object to subset information from
@@ -596,7 +596,6 @@ setMethod(
 )
 
 
-# setMethod("[[")
 
 ## * metaData ####
 
@@ -1127,6 +1126,17 @@ setMethod(
     signature(x = "giottoLargeImage", i = "missing", j = "missing", drop = "missing"),
     function(x, i, j) {
         x@raster_object
+    }
+)
+
+#' @rdname subset_bracket
+#' @export
+setMethod(
+    "[[",
+    signature(x = "giottoLargeImage", i = "gIndex", j = "missing"),
+    function(x, i, ...) {
+        x[] <- x[][[i]]
+        x
     }
 )
 
