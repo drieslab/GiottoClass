@@ -134,7 +134,7 @@ setMethod("XY<-", signature(x = "SpatVector", value = "matrix"), function(x, ...
 
 .xy_sv_polys_set <- function(x, ..., value) {
     atts <- terra::values(x)
-    if (identical(colnames(x), c("geom", "part", "x", "y", "hole"))) {
+    if (identical(colnames(value), c("geom", "part", "x", "y", "hole"))) {
         # the entire geom matrix is given. Directly use it.
         v <- terra::vect(value, type = "polygons", ..., atts = atts)
     } else {
