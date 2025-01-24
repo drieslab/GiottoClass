@@ -138,6 +138,9 @@ setMethod("XY<-", signature(x = "SpatVector", value = "matrix"), function(x, ...
         # the entire geom matrix is given. Directly use it.
         v <- terra::vect(value, type = "polygons", ..., atts = atts)
     } else {
+        if (ncol(value) == 2L && is.null(colnames(value))) {
+            colnames(value) <- c("x", "y")
+        }
         # replace xy values in geom matrix
         m <- terra::geom(x)
         m[, "x"] <- value[, "x"]
