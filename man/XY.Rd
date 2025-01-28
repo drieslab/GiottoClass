@@ -27,7 +27,7 @@
 
 \S4method{XY}{SpatVector}(x, include_geom = FALSE, ...)
 
-\S4method{XY}{SpatVector,matrix}(x, ...) <- value
+\S4method{XY}{SpatVector,matrix}(x, geomtype = "points", ...) <- value
 }
 \arguments{
 \item{x}{object}
