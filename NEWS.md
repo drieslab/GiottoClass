@@ -6,8 +6,8 @@
 - fix `ext<-()` for `spatLocsObj`
 - fix `ext<-()` for `giottoAffineImage`
 
-# changes
-- remove {magick} as a dependency
+## changes
+- move {magick} from imports to suggests
 
 # GiottoClass 0.4.6 (2025/01/17)
 

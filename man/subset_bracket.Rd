@@ -133,6 +133,8 @@
 
 \item{i, j}{indices specifying elements to extract. Indices are numeric or
 character vectors, or empty}
+
+\item{\dots}{additional arguments}
 }
 \value{
 Same as \code{x} unless brackets are empty in which case, the main

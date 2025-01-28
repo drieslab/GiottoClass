@@ -52,6 +52,7 @@ Suggests:
     GiottoData,
     HDF5Array (>= 1.18.1),
     knitr,
+    magick,
     plotly,
     raster,
     remotes,

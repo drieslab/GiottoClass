@@ -12,6 +12,7 @@ NULL
 #' @param x Giotto S4 object to subset information from
 #' @param i,j indices specifying elements to extract. Indices are numeric or
 #' character vectors, or empty
+#' @param \dots additional arguments
 #' @returns Same as `x` unless brackets are empty in which case, the main
 #' internal representation is returned.
 #' @examples
