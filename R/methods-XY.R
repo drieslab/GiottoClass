@@ -7,6 +7,8 @@
 #' coordinate values are retrieved and set as `matrix`.
 #' @param x object
 #' @param value matrix. xy(z) coordinates to set
+#' @param geomtype character. Either `"points"` or `"polygons"`. Only used
+#' with the `SpatVector` replacement method
 #' @param ... additional args to pass
 #' @returns `XY()` returns `matrix`. `XY<-()` returns same class as `x`
 #' @examples

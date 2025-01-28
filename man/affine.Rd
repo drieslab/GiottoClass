@@ -31,19 +31,19 @@
 
 \S4method{affine}{ANY,affine2d}(x, y, ...)
 
-\S4method{affine}{SpatVector,matrix}(x, y, inv = FALSE, ...)
+\S4method{affine}{SpatVector,matrix}(x, y, inv = FALSE, pre_multiply = FALSE, ...)
 
-\S4method{affine}{giottoPoints,matrix}(x, y, inv = FALSE, ...)
+\S4method{affine}{giottoPoints,matrix}(x, y, inv = FALSE, pre_multiply = FALSE, ...)
 
-\S4method{affine}{giottoPolygon,matrix}(x, y, inv = FALSE, ...)
+\S4method{affine}{giottoPolygon,matrix}(x, y, inv = FALSE, pre_multiply = FALSE, ...)
 
-\S4method{affine}{spatLocsObj,matrix}(x, y, inv = FALSE, ...)
+\S4method{affine}{spatLocsObj,matrix}(x, y, inv = FALSE, pre_multiply = FALSE, ...)
 
-\S4method{affine}{giottoLargeImage,matrix}(x, y, inv = FALSE, ...)
+\S4method{affine}{giottoLargeImage,matrix}(x, y, inv = FALSE, pre_multiply = FALSE, ...)
 
-\S4method{affine}{giottoAffineImage,matrix}(x, y, inv = FALSE, ...)
+\S4method{affine}{giottoAffineImage,matrix}(x, y, inv = FALSE, pre_multiply = FALSE, ...)
 
-\S4method{affine}{affine2d,matrix}(x, y, inv = FALSE, ...)
+\S4method{affine}{affine2d,matrix}(x, y, inv = FALSE, pre_multiply = FALSE, ...)
 }
 \arguments{
 \item{x}{object to affine transform or a \code{matrix}}
@@ -64,6 +64,11 @@ to affect all can be used.}
 to affect all can be used.}
 
 \item{...}{additional args to pass (none implemented)}
+
+\item{pre_multiply}{logical. Either pre: \code{t(A \%*\% t(xy))} or post: \code{xy \%*\% A}
+convention to use when applying the affine matrix. The general convention
+is to set \code{TRUE}, but Giotto internally uses \code{FALSE} (this may be updated
+in the future).}
 }
 \value{
 affine transformed object or an \code{affine2d} if a \code{matrix} was
