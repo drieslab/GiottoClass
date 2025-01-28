@@ -1,13 +1,19 @@
 # GiottoClass 0.4.7
 
 ## bug fixes
-- hotfix `shear()` for `giottoPolygon`
+- fix bug introduced in 0.4.6 with `shear()` for `giottoPolygon`.
 - fix {magick} `giottoAffineImage` realization when extent does not match the image dims ratio.
 - fix `ext<-()` for `spatLocsObj`
 - fix `ext<-()` for `giottoAffineImage`
+- fix external affine matrix compatibility. `affine()` now has `pre_multiply` param to switch between working with affine matrices defined for either pre or post-multiply. Pre is the general convention, but Giotto internally uses post. This will be addressed in a later update.
+- fix `giottoToSeuratV5()` selection of a default image to use
 
 ## changes
 - move {magick} from imports to suggests
+
+## enhancements
+- `[[` can now be used to select channels in `giottoLargeImage`-inheriting objects
+- `XY()` replacement function for `SpatVector` now has `geomtype` param in case of `"none"` geometries
 
 # GiottoClass 0.4.6 (2025/01/17)
 
