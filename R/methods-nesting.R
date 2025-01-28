@@ -111,7 +111,7 @@ setMethod("spatUnit<-", signature("giottoPolygon"), function(x, value) {
 setMethod("spatUnit<-", signature = "list", function(x, value) {
     if (length(x) != length(value)) {
         stop("Number of names to set must be the same as the length of list",
-             call. = FALSE
+            call. = FALSE
         )
     }
     lapply(seq_along(x), function(i) {
@@ -161,7 +161,7 @@ setMethod("featType<-", signature = "featData", function(x, value) {
 setMethod("featType<-", signature = "list", function(x, value) {
     if (length(x) != length(value)) {
         stop("Number of names to set must be the same as the length of list",
-             call. = FALSE
+            call. = FALSE
         )
     }
     lapply(seq_along(x), function(i) {
