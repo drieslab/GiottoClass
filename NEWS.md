@@ -1,4 +1,4 @@
-# GiottoClass 0.4.7
+# GiottoClass 0.4.7 (2025/01/29)
 
 ## bug fixes
 - fix bug introduced in 0.4.6 with `shear()` for `giottoPolygon`.
