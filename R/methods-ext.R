@@ -252,7 +252,6 @@ setMethod("ext<-", signature(x = "spatLocsObj", value = "SpatExtent"),
 #' @export
 setMethod("ext<-", signature(x = "spatialNetworkObj", value = "SpatExtent"),
     function(x, value) {
-        browser()
         warning("ext<- not supported for spatialNetworkObj", call. = FALSE)
         x
     }
