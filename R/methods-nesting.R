@@ -3,56 +3,63 @@ NULL
 
 # docs ----------------------------------------------------------- #
 
-#' @title Spatial unit information
-#' @name spatUnit-generic
-#' @description access and set spat_unit slot of S4 subobject
-#' @param x a Giotto S4 class subobject with spatial unit
-#' @param value value to set as spatial unit
-#' @aliases spatUnit spatUnit<-
-#' @returns spat_unit
+#' @title Giotto schema
+#' @name giotto_schema
+#' @aliases spatUnit spatUnit<- featType featType<- objName objName<- prov prov<-
+#' @description Data within the `giotto` object is organized in a schema
+#' largely revolving around the **spatial unit** (which spatial length scale or
+#' polygonal annotation that is used as the unit of study) and the 
+#' **feature type** (data modality). Information is then further organized
+#' based on the **name** or key of the object. In cases where a single
+#' spatial unit is comprised of information from multiple others, 
+#' **provenance** is tracked to keep a record of which spatial units were the
+#' sources of that data. The functions to get and set these aspects of the
+#' schema on the Giotto object and subobjects are:
+#' 
+#' * **spatial unit:** `spatUnit()`, `spatUnit<-()`
+#' * **feature type:** `featType()`, `featType<-()`
+#' * **name:**         `objName()`, `objName<-()`
+#' * **provenance:**   `prov()`, `prov<-()`
+#' 
+#' @param x `giotto` or Giotto S4 subobject
+#' @param value value to set for this schema component
+#' @returns character. NA is returned when schema component is not applicable
+#' to target object
 #' @examples
-#' g <- GiottoData::loadSubObjectMini("featMetaObj")
-#'
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' 
+#' ########### Get existing schema values within giotto object ########
 #' spatUnit(g)
-NULL
-
-#' @title Feature type information
-#' @name featType-generic
-#' @description access and set feat_type slot of S4 subobject
-#' @param x a Giotto S4 class subobject with feature type
-#' @param value value to set as feature type
-#' @aliases featType featType<-
-#' @returns feat_type
-#' @examples
-#' g <- GiottoData::loadSubObjectMini("featMetaObj")
-#'
 #' featType(g)
-NULL
-
-#' @title Giotto object name information
-#' @name objName-generic
-#' @description access and set name slot fo S4 subobject
-#' @param x a Giotto S4 class subobject with name data
-#' @param value value to set as object name
-#' @aliases objName objName<-
-#' @returns name slot
-#' @examples
-#' g <- GiottoData::loadSubObjectMini("exprObj")
-#'
-#' objName(g)
-NULL
-
-#' @title Provenance information
-#' @name prov-generic
-#' @description access and set provenance slot of S4 subobject
-#' @param x a Giotto S4 class subobject
-#' @param value value to set as provenance
-#' @aliases prov prov<-
-#' @returns provenance slot
-#' @examples
-#' g <- GiottoData::loadSubObjectMini("exprObj")
-#'
-#' prov(g)
+#' 
+#' ########### Get schema values from a list of objects ###############
+#' 
+#' glist <- as.list(g)
+#' spatUnit(glist)
+#' featType(glist)
+#' objName(glist)
+#' 
+#' ########### Get and set schema values with single subobject ########
+#' 
+#' fx <- g[["feat_meta", spat_unit = "aggregate"]][[1]]
+#' 
+#' spatUnit(fx)
+#' spatUnit(fx) <- "foo"
+#' spatUnit(fx)
+#' 
+#' featType(fx)
+#' featType(fx) <- "bar"
+#' featType(fx)
+#' 
+#' ex <- g[["expression", spat_unit = "aggregate"]][[1]]
+#' 
+#' objName(ex)
+#' objName(ex) <- "baz"
+#' objName(ex)
+#' 
+#' prov(ex)
+#' prov(ex) <- "qux"
+#' prov(ex)
 NULL
 
 # ---------------------------------------------------------------- #
@@ -65,38 +72,36 @@ NULL
 # spatUnit ####
 
 # default for unknown types
-#' @describeIn spatUnit-generic Get spatial unit information
+#' @rdname giotto_schema
 #' @export
-setMethod("spatUnit", signature("ANY"), function(x) {
-    NA_character_
-})
+setMethod("spatUnit", signature("ANY"), function(x) NA_character_)
 
-#' @rdname spatUnit-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("spatUnit", signature("giotto"), function(x) {
     raw_su <- mixedsort(unique(spatUnit(as.list(x))))
     raw_su[!is.na(raw_su)]
 })
 
-#' @rdname spatUnit-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("spatUnit", signature("list"), function(x) {
     vapply(x, spatUnit, FUN.VALUE = character(1L))
 })
 
-#' @describeIn spatUnit-generic Get spatial unit information
+#' @rdname giotto_schema
 #' @export
 setMethod("spatUnit", signature = "spatData", function(x) x@spat_unit)
 
-#' @describeIn spatUnit-generic Get spatial unit information
+#' @rdname giotto_schema
 #' @export
 setMethod("spatUnit", signature("giottoPolygon"), function(x) x@name)
 
-#' @rdname spatUnit-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("spatUnit<-", signature("ANY"), function(x, value) x)
 
-#' @describeIn spatUnit-generic Set spatial unit information
+#' @rdname giotto_schema
 #' @export
 setMethod("spatUnit<-", signature = "spatData", function(x, value) {
     value <- as.character(value)
@@ -105,7 +110,7 @@ setMethod("spatUnit<-", signature = "spatData", function(x, value) {
 })
 
 # giottoPolygon name describes the same thing as the spat_unit
-#' @describeIn spatUnit-generic Set giottoPolygon spat_unit
+#' @rdname giotto_schema
 #' @export
 setMethod("spatUnit<-", signature("giottoPolygon"), function(x, value) {
     value <- as.character(value)
@@ -113,7 +118,7 @@ setMethod("spatUnit<-", signature("giottoPolygon"), function(x, value) {
     x
 })
 
-#' @rdname spatUnit-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("spatUnit<-", signature = "list", function(x, value) {
     if (length(x) != length(value)) {
@@ -128,7 +133,7 @@ setMethod("spatUnit<-", signature = "list", function(x, value) {
     })
 })
 
-#' @rdname spatUnit-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("spatUnit<-", signature("giotto"), function(x, old, value) {
     checkmate::assert_character(old, len = 1L)
@@ -175,20 +180,20 @@ setMethod("spatUnit<-", signature("giotto"), function(x, old, value) {
 # featType ####
 
 # default for unknown types
-#' @describeIn featType-generic Get feature type information
+#' @rdname giotto_schema
 #' @export
 setMethod("featType", signature("ANY"), function(x) {
     NA_character_
 })
 
-#' @rdname featType-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("featType", signature("giotto"), function(x) {
     raw_ft <- mixedsort(unique(featType(as.list(x))))
     raw_ft[!is.na(raw_ft)]
 })
 
-#' @rdname featType-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("featType", signature("list"), function(x) {
     vapply(x, featType, FUN.VALUE = character(1L))
@@ -198,11 +203,11 @@ setMethod("featType", signature("list"), function(x) {
 #' @export
 setMethod("featType", signature = "featData", function(x) x@feat_type)
 
-#' @rdname featType-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("featType<-", signature("ANY"), function(x, value) x)
 
-#' @describeIn featType-generic Set feature type information
+#' @rdname giotto_schema
 #' @export
 setMethod("featType<-", signature = "featData", function(x, value) {
     value <- as.character(value)
@@ -210,7 +215,7 @@ setMethod("featType<-", signature = "featData", function(x, value) {
     x
 })
 
-#' @rdname featType-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("featType<-", signature = "list", function(x, value) {
     if (length(x) != length(value)) {
@@ -225,6 +230,8 @@ setMethod("featType<-", signature = "list", function(x, value) {
     })
 })
 
+#' @rdname giotto_schema
+#' @export
 setMethod("featType<-", signature("giotto"), function(x, old, value) {
     checkmate::assert_character(old, len = 1L)
     checkmate::assert_character(value, len = 1L)
@@ -268,33 +275,33 @@ setMethod("featType<-", signature("giotto"), function(x, old, value) {
 # objName ####
 
 # default for unknown types
-#' @rdname objName-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("objName", signature("ANY"), function(x) NA_character_)
 
-#' @rdname objName-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("objName", signature("list"), function(x) {
     vapply(x, objName, FUN.VALUE = character(1L), USE.NAMES = FALSE)
 })
 
-#' @describeIn objName-generic Get name information
+#' @rdname giotto_schema
 #' @export
 setMethod("objName", signature("nameData"), function(x) x@name)
 
-#' @describeIn objName-generic Get name giottoPoints
+#' @rdname giotto_schema
 #' @export
 setMethod("objName", signature("giottoPoints"), function(x) x@feat_type)
 
-#' @rdname objName-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("objName", signature("giottoLargeImage"), function(x) x@name)
 
-#' @rdname objName-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("objName", signature("giottoImage"), function(x) x@name)
 
-#' @rdname objName-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("objName<-", signature = "list", function(x, value) {
     if (length(x) != length(value)) {
@@ -309,7 +316,7 @@ setMethod("objName<-", signature = "list", function(x, value) {
     })
 })
 
-#' @rdname objName-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("objName<-", signature = "nameData", function(x, value) {
     value <- as.character(value)
@@ -317,7 +324,7 @@ setMethod("objName<-", signature = "nameData", function(x, value) {
     x
 })
 
-#' @rdname objName-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("objName<-", signature = "giottoImage", function(x, value) {
     value <- as.character(value)
@@ -325,7 +332,7 @@ setMethod("objName<-", signature = "giottoImage", function(x, value) {
     x
 })
 
-#' @rdname objName-generic
+#' @rdname giotto_schema
 #' @export
 setMethod("objName<-", signature("giottoLargeImage"), function(x, value) {
     value <- as.character(value)
@@ -334,7 +341,7 @@ setMethod("objName<-", signature("giottoLargeImage"), function(x, value) {
 })
 
 # name describes the same thing as feat_type for giottoPoints
-#' @describeIn objName-generic Set name giottoPoints
+#' @rdname giotto_schema
 #' @export
 setMethod("objName<-", signature = "giottoPoints", function(x, value) {
     value <- as.character(value)
@@ -348,12 +355,12 @@ setMethod("objName<-", signature = "giottoPoints", function(x, value) {
 
 
 # prov ####
-#' @describeIn prov-generic Get provenance information
+#' @rdname giotto_schema
 #' @export
 setMethod("prov", signature = "provData", function(x) x@provenance)
 
 
-#' @describeIn prov-generic Set provenance information
+#' @rdname giotto_schema
 #' @export
 setMethod("prov<-", signature = "provData", function(x, value) {
     x@provenance <- value
