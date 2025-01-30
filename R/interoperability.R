@@ -3867,12 +3867,27 @@ giottoToSpatialData <- function(
     g2sd_path <- system.file("python", "g2sd.py", package = "GiottoClass")
     reticulate::source_python(g2sd_path)
 
-    # Get metadata
-    spat_unit <- activeSpatUnit(gobject)
-    feat_type <- activeFeatType(gobject)
+    # Expression
+    expr_dt <- list_expression(gobject)
+    # ID spat_unit and feat_type if not already provided.
+    if (is.null(spat_unit) && is.null(feat_type)) {
+        spat_unit <- unique(expr_dt$spat_unit)
+        feat_type <- unique(expr_dt$feat_type)
+    } else if (is.null(spat_unit) && !is.null(feat_type)) {
+        spat_unit <- unique(expr_dt$spat_unit)
+    } else if (!is.null(spat_unit) && is.null(feat_type)) {
+        feat_type <- unique(expr_dt$feat_type)
+    }
+
+    for (su in spat_unit) {
+        wrap_msg("Spatial unit(s)", su, "will be used in conversion.")
+    }
+    for (ft in feat_type) {
+        wrap_msg("Feature type(s)", ft, "will be used in conversion.")
+    }
 
     # Create a temporary folder to hold anndata
-    temp <- "temp_anndata/"
+    temp <- "temp_conversion_files/"
 
     # First, convert Giotto object to AnnData using an existing function
     giottoToAnnData(
@@ -3884,10 +3899,10 @@ giottoToSpatialData <- function(
         save_directory = temp
     )
 
-    # Extract GiottoImage only if an image exists
-    image_exists <- NULL
+  # Extract GiottoImage only if an image exists
+    images_exist <- NULL
     if (length(slot(gobject, "images")) > 0) {
-        image_exists <- TRUE
+        images_exist <- TRUE
         gimg_list <- slot(gobject, "images")
         for (i in seq_along(gimg_list)) {
             img_name <- slot(gimg_list[[i]], "name")
@@ -3904,10 +3919,29 @@ giottoToSpatialData <- function(
         }
     }
 
-    spat_locs <- getSpatialLocations(gobject, output = "data.table")
+  # Extract polygons
+    library(sf)
+    if (!is.null(list_spatial_info(gobject))) {
+        dir.create(paste0(temp, "shapes"))
+        for (su in spat_unit) {
+        gpoly <- getPolygonInfo(gobject, polygon_name = su)
+        gpoly_sf <- as.sf(gpoly)
+        st_write(gpoly_sf, paste0(temp, "shapes/", su, ".geojson"), delete_dsn = TRUE)
+        }
+    }
+
+    # Extract points
+    if (!is.null(list_feature_info(gobject))) {
+        dir.create(paste0(temp, "points"))
+        for (ft in feat_type) {
+            gpoint <- getFeatureInfo(gobject, feat_type = ft)
+            gpoint_dt <- as.data.table(gpoint, geom = "XY")
+            fwrite(gpoint_dt, paste0(temp, "points/", ft, ".csv"), sep = ",", row.names = FALSE)
+        }
+    }
 
     # Create SpatialData object
-    createSpatialData(temp, spat_locs, spot_radius, save_directory, image_exists)
+    createSpatialData(temp, save_directory, images_exist)
 
     # Delete temporary files and folders
     unlink(temp, recursive = TRUE)
