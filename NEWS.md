@@ -1,11 +1,120 @@
+# GiottoClass 0.4.7 (2025/01/29)
 
-# GiottoClass 0.3.6 (2024/08/30)
+## bug fixes
+- fix bug introduced in 0.4.6 with `shear()` for `giottoPolygon`.
+- fix {magick} `giottoAffineImage` realization when extent does not match the image dims ratio.
+- fix `ext<-()` for `spatLocsObj`
+- fix `ext<-()` for `giottoAffineImage`
+- fix external affine matrix compatibility. `affine()` now has `pre_multiply` param to switch between working with affine matrices defined for either pre or post-multiply. Pre is the general convention, but Giotto internally uses post. This will be addressed in a later update.
+- fix `giottoToSeuratV5()` selection of a default image to use
+- replace internal usage of deprecated create_spat_net_obj -> createSpatNetObj and set_spatialNetwork -> setSpatialNetwork when calculating spatial networks.
+
+## changes
+- move {magick} from imports to suggests
+
+## enhancements
+- `[[` can now be used to select channels in `giottoLargeImage`-inheriting objects
+- `XY()` replacement function for `SpatVector` now has `geomtype` param in case of `"none"` geometries
+
+# GiottoClass 0.4.6 (2025/01/17)
+
+## bug fixes
+- fix `gefToGiotto()` gene column reading [#255](https://github.com/drieslab/GiottoClass/pull/255) by cmubioinformatics
+- fix `plot(add = TRUE)` for adding on to rasterized point plots
+- fix `calculateOverlap()` when there are duplicate poly_IDs
+- fix `calculateOverlap()` `giottoPolygon`, `giottoAffineImage` method. (The `giotto`, `missing` method still needs work)
+- fix `calculateOverlap()` `giottoPolygon`, `giottoLargeImage` method that locked `name_overlap` to be `objName()` of `y`
+- fix poly_ID generation when `terra::makeValid()` increases number of polys
+- fix `giottoPoints`, `giottoPolygon` `as.data.table()` conversion when `row()` = 0
+
+## new
+- `names()` and `names<-()` for `giottoLargeImage` inheriting objects to name image layers
+
+## enhancements
+- `make_valid` param for `createGiottoPolygonsFromDfr()` and `createGiottoPolygonsFromGeoJSON()`
+
+
+# GiottoClass 0.4.5 (2024/12/09)
+
+## enhancements
+- `spatUnit()<-` and `featType()<-` `list` methods
+- `set_default_spat_unit()` and `set_default_feat_type()` now look for defaults when given `NA_character_` inputs as well.
+- `update_giotto_params()` can now be turned off with `options("giotto.update_param" = FALSE)`
+
+## bug fixes
+- fix `giottoToSeuratV5()` Interoperability for Xenium Image
+- fix `createGiottoPolygon()` when no attributes information is provided
+- fix `createGiottoPolygonsFromGeoJSON()` reading from json GeometryCollection type inputs
+
+# GiottoClass 0.4.4 (2024/11/14)
+
+## bug fixes
+- fix cell metadata desyncing after `joinGiottoObjects()`
+- fix `readExprMatrix()` when IDs are numerical barcodes
+- fix `giottoAffineImage` not being detected during `saveGiotto()` image export step.
+- fix `giottoAffineImage` `reconnect()` method
+
+## enhancements
+- `saveGiotto()` now has `include_feat_coord` param. If `FALSE`, transcript coordinates will be dropped during saving, which will make the object much less memory intensive.
+- `saveGiotto()` now has a `export_image` param. If `FALSE`, the image will not be re-exported during the save process. (They can still be reconnected)
+
+# GiottoClass 0.4.2 (2024/10/30)
+
+## bug fixes
+- fix default method setting in `createNetwork()` for "delaunay" networks
+- fix y spacing of `makePseudoVisium()`
+
+## changes
+- `makePseudoVisium()` `micron_scale` (multiplicative scalefactor to get micron 
+  scaled values) supercedes `micron_size` which used the inverse.
+
+
+# GiottoClass 0.4.1 (2024/10/28)
+
+## new
+- `buffer()` for `giottoPolygon`, `giottoPoints`, `spatLocsObj`. Default is to crop by voronoi borders with `settleGeom()`
+- `settleGeom()` for `giottoPolygon` and `SpatVector` for finding non overlapping borders determined by voronoi
+
+
+# GiottoClass 0.4.0 (2024/10/27)
+
+## breaking changes
+- stop exporting deprecated internal accessors
+- terra requirement raised to 1.7.41 for `minCircle()`
 
 ## bug fixes
 - fix `dimnames()` for some subobjects
+- fix `joinGiottoObject()` for gobjects with only poly and point data [#233](https://github.com/drieslab/GiottoClass/issues/233)
+- fix `joinGiottoObject()` for gobjects with image intensity overlaps features
+- fix subsetting error due to expression `matrix` drop to `numeric` when only one cell is left
+- `shift_vertical_step` and `shift_horizontal_step` args in `createGiottoPolygonsFromMask()` when numeric now shift by steps based on the dims of the image instead of just by the numerical value provided.
+- fix feature metadata not being mixedsorted after join
+- fix non-inclusive subsetting when not all minmax values are supplied to `subsetGiottoLocs()` 
+- fix `giottoAffineImage` loading after being saved
 
 ## enhancements
-- python packages to install through pip is now settable in `installGiottoEnvironment()`
+- python packages to install through pip is now settable in `installGiottoEnvironment()` [#224](https://github.com/drieslab/GiottoClass/issues/224)
+- `giotto` `initialize()` and slot checking behavior can be toggled now using `'giotto.init'` and `'giotto.check_valid'` options. [#946](https://github.com/drieslab/Giotto/issues/946) by rbutleriii
+- `setGiotto()` now only initializes and performs checks once all items are added if a `list` input is provided.
+- `instructions()` with no args will now call `createGiottoInstructions()`. You can also supply named args.
+- `instructions(gobject, param)` and `instructions(gobject, param)<-` will now work for `giottoInstructions` objects for convenience.
+- `[`, `[[`, `$`, `$<-`, and `subset()` for `giotto` see `?GiottoClass::subset_giotto`
+- `subset` for `spatIDs()` and `featIDs()`
+- `objName()`, `spatUnit()`, `featType()` generics now return `NA_character_` instead of erroring when used on unsupported classes.
+- `ext()` and `ext<-()` can now be used to get and set extent of `affine2d`
+- `rownames()`, `colnames()`, `dimnames()` for `giotto`
+- `spatValues()` can get values from multiple spatial units.
+- `createGiottoPolygonsFromMask()` now works with anything `terra::rast()` can read
+- `createGiottoLargeImage()` now works with anything `terra::rast()` can read
+
+## new
+- `sliceGiotto()` for pulling out specific spatial units and feature types as independent `giotto` objects
+- `splitGiotto()` for splitting a Giotto object into a list of Giotto objects based on a cell metadata column
+- `as.list()` method for `giotto` to dump the data as a list of subobjects
+- `XY()` and `XY<-()` for accessing and setting coordinate values of subobjects as `matrix`
+- terra `convHull()`, `minRect()`, `minCircle()` for Giotto spatial vector classes
+- `area()` for `SpatVector` and `giottoPolygon`
+
 
 # GiottoClass 0.3.5 (2024/08/28)
 

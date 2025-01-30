@@ -4,31 +4,32 @@ NULL
 
 # Documentations ------------------------------------------------------------ #
 
-#' @title Subset part of an object with `[`
+#' @title Subset part of an object with `[` or `[[`
 #' @name subset_bracket
-#' @aliases `[`
+#' @aliases `[`, `[[`
 #' @description Extract values from Giotto classes. Providing empty brackets
 #' such as: `x[]` will usually extract the main contained data representation.
 #' @param x Giotto S4 object to subset information from
 #' @param i,j indices specifying elements to extract. Indices are numeric or
 #' character vectors, or empty
-#' @returns Same as `x` unless brackets are empty in which case, the main 
-#' internal representation is returned. 
+#' @param \dots additional arguments
+#' @returns Same as `x` unless brackets are empty in which case, the main
+#' internal representation is returned.
 #' @examples
 #' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
-#' 
+#'
 #' # extract contained `SpatVector`
 #' gpoints[]
-#' 
+#'
 #' # subset by feature
 #' gpoints[c("Mlc1", "Gfap")]
-#' 
+#'
 #' # subset by feature and colname
 #' gpoints["Mlc1", c("feat_ID", "feat_ID_uniq")]
-#' 
+#'
 #' # subset by index
 #' gpoints[seq(20)]
-#' 
+#'
 #' @seealso [replace_bracket] [subset_dollar] [replace_dollar]
 NULL
 
@@ -36,18 +37,18 @@ NULL
 #' @name replace_bracket
 #' @aliases `[<-`
 #' @description Replace values from Giotto Classes. Providing empty brackets
-#' such as `x[] <- value` will usually replace the entire contained data 
+#' such as `x[] <- value` will usually replace the entire contained data
 #' representation.
 #' @param x Giotto S4 object to replace information in
-#' @param i,j indices specifying elements to replace. Indices are numeric or 
+#' @param i,j indices specifying elements to replace. Indices are numeric or
 #' character vectors or empty
 #' @param value values(s) to set
 #' @returns same as `x`
 #' @examples
 #' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
-#' 
+#'
 #' gpoints[] <- gpoints[]
-#' 
+#'
 #' @seealso [subset_bracket] [subset_dollar] [replace_dollar]
 NULL
 
@@ -63,9 +64,9 @@ NULL
 #' @returns same as `x`
 #' @examples
 #' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
-#' 
+#'
 #' gpoints$new_col <- sprintf("feat_%d", seq(nrow(gpoints)))
-#' 
+#'
 #' @seealso [subset_bracket] [replace_bracket] [subset_dollar]
 NULL
 
@@ -85,13 +86,101 @@ NULL
 #' @seealso [subset_bracket] [replace_bracket] [replace_dollar]
 NULL
 
+#' @title Subset a `giotto` object
+#' @name subset_giotto
+#' @aliases `[.giotto`
+#' @description Subset a giotto object with `[` or `subset()` generic. The
+#' implementation is different from [subsetGiotto()] in that all spatial units
+#' will always be affected. The feature type to subset can be specified.
+#' @param x a `giotto` object
+#' @param feat_ids,i character vector. Feature IDs to subset the object for.
+#' @param cell_ids,j character vector. Cell/spatial IDs to subset the object
+#' for.
+#' @param drop not used
+#' @param spat_unit character. Controls which spatial unit to pull subsetting
+#' information from when using `cell_ids`/`j` and `subset` params. However,
+#' all spatial units will always be affected by the subset.
+#' @param feat_type character. Subset affects these feature type(s). Default
+#' is `"rna"`
+#' @param \dots additional args to pass (none implemented)
+#' @examples
+#' g <- GiottoData::loadGiottoMini("visium")
+#'
+#' # `[` examples
+#' g[1:5]
+#' g[, 2:10]
+#' g[1:5, 2:10]
+#' g[c(TRUE, FALSE), ]
+#'
+#' # subset() examples
+#' subset(g, nr_feats > 300)
+#' subset(g, nr_feats > 300,
+#'     cell_ids = c("GAATCGCCGGACACGG-1", "GAGGGCATCGCGTATC-1")
+#' )
+#' subset(g, Gfap + Gna12 > 10)
+#' @returns giotto object
+NULL
+
+#' @title Subset `giotto` subobjects
+#' @name subset_giotto_subobjects
+#' @aliases `[[.giotto`
+#' @description
+#' Subset a `giotto` object with `[[` to disassemble it into a list of Giotto
+#' S4 subobjects. If `drop` is `FALSE`, the selected subobjects
+#' will be reassembled into a new `giotto` object. Note that indexing within
+#' the `[[` filters for only those subobjects that have those attributes.
+#' This may remove some unexpected information. For specifically splitting the
+#' `giotto` object by spatial unit and/or feature type while keeping all
+#' expected information, use [sliceGiotto()]
+#' @param x giotto object
+#' @param spat_unit spatial unit (e.g. "cell")
+#' @param feat_type feature type to use (e.g. "rna", "protein")
+#' @param i character. Indicates the slot name
+#' @param j character. Indicates the subobject name
+#' @param drop logical. Default = TRUE
+#' @param \dots additional arguments
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' force(g)
+#'
+#' # return as lists of subobjects with drop = TRUE (default)
+#' g[[, "raw"]]
+#' g[["expression", spat_unit = "aggregate"]]
+#'
+#' # return as a subset giotto object with drop = FALSE
+#' g[[, "raw", drop = FALSE]]
+#' g[[spat_unit = "aggregate", drop = FALSE]]
+#' @returns giotto subobject
+NULL
 
 # --------------------------------------------------------------------------- #
 
 # $ S4 access generic ####
 
-## * coordDataDT ####
 
+#' @describeIn subset_dollar Subset giotto object
+setMethod(
+    "$", signature("giotto"), function(x, name) {
+        spatValues(x, feats = name)[[name]]
+    }
+)
+
+#' @rdname replace_dollar
+setMethod(
+    "$<-", signature("giotto"), function(x, name, value) {
+        cx <- getCellMetadata(x, output = "data.table", copy_obj = FALSE)
+        cx[, (name) := value]
+        return(x)
+    }
+)
+
+#' @export
+.DollarNames.giotto <- function(x, pattern) {
+    colnames(pDataDT(x))
+}
+
+
+## * coordDataDT ####
 #' @rdname subset_dollar
 #' @section \code{`$`} methods:
 #'   Select by colname from giotto S4 data.table coordinates slot.
@@ -262,6 +351,7 @@ setMethod("$", signature("affine2d"), function(x, name) {
 
 
 # [ S4 access generic ####
+
 
 ## * gdtData ####
 
@@ -507,7 +597,6 @@ setMethod(
 )
 
 
-# setMethod("[[")
 
 ## * metaData ####
 
@@ -1030,6 +1119,61 @@ setMethod(
     }
 )
 
+# * giottoLargeImage ####
+#' @rdname subset_bracket
+#' @export
+setMethod(
+    "[",
+    signature(x = "giottoLargeImage", i = "missing", j = "missing", drop = "missing"),
+    function(x, i, j) {
+        x@raster_object
+    }
+)
+
+#' @rdname subset_bracket
+#' @export
+setMethod(
+    "[[",
+    signature(x = "giottoLargeImage", i = "gIndex", j = "missing"),
+    function(x, i, ...) {
+        x[] <- x[][[i]]
+        x
+    }
+)
+
+#' @rdname replace_bracket
+#' @export
+setMethod(
+    "[<-",
+    signature(x = "giottoLargeImage", i = "missing", j = "missing", value = "ANY"),
+    function(x, i, j, value) {
+        x@raster_object <- value
+        return(initialize(x))
+    }
+)
+
+# * giottoImage ####
+#' @rdname subset_bracket
+#' @export
+setMethod(
+    "[",
+    signature(x = "giottoImage", i = "missing", j = "missing", drop = "missing"),
+    function(x, i, j) {
+        x@mg_object
+    }
+)
+
+#' @rdname replace_bracket
+#' @export
+setMethod(
+    "[<-",
+    signature(x = "giottoImage", i = "missing", j = "missing", value = "ANY"),
+    function(x, i, j, value) {
+        x@mg_object <- value
+        return(initialize(x))
+    }
+)
+
 #' @rdname subset_bracket
 #' @export
 setMethod(
@@ -1057,3 +1201,417 @@ setMethod(
         return(initialize(x))
     }
 )
+
+
+
+
+
+# giotto subsets ####
+
+
+
+# * [ ####
+
+#' @rdname subset_giotto
+#' @export
+setMethod(
+    "[", signature(x = "giotto", i = "gIndex", j = "missing", drop = "missing"),
+    function(x, i, ..., drop) {
+        subset(x, feat_ids = i, ...)
+    }
+)
+
+#' @rdname subset_giotto
+#' @export
+setMethod(
+    "[", signature(x = "giotto", i = "missing", j = "gIndex", drop = "missing"),
+    function(x, j, ..., drop) {
+        subset(x, cell_ids = j, ...)
+    }
+)
+
+#' @rdname subset_giotto
+#' @export
+setMethod(
+    "[", signature(x = "giotto", i = "gIndex", j = "gIndex", drop = "missing"),
+    function(x, i, j, ..., drop) {
+        subset(x, feat_ids = i, cell_ids = j, ...)
+    }
+)
+
+#' @describeIn subset_giotto Subset giotto objects
+setMethod(
+    "[", signature(x = "giotto", i = "missing", j = "missing", drop = "missing"),
+    function(x, ...) {
+        x[[...]]
+    }
+)
+
+# * [[ ####
+
+#' @rdname subset_giotto_subobjects
+#' @export
+setMethod(
+    "[[", signature(x = "giotto", i = "missing", j = "missing"),
+    function(x, spat_unit = NULL, feat_type = NULL, drop = TRUE, ...) {
+        res <- as.list(
+            x,
+            spat_unit = spat_unit, feat_type = feat_type, ...
+        )
+        if (drop) {
+            return(res)
+        } else {
+            g <- giotto(initialize = FALSE, instructions = instructions(x))
+            g <- setGiotto(g, res, verbose = FALSE)
+            if (!is.null(spat_unit)) activeSpatUnit(g) <- spat_unit[[1]]
+            if (!is.null(feat_type)) activeFeatType(g) <- feat_type[[1]]
+            return(g)
+        }
+    }
+)
+
+#' @rdname subset_giotto_subobjects
+#' @export
+setMethod(
+    "[[", signature(x = "giotto", i = "character", j = "missing"),
+    function(x, i, spat_unit = NULL, feat_type = NULL, drop = TRUE, ...) {
+        res <- as.list(
+            x,
+            slots = i, spat_unit = spat_unit, feat_type = feat_type, ...
+        )
+        if (drop) {
+            return(res)
+        } else {
+            g <- giotto(initialize = FALSE, instructions = instructions(x))
+            g <- setGiotto(g, res, verbose = FALSE)
+            if (!is.null(spat_unit)) activeSpatUnit(g) <- spat_unit[[1]]
+            if (!is.null(feat_type)) activeFeatType(g) <- feat_type[[1]]
+            return(g)
+        }
+    }
+)
+
+#' @rdname subset_giotto_subobjects
+#' @export
+setMethod(
+    "[[", signature(x = "giotto", i = "missing", j = "character"),
+    function(x, j, spat_unit = NULL, feat_type = NULL, drop = TRUE, ...) {
+        res <- as.list(x,
+            name = j,
+            spat_unit = spat_unit,
+            feat_type = feat_type,
+            ...
+        )
+        if (drop) {
+            return(res)
+        } else {
+            g <- giotto(initialize = FALSE, instructions = instructions(x))
+            g <- setGiotto(g, res, verbose = FALSE)
+            if (!is.null(spat_unit)) activeSpatUnit(g) <- spat_unit[[1]]
+            if (!is.null(feat_type)) activeFeatType(g) <- feat_type[[1]]
+            if (is.null(activeSpatUnit(g))) {
+                su <- spatUnit(res)
+                activeSpatUnit(g) <- su[!is.na(su)][[1L]]
+            }
+            if (is.null(activeFeatType(g))) {
+                ft <- featType(res)
+                activeFeatType(g) <- ft[!is.na(ft)][[1L]]
+            }
+            return(g)
+        }
+    }
+)
+
+#' @rdname subset_giotto_subobjects
+#' @export
+setMethod(
+    "[[", signature(x = "giotto", i = "character", j = "character"),
+    function(x, i, j, spat_unit = NULL, feat_type = NULL, drop = TRUE, ...) {
+        res <- as.list(x,
+            slots = i,
+            name = j,
+            spat_unit = spat_unit,
+            feat_type = feat_type,
+            ...
+        )
+        if (drop) {
+            return(res)
+        } else {
+            g <- giotto(initialize = FALSE, instructions = instructions(x))
+            g <- setGiotto(g, res, verbose = FALSE)
+            if (!is.null(spat_unit)) activeSpatUnit(g) <- spat_unit[[1]]
+            if (!is.null(feat_type)) activeFeatType(g) <- feat_type[[1]]
+            if (is.null(activeSpatUnit(g))) {
+                su <- spatUnit(res)
+                activeSpatUnit(g) <- su[!is.na(su)][[1L]]
+            }
+            if (is.null(activeFeatType(g))) {
+                ft <- featType(res)
+                activeFeatType(g) <- ft[!is.na(ft)][[1L]]
+            }
+            return(g)
+        }
+    }
+)
+
+
+
+#' @rdname subset_giotto
+#' @param subset Logical expression evaluated in expression values
+#' @param negate logical. if `TRUE` all IDs that are **not** in the `subset`
+#' are selected
+#' @param quote logical. If `TRUE`, the `subset` param will be quoted with
+#' `substitute()`. Set this to `FALSE` when calling from a function, although
+#' that may not be recommended since NSE output can be unexpected when not used
+#' interactively.
+#' @param \dots additional params to pass to `spatValues` used with the
+#' subset param
+#' @export
+setMethod("subset", signature("giotto"), function(x,
+    subset,
+    feat_ids = NULL,
+    cell_ids = NULL,
+    spat_unit = NULL,
+    feat_type = NULL,
+    negate = FALSE,
+    quote = TRUE,
+    ...) {
+    spat_unit <- set_default_spat_unit(
+        x, spat_unit
+    )
+    feat_type <- set_default_feat_type(
+        x,
+        spat_unit = spat_unit, feat_type = feat_type
+    )
+
+    # setup vars for subsetting IDs
+    fids <- NULL
+    sids <- NULL
+
+    # indexing and specified IDs
+    if (!is.null(feat_ids)) {
+        if (is.numeric(feat_ids) || is.logical(feat_ids)) {
+            fx <- fDataDT(x,
+                spat_unit = spat_unit,
+                feat_type = feat_type
+            )
+            if (is.logical(feat_ids)) {
+                fn <- nrow(fx)
+                if (length(feat_ids) != fn) {
+                    feat_ids <- rep_len(feat_ids, length.out = fn)
+                }
+            }
+            fids <- fx[feat_ids]$feat_ID
+        } else if (is.character(feat_ids)) {
+            fids <- feat_ids
+        } else if (is.factor(feat_ids)) {
+            fids <- as.character(fids)
+        }
+    }
+
+    if (!is.null(cell_ids)) {
+        if (is.numeric(cell_ids) || is.logical(cell_ids)) {
+            cx <- pDataDT(x,
+                spat_unit = spat_unit,
+                feat_type = feat_type
+            )
+            if (is.logical(cell_ids)) {
+                cn <- nrow(cx)
+                if (length(cell_ids) != cn) {
+                    cell_ids <- rep_len(cell_ids, length.out = cn)
+                }
+            }
+            sids <- cx[cell_ids]$cell_ID
+        } else if (is.character(cell_ids)) {
+            sids <- cell_ids
+        } else if (is.factor(cell_ids)) {
+            sids <- as.character(sids)
+        }
+    }
+
+    # expression evals ------------------------------------------------- #
+    if (quote) {
+        sub_s <- substitute(subset)
+    } else {
+        sub_s <- subset
+    }
+    if (negate) sub_s <- call("!", sub_s)
+
+    if (!missing(sub_s)) {
+        vars <- all.vars(sub_s)
+        vals <- lapply(vars, function(v) {
+            spatValues(x,
+                feats = v,
+                spat_unit = spat_unit,
+                feat_type = feat_type,
+                verbose = FALSE,
+                ...
+            )
+        })
+        .dtjoin <- function(x, y) {
+            x[y, on = "cell_ID"]
+        }
+        vals_dt <- Reduce(.dtjoin, vals)
+        if (identical(getOption("giotto.verbose"), "debug")) {
+            message("data.table used in subset")
+            print(vals_dt)
+        }
+        sids_s <- subset.data.frame(vals_dt, subset = eval(sub_s))$cell_ID
+
+        if (is.null(sids)) {
+            sids <- sids_s
+        } else {
+            checkmate::assert_character(sids)
+            sids <- intersect(sids_s, sids)
+        }
+    }
+
+    subsetGiotto(x,
+        spat_unit = ":all:",
+        feat_type = feat_type,
+        feat_ids = fids,
+        cell_ids = sids,
+        poly_info = spat_unit
+    )
+})
+
+
+
+
+
+#' @name sliceGiotto
+#' @title Slice `giotto` object by `spat_unit` and `feat_type`
+#' @description Extract specific spatial units and feature types from a
+#' `giotto` object as independent `giotto` objects.
+#' @param gobject `giotto` object
+#' @param spat_unit character vector. Spatial units to slice out. ":all:"
+#' means keeping all of them in the output
+#' @param feat_type character vector. Feature types to slice out. ":all:"
+#' means keeping all of them in the output
+#' @param verbose be verbose
+#' @returns `giotto` object
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' res <- sliceGiotto(g, spat_unit = "aggregate")
+#' force(res)
+#' @seealso [subsetGiotto()] [subset_giotto]
+#' @export
+sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", verbose = FALSE) {
+    spat_unit <- spat_unit %null% ":all:"
+    feat_type <- feat_type %null% ":all:"
+    x <- gobject # shorter name
+
+    if (identical(spat_unit, ":all:") && identical(feat_type, ":all:")) {
+        return(x) # return early if no slicing needed
+    }
+
+    # data slots
+    spat_only_slots <- c("spatial_info", "spatial_locs", "spatial_network")
+    feat_only_slots <- c("feat_info")
+    spat_feat_slots <- c(
+        "expression", "cell_metadata", "feat_metadata", "spatial_enrichment",
+        "nn_network", "dimension_reduction", "multiomics"
+    )
+
+    spat_only <- x[[spat_only_slots]]
+    feat_only <- x[[feat_only_slots]]
+    spat_feat <- x[[spat_feat_slots]]
+
+    # select data
+    if (!identical(spat_unit, ":all:")) { # select if not all
+        activeSpatUnit(x) <- spat_unit[[1L]]
+        spat_only <- spat_only[spatUnit(spat_only) %in% spat_unit]
+        spat_feat <- spat_feat[spatUnit(spat_feat) %in% spat_unit]
+    }
+
+    if (!identical(feat_type, ":all:")) {
+        activeFeatType(x) <- feat_type[[1L]]
+        feat_only <- feat_only[featType(feat_only) %in% feat_type]
+        spat_feat <- spat_feat[featType(spat_feat) %in% feat_type]
+    }
+
+    # combine selected data
+    datalist <- c(spat_only, feat_only, spat_feat)
+
+    g <- giotto(
+        images = x@images,
+        parameters = x@parameters,
+        instructions = x@instructions,
+        offset_file = x@offset_file,
+        versions = x@versions,
+        join_info = x@join_info,
+        h5_file = x@h5_file,
+        initialize = FALSE
+    )
+    g <- setGiotto(g,
+        datalist,
+        initialize = FALSE,
+        verbose = FALSE
+    )
+
+    return(initialize(g))
+}
+
+# * as.list ####
+
+#' @rdname as.list
+#' @title Coerce to a list
+#' @docType methods
+#' @method as.list giotto
+#' @description Generic to coerce to a list if possible
+#' @param x the object to coerce
+#' @param slots character vector. Which data slots to include in list. See
+#'   details
+#' @param spat_unit spatial unit (e.g. "cell")
+#' @param feat_type feature type to use (e.g. "rna", "protein")
+#' @param name name of the elements to select from the slot
+#' @param \dots additional arguments
+#' @details
+#' * Giotto method - the slots argument currently accepts any or multiple of:
+#' `"spatial_info", "spatial_locs", "spatial_network", "feat_info",
+#' "expression", "cell_metadata", "feat_metadata", "spatial_enrichment",
+#' "nn_network", "dimension_reduction", "multiomics"`
+#' @returns list
+#' @exportMethod as.list
+setMethod("as.list", signature("giotto"), function(x, slots, spat_unit = NULL, feat_type = NULL, name = NULL, ...) {
+    dataslots <- c(
+        "spatial_info", "spatial_locs", "spatial_network", "feat_info",
+        "expression", "cell_metadata", "feat_metadata", "spatial_enrichment",
+        "nn_network", "dimension_reduction", "multiomics", "images"
+    )
+
+    .giotto_datalist <- function(x, slots) {
+        lapply(slots, function(gslot) methods::slot(x, gslot)) |>
+            unlist(recursive = TRUE, use.names = FALSE)
+    }
+
+    if (missing(slots)) slots <- dataslots
+    slots <- match.arg(slots, choices = dataslots, several.ok = TRUE)
+    res <- do.call(.giotto_datalist, list(x = x, slots = slots))
+
+    if (!is.null(name)) {
+        res <- .dbrkt_on_filter(res, name)
+    }
+    if (!is.null(spat_unit)) {
+        res <- .dbrkt_su_filter(res, spat_unit)
+    }
+    if (!is.null(feat_type)) {
+        res <- .dbrkt_ft_filter(res, feat_type)
+    }
+    return(res)
+})
+
+
+# internals ####
+# suspend slot checking until all items in list are supplied
+
+
+.dbrkt_su_filter <- function(x, y) {
+    x[spatUnit(x) %in% y | inherits(x, "giottoLargeImage")]
+}
+.dbrkt_ft_filter <- function(x, y) {
+    x[featType(x) %in% y | inherits(x, "giottoLargeImage")]
+}
+.dbrkt_on_filter <- function(x, y) {
+    x[objName(x) %in% y]
+}

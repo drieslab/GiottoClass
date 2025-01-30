@@ -41,35 +41,32 @@ test_that("Instructions are created", {
     expect_type(instrs, "list")
 })
 
-# readGiottoInstructions
-test_that("readGiottoInstructions reads a few giotto object params correctly", {
-    expect_type(readGiottoInstructions(gobject, param = "show_plot"), "logical")
-    expect_type(readGiottoInstructions(gobject, param = "plot_format"), "character")
-    expect_type(readGiottoInstructions(gobject, param = "dpi"), "double")
+# read GiottoInstructions
+test_that("instructions reads a few giotto object params correctly", {
+    expect_type(instructions(gobject, param = "show_plot"), "logical")
+    expect_type(instructions(gobject, param = "plot_format"), "character")
+    expect_type(instructions(gobject, param = "dpi"), "double")
 })
 
-# showGiottoInstructions
-test_that("showGiottoInstructions returns expected list", {
-    expect_type(showGiottoInstructions(gobject), "list")
+# show GiottoInstructions
+test_that("instructions returns expected list", {
+    expect_type(instructions(gobject), "list")
 })
 
-# changeGiottoInstructions
-gobject <- changeGiottoInstructions(
-    gobject,
-    params = c("show_plot", "save_plot"),
-    new_values = c(FALSE, TRUE),
-    return_gobject = TRUE
-)
+# change GiottoInstructions
+instructions(gobject,
+    param = c("show_plot", "save_plot")
+) <- list(FALSE, TRUE)
 
-test_that("changeGiottoInstructions changes instruction params in object", {
-    expect_false(readGiottoInstructions(gobject, param = "show_plot"))
-    expect_true(readGiottoInstructions(gobject, param = "save_plot"))
+test_that("change GiottoInstructions changes instruction params in object", {
+    expect_false(instructions(gobject, param = "show_plot"))
+    expect_true(instructions(gobject, param = "save_plot"))
 })
 
-# replaceGiottoInstructions
-gobject <- replaceGiottoInstructions(gobject, instrs)
+# replace GiottoInstructions
+instructions(gobject) <- instrs
 
-test_that("replaceGiottoInstructions returns object instructions to original", {
-    expect_true(readGiottoInstructions(gobject, param = "show_plot"))
-    expect_false(readGiottoInstructions(gobject, param = "save_plot"))
+test_that("instructions returns object instructions to original", {
+    expect_true(instructions(gobject, param = "show_plot"))
+    expect_false(instructions(gobject, param = "save_plot"))
 })

@@ -33,7 +33,9 @@ NULL
 #' @export
 setMethod("crop", signature("giottoLargeImage"), function(x, y, ...) {
     do_crop <- .crop_check(x, y)
-    if (!do_crop) return(initialize(x))
+    if (!do_crop) {
+        return(initialize(x))
+    }
     x@raster_object <- terra::crop(x@raster_object, y, ...)
     return(initialize(x))
 })
@@ -46,9 +48,11 @@ setMethod("crop", signature("giottoAffineImage"), function(x, y, ...) {
     d <- .bound_poly(crop_ext)
     aff <- x@affine
     img_crop_ext <- ext(affine(d, aff, inv = TRUE)) # find extent in img space
-    
+
     do_crop <- .crop_check(x@raster_object, img_crop_ext)
-    if (!do_crop) return(initialize(x))
+    if (!do_crop) {
+        return(initialize(x))
+    }
     x@raster_object <- terra::crop(x@raster_object, img_crop_ext)
     return(initialize(x))
 })
@@ -60,10 +64,12 @@ setMethod("crop", signature("spatLocsObj"), function(x, y, ...) {
     # NSE vars
     sdimx <- sdimy <- NULL
     e <- ext(y)
-    
+
     do_crop <- .crop_check(x, y)
-    if (!do_crop) return(x)
-    
+    if (!do_crop) {
+        return(x)
+    }
+
     b <- .ext_to_num_vec(e) # bounds as a numerical vector
     x[] <- x[][sdimx >= b[1] & sdimx <= b[2] & sdimy >= b[3] & sdimy <= b[4]]
     return(x)
@@ -77,15 +83,17 @@ setMethod("crop", signature("spatialNetworkObj"), function(x, y, ...) {
     # NSE vars
     sdimx_begin <- sdimy_begin <- sdimx_end <- sdimy_end <- NULL
     e <- ext(y)
-    
+
     do_crop <- .crop_check(x, y)
-    if (!do_crop) return(x)
-    
+    if (!do_crop) {
+        return(x)
+    }
+
     b <- .ext_to_num_vec(e) # bounds as a numerical vector
     x[] <- x[][sdimx_begin >= b[1] & sdimx_begin <= b[2] &
-               sdimy_begin >= b[3] & sdimy_begin <= b[4]]
+        sdimy_begin >= b[3] & sdimy_begin <= b[4]]
     x[] <- x[][sdimx_end >= b[1] & sdimx_end <= b[2] &
-               sdimy_end >= b[3] & sdimy_end <= b[4]]
+        sdimy_end >= b[3] & sdimy_end <= b[4]]
     return(x)
 })
 
@@ -97,9 +105,8 @@ setMethod("crop", signature("spatialNetworkObj"), function(x, y, ...) {
 #' @export
 setMethod(
     "crop", signature("giottoPoints"),
-    function(
-        x, y, DT = TRUE, xmin = NULL, xmax = NULL,
-        ymin = NULL, ymax = NULL, ...) {
+    function(x, y, DT = TRUE, xmin = NULL, xmax = NULL,
+    ymin = NULL, ymax = NULL, ...) {
         checkmate::assert_logical(DT)
         if (DT) {
             # converting to DT, subsetting, then regeneration of SpatVector with vect()
@@ -114,9 +121,11 @@ setMethod(
             b <- .determine_crop_bounds(
                 x, y, missing_y, n_single_bounds, xmin, xmax, ymin, ymax
             )
-            
+
             do_crop <- .crop_check(x, b)
-            if (!do_crop) return(x)
+            if (!do_crop) {
+                return(x)
+            }
 
             # 2. convert to DT
             sv <- x@spatVector
@@ -134,7 +143,9 @@ setMethod(
             # non-DT method. terra default.
 
             do_crop <- .crop_check(x, y)
-            if (!do_crop) return(x)
+            if (!do_crop) {
+                return(x)
+            }
 
             x@spatVector <- terra::crop(x@spatVector, y, ...)
         }
@@ -154,9 +165,8 @@ setMethod(
 #' @export
 setMethod(
     "crop", signature("giottoPolygon"),
-    function(
-        x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL,
-        ymax = NULL, ...) {
+    function(x, y, DT = TRUE, xmin = NULL, xmax = NULL, ymin = NULL,
+    ymax = NULL, ...) {
         # A. spatVector cropping
         checkmate::assert_logical(DT)
         if (DT) {
@@ -166,16 +176,20 @@ setMethod(
             if (missing_y) y <- NULL # make easier to pass as a param downstream
             n_single_bounds <- 4 - sum(
                 vapply(list(xmin, xmax, ymin, ymax),
-                       is.null, FUN.VALUE = logical(1L))
+                    is.null,
+                    FUN.VALUE = logical(1L)
+                )
             )
 
             # 1. get final crop bounds (numeric vector of xmin, xmax, ymin, ymax)
             b <- .determine_crop_bounds(
                 x, y, missing_y, n_single_bounds, xmin, xmax, ymin, ymax
             )
-            
+
             do_crop <- .crop_check(x, b)
-            if (!do_crop) return(x)
+            if (!do_crop) {
+                return(x)
+            }
 
             # 2. convert to DT
             sv <- x@spatVectorCentroids
@@ -198,9 +212,11 @@ setMethod(
             x@unique_ID_cache <- spatDT[sub_idx, get("poly_ID")]
         } else {
             # non-DT method. terra default.
-            
+
             do_crop <- .crop_check(x, y)
-            if (!do_crop) return(x)
+            if (!do_crop) {
+                return(x)
+            }
 
             args <- list(y = y, ...)
             x <- .do_gpoly(x, what = terra::crop, args = args)
@@ -241,10 +257,9 @@ setMethod(
 #
 # returns a numeric vector of the 4 bounds in the order of:
 #   xmin, xmax, ymin, ymax
-.determine_crop_bounds <- function(
-        x, y, missing_y, n_single_bounds,
-        xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL,
-        output = c("numeric", "extent")) {
+.determine_crop_bounds <- function(x, y, missing_y, n_single_bounds,
+    xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL,
+    output = c("numeric", "extent")) {
     # check cropping params
     output <- match.arg(tolower(output), choices = c("numeric", "extent"))
 
@@ -286,13 +301,13 @@ setMethod(
     ey <- ext(y)
     exv <- .ext_to_num_vec(ex)
     eyv <- .ext_to_num_vec(ey)
-    
+
     # no overlap in extents
     if (is.null(terra::intersect(ex, ey))) {
         warning("crop region is empty", call. = FALSE)
         return(TRUE) # this will likely be an empty object though
     }
-    
+
     # if crop ext (y) fully encapsulates object ext (x):
     # yes, return FALSE, meaning no crop is needed
     # no, return TRUE, meaning crop is needed

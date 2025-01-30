@@ -4,6 +4,7 @@
 #' @param x giottoSubobject to set
 #' @param verbose be verbose
 #' @param \dots additional params to pass to specific Giotto setter functions
+#' @family functions to set data in giotto object
 #' @returns giottoSubobject
 #' @examples
 #' g <- createGiottoObject()
@@ -21,9 +22,28 @@ NULL
 setMethod(
     "setGiotto", signature("giotto", "list"),
     function(gobject, x, verbose = TRUE, ...) {
+        # suspend init and checking until all items are added
+        a <- list(...)
+        init <- !isFALSE(a$initialize)
+
+        init_opt <- getOption("giotto.init", TRUE)
+        cv_opt <- getOption("giotto.check_valid", TRUE)
+
+        .reset_opts <- function() {
+            options("giotto.init" = init_opt)
+            options("giotto.check_valid" = cv_opt)
+        }
+
+        on.exit(.reset_opts, add = TRUE)
+        options("giotto.init" = FALSE)
+        options("giotto.check_valid" = FALSE)
+
         for (item in x) {
             gobject <- setGiotto(gobject, item, verbose = verbose, ...)
         }
+
+        .reset_opts()
+        if (init) gobject <- initialize(gobject)
         return(gobject)
     }
 )

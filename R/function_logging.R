@@ -7,11 +7,20 @@
 
 #' @title Update giotto parameters
 #' @name update_giotto_params
+#' @description
+#' For developer use. Adds an entry to the `giotto` object object history.
+#' Care currently needs to be taken when a function that contains a call to
+#' this function is called from within yet another function. In such cases,
+#' a `toplevel < 0` or setting a temporary `"giotto.update_param" = FALSE` with
+#' `GiottoUtils::gwith_option()` may be the best option to avoid either
+#' evaluation errors or strange history entries. A new `update_giotto_params()`
+#' call can then be added that describes the function of the topmost function
+#' if desired.
 #' @param gobject giotto object
 #' @param description description of function run
 #' @param return_gobject logical. Whether the giotto object should be returned
 #' @param toplevel expected relative stackframe where call that is being
-#' recorded was made
+#' recorded was made. If negative, param recording is skipped
 #' @returns giotto object or list of parameters
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
@@ -26,9 +35,24 @@ update_giotto_params <- function(gobject,
     number_of_rounds <- length(parameters_list)
     update_name <- paste0(number_of_rounds, description)
 
+    # return before updating if toplevel negative or global setting is FALSE
+    if (skip_update <- toplevel < 0 || 
+        !getOption("giotto.update_param", TRUE)) {
+        if (isTRUE(return_gobject)) return(gobject)
+        else {
+            return(list(
+                plist = parameters_list, 
+                newname = names(tail(parameters_list, 1L))
+            ))
+        }
+    } 
+    
+    # `get_args()` can be problematic. Allow skip right before this step.
+
+    # update parameters list
     parameters_list[[update_name]] <- get_args(toplevel = toplevel)
 
-    if (return_gobject == TRUE) {
+    if (isTRUE(return_gobject)) {
         gobject@parameters <- parameters_list
         return(gobject)
     } else {
@@ -42,15 +66,34 @@ update_giotto_params <- function(gobject,
 #' @name objHistory
 #' @description Print and return giotto object history
 #' @param object giotto object
+#' @param summarized logical. whether print should be summarized
 #' @returns list
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
 #'
 #' objHistory(g)
+#' objHistory(g, summarized = TRUE)
 #' @export
-objHistory <- function(object) {
-    message("Steps and parameters used:")
-    message(object@parameters)
+objHistory <- function(object, summarized = FALSE) {
+    p <- object@parameters
+
+    if (summarized) {
+        message("Processing steps:")
+        for (step in names(p)) {
+            message(step)
+            sub_step <- p[[step]]
+            if (any(grepl("name", names(sub_step)) == TRUE)) {
+                selected_names <- grep("name", names(sub_step), value = TRUE)
+                wrap_msg("\t name info: ", sub_step[selected_names])
+            }
+        }
+    } else {
+        message("Steps and parameters used:")
+        for (i in seq_along(p)) {
+            cat(GiottoUtils::color_blue(sprintf("<%s>\n", names(p)[[i]])))
+            GiottoUtils::print_list(p[[i]], pre = "  ")
+        }
+    }
     invisible(x = object@parameters)
 }
 
@@ -68,6 +111,13 @@ objHistory <- function(object) {
 #' showProcessingSteps(g)
 #' @export
 showProcessingSteps <- function(gobject) {
+    deprecate_warn(
+        when = "0.4.0",
+        what = "showProcessingSteps()",
+        with = "objHistory()",
+        details = "objHistory with arg `summarized = TRUE` replaces this functionality"
+    )
+
     parameters <- gobject@parameters
 
     message("Processing steps:")

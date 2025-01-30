@@ -4,18 +4,15 @@
 #' @name .join_expression_matrices
 #' @keywords internal
 #' @noRd
-.join_expression_matrices <- function(matrix_list) {
+.join_expression_matrices <- function(matrix_list, feat_ids = NULL) {
     # find all features
-    final_feats <- list()
-    for (matr_i in seq_len(length(matrix_list))) {
-        rowfeats <- rownames(matrix_list[[matr_i]])
-        final_feats[[matr_i]] <- rowfeats
+    if (is.null(feat_ids)) {
+        final_feats <- lapply(matrix_list, rownames)
+        final_feats <- unique(unlist(final_feats))
+    } else {
+        final_feats <- feat_ids
     }
-
-    final_feats <- unique(unlist(final_feats))
     final_feats <- mixedsort(final_feats)
-
-
 
     # extend matrices with missing ids
     final_mats <- list()
@@ -52,17 +49,27 @@
 #' @name .join_cell_meta
 #' @keywords internal
 #' @noRd
-.join_cell_meta <- function(dt_list) {
-    final_list <- do.call("rbind", dt_list)
-    return(final_list)
+.join_cell_meta <- function(obj_list) {
+    do.call("rbind", obj_list)
 }
 
 #' @title .join_feat_meta
 #' @name .join_feat_meta
 #' @keywords internal
 #' @noRd
-.join_feat_meta <- function(dt_list) {
+.join_feat_meta <- function(dt_list, feat_ids = NULL) {
     feat_ID <- NULL
+
+    if (!is.null(feat_ids)) {
+        dt_list <- lapply(dt_list, function(dt) {
+            dt <- dt[feat_ID %in% feat_ids]
+            missing_feat <- dt[, feat_ids[!feat_ids %in% feat_ID]]
+            if (length(missing_feat) > 0L) {
+                dt_append <- data.table::data.table(feat_ID = missing_feat)
+                dt <- rbind(dt, dt_append, fill = TRUE)
+            }
+        })
+    }
 
     comb_meta <- do.call("rbind", c(dt_list, fill = TRUE))
     comb_meta <- unique(comb_meta)
@@ -78,8 +85,12 @@
             "feature metadata: multiple versions of metadata for:\n",
             dup_feats,
             "\n First entry will be selected for joined object."
+            # "first" is based on gobject order
         ))
     }
+
+    # order by feat_ID
+    comb_meta <- comb_meta[mixedorder(feat_ID)]
 
     return(comb_meta)
 }
@@ -109,11 +120,11 @@
 #' multiple giotto objects into a single one. Giotto supports multiple ways of
 #' joining spatial information as selected through param `join_method`:
 #'
-#'   * **"shift"** 
+#'   * **"shift"**
 #'      (default) Spatial locations of different datasets are shifted
 #'      by numeric vectors of values supplied through `x_shift`,
-#'      `y_shift`, `x_padding`, and `y_padding`. This is particularly useful 
-#'      for data that is provided as tiles or ROIs or when analyzing multiple 
+#'      `y_shift`, `x_padding`, and `y_padding`. This is particularly useful
+#'      for data that is provided as tiles or ROIs or when analyzing multiple
 #'      spatial datasets together and keeping their spatial data separate.
 #'
 #'     **If shift values are given then a value is needed for each giotto
@@ -123,8 +134,8 @@
 #'     use `x_padding` and `y_padding`. Both shift and padding values
 #'     can be used at the same time.
 #'
-#'     When `x_shift` is `NULL`, it defaults to the x range of gobjects in the 
-#'     list so that datasets are xshifted exactly next to each other with no 
+#'     When `x_shift` is `NULL`, it defaults to the x range of gobjects in the
+#'     list so that datasets are xshifted exactly next to each other with no
 #'     overlaps. An additional default `x_padding = 1000` is applied if
 #'     `x_shift`, `x_padding`, `y_shift`, `y_padding` are all `NULL`.
 #'   * **"z_stack"**
@@ -153,10 +164,10 @@
 #' g2 <- createGiottoObject(expression = m2)
 #'
 #' joinGiottoObjects(
-#'     gobject_list = list(g1, g2), 
+#'     gobject_list = list(g1, g2),
 #'     gobject_names = c("g1", "g2")
 #' )
-#' 
+#'
 #' # dry run joining objects with spatial information
 #' # a default x_padding of 1000 is applied
 #' viz <- GiottoData::loadGiottoMini("viz")
@@ -165,9 +176,9 @@
 #'     gobject_names = c("v1", "v2"),
 #'     dry_run = TRUE
 #' )
-#' 
+#'
 #' # place them right next to each other
-#' # note that this means generated spatial networks will be more likely to 
+#' # note that this means generated spatial networks will be more likely to
 #' # link across the datasets
 #' joinGiottoObjects(
 #'     list(viz, viz),
@@ -175,24 +186,25 @@
 #'     dry_run = TRUE,
 #'     x_padding = 0
 #' )
-#' 
+#'
 #' # join the spatial objects
 #' joined_viz <- joinGiottoObjects(
 #'     list(viz, viz),
 #'     gobject_names = c("v1", "v2")
 #' )
-#' 
+#'
 #' @export
-joinGiottoObjects <- function(gobject_list,
-    gobject_names = NULL,
-    join_method = c("shift", "z_stack", "no_change"),
-    z_vals = 1000,
-    x_shift = NULL,
-    y_shift = NULL,
-    x_padding = NULL,
-    y_padding = NULL,
-    dry_run = FALSE,
-    verbose = FALSE) {
+joinGiottoObjects <- function(
+        gobject_list,
+        gobject_names = NULL,
+        join_method = c("shift", "z_stack", "no_change"),
+        z_vals = 1000,
+        x_shift = NULL,
+        y_shift = NULL,
+        x_padding = NULL,
+        y_padding = NULL,
+        dry_run = FALSE,
+        verbose = FALSE) {
     # NSE vars
     sdimz <- cell_ID <- sdimx <- sdimy <- name <- NULL
 
@@ -255,10 +267,12 @@ joinGiottoObjects <- function(gobject_list,
         # Set default x_padding = 1000 if no shift params are given
         if (is.null(x_shift) && is.null(y_shift) &&
             is.null(x_padding) && is.null(y_padding)) {
-            vmsg(.v = verbose,
-                 "No xy shift or specific padding values given.
+            vmsg(
+                .v = verbose,
+                "No xy shift or specific padding values given.
                  Using defaults: x_padding = 1000
-                 Set any padding value of 0 to avoid this behavior")
+                 Set any padding value of 0 to avoid this behavior"
+            )
             x_padding <- 1000
         }
         # Assign default padding values if NULL
@@ -274,7 +288,8 @@ joinGiottoObjects <- function(gobject_list,
         if (is.null(x_shift)) {
             # if no x_shift provide default x_shift as object ext x range
             x_shift <- vapply(
-                gobj_idx, FUN.VALUE = numeric(length = 1L),
+                gobj_idx,
+                FUN.VALUE = numeric(length = 1L),
                 function(g_i) {
                     range(gext[[g_i]])[["x"]]
                 }
@@ -340,7 +355,8 @@ joinGiottoObjects <- function(gobject_list,
             gp <- terra::as.polygons(gext[[ge_i]])
             # perform transforms
             gp <- terra::shift(
-                gp, dx = final_x_shift[[ge_i]], dy = final_y_shift[[ge_i]]
+                gp,
+                dx = final_x_shift[[ge_i]], dy = final_y_shift[[ge_i]]
             )
             return(gp)
         })
@@ -475,7 +491,8 @@ joinGiottoObjects <- function(gobject_list,
 
         # get all spatLocsObj in the gobj
         available_locs <- getSpatialLocations(
-            gobj, spat_unit = ":all:", name = ":all:", output = "spatLocsObj",
+            gobj,
+            spat_unit = ":all:", name = ":all:", output = "spatLocsObj",
             copy_obj = TRUE, verbose = FALSE, set_defaults = FALSE,
             simplify = FALSE
         )
@@ -497,7 +514,8 @@ joinGiottoObjects <- function(gobject_list,
 
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         gobj <- setGiotto(
-            gobj, available_locs, verbose = FALSE, initialize = FALSE
+            gobj, available_locs,
+            verbose = FALSE, initialize = FALSE
         )
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
@@ -511,12 +529,19 @@ joinGiottoObjects <- function(gobject_list,
         # update IDs
         for (spat_unit in names(gobj@cell_metadata)) {
             for (feat_type in names(gobj@cell_metadata[[spat_unit]])) {
-                gobj@cell_metadata[[spat_unit]][[feat_type]]@metaDT[[
-                    "cell_ID"
-                ]] <- gobj@cell_ID[[spat_unit]]
-                gobj@cell_metadata[[spat_unit]][[feat_type]]@metaDT[[
-                    "list_ID"
-                ]] <- gname
+                cx <- getCellMetadata(gobj,
+                    spat_unit = spat_unit,
+                    feat_type = feat_type,
+                    output = "cellMetaObj",
+                    copy_obj = TRUE,
+                    set_defaults = FALSE
+                )
+
+                cx[][["list_ID"]] <- gname
+                cx[][["cell_ID"]] <- paste0(gname, "-", cx[][["cell_ID"]])
+                gobj <- setGiotto(gobj, cx,
+                    initialize = FALSE, verbose = FALSE
+                )
             }
         }
 
@@ -567,7 +592,6 @@ joinGiottoObjects <- function(gobject_list,
 
             # networks??
             # TODO
-
         }
 
 
@@ -614,36 +638,10 @@ joinGiottoObjects <- function(gobject_list,
 
 
     ## expression and feat IDs
-    ## if no expression matrices are provided, then just combine all feature IDs
     vmsg(.v = verbose, "2. expression data")
-
     avail_expr <- list_expression(gobject = first_obj)
 
-    if (is.null(avail_expr)) {
-        ## feat IDS
-        for (feat in first_features) {
-            combined_feat_ID <- unique(unlist(all_feat_ID_list[[feat]]))
-            ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-            comb_gobject <- set_feat_id(
-                gobject = comb_gobject,
-                feat_type = feat,
-                feat_IDs = combined_feat_ID,
-                set_defaults = FALSE
-            )
-            ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        }
-
-        # Moved de novo feature metadata generation as a catch to the end of
-        # the fxn. Done through init_feat_meta()
-
-        # S4_feat_metadata = create_feat_meta_obj(spat_unit = spat_unit,
-        # feat_type = feat_type,
-        # metaDT = data.table::data.table(feat_ID = combined_feat_ID))
-
-        # comb_gobject = setFeatureMetadata(gobject = comb_gobject,
-        #                                     S4_feat_metadata,
-        #                                     initialize = FALSE)
-    } else {
+    if (!is.null(avail_expr)) {
         for (exprObj_i in seq(nrow(avail_expr))) {
             expr_list <- lapply(updated_object_list, function(gobj) {
                 getExpression(
@@ -671,13 +669,6 @@ joinGiottoObjects <- function(gobject_list,
                 values = expr_list[[1]],
                 set_defaults = FALSE
             )
-
-            comb_gobject <- set_feat_id(
-                gobject = comb_gobject,
-                feat_type = avail_expr$feat_type[[exprObj_i]],
-                feat_IDs = combmat[["sort_all_feats"]],
-                set_defaults = FALSE
-            )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
             # Moved de novo feat metadata generation to end of fxn as a catch
@@ -685,9 +676,91 @@ joinGiottoObjects <- function(gobject_list,
     }
 
 
+    ## spatial info
+    vmsg(.v = verbose, "3. spatial polygon information")
+
+    available_spat_info <- unique(unlist(all_spatinfo_list))
+
+    if (isTRUE(verbose)) {
+        wrap_msg("available_spat_info: \n")
+        wrap_msg(available_spat_info)
+    }
+
+    for (spat_info in available_spat_info) {
+        savelist_vector <- list()
+        savelist_centroids <- list()
+        for (gobj_i in seq_along(updated_object_list)) {
+            gpoly <- getPolygonInfo(
+                updated_object_list[[gobj_i]],
+                return_giottoPolygon = TRUE
+            )
+            spat_information_vector <- gpoly[]
+            spat_information_centroids <- centroids(gpoly)
+
+            savelist_vector[[gobj_i]] <- spat_information_vector
+            savelist_centroids[[gobj_i]] <- spat_information_centroids
+
+            # TODO: add overlaps
+        }
+
+
+
+        comb_spatvectors <- do.call("rbind", savelist_vector)
+        comb_spatcentroids <- do.call("rbind", savelist_centroids)
+
+        comb_polygon <- create_giotto_polygon_object(
+            name = spat_info,
+            spatVector = comb_spatvectors,
+            spatVectorCentroids = comb_spatcentroids,
+            overlaps = NULL
+        )
+
+
+        comb_gobject@spatial_info[[spat_info]] <- comb_polygon
+    }
+
+
+
+    ## feature info
+    vmsg(.v = verbose, "4. spatial feature/points information")
+
+
+    for (feat in first_features) {
+        savelist_vector <- list()
+
+        for (gobj_i in seq_along(updated_object_list)) {
+            updated_feat_info <-
+                updated_object_list[[gobj_i]]@feat_info[[feat]]
+
+            if (!is.null(updated_feat_info)) {
+                spat_point_vector <- updated_feat_info@spatVector
+            } else {
+                spat_point_vector <- NULL
+            }
+
+            savelist_vector[[gobj_i]] <- spat_point_vector
+
+            # TODO: add network
+        }
+
+        comb_spatvectors <- do.call("rbind", savelist_vector)
+
+        if (is.null(comb_spatvectors)) {
+            comb_points <- NULL
+        } else {
+            comb_points <- create_giotto_points_object(
+                feat_type = feat,
+                spatVector = comb_spatvectors,
+                networks = NULL
+            )
+        }
+
+        comb_gobject@feat_info[[feat]] <- comb_points
+    }
+
 
     ## spatial locations
-    vmsg(.v = verbose, "3. spatial locations")
+    vmsg(.v = verbose, "5. spatial locations")
 
     available_locs <- list_spatial_locations(first_obj)
 
@@ -710,7 +783,8 @@ joinGiottoObjects <- function(gobject_list,
 
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         comb_gobject <- setGiotto(
-            comb_gobject, combspatlocs, initialize = FALSE, verbose = FALSE
+            comb_gobject, combspatlocs,
+            initialize = FALSE, verbose = FALSE
         )
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
     }
@@ -720,7 +794,7 @@ joinGiottoObjects <- function(gobject_list,
 
 
     ## cell metadata
-    vmsg(.v = verbose, "4. cell metadata")
+    vmsg(.v = verbose, "6. cell metadata")
 
     for (spat_unit in names(first_obj@cell_metadata)) {
         for (feat_type in names(first_obj@cell_metadata[[spat_unit]])) {
@@ -728,27 +802,14 @@ joinGiottoObjects <- function(gobject_list,
             for (gobj_i in seq_along(updated_object_list)) {
                 cellmeta <- updated_object_list[[
                     gobj_i
-                ]]@cell_metadata[[spat_unit]][[feat_type]][]
+                ]]@cell_metadata[[spat_unit]][[feat_type]]
                 savelist[[gobj_i]] <- cellmeta
             }
-            combcellmeta <- .join_cell_meta(dt_list = savelist)
-
-            S4_cell_meta <- getCellMetadata(
-                gobject = first_obj,
-                spat_unit = spat_unit,
-                feat_type = feat_type,
-                copy_obj = TRUE,
-                set_defaults = FALSE,
-                output = "cellMetaObj"
-            )
-            S4_cell_meta[] <- combcellmeta
+            combcellmeta <- .join_cell_meta(obj_list = savelist)
 
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-            comb_gobject <- setCellMetadata(
-                gobject = comb_gobject,
-                x = S4_cell_meta,
-                initialize = FALSE,
-                verbose = FALSE
+            comb_gobject <- setGiotto(comb_gobject, combcellmeta,
+                verbose = FALSE, initialize = FALSE
             )
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
@@ -797,87 +858,7 @@ joinGiottoObjects <- function(gobject_list,
 
 
 
-    ## spatial info
-    vmsg(.v = verbose, "5. spatial polygon information")
 
-    available_spat_info <- unique(unlist(all_spatinfo_list))
-
-    if (isTRUE(verbose)) {
-        wrap_msg("available_spat_info: \n")
-        wrap_msg(available_spat_info)
-    }
-
-    for (spat_info in available_spat_info) {
-        savelist_vector <- list()
-        savelist_centroids <- list()
-        for (gobj_i in seq_along(updated_object_list)) {
-            spat_information_vector <- updated_object_list[[
-                gobj_i
-            ]]@spatial_info[[spat_info]]@spatVector
-            savelist_vector[[gobj_i]] <- spat_information_vector
-
-            spat_information_centroids <- updated_object_list[[
-                gobj_i
-            ]]@spatial_info[[spat_info]]@spatVectorCentroids
-            savelist_centroids[[gobj_i]] <- spat_information_centroids
-
-            # TODO: add overlaps
-        }
-
-
-
-        comb_spatvectors <- do.call("rbind", savelist_vector)
-        comb_spatcentroids <- do.call("rbind", savelist_centroids)
-
-        comb_polygon <- create_giotto_polygon_object(
-            name = spat_info,
-            spatVector = comb_spatvectors,
-            spatVectorCentroids = comb_spatcentroids,
-            overlaps = NULL
-        )
-
-
-        comb_gobject@spatial_info[[spat_info]] <- comb_polygon
-    }
-
-
-
-    ## feature info
-    vmsg(.v = verbose, "6. spatial feature/points information")
-
-
-    for (feat in first_features) {
-        # for(feat in comb_gobject@expression_feat) {
-
-        savelist_vector <- list()
-
-        for (gobj_i in seq_along(updated_object_list)) {
-            if (is.null(updated_object_list[[gobj_i]]@feat_info)) {
-                spat_point_vector <- NULL
-            } else {
-                spat_point_vector <-
-                    updated_object_list[[gobj_i]]@feat_info[[feat]]@spatVector
-            }
-
-            savelist_vector[[gobj_i]] <- spat_point_vector
-
-            # TODO: add network
-        }
-
-        comb_spatvectors <- do.call("rbind", savelist_vector)
-
-        if (is.null(comb_spatvectors)) {
-            comb_points <- NULL
-        } else {
-            comb_points <- create_giotto_points_object(
-                feat_type = feat,
-                spatVector = comb_spatvectors,
-                networks = NULL
-            )
-        }
-
-        comb_gobject@feat_info[[feat]] <- comb_points
-    }
 
 
     ## If no feature_metadata exists, then generate now
@@ -932,5 +913,3 @@ joinGiottoObjects <- function(gobject_list,
     x[][, "cell_ID" := as.character(ids)]
     return(x)
 }
-
-

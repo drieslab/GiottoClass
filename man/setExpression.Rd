@@ -2,6 +2,7 @@
 % Please edit documentation in R/slot_accessors.R
 \name{setExpression}
 \alias{setExpression}
+\alias{setExpressionValues}
 \title{Set expression data}
 \usage{
 setExpression(
@@ -12,7 +13,8 @@ setExpression(
   name = "raw",
   provenance = NULL,
   verbose = TRUE,
-  initialize = TRUE
+  initialize = TRUE,
+  ...
 )
 }
 \arguments{
@@ -34,6 +36,8 @@ information for the giotto object. Pass NULL to remove an expression object}
 
 \item{initialize}{(default = FALSE) whether to initialize the gobject before
 returning}
+
+\item{...}{additional params to pass}
 }
 \value{
 giotto object
@@ -51,16 +55,14 @@ g <- setExpression(gobject = g, x = createExprObj(m, name = "raw"))
 }
 \seealso{
 Other expression accessor functions: 
-\code{\link{getExpression}()},
-\code{\link{set_expression_values}()}
+\code{\link{getExpression}()}
 
 Other functions to set data in giotto object: 
-\code{\link{get_cell_id}()},
-\code{\link{get_feat_id}()},
 \code{\link{setCellMetadata}()},
 \code{\link{setDimReduction}()},
 \code{\link{setFeatureInfo}()},
 \code{\link{setFeatureMetadata}()},
+\code{\link{setGiotto}()},
 \code{\link{setGiottoImage}()},
 \code{\link{setMultiomics}()},
 \code{\link{setNearestNetwork}()},
@@ -69,21 +71,7 @@ Other functions to set data in giotto object:
 \code{\link{setSpatialGrid}()},
 \code{\link{setSpatialLocations}()},
 \code{\link{setSpatialNetwork}()},
-\code{\link{set_NearestNetwork}()},
-\code{\link{set_cell_id}()},
-\code{\link{set_cell_metadata}()},
-\code{\link{set_dimReduction}()},
-\code{\link{set_expression_values}()},
-\code{\link{set_feat_id}()},
-\code{\link{set_feature_info}()},
-\code{\link{set_feature_metadata}()},
-\code{\link{set_giottoImage}()},
-\code{\link{set_multiomics}()},
-\code{\link{set_polygon_info}()},
-\code{\link{set_spatialGrid}()},
-\code{\link{set_spatialNetwork}()},
-\code{\link{set_spatial_enrichment}()},
-\code{\link{set_spatial_locations}()}
+\code{\link{set_multiomics}()}
 }
 \concept{expression accessor functions}
 \concept{functions to set data in giotto object}

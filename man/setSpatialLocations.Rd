@@ -11,7 +11,8 @@ setSpatialLocations(
   name = "raw",
   provenance = NULL,
   verbose = TRUE,
-  initialize = TRUE
+  initialize = TRUE,
+  ...
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ specified set of spatial locations data.}
 
 \item{initialize}{(default = FALSE) whether to initialize the gobject before
 returning}
+
+\item{...}{additional params to pass}
 }
 \value{
 giotto object
@@ -51,18 +54,15 @@ setSpatialLocations(gobject = g, x = createSpatLocsObj(sl, name = "raw"))
 }
 \seealso{
 Other spatial location data accessor functions: 
-\code{\link{getSpatialLocations}()},
-\code{\link{get_spatial_locations}()},
-\code{\link{set_spatial_locations}()}
+\code{\link{getSpatialLocations}()}
 
 Other functions to set data in giotto object: 
-\code{\link{get_cell_id}()},
-\code{\link{get_feat_id}()},
 \code{\link{setCellMetadata}()},
 \code{\link{setDimReduction}()},
 \code{\link{setExpression}()},
 \code{\link{setFeatureInfo}()},
 \code{\link{setFeatureMetadata}()},
+\code{\link{setGiotto}()},
 \code{\link{setGiottoImage}()},
 \code{\link{setMultiomics}()},
 \code{\link{setNearestNetwork}()},
@@ -70,21 +70,7 @@ Other functions to set data in giotto object:
 \code{\link{setSpatialEnrichment}()},
 \code{\link{setSpatialGrid}()},
 \code{\link{setSpatialNetwork}()},
-\code{\link{set_NearestNetwork}()},
-\code{\link{set_cell_id}()},
-\code{\link{set_cell_metadata}()},
-\code{\link{set_dimReduction}()},
-\code{\link{set_expression_values}()},
-\code{\link{set_feat_id}()},
-\code{\link{set_feature_info}()},
-\code{\link{set_feature_metadata}()},
-\code{\link{set_giottoImage}()},
-\code{\link{set_multiomics}()},
-\code{\link{set_polygon_info}()},
-\code{\link{set_spatialGrid}()},
-\code{\link{set_spatialNetwork}()},
-\code{\link{set_spatial_enrichment}()},
-\code{\link{set_spatial_locations}()}
+\code{\link{set_multiomics}()}
 }
 \concept{functions to set data in giotto object}
 \concept{spatial location data accessor functions}

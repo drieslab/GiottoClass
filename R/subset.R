@@ -84,14 +84,18 @@
         if (isTRUE(avail_ex[ex_i]$subset_cells) &&
             !isTRUE(avail_ex[ex_i]$subset_feats)) {
             filter_bool_cells <- spatIDs(ex) %in% cell_ids
-            ex[] <- .finalize_expr_subset(ex[][, filter_bool_cells])
+            ex[] <- .finalize_expr_subset(
+                ex[][, filter_bool_cells, drop = FALSE]
+            )
         }
 
         ## feat only subsets
         if (!isTRUE(avail_ex[ex_i]$subset_cells) &&
             isTRUE(avail_ex[ex_i]$subset_feats)) {
             filter_bool_feats <- featIDs(ex) %in% feat_ids
-            ex[] <- .finalize_expr_subset(ex[][filter_bool_feats, ])
+            ex[] <- .finalize_expr_subset(
+                ex[][filter_bool_feats, , drop = FALSE]
+            )
         }
 
         ## cell and feat subsets
@@ -101,7 +105,8 @@
             filter_bool_feats <- featIDs(ex) %in% feat_ids
             ex[] <- .finalize_expr_subset(ex[][
                 filter_bool_feats,
-                filter_bool_cells
+                filter_bool_cells,
+                drop = FALSE
             ])
         }
 
@@ -549,6 +554,9 @@
     # poly_whitelist = NULL,
     verbose = TRUE) {
     if (isTRUE(poly_info == ":all:")) poly_info <- names(spatial_info)
+    
+    # return early if no need to subset
+    if (is.null(cell_ids)) return(spatial_info)
 
     # set feat type
     if (is.null(feat_type)) {
@@ -895,6 +903,16 @@
         # #
         # # Should only be checked for cell_ids subsets
 
+        attached_polys <- list_spatial_info_names(gobject)
+
+        if (is.null(poly_info)) {
+            poly_info <- spat_unit[spat_unit %in% attached_polys]
+        }
+
+        if (isTRUE(poly_info == ":all:")) {
+            poly_info <- attached_polys
+        }
+
         for (select_poly_info in poly_info) {
             # For each entry entry in poly_info, subset using cell_ids.
             # Note that even if no poly_info is selected, the overlaps slots
@@ -948,18 +966,7 @@
         toplevel = toplevel_params
     )
 
-    ## TODO - this is no longer easily doable since multiple spatial units being
-    ## subset means that cells and feats removed are variable
-    # extra parameters to include
-    # cells_removed = length(filter_bool_cells[filter_bool_cells==FALSE])
-    # feats_removed = length(filter_bool_feats[filter_bool_feats==FALSE])
-
     parameters_list <- parameters_info[["plist"]]
-    # update_name = parameters_info[['newname']]
-    #
-    # parameters_list[[update_name]] = c(parameters_list[[update_name]],
-    #                                    'cells removed' = cells_removed,
-    #                                    'feats removed' = feats_removed)
     gobject@parameters <- parameters_list
 
 
@@ -1137,8 +1144,8 @@
         if (is.null(x_max)) x_max <- max(comb_metadata[["sdimx"]])
         if (is.null(x_min)) x_min <- min(comb_metadata[["sdimx"]])
 
-        comb_metadata <- comb_metadata[get("sdimx") < x_max &
-            get("sdimx") > x_min]
+        comb_metadata <- comb_metadata[get("sdimx") <= x_max &
+            get("sdimx") >= x_min]
     }
 
     # y spatial dimension
@@ -1146,8 +1153,8 @@
         if (is.null(y_max)) y_max <- max(comb_metadata[["sdimy"]])
         if (is.null(y_min)) y_min <- min(comb_metadata[["sdimy"]])
 
-        comb_metadata <- comb_metadata[get("sdimy") < y_max &
-            get("sdimy") > y_min]
+        comb_metadata <- comb_metadata[get("sdimy") <= y_max &
+            get("sdimy") >= y_min]
     }
 
     # z spatial dimension
@@ -1155,8 +1162,8 @@
         if (is.null(z_max)) z_max <- max(comb_metadata[["sdimz"]])
         if (is.null(z_min)) z_min <- min(comb_metadata[["sdimz"]])
 
-        comb_metadata <- comb_metadata[get("sdimz") < z_max &
-            get("sdimz") > z_min]
+        comb_metadata <- comb_metadata[get("sdimz") <= z_max &
+            get("sdimz") >= z_min]
     }
 
     if (return_gobject) {
@@ -1407,7 +1414,7 @@ subsetGiotto <- function(gobject,
     feat_type = "rna",
     cell_ids = NULL,
     feat_ids = NULL,
-    poly_info = NULL,
+    poly_info = spat_unit,
     all_spat_units = NULL,
     all_feat_types = NULL,
     spat_unit_fsub = ":all:",

@@ -64,6 +64,7 @@ createGiottoPolygonsFromDfr(
   segmdfr,
   name = "cell",
   calc_centroids = FALSE,
+  make_valid = FALSE,
   verbose = TRUE,
   skip_eval_dfr = FALSE,
   copy_dt = TRUE
@@ -73,6 +74,7 @@ createGiottoPolygonsFromGeoJSON(
   GeoJSON,
   name = "cell",
   calc_centroids = FALSE,
+  make_valid = FALSE,
   verbose = TRUE
 )
 }
@@ -86,7 +88,8 @@ a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.}
 
 \item{name}{name for the \code{giottoPolygon} object created}
 
-\item{calc_centroids}{(default FALSE) calculate centroids for polygons}
+\item{calc_centroids}{logical. (default \code{FALSE}) calculate centroids for
+polygons}
 
 \item{verbose}{be verbose}
 
@@ -116,17 +119,23 @@ poly_IDs. Default = "cell_". See \emph{ID_fmt} section.}
 
 \item{remove_unvalid_polygons}{remove unvalid polygons (default: TRUE)}
 
-\item{skip_eval_dfr}{(default FALSE) skip evaluation of provided dataframe}
+\item{skip_eval_dfr}{logical. (default FALSE) skip evaluation of provided
+dataframe}
 
 \item{copy_dt}{(default TRUE) if segmdfr is provided as dt, this determines
 whether a copy is made}
 
-\item{maskfile}{path to mask file}
+\item{maskfile}{path to mask file, a terra \code{SpatRaster}, or some other
+data class readable by \code{\link[terra:rast]{terra::rast()}}}
 
 \item{segmdfr}{data.frame-like object with polygon coordinate
 information (x, y, poly_ID) with x and y being vertex information for the
 polygon referenced by poly_ID. See details for how columns are selected for
 coordinate and ID information.}
+
+\item{make_valid}{logical. (default \code{FALSE}) Whether to run
+\code{\link[terra:is.valid]{terra::makeValid()}} on the geometries. Setting this to \code{TRUE} may cause
+read-in polygon attribute information to become out of sync.}
 
 \item{GeoJSON}{path to .GeoJSON file}
 }

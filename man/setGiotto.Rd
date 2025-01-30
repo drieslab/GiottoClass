@@ -64,3 +64,21 @@ g_expression <- GiottoData::loadSubObjectMini("exprObj")
 
 setGiotto(gobject = g, x = g_expression)
 }
+\seealso{
+Other functions to set data in giotto object: 
+\code{\link{setCellMetadata}()},
+\code{\link{setDimReduction}()},
+\code{\link{setExpression}()},
+\code{\link{setFeatureInfo}()},
+\code{\link{setFeatureMetadata}()},
+\code{\link{setGiottoImage}()},
+\code{\link{setMultiomics}()},
+\code{\link{setNearestNetwork}()},
+\code{\link{setPolygonInfo}()},
+\code{\link{setSpatialEnrichment}()},
+\code{\link{setSpatialGrid}()},
+\code{\link{setSpatialLocations}()},
+\code{\link{setSpatialNetwork}()},
+\code{\link{set_multiomics}()}
+}
+\concept{functions to set data in giotto object}

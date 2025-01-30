@@ -1,47 +1,32 @@
-#' @import data.table
-#' @import dbscan
-#' @import deldir
-#' @import magick
-#' @import reticulate
-#' @import sp
-#' @importFrom checkmate assert_character
-#' @importFrom igraph graph_from_data_frame
-#' @importFrom matrixStats colSds
+# All @import tags for GiottoClass should be declared in this dummy documentation #
+
 #' @importFrom methods new
 #' @importFrom methods as
 #' @importFrom methods rbind2
 #' @importFrom methods setMethod
 #' @importFrom methods show
 #' @importFrom methods initialize
-#' @importFrom methods slot
-#' @importFrom methods slot<-
+#' @importFrom methods slot slot<-
 #' @importFrom methods slotNames
 #' @importFrom methods validObject
-#' @importFrom graphics segments
 #' @importFrom graphics legend par rect
-#' @importFrom grDevices dev.size
-#' @importFrom stats cor
-#' @importMethodsFrom terra spin
-#' @importMethodsFrom terra flip
-#' @importMethodsFrom terra rescale
+#' @importMethodsFrom terra spin flip rescale t
 #' @importMethodsFrom Matrix t
-#' @importMethodsFrom terra t
-#' @importMethodsFrom terra ext
-#' @importMethodsFrom terra ext<-
+#' @importMethodsFrom terra ext ext<- convHull minCircle minRect
 #' @importMethodsFrom terra plot
 #' @importMethodsFrom terra wrap
-#' @importMethodsFrom terra vect
-#' @importMethodsFrom terra crop
-#' @importMethodsFrom terra as.data.frame
-#' @importMethodsFrom terra as.polygons as.points
-#' @importMethodsFrom terra nrow ncol
 #' @importMethodsFrom terra zoom
+#' @importMethodsFrom terra crop
+#' @importMethodsFrom terra vect buffer
+#' @importMethodsFrom terra relate
+#' @importMethodsFrom terra union erase intersect symdif snap
+#' @importMethodsFrom terra as.data.frame as.polygons as.points
+#' @importMethodsFrom terra nrow ncol
 #' @importMethodsFrom terra hist density
-#' @importClassesFrom terra SpatExtent
-#' @importClassesFrom terra SpatVector
+#' @importClassesFrom terra SpatExtent SpatVector
+#' @importMethodsFrom terra area
 #' @import GiottoUtils
 #' @import data.table
 #' @import utils
 #' @importFrom utils .DollarNames
-
 NULL

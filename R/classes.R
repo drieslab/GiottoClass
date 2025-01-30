@@ -30,9 +30,6 @@ setClassUnion("nullOrDatatable", c("NULL", "data.table"))
 #' @noRd
 setClassUnion("gIndex", c("numeric", "logical", "character"))
 
-
-
-
 # VIRTUAL CLASSES ####
 
 
@@ -345,6 +342,8 @@ setClass("spatFeatData",
 )
 
 
+# OLDCLASS ####
+setOldClass("giottoInstructions")
 
 
 
@@ -460,13 +459,13 @@ updateGiottoObject <- function(gobject) {
     if (!methods::.hasSlot(x, "largeImages")) {
         return(x)
     }
-    
+
     # transfer largeImages slot contents to images slot
     lgimg_list <- attr(x, "largeImages")
 
     # remove slot
     attr(x, "largeImages") <- NULL
-    
+
     # if @largeImages was empty, expect `\001NULL\001` of class `name`
     # the object can be returned early now that @largeImages is stripped
     if (inherits(lgimg_list, "name")) {
@@ -492,7 +491,7 @@ updateGiottoObject <- function(gobject) {
     }
 
     x@images <- c(x@images, lgimg_list)
-        
+
     return(x)
 }
 
@@ -505,7 +504,7 @@ updateGiottoObject <- function(gobject) {
 # ! Any slot modifications should also be reflected in packedGiotto class !
 
 #' @title S4 giotto Class
-#' @description \pkg{Giotto}'s core object that encapsulates all the components
+#' @description Giotto's core object that encapsulates all the components
 #' of a spatial-omic project and facilitates analyses.
 #' @concept giotto object
 #' @slot expression expression information
@@ -1661,13 +1660,16 @@ giottoLargeImage <- setClass(
 #' @title S4 giottoAffineImage Class
 #' @description
 #' Class extending `giottoLargeImage`. When `shear()` or `spin()` operations
-#' are performed on  
-#' 
-#' 
+#' are performed on a `giottoLargeImage`, this class is instantiated. It
+#' provides a way of storing the affine transformation and also lazily
+#' performing it when required for a plotting preview. It is possible to force
+#' the deferred affine transform using `doDeferred()` and return a processed
+#' `giottoLargeImage`.
 #' @slot affine contains `affine2d` object allowing lazily performed spatial
 #' transforms
-#' @slot funs list of functions associated with the object. Primarily to 
-#' perform the delayed/lazy operations
+#' @slot funs list of functions associated with the object. Primarily to
+#' perform the delayed/lazy operation
+#' @returns `giottoAffineImage`
 setClass(
     "giottoAffineImage",
     contains = c("giottoLargeImage"),
@@ -1727,3 +1729,18 @@ setClass(
 #     weight = 'numeric'
 #   )
 # )
+
+
+
+
+
+
+# giottoSpatial ####
+
+setClassUnion(
+    name = "giottoSpatial", c("giottoPolygon", "giottoPoints", "spatLocsObj")
+)
+
+setClassUnion(
+    name = "spatialClasses", c("giottoSpatial", "SpatVector")
+)

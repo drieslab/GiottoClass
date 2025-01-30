@@ -18,7 +18,8 @@ list_feat_metadata(
 
 \item{feat_type}{feature type (e.g. "rna", "dna", "protein")}
 
-\item{return_uniques}{return unique nesting names (ignores if final object exists/is correct class)}
+\item{return_uniques}{return unique nesting names (ignores if final object
+exists/is correct class)}
 }
 \value{
 names and locations of available feature metadata as data.table

@@ -33,14 +33,6 @@ setGeneric(
 )
 
 
-# Methods and documentations found in methods-spatShift.R
-setGeneric("spatShift", function(x, ...) standardGeneric("spatShift"))
-setGeneric("affine", function(x, y, ...) standardGeneric("affine"))
-setGeneric("shear", function(x, ...) standardGeneric("shear"))
-
-# Methods and documentations found in methods-overlaps.R
-setGeneric("overlaps", function(x, ...) standardGeneric("overlaps"))
-
 
 # Object creation ####
 setGeneric(
@@ -64,7 +56,6 @@ setGeneric("reconnect", function(x, ...) standardGeneric("reconnect"))
 if (!isGeneric("nrow")) setOldClass("nrow")
 if (!isGeneric("ncol")) setOldClass("ncol")
 if (!isGeneric("dim")) setOldClass("dim")
-# if(!isGeneric('t')) setOldClass('t', where = as.environment("package:Giotto"))
 
 ## colnames and rownames generics ####
 if (!isGeneric("colnames")) setOldClass("colnames")
@@ -78,6 +69,11 @@ setGeneric("copy",
 )
 
 
+# lazy operations ####
+setGeneric("doDeferred", function(x, ...) standardGeneric("doDeferred"))
+
+
+
 # spatial operations ####
 setGeneric(
     "calculateOverlap",
@@ -89,6 +85,20 @@ setGeneric(
 )
 
 
+setGeneric("spatShift", function(x, ...) standardGeneric("spatShift"))
+setGeneric("affine", function(x, y, ...) standardGeneric("affine"))
+setGeneric("shear", function(x, ...) standardGeneric("shear"))
+setGeneric("XY", function(x, ...) standardGeneric("XY"))
+setGeneric("XY<-", function(x, ..., value) standardGeneric("XY<-"))
+setGeneric("settleGeom", function(x, ...) standardGeneric("settleGeom"))
+if (!isGeneric("area")) {
+    setGeneric("area", function(x, ...) standardGeneric("area"))
+}
+
+# Methods and documentations found in methods-overlaps.R
+setGeneric("overlaps", function(x, ...) standardGeneric("overlaps"))
+
+
 # Giotto subnesting ####
 # All methods and documentations found in methods-nesting.R
 
@@ -98,11 +108,11 @@ setGeneric("prov<-", function(x, value) standardGeneric("prov<-"))
 
 ## spatUnit() S4 generic ####
 setGeneric("spatUnit", function(x) standardGeneric("spatUnit"))
-setGeneric("spatUnit<-", function(x, value) standardGeneric("spatUnit<-"))
+setGeneric("spatUnit<-", function(x, ..., value) standardGeneric("spatUnit<-"))
 
 ## featType() S4 generic ####
 setGeneric("featType", function(x) standardGeneric("featType"))
-setGeneric("featType<-", function(x, value) standardGeneric("featType<-"))
+setGeneric("featType<-", function(x, ..., value) standardGeneric("featType<-"))
 
 ## objName() generic ####
 setGeneric("objName", function(x) standardGeneric("objName"))

@@ -11,7 +11,8 @@ list_spatial_networks(gobject, spat_unit = NULL, return_uniques = FALSE)
 
 \item{spat_unit}{spatial unit (e.g. "cell")}
 
-\item{return_uniques}{return unique nesting names (ignores if final object exists/is correct class)}
+\item{return_uniques}{return unique nesting names (ignores if final object
+exists/is correct class)}
 }
 \value{
 data.table of names and locations of available spatial networks,

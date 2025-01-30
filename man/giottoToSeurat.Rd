@@ -13,7 +13,7 @@ giottoToSeurat(gobject, spat_unit = NULL, obj_use = NULL, ...)
 
 \item{obj_use}{Giotto object (deprecated, use gobject)}
 
-\item{...}{additional params to pass to \code{\link{get_spatial_locations}}}
+\item{...}{additional params to pass to \code{\link{getSpatialLocations}}}
 }
 \value{
 Seurat object
