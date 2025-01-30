@@ -128,6 +128,47 @@ setMethod("spatUnit<-", signature = "list", function(x, value) {
     })
 })
 
+#' @rdname spatUnit-generic
+#' @export
+setMethod("spatUnit<-", signature("giotto"), function(x, old, value) {
+    checkmate::assert_character(old, len = 1L)
+    checkmate::assert_character(value, len = 1L)
+    if (!isTRUE(old) %in% spatUnit(x)) {
+        stop("spat_unit replace: spatial unit ", old, " does not exist\n", 
+             call. = FALSE)
+    }
+    glist <- as.list(x)
+    for(item_i in seq_along(glist)) {
+        if (isTRUE(spatUnit(glist[[item_i]]) == old))
+        spatUnit(glist[[item_i]]) <- value
+    }
+    g <- giotto(
+        images = x@images,
+        parameters = x@parameters,
+        instructions = x@instructions,
+        offset_file = x@offset_file,
+        versions = x@versions,
+        join_info = x@join_info,
+        h5_file = x@h5_file,
+        initialize = FALSE
+    )
+    g <- setGiotto(g, glist, initialize = TRUE, verbose = FALSE)
+
+    active_spat <- activeSpatUnit(g)
+    if (!isTRUE(active_spat %in% spatUnit(g)) &&
+        length(spatUnit(g)) >= 1L) {
+        first_spat <- spatUnit(g)[[1]]
+        activeSpatUnit(g) <- first_spat
+        warning(wrap_txtf(
+            "activeSpatUnit \'%s\' no longer exists.
+            activeSpatUnit defaulted to \'%s\'", 
+            active_spat, first_spat
+        ),
+        call. = FALSE)
+    }
+    return(g)
+})
+
 
 
 
@@ -182,6 +223,44 @@ setMethod("featType<-", signature = "list", function(x, value) {
         featType(y) <- value[[i]]
         return(y)
     })
+})
+
+setMethod("featType<-", signature("giotto"), function(x, old, value) {
+    checkmate::assert_character(old, len = 1L)
+    checkmate::assert_character(value, len = 1L)
+    if (!isTRUE(old) %in% featType(x)) {
+        stop("feat_type replace: feature type ", old, " does not exist\n", 
+             call. = FALSE)
+    }
+    glist <- as.list(x)
+    for(item_i in seq_along(glist)) {
+        if (isTRUE(featType(glist[[item_i]]) == old))
+            featType(glist[[item_i]]) <- value
+    }
+    g <- giotto(
+        images = x@images,
+        parameters = x@parameters,
+        instructions = x@instructions,
+        offset_file = x@offset_file,
+        versions = x@versions,
+        join_info = x@join_info,
+        h5_file = x@h5_file,
+        initialize = FALSE
+    )
+    g <- setGiotto(g, glist, initialize = TRUE, verbose = FALSE)
+    
+    active_feat <- activeFeatType(g)
+    if (!isTRUE(active_feat %in% featType(g)) &&
+        length(featType(g)) >= 1L) {
+        first_feat <- featType(g)[[1]]
+        activeFeatType(g) <- first_feat
+        warning(wrap_txtf(
+            "activeFeatType \'%s\' no longer exists. 
+            activeFeatType defaulted to \'%s\'",
+            active_feat, first_feat
+        ), call. = FALSE)
+    }
+    return(g)
 })
 
 
