@@ -3831,10 +3831,27 @@ giottoToSpatialData <- function(
         }
     }
 
-    spat_locs <- getSpatialLocations(gobject, output="data.table")
+    # Extract polygons
+    dir.create(paste0(temp, "shapes"))
+    library(sf)
+    for (polygon in gobject@spatial_info) {
+        poly_name <- polygon@name
+        gpoly <- getPolygonInfo(gobject, polygon_name = poly_name)
+        gpoly_sf <- as.sf(gpoly)
+        st_write(gpoly_sf, paste0(temp, "shapes/", poly_name, ".geojson"), delete_dsn = TRUE)
+    }
+
+    # Extract points
+    dir.create(paste0(temp, "points"))
+    for (feat in gobject@feat_info) {
+        feat_type <- feat@feat_type
+        gpoint <- getFeatureInfo(gobject, feat_type = feat_type)
+        gpoint_dt <- as.data.table(gpoint, geom = "XY")
+        fwrite(gpoint_dt, paste0(temp, "points/", feat_type, ".csv"), sep = ",", row.names = FALSE)
+    }
 
     # Create SpatialData object
-    createSpatialData(temp, spat_locs, spot_radius, save_directory, image_exists)
+    createSpatialData(temp, save_directory, image_exists)
 
     # Delete temporary files and folders
     unlink(temp, recursive = TRUE)
