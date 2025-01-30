@@ -4,7 +4,14 @@
 \alias{setGiottoImage}
 \title{Set giotto image object}
 \usage{
-setGiottoImage(gobject, image, image_type = NULL, name = NULL, verbose = NULL)
+setGiottoImage(
+  gobject,
+  image,
+  image_type = NULL,
+  name = NULL,
+  initialize = FALSE,
+  verbose = NULL
+)
 }
 \arguments{
 \item{gobject}{giotto object}
@@ -15,6 +22,9 @@ giotto object}
 \item{image_type}{deprecated}
 
 \item{name}{name of giotto image object}
+
+\item{initialize}{(default = FALSE) whether to initialize the gobject before
+returning}
 
 \item{verbose}{be verbose}
 }
