@@ -23,6 +23,7 @@
 \alias{featType,ANY-method}
 \alias{featType,giotto-method}
 \alias{featType,list-method}
+\alias{featType,featData-method}
 \alias{featType<-,ANY-method}
 \alias{featType<-,featData-method}
 \alias{featType<-,list-method}
@@ -68,6 +69,8 @@
 
 \S4method{featType}{list}(x)
 
+\S4method{featType}{featData}(x)
+
 \S4method{featType}{ANY}(x) <- value
 
 \S4method{featType}{featData}(x) <- value
@@ -103,13 +106,14 @@
 \S4method{prov}{provData}(x) <- value
 }
 \arguments{
-\item{x}{\code{giotto} or Giotto S4 subobject}
+\item{x}{\code{giotto} or {Giotto} S4 subobject}
 
 \item{value}{value to set for this schema component}
 }
 \value{
 character. NA is returned when schema component is not applicable
-to target object
+to target object. If using the replacement function, the \code{giotto} object
+or subobject is returned
 }
 \description{
 Data within the \code{giotto} object is organized in a schema

@@ -21,10 +21,11 @@ NULL
 #' * **name:**         `objName()`, `objName<-()`
 #' * **provenance:**   `prov()`, `prov<-()`
 #' 
-#' @param x `giotto` or Giotto S4 subobject
+#' @param x `giotto` or {Giotto} S4 subobject
 #' @param value value to set for this schema component
 #' @returns character. NA is returned when schema component is not applicable
-#' to target object
+#' to target object. If using the replacement function, the `giotto` object
+#' or subobject is returned
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
@@ -199,7 +200,7 @@ setMethod("featType", signature("list"), function(x) {
     vapply(x, featType, FUN.VALUE = character(1L))
 })
 
-#' @describeIn featType-generic Get feature type information
+#' @rdname giotto_schema
 #' @export
 setMethod("featType", signature = "featData", function(x) x@feat_type)
 
