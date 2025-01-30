@@ -43,19 +43,21 @@ def createPointsModel(temp):
     return points
 
 def createTableModel(temp):
-    alist = glob.glob(temp+"*.h5ad")
-    adata = ad.read_h5ad(alist[0])
-    table = TableModel.parse(adata)
-    return table
+    tables = {}
+    tables_paths = glob.glob(temp+"*.h5ad")
+    for path in tables_paths:
+        adata = ad.read_h5ad(path)
+        table_name = os.path.basename(path).split("_converted_gobject")[0]
+        tables[table_name] = TableModel.parse(adata)
+    return tables
 
-def createSpatialData(temp, save_directory, image_exists):
-    if image_exists:
+def createSpatialData(temp, save_directory, images_exist):        
+    tables = createTableModel(temp)
+    if images_exist:
         images = createImageModel(temp)
-    table = createTableModel(temp)
-    if image_exists:
-        sd = SpatialData(tables = table, images = images)
+        sd = SpatialData(tables = tables, images = images)
     else:
-        sd = SpatialData(tables = table)
+        sd = SpatialData(tables = tables)
     shapes = createShapesModel(temp)
     for poly_name, polygon in shapes.items():
         sd.shapes[poly_name] = polygon
