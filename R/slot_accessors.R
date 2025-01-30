@@ -213,7 +213,7 @@ get_cell_id <- function(
         gobject,
         spat_unit = NULL,
         set_defaults = TRUE) {
-    assert_giotto(gobject)
+    checkmate::assert_true(inherits(gobject, "giotto"))
     if (isTRUE(set_defaults)) {
         spat_unit <- set_default_spat_unit(
             gobject = gobject,
@@ -260,7 +260,7 @@ set_cell_id <- function(
         cell_IDs,
         set_defaults = TRUE,
         verbose = TRUE) {
-    assert_giotto(gobject)
+    checkmate::assert_true(inherits(gobject, "giotto"))
 
     # set default spat_unit
     if (isTRUE(set_defaults)) {
