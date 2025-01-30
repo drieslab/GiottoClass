@@ -73,6 +73,13 @@ setMethod("spatUnit", signature("ANY"), function(x) {
 
 #' @rdname spatUnit-generic
 #' @export
+setMethod("spatUnit", signature("giotto"), function(x) {
+    raw_su <- mixedsort(unique(spatUnit(as.list(x))))
+    raw_su[!is.na(raw_su)]
+})
+
+#' @rdname spatUnit-generic
+#' @export
 setMethod("spatUnit", signature("list"), function(x) {
     vapply(x, spatUnit, FUN.VALUE = character(1L))
 })
@@ -133,6 +140,12 @@ setMethod("featType", signature("ANY"), function(x) {
     NA_character_
 })
 
+#' @rdname featType-generic
+#' @export
+setMethod("featType", signature("giotto"), function(x) {
+    raw_ft <- mixedsort(unique(featType(as.list(x))))
+    raw_ft[!is.na(raw_ft)]
+})
 
 #' @rdname featType-generic
 #' @export
