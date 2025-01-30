@@ -5969,6 +5969,7 @@ set_giottoImage <- function(
 #' @param image_type deprecated
 #' @param name name of giotto image object
 #' @param verbose be verbose
+#' @inheritParams data_access_params
 #' @returns giotto object
 #' @family image data accessor functions
 #' @family functions to set data in giotto object
@@ -5985,6 +5986,7 @@ setGiottoImage <- function(
         image,
         image_type = NULL,
         name = NULL,
+        initialize = FALSE,
         verbose = NULL) {
     if (!inherits(gobject, "giotto")) {
         wrap_msg("Unable to set Giotto Image to non-Giotto object.")
