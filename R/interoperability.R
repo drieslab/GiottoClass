@@ -3973,17 +3973,8 @@ giottoToSpatialData <- function(
     g2sd_path <- system.file("python", "g2sd.py", package = "GiottoClass")
     reticulate::source_python(g2sd_path)
 
-    # Expression
-    expr_dt <- list_expression(gobject)
-    # ID spat_unit and feat_type if not already provided.
-    if (is.null(spat_unit) && is.null(feat_type)) {
-        spat_unit <- unique(expr_dt$spat_unit)
-        feat_type <- unique(expr_dt$feat_type)
-    } else if (is.null(spat_unit) && !is.null(feat_type)) {
-        spat_unit <- unique(expr_dt$spat_unit)
-    } else if (!is.null(spat_unit) && is.null(feat_type)) {
-        feat_type <- unique(expr_dt$feat_type)
-    }
+    spat_unit <- spat_unit %null% spatUnit(gobject)
+    feat_type <- feat_type %null% featType(gobject)
 
     for (su in spat_unit) {
         wrap_msg("Spatial unit(s)", su, "will be used in conversion.")
@@ -4026,13 +4017,12 @@ giottoToSpatialData <- function(
     }
 
   # Extract polygons
-    library(sf)
     if (!is.null(list_spatial_info(gobject))) {
         dir.create(paste0(temp, "shapes"))
         for (su in spat_unit) {
         gpoly <- getPolygonInfo(gobject, polygon_name = su)
         gpoly_sf <- as.sf(gpoly)
-        st_write(gpoly_sf, paste0(temp, "shapes/", su, ".geojson"), delete_dsn = TRUE)
+        sf::st_write(gpoly_sf, paste0(temp, "shapes/", su, ".geojson"), delete_dsn = TRUE)
         }
     }
 
