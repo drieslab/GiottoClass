@@ -3531,181 +3531,106 @@ spatialdataToGiotto <- function(
     sd2g_path <- system.file("python", "sd2g.py", package = "GiottoClass")
     reticulate::source_python(sd2g_path)
     sdata <- read_spatialdata_from_path(spatialdata_path)
-
-    # Extract expression matrix
-    expr_df <- extract_expression(sdata)
-    cID <- extract_cell_IDs(sdata)
-    fID <- extract_feat_IDs(sdata)
-
-    # Extract spatial locations
-    spatial_df <- extract_spatial(sdata)
-    sp <- parse_obsm_for_spat_locs(sdata)
-
-    # Set up metadata
-    cm <- extract_cell_metadata(sdata)
-    cm <- as.data.table(cm)
-    if ("leiden" %in% names(cm)) {
-        cm$leiden <- as.numeric(cm$leiden)
-    }
-
-    fm <- extract_feat_metadata(sdata)
-    fm <- as.data.table(fm)
-
+    
     # Create baseline Giotto object
     gobject <- createGiottoObject(
-        expression = expr_df,
-        spatial_locs = spatial_df,
         instructions = instrs
     )
 
-    # Attach hires image
-    extracted_images <- extract_image(sdata)
-    extract_image_names <- extract_image_names(sdata)
+    # Extract expression matrices
+    expr_df_dict <- extract_expression(sdata)
 
-    raster_image_list <- lapply(extracted_images, terra::rast)
-    large_image_list <- createGiottoLargeImageList(raster_image_list, names = extract_image_names)
-    gobject <- addGiottoLargeImage(gobject = gobject, largeImages = large_image_list)
-
-    # Attach metadata
-    cm <- readCellMetadata(cm)
-    gobject <- setCellMetadata(gobject, x = cm)
-    fm <- readFeatMetadata(fm)
-    gobject <- setFeatureMetadata(gobject, x = fm)
-
-    spat_unit <- activeSpatUnit(gobject)
-    feat_type <- activeFeatType(gobject)
-
-    # Add PCA
-    p <- extract_pca(sdata)
-    if (!is.null(p)) {
-        pca <- p$pca
-        evs <- p$eigenvalues
-        loads <- p$loadings
-        # Add pca to giottoObject
-        dobj <- createDimObj(
-            coordinates = pca,
-            name = "pca",
-            spat_unit = spat_unit,
-            feat_type = feat_type,
-            method = "pca",
-            reduction = "cells",
-            provenance = NULL,
-            misc = list(
-                eigenvalues = evs,
-                loadings = loads
-            ),
-            my_rownames = colnames(expr_df)
-        )
-        gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
-    }
-
-    # Add UMAP
-    u <- extract_umap(sdata)
-    if (!is.null(u)) {
-        # Add UMAP to giottoObject
-        dobj <- createDimObj(
-            coordinates = u,
-            name = "umap",
-            spat_unit = spat_unit,
-            feat_type = feat_type,
-            method = "umap",
-            reduction = "cells",
-            provenance = NULL,
-            misc = NULL,
-            my_rownames = colnames(expr_df)
-        )
-        gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
-    }
-
-    # Add tSNE
-    t <- extract_tsne(sdata)
-    if (!is.null(t)) {
-        # Add TSNE to giottoObject
-        dobj <- createDimObj(
-            coordinates = t,
-            name = "tsne",
-            spat_unit = spat_unit,
-            feat_type = feat_type,
-            method = "tsne",
-            reduction = "cells",
-            provenance = NULL,
-            misc = NULL,
-            my_rownames = colnames(expr_df)
-        )
-        gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
-    }
-
-    ## Nearest Network
-
-    weights_sd <- NULL
-    num_NN_nets <- length(n_key_added)
-
-    if (is.null(n_key_added) && !is.null(extract_NN_connectivities(sdata, key_added = n_key_added))) {
-        num_NN_nets <- 1
-    }
-
-    for (i in num_NN_nets) {
-        if (inherits(n_key_added, "list")) {
-            n_key_added_it <- n_key_added[[i]]
-        } else {
-            n_key_added_it <- n_key_added
+    # Set expression data
+    su_list <- list()
+    ft_list <- list()
+    for (key in names(expr_df_dict)) {
+        parts <- strsplit(key, "_")[[1]]
+        su <- parts[1]
+        su_list <- c(su_list, su)
+        if (length(parts) == 3) {
+            ft <- paste0(parts[2],"_",parts[3])
         }
+        else {
+            ft <- parts[2]
+        }
+        ft_list <- c(ft_list, ft)
+        gobject <- setExpression(gobject, x = createExprObj(expr_df_dict[[key]], name = "raw"), spat_unit = su, feat_type = ft)
+    }
 
-        weights_sd <- extract_NN_connectivities(sdata, key_added = n_key_added_it)
-        # adw = methods::as(weights_ad, "TsparseMatrix")
-        if (!is.null(weights_sd)) {
-            distances_sd <- extract_NN_distances(sdata, key_added = n_key_added_it)
+    # ID spat_unit and feat_type if not already provided.
+    if (is.null(spat_unit) && is.null(feat_type)) {
+        spat_unit <- su_list
+        feat_type <- ft_list
+    } else if (is.null(spat_unit) && !is.null(feat_type)) {
+        spat_unit <- su_list
+    } else if (!is.null(spat_unit) && is.null(feat_type)) {
+        feat_type <- ft_list
+    }
 
-            nn_dt <- align_network_data(distances = weights_sd, weights = distances_sd)
+    for (su in spat_unit) {
+        wrap_msg("Spatial unit(s)", su, "will be used in conversion.")
+    }
+    for (ft in feat_type) {
+        wrap_msg("Feature type(s)", ft, "will be used in conversion.")
+    }
 
-            # pre-allocate DT variables
-            from <- to <- weight <- distance <- from_cell_ID <- to_cell_ID <- uniq_ID <- NULL
-            nn_dt <- data.table::data.table(nn_dt)
+    cID_dict <- extract_cell_IDs(sdata)
+    fID_dict <- extract_feat_IDs(sdata)
 
-            nn_dt[, from_cell_ID := cID[from]]
-            nn_dt[, to_cell_ID := cID[to]]
-            nn_dt[, uniq_ID := paste0(from, to)]
-            nn_dt[order(uniq_ID)]
-            nn_dt[, uniq_ID := NULL]
-            vert <- unique(x = c(nn_dt$from_cell_ID, nn_dt$to_cell_ID))
-            nn_network_igraph <- igraph::graph_from_data_frame(nn_dt[, .(from_cell_ID, to_cell_ID, weight, distance)], directed = TRUE, vertices = vert)
-
-            nn_info <- extract_NN_info(sdata = sdata, key_added = n_key_added_it)
-
-            net_type <- "kNN" # anndata default
-            if (("sNN" %in% n_key_added_it) & !is.null(n_key_added_it)) {
-                net_type <- "sNN"
-                net_name <- paste0(n_key_added_it, ".", nn_info["method"])
-            } else if (!("sNN" %in% n_key_added_it) & !is.null(n_key_added_it)) {
-                net_name <- paste0(n_key_added_it, ".", nn_info["method"])
-            } else {
-                net_name <- paste0(net_type, ".", nn_info["method"])
+    ## Layers
+    lay_dict <- extract_layer_names(sdata)
+    if (!is.null(lay_dict)) {
+        for (key in names(lay_dict)) {
+            parts <- strsplit(key, "_")[[1]]
+            layer_su <- parts[1]
+            if (length(parts) == 3) {
+                layer_ft <- paste0(parts[2],"_",parts[3])
             }
-
-            netObj <- createNearestNetObj(
-                name = net_name,
-                network = nn_network_igraph,
-                spat_unit = spat_unit,
-                feat_type = feat_type
-            )
-
-            gobject <- set_NearestNetwork(
-                gobject = gobject,
-                nn_network = netObj,
-                spat_unit = spat_unit,
-                feat_type = feat_type,
-                nn_network_to_use = net_type,
-                network_name = net_name,
-                set_defaults = FALSE
-            )
+            else {
+                layer_ft <- parts[2]
+            }
+            for (l_n in lay_dict[[key]]) {
+                lay <- extract_layered_data(sdata, key, layer_name = l_n)
+                if ("data.frame" %in% class(lay)) {
+                    names(lay) <- fID_dict[[key]]
+                    row.names(lay) <- cID_dict[[key]]
+                } else {
+                    lay@Dimnames[[1]] <- fID_dict[[key]]
+                    lay@Dimnames[[2]] <- cID_dict[[key]]
+                }
+                parts <- strsplit(l_n, "_")[[1]]
+                if (length(parts) == 4) {
+                    name <- parts[4]
+                }
+                else {
+                    name <- parts[3]
+                }
+                layExprObj <- createExprObj(lay, name = name)
+                gobject <- set_expression_values(
+                    gobject = gobject,
+                    spat_unit = layer_su,
+                    feat_type = layer_ft,
+                    values = layExprObj
+                )
+            }
         }
     }
+
+    # Extract spatial locations
+    spatial_dict <- extract_spatial(sdata)
+
+    # Set spatial locations
+    for (key in names(spatial_dict)) {
+        parts <- strsplit(key, "_")[[1]]
+        spat_loc_su <- parts[1]
+        gobject <- setSpatialLocations(gobject, x = createSpatLocsObj(spatial_dict[[key]], name = "raw"), spat_unit = spat_loc_su)
+    }
+
+    sp_dict <- parse_obsm_for_spat_locs(sdata)
 
     ## Spatial Network
-
     s_weights_sd <- NULL
     num_SN_nets <- length(spatial_n_key_added)
-
     # Check for the case where NULL is provided, since the
     # anndata object takes the default value for SN
 
@@ -3720,102 +3645,283 @@ spatialdataToGiotto <- function(
             spatial_n_key_added_it <- spatial_n_key_added
         }
 
-        s_weights_sd <- extract_SN_connectivities(sdata, key_added = spatial_n_key_added_it)
-        if (!is.null(s_weights_sd)) {
-            s_distances_sd <- extract_SN_distances(sdata, key_added = spatial_n_key_added_it)
-            ij_matrix <- methods::as(s_distances_sd, "TsparseMatrix")
-            from_idx <- ij_matrix@i + 1 # zero index!!!
-            to_idx <- ij_matrix@j + 1 # zero index!!!
+        s_weights_list <- extract_SN_connectivities(sdata, key_added = spatial_n_key_added_it)
+        if (!is.null(s_weights_list)) {
+            for (connectivity_key in names(s_weights_list)) {
+                s_weights_sd <- s_weights_list[[connectivity_key]]
+                split_key <- strsplit(connectivity_key, ", ")[[1]]  
+                tn <- gsub("[()']", "", split_key[1])
+                sk <- gsub("[()']", "", split_key[2])
 
-            # pre-allocate DT variables
-            from <- to <- weight <- distance <- from_cell_ID <- to_cell_ID <- uniq_ID <- NULL
-            sn_dt <- data.table::data.table(
-                from = from_idx,
-                to = to_idx,
-                weight = s_weights_sd@x,
-                distance = s_distances_sd@x
-            )
-
-            sn_dt[, from_cell_ID := cID[from]]
-            sn_dt[, to_cell_ID := cID[to]]
-
-            sdimx <- "sdimx"
-            sdimy <- "sdimy"
-            xbegin_name <- paste0(sdimx, "_begin")
-            ybegin_name <- paste0(sdimy, "_begin")
-            xend_name <- paste0(sdimx, "_end")
-            yend_name <- paste0(sdimy, "_end")
-
-            network_DT <- data.table::data.table(
-                from = sn_dt$from_cell_ID,
-                to = sn_dt$to_cell_ID,
-                xbegin_name = sp[sn_dt$from, sdimx],
-                ybegin_name = sp[sn_dt$from, sdimy],
-                xend_name = sp[sn_dt$to, sdimx],
-                yend_name = sp[sn_dt$to, sdimy],
-                weight = s_weights_sd@x,
-                distance = s_distances_sd@x
-            )
-            data.table::setnames(network_DT,
-                old = c("xbegin_name", "ybegin_name", "xend_name", "yend_name"),
-                new = c(xbegin_name, ybegin_name, xend_name, yend_name)
-            )
-            data.table::setorder(network_DT, from, to)
-
-            dist_mean <- get_distance(network_DT, method = "mean")
-            dist_median <- get_distance(network_DT, method = "median")
-            cellShapeObj <- list(
-                "meanCellDistance" = dist_mean,
-                "medianCellDistance" = dist_median
-            )
-
-            # TODO filter network?
-            # TODO 3D handling?
-            if (delaunay_spat_net) {
-                spatObj <- create_spat_net_obj(
-                    name = "sNN",
-                    method = "delaunay",
-                    networkDT = network_DT,
-                    cellShapeObj = cellShapeObj
+                s_distances_sd <- extract_SN_distances(sdata, key_added = spatial_n_key_added_it, tn = tn, sn_key_list = sk)
+                ij_matrix <- methods::as(s_distances_sd, "TsparseMatrix")
+                from_idx <- ij_matrix@i + 1 # zero index!!!
+                to_idx <- ij_matrix@j + 1 # zero index!!!
+                
+                # pre-allocate DT variables
+                from <- to <- weight <- distance <- from_cell_ID <- to_cell_ID <- uniq_ID <- NULL
+                sn_dt <- data.table::data.table(
+                    from = from_idx,
+                    to = to_idx,
+                    weight = s_weights_sd@x,
+                    distance = s_distances_sd@x
                 )
-            } else {
-                spatObj <- create_spat_net_obj(
-                    name = "sNN",
-                    method = "non-delaunay",
-                    networkDT = network_DT,
-                    cellShapeObj = cellShapeObj
+                cID = cID_dict[[tn]]
+                sn_dt[, from_cell_ID := cID[from]]
+                sn_dt[, to_cell_ID := cID[to]]
+
+                sdimx <- "sdimx"
+                sdimy <- "sdimy"
+                xbegin_name <- paste0(sdimx, "_begin")
+                ybegin_name <- paste0(sdimy, "_begin")
+                xend_name <- paste0(sdimx, "_end")
+                yend_name <- paste0(sdimy, "_end")
+
+                network_DT <- data.table::data.table(
+                    from = unlist(sn_dt$from_cell_ID),
+                    to = unlist(sn_dt$to_cell_ID),
+                    xbegin_name = sp_dict[[tn]][sn_dt$from, sdimx],
+                    ybegin_name = sp_dict[[tn]][sn_dt$from, sdimy],
+                    xend_name = sp_dict[[tn]][sn_dt$to, sdimx],
+                    yend_name = sp_dict[[tn]][sn_dt$to, sdimy],
+                    weight = s_weights_sd@x,
+                    distance = s_distances_sd@x
+                )
+                data.table::setnames(network_DT,
+                    old = c("xbegin_name", "ybegin_name", "xend_name", "yend_name"),
+                    new = c(xbegin_name, ybegin_name, xend_name, yend_name)
+                )
+                data.table::setorder(network_DT, from, to)
+                dist_mean <- get_distance(network_DT, method = "mean")
+                dist_median <- get_distance(network_DT, method = "median")
+                cellShapeObj <- list(
+                    "meanCellDistance" = dist_mean,
+                    "medianCellDistance" = dist_median
+                )
+
+                # TODO filter network?
+                # TODO 3D handling?
+                net_name = strsplit(sk, "_")[[1]][1]
+                if (net_name == "Delaunay") {
+                    spatObj <- createSpatNetObj(
+                        network = network_DT,
+                        name = "Delaunay_network",
+                        method = "delaunay",
+                        networkDT = network_DT,
+                        cellShapeObj = cellShapeObj
+                    )
+                } else {
+                    sk_trim <- sub("_connectivities", "", sk)
+                    net_name <- sk_trim
+                    spatObj <- createSpatNetObj(
+                        network = network_DT,
+                        name = net_name,
+                        method = "non-delaunay",
+                        networkDT = network_DT,
+                        cellShapeObj = cellShapeObj
+                    )
+                }
+                gobject <- set_spatialNetwork(
+                    gobject = gobject,
+                    spatial_network = spatObj,
+                    spat_unit = strsplit(tn, "_")[[1]][1]
                 )
             }
-
-            gobject <- set_spatialNetwork(
-                gobject = gobject,
-                spatial_network = spatObj,
-                name = "sNN"
-            )
         }
     }
 
-    ### Layers
-    lay_names <- extract_layer_names(sdata)
-    if (!is.null(lay_names)) {
-        for (l_n in lay_names) {
-            lay <- extract_layered_data(sdata, layer_name = l_n)
-            if ("data.frame" %in% class(lay)) {
-                names(lay) <- fID
-                row.names(lay) <- cID
-            } else {
-                lay@Dimnames[[1]] <- fID
-                lay@Dimnames[[2]] <- cID
+    # Dimension reduction
+    ## Add PCA
+    p_dict <- extract_pca(sdata)
+    if (!is.null(p_dict)) {
+        for (tn in names(p_dict)) {
+            p <- p_dict[[tn]]
+            if (!is.null(p)) {
+                pca <- p$pca
+                evs <- p$eigenvalues
+                loads <- p$loadings
+                parts <- strsplit(tn, "_")[[1]]
+                pca_su <- parts[1]
+                pca_ft <- parts[2]
+                rownames_vec <- if (!is.null(expr_df_dict[[tn]])) colnames(expr_df_dict[[tn]]) else NULL
+                dobj <- createDimObj(
+                    coordinates = pca,
+                    name = "pca",
+                    spat_unit = pca_su,
+                    feat_type = pca_ft,
+                    method = "pca",
+                    reduction = "cells",
+                    provenance = NULL,
+                    misc = list(
+                        eigenvalues = evs,
+                        loadings = loads
+                    ),
+                    my_rownames = rownames_vec
+                )
+                gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
             }
-            layExprObj <- createExprObj(lay, name = l_n)
-            gobject <- set_expression_values(
-                gobject = gobject,
-                spat_unit = spat_unit,
-                feat_type = feat_type,
-                name = l_n,
-                values = layExprObj
-            )
         }
+    }
+
+    # Add UMAP
+    u_dict <- extract_umap(sdata)
+    if (!is.null(u_dict)) {
+        for (tn in names(u_dict)) {
+            u <- u_dict[[tn]]
+            parts <- strsplit(tn, "_")[[1]]
+            umap_su <- parts[1]
+            umap_ft <- parts[2]
+            rownames_vec <- if (!is.null(expr_df_dict[[tn]])) colnames(expr_df_dict[[tn]]) else NULL
+            if (!is.null(u)) {
+                dobj <- createDimObj(
+                coordinates = u,
+                name = "umap",
+                spat_unit = umap_su,
+                feat_type = umap_ft,
+                method = "umap",
+                reduction = "cells",
+                provenance = NULL,
+                misc = NULL,
+                my_rownames = rownames_vec
+            )
+            gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
+            }
+        }        
+    }
+
+    # Add tSNE
+    t_dict <- extract_tsne(sdata)
+    if (!is.null(t_dict)) {
+        for (tn in names(t_dict)) {
+            t <- t_dict[[tn]]
+            parts <- strsplit(tn, "_")[[1]]
+            tsne_su <- parts[1]
+            tsne_ft <- parts[2]
+            rownames_vec <- if (!is.null(expr_df_dict[[tn]])) colnames(expr_df_dict[[tn]]) else NULL
+            if (!is.null(t)) {
+                dobj <- createDimObj(
+                    coordinates = t,
+                    name = "tsne",
+                    spat_unit = tsne_su,
+                    feat_type = tsne_ft,
+                    method = "tsne",
+                    reduction = "cells",
+                    provenance = NULL,
+                    misc = NULL,
+                    my_rownames = rownames_vec
+                )
+                gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
+            }
+        }
+        
+    }
+
+    ## Nearest Network
+    weights_sd <- NULL
+    num_NN_nets <- length(n_key_added)
+
+    if (is.null(n_key_added) && !is.null(extract_NN_connectivities(sdata, key_added = n_key_added))) {
+        num_NN_nets <- 1
+    }
+
+    for (i in 1:num_NN_nets) {
+        if (inherits(n_key_added, "list")) {
+            n_key_added_it <- n_key_added[[i]]
+        } else {
+            n_key_added_it <- n_key_added
+        }
+
+        weights_list <- extract_NN_connectivities(sdata, key_added = n_key_added_it)
+        if (!is.null(weights_list)) {
+            for (connectivity_key in names(weights_list)) {
+                weights_sd <- weights_list[[connectivity_key]]
+                split_key <- strsplit(connectivity_key, ", ")[[1]]  
+                tn <- gsub("[()']", "", split_key[1])
+                nk <- gsub("[()']", "", split_key[2])
+
+                distances_sd <- extract_NN_distances(sdata, key_added = n_key_added_it, tn = tn, nn_key_list = nk)
+
+                nn_dt <- align_network_data(distances = weights_sd, weights = distances_sd)
+
+                # pre-allocate DT variables
+                from <- to <- weight <- distance <- from_cell_ID <- to_cell_ID <- uniq_ID <- NULL
+                nn_dt <- data.table::data.table(nn_dt)
+                cID = cID_dict[[tn]]
+                nn_dt[, from_cell_ID := cID[from]]
+                nn_dt[, to_cell_ID := cID[to]]
+                nn_dt[, from_cell_ID := as.character(from_cell_ID)]
+                nn_dt[, to_cell_ID := as.character(to_cell_ID)]
+                nn_dt[, uniq_ID := paste0(from, to)]
+                nn_dt[order(uniq_ID)]
+                nn_dt[, uniq_ID := NULL]
+                vert <- unique(x = c(nn_dt$from_cell_ID, nn_dt$to_cell_ID))
+                nn_network_igraph <- igraph::graph_from_data_frame(nn_dt[, .(from_cell_ID, to_cell_ID, weight, distance)], directed = TRUE, vertices = vert)
+
+                nn_info <- extract_NN_info(sdata = sdata, key_added = n_key_added_it, tn = tn)
+
+                net_type <- "kNN" # anndata default
+                if (("sNN" %in% n_key_added_it) & !is.null(n_key_added_it)) {
+                    net_type <- "sNN"
+                    net_name <- paste0(n_key_added_it, ".", nn_info["method"])
+                } else if (!("sNN" %in% n_key_added_it) & !is.null(nk)) {
+                    nk_trim <- sub("_connectivities", "", nk)
+                    net_name <- nk_trim
+                } else {
+                    net_name <- paste0(net_type, ".", nn_info["method"])
+                }
+                parts <- strsplit(tn, "_")[[1]]
+                nn_su <- parts[1]
+                nn_ft <- parts[2]
+                netObj <- createNearestNetObj(
+                    name = net_name,
+                    network = nn_network_igraph,
+                    spat_unit = nn_su,
+                    feat_type = nn_ft
+                )
+
+                gobject <- set_NearestNetwork(
+                    gobject = gobject,
+                    nn_network = netObj,
+                    spat_unit = nn_su,
+                    feat_type = nn_ft,
+                    nn_network_to_use = net_type,
+                    network_name = net_name,
+                    set_defaults = FALSE
+                )
+            }
+        }
+    }
+
+    # Attach hires image
+    extracted_images <- extract_image(sdata)
+    extract_image_names <- extract_image_names(sdata)
+
+    raster_image_list <- lapply(extracted_images, terra::rast)
+    large_image_list <- createGiottoLargeImageList(raster_image_list, names = extract_image_names)
+    gobject <- addGiottoLargeImage(gobject = gobject, largeImages = large_image_list)
+
+    # Extract points
+    point_dict <- extract_points(sdata)
+    for (ft in names(point_dict)) {
+        gpoint_dt <- as.data.table(point_dict[[ft]])
+        gpoint <- createGiottoPoints(
+            gpoint_dt,
+            feat_type = ft
+        )
+        gobject <- setGiotto(
+            gobject,
+            gpoint
+        )
+    }
+
+    # Extract polygons
+    polygon_dict <- extract_polygons(sdata)
+    for (su in names(polygon_dict)) {
+        gpoly_dt <- as.data.table(polygon_dict[[su]])
+        gpoly <- createGiottoPolygon(
+            gpoly_dt
+        )
+        gobject <- setPolygonInfo(gobject, gpoly, name = su)
     }
 
     gobject <- update_giotto_params(

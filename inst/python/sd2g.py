@@ -2,9 +2,6 @@ import warnings
 import numpy as np
 import pandas as pd
 import scipy as sc
-import matplotlib.pyplot as plt
-from scipy.sparse import csr_matrix, csc_matrix
-import dask.array as da
 from time import perf_counter
 
 from spatialdata import SpatialData
@@ -27,44 +24,41 @@ def read_spatialdata_from_path(sd_path = None):
 
 # Extract gene expression
 def extract_expression(sdata = None):
-    expr = sdata.table.X.transpose().todense()
-    expr_df = pd.DataFrame(expr, index=sdata.table.var.index, columns=sdata.table.obs.index)
-    return expr_df
+    expr_df_dict = {}
+    table_names = list(sdata.tables.keys())
+    for tn in table_names:
+        expr = sdata.tables[tn].X.transpose().todense()
+        expr_df = pd.DataFrame(expr, index=sdata.tables[tn].var.index, columns=sdata.tables[tn].obs.index)
+        expr_df_dict[tn] = expr_df
+    return expr_df_dict
 
 # Extract cell IDs
-def extract_cell_IDs(sdata = None):
-    cell_IDs = sdata.table.obs.index.tolist()
-    return cell_IDs
+def extract_cell_IDs(sdata = None, tn = None):
+    if tn is None:
+        cID = {}
+        for tn in list(sdata.tables.keys()):
+            cID[tn] = sdata.tables[tn].obs.index.tolist()
+    else:
+        cID = sdata.tables[tn].obs.index.tolist()
+    return cID
 
 # Extract feature IDs
-def extract_feat_IDs(sdata = None):
-    feat_IDs = sdata.table.var.index.tolist()
-    return feat_IDs
-
-# Metadata
-def extract_cell_metadata(sdata = None):
-    cell_metadata = sdata.table.obs.reset_index()
-    cell_metadata = cell_metadata.rename(columns={"index": "cell_ID"})
-    return cell_metadata
-
-def extract_feat_metadata(sdata = None):
-    feat_metadata = sdata.table.var.reset_index()
-    feat_metadata = feat_metadata.rename(columns={"index": "feat_ID"})
-    return feat_metadata
+def extract_feat_IDs(sdata = None, tn = None):
+    if tn is None:
+        fID = {}
+        for tn in list(sdata.tables.keys()):
+            fID[tn] = sdata.tables[tn].var.index.tolist()
+    else:
+        fID = sdata.tables[tn].var.index.tolist()
+    return fID
 
 # Alternative expression data
 def extract_layer_names(sdata = None):
-    layer_names = None
-    if len(sdata.table.layers) > 0:
-        layer_names = [i for i in sdata.table.layers]
-    return layer_names
+    layers_dict = {key: list(adata.layers.keys()) for key, adata in sdata.tables.items() if len(adata.layers) > 0}
+    return layers_dict
 
-def extract_layered_data(sdata = None, layer_name = None):
-    layer_names = [i for i in sdata.table.layers]
-    if layer_name not in layer_names:
-        print(f"Invalid Key, {layer_name}, for sdata.table.layers")
-        raise(KeyError)
-    target_layer = sdata.table.layers[layer_name]
+def extract_layered_data(sdata = None, key = None, layer_name = None):
+    target_layer = sdata.tables[key].layers[layer_name]
     if type(target_layer) == sc.sparse.csr_matrix:
         target_layer = target_layer.T
     elif type(target_layer) == sc.sparse.csr.csr_matrix:
@@ -73,158 +67,220 @@ def extract_layered_data(sdata = None, layer_name = None):
         target_layer = pd.DataFrame(target_layer)
     return target_layer
 
-# Extract spatial information
+# Extract spatial locations
 def extract_spatial(sdata = None):
-    spatial = sdata.table.obsm['spatial']
-    spatial_df = pd.DataFrame(spatial)
-    spatial_df.columns = ['X', 'Y']
-    spatial_df['Y'] = spatial_df['Y'] * -1
-    return spatial_df
+    spatial_dict = {}
+    table_names = list(sdata.tables.keys())
+    for tn in table_names:
+        spatial = sdata.tables[tn].obsm['spatial']
+        spatial_df = pd.DataFrame(spatial)
+        spatial_df.columns = ['X', 'Y']
+        spatial_df['Y'] = spatial_df['Y'] * -1
+        spatial_dict[tn] = spatial_df
+    return spatial_dict
 
 def parse_obsm_for_spat_locs(sdata = None):
-    cID = np.array(extract_cell_IDs(sdata))
-    spat_locs = None
-    spat_key = None
-    
-    try:
-        spat_locs = sdata.table.obsm["spatial"]
-    except (KeyError):
-        spat_keys = [i for i in sdata.table.obsm if 'spatial' in i]
-        if len(spat_keys) > 0:
-            spat_key = spat_keys[0]
-            spat_locs = sdata.table.obsm[spat_key]
-
-    if spat_locs is None:
-        err_mess = '''Spatial locations were not found. If spatial locations should have been found,
-        please modify the anndata table within SpatialData object to include a keyword-value pair within the obsm slot,
-        in which the keyword contains the phrase "spatial" and the value corresponds to the spatial locations.\n
-        In the Giotto Object resulting from this conversion, dummy locations will be used.'''
-        print(err_mess)
+    sp_dict = {}
+    table_names = list(sdata.tables.keys())
+    for tn in table_names:
+        cID = np.array(extract_cell_IDs(sdata, tn))
         spat_locs = None
-        return spat_locs
-    else:
-        print("Spatial locations found.")
-    
-    cID = np.array(cID).reshape(len(cID),1)
-    spat_locs = np.concatenate((spat_locs,cID), axis = 1)
-    num_col = spat_locs.shape[1]
-    
-    colnames = ["sdimx","sdimy","sdimz","cell_ID"]
-    conv = {"sdimx":float, "sdimy":float,"sdimz":float,"cell_ID":str}
-    
-    if num_col > 3:
-        spat_locs = pd.DataFrame(spat_locs, columns = colnames)
-    else:
-        del colnames[2]
-        del conv['sdimz']
-        spat_locs = pd.DataFrame(spat_locs, columns = colnames)
-    
-    spat_locs = spat_locs.astype(conv)
-    # Giotto y axis convention
-    spat_locs["sdimy"] = -1 * spat_locs["sdimy"]
-    return spat_locs
+        spat_key = None
+        try:
+            spat_locs = sdata.tables[tn].obsm["spatial"]
+            spat_key = "spatial"
+        except (KeyError):
+            spat_keys = [i for i in sdata.tables[tn].obsm if 'spatial' in i]
+            spat_key = next(iter(spat_keys), None)
+            if spat_key:
+                spat_locs = sdata.tables[tn].obsm[spat_key]
+        if spat_locs is not None:
+            if len(cID) != spat_locs.shape[0]:
+                print(f"Warning: Mismatch in number of cells for {tn}. cID has {len(cID)}, but spatial locations have {spat_locs.shape[0]} rows.")
+            print(f"Spatial locations found for {tn} using key: {spat_key}")
+            
+            cID = np.array(cID).reshape(len(cID),1)
+            spat_locs = np.concatenate((spat_locs,cID), axis = 1)
+            num_col = spat_locs.shape[1]
 
-# Extract images
-def extract_image(sdata = None):
-    # Retrieve the list of images
-    image_list = list(sdata.images.keys())
+            colnames = ["sdimx", "sdimy", "sdimz", "cell_ID"]
+            conv = {"sdimx": float, "sdimy": float,"sdimz": float,"cell_ID": str}
 
-    # Extract image from SpatialData and convert it to numpy array
-    extracted_images = []
-    for image_key in image_list:
-        image = sdata.images[image_key]
-        image_array = np.transpose(image.compute().data, (1, 2, 0))  # Transpose to (y, x, c)
-        extracted_images.append(image_array)
-    return extracted_images
+            if num_col > 3:
+                spat_locs = pd.DataFrame(spat_locs, columns = colnames)
+            else:
+                del colnames[2]
+                del conv['sdimz']
+                spat_locs = pd.DataFrame(spat_locs, columns = colnames)
+            
+            spat_locs = spat_locs.astype(conv)
+            spat_locs["sdimy"] = -1 * spat_locs["sdimy"]
+            sp_dict[tn] = spat_locs
 
-# Extract image names
-def extract_image_names(sdata = None):
-    image_names = list(sdata.images.keys())
-    return image_names
+        else:
+            print(f"Spatial locations were NOT found for {tn}. Skipping...")
+    return sp_dict 
+
+# Extract spatial networks
+def find_SN_keys(sdata = None, key_added = None, tn = None):
+    sn_key_list = []
+    prefix = ""
+    suffix = "neighbors"
+
+    if key_added is None:
+        map_key = prefix + suffix  # Default key to look for
+        if map_key not in sdata.tables[tn].uns:
+            print(f"Warning: Key '{map_key}' not found in sdata.tables[{tn}].uns. Skipping {tn}...")
+            return None
+        tmp_keys = sdata.tables[tn].uns[map_key].keys()
+        for i in tmp_keys:
+            sn_key_list.append(sdata.tables[tn].uns[map_key][i])
+
+    elif ".txt" in key_added:
+        line_keys = []
+        with open(key_added) as f:
+            for line in f.readlines():
+                line = line.strip()
+                line_key_added = line + "_" + suffix
+                line_keys.append(line_key_added)
+        for key in line_keys:
+            if key not in sdata.tables[tn].uns:
+                print(f"Warning: Key '{key}' not found in sdata.tables[{tn}].uns. Skipping {tn}...")
+                return None
+            map_keys = sdata.tables[tn].uns[key].keys()
+            for i in map_keys:
+                sn_key_list.append(sdata.tables[tn].uns[key][i])
+
+    elif key_added is not None:
+        key_added = key_added + suffix
+        if key_added not in sdata.tables[tn].uns:
+            print(f"Warning: Key '{key}' not found in sdata.tables[{tn}].uns. Skipping {tn}...")
+            return None
+        map_keys = sdata.tables[tn].uns[key_added].keys()
+        for i in map_keys:
+            sn_key_list.append(sdata.tables[tn].uns[key_added][i])
+        
+    if len(sn_key_list) == 0:
+        sn_key_list = None
+    return sn_key_list
+
+def extract_SN_connectivities(sdata = None, key_added = None):
+    connectivities = {}
+    for tn in sdata.tables.keys():
+        sn_key_list = find_SN_keys(sdata = sdata, key_added = key_added, tn = tn)
+        if type(sn_key_list) is type(None):
+            continue
+        for sk in sn_key_list:
+            if "connectivities" in sk:
+                connectivities[(tn, sk)] = sdata.tables[tn].obsp[sk]
+    return connectivities
+
+def extract_SN_distances(sdata = None, key_added = None, tn = None, sn_key_list = None):    
+    distances = None
+    if sn_key_list is None:
+        sn_key_list = find_SN_keys(sdata = sdata, key_added = key_added, tn = tn)
+
+    if type(sn_key_list) is type(None):
+        return distances
+    
+    sk_trim = sn_key_list.replace("_connectivities", "")
+    distance_key = sk_trim + '_distances'
+    distances = sdata.tables[tn].obsp[distance_key]
+    
+    return distances
 
 # Extract PCA
 def extract_pca(sdata = None):
-    o_keys = sdata.table.obsm_keys()
-    v_keys = sdata.table.varm_keys()
-    u_keys = None
+    pca_dict = {}
+    for tn in sdata.tables.keys():
+        o_keys = getattr(sdata.tables[tn], "obsm_keys", lambda: [])()
+        v_keys = getattr(sdata.tables[tn], "varm_keys", lambda: [])()
+        u_keys = getattr(sdata.tables[tn], "uns", {}).get("pca", {}).keys()
 
-    pca = dict()
+        pca = dict()
 
-    for ok in o_keys:
-        if "X_pca" in ok:
-            pca['pca'] = sdata.table.obsm[ok]
-            u_keys = sdata.table.uns['pca'].keys()
-
-    for vk in v_keys:
-        if "PCs" in vk:
-            pca['loadings'] = sdata.table.varm[vk]
-        
-    if type(u_keys) is not type(None):
-        for uk in u_keys:
-            if "variance" == uk:
-                pca['eigenvalues'] = sdata.table.uns['pca'][uk]
-        
-    if(len(pca)) == 0:
-        pca = None
-
-    return pca
+        for ok in o_keys:
+            if "X_pca" in ok:
+                pca['pca'] = sdata.tables[tn].obsm[ok]
+                break
+        for vk in v_keys:
+            if "PCs" in vk:
+                pca['loadings'] = sdata.tables[tn].varm[vk]
+                break  # Use first valid PC loading
+        if u_keys:
+            for uk in u_keys:
+                if "variance" in uk:
+                    pca['eigenvalues'] = sdata.tables[tn].uns["pca"][uk]
+            
+        if pca:
+            pca_dict[tn] = pca
+    return pca_dict
 
 # Extract UMAP
 def extract_umap(sdata = None):
-    o_keys = sdata.table.obsm_keys()
+    umap_dict = {}
+    for tn in sdata.tables.keys():
+        o_keys = getattr(sdata.tables[tn], "obsm_keys", lambda: [])()
 
-    umap = None
+        umap = None
 
-    for ok in o_keys:
-        if "X_umap" in ok:
-            umap = sdata.table.obsm[ok]
+        for ok in o_keys:
+            if "X_umap" in ok:
+                umap = sdata.tables[tn].obsm[ok]
+        if umap is not None:
+            umap_dict[tn] = umap
 
-    return umap
+    return umap_dict
 
 # Extract tSNE
 def extract_tsne(sdata = None):
-    o_keys = sdata.table.obsm_keys()
+    tsne_dict = {}
+    for tn in sdata.tables.keys():
+        o_keys = getattr(sdata.tables[tn], "obsm_keys", lambda: [])()
 
-    tsne = None
+        tsne = None
 
-    for ok in o_keys:
-        if "X_tsne" in ok:
-            tsne = sdata.table.obsm[ok]
+        for ok in o_keys:
+            if "X_tsne" in ok:
+                tsne = sdata.tables[tn].obsm[ok]
+        if tsne is not None:
+            tsne_dict[tn] = tsne
 
-    return tsne  
+    return tsne_dict
 
-## NN Network
-
-def find_NN_keys(sdata = None, key_added = None):
+## Extract NN network
+def find_NN_keys(sdata = None, key_added = None, tn = None):
     nn_key_list = []
     
     if key_added is None:
-        param_keys = list(sdata.table.uns.keys())
+        param_keys = list(sdata.tables[tn].uns.keys())
         for pk in param_keys:
             if "neighbors" in pk and "spatial" not in pk:
                 try:
-                    tmp_keys = sdata.table.uns[pk].keys()
+                    tmp_keys = sdata.tables[tn].uns[pk].keys()
                 except KeyError:
                     tmp_keys = None
                     return None
                 for i in tmp_keys:
-                    nn_key_list.append(sdata.table.uns[pk].keys())
-                break #Only returns connectivity and distance keys for one network
+                    nn_key_list.append(sdata.tables[tn].uns[pk].keys())
+                break
     elif ".txt" in key_added:
         line_keys = []
         with open(key_added) as f:
             for line in f.readlines():
                 line = line.strip()
                 line_keys.append(line)
-
         for key in line_keys:
-            map_keys = sdata.table.uns[key].keys()
+            if key not in sdata.tables[tn].uns:
+                print(f"Warning: Key '{key}' not found in sdata.tables[{tn}].uns. Skipping {tn}...")
+                return None
+            map_keys = sdata.tables[tn].uns[key].keys()
             for i in map_keys:
-                nn_key_list.append(sdata.table.uns[key][i])
+                nn_key_list.append(sdata.tables[tn].uns[key][i])
     elif key_added and key_added.casefold() != "spatial":
-        map_keys = sdata.table.uns[key].keys()
+        map_keys = sdata.tables[tn].uns[key].keys()
         for i in map_keys:
-            nn_key_list.append(sdata.table.uns[key][i])
+            nn_key_list.append(sdata.tables[tn].uns[key][i])
     elif key_added and key_added.casefold() == "spatial":
         s1 = "String 'spatial' cannot be used as n_key_added to retrieve a Nearest Neighbor Network. "
         s2 = "This results from conflicting keys for nearest neighbor and spatial networks. "
@@ -237,29 +293,30 @@ def find_NN_keys(sdata = None, key_added = None):
     return nn_key_list
 
 def extract_NN_connectivities(sdata = None, key_added = None):
-    connectivities = None
-    nn_key_list = find_NN_keys(sdata = sdata, key_added = key_added)
-
-    if type(nn_key_list) is type(None):
-        return connectivities
-    
-    for nk in nn_key_list:
-        if "connectivities" in nk:
-            connectivities = sdata.table.obsp[nk]
+    connectivities = {}
+    for tn in sdata.tables.keys():
+        nn_key_list = find_NN_keys(sdata = sdata, key_added = key_added, tn = tn)
+        if type(nn_key_list) is type(None):
+            continue
+        for nk in nn_key_list:
+            if "connectivities" in nk:
+                connectivities[(tn, nk)] = sdata.tables[tn].obsp[nk]
     return connectivities
 
-def extract_NN_distances(sdata = None, key_added = None):
+def extract_NN_distances(sdata = None, key_added = None, tn = None, nn_key_list = None):
     distances = None
-    nn_key_list = find_NN_keys(sdata = sdata, key_added = key_added)
+    if nn_key_list is None:
+        nn_key_list = find_NN_keys(sdata = sdata, key_added = key_added, tn = tn)
+
     if type(nn_key_list) is type(None):
         return distances
-    for nk in nn_key_list:
-        if "distances" in nk:
-            distances = sdata.table.obsp[nk]
+    nk_trim = nn_key_list.replace("_connectivities", "")
+    distance_key = nk_trim + '_distances'
+    distances = sdata.tables[tn].obsp[distance_key]
     return distances
 
-def extract_NN_info(sdata = None, key_added = None):
-    nn_keys = find_NN_keys(sdata, key_added=key_added)
+def extract_NN_info(sdata = None, key_added = None, tn = None):
+    nn_keys = find_NN_keys(sdata, key_added=key_added, tn = tn)
     nn_info = None
     for nk in nn_keys:
         if type(nk) is dict:
@@ -281,97 +338,76 @@ def align_network_data(distances = None, weights = None):
     df.loc[:,"weight"] = pd.Series(w_nz)
     with warnings.catch_warnings():
         warnings.simplefilter(action='ignore', category=(DeprecationWarning, FutureWarning))
-        # Ignoring the warning here because the desired behavior is maintained
         df.loc[:,"from"] = pd.Series(idx_dist_not_sparse[0])
         df.loc[:,"to"] = pd.Series(idx_dist_not_sparse[1])
     
     df.loc[:,"from"] += 1
     df.loc[:,"to"] += 1
-    # for x, i in enumerate(zip(*dist_not_sparse)):
-    #     to = i[-1]
-    #     from_ = i[0]
-    #     dist = distances[from_,to]
-    #     weig = weights[from_,to]
 
-    #     # Correct indexing convention for export to R
-    #     from_ += 1
-    #     to += 1
-
-    #     df.iloc[x,:] = {"distance":dist, "weight":weig, "from":from_, "to":to}
     t1 = perf_counter()
     print("Network extraction time:",t1-t0)
     return df
 
-def find_SN_keys(sdata = None, key_added = None):
-    sn_key_list = []
-    prefix = ""
-    suffix = "neighbors"
+# Extract images
+def extract_image(sdata = None):
+    # Retrieve the list of images
+    image_list = list(sdata.images.keys())
 
-    if key_added is None:
-        map_key = prefix + suffix
-        try:
-            tmp_keys = sdata.table.uns[map_key].keys()
-        except KeyError:
-            tmp_keys = None
-            return None
+    # Extract image from SpatialData and convert it to numpy array
+    extracted_images = []
+    for image_key in image_list:
+        image = sdata.images[image_key]
+        image_array = np.transpose(image.compute().data, (1, 2, 0))  # Transpose to (y, x, c)
+        extracted_images.append(image_array)
+    return extracted_images
+
+# Extract image names
+def extract_image_names(sdata = None):
+    image_names = list(sdata.images.keys())
+    return image_names
+
+# Extract points
+def extract_points(sdata = None):
+    points_dict = {}
+    point_dict = sdata.points
+    for ft, ddf in point_dict.items():  # Iterate over all feature types (e.g., "rna", "protein", etc.)
+        # Convert Dask DataFrame to Pandas
+        df = ddf.compute()  # `.compute()` converts Dask -> Pandas
         
-        for i in tmp_keys:
-            #if type(adata.uns[pk][i]) == type(dict()): continue
-            sn_key_list.append(sdata.table.uns[map_key][i])
-    elif ".txt" in key_added:
-        line_keys = []
-        with open(key_added) as f:
-            for line in f.readlines():
-                line = line.strip()
-                line_key_added = line + "_" + suffix
-                line_keys.append(line_key_added)
-        for key in line_keys:
-            map_keys = sdata.table.uns[key].keys()
-            for i in map_keys:
-                sn_key_list.append(sdata.table.uns[key][i])
+        # Select relevant columns
+        df = df[["feat_ID", "x", "y"]].copy()
 
-    elif key_added is not None:
-        key_added = key_added + suffix
-        map_keys = sdata.table.uns[key_added].keys()
-        for i in map_keys:
-            #if type(adata.uns[key_added][i]) == type(dict()): continue
-            sn_key_list.append(sdata.table.uns[key_added][i])
-        
-    if len(sn_key_list) == 0:
-        sn_key_list = None
-    return sn_key_list
+        # Assign a unique integer index for each feature
+        df["geom"] = df["feat_ID"].astype("category").cat.codes + 1
+        points_dict[ft] = df
 
-def extract_SN_connectivities(sdata = None, key_added = None):
-    connectivities = None
-    sn_key_list = find_SN_keys(sdata = sdata, key_added = key_added)
+    return points_dict
 
-    if type(sn_key_list) is type(None):
-        return connectivities
-    
-    for sk in sn_key_list:
-        if "connectivities" in sk:
-            connectivities = sdata.table.obsp[sk]
-    
-    return connectivities
+# Extract polygons
+def extract_polygons(sdata = None):
+    polygons_dict = {}
+    polygon_dict = sdata.shapes
+    for su in polygon_dict.keys():
+        rows = []
+        for poly_id, geometry in zip(polygon_dict[su]["poly_ID"], polygon_dict[su]["geometry"]):
+            if geometry.geom_type == "Polygon":
+                coords = list(geometry.exterior.coords)
+                part_id = 1
+                for x, y in coords:
+                    rows.append({"poly_ID": poly_id, "x": x, "y": y, "part": part_id})
 
-def extract_SN_distances(sdata = None, key_added = None):    
-    distances = None
-    sn_key_list = find_SN_keys(sdata = sdata, key_added = key_added)
+            elif geometry.geom_type == "MultiPolygon":
+                part_id = 1
+                for poly in geometry.geoms:
+                    coords = list(poly.exterior.coords)
+                    for x, y in coords:
+                        rows.append({"poly_ID": poly_id, "x": x, "y": y, "part": part_id})
+                    part_id += 1
+        df = pd.DataFrame(rows)
 
-    if type(sn_key_list) is type(None):
-        return distances
-    
-    for sk in sn_key_list:
-        if "distances" in sk:
-            distances = sdata.table.obsp[sk]
-    
-    return distances
+        df["geom"] = df["poly_ID"].astype("category").cat.codes + 1
+        df["hole"] = 0
 
-def extract_SN_info(sdata = None, key_added = None):
-    sn_keys = find_SN_keys(sdata, key_added=key_added)
-    sn_info = None
-    for sk in sn_keys:
-        if type(sk) is dict:
-            sn_info = pd.Series(sk)
-    return sn_info
+        polygons_dict[su] = df
 
+    return polygons_dict
