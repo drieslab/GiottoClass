@@ -803,12 +803,12 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
 
     ###
     ###
-    delaunay_network_Obj <- create_spat_net_obj(
+    delaunay_network_Obj <- createSpatNetObj(
         name = name,
         method = method,
         parameters = parameters,
         outputObj = outputObj,
-        networkDT = delaunay_network_DT,
+        network = delaunay_network_DT,
         networkDT_before_filter = networkDT_before_filter,
         cellShapeObj = cellShapeObj,
         spat_unit = spat_unit,
@@ -871,11 +871,11 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
         slot(gobject, "parameters") <- parameters_list
 
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        gobject <- set_spatialNetwork(
+        gobject <- setSpatialNetwork(
             gobject = gobject,
             spat_unit = spat_unit,
             name = name,
-            spatial_network = delaunay_network_Obj
+            x = delaunay_network_Obj
         )
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
@@ -978,12 +978,12 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
         "medianCellDistance" = medianCellDistance
     )
 
-    delaunay_network_Obj <- create_spat_net_obj(
+    delaunay_network_Obj <- createSpatNetObj(
         name = name,
         method = method,
         parameters = parameters,
         outputObj = outputObj,
-        networkDT = delaunay_network_DT,
+        network = delaunay_network_DT,
         networkDT_before_filter = networkDT_before_filter,
         cellShapeObj = cellShapeObj,
         spat_unit = spat_unit,
@@ -1018,11 +1018,11 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
         gobject@parameters <- parameters_list
 
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        gobject <- set_spatialNetwork(
+        gobject <- setSpatialNetwork(
             gobject = gobject,
             spat_unit = spat_unit,
             name = name,
-            spatial_network = delaunay_network_Obj
+            x = delaunay_network_Obj
         )
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
@@ -1484,12 +1484,12 @@ createSpatialKNNnetwork <- function(
         "dimensions" = dimensions
     )
 
-    spatial_network_Obj <- create_spat_net_obj(
+    spatial_network_Obj <- createSpatNetObj(
         name = name,
         method = method,
         parameters = parameters,
         outputObj = outputObj,
-        networkDT = spatial_network_DT,
+        network = spatial_network_DT,
         spat_unit = spat_unit,
         provenance = prov(spatial_locations),
         misc = NULL
@@ -1522,11 +1522,11 @@ createSpatialKNNnetwork <- function(
         slot(gobject, "parameters") <- parameters_list
 
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        gobject <- set_spatialNetwork(
+        gobject <- setSpatialNetwork(
             gobject = gobject,
             spat_unit = spat_unit,
             name = name,
-            spatial_network = spatial_network_Obj
+            x = spatial_network_Obj
         )
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
@@ -1897,9 +1897,9 @@ createSpatialWeightMatrix <- function(
         if (isTRUE(verbose)) {
             wrap_msg("Attaching weight matrix to", spatial_network_to_use)
         }
-        gobject <- set_spatialNetwork(
+        gobject <- setSpatialNetwork(
             gobject = gobject,
-            spatial_network = sn,
+            x = sn,
             set_defaults = FALSE,
             verbose = FALSE
         )

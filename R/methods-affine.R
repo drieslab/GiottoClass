@@ -11,6 +11,10 @@
 #' be a matrix with either 2 or 3 columns (linear or affine).
 #' @param inv logical. Whether the inverse of the affine transform should
 #' be applied.
+#' @param pre_multiply logical. Either pre: `t(A %*% t(xy))` or post: `xy %*% A`
+#' convention to use when applying the affine matrix. The general convention
+#' is to set `TRUE`, but Giotto internally uses `FALSE` (this may be updated
+#' in the future).
 #' @param ... additional args to pass (none implemented)
 #' @returns affine transformed object or an `affine2d` if a `matrix` was
 #' passed to `x`
@@ -181,11 +185,11 @@ setMethod("affine", signature(x = "ANY", y = "affine2d"), function(x, y, ...) {
 #' @export
 setMethod(
     "affine", signature(x = "SpatVector", y = "matrix"),
-    function(x, y, inv = FALSE, ...) {
+    function(x, y, inv = FALSE, pre_multiply = FALSE, ...) {
         a <- list(...)
         if (terra::geomtype(x) != "none") a$geomtype <- terra::geomtype(x)
         else a$geomtype <- match.arg(a$geomtype, c("points", "polygons"))
-        a <- c(list(x = x, m = y, inv = inv), a)
+        a <- c(list(x = x, m = y, inv = inv, pre_multiply = pre_multiply), a)
         
         do.call(.affine_sv, a)
     }
@@ -196,8 +200,15 @@ setMethod(
 #' @export
 setMethod(
     "affine", signature(x = "giottoPoints", y = "matrix"),
-    function(x, y, inv = FALSE, ...) {
-        x[] <- .affine_sv(x = x[], geomtype = "points", m = y, inv = inv, ...)
+    function(x, y, inv = FALSE, pre_multiply = FALSE, ...) {
+        x[] <- .affine_sv(
+            x = x[], 
+            m = y, 
+            geomtype = "points",
+            inv = inv, 
+            pre_multiply = pre_multiply,
+            ...
+        )
         return(x)
     }
 )
@@ -207,8 +218,13 @@ setMethod(
 #' @export
 setMethod(
     "affine", signature(x = "giottoPolygon", y = "matrix"),
-    function(x, y, inv = FALSE, ...) {
-        a <- list(geomtype = "polygons", m = y, inv = inv, ...)
+    function(x, y, inv = FALSE, pre_multiply = FALSE, ...) {
+        a <- list(
+            geomtype = "polygons", m = y, 
+            inv = inv,
+            pre_multiply = pre_multiply, 
+            ...
+        )
         .do_gpoly(x, what = .affine_sv, args = a)
     }
 )
@@ -218,9 +234,13 @@ setMethod(
 #' @export
 setMethod(
     "affine", signature("spatLocsObj", y = "matrix"),
-    function(x, y, inv = FALSE, ...) {
+    function(x, y, inv = FALSE, pre_multiply = FALSE, ...) {
         x[] <- .affine_dt(
-            x = x[], m = y, xcol = "sdimx", ycol = "sdimy", inv = inv, ...
+            x = x[], m = y,
+            xcol = "sdimx", ycol = "sdimy", 
+            inv = inv,
+            pre_multiply = pre_multiply,
+            ...
         )
         return(x)
     }
@@ -229,7 +249,9 @@ setMethod(
 # * giottoLargeImage, matrix ####
 #' @rdname affine
 #' @export
-setMethod("affine", signature(x = "giottoLargeImage", y = "matrix"), function(x, y, inv = FALSE, ...) {
+setMethod(
+    "affine", signature(x = "giottoLargeImage", y = "matrix"), 
+    function(x, y, inv = FALSE, pre_multiply = FALSE, ...) {
     a <- get_args_list(...)
     a$x <- as(x, "giottoAffineImage") # convert to giottoAffineImage
     res <- do.call(affine, args = a)
@@ -239,7 +261,9 @@ setMethod("affine", signature(x = "giottoLargeImage", y = "matrix"), function(x,
 # * giottoAffineImage, matrix ####
 #' @rdname affine
 #' @export
-setMethod("affine", signature(x = "giottoAffineImage", y = "matrix"), function(x, y, inv = FALSE, ...) {
+setMethod(
+    "affine", signature(x = "giottoAffineImage", y = "matrix"), 
+    function(x, y, inv = FALSE, pre_multiply = FALSE, ...) {
     a <- get_args_list(...)
     aff <- x@affine
     a$x <- aff
@@ -251,13 +275,20 @@ setMethod("affine", signature(x = "giottoAffineImage", y = "matrix"), function(x
 # * affine2d, matrix ####
 #' @rdname affine
 #' @export
-setMethod("affine", signature(x = "affine2d", y = "matrix"), function(x, y, inv = FALSE, ...) {
-    a <- get_args_list()
+setMethod(
+    "affine", signature(x = "affine2d", y = "matrix"), 
+    function(x, y, inv = FALSE, pre_multiply = FALSE, ...) {
+    a <- get_args_list(...)
     # update linear
     m <- .aff_linear_2d(y)
     if (isTRUE(inv)) m <- solve(m)
     old_aff <- new_aff <- x@affine
-    .aff_linear_2d(new_aff) <- .aff_linear_2d(new_aff) %*% m
+    if (isTRUE(pre_multiply)) {
+        .aff_linear_2d(new_aff) <- t(m %*% t(.aff_linear_2d(new_aff)))
+    } else {
+        .aff_linear_2d(new_aff) <- .aff_linear_2d(new_aff) %*% m
+    }
+    
 
     ## calc shifts ##
     # create dummy
@@ -283,17 +314,16 @@ setMethod("affine", signature(x = "affine2d", y = "matrix"), function(x, y, inv 
     return(initialize(x))
 })
 
-
 # internals ####
 
 # 2D only
-.affine_sv <- function(x, geomtype, m, inv = FALSE, ...) {
+.affine_sv <- function(x, geomtype, m, ...) {
     m <- as.matrix(m)
     if (terra::geomtype(x) != "none") geomtype <- terra::geomtype(x)
     else geomtype <- match.arg(geomtype, c("points", "polygons"))
     xdt <- data.table::as.data.table(x, geomtype = geomtype, geom = "XY")
     xdt <- .affine_dt(
-        x = xdt, m = m, xcol = "x", ycol = "y", inv = inv, ...
+        x = xdt, m = m, xcol = "x", ycol = "y", ...
     )
 
     res <- switch(geomtype,
@@ -304,11 +334,23 @@ setMethod("affine", signature(x = "affine2d", y = "matrix"), function(x, y, inv 
     return(res)
 }
 
-.affine_dt <- function(x, m, xcol = "sdimx", ycol = "sdimy", inv = FALSE, ...) {
+.affine_dt <- function(x, m, xcol = "sdimx", ycol = "sdimy", ...) {
     x <- data.table::as.data.table(x)
     m <- as.matrix(m)
     xm <- as.matrix(x[, c(xcol, ycol), with = FALSE])
 
+    xm <- .affine_matrix(x = xm, m = m, ...)
+
+    x[, (xcol) := xm[, 1L]]
+    x[, (ycol) := xm[, 2L]]
+
+    return(x)
+}
+
+.affine_matrix <- function(x, m, inv = FALSE, pre_multiply = FALSE, ...) {
+    x <- as.matrix(x)
+    y <- as.matrix(x)
+    
     # translations (if any)
     translation <- NULL
     if (ncol(m) > 2) {
@@ -316,25 +358,25 @@ setMethod("affine", signature(x = "affine2d", y = "matrix"), function(x, y, inv 
         if (isTRUE(inv)) translation <- -translation
         if (all(translation == c(0, 0))) translation <- NULL
     }
-
+    
     # inv translation
     if (!is.null(translation) && isTRUE(inv)) {
-        xm <- t(t(xm) + translation)
+        x <- t(t(x) + translation)
     }
-
+    
     # linear transforms
     aff_m <- m[seq(2), seq(2)]
     if (isTRUE(inv)) aff_m <- solve(aff_m)
-    xm <- xm %*% aff_m
-
+    x <- if (isTRUE(pre_multiply)) {
+        t(aff_m %*% t(x))
+    } else {
+        x %*% aff_m
+    }
+    
     # normal translation
     if (!is.null(translation) && !isTRUE(inv)) {
-        xm <- t(t(xm) + translation)
+        x <- t(t(x) + translation)
     }
-
-    x[, (xcol) := xm[, 1L]]
-    x[, (ycol) := xm[, 2L]]
-
     return(x)
 }
 
@@ -344,12 +386,31 @@ setMethod("affine", signature(x = "affine2d", y = "matrix"), function(x, y, inv 
     mg <- .spatraster_sample_values(x, output = "magick", size = size, ...)
     aff <- x@affine
 
+    # account for intrinsic rescale needed to account for ext vs dim differences
+    # terra spatSample() ignores extent dims, and output aspect ratio is the
+    # same as the source image.
+    # Only downscale here.
+    sv_xy_dim <- range(ext(x@raster_object))
+    sv_xy_ratio <- sv_xy_dim / max(sv_xy_dim)
+    mg_info <- magick::image_info(mg)[c("width", "height")]
+    mg_xy_dim <- as.numeric(mg_info)
+    mg_xy_ratio <- mg_xy_dim / max(mg_xy_dim)
+    ext_ratio <- sv_xy_ratio / mg_xy_ratio
+    
     # create a dummy spatLocsObj to act as control points
     # pt1: bottom left
     # pt2: top left
     # pt3: bottom right
     dummy_sl <- .magick_image_corners(mg)
-    aff_dummy_sl <- dummy_sl %>%
+    
+    # account for intrinsic scaling from when ext != dims ratio
+    aff_dummy_sl <- rescale(dummy_sl,
+        fx = ext_ratio[["x"]], 
+        fy = ext_ratio[["y"]], 
+        x0 = 0, y0 = 0
+    )
+    
+    aff_dummy_sl <- aff_dummy_sl %>%
         affine(.aff_linear_2d(aff)) %>%
         flip() %>%
         rescale(

@@ -29,10 +29,11 @@ GiottoClass object
 Reconnect a GiottoClass object
 }
 \examples{
-f <- tempfile()
-a <- GiottoData::loadSubObjectMini("giottoLargeImage")
-saveRDS(a, f)
+temp <- tempfile()
+f <- system.file("extdata/toy_intensity.tif", package="GiottoClass")
+a <- createGiottoLargeImage(f)
+saveRDS(a, temp)
 
-b <- readRDS(f) # expected to be null pointer
+b <- readRDS(temp) # expected to be null pointer
 b <- reconnect(b) # reconnected to source image
 }
