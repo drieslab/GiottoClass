@@ -4001,6 +4001,10 @@ giottoToSpatialData <- function(
         save_directory = NULL) {
     # Initialize reticulate
     instrs <- createGiottoInstructions(python_path = python_path)
+    
+    if (dir.exists(save_directory)) {
+        stop("save_directory must be a non-existing directory")
+    }
 
     # Check spatialdata dependencies
     package_check(
