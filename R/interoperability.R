@@ -256,17 +256,19 @@ anndataToGiotto <- function(
             }
         }
     }
+    
+    g_su_ft <- gsub("converted_gobject.h5ad", "", basename(anndata_path))
 
     if (is.null(n_key_added)) {
         n_key_added <- list.files(
             file.path(dirname(anndata_path), "giotto_meta"), 
-            pattern = "nn_network", full.names = TRUE)
+            pattern = paste0(g_su_ft, "nn_network"), full.names = TRUE)
         n_key_added <- n_key_added %none% NULL
     }
     if (is.null(spatial_n_key_added)) {
         spatial_n_key_added <- list.files(
             file.path(dirname(anndata_path), "giotto_meta"), 
-            pattern = "spatial_network", full.names = TRUE)
+            pattern = paste0(g_su_ft, "spatial_network"), full.names = TRUE)
         spatial_n_key_added <- spatial_n_key_added %none% NULL
     }
 
