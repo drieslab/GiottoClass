@@ -1,6 +1,6 @@
 Package: GiottoClass
 Title: Giotto Suite object definitions and framework
-Version: 0.4.6
+Version: 0.4.7
 Authors@R: c(
 	person("Ruben", "Dries", email = "rubendries@gmail.com",
 		 role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7650-7754")),
@@ -36,7 +36,6 @@ Imports:
     graphics,
     grDevices,
     igraph (>= 1.2.4.1),
-    magick,
     Matrix (>= 1.6-2),
     matrixStats (>= 0.55.0),
     methods,
@@ -53,6 +52,7 @@ Suggests:
     GiottoData,
     HDF5Array (>= 1.18.1),
     knitr,
+    magick,
     plotly,
     raster,
     remotes,

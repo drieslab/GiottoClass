@@ -108,11 +108,11 @@ setGeneric("prov<-", function(x, value) standardGeneric("prov<-"))
 
 ## spatUnit() S4 generic ####
 setGeneric("spatUnit", function(x) standardGeneric("spatUnit"))
-setGeneric("spatUnit<-", function(x, value) standardGeneric("spatUnit<-"))
+setGeneric("spatUnit<-", function(x, ..., value) standardGeneric("spatUnit<-"))
 
 ## featType() S4 generic ####
 setGeneric("featType", function(x) standardGeneric("featType"))
-setGeneric("featType<-", function(x, value) standardGeneric("featType<-"))
+setGeneric("featType<-", function(x, ..., value) standardGeneric("featType<-"))
 
 ## objName() generic ####
 setGeneric("objName", function(x) standardGeneric("objName"))

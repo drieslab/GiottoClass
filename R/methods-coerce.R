@@ -173,6 +173,7 @@ setMethod("as.matrix", signature("spatLocsObj"), function(x, id_rownames = TRUE,
 # image types ####
 
 methods::setAs("giottoLargeImage", "giottoImage", function(from) {
+    package_check("magick")
     mgobj <- .spatraster_sample_values(
         raster_object = from,
         size = getOption("giotto.plot_img_max_crop", 1e8),
@@ -201,6 +202,7 @@ methods::setAs("giottoLargeImage", "giottoImage", function(from) {
 })
 
 methods::setAs("giottoLargeImage", "giottoAffineImage", function(from) {
+    package_check("magick")
     attr(from, "affine") <- new("affine2d")
     attr(from, "funs") <- list()
     attr(from, "class") <- "giottoAffineImage"
