@@ -257,6 +257,19 @@ anndataToGiotto <- function(
         }
     }
 
+    if (is.null(n_key_added)) {
+        n_key_added <- list.files(
+            file.path(dirname(anndata_path), "giotto_meta"), 
+            pattern = "nn_network", full.names = TRUE)
+        n_key_added <- n_key_added %none% NULL
+    }
+    if (is.null(spatial_n_key_added)) {
+        spatial_n_key_added <- list.files(
+            file.path(dirname(anndata_path), "giotto_meta"), 
+            pattern = "spatial_network", full.names = TRUE)
+        spatial_n_key_added <- spatial_n_key_added %none% NULL
+    }
+
     # Required step to properly initialize reticulate
     instrs <- createGiottoInstructions(python_path = python_path)
 
@@ -3534,6 +3547,19 @@ spatialdataToGiotto <- function(
     sd2g_path <- system.file("python", "sd2g.py", package = "GiottoClass")
     reticulate::source_python(sd2g_path)
     sdata <- read_spatialdata_from_path(spatialdata_path)
+
+    if (is.null(n_key_added)) {
+        n_key_added <- list.files(
+            file.path(spatialdata_path, "giotto_meta"), 
+            pattern = "nn_network", full.names = TRUE)
+        n_key_added <- n_key_added %none% NULL
+    }
+    if (is.null(spatial_n_key_added)) {
+        spatial_n_key_added <- list.files(
+            file.path(spatialdata_path, "giotto_meta"), 
+            pattern = "spatial_network", full.names = TRUE)
+        spatial_n_key_added <- spatial_n_key_added %none% NULL
+    }
     
     # Create baseline Giotto object
     gobject <- createGiottoObject(
