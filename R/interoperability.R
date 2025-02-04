@@ -658,7 +658,7 @@ giottoToAnnData <- function(
         env_name = "giotto_env",
         save_directory = NULL) {
     # Check gobject
-    invalid_obj <- !("giotto" %in% class(gobject))
+    invalid_obj <- !inherits(gobject, "giotto")
     if (is.null(gobject) || invalid_obj) {
         stop(wrap_msg("Please provide a valid Giotto Object for conversion."))
     }
