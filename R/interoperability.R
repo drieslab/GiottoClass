@@ -658,7 +658,7 @@ giottoToAnnData <- function(
         env_name = "giotto_env",
         save_directory = NULL) {
     # Check gobject
-    invalid_obj <- !inherits(gobject, "giotto")
+    invalid_obj <- !("giotto" %in% class(gobject))
     if (is.null(gobject) || invalid_obj) {
         stop(wrap_msg("Please provide a valid Giotto Object for conversion."))
     }
@@ -701,9 +701,17 @@ giottoToAnnData <- function(
     gmdir <- file.path(save_directory, "giotto_meta")
     if (!dir.exists(gmdir)) dir.create(gmdir)
 
-    # find object spat units and feat types
-    spat_unit <- spat_unit %null% spatUnit(gobject)
-    feat_type <- feat_type %null% featType(gobject)
+    # Expresion
+    expr_dt <- list_expression(gobject)
+    # ID spat_unit and feat_type if not already provided.
+    if (is.null(spat_unit) && is.null(feat_type)) {
+        spat_unit <- unique(expr_dt$spat_unit)
+        feat_type <- unique(expr_dt$feat_type)
+    } else if (is.null(spat_unit) && !is.null(feat_type)) {
+        spat_unit <- unique(expr_dt$spat_unit)
+    } else if (!is.null(spat_unit) && is.null(feat_type)) {
+        feat_type <- unique(expr_dt$feat_type)
+    }
 
     for (su in spat_unit) {
         wrap_msg("Spatial unit(s)", su, "will be used in conversion.")
