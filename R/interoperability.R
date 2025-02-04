@@ -683,6 +683,10 @@ giottoToAnnData <- function(
                 .h5ad file."
         )
     }
+    
+    # set up giotto meta folder
+    gmdir <- file.path(save_directory, "giotto_meta")
+    if (!dir.exists(gmdir)) dir.create(gmdir)
 
     # find object spat units and feat types
     spat_unit <- spat_unit %null% spatUnit(gobject)
@@ -1062,7 +1066,10 @@ giottoToAnnData <- function(
                 append_n <- FALSE
                 if (length(network_name) != 0) {
                     if (nn_net_tu == "kNN") append_n <- TRUE
-                    write(network_name, fname_nn, append = append_n)
+                    write(network_name, 
+                          file = file.path(
+                              save_directory, "giotto_meta", fname_nn), 
+                          append = append_n)
                 }
             }
             adata_pos <- adata_pos + 1
@@ -1140,7 +1147,9 @@ giottoToAnnData <- function(
             }
 
             fname_sn <- paste0(su, "_", ft, "_spatial_network_keys_added.txt")
-            if (length(network_name) != 0) write(network_name, fname_sn)
+            if (length(network_name) != 0) write(
+                network_name, 
+                file = file.path(save_directory, "giotto_meta", fname_sn))
         }
 
         adata_pos <- adata_pos + 1
@@ -4032,6 +4041,12 @@ giottoToSpatialData <- function(
 
     # Create SpatialData object
     createSpatialData(temp, save_directory, images_exist)
+
+    # copy over giotto metadata
+    dir.create(file.path(save_directory, "giotto_meta"))
+    file.copy(from = file.path(temp, "giotto_meta"),
+              to = save_directory,
+              recursive = TRUE)
 
     # Delete temporary files and folders
     unlink(temp, recursive = TRUE)
