@@ -4024,6 +4024,11 @@ giottoToSpatialData <- function(
 
     # Create a temporary folder to hold anndata
     temp <- "temp_conversion_files/"
+    # Delete temporary files and folders when done
+    on.exit({
+        if (dir.exists(temp)) unlink(temp, recursive = TRUE)
+    }, add = TRUE)
+    
 
     # First, convert Giotto object to AnnData using an existing function
     giottoToAnnData(
@@ -4083,9 +4088,6 @@ giottoToSpatialData <- function(
     file.copy(from = file.path(temp, "giotto_meta"),
               to = save_directory,
               recursive = TRUE)
-
-    # Delete temporary files and folders
-    unlink(temp, recursive = TRUE)
 
     # Successful Conversion
     cat("Giotto object has been converted and saved to SpatialData object at: ", save_directory, "\n")
