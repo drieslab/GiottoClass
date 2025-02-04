@@ -658,7 +658,9 @@ giottoToAnnData <- function(
     # Python module import
     g2ad_path <- system.file("python", "g2ad.py", package = "GiottoClass")
     reticulate::source_python(g2ad_path)
-    if (!is.null(save_directory)) dir_guard(save_directory)
+    if (!is.null(save_directory)) {
+        save_directory <- paste0(save_directory, "/")
+    }
 
     # Check directory, make it if it doesn't exist
     if (is.null(save_directory)) {
