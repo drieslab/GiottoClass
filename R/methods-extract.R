@@ -4,14 +4,15 @@ NULL
 
 # Documentations ------------------------------------------------------------ #
 
-#' @title Subset part of an object with `[`
+#' @title Subset part of an object with `[` or `[[`
 #' @name subset_bracket
-#' @aliases `[`
+#' @aliases `[`, `[[`
 #' @description Extract values from Giotto classes. Providing empty brackets
 #' such as: `x[]` will usually extract the main contained data representation.
 #' @param x Giotto S4 object to subset information from
 #' @param i,j indices specifying elements to extract. Indices are numeric or
 #' character vectors, or empty
+#' @param \dots additional arguments
 #' @returns Same as `x` unless brackets are empty in which case, the main
 #' internal representation is returned.
 #' @examples
@@ -596,7 +597,6 @@ setMethod(
 )
 
 
-# setMethod("[[")
 
 ## * metaData ####
 
@@ -1130,6 +1130,17 @@ setMethod(
     }
 )
 
+#' @rdname subset_bracket
+#' @export
+setMethod(
+    "[[",
+    signature(x = "giottoLargeImage", i = "gIndex", j = "missing"),
+    function(x, i, ...) {
+        x[] <- x[][[i]]
+        x
+    }
+)
+
 #' @rdname replace_bracket
 #' @export
 setMethod(
@@ -1477,6 +1488,8 @@ setMethod("subset", signature("giotto"), function(x,
 #' means keeping all of them in the output
 #' @param feat_type character vector. Feature types to slice out. ":all:"
 #' means keeping all of them in the output
+#' @param negate logical. If `TRUE`, all specified `spat_unit` and `feat_type`
+#' are **not** kept. `":all:"` tokens are ignored.
 #' @param verbose be verbose
 #' @returns `giotto` object
 #' @examples
@@ -1485,13 +1498,24 @@ setMethod("subset", signature("giotto"), function(x,
 #' force(res)
 #' @seealso [subsetGiotto()] [subset_giotto]
 #' @export
-sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", verbose = FALSE) {
+sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", negate = FALSE, verbose = FALSE) {
     spat_unit <- spat_unit %null% ":all:"
     feat_type <- feat_type %null% ":all:"
     x <- gobject # shorter name
 
     if (identical(spat_unit, ":all:") && identical(feat_type, ":all:")) {
         return(x) # return early if no slicing needed
+    }
+    
+    if (isTRUE(negate)) {
+        if (!identical(spat_unit, ":all:")) {
+            avail_su <- spatUnit(gobject)
+            spat_unit <- avail_su[!avail_su %in% spat_unit]
+        }
+        if (!identical(feat_type, ":all:")) {
+            avail_ft <- featType(gobject)
+            feat_type <- avail_ft[!avail_ft %in% feat_type]
+        }
     }
 
     # data slots

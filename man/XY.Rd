@@ -27,7 +27,7 @@
 
 \S4method{XY}{SpatVector}(x, include_geom = FALSE, ...)
 
-\S4method{XY}{SpatVector,matrix}(x, ...) <- value
+\S4method{XY}{SpatVector,matrix}(x, geomtype = "points", ...) <- value
 }
 \arguments{
 \item{x}{object}
@@ -38,6 +38,9 @@
 
 \item{include_geom}{logical. Whether \code{geom}, \code{part}, and \code{hole} from the
 terra geometry matrix should be included.}
+
+\item{geomtype}{character. Either \code{"points"} or \code{"polygons"}. Only used
+with the \code{SpatVector} replacement method}
 }
 \value{
 \code{XY()} returns \code{matrix}. \verb{XY<-()} returns same class as \code{x}

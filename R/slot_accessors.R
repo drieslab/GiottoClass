@@ -213,7 +213,7 @@ get_cell_id <- function(
         gobject,
         spat_unit = NULL,
         set_defaults = TRUE) {
-    assert_giotto(gobject)
+    checkmate::assert_true(inherits(gobject, "giotto"))
     if (isTRUE(set_defaults)) {
         spat_unit <- set_default_spat_unit(
             gobject = gobject,
@@ -260,7 +260,7 @@ set_cell_id <- function(
         cell_IDs,
         set_defaults = TRUE,
         verbose = TRUE) {
-    assert_giotto(gobject)
+    checkmate::assert_true(inherits(gobject, "giotto"))
 
     # set default spat_unit
     if (isTRUE(set_defaults)) {
@@ -5969,6 +5969,7 @@ set_giottoImage <- function(
 #' @param image_type deprecated
 #' @param name name of giotto image object
 #' @param verbose be verbose
+#' @inheritParams data_access_params
 #' @returns giotto object
 #' @family image data accessor functions
 #' @family functions to set data in giotto object
@@ -5985,6 +5986,7 @@ setGiottoImage <- function(
         image,
         image_type = NULL,
         name = NULL,
+        initialize = FALSE,
         verbose = NULL) {
     if (!inherits(gobject, "giotto")) {
         wrap_msg("Unable to set Giotto Image to non-Giotto object.")

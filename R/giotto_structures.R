@@ -13,6 +13,7 @@
 #' @returns giottoPolygon
 .do_gpoly <- function(x, what, args = NULL) {
     x@spatVector <- do.call(what, args = append(list(x@spatVector), args))
+    if (!is.null(args$geomtype)) args$geomtype <- "points"
     if (!is.null(x@spatVectorCentroids)) {
         x@spatVectorCentroids <- do.call(
             what,

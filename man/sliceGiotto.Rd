@@ -4,7 +4,13 @@
 \alias{sliceGiotto}
 \title{Slice \code{giotto} object by \code{spat_unit} and \code{feat_type}}
 \usage{
-sliceGiotto(gobject, spat_unit = ":all:", feat_type = ":all:", verbose = FALSE)
+sliceGiotto(
+  gobject,
+  spat_unit = ":all:",
+  feat_type = ":all:",
+  negate = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{gobject}{\code{giotto} object}
@@ -14,6 +20,9 @@ means keeping all of them in the output}
 
 \item{feat_type}{character vector. Feature types to slice out. ":all:"
 means keeping all of them in the output}
+
+\item{negate}{logical. If \code{TRUE}, all specified \code{spat_unit} and \code{feat_type}
+are \strong{not} kept. \code{":all:"} tokens are ignored.}
 
 \item{verbose}{be verbose}
 }

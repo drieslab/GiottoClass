@@ -7,6 +7,8 @@
 #' coordinate values are retrieved and set as `matrix`.
 #' @param x object
 #' @param value matrix. xy(z) coordinates to set
+#' @param geomtype character. Either `"points"` or `"polygons"`. Only used
+#' with the `SpatVector` replacement method
 #' @param ... additional args to pass
 #' @returns `XY()` returns `matrix`. `XY<-()` returns same class as `x`
 #' @examples
@@ -77,7 +79,7 @@ setMethod("XY", signature("giottoPoints"), function(x, ...) {
 setMethod(
     "XY<-", signature(x = "giottoPoints", value = "ANY"),
     function(x, ..., value) {
-        XY(x[]) <- value
+        XY(x[], geomtype = "points") <- value
         return(x)
     }
 )
@@ -93,7 +95,7 @@ setMethod("XY", signature("giottoPolygon"), function(x, ...) {
 setMethod(
     "XY<-", signature(x = "giottoPolygon", value = "ANY"),
     function(x, ..., value) {
-        XY(x[]) <- value
+        XY(x[], geomtype = "polygon") <- value
         return(x)
     }
 )
@@ -114,8 +116,12 @@ setMethod("XY", signature("SpatVector"), function(x, include_geom = FALSE, ...) 
 
 #' @rdname XY
 #' @export
-setMethod("XY<-", signature(x = "SpatVector", value = "matrix"), function(x, ..., value) {
-    switch(terra::geomtype(x),
+setMethod("XY<-", signature(x = "SpatVector", value = "matrix"), function(x, geomtype = "points", ..., value) {
+    terra_gtype <- terra::geomtype(x)
+    if (terra::geomtype(x) != "none") geomtype <- terra_gtype
+    geomtype <- match.arg(tolower(geomtype), choices = c("points", "polygons"))
+    
+    switch(geomtype,
         "points" = .xy_sv_points_set(x, ..., value = value),
         "polygons" = .xy_sv_polys_set(x, ..., value = value)
     )
@@ -134,14 +140,18 @@ setMethod("XY<-", signature(x = "SpatVector", value = "matrix"), function(x, ...
 
 .xy_sv_polys_set <- function(x, ..., value) {
     atts <- terra::values(x)
-    if (identical(colnames(x), c("geom", "part", "x", "y", "hole"))) {
+    if (identical(colnames(value), c("geom", "part", "x", "y", "hole"))) {
         # the entire geom matrix is given. Directly use it.
         v <- terra::vect(value, type = "polygons", ..., atts = atts)
     } else {
+        if (ncol(value) == 2L && is.null(colnames(value))) {
+            colnames(value) <- c("x", "y")
+        }
         # replace xy values in geom matrix
         m <- terra::geom(x)
         m[, "x"] <- value[, "x"]
         m[, "y"] <- value[, "y"]
         v <- terra::vect(m, type = "polygons", ..., atts = atts)
     }
+    return(v)
 }
