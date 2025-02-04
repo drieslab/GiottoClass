@@ -1,6 +1,7 @@
-# GiottoClass 0.4.7 (2025/01/29)
+# GiottoClass 0.4.7 (2025/02/04)
 
 ## bug fixes
+- fixes and updates for {spatialdata} and {anndata} interoperability.
 - fix bug introduced in 0.4.6 with `shear()` for `giottoPolygon`.
 - fix {magick} `giottoAffineImage` realization when extent does not match the image dims ratio.
 - fix `ext<-()` for `spatLocsObj`
@@ -15,6 +16,8 @@
 ## enhancements
 - `[[` can now be used to select channels in `giottoLargeImage`-inheriting objects
 - `XY()` replacement function for `SpatVector` now has `geomtype` param in case of `"none"` geometries
+- `negate` param for negative selection in `sliceGiotto()`
+- `spatUnit()` and `featType()` method for `giotto` to find existing spatial units and feature types
 
 # GiottoClass 0.4.6 (2025/01/17)
 
