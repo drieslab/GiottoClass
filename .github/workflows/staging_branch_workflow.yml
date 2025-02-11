@@ -1,22 +1,14 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-#
-# See https://github.com/r-lib/actions/tree/master/examples#readme for
-# additional example workflows available for the R community.
-
-
-name: R-CMD-check
-
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
-  pull_request:
-    types: opened
-    branches: [ "main" ]
+  push:
+    branches: [ staging ]
+
+name: STAGING final checks
 
 permissions:
   contents: read
-
+  packages: read
 
 jobs:
   R-CMD-check:
@@ -34,7 +26,7 @@ jobs:
           - {os: windows-latest, r: 'release'}
           # - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,   r: 'release'}
-          - {os: ubuntu-latest,   r: 'oldrel-1'}
+          - {os: ubuntu-latest,   r: 'oldrel-1'} # incompatible with R 4.4
 
     steps:
 
@@ -124,11 +116,64 @@ jobs:
           upload-snapshots: true
           error-on: '"error"' # workflow errors on error only, can change to include warnings
 
-      # show testthat output for ease of access
-      - name: Show testthat output
-        if: always()
-        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
-        shell: bash
-
-
+  codecov:
+    needs: R-CMD-check
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/drieslab/ci-giottosuite/ci-env
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history and tags
+      - name: giotto-deps
+        run: remotes::install_github('drieslab/GiottoUtils', upgrade = 'never')
+        shell: Rscript {0}
+      - name: catch R deps not in container
+        run: devtools::install_deps()
+        shell: Rscript {0}
+      - name: Generate coverage report and upload
+        run: |
+          remotes::install_github('drieslab/GiottoData', upgrade = 'never')
+          covr::codecov(
+            quiet = FALSE,
+            clean = FALSE,
+            branch = "staging",
+            type = c("tests", "examples", "vignettes"),
+            combine_types = TRUE,
+            install_path = file.path(Sys.getenv("RUNNER_TEMP"), "package")
+          )
+        shell: Rscript {0}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  
+  bioccheck:
+    needs: R-CMD-check
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/drieslab/ci-giottosuite/ci-env
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history and tags
+     - name: giotto-deps
+        run: remotes::install_github('drieslab/GiottoUtils', upgrade = 'never')
+        shell: Rscript {0}
+      - name: catch R deps not in container
+        run: devtools::install_deps()
+        shell: Rscript {0}
+      - name: Build and install
+        run: |
+          R CMD build .
+          R CMD INSTALL *.tar.gz
+      - name: Run BiocCheck
+        run: |
+          remotes::install_github('drieslab/GiottoData', upgrade = 'never')
+          BiocCheck::BiocCheck()
+        shell: Rscript {0}
 
