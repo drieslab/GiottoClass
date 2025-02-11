@@ -97,7 +97,7 @@ expected IDs within all \code{giotto} slots, and not always the exact set or
 ordering.
 }
 \examples{
-g <- GiottoData::loadGiottoMini("vis")
+g <- GiottoData::loadGiottoMini("visium")
 spatIDs(g)
 spatIDs(g, subset = nr_feats <= 200)
 spatIDs(g, subset = Dim.1 > 25, dim_reduction_to_use = "umap")
