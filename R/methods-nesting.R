@@ -21,7 +21,8 @@ NULL
 #' * **name:**         `objName()`, `objName<-()`
 #' * **provenance:**   `prov()`, `prov<-()`
 #' 
-#' @param x `giotto` or {Giotto} S4 subobject
+#' @param x `giotto` or \{Giotto\} S4 subobject
+#' @param old character. Old value to replace
 #' @param value value to set for this schema component
 #' @returns character. NA is returned when schema component is not applicable
 #' to target object. If using the replacement function, the `giotto` object
@@ -29,8 +30,16 @@ NULL
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
 #' 
-#' ########### Get existing schema values within giotto object ########
+#' ########### Get/set existing schema values within giotto object ####
 #' spatUnit(g)
+#' featType(g)
+#' 
+#' # rename a spatial unit
+#' spatUnit(g, old = "z0") <- "slice1"
+#' spatUnit(g)
+#' 
+#' # rename a feature type
+#' featType(g, old = "rna") <- "feature1"
 #' featType(g)
 #' 
 #' ########### Get schema values from a list of objects ###############
@@ -139,7 +148,7 @@ setMethod("spatUnit<-", signature = "list", function(x, value) {
 setMethod("spatUnit<-", signature("giotto"), function(x, old, value) {
     checkmate::assert_character(old, len = 1L)
     checkmate::assert_character(value, len = 1L)
-    if (!isTRUE(old) %in% spatUnit(x)) {
+    if (!isTRUE(old %in% spatUnit(x))) {
         stop("spat_unit replace: spatial unit ", old, " does not exist\n", 
              call. = FALSE)
     }
@@ -236,7 +245,7 @@ setMethod("featType<-", signature = "list", function(x, value) {
 setMethod("featType<-", signature("giotto"), function(x, old, value) {
     checkmate::assert_character(old, len = 1L)
     checkmate::assert_character(value, len = 1L)
-    if (!isTRUE(old) %in% featType(x)) {
+    if (!isTRUE(old %in% featType(x))) {
         stop("feat_type replace: feature type ", old, " does not exist\n", 
              call. = FALSE)
     }

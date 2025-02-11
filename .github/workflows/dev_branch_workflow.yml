@@ -121,8 +121,6 @@ jobs:
           fetch-depth: 0  # Fetch all history and tags
       - name: Set up GitHub token for R
         run: echo "GITHUB_PAT=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
-      - name: Set up GitHub token for R
-        run: echo "GITHUB_PAT=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
       - name: catch R deps not in container
         run: devtools::install_deps()
         shell: Rscript {0}

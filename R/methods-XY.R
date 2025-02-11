@@ -42,7 +42,7 @@ NULL
 #' @rdname XY
 #' @export
 setMethod("XY", signature("spatLocsObj"), function(x, ...) {
-    m <- x[][, colnames(x) != "cell_ID", with = F] |>
+    m <- x[][, colnames(x) != "cell_ID", with = FALSE] |>
         as.matrix(...)
     if (ncol(m) == 2L) colnames(m) <- c("x", "y")
     if (ncol(m) == 3L) colnames(m) <- c("x", "y", "z")
