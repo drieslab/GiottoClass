@@ -32,7 +32,7 @@ jobs:
         shell: Rscript {0}
       - name: Build and install
         run: |
-          R CMD build .
+          R CMD build . --no-build-vignettes
           R CMD INSTALL *.tar.gz
       - name: Run tests
         run: |
