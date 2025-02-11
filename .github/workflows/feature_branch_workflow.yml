@@ -22,19 +22,19 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Fetch all history and tags
-      - name: giotto-deps
-        run: remotes::install_github('drieslab/GiottoUtils', upgrade = 'never')
-        shell: Rscript {0}
-      - name: catch R deps not in container
-        run: devtools::install_deps()
-        shell: Rscript {0}
+      - name: Catch R deps not in container and Giotto deps    
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          dependencies: '"hard"'
+          extra-packages: |
+            github::drieslab/GiottoUtils
+            github::drieslab/GiottoData
       - name: Build and install
         run: |
           R CMD build .
           R CMD INSTALL *.tar.gz
       - name: Run tests
         run: |
-          remotes::install_github('drieslab/GiottoData', upgrade = 'never')
           library(testthat)
           library(GiottoClass)
           test_dir("tests/testthat")
