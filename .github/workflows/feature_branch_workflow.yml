@@ -22,8 +22,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Fetch all history and tags
+      - name: Set up GitHub token for R
+        run: echo "GITHUB_PAT=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
       - name: giotto-deps
-        run: remotes::install_github('drieslab/GiottoUtils', upgrade = 'never')
+        run: remotes::install_github('drieslab/GiottoUtils', upgrade = 'never', auth_token = Sys.getenv("GITHUB_PAT"))
         shell: Rscript {0}
       - name: catch R deps not in container
         run: devtools::install_deps()
@@ -34,7 +36,7 @@ jobs:
           R CMD INSTALL *.tar.gz
       - name: Run tests
         run: |
-          remotes::install_github('drieslab/GiottoData', upgrade = 'never')
+          remotes::install_github('drieslab/GiottoData', upgrade = 'never', auth_token = Sys.getenv("GITHUB_PAT"))
           library(testthat)
           library(GiottoClass)
           test_dir("tests/testthat")
@@ -59,6 +61,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Fetch all history and tags
+      - name: Set up GitHub token for R
+        run: echo "GITHUB_PAT=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
       - name: catch R deps not in container
         run: devtools::install_deps()
         shell: Rscript {0}
