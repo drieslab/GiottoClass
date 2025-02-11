@@ -1,5 +1,5 @@
 Package: GiottoClass
-Title: Giotto Suite object definitions and framework
+Title: Giotto Suite Object Definitions and Framework
 Version: 0.4.7
 Authors@R: c(
 	person("Ruben", "Dries", email = "rubendries@gmail.com",
@@ -15,8 +15,8 @@ Authors@R: c(
 	person("Edward", "Ruiz", email = "ecruiz@bu.edu",
 		 role = c("aut"))
 	)
-Description: This package contains the Giotto object and subobject class
-  definitions and frameworks. Functionalities relating to data ingestion, basic 
+Description: Definitions for the Giotto object and its subobjects. 
+  Functionalities relating to data ingestion, basic 
   object creation, data access within the Giotto object, and generics defined  
   for the Giotto classes are all found here. Applications of this framework and 
   convenience functions for loading specific technologies are found in the base 
