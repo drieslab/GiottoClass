@@ -20,19 +20,21 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Fetch all history and tags
+      - name: Set up GitHub token for R
+        run: echo "GITHUB_PAT=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
       - name: giotto-deps
-        run: remotes::install_github('drieslab/GiottoUtils', upgrade = 'never')
+        run: remotes::install_github('drieslab/GiottoUtils', upgrade = 'never', auth_token = Sys.getenv("GITHUB_PAT"))
         shell: Rscript {0}
       - name: catch R deps not in container
         run: devtools::install_deps()
         shell: Rscript {0}
       - name: Build and install # needed for GiottoData install
         run: |
-          R CMD build .
+          R CMD build . --no-build-vignettes
           R CMD INSTALL *.tar.gz
       - name: Generate coverage report and upload
         run: |
-          remotes::install_github('drieslab/GiottoData', upgrade = 'never')
+          remotes::install_github('drieslab/GiottoData', upgrade = 'never', auth_token = Sys.getenv("GITHUB_PAT"))
           covr::codecov(
             quiet = FALSE,
             clean = FALSE,
@@ -57,14 +59,14 @@ jobs:
         with:
           fetch-depth: 0  # Fetch all history and tags
       - name: giotto-deps
-        run: remotes::install_github('drieslab/GiottoUtils', upgrade = 'never')
+        run: remotes::install_github('drieslab/GiottoUtils', upgrade = 'never', auth_token = Sys.getenv("GITHUB_PAT"))
         shell: Rscript {0}
       - name: catch R deps not in container
         run: devtools::install_deps()
         shell: Rscript {0}
       - name: Check package
         run: |
-          remotes::install_github('drieslab/GiottoData', upgrade = 'never')
+          remotes::install_github('drieslab/GiottoData', upgrade = 'never', auth_token = Sys.getenv("GITHUB_PAT"))
           rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "error")
         shell: Rscript {0}
 
@@ -80,14 +82,14 @@ jobs:
         with:
           fetch-depth: 0  # Fetch all history and tags
       - name: giotto-deps
-        run: remotes::install_github('drieslab/GiottoUtils', upgrade = 'never')
+        run: remotes::install_github('drieslab/GiottoUtils', upgrade = 'never', auth_token = Sys.getenv("GITHUB_PAT"))
         shell: Rscript {0}
       - name: catch R deps not in container
         run: devtools::install_deps()
         shell: Rscript {0}
       - name: Build and install
         run: |
-          R CMD build .
+          R CMD build . --no-build-vignettes
           R CMD INSTALL *.tar.gz
       - name: Run BiocCheck # this is mainly formatting. No need for GiottoData
         run: |
@@ -107,29 +109,40 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Fetch all history and tags
+      - name: Set up GitHub token for R
+        run: echo "GITHUB_PAT=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
       - name: catch R deps not in container
         run: devtools::install_deps()
         shell: Rscript {0}
+
       - name: Run lintr
         run: |
-          lintr::sarif_output(
-            lintr::lint_package(
-              ".",
-              exclusions = list("tests", "vignettes", "pkgdown"), 
-              linters = lintr::linters_with_defaults(
-                indentation_linter = lintr::indentation_linter(indent = 4L),
-                object_name_linter = lintr::object_name_linter(styles = c("camelCase", "symbols", "snake_case", "UPPERCASE"))
-              )
-            ),
-            "lintr-results.sarif"
+          results <- lintr::lint_package(
+            ".",
+            exclusions = list("tests", "vignettes", "pkgdown"),
+            linters = lintr::linters_with_defaults(
+              indentation_linter = lintr::indentation_linter(indent = 4L),
+              object_name_linter = lintr::object_name_linter(styles = c("camelCase", "symbols", "snake_case", "UPPERCASE"))
+            )
           )
+          
+          # Fix any invalid column numbers
+          for (i in seq_along(results)) {
+            if (!is.null(results[[i]]$column_number) && results[[i]]$column_number < 1) {
+              results[[i]]$column_number <- 1
+            }
+          }
+          
+          lintr::sarif_output(results, "lintr-results.sarif")
         shell: Rscript {0}
         continue-on-error: true
+
       - name: Upload analysis results to GitHub
         uses: github/codeql-action/upload-sarif@v3
         with:
