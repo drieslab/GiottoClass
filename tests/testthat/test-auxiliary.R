@@ -13,12 +13,11 @@ m <- matrix(
 )
 
 # createMetafeats ####
-e <- exprObj(
-    exprMat = m,
+e <- createExprObj(m,
+    name = "test",
     spat_unit = "cell",
-    provenance = "cell",
     feat_type = "test_feat",
-    name = "test"
+    provenance = "cell"
 )
 g <- setGiotto(g, e)
 
