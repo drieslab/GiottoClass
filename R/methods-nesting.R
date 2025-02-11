@@ -139,7 +139,7 @@ setMethod("spatUnit<-", signature = "list", function(x, value) {
 setMethod("spatUnit<-", signature("giotto"), function(x, old, value) {
     checkmate::assert_character(old, len = 1L)
     checkmate::assert_character(value, len = 1L)
-    if (!isTRUE(old) %in% spatUnit(x)) {
+    if (!isTRUE(old %in% spatUnit(x))) {
         stop("spat_unit replace: spatial unit ", old, " does not exist\n", 
              call. = FALSE)
     }
@@ -236,7 +236,7 @@ setMethod("featType<-", signature = "list", function(x, value) {
 setMethod("featType<-", signature("giotto"), function(x, old, value) {
     checkmate::assert_character(old, len = 1L)
     checkmate::assert_character(value, len = 1L)
-    if (!isTRUE(old) %in% featType(x)) {
+    if (!isTRUE(old %in% featType(x))) {
         stop("feat_type replace: feature type ", old, " does not exist\n", 
              call. = FALSE)
     }

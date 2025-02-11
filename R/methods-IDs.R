@@ -37,7 +37,7 @@ NULL
 #' @returns character vector of cell/spatial IDs or feature IDs
 #' @include classes.R
 #' @examples
-#' g <- GiottoData::loadGiottoMini("vis")
+#' g <- GiottoData::loadGiottoMini("visium")
 #' spatIDs(g)
 #' spatIDs(g, subset = nr_feats <= 200)
 #' spatIDs(g, subset = Dim.1 > 25, dim_reduction_to_use = "umap")
