@@ -18,6 +18,7 @@
 - `XY()` replacement function for `SpatVector` now has `geomtype` param in case of `"none"` geometries
 - `negate` param for negative selection in `sliceGiotto()`
 - `spatUnit()` and `featType()` method for `giotto` to find existing spatial units and feature types
+- expose `make_valid` param and `...` passing for `createGiottoPolygon()` `data.frame` method
 
 # GiottoClass 0.4.6 (2025/01/17)
 
