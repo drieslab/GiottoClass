@@ -38,12 +38,13 @@ NULL
 #' @export
 setMethod(
     "relate", signature(x = "giottoSpatial", y = "giottoSpatial"),
-    function(x, y, relation,
-    pairs = TRUE,
-    na.rm = TRUE,
-    output = c("data.table", "matrix"),
-    use_names = TRUE,
-    ...) {
+    function(
+        x, y, relation,
+        pairs = TRUE,
+        na.rm = TRUE,
+        output = c("data.table", "matrix"),
+        use_names = TRUE,
+        ...) {
         output <- match.arg(output, choices = c("data.table", "matrix"))
 
         if (inherits(x, "spatLocsObj")) x_use <- as.points(x)
@@ -78,11 +79,12 @@ setMethod(
 #' @export
 setMethod(
     "relate", signature(x = "giotto", y = "giottoSpatial"),
-    function(x, y, ...,
-    what = c("polygon", "spatlocs", "points"),
-    spat_unit = NULL,
-    feat_type = NULL,
-    spat_locs_name = NULL) {
+    function(
+        x, y, ...,
+        what = c("polygon", "spatlocs", "points"),
+        spat_unit = NULL,
+        feat_type = NULL,
+        spat_locs_name = NULL) {
         what <- match.arg(what, c("polygon", "spatlocs", "points"))
 
         spat_unit <- set_default_spat_unit(x, spat_unit = spat_unit)

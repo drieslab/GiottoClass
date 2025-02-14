@@ -134,5 +134,3 @@ setMethod("names<-", signature(x = "giottoLargeImage"), function(x, value) {
     names(x[]) <- value
     x
 })
-
-
