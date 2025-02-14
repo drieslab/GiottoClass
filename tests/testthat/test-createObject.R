@@ -656,4 +656,3 @@ test_that("Depth 3 works", {
 
 
 options("lifecycle_verbosity" = lifecycle_opt)
-

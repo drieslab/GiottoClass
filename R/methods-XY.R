@@ -120,7 +120,7 @@ setMethod("XY<-", signature(x = "SpatVector", value = "matrix"), function(x, geo
     terra_gtype <- terra::geomtype(x)
     if (terra::geomtype(x) != "none") geomtype <- terra_gtype
     geomtype <- match.arg(tolower(geomtype), choices = c("points", "polygons"))
-    
+
     switch(geomtype,
         "points" = .xy_sv_points_set(x, ..., value = value),
         "polygons" = .xy_sv_polys_set(x, ..., value = value)
