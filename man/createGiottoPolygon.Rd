@@ -39,7 +39,9 @@
   calc_centroids = FALSE,
   skip_eval_dfr = FALSE,
   copy_dt = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  make_valid = FALSE,
+  ...
 )
 
 createGiottoPolygonsFromMask(
@@ -125,6 +127,10 @@ dataframe}
 \item{copy_dt}{(default TRUE) if segmdfr is provided as dt, this determines
 whether a copy is made}
 
+\item{make_valid}{logical. (default \code{FALSE}) Whether to run
+\code{\link[terra:is.valid]{terra::makeValid()}} on the geometries. Setting this to \code{TRUE} may cause
+read-in polygon attribute information to become out of sync.}
+
 \item{maskfile}{path to mask file, a terra \code{SpatRaster}, or some other
 data class readable by \code{\link[terra:rast]{terra::rast()}}}
 
@@ -132,10 +138,6 @@ data class readable by \code{\link[terra:rast]{terra::rast()}}}
 information (x, y, poly_ID) with x and y being vertex information for the
 polygon referenced by poly_ID. See details for how columns are selected for
 coordinate and ID information.}
-
-\item{make_valid}{logical. (default \code{FALSE}) Whether to run
-\code{\link[terra:is.valid]{terra::makeValid()}} on the geometries. Setting this to \code{TRUE} may cause
-read-in polygon attribute information to become out of sync.}
 
 \item{GeoJSON}{path to .GeoJSON file}
 }

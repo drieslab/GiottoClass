@@ -12,8 +12,35 @@ NULL
 #### creating Giotto objects ####
 
 #' @title Create a giotto object
-#' @name createGiottoObject
-#' @description Function to create a giotto object
+#' @name create_giotto
+#' @description `giotto` objects can represent and work with datasets that are:
+#' 
+#' * Already aggregated _(in the form of a pair of expression matrix and spatial 
+#' centroids) + (optional) associated analyses_
+#' * Subcellular _(polygon/mask annotations and point detections
+#' e.g. transcripts or polygon/mask annotations and raw intensity staining
+#' images (e.g. protein stains)). + (optional) associated aggregate data_
+#' * Multiple sets/combinations of the previous two belonging to the same 
+#' experiment, organized by [giotto_schema]
+#' 
+#' A `giotto` analysis object can be generated in several ways:
+#' 
+#' * In one step _(with `createGiottoObject()` and input data)_.
+#' * A piecewise manner where you start with just an empty `giotto` object 
+#' that you append to _(either using `createGiottoObject()` with no params or 
+#' a call to the class  constructor function `giotto()` - see piecewise 
+#' creation section and examples)_.
+#' * Via technology specific convenience functions _(exported from \{Giotto\})_
+#' 
+#' See \url{https://drieslab.github.io/Giotto_website/articles/object_creation.html} 
+#' for more information. The details sections here also expand on the above
+#' options.
+#' @param gpolygons giotto polygons
+#' @param polygon_mask_list_params list parameters
+#' for \code{\link{createGiottoPolygonsFromMask}}
+#' @param polygon_dfr_list_params list parameters
+#' for \code{\link{createGiottoPolygonsFromDfr}}
+#' @param gpoints giotto points
 #' @param expression expression information
 #' @param raw_exprs deprecated, use expression
 #' @param expression_feat available features (e.g. rna, protein, ...)
@@ -31,14 +58,17 @@ NULL
 #' @param feat_info list of giotto point objects with feature info,
 #' see \code{\link{createGiottoPoints}}
 #' @param spatial_network list of spatial network(s)
+#' @param spatial_network_name list of spatial network name(s)
 #' @param spatial_grid list of spatial grid(s)
 #' @param spatial_grid_name list of spatial grid name(s)
 #' @param spatial_enrichment list of spatial enrichment score(s) for each
 #' spatial region
+#' @param spatial_enrichment_name list of spatial enrichment name(s)
 #' @param dimension_reduction list of dimension reduction(s)
 #' @param nn_network list of nearest neighbor network(s)
 #' @param images list of images
 #' @param largeImages deprecated
+#' @param largeImages_list_params image params when loading largeImages as list
 #' @param offset_file file used to stitch fields together (optional)
 #' @param instructions list of instructions or output result
 #' from \code{\link{createGiottoInstructions}}
@@ -48,13 +78,10 @@ NULL
 #' use (e.g. 'dgCMatrix', 'DelayedArray')
 #' @param h5_file path to h5 file
 #' @param verbose be verbose when building Giotto object
-#' @returns giotto object
-#' @details
-#'
-#' See \url{http://giottosuite.com/articles/getting_started_gobject.html} for
-#' more details
-#'
-#' \[**Requirements**\] To create a giotto object you need to provide at least
+#' @returns `giotto` object
+#' @section single step creation (conventional):
+#' 
+#' \[**Requirements**\] To use this method, you need to provide at least
 #' a matrix with genes as row names and cells as column names. This matrix can
 #' be provided as a base matrix, sparse Matrix, data.frame, data.table or as a
 #' path to any of those. To include spatial information about
@@ -91,14 +118,84 @@ NULL
 #'   \item{nearest neighbours networks}
 #'   \item{images}
 #' }
+#' 
+#' `createGiottoObjectSubcellular()` is another variant of this functionality
+#' that specializes in starting from polygon (e.g. cell annotations) and
+#' points (e.g. transcripts) information, but it is a legacy function. It is 
+#' usually most convenient to work with piecewise creation.
+#' 
+#' @section piecewise creation (most flexible):
+#' Giotto converts input data into compatible subobjects (`exprObj`, 
+#' `giottoPolygon`, `giottoPoints`, etc). These subobjects can be created using
+#' the relevant `create*` functions. They can then directly be used to assemble 
+#' a `giotto` object.
+#' 
+#' 1. Create an empty `giotto` object (either use `createGiottoObject()` with
+#' no params or the class constructor `giotto()`)
+#' 2. Either append created subobjects one by one or all at once as a `list` of 
+#' subobjects.
+#' 
+#' \preformatted{
+#' # pseudocode with giotto object and created subobjects:
+#' 
+#' # Start with an empty giotto object
+#' g <- giotto()
+#' 
+#' # Data (subobjects) can then be added one by one.
+#' g <- setGiotto(g, polys)
+#' g <- setGiotto(g, transcripts)
+#' g <- setGiotto(g, imgs)
+#' g <- setGiotto(g, expression)
+#' g <- setGiotto(g, cell_meta)
+#' 
+#' # alternatively as a list
+#' g <- setGiotto(g, list(polys, transcripts, imgs, expression, cell_meta))
+#' }
+#' 
+#' @section technology specific:
+#' There are several convenience functions we provide for loading in data from 
+#' popular platforms. These functions are exported from \{Giotto\} instead of
+#' this package. They take care of reading the expected output 
+#' folder structures, auto-detecting where needed data items are, formatting 
+#' items for ingestion, then object creation.
+#' 
+#' \preformatted{
+#' # some examples are:
+#' Giotto::createGiottoVisiumObject()
+#' Giotto::createGiottoXeniumObject()
+#' Giotto::createGiottoVisiumHDObject()
+#' Giotto::createGiottoCosMxObject()
+#' }
+#' 
+#' Also see \url{https://drieslab.github.io/Giotto_website/articles/import_utilities.html}
+#' for technology-specific import utilities that can be used with the piecewise 
+#' `giotto` object assembly method.
 #'
 #' @concept giotto
 #' @examples
+#' # create an empty object
+#' g <- createGiottoObject
+#' # (can also use the class generator function)
+#' g <- giotto()
+#' 
+#' # create an object containing an expression matrix
 #' expr_matrix <- readRDS(system.file("extdata/toy_matrix.RDS",
 #'     package = "GiottoClass"
 #' ))
 #'
 #' createGiottoObject(expression = expr_matrix)
+#' 
+#' x_gpolygons <- GiottoData::loadSubObjectMini("giottoPolygon")
+#' x_gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
+#'
+#' createGiottoObjectSubcellular(
+#'     gpolygons = x_gpolygons,
+#'     gpoints = x_gpoints
+#' )
+#' @md
+NULL
+
+#' @rdname create_giotto
 #' @export
 createGiottoObject <- function(
         expression,
@@ -610,51 +707,7 @@ createGiottoObject <- function(
 
 
 
-#' @title Create a giotto object from subcellular data
-#' @name createGiottoObjectSubcellular
-#' @description Function to create a giotto object starting from subcellular
-#' polygon (e.g. cell) and points (e.g. transcripts) information
-#' @param gpolygons giotto polygons
-#' @param polygon_mask_list_params list parameters
-#' for \code{\link{createGiottoPolygonsFromMask}}
-#' @param polygon_dfr_list_params list parameters
-#' for \code{\link{createGiottoPolygonsFromDfr}}
-#' @param gpoints giotto points
-#' @param cell_metadata cell annotation metadata
-#' @param feat_metadata feature annotation metadata for each unique feature
-#' @param spatial_network list of spatial network(s)
-#' @param spatial_network_name list of spatial network name(s)
-#' @param spatial_grid list of spatial grid(s)
-#' @param spatial_grid_name list of spatial grid name(s)
-#' @param spatial_enrichment list of spatial enrichment score(s) for each
-#' spatial region
-#' @param spatial_enrichment_name list of spatial enrichment name(s)
-#' @param dimension_reduction list of dimension reduction(s)
-#' @param nn_network list of nearest neighbor network(s)
-#' @param images list of images
-#' @param largeImages deprecated
-#' @param largeImages_list_params image params when loading largeImages as list
-#' @param instructions list of instructions or output result
-#' from \code{\link{createGiottoInstructions}}
-#' @param cores how many cores or threads to use to read data if paths are
-#' provided
-#' @param verbose be verbose when building Giotto object
-#' @returns giotto object
-#' @details There are two different ways to create a Giotto Object with
-#' subcellular information:
-#' - Starting from polygons (spatial units e.g. cell) represented by a mask
-#' or dataframe file and giotto points (analyte coordinates e.g. transcripts)
-#' - Starting from polygons (spatial units e.g. cell) represented by a mask
-#' or dataframe file and raw intensity images (e.g. protein stains)
-#' @concept giotto
-#' @examples
-#' x_gpolygons <- GiottoData::loadSubObjectMini("giottoPolygon")
-#' x_gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
-#'
-#' createGiottoObjectSubcellular(
-#'     gpolygons = x_gpolygons,
-#'     gpoints = x_gpoints
-#' )
+#' @rdname create_giotto
 #' @export
 createGiottoObjectSubcellular <- function(gpolygons = NULL,
     polygon_mask_list_params = NULL,
