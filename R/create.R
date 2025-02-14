@@ -2422,14 +2422,23 @@ setMethod(
 #' gpoly <- createGiottoPolygon(shp, name = "test")
 #' plot(gpoly)
 #' gpoly_dt <- data.table::as.data.table(gpoly, geom = "XY")
-#' needed_cols_dt <- gpoly_dt[, .(geom, part, x, y, hole, poly_ID)]
-#' force(needed_cols_dt)
+#' 
+#' # 5 columns are needed for complex polys/full definitions
+#' # examples: multipolygons, polygons with internal holes
+#' full_cols_dt <- gpoly_dt[, .(geom, part, x, y, hole, poly_ID)]
+#' force(full_cols_dt)
 #'
-#' out <- createGiottoPolygon(needed_cols_dt,
+#' out1 <- createGiottoPolygon(full_cols_dt,
 #'     name = "test"
 #' )
-#' plot(out)
+#' plot(out1)
 #'
+#' # 3 columns are needed for simple polys
+#' reduced_cols_dt <- gpoly_dt[, .(x, y, poly_ID)]
+#' out2 <- createGiottoPolygon(full_cols_dt,
+#'     name = "test"
+#' )
+#' plot(out2)
 #' @export
 setMethod(
     "createGiottoPolygon", signature("data.frame"),
