@@ -2279,40 +2279,80 @@ create_giotto_points_object <- function(feat_type = "rna",
 #' methods based on what kind of data the file was.
 #' @param x input. Filepath to a .GeoJSON or a mask image file. Can also be a
 #' data.frame with vertex 'x', 'y', and 'poly_ID' information.
-#' @param name name for polygons
+#' @param name character. Name to assign this set of polygons. This will also
+#' be the name of the spatial unit that they define. See [giotto_schema]
 #' @param calc_centroids logical. (default `FALSE`) calculate centroids for
 #' polygons
 #' @param make_valid logical. (default `FALSE`) Whether to run
 #' [terra::makeValid()] on the geometries. Setting this to `TRUE` may cause
 #' read-in polygon attribute information to become out of sync.
 #' @param verbose be verbose
-#' @returns giottoPolygon
-NULL
-
-
-#' @rdname createGiottoPolygon
 #' @param \dots additional params to pass. For character method, params pass to
 #' SpatRaster or SpatVector methods, depending on whether x was a filepath to
 #' a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.
+#' @returns giottoPolygon
 #' @examples
 #' # ------- create from a mask image ------- #
-#' m <- system.file("extdata/toy_mask_multi.tif", package = "GiottoClass")
-#' plot(terra::rast(m), col = grDevices::hcl.colors(7))
-#' gp <- createGiottoPolygon(
-#'     m,
-#'     flip_vertical = FALSE, flip_horizontal = FALSE,
-#'     shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
-#'     ID_fmt = "id_test_%03d",
-#'     name = "test"
+#' # example multi-value mask image
+#' mask_multi <- system.file("extdata/toy_mask_multi.tif",
+#'     package = "GiottoClass"
 #' )
-#' plot(gp, col = grDevices::hcl.colors(7))
+#' plot(terra::rast(mask_multi), col = grDevices::hcl.colors(7)) # preview mask
+#' createGiottoPolygon(mask_multi) # with all default settings
+#' gpoly1 <- createGiottoPolygon(mask_multi,
+#'     ID_fmt = "id_test_%03d", # apply a format when assigning poly_IDs
+#'     name = "multi_test"
+#' )
+#' force(gpoly1)
+#' plot(gpoly1, col = grDevices::hcl.colors(7)) # plot poly
+#' 
+#' # example single-value mask image
+#' mask_single <- system.file("extdata/toy_mask_single.tif",
+#'     package = "GiottoClass"
+#' )
+#' plot(terra::rast(mask_single)) # preview mask
+#'
+#' gpoly2 <- createGiottoPolygon(mask_single,
+#'     ID_fmt = "id_test_%03d",
+#'     name = "single_test"
+#' )
+#' plot(gpoly2, col = grDevices::hcl.colors(5)) # plot poly
 #'
 #' # ------- create from an shp file ------- #
 #' shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
 #' # vector inputs do not have params for flipping and shifting
-#' gp2 <- createGiottoPolygon(shp, name = "test")
+#' gp2 <- createGiottoPolygon(shp)
 #' plot(gp2, col = grDevices::hcl.colors(7))
+#' 
+#' # ------- create from data.frame-like ------- #
+#' # load example data and convert to data.table
+#' shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
+#' gpoly <- createGiottoPolygon(shp)
+#' gpoly_dt <- data.table::as.data.table(gpoly, geom = "XY")
+#' 
+#' # 5 columns are needed for complex polys/full definitions
+#' # examples: multipolygons, polygons with internal holes
+#' full_cols_dt <- gpoly_dt[, .(geom, part, x, y, hole, poly_ID)]
+#' force(full_cols_dt)
 #'
+#' out1 <- createGiottoPolygon(full_cols_dt)
+#' plot(out1)
+#'
+#' # 3 columns are needed for simple polys
+#' reduced_cols_dt <- gpoly_dt[, .(x, y, poly_ID)]
+#' out2 <- createGiottoPolygon(full_cols_dt)
+#' plot(out2)
+#' 
+#' # additional columns outside of these are retained as attributes
+#' # these cols must map with the poly_ID/geom.
+#' 
+#' # set up an example attribute
+#' reduced_cols_dt$attribute <- match(reduced_cols_dt$poly_ID, letters)
+#' createGiottoPolygon(reduced_cols_dt)
+NULL
+
+
+#' @rdname createGiottoPolygon
 #' @export
 setMethod(
     "createGiottoPolygon", signature("character"),
@@ -2416,29 +2456,6 @@ setMethod(
 
 
 #' @rdname createGiottoPolygon
-#' @examples
-#' # ------- create from data.frame-like ------- #
-#' shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
-#' gpoly <- createGiottoPolygon(shp, name = "test")
-#' plot(gpoly)
-#' gpoly_dt <- data.table::as.data.table(gpoly, geom = "XY")
-#' 
-#' # 5 columns are needed for complex polys/full definitions
-#' # examples: multipolygons, polygons with internal holes
-#' full_cols_dt <- gpoly_dt[, .(geom, part, x, y, hole, poly_ID)]
-#' force(full_cols_dt)
-#'
-#' out1 <- createGiottoPolygon(full_cols_dt,
-#'     name = "test"
-#' )
-#' plot(out1)
-#'
-#' # 3 columns are needed for simple polys
-#' reduced_cols_dt <- gpoly_dt[, .(x, y, poly_ID)]
-#' out2 <- createGiottoPolygon(full_cols_dt,
-#'     name = "test"
-#' )
-#' plot(out2)
 #' @export
 setMethod(
     "createGiottoPolygon", signature("data.frame"),
@@ -2506,33 +2523,6 @@ setMethod(
 #' If a "%" character is detected in the input then the input will be treated as
 #' a `sprintf()` `fmt` param input instead. (ie: `ID_fmt = "cell_%03d"` produces
 #' `cell_001`, `cell_002`, `cell_003`, ...)
-#' @examples
-#' mask_multi <- system.file("extdata/toy_mask_multi.tif",
-#'     package = "GiottoClass"
-#' )
-#' mask_single <- system.file("extdata/toy_mask_single.tif",
-#'     package = "GiottoClass"
-#' )
-#' plot(terra::rast(mask_multi), col = grDevices::hcl.colors(7))
-#' plot(terra::rast(mask_single))
-#'
-#' gpoly1 <- createGiottoPolygonsFromMask(
-#'     mask_multi,
-#'     flip_vertical = FALSE, flip_horizontal = FALSE,
-#'     shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
-#'     ID_fmt = "id_test_%03d",
-#'     name = "multi_test"
-#' )
-#' plot(gpoly1, col = grDevices::hcl.colors(7))
-#'
-#' gpoly2 <- createGiottoPolygonsFromMask(
-#'     mask_single,
-#'     flip_vertical = FALSE, flip_horizontal = FALSE,
-#'     shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
-#'     ID_fmt = "id_test_%03d",
-#'     name = "single_test"
-#' )
-#' plot(gpoly2, col = grDevices::hcl.colors(5))
 #' @export
 createGiottoPolygonsFromMask <- function(
         maskfile,
