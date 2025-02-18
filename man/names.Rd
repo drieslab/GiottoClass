@@ -4,11 +4,14 @@
 \alias{names}
 \alias{names,giottoLargeImage-method}
 \alias{names<-,giottoLargeImage-method}
+\alias{names,normParam-method}
 \title{Names of objects}
 \usage{
 \S4method{names}{giottoLargeImage}(x)
 
 \S4method{names}{giottoLargeImage}(x) <- value
+
+\S4method{names}{normParam}(x)
 }
 \arguments{
 \item{x}{object}

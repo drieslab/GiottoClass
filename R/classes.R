@@ -337,7 +337,7 @@ setClass(
 #' own child classes. These parameter objects are intended to be passed 
 #' alongside the data to normalize to [normalizeData()].
 #' @export
-setClass("normParam", contains = "VIRTUAL")
+setClass("normParam", contains = "VIRTUAL", slots = list(param = "list"))
 
 
 # SUBCLASSES ####

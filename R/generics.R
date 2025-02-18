@@ -100,7 +100,7 @@ setGeneric(
 #' @param ... additional arguments, for use in specific methods
 #' @returns An object of the same class containing the normalized data
 #' @export
-setGeneric("normalizeData", function(x, ...) standardGeneric("normalizeData"))
+setGeneric("normalizeData", function(x, param, ...) standardGeneric("normalizeData"))
 
 
 # Methods and documentations found in methods-spatShift.R

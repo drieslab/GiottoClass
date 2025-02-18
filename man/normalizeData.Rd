@@ -4,14 +4,14 @@
 \alias{normalizeData}
 \title{Normalize an object}
 \usage{
-normalizeData(x, ...)
+normalizeData(x, param, ...)
 }
 \arguments{
 \item{x}{a data object}
 
-\item{...}{additional arguments, for use in specific methods}
-
 \item{param}{a \link{normParam} inheriting object}
+
+\item{...}{additional arguments, for use in specific methods}
 }
 \value{
 An object of the same class containing the normalized data

@@ -134,3 +134,9 @@ setMethod("names<-", signature(x = "giottoLargeImage"), function(x, value) {
     names(x[]) <- value
     x
 })
+#' @rdname names
+setMethod("names", signature("normParam"), function(x) names(x@param))
+setMethod("names<-", signature("normParam"), function(x, value) {
+    names(x@param) <- value
+    x
+})

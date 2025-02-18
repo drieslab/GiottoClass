@@ -10,6 +10,7 @@
 \alias{$,metaData-method}
 \alias{$,terraVectData-method}
 \alias{$,affine2d-method}
+\alias{$,normParam-method}
 \title{Subset part of an object with \code{$}}
 \usage{
 \S4method{$}{giotto}(x, name)
@@ -25,6 +26,8 @@
 \S4method{$}{terraVectData}(x, name)
 
 \S4method{$}{affine2d}(x, name)
+
+\S4method{$}{normParam}(x, name)
 }
 \arguments{
 \item{x}{Giotto S4 object to extract columns from}
@@ -63,6 +66,9 @@ Select by colname from giotto S4 spatVector slot.
 
 
 Select piecewise transform values from \code{affine2d}
+
+
+Select param from \code{normParam} inheriting objects
 }
 
 \examples{

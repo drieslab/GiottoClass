@@ -40,6 +40,7 @@
 \alias{[<-,affine2d,missing,missing,ANY-method}
 \alias{[<-,affine2d,missing,missing,}
 \alias{[<-,affine2d,missing,missing-method}
+\alias{[<-,normParam,missing,missing,list-method}
 \title{Replace part of an object with \verb{[<-}}
 \usage{
 \S4method{[}{coordDataDT,missing,missing,ANY}(x, i, j) <- value
@@ -67,6 +68,8 @@
 \S4method{[}{giottoImage,missing,missing,ANY}(x, i, j) <- value
 
 \S4method{[}{affine2d,missing,missing,ANY}(x, i, j) <- value
+
+\S4method{[}{normParam,missing,missing,list}(x) <- value
 }
 \arguments{
 \item{x}{Giotto S4 object to replace information in}
