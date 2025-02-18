@@ -328,6 +328,16 @@ setClass(
     )
 )
 
+#' `normParam` class
+#' @name normParam
+#' @description
+#' Utility class that defines a data normalization procedure and any params 
+#' used in performing it. This is a VIRTUAL mother class. Packages defining normalization
+#' methods (and ways to implement them on data structures) will create their
+#' own child classes. These parameter objects are intended to be passed 
+#' alongside the data to normalize to [normalizeData()].
+#' @export
+setClass("normParam", contains = "VIRTUAL")
 
 
 # SUBCLASSES ####
