@@ -2305,7 +2305,7 @@ create_giotto_points_object <- function(feat_type = "rna",
 #' )
 #' force(gpoly1)
 #' plot(gpoly1, col = grDevices::hcl.colors(7)) # plot poly
-#' 
+#'
 #' # example single-value mask image
 #' mask_single <- system.file("extdata/toy_mask_single.tif",
 #'     package = "GiottoClass"
@@ -2323,13 +2323,13 @@ create_giotto_points_object <- function(feat_type = "rna",
 #' # vector inputs do not have params for flipping and shifting
 #' gp2 <- createGiottoPolygon(shp)
 #' plot(gp2, col = grDevices::hcl.colors(7))
-#' 
+#'
 #' # ------- create from data.frame-like ------- #
 #' # load example data and convert to data.table
 #' shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
 #' gpoly <- createGiottoPolygon(shp)
 #' gpoly_dt <- data.table::as.data.table(gpoly, geom = "XY")
-#' 
+#'
 #' # 5 columns are needed for complex polys/full definitions
 #' # examples: multipolygons, polygons with internal holes
 #' full_cols_dt <- gpoly_dt[, .(geom, part, x, y, hole, poly_ID)]
@@ -2342,10 +2342,10 @@ create_giotto_points_object <- function(feat_type = "rna",
 #' reduced_cols_dt <- gpoly_dt[, .(x, y, poly_ID)]
 #' out2 <- createGiottoPolygon(full_cols_dt)
 #' plot(out2)
-#' 
+#'
 #' # additional columns outside of these are retained as attributes
 #' # these cols must map with the poly_ID/geom.
-#' 
+#'
 #' # set up an example attribute
 #' reduced_cols_dt$attribute <- match(reduced_cols_dt$poly_ID, letters)
 #' createGiottoPolygon(reduced_cols_dt)
