@@ -896,7 +896,7 @@ evaluate_input <- function(type, x, ...) {
     spatial_info[, geom := new_vec]
 
     spatial_info[, c("part", "hole") := list(1, 0)]
-    data.table::setcolorder(spatial_info, 
+    data.table::setcolorder(spatial_info,
         c("geom", "part", "x", "y", "hole", "poly_ID")
     )
 
