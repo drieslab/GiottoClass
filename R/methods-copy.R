@@ -15,9 +15,29 @@ NULL
 #' copy(g)
 NULL
 
-#' @describeIn copy Copy \emph{data.table}-based spatial locations object.
+#' @rdname copy
 #' @export
 setMethod("copy", signature(x = "coordDataDT"), function(x) {
     x@coordinates <- data.table::copy(x@coordinates)
+    x
+})
+
+#' @rdname copy
+#' @export
+setMethod("copy", signature("giottoPoints"), function(x) {
+    x[] <- terra::deepcopy(x[])
+    x
+})
+
+#' @rdname copy
+#' @export
+setMethod("copy", signature("giottoPolygon"), function(x) {
+    .do_gpoly(x, terra::deepcopy)
+})
+
+#' @rdname copy
+#' @export
+setMethod("copy", signature("giottoLargeImage"), function(x) {
+    x[] <- terra::deepcopy(x[])
     x
 })

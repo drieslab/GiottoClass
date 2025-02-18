@@ -25,23 +25,23 @@ setMethod(
         # suspend init and checking until all items are added
         a <- list(...)
         init <- !isFALSE(a$initialize)
-        
+
         init_opt <- getOption("giotto.init", TRUE)
         cv_opt <- getOption("giotto.check_valid", TRUE)
-        
+
         .reset_opts <- function() {
             options("giotto.init" = init_opt)
             options("giotto.check_valid" = cv_opt)
         }
-        
+
         on.exit(.reset_opts, add = TRUE)
         options("giotto.init" = FALSE)
         options("giotto.check_valid" = FALSE)
-        
+
         for (item in x) {
             gobject <- setGiotto(gobject, item, verbose = verbose, ...)
         }
-        
+
         .reset_opts()
         if (init) gobject <- initialize(gobject)
         return(gobject)

@@ -69,6 +69,11 @@ setGeneric("copy",
 )
 
 
+# lazy operations ####
+setGeneric("doDeferred", function(x, ...) standardGeneric("doDeferred"))
+
+
+
 # spatial operations ####
 setGeneric(
     "calculateOverlap",
@@ -78,6 +83,7 @@ setGeneric(
     "overlapToMatrix",
     function(x, ...) standardGeneric("overlapToMatrix")
 )
+
 
 # expression value normalization
 #' @title Normalize an object
@@ -112,11 +118,16 @@ setGeneric("norm_osmfish", function(x, ...) standardGeneric("norm_osmfish"))
 
 
 # Methods and documentations found in methods-spatShift.R
+
 setGeneric("spatShift", function(x, ...) standardGeneric("spatShift"))
 setGeneric("affine", function(x, y, ...) standardGeneric("affine"))
 setGeneric("shear", function(x, ...) standardGeneric("shear"))
 setGeneric("XY", function(x, ...) standardGeneric("XY"))
 setGeneric("XY<-", function(x, ..., value) standardGeneric("XY<-"))
+setGeneric("settleGeom", function(x, ...) standardGeneric("settleGeom"))
+if (!isGeneric("area")) {
+    setGeneric("area", function(x, ...) standardGeneric("area"))
+}
 
 # Methods and documentations found in methods-overlaps.R
 setGeneric("overlaps", function(x, ...) standardGeneric("overlaps"))
@@ -132,11 +143,11 @@ setGeneric("prov<-", function(x, value) standardGeneric("prov<-"))
 
 ## spatUnit() S4 generic ####
 setGeneric("spatUnit", function(x) standardGeneric("spatUnit"))
-setGeneric("spatUnit<-", function(x, value) standardGeneric("spatUnit<-"))
+setGeneric("spatUnit<-", function(x, ..., value) standardGeneric("spatUnit<-"))
 
 ## featType() S4 generic ####
 setGeneric("featType", function(x) standardGeneric("featType"))
-setGeneric("featType<-", function(x, value) standardGeneric("featType<-"))
+setGeneric("featType<-", function(x, ..., value) standardGeneric("featType<-"))
 
 ## objName() generic ####
 setGeneric("objName", function(x) standardGeneric("objName"))

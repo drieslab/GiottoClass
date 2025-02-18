@@ -2,10 +2,13 @@
 % Please edit documentation in R/methods-reconnect.R
 \name{reconnect}
 \alias{reconnect}
+\alias{reconnect,giottoAffineImage-method}
 \alias{reconnect,giottoLargeImage-method}
 \alias{reconnect,giottoImage-method}
 \title{Reconnect a GiottoClass object}
 \usage{
+\S4method{reconnect}{giottoAffineImage}(x, path = NULL, ...)
+
 \S4method{reconnect}{giottoLargeImage}(x, path = NULL, ...)
 
 \S4method{reconnect}{giottoImage}(x, path = NULL, ...)
@@ -26,8 +29,11 @@ GiottoClass object
 Reconnect a GiottoClass object
 }
 \examples{
-g <- GiottoData::loadGiottoMini("visium")
-g_image <- getGiottoImage(g, image_type = "largeImage")
+temp <- tempfile()
+f <- system.file("extdata/toy_intensity.tif", package = "GiottoClass")
+a <- createGiottoLargeImage(f)
+saveRDS(a, temp)
 
-reconnect(g_image)
+b <- readRDS(temp) # expected to be null pointer
+b <- reconnect(b) # reconnected to source image
 }

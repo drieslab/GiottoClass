@@ -128,29 +128,45 @@ NULL
 
 #' @rdname createNetwork
 #' @export
-createNetwork <- function(x,
-    type = c("sNN", "kNN", "delaunay"),
-    method = c("dbscan", "geometry", "RTriangle", "deldir"),
-    node_ids = NULL,
-    include_distance = TRUE,
-    include_weight = TRUE,
-    as.igraph = TRUE,
-    verbose = NULL,
-    ...) {
+createNetwork <- function(
+        x,
+        type = c("sNN", "kNN", "delaunay"),
+        method = c("dbscan", "geometry", "RTriangle", "deldir"),
+        node_ids = NULL,
+        include_distance = TRUE,
+        include_weight = TRUE,
+        as.igraph = TRUE,
+        verbose = NULL,
+        ...) {
     # NSE vars
     from <- to <- NULL
 
     # check params
     type <- match.arg(type, choices = c("sNN", "kNN", "delaunay"))
+
+    mdef <- c("dbscan", "geometry", "RTriangle", "deldir")
+    if (type %in% c("sNN", "kNN")) {
+        mchoices <- c("dbscan")
+        if (identical(method, mdef)) method <- mchoices
+    }
+    if (type %in% c("delaunay")) {
+        mchoices <- c("geometry", "RTriangle", "deldir")
+        if (identical(method, mdef)) method <- mchoices
+    }
+
     method <- switch(type,
-        "sNN" = match.arg(method, choices = c("dbscan"), several.ok = TRUE),
-        "kNN" = match.arg(method, choices = c("dbscan"), several.ok = TRUE),
-        "delaunay" = match.arg(
-            method,
-            choices = c("geometry", "RTriangle", "deldir"),
-            several.ok = TRUE
-        )
+        "sNN" = match.arg(method, choices = mchoices, several.ok = TRUE),
+        "kNN" = match.arg(method, choices = mchoices, several.ok = TRUE),
+        "delaunay" = {
+            method <- method[[1L]]
+            match.arg(method, choices = mchoices, several.ok = TRUE)
+        }
     )
+
+    vmsg(.is_debug = TRUE, sprintf(
+        "network\n type: %s\n method: %s",
+        type, method
+    ))
 
     # get common params
     alist <- list(
@@ -211,11 +227,12 @@ createNetwork <- function(x,
 
 
 # x input is a matrix
-.net_dt_knn <- function(x, k = 30L, include_weight = TRUE, include_distance = TRUE,
-    filter = FALSE,
-    maximum_distance = NULL, minimum_k = 0L,
-    weight_fun = function(d) 1 / (1 + d),
-    verbose = NULL, ...) {
+.net_dt_knn <- function(
+        x, k = 30L, include_weight = TRUE, include_distance = TRUE,
+        filter = FALSE,
+        maximum_distance = NULL, minimum_k = 0L,
+        weight_fun = function(d) 1 / (1 + d),
+        verbose = NULL, ...) {
     # NSE vars
     from <- to <- distance <- NULL
 
@@ -268,10 +285,11 @@ createNetwork <- function(x,
 }
 
 # x input is a matrix
-.net_dt_snn <- function(x, k = 30L, include_weight = TRUE, include_distance = TRUE,
-    top_shared = 3L, minimum_shared = 5L,
-    weight_fun = function(d) 1 / (1 + d),
-    verbose = NULL, ...) {
+.net_dt_snn <- function(
+        x, k = 30L, include_weight = TRUE, include_distance = TRUE,
+        top_shared = 3L, minimum_shared = 5L,
+        weight_fun = function(d) 1 / (1 + d),
+        verbose = NULL, ...) {
     # NSE vars
     from <- to <- shared <- distance <- NULL
 
@@ -318,9 +336,10 @@ createNetwork <- function(x,
     return(snn_network_dt)
 }
 
-.net_dt_del_geometry <- function(x, include_weight = TRUE, options = "Pp", maximum_distance = "auto",
-    minimum_k = 0L, weight_fun = function(d) 1 / d,
-    ...) {
+.net_dt_del_geometry <- function(
+        x, include_weight = TRUE, options = "Pp", maximum_distance = "auto",
+        minimum_k = 0L, weight_fun = function(d) 1 / d,
+        ...) {
     package_check("geometry", repository = "CRAN:geometry")
 
     # data.table variables
@@ -331,7 +350,7 @@ createNetwork <- function(x,
     )
 
     geometry_obj <- list("delaunay_simplex_mat" = delaunay_simplex_mat)
-    edge_combs <- utils::combn(x = ncol(delaunay_simplex_mat), m = 2L)
+    edge_combs <- combn(x = ncol(delaunay_simplex_mat), m = 2L)
     delaunay_edges <- data.table::as.data.table(apply(
         edge_combs,
         MARGIN = 1L, function(comb) delaunay_simplex_mat[, comb]
@@ -371,9 +390,10 @@ createNetwork <- function(x,
     return(out_object)
 }
 
-.net_dt_del_rtriangle <- function(x, include_weight = TRUE, maximum_distance = "auto", minimum_k = 0L,
-    Y = TRUE, j = TRUE, S = 0, weight_fun = function(d) 1 / d,
-    ...) {
+.net_dt_del_rtriangle <- function(
+        x, include_weight = TRUE, maximum_distance = "auto", minimum_k = 0L,
+        Y = TRUE, j = TRUE, S = 0, weight_fun = function(d) 1 / d,
+        ...) {
     # NSE vars
     from <- to <- distance <- NULL
 
@@ -415,9 +435,10 @@ createNetwork <- function(x,
     return(out_object)
 }
 
-.net_dt_del_deldir <- function(x, include_weight = TRUE, maximum_distance = "auto", minimum_k = 0L,
-    weight_fun = function(d) 1 / d,
-    ...) {
+.net_dt_del_deldir <- function(
+        x, include_weight = TRUE, maximum_distance = "auto", minimum_k = 0L,
+        weight_fun = function(d) 1 / d,
+        ...) {
     # NSE variables
     from <- to <- distance <- NULL
 
@@ -606,22 +627,23 @@ edge_distances <- function(x, y, x_node_ids = NULL) {
 #'
 #' createNearestNetwork(g)
 #' @export
-createNearestNetwork <- function(gobject,
-    spat_unit = NULL,
-    feat_type = NULL,
-    type = c("sNN", "kNN"),
-    dim_reduction_to_use = "pca",
-    dim_reduction_name = NULL,
-    dimensions_to_use = seq_len(10),
-    feats_to_use = NULL,
-    expression_values = c("normalized", "scaled", "custom"),
-    name = NULL,
-    return_gobject = TRUE,
-    k = 30,
-    minimum_shared = 5,
-    top_shared = 3,
-    verbose = TRUE,
-    ...) {
+createNearestNetwork <- function(
+        gobject,
+        spat_unit = NULL,
+        feat_type = NULL,
+        type = c("sNN", "kNN"),
+        dim_reduction_to_use = "pca",
+        dim_reduction_name = NULL,
+        dimensions_to_use = seq_len(10),
+        feats_to_use = NULL,
+        expression_values = c("normalized", "scaled", "custom"),
+        name = NULL,
+        return_gobject = TRUE,
+        k = 30,
+        minimum_shared = 5,
+        top_shared = 3,
+        verbose = TRUE,
+        ...) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -862,16 +884,15 @@ createNearestNetwork <- function(gobject,
 #'
 #' addNetworkLayout(g)
 #' @export
-addNetworkLayout <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        nn_network_to_use = "sNN",
-        network_name = "sNN.pca",
-        layout_type = c("drl"),
-        options_list = NULL,
-        layout_name = "layout",
-        return_gobject = TRUE) {
+addNetworkLayout <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    nn_network_to_use = "sNN",
+    network_name = "sNN.pca",
+    layout_type = c("drl"),
+    options_list = NULL,
+    layout_name = "layout",
+    return_gobject = TRUE) {
     ## checks
     if (is.null(nn_network_to_use) | is.null(network_name)) {
         stop("\n first create a nearest network \n")

@@ -18,11 +18,13 @@ NULL
 
 
 
-
+# * giottoImage ####
 
 #' @describeIn plot-generic Plot \emph{magick}-based giottoImage object. ... param passes to \code{\link{.plot_giottoimage_mg}}
 #' @export
 setMethod("plot", signature(x = "giottoImage", y = "missing"), function(x, y, ...) .plot_giottoimage_mg(giottoImage = x, ...))
+
+# * giottoLargeImage ####
 
 #' @describeIn plot-generic Plot \emph{terra}-based giottoLargeImage object. ... param passes to \code{\link{.plot_giottolargeimage}}
 #' @param col character. Colors. The default is grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1)
@@ -47,9 +49,8 @@ setMethod("plot", signature(x = "giottoImage", y = "missing"), function(x, y, ..
 setMethod(
     "plot",
     signature(x = "giottoLargeImage", y = "missing"),
-    function(
-        x, y, col, max_intensity, mar, asRGB = FALSE, legend = FALSE, axes = TRUE,
-        maxcell = 5e5, smooth = TRUE, ...) {
+    function(x, y, col, max_intensity, mar, asRGB = FALSE, legend = FALSE, axes = TRUE,
+    maxcell = 5e5, smooth = TRUE, ...) {
         arglist <- list(
             giottoLargeImage = x,
             asRGB = asRGB,
@@ -87,6 +88,8 @@ setMethod(
     }
 )
 
+# * giottoAffineImage ####
+
 #' @rdname plot-generic
 #' @export
 setMethod(
@@ -95,6 +98,8 @@ setMethod(
         .plot_giottoaffineimage(x, ...)
     }
 )
+
+# * giottoPolygon ####
 
 #' @describeIn plot-generic Plot \emph{terra}-based giottoPolygon object. ... param passes to \code{\link[terra]{plot}}
 #' @param point_size size of points when plotting giottoPolygon object centroids
@@ -111,11 +116,12 @@ setMethod(
 #' @export
 setMethod(
     "plot", signature(x = "giottoPolygon", y = "missing"),
-    function(x,
-    point_size = 0.6,
-    type = c("poly", "centroid"),
-    max_poly = getOption("giotto.plot_max_poly", 1e6),
-    ...) {
+    function(
+        x,
+        point_size = 0.6,
+        type = c("poly", "centroid"),
+        max_poly = getOption("giotto.plot_max_poly", 1e6),
+        ...) {
         if (length(x@unique_ID_cache) == 0) {
             stop(wrap_txt("No geometries to plot"), call. = FALSE)
         }
@@ -129,6 +135,8 @@ setMethod(
         .plot_giotto_polygon(x = x, point_size = point_size, type = type, ...)
     }
 )
+
+# * giottoPoints ####
 
 #' @describeIn plot-generic \emph{terra}-based giottoPoint object. ... param passes to \code{\link[terra]{plot}}
 #' @param point_size size of points when plotting giottoPoints
@@ -204,6 +212,7 @@ setMethod(
     }
 )
 
+# * spatLocsObj ####
 
 #' @describeIn plot-generic Plot a spatLocsObj
 #' @examples
@@ -226,6 +235,7 @@ setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) 
     }
 })
 
+# * dimObj ####
 
 #' @describeIn plot-generic Plot a dimObj
 #' @param dims dimensions to plot
@@ -256,6 +266,7 @@ setMethod(
     }
 )
 
+# * spatialNetworkObj ####
 
 #' @describeIn plot-generic Plot a spatialNetworkObj
 #' @export
@@ -299,6 +310,7 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
     )
 })
 
+# * affine2d ####
 
 #' @describeIn plot-generic Plot a affine2d. blue is start, red is end
 #' @export
@@ -418,10 +430,9 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
 #' @param giottoImage giottoImage object
 #' @return plot
 #' @keywords internal
-.plot_giottoimage_mg <- function(
-        gobject = NULL,
-        image_name = NULL,
-        giottoImage = NULL) {
+.plot_giottoimage_mg <- function(gobject = NULL,
+    image_name = NULL,
+    giottoImage = NULL) {
     if (!is.null(giottoImage)) {
         graphics::plot(giottoImage@mg_object)
     } else {
@@ -467,26 +478,25 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
 #' depending on image type
 #' @return plot
 #' @keywords internal
-.plot_giottolargeimage <- function(
-        gobject = NULL,
-        largeImage_name = NULL,
-        giottoLargeImage = NULL,
-        crop_extent = NULL,
-        xmax_crop = NULL,
-        xmin_crop = NULL,
-        ymax_crop = NULL,
-        ymin_crop = NULL,
-        max_intensity = NULL,
-        asRGB = FALSE,
-        stretch = NULL,
-        axes = TRUE,
-        smooth = TRUE,
-        mar = c(3, 5, 1.5, 1),
-        legend = FALSE,
-        maxcell = 5e5,
-        col = grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1),
-        asp = 1,
-        ...) {
+.plot_giottolargeimage <- function(gobject = NULL,
+    largeImage_name = NULL,
+    giottoLargeImage = NULL,
+    crop_extent = NULL,
+    xmax_crop = NULL,
+    xmin_crop = NULL,
+    ymax_crop = NULL,
+    ymin_crop = NULL,
+    max_intensity = NULL,
+    asRGB = FALSE,
+    stretch = NULL,
+    axes = TRUE,
+    smooth = TRUE,
+    mar = c(3, 5, 1.5, 1),
+    legend = FALSE,
+    maxcell = 5e5,
+    col = grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1),
+    asp = 1,
+    ...) {
     a <- c(get_args_list(), list(...))
 
     # Get giottoLargeImage and check and perform crop if needed
@@ -565,13 +575,12 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
 #' @param ... additional params to pass to plot functions
 #' @keywords internal
 #' @noRd
-.plot_giotto_points <- function(
-        x,
-        point_size = 0,
-        feats = NULL,
-        raster = TRUE,
-        raster_size = 600L,
-        ...) {
+.plot_giotto_points <- function(x,
+    point_size = 0,
+    feats = NULL,
+    raster = TRUE,
+    raster_size = 600L,
+    ...) {
     args_list <- list(feats, asp = 1L, ...)
 
     # point size
@@ -607,10 +616,6 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
 #' @noRd
 .plot_giotto_points_raster <- function(data, feats = NULL, ...) {
     args_list <- list(...)
-
-    opar <- par(no.readonly = TRUE)
-    on.exit(par(opar), add = TRUE)
-
 
     # raster size
     if (is.null(args_list$size)) {
@@ -674,7 +679,14 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
 #' @param ... additonal params to pass to terra::plot()
 #' @keywords internal
 #' @noRd
-.plot_giotto_points_all <- function(x, size = 600, force_size = FALSE, dens = FALSE, col = NULL, background, ...) {
+.plot_giotto_points_all <- function(
+        x,
+        size = 600,
+        force_size = FALSE,
+        dens = FALSE,
+        col = NULL,
+        background,
+        ...) {
     pargs <- list(...)
     rargs <- list()
     if (!is.null(pargs$ext)) {
@@ -737,8 +749,6 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
         .gstop(str_vector(feats), "not found in giottoPoints", .n = 6L)
     }
 
-    par(mar = c(2.7, 3.5, 2, 2))
-
     dataDT <- dataDT[feat_ID == feats] # select single feats's data
     args_list$x <- dataDT$x
     args_list$y <- dataDT$y
@@ -763,7 +773,6 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
         .gstop(str_vector(missing_feats), "not found in giottoPoints", .n = 6L)
     }
 
-    par(mar = c(2.7, 3.5, 2, 4))
     feat_colors <- getRainbowColors(length(feats))
 
     data.table::setkey(dataDT, "feat_ID")
@@ -787,14 +796,16 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
     do.call(scattermore::scattermoreplot, args_list)
     legend(
         x = "topright",
-        inset = c(-1.3 / grDevices::dev.size()[1], 0),
         legend = feats,
+        text.col = "white",
         col = feat_colors,
         bty = "n",
         pch = 20,
         cex = 0.6,
+        title.cex = 0.8,
         title = "feat_ID",
-        xpd = TRUE
+        xpd = TRUE,
+        inset = c(0.04, 0.02)
     )
 }
 
@@ -846,8 +857,9 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
 #' @param ... additional params to pass to plot function
 #' @keywords internal
 #' @noRd
-.plot_giotto_polygon <- function(x, point_size = 0.6,
-    type = c("poly", "centroid"), ...) {
+.plot_giotto_polygon <- function(
+        x, point_size = 0.6,
+        type = c("poly", "centroid"), ...) {
     a <- list(...)
 
     type <- match.arg(type, choices = c("poly", "centroid"))

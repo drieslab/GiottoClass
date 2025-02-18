@@ -564,6 +564,11 @@
         verbose = TRUE) {
     if (isTRUE(poly_info == ":all:")) poly_info <- names(spatial_info)
 
+    # return early if no need to subset
+    if (is.null(cell_ids)) {
+        return(spatial_info)
+    }
+
     # set feat type
     if (is.null(feat_type)) {
         feat_type <- "rna"
@@ -910,13 +915,13 @@
         # # aggregate spatial locations and expression information
         # #
         # # Should only be checked for cell_ids subsets
-        
+
         attached_polys <- list_spatial_info_names(gobject)
-        
+
         if (is.null(poly_info)) {
             poly_info <- spat_unit[spat_unit %in% attached_polys]
         }
-        
+
         if (isTRUE(poly_info == ":all:")) {
             poly_info <- attached_polys
         }
@@ -974,18 +979,7 @@
         toplevel = toplevel_params
     )
 
-    ## TODO - this is no longer easily doable since multiple spatial units being
-    ## subset means that cells and feats removed are variable
-    # extra parameters to include
-    # cells_removed = length(filter_bool_cells[filter_bool_cells==FALSE])
-    # feats_removed = length(filter_bool_feats[filter_bool_feats==FALSE])
-
     parameters_list <- parameters_info[["plist"]]
-    # update_name = parameters_info[['newname']]
-    #
-    # parameters_list[[update_name]] = c(parameters_list[[update_name]],
-    #                                    'cells removed' = cells_removed,
-    #                                    'feats removed' = feats_removed)
     gobject@parameters <- parameters_list
 
 
@@ -1164,8 +1158,8 @@
         if (is.null(x_max)) x_max <- max(comb_metadata[["sdimx"]])
         if (is.null(x_min)) x_min <- min(comb_metadata[["sdimx"]])
 
-        comb_metadata <- comb_metadata[get("sdimx") < x_max &
-            get("sdimx") > x_min]
+        comb_metadata <- comb_metadata[get("sdimx") <= x_max &
+            get("sdimx") >= x_min]
     }
 
     # y spatial dimension
@@ -1173,8 +1167,8 @@
         if (is.null(y_max)) y_max <- max(comb_metadata[["sdimy"]])
         if (is.null(y_min)) y_min <- min(comb_metadata[["sdimy"]])
 
-        comb_metadata <- comb_metadata[get("sdimy") < y_max &
-            get("sdimy") > y_min]
+        comb_metadata <- comb_metadata[get("sdimy") <= y_max &
+            get("sdimy") >= y_min]
     }
 
     # z spatial dimension
@@ -1182,8 +1176,8 @@
         if (is.null(z_max)) z_max <- max(comb_metadata[["sdimz"]])
         if (is.null(z_min)) z_min <- min(comb_metadata[["sdimz"]])
 
-        comb_metadata <- comb_metadata[get("sdimz") < z_max &
-            get("sdimz") > z_min]
+        comb_metadata <- comb_metadata[get("sdimz") <= z_max &
+            get("sdimz") >= z_min]
     }
 
     if (return_gobject) {

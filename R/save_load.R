@@ -9,9 +9,14 @@
 #' @param method method to save main object
 #' @param method_params additional method parameters for RDS or qs
 #' @param overwrite Overwrite existing folders
+#' @param export_image logical. Write out an image of the format specified by
+#' `image_filetype` when saving a `giottoLargeImage`.
+#' Future image loads and reconnects will point to this new file.
 #' @param image_filetype the image filetype to use, see
 #' \code{\link[terra]{writeRaster}}. Default is "PNG". For TIFF outputs, try
 #' "COG"
+#' @param include_feat_coord logical. Whether to keep the feature coordinates
+#' when saving. Dropping them can improve performance for large datasets.
 #' @param verbose be verbose
 #' @param ... additional parameters for \code{\link[terra]{writeRaster}}
 #' @returns Creates a directory with Giotto object information
@@ -23,15 +28,18 @@
 #'
 #' saveGiotto(gobject = g, dir = tempdir(), overwrite = TRUE)
 #' @export
-saveGiotto <- function(gobject,
-    foldername = "saveGiottoDir",
-    dir = getwd(),
-    method = c("RDS", "qs"),
-    method_params = list(),
-    overwrite = FALSE,
-    image_filetype = "PNG",
-    verbose = TRUE,
-    ...) {
+saveGiotto <- function(
+        gobject,
+        foldername = "saveGiottoDir",
+        dir = getwd(),
+        method = c("RDS", "qs"),
+        method_params = list(),
+        overwrite = FALSE,
+        export_image = TRUE,
+        image_filetype = "PNG",
+        include_feat_coord = TRUE,
+        verbose = TRUE,
+        ...) {
     # check params
     checkmate::assert_character(foldername)
     checkmate::assert_character(dir)
@@ -44,6 +52,10 @@ saveGiotto <- function(gobject,
     dir <- normalizePath(dir)
     final_dir <- file.path(dir, foldername)
 
+    if (isFALSE(include_feat_coord)) {
+        gobject@feat_info <- NULL
+    }
+
     overwriting <- FALSE
     if (dir.exists(final_dir)) {
         if (!overwrite) {
@@ -55,7 +67,7 @@ saveGiotto <- function(gobject,
                     overwrite folder")
             overwriting <- TRUE
             use_dir <- file.path(dir, ".giotto_scratch")
-            dir.create(use_dir, recursive = TRUE)
+            dir.create(use_dir, recursive = TRUE, showWarnings = FALSE)
         }
     } else {
         dir.create(final_dir, recursive = TRUE)
@@ -211,27 +223,36 @@ saveGiotto <- function(gobject,
     # only `giottoLargeImages` need to be saved separately
     image_names <- list_images_names(gobject, img_type = "largeImage")
 
-    if (!is.null(image_names)) {
+    if (!is.null(image_names) && export_image) {
         image_dir <- paste0(use_dir, "/", "Images")
         dir.create(image_dir)
         for (image in image_names) {
             vmsg(.v = verbose, "For image information: ", image)
 
-            r <- gobject@images[[image]]@raster_object
+            img <- gobject[["images", image]][[1L]] # extract image
+            r <- img@raster_object
 
             if (!is.null(r)) {
-                # save extent info just in case
-                gobject@images[[image]]@extent <- terra::ext(r)[]
+                # save extent info (needed for non-COG outputs)
+                img@extent <- terra::ext(r)[]
+                # update filepath
+                img@file_path <- filename
 
                 # save raster
-                filename <- paste0(image_dir, "/", image, "_spatRaster")
+                filename <- file.path(image_dir, paste0(image, "_spatRaster"))
                 terra::writeRaster(
                     x = r,
                     filename = filename,
                     filetype = image_filetype,
                     NAflag = NA,
                     overwrite = TRUE
-                ) # test
+                )
+
+                # update image in gobject
+                gobject <- setGiotto(
+                    gobject, img,
+                    verbose = FALSE
+                )
             }
         }
     }
@@ -297,13 +318,12 @@ saveGiotto <- function(gobject,
 #'
 #' loadGiotto(path_to_folder = paste0(td, "/saveGiottoDir"))
 #' @export
-loadGiotto <- function(
-        path_to_folder,
-        load_params = list(),
-        reconnect_giottoImage = TRUE,
-        python_path = NULL,
-        init_gobject = TRUE,
-        verbose = TRUE) {
+loadGiotto <- function(path_to_folder,
+    load_params = list(),
+    reconnect_giottoImage = TRUE,
+    python_path = NULL,
+    init_gobject = TRUE,
+    verbose = TRUE) {
     # data.table vars
     img_type <- NULL
 
@@ -344,7 +364,7 @@ loadGiotto <- function(
 
     ## 4. images
     # compatibility for pre-v0.3.0
-    gobject <- .update_image_slot(gobject)
+    gobject <- .update_image_slot(gobject) # merge largeImages slot to images
     gobject <- .load_giotto_images(
         gobject = gobject,
         path_to_folder = path_to_folder,
@@ -352,13 +372,8 @@ loadGiotto <- function(
     )
 
     if (isTRUE(reconnect_giottoImage)) {
-        if (!is.null(list_images(gobject))) {
-            if (list_images(gobject)[img_type == "image", .N] > 0) {
-                gobject <- reconnectGiottoImage(gobject,
-                    reconnect_type = "image"
-                )
-            }
-        }
+        imglist <- lapply(gobject[["images"]], reconnect)
+        gobject <- setGiotto(gobject, imglist, verbose = FALSE)
     }
 
 
@@ -674,6 +689,10 @@ loadGiotto <- function(
 }
 
 
+# the actual reconnection step is done through reconnect() after this step now
+# .update_giotto_image() <- this is NEEDED for legacy structure support
+# raster reload <- not needed
+# filepath update <- now done after this, but useful for legacy saves
 .load_giotto_images <- function(gobject, path_to_folder, verbose = NULL) {
     vmsg(.v = verbose, "4. read Giotto image information")
     vmsg(
@@ -708,7 +727,11 @@ loadGiotto <- function(
         spatRaster <- terra::rast(load_img)
 
         gobject@images[[img]]@raster_object <- spatRaster
+        # file path updating now happens during export, but keep this in for
+        # legacy saved object support
         gobject@images[[img]]@file_path <- load_img
+        gobject@images[[img]] <- .update_giotto_image(gobject@images[[img]])
+        gobject@images[[img]] <- initialize(gobject@images[[img]])
     }
 
     return(gobject)

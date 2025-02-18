@@ -8,7 +8,7 @@
 \usage{
 \S4method{as.points}{data.frame}(x, include_values = TRUE, specific_values = NULL)
 
-\S4method{as.points}{spatLocsObj}(x, ...)
+\S4method{as.points}{spatLocsObj}(x)
 }
 \arguments{
 \item{x}{SpatRaster, SpatVector, SpatExtent, or correctly formatted

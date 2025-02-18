@@ -15,11 +15,10 @@
 #'
 #' pDataDT(g)
 #' @export
-pDataDT <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        ...) {
+pDataDT <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    ...) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -68,11 +67,10 @@ pDataDT <- function(
 #'
 #' fDataDT(g)
 #' @export
-fDataDT <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        ...) {
+fDataDT <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    ...) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -120,7 +118,7 @@ fDataDT <- function(
 #' @param gobject `giotto` object
 #' @param spat_unit spatial unit
 #' @param feat_type feature type
-#' @param annotation_vector named `character` vector. Vector names are labels 
+#' @param annotation_vector named `character` vector. Vector names are labels
 #' in the cluster column. Labels to assign are the vector values.
 #' @param cluster_column `character`. Cell metaadata column to map annotation
 #'  values based on.
@@ -154,13 +152,12 @@ fDataDT <- function(
 #'     cluster_column = "leiden_clus"
 #' )
 #' @export
-annotateGiotto <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        annotation_vector = NULL,
-        cluster_column = NULL,
-        name = "cell_types") {
+annotateGiotto <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    annotation_vector = NULL,
+    cluster_column = NULL,
+    name = "cell_types") {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -232,7 +229,7 @@ annotateGiotto <- function(
 
     data.table::setnames(cell_metadata[], old = "temp_cluster_name", new = name)
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    gobject <- setGiotto(gobject, cell_metadata, 
+    gobject <- setGiotto(gobject, cell_metadata,
         verbose = FALSE, initialize = FALSE
     )
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -274,12 +271,11 @@ annotateGiotto <- function(
 #'
 #' g <- removeCellAnnotation(g, columns = "cell_types")
 #' @export
-removeCellAnnotation <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        columns = NULL,
-        return_gobject = TRUE) {
+removeCellAnnotation <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    columns = NULL,
+    return_gobject = TRUE) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -338,12 +334,11 @@ removeCellAnnotation <- function(
 #'
 #' g <- removeFeatAnnotation(g, columns = "hvf")
 #' @export
-removeFeatAnnotation <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        columns = NULL,
-        return_gobject = TRUE) {
+removeFeatAnnotation <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    columns = NULL,
+    return_gobject = TRUE) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -434,14 +429,13 @@ removeFeatAnnotation <- function(
 #'
 #' pDataDT(g)
 #' @export
-addCellMetadata <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        new_metadata,
-        vector_name = NULL,
-        by_column = FALSE,
-        column_cell_ID = NULL) {
+addCellMetadata <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    new_metadata,
+    vector_name = NULL,
+    by_column = FALSE,
+    column_cell_ID = NULL) {
     # NSE variables
     cell_ID <- NULL
 
@@ -617,14 +611,13 @@ addCellMetadata <- function(
 #'
 #' fDataDT(g)
 #' @export
-addFeatMetadata <- function(
-        gobject,
-        feat_type = NULL,
-        spat_unit = NULL,
-        new_metadata,
-        vector_name = NULL,
-        by_column = FALSE,
-        column_feat_ID = NULL) {
+addFeatMetadata <- function(gobject,
+    feat_type = NULL,
+    spat_unit = NULL,
+    new_metadata,
+    vector_name = NULL,
+    by_column = FALSE,
+    column_feat_ID = NULL) {
     # NSE variables
     feat_ID <- NULL
 
@@ -779,12 +772,11 @@ addFeatMetadata <- function(
 #'
 #' create_average_DT(g, meta_data_name = "leiden_clus")
 #' @export
-create_average_DT <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        meta_data_name,
-        expression_values = c("normalized", "scaled", "custom")) {
+create_average_DT <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    meta_data_name,
+    expression_values = c("normalized", "scaled", "custom")) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -850,13 +842,12 @@ create_average_DT <- function(
 #'
 #' create_average_detection_DT(g, meta_data_name = "leiden_clus")
 #' @export
-create_average_detection_DT <- function(
-        gobject,
-        feat_type = NULL,
-        spat_unit = NULL,
-        meta_data_name,
-        expression_values = c("normalized", "scaled", "custom"),
-        detection_threshold = 0) {
+create_average_detection_DT <- function(gobject,
+    feat_type = NULL,
+    spat_unit = NULL,
+    meta_data_name,
+    expression_values = c("normalized", "scaled", "custom"),
+    detection_threshold = 0) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -932,14 +923,13 @@ create_average_detection_DT <- function(
 #'
 #' create_cluster_matrix(g, cluster_column = "leiden_clus")
 #' @export
-create_cluster_matrix <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        expression_values = c("normalized", "scaled", "custom"),
-        cluster_column,
-        feat_subset = NULL,
-        gene_subset = NULL) {
+create_cluster_matrix <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    expression_values = c("normalized", "scaled", "custom"),
+    cluster_column,
+    feat_subset = NULL,
+    gene_subset = NULL) {
     # data.table variables
     feats <- NULL
 
@@ -1030,14 +1020,13 @@ create_cluster_matrix <- function(
 #'
 #' calculateMetaTable(g, metadata_cols = "leiden_clus")
 #' @export
-calculateMetaTable <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        expression_values = c("normalized", "scaled", "custom"),
-        metadata_cols = NULL,
-        selected_feats = NULL,
-        selected_genes = NULL) {
+calculateMetaTable <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    expression_values = c("normalized", "scaled", "custom"),
+    metadata_cols = NULL,
+    selected_feats = NULL,
+    selected_genes = NULL) {
     if (is.null(metadata_cols)) stop("\n You need to select one or more
                                     valid column names from pDataDT() \n")
 
@@ -1152,13 +1141,12 @@ calculateMetaTable <- function(
 #'     value_cols = "leiden_clus"
 #' )
 #' @export
-calculateMetaTableCells <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        value_cols = NULL,
-        metadata_cols = NULL,
-        spat_enr_names = NULL) {
+calculateMetaTableCells <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    value_cols = NULL,
+    metadata_cols = NULL,
+    spat_enr_names = NULL) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -1347,17 +1335,16 @@ calculateMetaTableCells <- function(
 #' )
 #' showGiottoSpatEnrichments(g)
 #' @export
-createMetafeats <- function(
-        gobject,
-        spat_unit = NULL,
-        feat_type = NULL,
-        expression_values = c("normalized", "scaled", "custom"),
-        feat_clusters,
-        stat = c("mean", "sum", "max", "min"),
-        rescale_to = NULL,
-        name = paste0("metafeat_", ifelse(is.function(stat), "custom", stat)),
-        return_gobject = TRUE,
-        verbose = NULL) {
+createMetafeats <- function(gobject,
+    spat_unit = NULL,
+    feat_type = NULL,
+    expression_values = c("normalized", "scaled", "custom"),
+    feat_clusters,
+    stat = c("mean", "sum", "max", "min"),
+    rescale_to = NULL,
+    name = paste0("metafeat_", ifelse(is.function(stat), "custom", stat)),
+    return_gobject = TRUE,
+    verbose = NULL) {
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject, spat_unit = spat_unit

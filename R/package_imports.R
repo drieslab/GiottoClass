@@ -10,23 +10,21 @@
 #' @importFrom methods slotNames
 #' @importFrom methods validObject
 #' @importFrom graphics legend par rect
-#' @importMethodsFrom terra spin
-#' @importMethodsFrom terra flip
-#' @importMethodsFrom terra rescale
+#' @importMethodsFrom terra spin flip rescale t
 #' @importMethodsFrom Matrix t
-#' @importMethodsFrom terra t
-#' @importMethodsFrom terra ext ext<-
+#' @importMethodsFrom terra ext ext<- convHull minCircle minRect
 #' @importMethodsFrom terra plot
 #' @importMethodsFrom terra wrap
 #' @importMethodsFrom terra zoom
 #' @importMethodsFrom terra crop
-#' @importMethodsFrom terra vect
+#' @importMethodsFrom terra vect buffer
 #' @importMethodsFrom terra relate
-#' @importMethodsFrom terra union intersect symdif snap
+#' @importMethodsFrom terra union erase intersect symdif snap
 #' @importMethodsFrom terra as.data.frame as.polygons as.points
 #' @importMethodsFrom terra nrow ncol
 #' @importMethodsFrom terra hist density
 #' @importClassesFrom terra SpatExtent SpatVector
+#' @importMethodsFrom terra area
 #' @import GiottoUtils
 #' @import data.table
 #' @import utils

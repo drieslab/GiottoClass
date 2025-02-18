@@ -4,7 +4,14 @@
 \alias{setGiottoImage}
 \title{Set giotto image object}
 \usage{
-setGiottoImage(gobject, image, image_type = NULL, name = NULL, verbose = NULL)
+setGiottoImage(
+  gobject,
+  image,
+  image_type = NULL,
+  name = NULL,
+  initialize = FALSE,
+  verbose = NULL
+)
 }
 \arguments{
 \item{gobject}{giotto object}
@@ -15,6 +22,9 @@ giotto object}
 \item{image_type}{deprecated}
 
 \item{name}{name of giotto image object}
+
+\item{initialize}{(default = FALSE) whether to initialize the gobject before
+returning}
 
 \item{verbose}{be verbose}
 }
@@ -46,7 +56,6 @@ Other image data accessor functions:
 \code{\link{getGiottoImage}()}
 
 Other functions to set data in giotto object: 
-\code{\link{get_feat_id}()},
 \code{\link{setCellMetadata}()},
 \code{\link{setDimReduction}()},
 \code{\link{setExpression}()},
@@ -60,7 +69,6 @@ Other functions to set data in giotto object:
 \code{\link{setSpatialGrid}()},
 \code{\link{setSpatialLocations}()},
 \code{\link{setSpatialNetwork}()},
-\code{\link{set_feat_id}()},
 \code{\link{set_multiomics}()}
 }
 \concept{functions to set data in giotto object}

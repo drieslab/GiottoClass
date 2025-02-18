@@ -7,8 +7,10 @@
 #' coordinate values are retrieved and set as `matrix`.
 #' @param x object
 #' @param value matrix. xy(z) coordinates to set
+#' @param geomtype character. Either `"points"` or `"polygons"`. Only used
+#' with the `SpatVector` replacement method
 #' @param ... additional args to pass
-#' @returns same class as `x`
+#' @returns `XY()` returns `matrix`. `XY<-()` returns same class as `x`
 #' @examples
 #' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
 #' gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
@@ -18,17 +20,17 @@
 #' plot(sl)
 #' XY(sl) <- m1 + 1000
 #' plot(sl)
-#' 
+#'
 #' m2 <- XY(gpoints)
 #' plot(gpoints)
 #' XY(gpoints) <- m2 * 2 + 1000
 #' plot(gpoints)
-#' 
+#'
 #' m3 <- XY(gpoly)
 #' plot(gpoly)
 #' XY(gpoly) <- m3 / 2
 #' plot(gpoly)
-#' 
+#'
 #' XY(gpoly[1:10]) # vertices from first 10 polys
 NULL
 # ---------------------------------------------------------------- #
@@ -40,7 +42,7 @@ NULL
 #' @rdname XY
 #' @export
 setMethod("XY", signature("spatLocsObj"), function(x, ...) {
-    m <- x[][, colnames(sl) != "cell_ID", with = F] |>
+    m <- x[][, colnames(x) != "cell_ID", with = FALSE] |>
         as.matrix(...)
     if (ncol(m) == 2L) colnames(m) <- c("x", "y")
     if (ncol(m) == 3L) colnames(m) <- c("x", "y", "z")
@@ -50,16 +52,19 @@ setMethod("XY", signature("spatLocsObj"), function(x, ...) {
 #' @rdname XY
 #' @export
 setMethod(
-    "XY<-", signature(x = "spatLocsObj", value = "matrix"), 
+    "XY<-", signature(x = "spatLocsObj", value = "matrix"),
     function(x, value) {
         dt <- data.table::as.data.table(value)
-        if (ncol(dt) == 2L) 
+        if (ncol(dt) == 2L) {
             data.table::setnames(dt, new = c("sdimx", "sdimy"))
-        if (ncol(dt) == 3L)
+        }
+        if (ncol(dt) == 3L) {
             data.table::setnames(dt, new = c("sdimx", "sdimy", "sdimx"))
+        }
         x[] <- cbind(dt, x[][, "cell_ID"])
         return(x)
-    })
+    }
+)
 
 # * giottoPoints & giottoPolygon ####
 
@@ -72,11 +77,12 @@ setMethod("XY", signature("giottoPoints"), function(x, ...) {
 #' @rdname XY
 #' @export
 setMethod(
-    "XY<-", signature(x = "giottoPoints", value = "ANY"), 
+    "XY<-", signature(x = "giottoPoints", value = "ANY"),
     function(x, ..., value) {
-        XY(x[]) <- value
+        XY(x[], geomtype = "points") <- value
         return(x)
-    })
+    }
+)
 
 #' @rdname XY
 #' @export
@@ -87,11 +93,12 @@ setMethod("XY", signature("giottoPolygon"), function(x, ...) {
 #' @rdname XY
 #' @export
 setMethod(
-    "XY<-", signature(x = "giottoPolygon", value = "ANY"), 
+    "XY<-", signature(x = "giottoPolygon", value = "ANY"),
     function(x, ..., value) {
-        XY(x[]) <- value
+        XY(x[], geomtype = "polygon") <- value
         return(x)
-    })
+    }
+)
 
 # * SpatVector ####
 
@@ -109,8 +116,12 @@ setMethod("XY", signature("SpatVector"), function(x, include_geom = FALSE, ...) 
 
 #' @rdname XY
 #' @export
-setMethod("XY<-", signature(x = "SpatVector", value = "matrix"), function(x, ..., value) {
-    switch(terra::geomtype(x),
+setMethod("XY<-", signature(x = "SpatVector", value = "matrix"), function(x, geomtype = "points", ..., value) {
+    terra_gtype <- terra::geomtype(x)
+    if (terra::geomtype(x) != "none") geomtype <- terra_gtype
+    geomtype <- match.arg(tolower(geomtype), choices = c("points", "polygons"))
+
+    switch(geomtype,
         "points" = .xy_sv_points_set(x, ..., value = value),
         "polygons" = .xy_sv_polys_set(x, ..., value = value)
     )
@@ -129,21 +140,18 @@ setMethod("XY<-", signature(x = "SpatVector", value = "matrix"), function(x, ...
 
 .xy_sv_polys_set <- function(x, ..., value) {
     atts <- terra::values(x)
-    if (identical(colnames(x), c("geom", "part", "x", "y", "hole"))) {
+    if (identical(colnames(value), c("geom", "part", "x", "y", "hole"))) {
         # the entire geom matrix is given. Directly use it.
         v <- terra::vect(value, type = "polygons", ..., atts = atts)
     } else {
+        if (ncol(value) == 2L && is.null(colnames(value))) {
+            colnames(value) <- c("x", "y")
+        }
         # replace xy values in geom matrix
         m <- terra::geom(x)
         m[, "x"] <- value[, "x"]
         m[, "y"] <- value[, "y"]
         v <- terra::vect(m, type = "polygons", ..., atts = atts)
     }
+    return(v)
 }
-
-
-
-
-
-
-
