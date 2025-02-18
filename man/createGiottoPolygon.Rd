@@ -88,7 +88,8 @@ data.frame with vertex 'x', 'y', and 'poly_ID' information.}
 SpatRaster or SpatVector methods, depending on whether x was a filepath to
 a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.}
 
-\item{name}{name for the \code{giottoPolygon} object created}
+\item{name}{character. Name to assign this set of polygons. This will also
+be the name of the spatial unit that they define. See \link{giotto_schema}}
 
 \item{calc_centroids}{logical. (default \code{FALSE}) calculate centroids for
 polygons}

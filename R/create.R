@@ -2485,7 +2485,6 @@ setMethod(
 #' data class readable by [terra::rast()]
 #' @param mask_method how the mask file defines individual segmentation
 #' annotations. See *mask_method* section
-#' @param name character. Name to assign created `giottoPolygon`
 #' @param remove_background_polygon try to remove background
 #' polygon (default: FALSE)
 #' @param background_algo algorithm to remove background polygon
@@ -2751,7 +2750,6 @@ createGiottoPolygonsFromMask <- function(
 #' information (x, y, poly_ID) with x and y being vertex information for the
 #' polygon referenced by poly_ID. See details for how columns are selected for
 #' coordinate and ID information.
-#' @param name name for the \code{giottoPolygon} object
 #' @param skip_eval_dfr logical. (default FALSE) skip evaluation of provided
 #' dataframe
 #' @param copy_dt (default TRUE) if segmdfr is provided as dt, this determines
@@ -2813,8 +2811,6 @@ createGiottoPolygonsFromDfr <- function(segmdfr,
 #' @title Create giotto polygons from GeoJSON
 #' @rdname createGiottoPolygon
 #' @param GeoJSON path to .GeoJSON file
-#' @param name name for the \code{giottoPolygon} object created
-#' @param verbose be verbose
 #' @concept polygon
 #' @export
 createGiottoPolygonsFromGeoJSON <- function(GeoJSON,
