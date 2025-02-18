@@ -9,6 +9,7 @@
 - fix external affine matrix compatibility. `affine()` now has `pre_multiply` param to switch between working with affine matrices defined for either pre or post-multiply. Pre is the general convention, but Giotto internally uses post. This will be addressed in a later update.
 - fix `giottoToSeuratV5()` selection of a default image to use
 - replace internal usage of deprecated create_spat_net_obj -> createSpatNetObj and set_spatialNetwork -> setSpatialNetwork when calculating spatial networks.
+- fix `createGiottoPolygon()` not preserving attributes from `data.table` inputs
 
 ## changes
 - move {magick} from imports to suggests

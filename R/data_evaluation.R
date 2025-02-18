@@ -896,10 +896,9 @@ evaluate_input <- function(type, x, ...) {
     spatial_info[, geom := new_vec]
 
     spatial_info[, c("part", "hole") := list(1, 0)]
-    spatial_info <- spatial_info[,
-        c("geom", "part", "x", "y", "hole", "poly_ID"),
-        with = FALSE
-    ]
+    data.table::setcolorder(spatial_info,
+        c("geom", "part", "x", "y", "hole", "poly_ID")
+    )
 
     # get unique IDs
     unique_IDs <- spatial_info[, unique(poly_ID)]
