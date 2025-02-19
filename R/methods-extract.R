@@ -351,22 +351,22 @@ setMethod("$", signature("affine2d"), function(x, name) {
 
 #' @rdname subset_dollar
 #' @section \code{`$`} methods:
-#'   Select param from `normParam` inheriting objects
+#'   Select param from `processParam` inheriting objects
 #' @export
-setMethod("$", signature("normParam"), function(x, name) {
+setMethod("$", signature("processParam"), function(x, name) {
     x@param[[name]]
 })
 #' @export
-.DollarNames.normParam <- function(x, pattern) {
+.DollarNames.processParam <- function(x, pattern) {
     names(x@param)
 }
 
 #' @rdname replace_dollar
 #' @section \code{`$<-`} methods:
-#'   Set values by param name into `normParam` inheriting objects
+#'   Set values by param name into `processParam` inheriting objects
 #' @export
 setMethod(
-    "$<-", signature("normParam"),
+    "$<-", signature("processParam"),
     function(x, name, value) {
         x@param[[name]] <- value
         return(initialize(x))
@@ -1226,11 +1226,11 @@ setMethod(
     }
 )
 
-# * normParam ####
+# * processParam ####
 #' @rdname subset_bracket
 #' @export
 setMethod("[", 
-    signature(x = "normParam", 
+    signature(x = "processParam", 
               i = "missing", j = "missing", drop = "missing"),
     function(x) x@param
 )
@@ -1238,7 +1238,7 @@ setMethod("[",
 #' @rdname replace_bracket
 #' @export
 setMethod("[<-",
-    signature(x = "normParam", i = "missing", j = "missing", value = "list"),
+    signature(x = "processParam", i = "missing", j = "missing", value = "list"),
     function(x, value) {
         x@param <- value
         return(initialize(x))

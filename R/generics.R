@@ -85,31 +85,21 @@ setGeneric(
 )
 
 
-# expression value normalization
-#' @title Normalize an object
-#' @name normalizeData
-#' @description Generic for normalizing an object containing measured values.
-#' `normalizeData()` is intended as the central API for accessing
-#' normalization workflows. Specific methods should be defined for it to
-#' help with pre or post processing specific to a data class type. No methods 
-#' for normalization are exported from \pkg{GiottoClass}. The methods, which may 
+#' @title Data Processing
+#' @name processData
+#' @description Generic for processing an object containing measured values.
+#' Specific methods should be defined for this generic to
+#' perform pre or post processing specific to a data class type. No methods
+#' are exported from \pkg{GiottoClass}. The methods, which may 
 #' differ depending on the input data, are attached from other packages which
-#' focus on analyses and/or alternative data representations.
+#' focus on analyses and/or alternative data representations with specific ways
+#' to implement those analyses.
 #' @param x a data object
-#' @param param a [normParam] inheriting object
+#' @param param a [processParam] inheriting object
 #' @param ... additional arguments, for use in specific methods
-#' @returns An object of the same class containing the normalized data
+#' @returns An object of the same class containing the processed
 #' @export
-setGeneric("normalizeData", function(x, param, ...) standardGeneric("normalizeData"))
-
-#' @title Scale values of an object
-#' @name scaleData
-#' @description Scaling and centering of values
-#' @param x a data object
-#' @param ... additional arguments, for use in specific methods
-#' @returns An object of the same class containing the scaled data
-#' @export
-setGeneric("scaleData", function(x, ...) standardGeneric("scaleData"))
+setGeneric("processData", function(x, param, ...) standardGeneric("processData"))
 
 # Methods and documentations found in methods-spatShift.R
 

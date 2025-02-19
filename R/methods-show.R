@@ -828,8 +828,8 @@ setMethod("as.character", signature("giottoLargeImage"), function(x, ...) {
     sprintf("<%s> %s", class(x), objName(x))
 })
 
-# normParam ####
-setMethod("show", signature("normParam"), function(object) {
+# processParam ####
+setMethod("show", signature("processParam"), function(object) {
     cat(sprintf("<%s>\n", class(object)))
     cat("params:\n")
     print_list(object[])

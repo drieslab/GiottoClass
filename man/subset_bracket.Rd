@@ -44,7 +44,7 @@
 \alias{[[,giottoLargeImage,gIndex,missing-method}
 \alias{[,giottoImage,missing,missing,missing-method}
 \alias{[,affine2d,missing,missing,missing-method}
-\alias{[,normParam,missing,missing,missing-method}
+\alias{[,processParam,missing,missing,missing-method}
 \title{Subset part of an object with \code{[} or \code{[[}}
 \usage{
 \S4method{[}{gdtData,gIndex,gIndex,missing}(x, i, j)
@@ -129,7 +129,7 @@
 
 \S4method{[}{affine2d,missing,missing,missing}(x, i, j)
 
-\S4method{[}{normParam,missing,missing,missing}(x)
+\S4method{[}{processParam,missing,missing,missing}(x)
 }
 \arguments{
 \item{x}{Giotto S4 object to subset information from}

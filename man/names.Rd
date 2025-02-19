@@ -4,14 +4,14 @@
 \alias{names}
 \alias{names,giottoLargeImage-method}
 \alias{names<-,giottoLargeImage-method}
-\alias{names,normParam-method}
+\alias{names,processParam-method}
 \title{Names of objects}
 \usage{
 \S4method{names}{giottoLargeImage}(x)
 
 \S4method{names}{giottoLargeImage}(x) <- value
 
-\S4method{names}{normParam}(x)
+\S4method{names}{processParam}(x)
 }
 \arguments{
 \item{x}{object}

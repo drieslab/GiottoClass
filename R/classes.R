@@ -328,17 +328,17 @@ setClass(
     )
 )
 
-#' `normParam` class
-#' @name normParam
+#' @title Parameter Classes for Data Processing Operations
+#' @name processParam
 #' @description
-#' Utility class that defines a data normalization procedure and any params 
-#' used in performing it. This is a VIRTUAL mother class. Packages defining normalization
-#' methods (and ways to implement them on data structures) will create their
-#' own child classes. These parameter objects are intended to be passed 
-#' alongside the data to normalize to [normalizeData()].
+#' Utility class that defines a data processing procedure and any params used
+#' in performing it. Packages defining processing methods will create their own 
+#' child classes. These parameter objects are intended to be passed alongside
+#' the data to process to [processData()].
+#' @slot param list. Named parameters to use with the intended processing
+#' operation. These can be accessed and updated using the `$` operator.
 #' @export
-setClass("normParam", contains = "VIRTUAL", slots = list(param = "list"))
-
+setClass("processParam", contains = "VIRTUAL", slots = list(param = "list"))
 
 # SUBCLASSES ####
 
