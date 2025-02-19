@@ -792,6 +792,7 @@ setMethod(
 )
 
 
+# affine2d ####
 
 #' @rdname show
 setMethod("show", signature("affine2d"), function(object) {
@@ -827,8 +828,12 @@ setMethod("as.character", signature("giottoLargeImage"), function(x, ...) {
     sprintf("<%s> %s", class(x), objName(x))
 })
 
-
-
+# normParam ####
+setMethod("show", signature("normParam"), function(object) {
+    cat(sprintf("<%s>\n", class(object)))
+    cat("params:\n")
+    print_list(object[])
+})
 
 
 
