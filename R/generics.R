@@ -102,6 +102,14 @@ setGeneric(
 #' @export
 setGeneric("normalizeData", function(x, param, ...) standardGeneric("normalizeData"))
 
+#' @title Scale values of an object
+#' @name scaleData
+#' @description Scaling and centering of values
+#' @param x a data object
+#' @param ... additional arguments, for use in specific methods
+#' @returns An object of the same class containing the scaled data
+#' @export
+setGeneric("scaleData", function(x, ...) standardGeneric("scaleData"))
 
 # Methods and documentations found in methods-spatShift.R
 
