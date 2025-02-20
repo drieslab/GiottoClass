@@ -665,6 +665,7 @@ set_giotto_python_path <- function(
             "active environment :", py,
             "python version :", getOption("giotto.py_active_ver")
         ))
+        return(invisible())
     }
 
     # get path in order of DECREASING priority #
