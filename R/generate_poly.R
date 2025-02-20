@@ -40,13 +40,12 @@
 #'
 #' @seealso [generate_grid] [tessellate]
 #' @export
-polyStamp <- function(
-        stamp_dt,
-        spatlocs,
-        id_col = "cell_ID",
-        x_col = "sdimx",
-        y_col = "sdimy",
-        verbose = TRUE) {
+polyStamp <- function(stamp_dt,
+    spatlocs,
+    id_col = "cell_ID",
+    x_col = "sdimx",
+    y_col = "sdimy",
+    verbose = TRUE) {
     # data.table vars
     spatlocs_idx <- rel_vertices_idx <- poly_ID <- NULL
 
@@ -121,9 +120,8 @@ polyStamp <- function(
 #' @examples
 #' circleVertices(radius = 10)
 #' @export
-circleVertices <- function(
-        radius,
-        npoints = 25) {
+circleVertices <- function(radius,
+    npoints = 25) {
     a <- seq(0, 2 * pi, length.out = npoints + 1)
     x <- radius * cos(a)
     y <- radius * sin(a)
@@ -226,13 +224,17 @@ hexVertices <- function(radius, major_axis = c("v", "h")) {
 #' @param shape_size numeric. Size of shape to tessellate. (x-axis width for
 #' hexagons, side length for squares)
 #' @param name name of giottoPolygons grid to make
-#' @param gap numeric. Shrink polygons to add a gap between tessellated polygons
+#' @param gap numeric. Shrink polygons to add a gap between tessellated
+#' polygons. See details
 #' @param id_prefix character. prefix to add to poly_ID names generated
 #' @param radius deprecated. numeric. Radius size of the tessellation grid.
 #' @details This function generates a tessellated grid of spatial locations
-#' based on the input spatial locations. The shape of the tessellation grid
-#' can be either hexagonal or square. The shape_size parameter determines the
-#' size of the grid cells or the bin size.
+#' based on the input spatial locations. The `shape` of the tessellation grid
+#' can be either hexagonal or square. The `shape_size` parameter determines the
+#' size of the grid cells or the bin size. Applying a `gap` will not change the
+#' center to center distance or change centroid location. For example, a
+#' square tessellation with `shape_size` of 10 and `gap` of 9 will produce 1x1
+#' polygons with size 9 gutter space between polys.
 #' @returns A giottoPolygon
 #' @examples
 #' # Create an extent across which to generate tessellated polygons
@@ -250,14 +252,13 @@ hexVertices <- function(radius, major_axis = c("v", "h")) {
 #' plot(x)
 #' @concept spatial location
 #' @export
-tessellate <- function(
-        extent,
-        shape = c("hexagon", "square"),
-        shape_size = NULL,
-        gap = 0,
-        radius = NULL,
-        id_prefix = "ID_",
-        name = "grid") {
+tessellate <- function(extent,
+    shape = c("hexagon", "square"),
+    shape_size = NULL,
+    gap = 0,
+    radius = NULL,
+    id_prefix = "ID_",
+    name = "grid") {
     if (is.null(radius) && is.null(shape_size)) stop("shape_size must be given")
     if (!is.null(radius)) shape_size <- radius * 2
 
@@ -409,11 +410,10 @@ orthoGrid <- function(extent, ccd, id_prefix = "ID_") {
 #' plot(x)
 #' @concept spatial location
 #' @export
-makePseudoVisium <- function(
-        extent = NULL,
-        micron_scale = 1,
-        micron_size = deprecated(),
-        name = "pseudo_visium") {
+makePseudoVisium <- function(extent = NULL,
+    micron_scale = 1,
+    micron_size = deprecated(),
+    name = "pseudo_visium") {
     if (is_present(micron_size)) {
         micron_size <- 1 / micron_size
     }
