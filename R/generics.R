@@ -6,6 +6,7 @@ NULL
 # Giotto Object Settings ####
 # Methods and documentations found in methods-IDs.R
 setGeneric("spatIDs", function(x, ...) standardGeneric("spatIDs"))
+setGeneric("spatIDs<-", function(x, ..., value) standardGeneric("spatIDs<-"))
 setGeneric("featIDs", function(x, ...) standardGeneric("featIDs"))
 
 ## instructions ####

@@ -1,5 +1,8 @@
 # GiottoClass 0.4.7 (2025/02/04)
 
+## new
+- `spatIDs()<-` for `giottoPolygon`
+
 ## bug fixes
 - fixes and updates for {spatialdata} and {anndata} interoperability.
 - fix bug introduced in 0.4.6 with `shear()` for `giottoPolygon`.
