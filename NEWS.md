@@ -1,5 +1,8 @@
 # GiottoClass 0.4.7 (2025/02/04)
 
+## new
+- `spatIDs()<-` for `giottoPolygon`
+
 ## bug fixes
 - fixes and updates for {spatialdata} and {anndata} interoperability.
 - fix bug introduced in 0.4.6 with `shear()` for `giottoPolygon`.
@@ -10,6 +13,7 @@
 - fix `giottoToSeuratV5()` selection of a default image to use
 - replace internal usage of deprecated create_spat_net_obj -> createSpatNetObj and set_spatialNetwork -> setSpatialNetwork when calculating spatial networks.
 - fix `createGiottoPolygon()` not preserving attributes from `data.table` inputs
+- fix `loadGiotto()` error when a non-expected reticulate environment is already activated in the session
 
 ## changes
 - move {magick} from imports to suggests
