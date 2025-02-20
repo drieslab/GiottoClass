@@ -349,6 +349,29 @@ setMethod("$", signature("affine2d"), function(x, name) {
     c("affine", "order", "rotate", "shear", "scale", "translate")
 }
 
+#' @rdname subset_dollar
+#' @section \code{`$`} methods:
+#'   Select param from `processParam` inheriting objects
+#' @export
+setMethod("$", signature("processParam"), function(x, name) {
+    x@param[[name]]
+})
+#' @export
+.DollarNames.processParam <- function(x, pattern) {
+    names(x@param)
+}
+
+#' @rdname replace_dollar
+#' @section \code{`$<-`} methods:
+#'   Set values by param name into `processParam` inheriting objects
+#' @export
+setMethod(
+    "$<-", signature("processParam"),
+    function(x, name, value) {
+        x@param[[name]] <- value
+        return(initialize(x))
+    }
+)
 
 # [ S4 access generic ####
 
@@ -1174,6 +1197,7 @@ setMethod(
     }
 )
 
+# * affine2d ####
 #' @rdname subset_bracket
 #' @export
 setMethod(
@@ -1202,8 +1226,24 @@ setMethod(
     }
 )
 
+# * processParam ####
+#' @rdname subset_bracket
+#' @export
+setMethod("[", 
+    signature(x = "processParam", 
+              i = "missing", j = "missing", drop = "missing"),
+    function(x) x@param
+)
 
-
+#' @rdname replace_bracket
+#' @export
+setMethod("[<-",
+    signature(x = "processParam", i = "missing", j = "missing", value = "list"),
+    function(x, value) {
+        x@param <- value
+        return(initialize(x))
+    }
+)
 
 
 # giotto subsets ####
