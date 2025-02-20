@@ -5,7 +5,7 @@ NULL
 #' @title Spatial and feature IDs
 #' @name spatIDs-generic
 #' @aliases spatIDs<-
-#' @description Get the cell/spot IDs 
+#' @description Get the cell/spot IDs
 #' (termed spatial IDs to better reflect when not at the single-cell level)
 #' and feature IDs of a giotto object or subobject.
 #'
@@ -172,8 +172,9 @@ setMethod(
     "spatIDs<-", signature(x = "giottoPolygon"),
     function(x, old = NULL, ..., value) {
         if (!is.null(x@overlaps)) {
-            warning("dropping overlaps information due to ID change", 
-                    call. = FALSE)
+            warning("dropping overlaps information due to ID change",
+                call. = FALSE
+            )
             x@overlaps <- NULL
         }
 
@@ -185,10 +186,11 @@ setMethod(
             i <- match(old, spatIDs(x))
             matched <- !is.na(i)
             if (any(!matched)) {
-                wrap_txtf("spatIDs<-(): old ID(s) not discovered:\n %s.\n
-                          Skipping associated replacement values:\n '%s'", 
-                          paste(old[!matched], collapse = "', '"),
-                          paste(value[!matched], collapse = "', '")
+                wrap_txtf(
+                    "spatIDs<-(): old ID(s) not discovered:\n %s.\n
+                          Skipping associated replacement values:\n '%s'",
+                    paste(old[!matched], collapse = "', '"),
+                    paste(value[!matched], collapse = "', '")
                 ) %>%
                     warning(call. = FALSE)
             }

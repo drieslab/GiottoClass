@@ -224,7 +224,7 @@ hexVertices <- function(radius, major_axis = c("v", "h")) {
 #' @param shape_size numeric. Size of shape to tessellate. (x-axis width for
 #' hexagons, side length for squares)
 #' @param name name of giottoPolygons grid to make
-#' @param gap numeric. Shrink polygons to add a gap between tessellated 
+#' @param gap numeric. Shrink polygons to add a gap between tessellated
 #' polygons. See details
 #' @param id_prefix character. prefix to add to poly_ID names generated
 #' @param radius deprecated. numeric. Radius size of the tessellation grid.
@@ -232,7 +232,7 @@ hexVertices <- function(radius, major_axis = c("v", "h")) {
 #' based on the input spatial locations. The `shape` of the tessellation grid
 #' can be either hexagonal or square. The `shape_size` parameter determines the
 #' size of the grid cells or the bin size. Applying a `gap` will not change the
-#' center to center distance or change centroid location. For example, a 
+#' center to center distance or change centroid location. For example, a
 #' square tessellation with `shape_size` of 10 and `gap` of 9 will produce 1x1
 #' polygons with size 9 gutter space between polys.
 #' @returns A giottoPolygon
