@@ -8,19 +8,19 @@ NULL
 #' @aliases spatUnit spatUnit<- featType featType<- objName objName<- prov prov<-
 #' @description Data within the `giotto` object is organized in a schema
 #' largely revolving around the **spatial unit** (which spatial length scale or
-#' polygonal annotation that is used as the unit of study) and the 
+#' polygonal annotation that is used as the unit of study) and the
 #' **feature type** (data modality). Information is then further organized
 #' based on the **name** or key of the object. In cases where a single
-#' spatial unit is comprised of information from multiple others, 
+#' spatial unit is comprised of information from multiple others,
 #' **provenance** is tracked to keep a record of which spatial units were the
 #' sources of that data. The functions to get and set these aspects of the
 #' schema on the Giotto object and subobjects are:
-#' 
+#'
 #' * **spatial unit:** `spatUnit()`, `spatUnit<-()`
 #' * **feature type:** `featType()`, `featType<-()`
 #' * **name:**         `objName()`, `objName<-()`
 #' * **provenance:**   `prov()`, `prov<-()`
-#' 
+#'
 #' @param x `giotto` or \{Giotto\} S4 subobject
 #' @param old character. Old value to replace
 #' @param value value to set for this schema component
@@ -29,44 +29,44 @@ NULL
 #' or subobject is returned
 #' @examples
 #' g <- GiottoData::loadGiottoMini("vizgen")
-#' 
+#'
 #' ########### Get/set existing schema values within giotto object ####
 #' spatUnit(g)
 #' featType(g)
-#' 
+#'
 #' # rename a spatial unit
 #' spatUnit(g, old = "z0") <- "slice1"
 #' spatUnit(g)
-#' 
+#'
 #' # rename a feature type
 #' featType(g, old = "rna") <- "feature1"
 #' featType(g)
-#' 
+#'
 #' ########### Get schema values from a list of objects ###############
-#' 
+#'
 #' glist <- as.list(g)
 #' spatUnit(glist)
 #' featType(glist)
 #' objName(glist)
-#' 
+#'
 #' ########### Get and set schema values with single subobject ########
-#' 
+#'
 #' fx <- g[["feat_meta", spat_unit = "aggregate"]][[1]]
-#' 
+#'
 #' spatUnit(fx)
 #' spatUnit(fx) <- "foo"
 #' spatUnit(fx)
-#' 
+#'
 #' featType(fx)
 #' featType(fx) <- "bar"
 #' featType(fx)
-#' 
+#'
 #' ex <- g[["expression", spat_unit = "aggregate"]][[1]]
-#' 
+#'
 #' objName(ex)
 #' objName(ex) <- "baz"
 #' objName(ex)
-#' 
+#'
 #' prov(ex)
 #' prov(ex) <- "qux"
 #' prov(ex)
@@ -149,13 +149,15 @@ setMethod("spatUnit<-", signature("giotto"), function(x, old, value) {
     checkmate::assert_character(old, len = 1L)
     checkmate::assert_character(value, len = 1L)
     if (!isTRUE(old %in% spatUnit(x))) {
-        stop("spat_unit replace: spatial unit ", old, " does not exist\n", 
-             call. = FALSE)
+        stop("spat_unit replace: spatial unit ", old, " does not exist\n",
+            call. = FALSE
+        )
     }
     glist <- as.list(x)
-    for(item_i in seq_along(glist)) {
-        if (isTRUE(spatUnit(glist[[item_i]]) == old))
-        spatUnit(glist[[item_i]]) <- value
+    for (item_i in seq_along(glist)) {
+        if (isTRUE(spatUnit(glist[[item_i]]) == old)) {
+            spatUnit(glist[[item_i]]) <- value
+        }
     }
     g <- giotto(
         images = x@images,
@@ -174,12 +176,14 @@ setMethod("spatUnit<-", signature("giotto"), function(x, old, value) {
         length(spatUnit(g)) >= 1L) {
         first_spat <- spatUnit(g)[[1]]
         activeSpatUnit(g) <- first_spat
-        warning(wrap_txtf(
-            "activeSpatUnit \'%s\' no longer exists.
-            activeSpatUnit defaulted to \'%s\'", 
-            active_spat, first_spat
-        ),
-        call. = FALSE)
+        warning(
+            wrap_txtf(
+                "activeSpatUnit \'%s\' no longer exists.
+            activeSpatUnit defaulted to \'%s\'",
+                active_spat, first_spat
+            ),
+            call. = FALSE
+        )
     }
     return(g)
 })
@@ -246,13 +250,15 @@ setMethod("featType<-", signature("giotto"), function(x, old, value) {
     checkmate::assert_character(old, len = 1L)
     checkmate::assert_character(value, len = 1L)
     if (!isTRUE(old %in% featType(x))) {
-        stop("feat_type replace: feature type ", old, " does not exist\n", 
-             call. = FALSE)
+        stop("feat_type replace: feature type ", old, " does not exist\n",
+            call. = FALSE
+        )
     }
     glist <- as.list(x)
-    for(item_i in seq_along(glist)) {
-        if (isTRUE(featType(glist[[item_i]]) == old))
+    for (item_i in seq_along(glist)) {
+        if (isTRUE(featType(glist[[item_i]]) == old)) {
             featType(glist[[item_i]]) <- value
+        }
     }
     g <- giotto(
         images = x@images,
@@ -265,14 +271,14 @@ setMethod("featType<-", signature("giotto"), function(x, old, value) {
         initialize = FALSE
     )
     g <- setGiotto(g, glist, initialize = TRUE, verbose = FALSE)
-    
+
     active_feat <- activeFeatType(g)
     if (!isTRUE(active_feat %in% featType(g)) &&
         length(featType(g)) >= 1L) {
         first_feat <- featType(g)[[1]]
         activeFeatType(g) <- first_feat
         warning(wrap_txtf(
-            "activeFeatType \'%s\' no longer exists. 
+            "activeFeatType \'%s\' no longer exists.
             activeFeatType defaulted to \'%s\'",
             active_feat, first_feat
         ), call. = FALSE)

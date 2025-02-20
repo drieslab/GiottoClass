@@ -35,17 +35,32 @@ jobs:
       - name: Generate coverage report and upload
         run: |
           remotes::install_github('drieslab/GiottoData', upgrade = 'never', auth_token = Sys.getenv("GITHUB_PAT"))
-          covr::codecov(
-            quiet = FALSE,
-            clean = FALSE,
-            branch = "dev",
+          # Create and save HTML report
+          coverage_report <- covr::package_coverage(
             type = c("tests", "examples", "vignettes"),
             combine_types = TRUE,
+            quiet = TRUE,
+            clean = FALSE,
             install_path = file.path(Sys.getenv("RUNNER_TEMP"), "package")
+          )
+          covr::report(coverage_report, file = "coverage-report.html", browse = FALSE)
+          
+          # Upload to Codecov
+          covr::codecov(
+            coverage = coverage_report,
+            branch = "dev",
+            quiet = FALSE
           )
         shell: Rscript {0}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          
+      - name: Upload coverage HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage-report.html
+          retention-days: 30
 
   rcmdcheck:
     runs-on: ubuntu-latest

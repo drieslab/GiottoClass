@@ -1,5 +1,8 @@
 # GiottoClass 0.4.7 (2025/02/04)
 
+## new
+- `spatIDs()<-` for `giottoPolygon`
+
 ## bug fixes
 - fixes and updates for {spatialdata} and {anndata} interoperability.
 - fix bug introduced in 0.4.6 with `shear()` for `giottoPolygon`.
@@ -9,6 +12,7 @@
 - fix external affine matrix compatibility. `affine()` now has `pre_multiply` param to switch between working with affine matrices defined for either pre or post-multiply. Pre is the general convention, but Giotto internally uses post. This will be addressed in a later update.
 - fix `giottoToSeuratV5()` selection of a default image to use
 - replace internal usage of deprecated create_spat_net_obj -> createSpatNetObj and set_spatialNetwork -> setSpatialNetwork when calculating spatial networks.
+- fix `createGiottoPolygon()` not preserving attributes from `data.table` inputs
 
 ## changes
 - move {magick} from imports to suggests
@@ -18,6 +22,7 @@
 - `XY()` replacement function for `SpatVector` now has `geomtype` param in case of `"none"` geometries
 - `negate` param for negative selection in `sliceGiotto()`
 - `spatUnit()` and `featType()` method for `giotto` to find existing spatial units and feature types
+- expose `make_valid` param and `...` passing for `createGiottoPolygon()` `data.frame` method
 
 # GiottoClass 0.4.6 (2025/01/17)
 

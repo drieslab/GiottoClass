@@ -25,7 +25,8 @@ and "square".}
 \item{shape_size}{numeric. Size of shape to tessellate. (x-axis width for
 hexagons, side length for squares)}
 
-\item{gap}{numeric. Shrink polygons to add a gap between tessellated polygons}
+\item{gap}{numeric. Shrink polygons to add a gap between tessellated
+polygons. See details}
 
 \item{radius}{deprecated. numeric. Radius size of the tessellation grid.}
 
@@ -42,9 +43,12 @@ spatial extent
 }
 \details{
 This function generates a tessellated grid of spatial locations
-based on the input spatial locations. The shape of the tessellation grid
-can be either hexagonal or square. The shape_size parameter determines the
-size of the grid cells or the bin size.
+based on the input spatial locations. The \code{shape} of the tessellation grid
+can be either hexagonal or square. The \code{shape_size} parameter determines the
+size of the grid cells or the bin size. Applying a \code{gap} will not change the
+center to center distance or change centroid location. For example, a
+square tessellation with \code{shape_size} of 10 and \code{gap} of 9 will produce 1x1
+polygons with size 9 gutter space between polys.
 }
 \examples{
 # Create an extent across which to generate tessellated polygons
