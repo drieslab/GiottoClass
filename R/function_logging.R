@@ -27,26 +27,28 @@
 #'
 #' update_giotto_params(g, toplevel = 1)
 #' @export
-update_giotto_params <- function(gobject,
-    description = "_test",
-    return_gobject = TRUE,
-    toplevel = 2) {
+update_giotto_params <- function(
+        gobject,
+        description = "_test",
+        return_gobject = TRUE,
+        toplevel = 2) {
     parameters_list <- gobject@parameters
     number_of_rounds <- length(parameters_list)
     update_name <- paste0(number_of_rounds, description)
 
     # return before updating if toplevel negative or global setting is FALSE
-    if (skip_update <- toplevel < 0 || 
+    if (skip_update <- toplevel < 0 ||
         !getOption("giotto.update_param", TRUE)) {
-        if (isTRUE(return_gobject)) return(gobject)
-        else {
+        if (isTRUE(return_gobject)) {
+            return(gobject)
+        } else {
             return(list(
-                plist = parameters_list, 
+                plist = parameters_list,
                 newname = names(tail(parameters_list, 1L))
             ))
         }
-    } 
-    
+    }
+
     # `get_args()` can be problematic. Allow skip right before this step.
 
     # update parameters list

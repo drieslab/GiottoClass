@@ -194,17 +194,16 @@
 #' )
 #'
 #' @export
-joinGiottoObjects <- function(
-        gobject_list,
-        gobject_names = NULL,
-        join_method = c("shift", "z_stack", "no_change"),
-        z_vals = 1000,
-        x_shift = NULL,
-        y_shift = NULL,
-        x_padding = NULL,
-        y_padding = NULL,
-        dry_run = FALSE,
-        verbose = FALSE) {
+joinGiottoObjects <- function(gobject_list,
+    gobject_names = NULL,
+    join_method = c("shift", "z_stack", "no_change"),
+    z_vals = 1000,
+    x_shift = NULL,
+    y_shift = NULL,
+    x_padding = NULL,
+    y_padding = NULL,
+    dry_run = FALSE,
+    verbose = FALSE) {
     # NSE vars
     sdimz <- cell_ID <- sdimx <- sdimy <- name <- NULL
 

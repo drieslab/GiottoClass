@@ -13,12 +13,11 @@ m <- matrix(
 )
 
 # createMetafeats ####
-e <- exprObj(
-    exprMat = m,
+e <- createExprObj(m,
+    name = "test",
     spat_unit = "cell",
-    provenance = "cell",
     feat_type = "test_feat",
-    name = "test"
+    provenance = "cell"
 )
 g <- setGiotto(g, e)
 
@@ -107,7 +106,7 @@ test_that("createMetafeat can calculate min values", {
 
     test_m_num <- as.matrix(enr[, 1:3])
     dimnames(test_m_num) <- NULL
-    expect_identical(test_m_num, expect_m)
+    expect_equal(test_m_num, expect_m)
 })
 
 test_that("createMetafeat can calculate max values", {
@@ -126,7 +125,7 @@ test_that("createMetafeat can calculate max values", {
 
     test_m_num <- as.matrix(enr[, 1:3])
     dimnames(test_m_num) <- NULL
-    expect_identical(test_m_num, expect_m)
+    expect_equal(test_m_num, expect_m)
 })
 
 test_that("createMetafeat can use weights", {

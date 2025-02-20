@@ -119,17 +119,16 @@ setMethod("ext", signature("giottoImage"), function(x, ...) {
 #' only "images" at the moment, which produces a combined `SpatExtent`
 #' @param verbose be verbose
 #' @export
-setMethod("ext", signature("giotto"), function(
-        x,
-        spat_unit = ":all:",
-        feat_type = ":all:",
-        all_data = TRUE,
-        prefer = c("polygon", "spatlocs", "points", "images"),
-        name = list(
-            spatlocs = ":all:"
-        ),
-        verbose = NULL,
-        ...) {
+setMethod("ext", signature("giotto"), function(x,
+    spat_unit = ":all:",
+    feat_type = ":all:",
+    all_data = TRUE,
+    prefer = c("polygon", "spatlocs", "points", "images"),
+    name = list(
+        spatlocs = ":all:"
+    ),
+    verbose = NULL,
+    ...) {
     data_types <- c("polygon", "spatlocs", "points", "images")
 
     if (!is.null(name)) {
@@ -244,13 +243,15 @@ setMethod("ext", signature("affine2d"), function(x, ...) ext(x@anchor))
 
 #' @rdname ext
 #' @export
-setMethod("ext<-", signature(x = "spatLocsObj", value = "SpatExtent"),
+setMethod(
+    "ext<-", signature(x = "spatLocsObj", value = "SpatExtent"),
     function(x, value) .set_ext_vector(x, value)
 )
 
 #' @rdname ext
 #' @export
-setMethod("ext<-", signature(x = "spatialNetworkObj", value = "SpatExtent"),
+setMethod(
+    "ext<-", signature(x = "spatialNetworkObj", value = "SpatExtent"),
     function(x, value) {
         warning("ext<- not supported for spatialNetworkObj", call. = FALSE)
         x
@@ -273,7 +274,8 @@ setMethod(
 
 #' @rdname ext
 #' @export
-setMethod("ext<-", signature(x = "giottoLargeImage", value = "SpatExtent"), 
+setMethod(
+    "ext<-", signature(x = "giottoLargeImage", value = "SpatExtent"),
     function(x, value) {
         terra::ext(x@raster_object) <- value
         x@extent <- value
@@ -283,7 +285,8 @@ setMethod("ext<-", signature(x = "giottoLargeImage", value = "SpatExtent"),
 
 #' @rdname ext
 #' @export
-setMethod("ext<-", signature(x = "giottoAffineImage", value = "SpatExtent"),
+setMethod(
+    "ext<-", signature(x = "giottoAffineImage", value = "SpatExtent"),
     function(x, value) .set_ext_vector(x, value)
 )
 

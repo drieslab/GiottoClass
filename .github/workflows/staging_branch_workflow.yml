@@ -1,0 +1,194 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    branches: [ staging ]
+
+name: STAGING final checks
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  R-CMD-check:
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config: # matrix of system runners to run workflow on
+          - {os: macOS-latest,   r: 'release'}
+          - {os: windows-latest, r: 'release'}
+          # - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
+          - {os: ubuntu-latest,   r: 'release'}
+          - {os: ubuntu-latest,   r: 'oldrel-1'} # incompatible with R 4.4
+
+    steps:
+
+      - name: Checkout repo for workflow access
+        uses: actions/checkout@v4
+
+      - name: Setup pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+
+      - name: Install XQuartz on macOS
+        if: runner.os == 'macOS'
+        run: |
+          brew install --cask xquartz
+          
+      - name: Install X11 on Ubuntu
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libx11-dev libglu1-mesa-dev libfreetype6-dev
+
+      - name: Set up R environment
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+
+      - name: Set up dependencies (general)
+        uses: r-lib/actions/setup-r-dependencies@v2
+        env:
+          _R_CHECK_FORCE_SUGGESTS: false
+          _R_CHECK_RD_XREFS: false
+        with:
+          dependencies: '"hard"' # do not use suggested dependencies
+          install-pandoc: false
+          extra-packages: |
+            any::rcmdcheck
+            any::testthat
+            any::rlang
+            any::R.utils
+            any::knitr
+            any::rmarkdown
+            any::qs
+            any::sp
+            any::stars
+            any::raster
+            any::sf
+            any::scattermore
+            any::exactextractr
+            any::RTriangle
+            any::geometry
+            any::qs
+            any::future.apply
+            any::Biobase
+            any::chihaya
+            any::DelayedArray
+            any::DelayedMatrixStats
+            any::HDF5Array
+            any::plotly
+            any::rgl
+            any::rhdf5
+            any::S4Vectors
+            any::ScaledMatrix
+            any::XML
+            any::Seurat
+            any::SeuratObject
+            any::SingleCellExperiment
+            any::SpatialExperiment
+            any::STexampleData
+            any::SummarizedExperiment
+            github::drieslab/GiottoData
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: setup giotto_env
+        shell: Rscript {0}
+        run: |
+          if (!GiottoClass::checkGiottoEnvironment()) {
+            GiottoClass::installGiottoEnvironment()
+          }
+          
+          reticulate::conda_install(
+            envname = 'giotto_env',
+            packages = 'scanpy',
+            pip = TRUE
+          )
+          
+          path_to_python <- GiottoClass::set_giotto_python_path()
+          
+          writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
+                     Sys.getenv("GITHUB_ENV"))
+
+      - name: Run R CMD check
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          error-on: '"error"' # workflow errors on error only, can change to include warnings
+
+  codecov:
+    needs: R-CMD-check
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/drieslab/ci-giottosuite/ci-env
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history and tags
+      - name: Set up GitHub token for R
+        run: echo "GITHUB_PAT=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+      - name: giotto-deps
+        run: remotes::install_github('drieslab/GiottoUtils', upgrade = 'never')
+        shell: Rscript {0}
+      - name: catch R deps not in container
+        run: devtools::install_deps()
+        shell: Rscript {0}
+      - name: Generate coverage report and upload
+        run: |
+          remotes::install_github('drieslab/GiottoData', upgrade = 'never', auth_token = Sys.getenv("GITHUB_PAT"))
+          covr::codecov(
+            quiet = FALSE,
+            clean = FALSE,
+            branch = "staging",
+            type = c("tests", "examples", "vignettes"),
+            combine_types = TRUE,
+            install_path = file.path(Sys.getenv("RUNNER_TEMP"), "package", auth_token = Sys.getenv("GITHUB_PAT"))
+          )
+        shell: Rscript {0}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  
+  bioccheck:
+    needs: R-CMD-check
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/drieslab/ci-giottosuite/ci-env
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history and tags
+      - name: Set up GitHub token for R
+        run: echo "GITHUB_PAT=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+      - name: giotto-deps
+        run: remotes::install_github('drieslab/GiottoUtils', upgrade = 'never', auth_token = Sys.getenv("GITHUB_PAT"))
+        shell: Rscript {0}
+      - name: catch R deps not in container
+        run: devtools::install_deps()
+        shell: Rscript {0}
+      - name: Build and install
+        run: |
+          R CMD build . --no-build-vignettes
+          R CMD INSTALL *.tar.gz
+      - name: Run BiocCheck
+        run: |
+          remotes::install_github('drieslab/GiottoData', upgrade = 'never', auth_token = Sys.getenv("GITHUB_PAT"))
+          BiocCheck::BiocCheck()
+        shell: Rscript {0}
+

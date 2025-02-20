@@ -16,10 +16,14 @@ setMethod(
     "initialize", signature("giotto"),
     function(.Object, ..., initialize = TRUE) {
         .Object <- methods::callNextMethod(.Object, ...)
-        handle_errors({
-            .init_gobject(.Object = .Object, ..., initialize = initialize)
-        }, prefix = "giotto initialize")
-})
+        handle_errors(
+            {
+                .init_gobject(.Object = .Object, ..., initialize = initialize)
+            },
+            prefix = "giotto initialize"
+        )
+    }
+)
 
 
 
@@ -333,83 +337,83 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
         return(.Object)
     }
     .Object <- updateGiottoObject(.Object)
-    
+
     vmsg(.is_debug = TRUE, .initial = "  ", "!!giotto.initialize run!!")
-    
+
     # DT vars
     spat_unit <- feat_type <- NULL
-    
+
     # a = list(...)
-    
-    
+
+
     # TODO
     ## set slots ##
     ## --------- ##
-    
+
     # if('spatial_info' %in% names(a)) {
     #   .Object = setPolygonInfo(.Object, gpolygon = a$spatial_info)
     # }
     # if('expression' %in% names(a)) {
     #   .Object = setExpression(.Object, values = a$expression)
     # }
-    
-    
-    
-    
-    
+
+
+
+
+
     ## set instructions ##
     ## ---------------- ##
-    
+
     # set default instructions (make sure initialize = FALSE)
     if (is.null(instructions(.Object))) {
         instructions(.Object, initialize = FALSE) <- createGiottoInstructions()
     }
-    
+
     ## test python module availability if a python env is expected ##
     .check_giotto_python_modules(
         my_python_path = instructions(.Object, "python_path")
     )
-    
-    
-    
+
+
+
     ## Slot Detection ##
     ## -------------- ##
-    
+
     # detect expression and subcellular data
     avail_expr <- list_expression(.Object)
     avail_si <- list_spatial_info(.Object)
     avail_fi <- list_feature_info(.Object)
-    
+
     used_spat_units <- unique(c(avail_expr$spat_unit, avail_si$spat_info))
     used_feat_types <- unique(c(avail_expr$feat_type, avail_fi$feat_info))
-    
+
     # detect ID slots
     avail_cid <- list_cell_id_names(.Object)
     avail_fid <- list_cell_id_names(.Object)
-    
+
     # detect metadata slots
     avail_cm <- list_cell_metadata(.Object)
     avail_fm <- list_feat_metadata(.Object)
-    
+
     # detect spatial location slot
     avail_sl <- list_spatial_locations(.Object)
-    
+
     # detect nearest network slot
     avail_nn <- list_nearest_networks(.Object)
-    
+
     # detect dimension reduction slot
     avail_dr <- list_dim_reductions(.Object)
-    
+
     # detect spatial network slot
     avail_sn <- list_spatial_networks(.Object)
-    
+
     # detect spatial enrichment slot
     avail_se <- list_spatial_enrichments(.Object)
-    
-    
+
+
     ## Perform any subobject updates ##
     ## ----------------------------- ##
-    
+
     # Feature Info #
     if (!is.null(avail_fi)) {
         info_list <- get_feature_info_list(.Object)
@@ -430,12 +434,12 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
         )
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
     }
-    
-    
+
+
     # Spatial Info #
     if (!is.null(avail_si)) {
         info_list <- get_polygon_info_list(.Object)
-        
+
         # update S4 object if needed
         info_list <- lapply(info_list, function(info) {
             try_val <- try(validObject(info), silent = TRUE)
@@ -454,25 +458,25 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
         )
         ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     ## Set active/default spat_unit and feat_type ##
     ## ------------------------------------------ ##
-    
+
     # detect if actives are set in giotto instructions
     active_su <- try(instructions(.Object, "active_spat_unit"), silent = TRUE)
     active_ft <- try(instructions(.Object, "active_feat_type"), silent = TRUE)
-    
+
     # determine actives using defaults if data exists then set
     if (inherits(active_su, "try-error")) {
         if (!is.null(avail_expr) | !is.null(avail_si)) {
             active_su <- set_default_spat_unit(gobject = .Object)
             instructions(.Object, "active_spat_unit",
-                         initialize = FALSE
+                initialize = FALSE
             ) <- active_su
         }
     }
@@ -483,16 +487,16 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
                 spat_unit = active_su
             )
             instructions(.Object, "active_feat_type",
-                         initialize = FALSE
+                initialize = FALSE
             ) <- active_ft
         }
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     ## Set expression_feat ##
     ## ------------------- ##
     e_feat <- used_feat_types
@@ -501,20 +505,20 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
         e_feat <- c(e_feat[rna_idx], e_feat[-rna_idx])
     }
     .Object@expression_feat <- e_feat
-    
-    
-    
-    
-    
+
+
+
+
+
     ## Ensure Consistent IDs ##
     ## --------------------- ##
-    
+
     # cell IDs can be expected to be constant across a spatial unit
-    
+
     # expression
     if (!is.null(avail_expr)) {
         unique_expr_sets <- unique(avail_expr[, .(spat_unit, feat_type)])
-        
+
         for (set_i in nrow(unique_expr_sets)) {
             exp_list <- get_expression_values_list(
                 gobject = .Object,
@@ -523,7 +527,7 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
                 output = "exprObj",
                 set_defaults = FALSE
             )
-            
+
             exp_list_names <- lapply(exp_list, spatIDs)
             list_match <- vapply(
                 exp_list_names,
@@ -541,26 +545,26 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
             }
         }
     }
-    
-    
-    
-    
+
+
+
+
     # MIGHT BE CHANGED IN THE FUTURE
     # feat_IDs cannot be expected to be constant across spat units.
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
     ## ID initialization ##
     ## ----------------- ##
-    
+
     # Must be after default spat_unit/feat_type are set.
     # feat_ID initialization depends on active spat_unit
-    
-    
+
+
     # Initialization of cell_ID and feat_ID slots. These slots hold their     #
     # respective IDs for each spatial unit and feature type respectively.     #
     #                                                                         #
@@ -568,30 +572,30 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
     #                                                                         #
     # expression information is PREFERRED for ID initialization.              #
     # subcellular information, being raw data may also be used.               #
-    
+
     .Object <- init_cell_and_feat_IDs(gobject = .Object)
-    
-    
-    
-    
-    
+
+
+
+
+
     ## Metadata initialization ##
     ## ----------------------- ##
-    
+
     # Initialization of all spat_unit/feat_type combinations if the metadata  #
     # does not currently exist.                                               #
-    
+
     # provenance is always updated from matched expression info if existing
-    
-    
-    
+
+
+
     for (spatial_unit in used_spat_units) {
         for (feature_type in used_feat_types) {
             provenance <- NULL
             # get expression for provenance info
             if (!is.null(avail_expr)) {
                 if (nrow(avail_expr[spat_unit == spatial_unit &
-                                    feat_type == feature_type]) != 0L) {
+                    feat_type == feature_type]) != 0L) {
                     provenance <- prov(getExpression(
                         gobject = .Object,
                         spat_unit = spatial_unit,
@@ -601,9 +605,9 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
                     ))
                 }
             }
-            
+
             # initialize if no metadata exists OR none for this spat/feat
-            
+
             # cell metadata
             if (is.null(avail_cm)) {
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -617,7 +621,7 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
                 )
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             } else if (nrow(avail_cm[spat_unit == spatial_unit &
-                                     feat_type == feature_type]) == 0L) {
+                feat_type == feature_type]) == 0L) {
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
                 .Object <- set_cell_metadata(
                     gobject = .Object,
@@ -629,7 +633,7 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
                 )
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             }
-            
+
             # feature metadata
             if (is.null(avail_fm)) {
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -643,7 +647,7 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
                 )
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             } else if (nrow(avail_fm[spat_unit == spatial_unit &
-                                     feat_type == feature_type]) == 0L) {
+                feat_type == feature_type]) == 0L) {
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
                 .Object <- set_feature_metadata(
                     gobject = .Object,
@@ -655,11 +659,11 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
                 )
                 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
             }
-            
-            
+
+
             # update provenance (always happens for all metadata objects)
             if (is.null(provenance)) next() # skip if no provenance info
-            
+
             cm <- getCellMetadata(
                 gobject = .Object,
                 spat_unit = spatial_unit,
@@ -694,99 +698,99 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
             ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
         }
     }
-    
-    
+
+
     # SLOT CHECKS ####
-    
+
     # option to skip checks
     if (!getOption("giotto.check_valid", TRUE)) {
         return(.Object)
     }
-    
+
     vmsg(.is_debug = TRUE, .initial = "  ", "!!giotto validity run!!")
-    
+
     ## Metadata ##
     ## ------------- ##
-    
+
     # spat_unit cross compatibility for metadata checks use spatIDs() to pull
     # the relevant set of spatIDs for that spatial unit.
-    
+
     if (!is.null(avail_cm)) {
         .check_cell_metadata(gobject = .Object) # modifies by reference
     }
-    
+
     if (!is.null(avail_fm)) {
         .check_feat_metadata(gobject = .Object) # modifies by reference
     }
-    
-    
+
+
     ## Spatial locations ##
     ## ----------------- ##
-    
+
     if (!is.null(avail_expr) && !is.null(avail_sl)) {
         # 1. ensure spatial locations and expression matrices have the same
         # cell IDs
         # 2. give cell IDs if not provided
         .check_spatial_location_data(gobject = .Object) # modifies by reference
     }
-    
-    
-    
+
+
+
     ## Spatial network ##
     ## --------------- ##
-    
+
     if (!is.null(avail_sl) && !is.null(avail_sn)) {
         # 1. ensure vertices have same IDs as seen in spat_unit for gobject
         # 2. ensure spatial locations of same spat_unit exists
         .check_spatial_networks(gobject = .Object)
     }
-    
-    
-    
+
+
+
     ## Spatial enrichment ##
     ## ------------------ ##
-    
+
     if (!is.null(avail_sl) && !is.null(avail_se)) {
         # 1. ensure IDs in enrichment match gobject for same spat_unit
         # 2. ensure spatial locations exist for same spat_unit
         .check_spatial_enrichment(gobject = .Object)
     }
-    
-    
-    
+
+
+
     ## Nearest networks ##
     ## ---------------- ##
-    
+
     if (!is.null(avail_expr) && !is.null(avail_nn)) {
         .check_nearest_networks(gobject = .Object)
     }
-    
-    
-    
+
+
+
     ## Dimension reduction ##
     ## ------------------- ##
-    
+
     if (!is.null(avail_dr)) {
         .Object <- .check_dimension_reduction(gobject = .Object)
     }
-    
-    
-    
+
+
+
     ## Spatial info ##
     ## ------------ ##
-    
+
     if (!is.null(avail_si) & !is.null(avail_sl)) {
         .check_spatial_info(gobject = .Object)
     }
-    
-    
-    
+
+
+
     ## validity check ##
     ## -------------- ##
     methods::validObject(.Object)
-    
-    
-    
+
+
+
     .Object
 }
 
@@ -861,9 +865,8 @@ init_cell_and_feat_IDs <- function(gobject) {
 #' and feature type in the giotto object.
 #' @returns cellMetaObjs
 #' @keywords internal
-init_cell_metadata <- function(
-        gobject,
-        provenance = NULL) {
+init_cell_metadata <- function(gobject,
+    provenance = NULL) {
     # data.table vars
     spat_unit <- feat_type <- NULL
 
@@ -931,9 +934,8 @@ init_cell_metadata <- function(
 #' @param provenance provenance information (optional)
 #' @returns featMetaObjs
 #' @keywords internal
-init_feat_metadata <- function(
-        gobject,
-        provenance = NULL) {
+init_feat_metadata <- function(gobject,
+    provenance = NULL) {
     # data.table vars
     spat_unit <- feat_type <- NULL
 
