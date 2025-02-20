@@ -1367,15 +1367,16 @@ setMethod(
 #' @param \dots additional params to pass to `spatValues` used with the
 #' subset param
 #' @export
-setMethod("subset", signature("giotto"), function(x,
-    subset,
-    feat_ids = NULL,
-    cell_ids = NULL,
-    spat_unit = NULL,
-    feat_type = NULL,
-    negate = FALSE,
-    quote = TRUE,
-    ...) {
+setMethod("subset", signature("giotto"), function(
+        x,
+        subset,
+        feat_ids = NULL,
+        cell_ids = NULL,
+        spat_unit = NULL,
+        feat_type = NULL,
+        negate = FALSE,
+        quote = TRUE,
+        ...) {
     spat_unit <- set_default_spat_unit(
         x, spat_unit
     )
@@ -1506,7 +1507,7 @@ sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", negat
     if (identical(spat_unit, ":all:") && identical(feat_type, ":all:")) {
         return(x) # return early if no slicing needed
     }
-    
+
     if (isTRUE(negate)) {
         if (!identical(spat_unit, ":all:")) {
             avail_su <- spatUnit(gobject)
