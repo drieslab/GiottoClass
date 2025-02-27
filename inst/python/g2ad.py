@@ -103,13 +103,14 @@ def set_adg_metadata(adata = None, cell_meta = None, feat_meta = None):
     
     return adata
 
-def set_adg_pca(adata = None, pca_coord = None, loadings = None, eigenv = None, feats_used = None):
+def set_adg_pca(adata = None, pca_coord = None, loadings = None, eigenv = None, feats_used = None, pca_name = None):
     ad_guard(adata)
     hvf = False
-    
+    pca_name_initial = pca_name
     if pca_coord is not None:
-        adata.obsm['X_pca'] = pca_coord
+        adata.obsm['X_' + pca_name] = pca_coord
     if feats_used is not None:
+        pca_name = "" if pca_name == "pca" else "_" + pca_name
         all_feats = adata.var_names
         all_false = [False for i in all_feats]
         highly_variable = pd.Series(all_false, index=all_feats)
@@ -117,10 +118,10 @@ def set_adg_pca(adata = None, pca_coord = None, loadings = None, eigenv = None, 
             if i in feats_used:
                 highly_variable.iloc[x] = True
         highly_variable.name = 'highly_variable'
-        adata.var['highly_variable'] = highly_variable
+        adata.var['highly_variable' + pca_name] = highly_variable
         hvf = True
 
-    if loadings is not None and hvf:    
+    if loadings is not None and hvf:
         n_pc = loadings.shape[1]
         pc_placehold = np.zeros(shape = (adata.n_vars, n_pc))
         pc_placehold = pd.DataFrame(pc_placehold, index=adata.var_names, dtype=float)
@@ -130,29 +131,29 @@ def set_adg_pca(adata = None, pca_coord = None, loadings = None, eigenv = None, 
             test_pc = loadings.iloc[row,:]
             pc_placehold.loc[i] = test_pc
         pc_placehold = pc_placehold.to_numpy(dtype=float)
-        adata.varm["PCs"] = pc_placehold
+        adata.varm["PCs" + pca_name] = pc_placehold
 
     elif loadings is not None:
-        adata.varm["PCs"] = loadings.to_numpy(dtype=float)
+        adata.varm["PCs" + pca_name] = loadings.to_numpy(dtype=float)
     if eigenv is not None:
         eigenv_shape = len(eigenv)
         eigenv = np.array(eigenv)
-        adata.uns['pca'] = {}
-        adata.uns['pca'] = {'variance':eigenv.reshape(eigenv_shape,)}
+        adata.uns[pca_name_initial] = {}
+        adata.uns[pca_name_initial] = {'variance':eigenv.reshape(eigenv_shape,)}
 
     return adata
 
-def set_adg_umap(adata = None, umap_data = None):
+def set_adg_umap(adata = None, umap_data = None, umap_name = None):
     ad_guard(adata)
     if umap_data is not None:
-        adata.obsm['X_umap'] = umap_data
+        adata.obsm['X_' + umap_name] = umap_data
     
     return adata
 
-def set_adg_tsne(adata = None, tsne_data = None):
+def set_adg_tsne(adata = None, tsne_data = None, tsne_name = None):
     ad_guard(adata)
     if tsne_data is not None:
-        adata.obsm['X_tsne'] = tsne_data
+        adata.obsm['X_' + tsne_name] = tsne_data
     
     return adata
 
@@ -197,6 +198,10 @@ def set_adg_nn(adata = None, df_NN = None, net_name = None, n_neighbors = None, 
     
     return adata
 
+def save_nn_keys(adata = None, network_name = None):
+    adata.uns['NN_keys'] = network_name
+    return adata
+
 def set_adg_sn(adata = None, df_SN = None, net_name = None, n_neighbors = None, max_distance = None, dim_used = None):
     ad_guard(adata)
     dim12 = len(adata.obs_names) # dimensions are # of cell_IDs
@@ -227,6 +232,10 @@ def set_adg_sn(adata = None, df_SN = None, net_name = None, n_neighbors = None, 
                                                    'max_distance':max_distance}
                                         }
     
+    return adata
+
+def save_sn_keys(adata = None, network_name = None):
+    adata.uns['SN_keys'] = network_name
     return adata
 
 def write_ad_h5ad(adata = None, save_directory = None, spat_unit = None, feat_type = None):

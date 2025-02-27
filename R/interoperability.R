@@ -868,125 +868,80 @@ giottoToAnnData <- function(
 
     # pca on feats not supported by anndata because of dimensionality
     # agreement reqs
-    reduction_options <- names(gobject@dimension_reduction)
+    reduction_list <- list_giotto_data(gobject, "dimension_reduction")
     dim_red <- NULL
 
-    for (ro in reduction_options) {
+    for (i in 1:nrow(reduction_list)) {
+        ro = reduction_list[[i, 1]]
+        su = reduction_list[[i, 2]]
+        ft = reduction_list[[i, 3]]
+        method = reduction_list[[i, 4]]
+        name = reduction_list[[i, 5]]
+
         if (ro != "cells") {
             warning("AnnData does not support storing PCA by features.
                     Skipping PCA data conversion.")
             break
         }
-        for (su in spat_unit) {
-            for (ft in names(gobject@expression[[su]])) {
-                name <- "pca"
-                if (ft != "rna") name <- paste0(ft, ".pca")
-                dim_red <- try_get_dimReduction(
-                    gobject = gobject,
-                    spat_unit = su,
-                    feat_type = ft,
-                    reduction = ro,
-                    reduction_method = "pca",
-                    name = name,
-                    output = "dimObj",
-                    set_defaults = FALSE
-                )
-                if (is.null(dim_red)) {
-                    adata_pos <- adata_pos + 1
-                    next
-                }
-                pca_coord <- dim_red[]
-                pca_loadings <- data.table(dim_red@misc$loadings)
-                feats_used <- dimnames(dim_red@misc$loadings)[[1]]
-                evs <- dim_red@misc$eigenvalues
 
-                adata_list[[adata_pos]] <- set_adg_pca(
-                    adata = adata_list[[adata_pos]],
-                    pca_coord = pca_coord,
-                    loadings = pca_loadings,
-                    eigenv = evs,
-                    feats_used = feats_used
-                )
-                adata_pos <- adata_pos + 1
-            }
+        if (ft != "rna") name <- paste0(ft, ".pca")
+        dim_red <- try_get_dimReduction(
+            gobject = gobject,
+            spat_unit = su,
+            feat_type = ft,
+            reduction = ro,
+            reduction_method = method,
+            name = name,
+            output = "dimObj",
+            set_defaults = FALSE
+        )
+
+        if (is.null(dim_red)) {
+            adata_pos <- adata_pos + 1
+            next
+        }
+
+        if (method == "pca") {
+            pca_coord <- dim_red[]
+            pca_loadings <- data.table(dim_red@misc$loadings)
+            feats_used <- dimnames(dim_red@misc$loadings)[[1]]
+            evs <- dim_red@misc$eigenvalues
+
+            adata_list[[adata_pos]] <- set_adg_pca(
+                adata = adata_list[[adata_pos]],
+                pca_coord = pca_coord,
+                loadings = pca_loadings,
+                eigenv = evs,
+                feats_used = feats_used,
+                pca_name = name
+            )
+            wrap_msg(sprintf("\n%s converted.\n", name))
+            adata_pos <- adata_pos + 1
+        }
+
+        if (method == "umap") {
+            umap_data <- dim_red[]
+            adata_list[[adata_pos]] <- set_adg_umap(
+                adata = adata_list[[adata_pos]],
+                umap_data = umap_data,
+                umap_name = name
+            )
+            wrap_msg(sprintf("\n%s converted.\n", name))
+            adata_pos <- adata_pos + 1
+        }
+
+        if (method == "tsne") {
+            tsne_data <- dim_red[]
+            adata_list[[adata_pos]] <- set_adg_tsne(
+                adata = adata_list[[adata_pos]],
+                tsne_data = tsne_data,
+                tsne_name = name
+            )
+            wrap_msg(sprintf("\n%s converted.\n", name))
+            adata_pos <- adata_pos + 1
         }
         adata_pos <- 1
     }
-
-    # Reset indexing variable
-    adata_pos <- 1
-
-    ## UMAP
-    for (ro in reduction_options) {
-        for (su in spat_unit) {
-            for (ft in names(gobject@expression[[su]])) {
-                name <- "umap"
-                if (ft != "rna") name <- paste0(ft, ".umap")
-                dim_red <- try_get_dimReduction(
-                    gobject = gobject,
-                    spat_unit = su,
-                    feat_type = ft,
-                    reduction = ro,
-                    reduction_method = "umap",
-                    name = name,
-                    output = "dimObj",
-                    set_defaults = FALSE
-                )
-
-                if (is.null(dim_red)) {
-                    adata_pos <- adata_pos + 1
-                    next
-                }
-                umap_data <- dim_red[]
-                adata_list[[adata_pos]] <- set_adg_umap(
-                    adata = adata_list[[adata_pos]],
-                    umap_data = umap_data
-                )
-                adata_pos <- adata_pos + 1
-            }
-        }
-        # Reset indexing variable
-        adata_pos <- 1
-    }
-
-    # Reset indexing variable
-    adata_pos <- 1
-
-    ## T-SNE
-    for (ro in reduction_options) {
-        for (su in spat_unit) {
-            for (ft in names(gobject@expression[[su]])) {
-                name <- "tsne"
-                if (ft != "rna") name <- paste0(ft, ".tsne")
-                dim_red <- try_get_dimReduction(
-                    gobject = gobject,
-                    spat_unit = su,
-                    feat_type = ft,
-                    reduction = ro,
-                    reduction_method = "tsne",
-                    name = name,
-                    output = "dimObj",
-                    set_defaults = FALSE
-                )
-
-                if (is.null(dim_red)) {
-                    adata_pos <- adata_pos + 1
-                    next
-                }
-                tsne_data <- dim_red[]
-                adata_list[[adata_pos]] <- set_adg_tsne(
-                    adata = adata_list[[adata_pos]],
-                    tsne_data = tsne_data
-                )
-                adata_pos <- adata_pos + 1
-            }
-        }
-        # Reset indexing variable
-        adata_pos <- 1
-    }
-
-    # Reset indexing variable
-    adata_pos <- 1
 
     # Nearest Neighbor Network
 
@@ -1063,13 +1018,9 @@ giottoToAnnData <- function(
                     )
                 }
 
-                fname_nn <- paste0(su, "_", ft, "_nn_network_keys_added.txt")
+                # Save NN keys to .uns['NN_keys']
                 network_name <- network_name[!grepl("kNN.", network_name)]
-                append_n <- FALSE
-                if (length(network_name) != 0) {
-                    if (nn_net_tu == "kNN") append_n <- TRUE
-                    write(network_name, fname_nn, append = append_n)
-                }
+                save_nn_keys(adata = adata_list[[adata_pos]], network_name = network_name)
             }
             adata_pos <- adata_pos + 1
         }
@@ -1145,8 +1096,10 @@ giottoToAnnData <- function(
                 )
             }
 
-            fname_sn <- paste0(su, "_", ft, "_spatial_network_keys_added.txt")
-            if (length(network_name) != 0) write(network_name, fname_sn)
+            # Save SN keys to .uns['SN_keys']
+            if (length(network_name) != 0) {
+                save_sn_keys(adata = adata_list[[adata_pos]], network_name = network_name)
+            }
         }
 
         adata_pos <- adata_pos + 1
