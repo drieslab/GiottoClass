@@ -6353,6 +6353,41 @@ spatValues <- function(gobject,
 }
 
 
+## svkey ####
+
+#' @describeIn spatValues Create a `svkey` defining a `spatValues()` call
+#' for deferred use. Handy for contexts where the full `giotto` object is not
+#' available.
+#' @export
+svkey <- function(feats,
+    spat_unit = NULL,
+    feat_type = NULL,
+    expression_values = NULL,
+    spat_loc_name = NULL,
+    poly_info = NULL,
+    dim_reduction_to_use = NULL,
+    dim_reduction_name = NULL,
+    verbose = NULL) {
+    if (missing(feats)) stop("'feats' to get must be provided", call. = FALSE)
+    a <- get_args_list()
+    svk <- do.call(new, c(list(Class = "svkey"), a))
+    svk@get <- function(gobject) {
+        spatValues(
+            gobject = gobject,
+            feats = svk@feats,
+            spat_unit = svk@spat_unit,
+            feat_type = svk@feat_type,
+            expression_values = svk@expression_values,
+            spat_loc_name = svk@spat_loc_name,
+            poly_info = svk@poly_info,
+            dim_reduction_to_use = svk@dim_reduction_to_use,
+            dim_reduction_name = svk@dim_reduction_name,
+            verbose = svk@verbose
+        )
+    }
+    svk
+}
+
 
 # internals ####
 

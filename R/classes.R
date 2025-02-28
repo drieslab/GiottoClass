@@ -4,23 +4,11 @@ NULL
 # MISC ####
 ## * Define class unions ####
 
-#' @title NULL or char class union
-#' @description class to allow either NULL or character
-#' @keywords internal
-#' @noRd
 setClassUnion("nullOrChar", c("NULL", "character"))
-
-#' @title NULL or list class union
-#' @description class to allow either NULL or list
-#' @keywords internal
-#' @noRd
 setClassUnion("nullOrList", c("NULL", "list"))
-
-#' @title NULL or data.table class union
-#' @description class to allow either NULL or data.table
-#' @keywords internal
-#' @noRd
 setClassUnion("nullOrDatatable", c("NULL", "data.table"))
+setClassUnion("nullOrLogical", c("NULL", "logical"))
+# see zzz.R for allMatrix
 
 #' @title gIndex
 #' @description
@@ -306,6 +294,7 @@ terraVectData <- setClass(
 
 # UTILITY ####
 
+# ** affine2d ####
 setClass(
     Class = "affine2d",
     slots = list(
@@ -328,6 +317,8 @@ setClass(
     )
 )
 
+# ** processParam ####
+
 #' @title Parameter Classes for Data Processing Operations
 #' @name processParam
 #' @description
@@ -339,6 +330,33 @@ setClass(
 #' operation. These can be accessed and updated using the `$` operator.
 #' @export
 setClass("processParam", contains = "VIRTUAL", slots = list(param = "list"))
+
+
+
+# ** svkey ####
+
+#' @name svkey
+#' @title Spatial Value Key
+#' @description
+#' A metaprogramming object that references a set of information to get
+#' from a `giotto` object when used as `svkey@get(gobject)`. 
+#' Referenced data will be retrieved as a `data.table` via [spatValues()]
+#' @keywords internal
+setClass("svkey",
+    slots = list(
+        feats = "character",
+        spat_unit = "nullOrChar",
+        feat_type = "nullOrChar",
+        expression_values = "nullOrChar",
+        spat_loc_name = "nullOrChar",
+        spat_enr_name = "nullOrChar",
+        poly_info = "nullOrChar",
+        dim_reduction_to_use = "nullOrChar",
+        dim_reduction_name = "nullOrChar",
+        verbose = "nullOrLogical",
+        get = "function"
+    )
+)
 
 # SUBCLASSES ####
 

@@ -741,7 +741,11 @@ setMethod("as.character", signature("giottoImage"), function(x, ...) {
     sprintf("<%s> %s", class(x), objName(x))
 })
 
-
+#' @rdname as.character
+#' @export
+setMethod("as.character", signature("svkey"), function(x, ...) {
+    sprintf("<svkey> feats: '%s'", paste(x@feats, collapse = "', '"))
+})
 
 
 
@@ -835,6 +839,23 @@ setMethod("show", signature("processParam"), function(object) {
     print_list(object[])
 })
 
+# svkey ####
+setMethod("show", signature("svkey"), function(object) {
+    cat(sprintf("<%s>\n", class(object)))
+    plist <- list(
+        feats = sprintf("'%s'", paste(object@feats, collapse = "' '")))
+    plist$spat_unit <- object@spat_unit
+    plist$feat_type <- object@feat_type
+    plist$expression_values <- object@expression_values
+    plist$spat_loc_name <- object@spat_loc_name
+    plist$spat_enr_name <- object@spat_enr_name
+    plist$poly_info <- object@poly_info
+    plist$dim_reduction_to_use <- object@dim_reduction_to_use
+    plist$dim_reduction_name <- object@dim_reduction_name
+    plist$verbose <- object@verbose
+
+    print_list(plist)
+})
 
 
 # show helpers ####
