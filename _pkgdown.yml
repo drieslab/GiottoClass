@@ -20,6 +20,8 @@ template:
     fg: "#000000"
     primary: "#7E69AE"
     code_font: {google: "JetBrains Mono"}
+  params:
+    search: true
 
 navbar:
   bg: light
