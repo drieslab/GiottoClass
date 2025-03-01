@@ -32,8 +32,10 @@ navbar:
     - articles
     - news
     right:
+    - search
     - suite
     - github
+    - lightswitch
   components:
     reference:
       text: Documentation
