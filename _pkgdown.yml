@@ -223,6 +223,11 @@ reference:
   - joinGiottoObjects
   - splitGiotto
   - sliceGiotto
+- title: Data Processing
+  desc: Data Processing Framework
+- contents:
+  - processData
+  - processParam
 - title: Poly Generation
   desc: Creation of polygon shapes and arrays
 - contents:
@@ -351,10 +356,7 @@ reference:
 - contents:
   - activeFeatType-generic
   - activeSpatUnit-generic
-  - featType-generic
-  - spatUnit-generic
-  - prov-generic
-  - objName-generic
+  - giotto_schema
   - spatIDs-generic
   - overlaps-generic
 - title: Save/Load
