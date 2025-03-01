@@ -240,8 +240,6 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
 
 
 
-
-
 ## * Initialize
 # setMethod('initialize', 'nnNetObj',
 #           function(.Object, ...) {
