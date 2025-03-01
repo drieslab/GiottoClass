@@ -8,5 +8,4 @@ inst/doc
 .Rprofile
 docs
 codecov.yml
-pkgdown
 cell_rna*
