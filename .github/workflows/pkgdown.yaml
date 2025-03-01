@@ -102,7 +102,7 @@ jobs:
           writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
                      Sys.getenv("GITHUB_ENV"))
 
-    - name: Build site
+      - name: Build site
         run: |
           pkgdown::build_search()
           pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
