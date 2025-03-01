@@ -26,6 +26,7 @@
 - expose `make_valid` param and `...` passing for `createGiottoPolygon()` `data.frame` method
 
 ## new
+- `processData()` generic and `processParam` class
 - `svkey` metaprogramming object for storing `spatValue()` parameters for later eval.
 
 # GiottoClass 0.4.6 (2025/01/17)
