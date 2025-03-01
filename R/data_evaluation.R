@@ -83,12 +83,11 @@ evaluate_input <- function(type, x, ...) {
 #' @keywords internal
 #' @returns sparse matrix
 #' @noRd
-.evaluate_expr_matrix <- function(
-        inputmatrix,
-        sparse = TRUE,
-        cores = determine_cores(),
-        feat_type = "rna",
-        expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
+.evaluate_expr_matrix <- function(inputmatrix,
+    sparse = TRUE,
+    cores = determine_cores(),
+    feat_type = "rna",
+    expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
     if (inherits(inputmatrix, "character")) {
         inputmatrix <- path.expand(inputmatrix)
         mymatrix <- readExprMatrix(inputmatrix,
@@ -160,10 +159,9 @@ evaluate_input <- function(type, x, ...) {
 #' @param cores cores to use if reading in the information
 #' @keywords internal
 #' @noRd
-.evaluate_cell_metadata <- function(
-        metadata,
-        cores = determine_cores(),
-        verbose = TRUE) {
+.evaluate_cell_metadata <- function(metadata,
+    cores = determine_cores(),
+    verbose = TRUE) {
     # data.table vars
     cell_ID <- NULL
 
@@ -221,10 +219,9 @@ evaluate_input <- function(type, x, ...) {
 
 #' @keywords internal
 #' @noRd
-.evaluate_feat_metadata <- function(
-        metadata,
-        cores = determine_cores(),
-        verbose = TRUE) {
+.evaluate_feat_metadata <- function(metadata,
+    cores = determine_cores(),
+    verbose = TRUE) {
     # data.table vars
     feat_ID <- NULL
 
@@ -292,10 +289,9 @@ evaluate_input <- function(type, x, ...) {
 #' @return data.table
 #' @keywords internal
 #' @noRd
-.evaluate_spatial_locations <- function(
-        spatial_locs,
-        cores = determine_cores(),
-        verbose = TRUE) {
+.evaluate_spatial_locations <- function(spatial_locs,
+    cores = determine_cores(),
+    verbose = TRUE) {
     # data.table variables
     cell_ID <- NULL
 
@@ -430,11 +426,10 @@ evaluate_input <- function(type, x, ...) {
 #' compatible with spatEnrObj
 #' @keywords internal
 #' @noRd
-.evaluate_spatial_enrichment <- function(
-        spatial_enrichment,
-        provenance = NULL,
-        cores = determine_cores(),
-        verbose = TRUE) {
+.evaluate_spatial_enrichment <- function(spatial_enrichment,
+    provenance = NULL,
+    cores = determine_cores(),
+    verbose = TRUE) {
     # data.table vars
     cell_ID <- NULL
 
@@ -629,9 +624,8 @@ evaluate_input <- function(type, x, ...) {
 #' 'poly_ID' if necessary.
 #' @keywords internal
 #' @noRd
-.evaluate_gpoly_dfr <- function(
-        input_dt,
-        verbose = TRUE) {
+.evaluate_gpoly_dfr <- function(input_dt,
+    verbose = TRUE) {
     x <- y <- poly_ID <- NULL
 
     # data.frame like object needs to have 2 coordinate columns and
@@ -723,17 +717,16 @@ evaluate_input <- function(type, x, ...) {
 #' @param verbose be verbose
 #' @return list of SpatVector and unique_IDs
 #' @noRd
-.evaluate_gpoly_spatvector <- function(
-        input_sv,
-        make_valid = FALSE,
-        verbose = TRUE) {
+.evaluate_gpoly_spatvector <- function(input_sv,
+    make_valid = FALSE,
+    verbose = TRUE) {
     # determine sv type
     sv_type <- terra::geomtype(input_sv)
 
     if (sv_type != "polygons") {
         stop('SpatVector is of type "', sv_type, '" instead of "polygons"')
     }
-    
+
     # 0. process spatvector
     # strip crs info
     terra::set.crs(input_sv, NULL)
@@ -778,7 +771,7 @@ evaluate_input <- function(type, x, ...) {
     terra::set.names(input_sv, sv_names)
     unique_names <- make.unique(terra::values(input_sv)[[poly_ID_col]])
     # only select as many names as there are poly geometries.
-    # With `makeValid()`, if a polygon is lost due to the process, the 
+    # With `makeValid()`, if a polygon is lost due to the process, the
     # attributes table length ends up being longer than the number of geoms.
     input_sv[[poly_ID_col]] <- unique_names[seq_len(nrow(input_sv))]
 
@@ -820,13 +813,12 @@ evaluate_input <- function(type, x, ...) {
 #' @return list of SpatVector and unique polygon IDs that it contains
 #' @keywords internal
 #' @noRd
-.evaluate_spatial_info <- function(
-        spatial_info,
-        skip_eval_dfr = FALSE,
-        copy_dt = TRUE,
-        make_valid = FALSE,
-        cores = determine_cores(),
-        verbose = TRUE) {
+.evaluate_spatial_info <- function(spatial_info,
+    skip_eval_dfr = FALSE,
+    copy_dt = TRUE,
+    make_valid = FALSE,
+    cores = determine_cores(),
+    verbose = TRUE) {
     # NSE vars
     geom <- poly_ID <- NULL
 
@@ -837,16 +829,20 @@ evaluate_input <- function(type, x, ...) {
         if (!file.exists(spatial_info)) {
             stop("path to spatial information does not exist", call. = FALSE)
         }
-        
+
         if (tolower(file_extension(spatial_info)) %in% c("geojson", "json")) {
             spatial_info <- .json_try_read_poly(spatial_info) # to spatvector
             spatial_info <- .evaluate_gpoly_spatvector(
-                spatial_info, make_valid = make_valid, verbose = verbose)
+                spatial_info,
+                make_valid = make_valid, verbose = verbose
+            )
             return(spatial_info)
         } else if (tolower(file_extension(spatial_info)) %in% c("shp", "wkt")) {
             spatial_info <- terra::vect(spatial_info)
             spatial_info <- .evaluate_gpoly_spatvector(
-                spatial_info, make_valid = make_valid, verbose = verbose)
+                spatial_info,
+                make_valid = make_valid, verbose = verbose
+            )
             return(spatial_info)
         } else {
             spatial_info <- data.table::fread(
@@ -864,7 +860,9 @@ evaluate_input <- function(type, x, ...) {
         ## 1.3 SpatVector input
     } else if (inherits(spatial_info, "SpatVector")) {
         spatial_info <- .evaluate_gpoly_spatvector(
-            spatial_info, make_valid = make_valid, verbose = verbose)
+            spatial_info,
+            make_valid = make_valid, verbose = verbose
+        )
         return(spatial_info)
 
         ## 1.4 Other inputs
@@ -875,7 +873,8 @@ evaluate_input <- function(type, x, ...) {
         if (inherits(spatial_info, "try-error")) {
             stop(
                 "If spatial information is provided then it needs to be a",
-                "file path or a data.frame-like object", call. = FALSE
+                "file path or a data.frame-like object",
+                call. = FALSE
             )
         }
     }
@@ -897,10 +896,9 @@ evaluate_input <- function(type, x, ...) {
     spatial_info[, geom := new_vec]
 
     spatial_info[, c("part", "hole") := list(1, 0)]
-    spatial_info <- spatial_info[,
-        c("geom", "part", "x", "y", "hole", "poly_ID"),
-        with = FALSE
-    ]
+    data.table::setcolorder(spatial_info,
+        c("geom", "part", "x", "y", "hole", "poly_ID")
+    )
 
     # get unique IDs
     unique_IDs <- spatial_info[, unique(poly_ID)]
@@ -937,11 +935,10 @@ evaluate_input <- function(type, x, ...) {
 #' @return data.table
 #' @keywords internal
 #' @noRd
-.evaluate_feat_info <- function(
-        spatial_feat_info,
-        feat_type,
-        cores = determine_cores(),
-        feat_ID) {
+.evaluate_feat_info <- function(spatial_feat_info,
+    feat_type,
+    cores = determine_cores(),
+    feat_ID) {
     ## 1. load or read spatial information data ##
     if (inherits(spatial_feat_info, "character")) {
         if (!file.exists(spatial_feat_info)) {
@@ -1010,13 +1007,17 @@ evaluate_input <- function(type, x, ...) {
     res <- tryCatch(.json_read_poly_custom(x), error = function(e) {
         errors$custom <<- e$message
     })
-    if (!inherits(res, "character")) return(res)
+    if (!inherits(res, "character")) {
+        return(res)
+    }
 
     res <- tryCatch(terra::vect(x), error = function(e) {
         errors$terra <<- e$message
     })
-    if (!inherits(res, "character")) return(res)
-    
+    if (!inherits(res, "character")) {
+        return(res)
+    }
+
     stop(wrap_txtf(
         "json readers failed.\ncustom: %s\nterra: %s",
         errors$custom,
@@ -1027,7 +1028,7 @@ evaluate_input <- function(type, x, ...) {
 .json_read_poly_custom <- function(x) {
     json_list <- GiottoUtils::read_json(x)
     type <- json_list$type
-    
+
     switch(tolower(type),
         "featurecollection" = .json_read_poly_feat_collection(json_list),
         "geometrycollection" = .json_read_poly_geom_collection(json_list)
@@ -1041,14 +1042,14 @@ evaluate_input <- function(type, x, ...) {
     checkmate::assert_list(x)
     p <- x$features
     npoly <- length(p)
-    
+
     # SpatVector
     mat <- lapply(seq_along(p), function(poly_i) {
         coordslist <- p[[poly_i]]$geometry$coordinates
         .json_poly_coordslist_to_geommat(coordslist, poly_i)
     }) |> do.call(what = rbind)
     sv <- terra::vect(mat, type = "polygon")
-    
+
     # fields/attributes
     fields <- .json_extract_fields(p)
     if (nrow(fields) > 0L) terra::values(sv) <- fields
@@ -1061,7 +1062,7 @@ evaluate_input <- function(type, x, ...) {
     checkmate::assert_list(x)
     p <- x$geometries
     npoly <- length(p)
-    
+
     # SpatVector
     mat <- lapply(seq_len(npoly), function(poly_i) {
         coordslist <- p[[poly_i]]$coordinates
@@ -1069,7 +1070,7 @@ evaluate_input <- function(type, x, ...) {
     }) |>
         do.call(what = rbind)
     sv <- terra::vect(mat, type = "polygon")
-    
+
     # fields/attributes
     fields <- .json_extract_fields(p)
     if (nrow(fields) > 0L) terra::values(sv) <- fields
@@ -1082,13 +1083,13 @@ evaluate_input <- function(type, x, ...) {
     nvtx <- length(coords) / 2 # div 2 since these are pairs
     matrix(
         c(
-            rep(idx, nvtx),          # geom
-            rep(1L, nvtx),           # part
-            coords[c(TRUE, FALSE)],  # x
-            coords[c(FALSE, TRUE)],  # y
-            rep(0L, nvtx)            # hole
+            rep(idx, nvtx), # geom
+            rep(1L, nvtx), # part
+            coords[c(TRUE, FALSE)], # x
+            coords[c(FALSE, TRUE)], # y
+            rep(0L, nvtx) # hole
         ),
-        nrow = nvtx, 
+        nrow = nvtx,
         ncol = 5,
         byrow = FALSE
     )
@@ -1096,36 +1097,39 @@ evaluate_input <- function(type, x, ...) {
 
 .json_extract_fields <- function(features) {
     nfeat <- length(features)
-    
+
     # Skip these GeoJSON structural fields
     skip_fields <- c("coordinates", "type", "bbox")
-    
+
     # Initialize results list
     # fields vectors will be accumulated here
     all_fields <- list()
-    
+
     feat_i <- function(i) {
         features[[i]]
     }
-    
+
     # Recursive function to process nested fields
     process_field <- function(feat_fun, field_name) {
         # get feature data from previous feature function
         field_data <- feat_fun(1L) # detect from first feature
-        
+
         # If it's a list/nested structure
         if (is.list(field_data)) {
             subfield_names <- names(field_data)
             subfield_names <- subfield_names[!subfield_names %in% skip_fields]
             # ignore any non-named lists/nesting
-            if (length(subfield_names) == 0L) return(NULL)
-            
+            if (length(subfield_names) == 0L) {
+                return(NULL)
+            }
+
             # otherwise, recurse across subnesting
             for (subfield in subfield_names) {
                 # Create the full field path
                 full_field_name <- paste(
                     # `%` is used as an uncommon separator for possible cleanup
-                    c(field_name, subfield), collapse = "%"
+                    c(field_name, subfield),
+                    collapse = "%"
                 )
                 subfeat_fun <- function(i) {
                     feat_fun(i)[[subfield]]
@@ -1135,8 +1139,10 @@ evaluate_input <- function(type, x, ...) {
         } else {
             # evaluate actual field values
             # skip if length > 1 (like array data)
-            if (length(field_data) > 1L) return(NULL)
-            
+            if (length(field_data) > 1L) {
+                return(NULL)
+            }
+
             # base case: simple field
             # return across all features
             all_fields[[field_name]] <<- lapply(seq_len(nfeat), function(f_i) {
@@ -1145,9 +1151,9 @@ evaluate_input <- function(type, x, ...) {
                 unlist()
         }
     }
-    
+
     process_field(feat_fun = feat_i, field_name = NULL)
-    
+
     # Convert to data frame
     result_df <- do.call(data.frame, all_fields)
     names(result_df) <- .json_extract_fields_prune_names(names(all_fields))
@@ -1155,16 +1161,19 @@ evaluate_input <- function(type, x, ...) {
 }
 
 .json_extract_fields_prune_names <- function(x) {
-    if (length(x) == 0L) return(x) # skip if none
+    if (length(x) == 0L) {
+        return(x)
+    } # skip if none
     checkmate::assert_character(x)
     shortnames <- vapply(
-        strsplit(x, "%"), tail, n = 1L, FUN.VALUE = character(1L)
+        strsplit(x, "%"), tail,
+        n = 1L, FUN.VALUE = character(1L)
     )
     for (i in seq_along(x)) {
         if (sum(duplicated(c(shortnames[[i]], x))) > 0) next
         x[[i]] <- shortnames[[i]]
     }
-    
+
     # final cleanup
     gsub("%", ".", x)
 }

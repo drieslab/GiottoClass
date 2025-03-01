@@ -3,10 +3,13 @@
 \name{as.character}
 \alias{as.character}
 \alias{as.character,giottoImage-method}
+\alias{as.character,svkey-method}
 \alias{as.character,giottoLargeImage-method}
 \title{Create a text representation of an object}
 \usage{
 \S4method{as.character}{giottoImage}(x, ...)
+
+\S4method{as.character}{svkey}(x, ...)
 
 \S4method{as.character}{giottoLargeImage}(x, ...)
 }

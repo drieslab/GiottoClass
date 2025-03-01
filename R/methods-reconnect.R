@@ -8,7 +8,7 @@
 #' @returns GiottoClass object
 #' @examples
 #' temp <- tempfile()
-#' f <- system.file("extdata/toy_intensity.tif", package="GiottoClass")
+#' f <- system.file("extdata/toy_intensity.tif", package = "GiottoClass")
 #' a <- createGiottoLargeImage(f)
 #' saveRDS(a, temp)
 #'

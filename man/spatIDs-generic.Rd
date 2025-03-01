@@ -2,6 +2,7 @@
 % Please edit documentation in R/methods-IDs.R
 \name{spatIDs-generic}
 \alias{spatIDs-generic}
+\alias{spatIDs<-}
 \alias{spatIDs}
 \alias{featIDs}
 \alias{spatIDs,giotto-method}
@@ -11,6 +12,7 @@
 \alias{spatIDs,spatialNetworkObj-method}
 \alias{spatIDs,dimObj-method}
 \alias{spatIDs,giottoPolygon-method}
+\alias{spatIDs<-,giottoPolygon-method}
 \alias{spatIDs,spatEnrObj-method}
 \alias{spatIDs,nnNetObj-method}
 \alias{featIDs,giotto-method}
@@ -33,6 +35,8 @@
 \S4method{spatIDs}{dimObj}(x, ...)
 
 \S4method{spatIDs}{giottoPolygon}(x, use_cache = TRUE, uniques = TRUE, ...)
+
+\S4method{spatIDs}{giottoPolygon}(x, old = NULL, ...) <- value
 
 \S4method{spatIDs}{spatEnrObj}(x, ...)
 
@@ -72,14 +76,18 @@ currently only pass to \code{fDataDT()}.}
 \item{uniques}{return unique ID values
 only (currently gpoly and gpoints only)}
 
+\item{old}{character. IDs to match against to replace}
+
+\item{value}{character. IDs to replace with}
+
 \item{feat_type}{(optional) specify which feature type}
 }
 \value{
 character vector of cell/spatial IDs or feature IDs
 }
 \description{
-Get the cell
-IDs (termed spatial IDs to better reflect when not at the single-cell level)
+Get the cell/spot IDs
+(termed spatial IDs to better reflect when not at the single-cell level)
 and feature IDs of a giotto object or subobject.
 
 [\strong{\code{giotto} object specific}]
@@ -97,7 +105,7 @@ expected IDs within all \code{giotto} slots, and not always the exact set or
 ordering.
 }
 \examples{
-g <- GiottoData::loadGiottoMini("vis")
+g <- GiottoData::loadGiottoMini("visium")
 spatIDs(g)
 spatIDs(g, subset = nr_feats <= 200)
 spatIDs(g, subset = Dim.1 > 25, dim_reduction_to_use = "umap")
@@ -108,4 +116,12 @@ featIDs(g, subset = nr_cells < 100)
 gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
 featIDs(gpoints)
 
+# ID replacements (currently only giottoPolygons)
+polys <- g[["spatial_info"]][[1]]
+polys@overlaps <- NULL # make NULL to avoid a warning
+head(spatIDs(polys))
+spatIDs(polys) <- paste0("poly_", seq_len(nrow(polys)))
+head(spatIDs(polys))
+spatIDs(polys, old = c("poly_1", "poly_3")) <- c("test1", "test2")
+head(spatIDs(polys))
 }

@@ -106,9 +106,11 @@
 \S4method{prov}{provData}(x) <- value
 }
 \arguments{
-\item{x}{\code{giotto} or {Giotto} S4 subobject}
+\item{x}{\code{giotto} or \{Giotto\} S4 subobject}
 
 \item{value}{value to set for this schema component}
+
+\item{old}{character. Old value to replace}
 }
 \value{
 character. NA is returned when schema component is not applicable
@@ -135,8 +137,16 @@ schema on the Giotto object and subobjects are:
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
 
-########### Get existing schema values within giotto object ########
+########### Get/set existing schema values within giotto object ####
 spatUnit(g)
+featType(g)
+
+# rename a spatial unit
+spatUnit(g, old = "z0") <- "slice1"
+spatUnit(g)
+
+# rename a feature type
+featType(g, old = "rna") <- "feature1"
 featType(g)
 
 ########### Get schema values from a list of objects ###############

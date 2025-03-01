@@ -131,11 +131,12 @@ setMethod("shear", signature("affine2d"), function(x, fx = 0, fy = 0, x0, y0, ..
 
 # internals ####
 
-.shear_dt <- function(x, 
-    fx = 0, fy = 0, 
-    x0, y0, 
-    geom = c("sdimx", "sdimy", "sdimz"),
-    ...) {
+.shear_dt <- function(
+        x,
+        fx = 0, fy = 0,
+        x0, y0,
+        geom = c("sdimx", "sdimy", "sdimz"),
+        ...) {
     x <- data.table::copy(x)
     xyz <- c("x", "y", "z")
     if (is.null(names(geom))) names(geom) <- xyz
@@ -169,8 +170,7 @@ setMethod("shear", signature("affine2d"), function(x, fx = 0, fy = 0, x0, y0, ..
 }
 
 .shear_sv <- function(
-    x, geomtype, fx = 0, fy = 0, x0, y0, geom = c("x", "y", "z"), ...
-) {
+        x, geomtype, fx = 0, fy = 0, x0, y0, geom = c("x", "y", "z"), ...) {
     a <- get_args_list(...)
     geomtype <- match.arg(geomtype, c("points", "polygons"))
     a$x <- data.table::as.data.table(x, geom = "XY")
