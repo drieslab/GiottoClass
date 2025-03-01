@@ -6,6 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Giotto image tools • GiottoClass</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/JetBrains_Mono-0.4.9/font.css" rel="stylesheet">
@@ -21,7 +27,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -167,9 +173,9 @@ be supplied. For monochrome colorscales:
 </ul>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.4.2 (2024-10-31)</span></span>
+<pre><code><span><span class="co">## R version 4.4.3 (2025-02-28)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">## Running under: Ubuntu 24.04.1 LTS</span></span>
+<span><span class="co">## Running under: Ubuntu 24.04.2 LTS</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Matrix products: default</span></span>
 <span><span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -188,24 +194,24 @@ be supplied. For monochrome colorscales:
 <span><span class="co">## [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">## [1] GiottoClass_0.4.6</span></span>
+<span><span class="co">## [1] GiottoClass_0.4.7</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##  [1] Matrix_1.7-1        jsonlite_1.8.9      compiler_4.4.2     </span></span>
+<span><span class="co">##  [1] Matrix_1.7-2        jsonlite_1.9.0      compiler_4.4.3     </span></span>
 <span><span class="co">##  [4] gtools_3.9.5        Rcpp_1.0.14         Biobase_2.66.0     </span></span>
-<span><span class="co">##  [7] jquerylib_0.1.4     systemfonts_1.2.0   IRanges_2.40.1     </span></span>
-<span><span class="co">## [10] textshaping_0.4.1   yaml_2.3.10         fastmap_1.2.0      </span></span>
-<span><span class="co">## [13] lattice_0.22-6      R6_2.5.1            XVector_0.46.0     </span></span>
+<span><span class="co">##  [7] jquerylib_0.1.4     systemfonts_1.2.1   IRanges_2.40.1     </span></span>
+<span><span class="co">## [10] textshaping_1.0.0   yaml_2.3.10         fastmap_1.2.0      </span></span>
+<span><span class="co">## [13] lattice_0.22-6      R6_2.6.1            XVector_0.46.0     </span></span>
 <span><span class="co">## [16] knitr_1.49          BiocGenerics_0.52.0 htmlwidgets_1.6.4  </span></span>
 <span><span class="co">## [19] backports_1.5.0     checkmate_2.3.2     desc_1.4.3         </span></span>
-<span><span class="co">## [22] bslib_0.8.0         GiottoUtils_0.2.3   rlang_1.1.4        </span></span>
-<span><span class="co">## [25] cachem_1.1.0        terra_1.8-10        xfun_0.50          </span></span>
-<span><span class="co">## [28] fs_1.6.5            sass_0.4.9          cli_3.6.3          </span></span>
+<span><span class="co">## [22] bslib_0.9.0         GiottoUtils_0.2.4   rlang_1.1.5        </span></span>
+<span><span class="co">## [25] cachem_1.1.0        terra_1.8-29        xfun_0.51          </span></span>
+<span><span class="co">## [28] fs_1.6.5            sass_0.4.9          cli_3.6.4          </span></span>
 <span><span class="co">## [31] pkgdown_2.1.1       magrittr_2.0.3      zlibbioc_1.52.0    </span></span>
-<span><span class="co">## [34] digest_0.6.37       grid_4.4.2          lifecycle_1.0.4    </span></span>
-<span><span class="co">## [37] S4Vectors_0.44.0    evaluate_1.0.3      data.table_1.16.4  </span></span>
-<span><span class="co">## [40] codetools_0.2-20    ragg_1.3.3          stats4_4.4.2       </span></span>
-<span><span class="co">## [43] GiottoData_0.2.16   rmarkdown_2.29      tools_4.4.2        </span></span>
+<span><span class="co">## [34] digest_0.6.37       grid_4.4.3          lifecycle_1.0.4    </span></span>
+<span><span class="co">## [37] S4Vectors_0.44.0    evaluate_1.0.3      data.table_1.17.0  </span></span>
+<span><span class="co">## [40] codetools_0.2-20    ragg_1.3.3          stats4_4.4.3       </span></span>
+<span><span class="co">## [43] GiottoData_0.2.16   rmarkdown_2.29      tools_4.4.3        </span></span>
 <span><span class="co">## [46] htmltools_0.5.8.1</span></span></code></pre>
 </div>
 </div>
