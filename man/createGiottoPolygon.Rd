@@ -24,10 +24,10 @@
   fill_holes = TRUE,
   poly_IDs = NULL,
   ID_fmt = "cell_",
-  flip_vertical = TRUE,
-  shift_vertical_step = TRUE,
-  flip_horizontal = TRUE,
-  shift_horizontal_step = TRUE,
+  flip_vertical = FALSE,
+  shift_vertical_step = FALSE,
+  flip_horizontal = FALSE,
+  shift_horizontal_step = FALSE,
   remove_unvalid_polygons = TRUE,
   calc_centroids = FALSE,
   verbose = TRUE
@@ -53,10 +53,10 @@ createGiottoPolygonsFromMask(
   fill_holes = TRUE,
   poly_IDs = NULL,
   ID_fmt = "cell_",
-  flip_vertical = TRUE,
-  shift_vertical_step = TRUE,
-  flip_horizontal = TRUE,
-  shift_horizontal_step = TRUE,
+  flip_vertical = FALSE,
+  shift_vertical_step = FALSE,
+  flip_horizontal = FALSE,
+  shift_horizontal_step = FALSE,
   calc_centroids = FALSE,
   remove_unvalid_polygons = TRUE,
   verbose = FALSE
@@ -112,13 +112,13 @@ each polygon in the mask file.}
 \item{ID_fmt}{character. Only applied if \code{poly_IDs = NULL}. Naming scheme for
 poly_IDs. Default = "cell_". See \emph{ID_fmt} section.}
 
-\item{flip_vertical}{flip mask figure in a vertical manner}
+\item{flip_vertical, flip_horizontal}{logical. Flip output polygons across y
+(vertical) or x (horizontal) axis.}
 
-\item{shift_vertical_step}{shift vertical (boolean or numerical)}
-
-\item{flip_horizontal}{flip mask figure in a horizontal manner}
-
-\item{shift_horizontal_step}{shift horizontal (boolean or numerical)}
+\item{shift_vertical_step, shift_horizontal_step}{logical or numeric. When
+\code{FALSE}, no shift is performed. When numeric, a shift of
+\eqn{image height \times step} (vertical) or \eqn{image width \times step}
+(horizontal) is performed.}
 
 \item{remove_unvalid_polygons}{remove unvalid polygons (default: TRUE)}
 

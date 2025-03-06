@@ -2363,7 +2363,7 @@ setMethod(
         # try failure means it should be vector file
         try_rast <- tryCatch(
             {
-                terra::rast(x)
+                .create_terra_spatraster(x)
             },
             error = function(e) {
                 return(invisible(NULL))
@@ -2426,10 +2426,10 @@ setMethod(
     fill_holes = TRUE,
     poly_IDs = NULL,
     ID_fmt = "cell_",
-    flip_vertical = TRUE,
-    shift_vertical_step = TRUE,
-    flip_horizontal = TRUE,
-    shift_horizontal_step = TRUE,
+    flip_vertical = FALSE,
+    shift_vertical_step = FALSE,
+    flip_horizontal = FALSE,
+    shift_horizontal_step = FALSE,
     remove_unvalid_polygons = TRUE,
     calc_centroids = FALSE,
     verbose = TRUE) {
@@ -2493,10 +2493,12 @@ setMethod(
 #' each polygon in the mask file.
 #' @param ID_fmt character. Only applied if `poly_IDs = NULL`. Naming scheme for
 #' poly_IDs. Default = "cell_". See *ID_fmt* section.
-#' @param flip_vertical flip mask figure in a vertical manner
-#' @param shift_vertical_step shift vertical (boolean or numerical)
-#' @param flip_horizontal flip mask figure in a horizontal manner
-#' @param shift_horizontal_step shift horizontal (boolean or numerical)
+#' @param flip_vertical,flip_horizontal logical. Flip output polygons across y
+#' (vertical) or x (horizontal) axis.
+#' @param shift_vertical_step,shift_horizontal_step logical or numeric. When
+#' `FALSE`, no shift is performed. When numeric, a shift of
+#' \eqn{image height \times step} (vertical) or \eqn{image width \times step}
+#' (horizontal) is performed.
 #' @param remove_unvalid_polygons remove unvalid polygons (default: TRUE)
 #' @concept mask polygon
 #' @section mask_method:
@@ -2532,10 +2534,10 @@ createGiottoPolygonsFromMask <- function(
         fill_holes = TRUE,
         poly_IDs = NULL,
         ID_fmt = "cell_",
-        flip_vertical = TRUE,
-        shift_vertical_step = TRUE,
-        flip_horizontal = TRUE,
-        shift_horizontal_step = TRUE,
+        flip_vertical = FALSE,
+        shift_vertical_step = FALSE,
+        flip_horizontal = FALSE,
+        shift_horizontal_step = FALSE,
         calc_centroids = FALSE,
         remove_unvalid_polygons = TRUE,
         verbose = FALSE) {
@@ -2593,10 +2595,12 @@ createGiottoPolygonsFromMask <- function(
 
     ## flip across axes ##
     if (isTRUE(flip_vertical)) {
-        terra_polygon <- .flip_spatvect(terra_polygon)
+        terra_polygon <- .flip_spatvect(terra_polygon,
+            direction = "vertical")
     }
     if (isTRUE(flip_horizontal)) {
-        terra_polygon <- .flip_spatvect(terra_polygon)
+        terra_polygon <- .flip_spatvect(terra_polygon,
+            direction = "horizontal")
     }
 
     # convert to DT format since we want to be able to compare number of geoms
