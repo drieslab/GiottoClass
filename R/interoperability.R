@@ -2509,7 +2509,7 @@ seuratToGiottoV5 <- function(sobject,
 
 
 
-    # Find SueratImages, extract them, and pass to create image
+    # Find SeuratImages, extract them, and pass to create image
     image_list <- list()
     for (i in names(sobject@images)) {
         simg <- sobject[[i]]
