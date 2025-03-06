@@ -41,7 +41,7 @@ Imports:
     methods,
     reticulate (>= 1.25),
     stats,
-    terra (>= 1.7-41)
+    terra (>= 1.8-21)
 Suggests: 
     Biobase,
     chihaya,
