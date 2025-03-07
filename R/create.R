@@ -2326,29 +2326,56 @@ create_giotto_points_object <- function(feat_type = "rna",
 #'
 #' # ------- create from data.frame-like ------- #
 #' # load example data and convert to data.table
-#' shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
-#' gpoly <- createGiottoPolygon(shp)
-#' gpoly_dt <- data.table::as.data.table(gpoly, geom = "XY")
+#' dt <- data.table::data.table(
+#'     id = c(
+#'         rep('a', 3), # Triangle (id 'a')
+#'         rep('b', 4), # Square 1 (id 'b')
+#'         rep('c', 4) # Square 2 (id 'c')
+#'     ),
+#'     x = c(
+#'         0, 1, 0.5,
+#'         2, 5, 5, 2,
+#'         6, 7, 7, 6
+#'     ),
+#'     y = c(
+#'         0, 0, 1,
+#'         2, 2, 5, 5,
+#'         5, 5, 6, 6
+#'     )
+#' )
 #'
-#' # 5 columns are needed for complex polys/full definitions
-#' # examples: multipolygons, polygons with internal holes
-#' full_cols_dt <- gpoly_dt[, .(geom, part, x, y, hole, poly_ID)]
+#' # simple polygons only need 3 cols
+#' force(dt)
+#' out1 <- createGiottoPolygon(dt)
+#' plot(out1, col = getRainbowColors(3))
+#'
+#' # multipolygons can be generated using the `part_col` param
+#' dt[, part_index := c(rep(1, 7), rep(2, 4))]
+#' dt[, id := c(rep("a", 3), rep("b", 8))]
+#' force(dt)
+#' out2 <- createGiottoPolygon(dt, part_col = "part_index")
+#' plot(out2, col = getRainbowColors(2))
+#'
+#' # For more complex inputs with holes, it is recommended to format into
+#' # the geom, part, x, y, hole, format that terra uses with matrix inputs
+#' # + poly_ID.
+#'
+#' # extract 5 column representation:
+#' dt_full <- data.table::as.data.table(out2, geom = "XY")
 #' force(full_cols_dt)
 #'
-#' out1 <- createGiottoPolygon(full_cols_dt)
-#' plot(out1)
+#' # Columns named geom, part, x, y, hole, are treated specially when provided.
+#' # They can be directly used without internal modification
+#' res <- createGiottoPolygon(dt_full)
+#' plot(res, col = getRainbowColors(2))
 #'
-#' # 3 columns are needed for simple polys
-#' reduced_cols_dt <- gpoly_dt[, .(x, y, poly_ID)]
-#' out2 <- createGiottoPolygon(full_cols_dt)
-#' plot(out2)
-#'
-#' # additional columns outside of these are retained as attributes
-#' # these cols must map with the poly_ID/geom.
+#' # additional columns outside of the 3 (+ part_col if provided) or 5 column
+#' # formatting are retained as attributes
+#' # These cols MUST map with the poly_ID/geom.
 #'
 #' # set up an example attribute
-#' reduced_cols_dt$attribute <- match(reduced_cols_dt$poly_ID, letters)
-#' createGiottoPolygon(reduced_cols_dt)
+#' dt_full$attribute <- match(dt_full$poly_ID, letters)
+#' createGiottoPolygon(dt_full)
 NULL
 
 
@@ -2461,6 +2488,7 @@ setMethod(
     "createGiottoPolygon", signature("data.frame"),
     function(x,
     name = "cell",
+    part_col = NULL,
     calc_centroids = FALSE,
     skip_eval_dfr = FALSE,
     copy_dt = TRUE,
@@ -2469,6 +2497,7 @@ setMethod(
     ...) {
         createGiottoPolygonsFromDfr(
             segmdfr = x,
+            part_col = part_col,
             name = name,
             calc_centroids = calc_centroids,
             skip_eval_dfr = skip_eval_dfr,
@@ -2754,6 +2783,8 @@ createGiottoPolygonsFromMask <- function(
 #' information (x, y, poly_ID) with x and y being vertex information for the
 #' polygon referenced by poly_ID. See details for how columns are selected for
 #' coordinate and ID information.
+#' @param part_col character (optional). If provided, a column in the data
+#' when processing will be indexed along as parts to generate a multipolygon.
 #' @param skip_eval_dfr logical. (default FALSE) skip evaluation of provided
 #' dataframe
 #' @param copy_dt (default TRUE) if segmdfr is provided as dt, this determines
@@ -2771,6 +2802,7 @@ createGiottoPolygonsFromMask <- function(
 #' @export
 createGiottoPolygonsFromDfr <- function(segmdfr,
     name = "cell",
+    part_col = NULL,
     calc_centroids = FALSE,
     make_valid = FALSE,
     verbose = TRUE,
@@ -2778,6 +2810,7 @@ createGiottoPolygonsFromDfr <- function(segmdfr,
     copy_dt = TRUE) {
     eval_list <- .evaluate_spatial_info(
         spatial_info = segmdfr,
+        part_col = part_col,
         make_valid = make_valid,
         skip_eval_dfr = skip_eval_dfr,
         copy_dt = copy_dt,

@@ -647,10 +647,12 @@ setMethod(
 
         attr_values <- unique(dt[, other_values, with = FALSE])
         if (nrow(attr_values) > 0L &&
-            nrow(attr_values) != max(dt[, max(geom)])) {
-            warning(wrap_txt(".dt_to_spatvector_polygon:
-                            Number of attributes does not match number of
-                            polygons to create. Attributes are ignored."), call. = FALSE)
+            nrow(attr_values) != dt[, max(geom)]) {
+            warning(wrap_txt(
+                ".dt_to_spatvector_polygon:
+                Number of attributes does not match number of
+                polygons to create. Attributes are ignored."
+            ), call. = FALSE)
         }
     }
 

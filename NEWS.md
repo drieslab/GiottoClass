@@ -26,6 +26,7 @@
 - `negate` param for negative selection in `sliceGiotto()`
 - `spatUnit()` and `featType()` method for `giotto` to find existing spatial units and feature types
 - expose `make_valid` param and `...` passing for `createGiottoPolygon()` `data.frame` method
+- `createGiottoPolygon()` `part_col` param for generating multipolygons from `data.frame-like` inputs.
 
 ## new
 - `processData()` generic and `processParam` class
