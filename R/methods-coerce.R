@@ -653,6 +653,9 @@ setMethod(
                 Number of attributes does not match number of
                 polygons to create. Attributes are ignored."
             ), call. = FALSE)
+
+            # fallback to poly_ID only
+            attr_values <- unique(attr_values[, "poly_ID"])
         }
     }
 

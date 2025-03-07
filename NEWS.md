@@ -15,6 +15,7 @@
 - fix `createGiottoPolygon()` not preserving attributes from `data.table` inputs
 - fix `loadGiotto()` error when a non-expected reticulate environment is already activated in the session
 - fix `createGiottoLargeImage()` and `createGiottoPolygonsFromMask()` to align with {terra} `v1.8-21` `rast(noflip = TRUE)` [#1102](https://github.com/drieslab/Giotto/issues/1102) by StevenWijnen and rbutleriii
+- add fallback for when attributes do not match number of geometries in `createGiottoPolygon()` so that poly_ID col is not dropped
 
 ## changes
 - move {magick} from imports to suggests
