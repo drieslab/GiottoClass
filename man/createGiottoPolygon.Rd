@@ -270,7 +270,7 @@ plot(out2, col = getRainbowColors(2))
 
 # extract 5 column representation:
 dt_full <- data.table::as.data.table(out2, geom = "XY")
-force(full_cols_dt)
+force(dt_full)
 
 # Columns named geom, part, x, y, hole, are treated specially when provided.
 # They can be directly used without internal modification

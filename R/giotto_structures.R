@@ -286,7 +286,7 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 }
 
 
-#' @name combineGeom
+#' @name combine_split_geoms
 #' @title Combine or Split Complex Geometries
 #' @description
 #' Geometries can be either single/simple or multi with multiple closed rings
@@ -312,10 +312,11 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 #' @param by character. Column name of variable used to group the geometries.
 #' Will be used as the new `poly_ID` column. All geometries will be combined
 #' if not provided.
+#' @inheritParams terra::aggregate
 #' @param fmt character. sprintf formatting to use to generate `poly_ID` column
 #' values if no attributes are retained after combining.
-#' @param ... additional params to pass to [terra::aggregate()] or
-#' [terra::disagg()]
+#' @param ... additional params to pass to [terra::aggregate()] (and then to
+#' `fun`, such as `na.rm=TRUE`) or [terra::disagg()]
 #' @returns the same class as `x`
 #' @examples
 #' dt <- data.table::data.table(
@@ -361,6 +362,9 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 #' s_cgid <- splitGeom(c_gid)
 #' force(s_cgid)
 #' plot(s_cgid, col = plot_colors)
+NULL
+
+#' @rdname combine_split_geoms
 #' @export
 setMethod("combineGeom", signature(x = "giottoPolygon"),
     function(x,
@@ -394,7 +398,7 @@ setMethod("combineGeom", signature(x = "giottoPolygon"),
     x@spatVectorCentroids <- NULL
     x
 })
-#' @rdname combineGeom
+#' @rdname combine_split_geoms
 #' @export
 setMethod("splitGeom", signature("giottoPolygon"), function(x, ...) {
     x[] <- splitGeom(x[], ...)
@@ -413,11 +417,13 @@ setMethod("splitGeom", signature("giottoPolygon"), function(x, ...) {
 # They are there to perform the underlying geom operations (possibly on other
 # representations other than SpatVectors in the future). However, they don't
 # deal with IDs like might be expected by Giotto.
+#' @keywords internal
 #' @noRd
 setMethod("combineGeom", signature(x = "SpatVector"),
           function(x, by = NULL, dissolve = FALSE, fun = "mean", ...) {
               terra::aggregate(x, by = by, dissolve = dissolve, fun = fun, ...)
           })
+#' @keywords internal
 #' @noRd
 setMethod("splitGeom", signature(x = "SpatVector"), function(x, ...) {
     terra::disagg(x, ...)
