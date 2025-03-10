@@ -413,10 +413,12 @@ setMethod("splitGeom", signature("giottoPolygon"), function(x, ...) {
 # They are there to perform the underlying geom operations (possibly on other
 # representations other than SpatVectors in the future). However, they don't
 # deal with IDs like might be expected by Giotto.
+#' @noRd
 setMethod("combineGeom", signature(x = "SpatVector"),
           function(x, by = NULL, dissolve = FALSE, fun = "mean", ...) {
               terra::aggregate(x, by = by, dissolve = dissolve, fun = fun, ...)
           })
+#' @noRd
 setMethod("splitGeom", signature(x = "SpatVector"), function(x, ...) {
     terra::disagg(x, ...)
 })
