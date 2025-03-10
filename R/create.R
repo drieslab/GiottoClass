@@ -2326,29 +2326,56 @@ create_giotto_points_object <- function(feat_type = "rna",
 #'
 #' # ------- create from data.frame-like ------- #
 #' # load example data and convert to data.table
-#' shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
-#' gpoly <- createGiottoPolygon(shp)
-#' gpoly_dt <- data.table::as.data.table(gpoly, geom = "XY")
+#' dt <- data.table::data.table(
+#'     id = c(
+#'         rep('a', 3), # Triangle (id 'a')
+#'         rep('b', 4), # Square 1 (id 'b')
+#'         rep('c', 4) # Square 2 (id 'c')
+#'     ),
+#'     x = c(
+#'         0, 1, 0.5,
+#'         2, 5, 5, 2,
+#'         6, 7, 7, 6
+#'     ),
+#'     y = c(
+#'         0, 0, 1,
+#'         2, 2, 5, 5,
+#'         5, 5, 6, 6
+#'     )
+#' )
 #'
-#' # 5 columns are needed for complex polys/full definitions
-#' # examples: multipolygons, polygons with internal holes
-#' full_cols_dt <- gpoly_dt[, .(geom, part, x, y, hole, poly_ID)]
-#' force(full_cols_dt)
+#' # simple polygons only need 3 cols
+#' force(dt)
+#' out1 <- createGiottoPolygon(dt)
+#' plot(out1, col = getRainbowColors(3))
 #'
-#' out1 <- createGiottoPolygon(full_cols_dt)
-#' plot(out1)
+#' # multipolygons can be generated using the `part_col` param
+#' dt[, part_index := c(rep(1, 7), rep(2, 4))]
+#' dt[, id := c(rep("a", 3), rep("b", 8))]
+#' force(dt)
+#' out2 <- createGiottoPolygon(dt, part_col = "part_index")
+#' plot(out2, col = getRainbowColors(2))
 #'
-#' # 3 columns are needed for simple polys
-#' reduced_cols_dt <- gpoly_dt[, .(x, y, poly_ID)]
-#' out2 <- createGiottoPolygon(full_cols_dt)
-#' plot(out2)
+#' # For more complex inputs with holes, it is recommended to format into
+#' # the geom, part, x, y, hole, format that terra uses with matrix inputs
+#' # + poly_ID.
 #'
-#' # additional columns outside of these are retained as attributes
-#' # these cols must map with the poly_ID/geom.
+#' # extract 5 column representation:
+#' dt_full <- data.table::as.data.table(out2, geom = "XY")
+#' force(dt_full)
+#'
+#' # Columns named geom, part, x, y, hole, are treated specially when provided.
+#' # They can be directly used without internal modification
+#' res <- createGiottoPolygon(dt_full)
+#' plot(res, col = getRainbowColors(2))
+#'
+#' # additional columns outside of the 3 (+ part_col if provided) or 5 column
+#' # formatting are retained as attributes
+#' # These cols MUST map with the poly_ID/geom.
 #'
 #' # set up an example attribute
-#' reduced_cols_dt$attribute <- match(reduced_cols_dt$poly_ID, letters)
-#' createGiottoPolygon(reduced_cols_dt)
+#' dt_full$attribute <- match(dt_full$poly_ID, letters)
+#' createGiottoPolygon(dt_full)
 NULL
 
 
@@ -2363,7 +2390,7 @@ setMethod(
         # try failure means it should be vector file
         try_rast <- tryCatch(
             {
-                terra::rast(x)
+                .create_terra_spatraster(x)
             },
             error = function(e) {
                 return(invisible(NULL))
@@ -2426,10 +2453,10 @@ setMethod(
     fill_holes = TRUE,
     poly_IDs = NULL,
     ID_fmt = "cell_",
-    flip_vertical = TRUE,
-    shift_vertical_step = TRUE,
-    flip_horizontal = TRUE,
-    shift_horizontal_step = TRUE,
+    flip_vertical = FALSE,
+    shift_vertical_step = FALSE,
+    flip_horizontal = FALSE,
+    shift_horizontal_step = FALSE,
     remove_unvalid_polygons = TRUE,
     calc_centroids = FALSE,
     verbose = TRUE) {
@@ -2461,6 +2488,7 @@ setMethod(
     "createGiottoPolygon", signature("data.frame"),
     function(x,
     name = "cell",
+    part_col = NULL,
     calc_centroids = FALSE,
     skip_eval_dfr = FALSE,
     copy_dt = TRUE,
@@ -2469,6 +2497,7 @@ setMethod(
     ...) {
         createGiottoPolygonsFromDfr(
             segmdfr = x,
+            part_col = part_col,
             name = name,
             calc_centroids = calc_centroids,
             skip_eval_dfr = skip_eval_dfr,
@@ -2493,10 +2522,12 @@ setMethod(
 #' each polygon in the mask file.
 #' @param ID_fmt character. Only applied if `poly_IDs = NULL`. Naming scheme for
 #' poly_IDs. Default = "cell_". See *ID_fmt* section.
-#' @param flip_vertical flip mask figure in a vertical manner
-#' @param shift_vertical_step shift vertical (boolean or numerical)
-#' @param flip_horizontal flip mask figure in a horizontal manner
-#' @param shift_horizontal_step shift horizontal (boolean or numerical)
+#' @param flip_vertical,flip_horizontal logical. Flip output polygons across y
+#' (vertical) or x (horizontal) axis.
+#' @param shift_vertical_step,shift_horizontal_step logical or numeric. When
+#' `FALSE`, no shift is performed. When numeric, a shift of
+#' \eqn{image height \times step} (vertical) or \eqn{image width \times step}
+#' (horizontal) is performed.
 #' @param remove_unvalid_polygons remove unvalid polygons (default: TRUE)
 #' @concept mask polygon
 #' @section mask_method:
@@ -2532,10 +2563,10 @@ createGiottoPolygonsFromMask <- function(
         fill_holes = TRUE,
         poly_IDs = NULL,
         ID_fmt = "cell_",
-        flip_vertical = TRUE,
-        shift_vertical_step = TRUE,
-        flip_horizontal = TRUE,
-        shift_horizontal_step = TRUE,
+        flip_vertical = FALSE,
+        shift_vertical_step = FALSE,
+        flip_horizontal = FALSE,
+        shift_horizontal_step = FALSE,
         calc_centroids = FALSE,
         remove_unvalid_polygons = TRUE,
         verbose = FALSE) {
@@ -2593,10 +2624,12 @@ createGiottoPolygonsFromMask <- function(
 
     ## flip across axes ##
     if (isTRUE(flip_vertical)) {
-        terra_polygon <- .flip_spatvect(terra_polygon)
+        terra_polygon <- .flip_spatvect(terra_polygon,
+            direction = "vertical")
     }
     if (isTRUE(flip_horizontal)) {
-        terra_polygon <- .flip_spatvect(terra_polygon)
+        terra_polygon <- .flip_spatvect(terra_polygon,
+            direction = "horizontal")
     }
 
     # convert to DT format since we want to be able to compare number of geoms
@@ -2750,6 +2783,8 @@ createGiottoPolygonsFromMask <- function(
 #' information (x, y, poly_ID) with x and y being vertex information for the
 #' polygon referenced by poly_ID. See details for how columns are selected for
 #' coordinate and ID information.
+#' @param part_col character (optional). If provided, a column in the data
+#' when processing will be indexed along as parts to generate a multipolygon.
 #' @param skip_eval_dfr logical. (default FALSE) skip evaluation of provided
 #' dataframe
 #' @param copy_dt (default TRUE) if segmdfr is provided as dt, this determines
@@ -2767,6 +2802,7 @@ createGiottoPolygonsFromMask <- function(
 #' @export
 createGiottoPolygonsFromDfr <- function(segmdfr,
     name = "cell",
+    part_col = NULL,
     calc_centroids = FALSE,
     make_valid = FALSE,
     verbose = TRUE,
@@ -2774,6 +2810,7 @@ createGiottoPolygonsFromDfr <- function(segmdfr,
     copy_dt = TRUE) {
     eval_list <- .evaluate_spatial_info(
         spatial_info = segmdfr,
+        part_col = part_col,
         make_valid = make_valid,
         skip_eval_dfr = skip_eval_dfr,
         copy_dt = copy_dt,

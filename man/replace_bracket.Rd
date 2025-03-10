@@ -69,7 +69,7 @@
 
 \S4method{[}{affine2d,missing,missing,ANY}(x, i, j) <- value
 
-\S4method{[}{processParam,missing,missing,list}(x) <- value
+\S4method{[}{processParam,missing,missing,list}(x, i, j) <- value
 }
 \arguments{
 \item{x}{Giotto S4 object to replace information in}
