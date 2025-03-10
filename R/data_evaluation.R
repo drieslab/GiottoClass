@@ -804,6 +804,8 @@ evaluate_input <- function(type, x, ...) {
 #' @description Evaluate spatial information input into a SpatVector for
 #' giottoPolygon creation
 #' @param spatial_info spatial information to evaluate
+#' @param part_col character (optional). If provided, a column in the data
+#' when processing will be indexed along as parts to generate a multipolygon.
 #' @param skip_eval_dfr (default FALSE) skip evaluation of data.frame like input
 #' @param make_valid logical. Whether to run `terra::makeValid()`
 #' @param copy_dt (default TRUE) if segmdfr is provided as dt, this determines
@@ -814,6 +816,7 @@ evaluate_input <- function(type, x, ...) {
 #' @keywords internal
 #' @noRd
 .evaluate_spatial_info <- function(spatial_info,
+    part_col = NULL,
     skip_eval_dfr = FALSE,
     copy_dt = TRUE,
     make_valid = FALSE,
@@ -895,7 +898,23 @@ evaluate_input <- function(type, x, ...) {
     new_vec <- nr_of_cells_vec[as.character(spatial_info$poly_ID)]
     spatial_info[, geom := new_vec]
 
-    spatial_info[, c("part", "hole") := list(1, 0)]
+    if (!"part" %in% colnames(spatial_info)) {
+        if (!is.null(part_col)) {
+            part_idx <- seq_along(unique(spatial_info[[part_col]]))
+            names(part_idx) <- unique(spatial_info[[part_col]])
+            part_vec <- part_idx[as.character(spatial_info[[part_col]])]
+            spatial_info[, part := part_vec]
+            spatial_info[, part := part - min(part) + 1, by = geom]
+            # drop the part col since it is incompatible with attributes
+            spatial_info[, (part_col) := NULL]
+        } else {
+            spatial_info[, part := 1]
+        }
+    }
+    if (!"hole" %in% colnames(spatial_info)) {
+        spatial_info[, hole := 0]
+    }
+
     data.table::setcolorder(spatial_info,
         c("geom", "part", "x", "y", "hole", "poly_ID")
     )

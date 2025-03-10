@@ -165,15 +165,6 @@ setMethod(
 
 #' @rdname flip
 #' @export
-setMethod("flip", signature("giottoLargeImage"), function(x, direction = "vertical", x0 = 0, y0 = 0) {
-    a <- get_args_list()
-    a$x <- as(x, "giottoAffineImage") # convert to giottoAffineImage
-    res <- do.call(flip, args = a)
-    return(res)
-})
-
-#' @rdname flip
-#' @export
 setMethod("flip", signature("giottoAffineImage"), function(x, direction = "vertical", x0 = 0, y0 = 0) {
     a <- get_args_list()
     a$x <- x@affine
@@ -367,9 +358,6 @@ setMethod("flip", signature("affine2d"), function(x, direction = "vertical", x0 
 
 #' @name .flip_large_image
 #' @title Flip a giottoLargeImage object
-#' @description Flip a giottoPoints over a designated x or y value depending on
-#' direction param input. Note that this behavior is different from terra's
-#' implementation of flip for SpatVectors where flips happen over the extent
 #' @param image giottoLargeImage
 #' @param direction character. Direction to flip. Should be either partial
 #' match to 'vertical' or 'horizontal'
