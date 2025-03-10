@@ -2,6 +2,7 @@
 
 ## new
 - `spatIDs()<-` for `giottoPolygon`
+- `combineGeom()` and `splitGeom()` for `giottoPolygon`
 
 ## bug fixes
 - fixes and updates for {spatialdata} and {anndata} interoperability.
