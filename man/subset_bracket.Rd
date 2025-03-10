@@ -129,7 +129,7 @@
 
 \S4method{[}{affine2d,missing,missing,missing}(x, i, j)
 
-\S4method{[}{processParam,missing,missing,missing}(x)
+\S4method{[}{processParam,missing,missing,missing}(x, i, j)
 }
 \arguments{
 \item{x}{Giotto S4 object to subset information from}

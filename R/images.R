@@ -682,7 +682,7 @@ reconnect_giottoImage_MG <- function(
 #' @keywords internal
 #' @returns spatRaster object
 .create_terra_spatraster <- function(image_path) {
-    raster_object <- try(handle_warnings(terra::rast(x = image_path))$result)
+    raster_object <- try(terra::rast(x = image_path, noflip = TRUE))
     if (inherits(raster_object, "try-error")) {
         stop(raster_object, " can not be read by terra::rast() \n")
     }
