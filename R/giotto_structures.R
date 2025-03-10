@@ -315,6 +315,8 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 #' @inheritParams terra::aggregate
 #' @param fmt character. sprintf formatting to use to generate `poly_ID` column
 #' values if no attributes are retained after combining.
+#' @param previous_id character. If not `NULL`, column name to store original
+#' poly_ID values under. Note that merged IDs will be `NA`.
 #' @param ... additional params to pass to [terra::aggregate()] (and then to
 #' `fun`, such as `na.rm=TRUE`) or [terra::disagg()]
 #' @returns the same class as `x`
@@ -368,18 +370,24 @@ NULL
 #' @export
 setMethod("combineGeom", signature(x = "giottoPolygon"),
     function(x,
-        by = NULL, dissolve = FALSE, fun = "mean", ..., fmt = "poly_%d") {
+        by = NULL, dissolve = FALSE, fun = "mean", ...,
+        fmt = "poly_%d", previous_id = "source_id") {
     # rename cols
     if (!is.null(by)) {
-        x$old_poly_ID <- NULL # drop any old poly_ID
-        cnames <- names(x[])
-        if (!by %in% cnames) {
+        if (!by %in% names(x[])) {
             stop("[combineGeom] 'by' must be an existing column\n",
                  call. = FALSE)
         }
-        pid_idx_old <- which(cnames == "poly_ID")
-        pid_idx_new <- which(cnames == by)
-        names(x[])[pid_idx_old] <- "old_poly_ID"
+
+        # handle original names
+        pid_idx_old <- which(names(x[]) == "poly_ID")
+        if (is.null(previous_id)) {
+            x$poly_ID <- NULL
+        } else {
+            names(x[])[pid_idx_old] <- previous_id
+        }
+        # handle new names (by)
+        pid_idx_new <- which(names(x[]) == by)
         names(x[])[pid_idx_new] <- "poly_ID"
         by <- "poly_ID"
     }
@@ -400,10 +408,14 @@ setMethod("combineGeom", signature(x = "giottoPolygon"),
 })
 #' @rdname combine_split_geoms
 #' @export
-setMethod("splitGeom", signature("giottoPolygon"), function(x, ...) {
+setMethod("splitGeom", signature("giottoPolygon"),
+    function(x, fmt = "poly_%d", previous_id = "source_id", ...) {
+    if (!is.null(previous_id)) {
+        x[][[previous_id]] <- x$poly_ID
+    }
     x[] <- splitGeom(x[], ...)
     # make duplicate names unique
-    x$poly_ID <- .uniquify_dups(x$poly_ID, verbose = FALSE)
+    x$poly_ID <- sprintf(fmt, seq_len(nrow(x)))
     # update unique names
     x@unique_ID_cache <- unique(x$poly_ID)
     # drop overlaps
