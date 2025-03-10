@@ -1229,17 +1229,17 @@ setMethod(
 # * processParam ####
 #' @rdname subset_bracket
 #' @export
-setMethod("[", 
-    signature(x = "processParam", 
+setMethod("[",
+    signature(x = "processParam",
               i = "missing", j = "missing", drop = "missing"),
-    function(x) x@param
+    function(x, i, j) x@param
 )
 
 #' @rdname replace_bracket
 #' @export
 setMethod("[<-",
     signature(x = "processParam", i = "missing", j = "missing", value = "list"),
-    function(x, value) {
+    function(x, i, j, value) {
         x@param <- value
         return(initialize(x))
     }

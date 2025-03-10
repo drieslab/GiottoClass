@@ -85,13 +85,12 @@ setGeneric(
     function(x, ...) standardGeneric("overlapToMatrix")
 )
 
-
 #' @title Data Processing
 #' @name processData
 #' @description Generic for processing an object containing measured values.
 #' Specific methods should be defined for this generic to
 #' perform pre or post processing specific to a data class type. No methods
-#' are exported from \pkg{GiottoClass}. The methods, which may 
+#' are exported from \pkg{GiottoClass}. The methods, which may
 #' differ depending on the input data, are attached from other packages which
 #' focus on analyses and/or alternative data representations with specific ways
 #' to implement those analyses.
@@ -110,6 +109,8 @@ setGeneric("shear", function(x, ...) standardGeneric("shear"))
 setGeneric("XY", function(x, ...) standardGeneric("XY"))
 setGeneric("XY<-", function(x, ..., value) standardGeneric("XY<-"))
 setGeneric("settleGeom", function(x, ...) standardGeneric("settleGeom"))
+setGeneric("combineGeom", function(x, ...) standardGeneric("combineGeom"))
+setGeneric("splitGeom", function(x, ...) standardGeneric("splitGeom"))
 if (!isGeneric("area")) {
     setGeneric("area", function(x, ...) standardGeneric("area"))
 }
