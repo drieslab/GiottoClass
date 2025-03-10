@@ -12,10 +12,11 @@
   dissolve = FALSE,
   fun = "mean",
   ...,
-  fmt = "poly_\%d"
+  fmt = "poly_\%d",
+  previous_id = "source_id"
 )
 
-\S4method{splitGeom}{giottoPolygon}(x, ...)
+\S4method{splitGeom}{giottoPolygon}(x, fmt = "poly_\%d", previous_id = "source_id", ...)
 }
 \arguments{
 \item{x}{geometry class to combine or split.}
@@ -33,6 +34,9 @@ if not provided.}
 
 \item{fmt}{character. sprintf formatting to use to generate \code{poly_ID} column
 values if no attributes are retained after combining.}
+
+\item{previous_id}{character. If not \code{NULL}, column name to store original
+poly_ID values under. Note that merged IDs will be \code{NA}.}
 }
 \value{
 the same class as \code{x}

@@ -1232,7 +1232,7 @@ setMethod(
 setMethod("[",
     signature(x = "processParam",
               i = "missing", j = "missing", drop = "missing"),
-    function(x) x@param
+    function(x, i, j) x@param
 )
 
 #' @rdname replace_bracket
