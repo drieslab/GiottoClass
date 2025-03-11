@@ -332,6 +332,7 @@ reference:
   - convHull
   - buffer
   - settleGeom
+  - combine_split_geoms
   - relate
   - spatial_binary_ops
   - rescalePolygons
