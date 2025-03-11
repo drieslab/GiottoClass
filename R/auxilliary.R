@@ -436,6 +436,9 @@ addCellMetadata <- function(gobject,
     vector_name = NULL,
     by_column = FALSE,
     column_cell_ID = NULL) {
+    checkmate::assert_character(vector_name, null.ok = TRUE, len = 1)
+    checkmate::assert_logical(by_column)
+    checkmate::assert_character(column_cell_ID, null.ok = TRUE)
     # NSE variables
     cell_ID <- NULL
 
