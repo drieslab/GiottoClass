@@ -44,6 +44,9 @@
 <ul><li>
 <code>spatIDs()&lt;-</code> for <code>giottoPolygon</code>
 </li>
+<li>
+<code>combineGeom()</code> and <code>splitGeom()</code> for <code>giottoPolygon</code>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-0-4-7">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-7"></a></h3>
@@ -59,10 +62,14 @@
 <li>replace internal usage of deprecated create_spat_net_obj -&gt; createSpatNetObj and set_spatialNetwork -&gt; setSpatialNetwork when calculating spatial networks.</li>
 <li>fix <code><a href="../reference/createGiottoPolygon.html">createGiottoPolygon()</a></code> not preserving attributes from <code>data.table</code> inputs</li>
 <li>fix <code><a href="../reference/loadGiotto.html">loadGiotto()</a></code> error when a non-expected reticulate environment is already activated in the session</li>
+<li>fix <code><a href="../reference/createGiottoLargeImage.html">createGiottoLargeImage()</a></code> and <code><a href="../reference/createGiottoPolygon.html">createGiottoPolygonsFromMask()</a></code> to align with {terra} <code>v1.8-21</code> <code>rast(noflip = TRUE)</code> <a href="https://github.com/drieslab/Giotto/issues/1102" class="external-link">#1102</a> by StevenWijnen and rbutleriii</li>
+<li>add fallback for when attributes do not match number of geometries in <code><a href="../reference/createGiottoPolygon.html">createGiottoPolygon()</a></code> so that poly_ID col is not dropped</li>
 </ul></div>
 <div class="section level3">
 <h3 id="changes-0-4-7">changes<a class="anchor" aria-label="anchor" href="#changes-0-4-7"></a></h3>
 <ul><li>move {magick} from imports to suggests</li>
+<li>{terra} <code>&gt;=v1.8-21</code>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="enhancements-0-4-7">enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-4-7"></a></h3>
@@ -76,6 +83,8 @@
 <li>
 <code><a href="../reference/giotto_schema.html">spatUnit()</a></code> and <code><a href="../reference/giotto_schema.html">featType()</a></code> method for <code>giotto</code> to find existing spatial units and feature types</li>
 <li>expose <code>make_valid</code> param and <code>...</code> passing for <code><a href="../reference/createGiottoPolygon.html">createGiottoPolygon()</a></code> <code>data.frame</code> method</li>
+<li>
+<code><a href="../reference/createGiottoPolygon.html">createGiottoPolygon()</a></code> <code>part_col</code> param for generating multipolygons from <code>data.frame-like</code> inputs.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-0-4-7-1">new<a class="anchor" aria-label="anchor" href="#new-0-4-7-1"></a></h3>

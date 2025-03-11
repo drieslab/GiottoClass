@@ -81,10 +81,10 @@ methods based on what kind of data the file was.</p>
 <span>  fill_holes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  poly_IDs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ID_fmt <span class="op">=</span> <span class="st">"cell_"</span>,</span>
-<span>  flip_vertical <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  shift_vertical_step <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  flip_horizontal <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  shift_horizontal_step <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  flip_vertical <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  shift_vertical_step <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  flip_horizontal <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  shift_horizontal_step <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  remove_unvalid_polygons <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  calc_centroids <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -94,6 +94,7 @@ methods based on what kind of data the file was.</p>
 <span><span class="fu">createGiottoPolygon</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"cell"</span>,</span>
+<span>  part_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  calc_centroids <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  skip_eval_dfr <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  copy_dt <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -111,10 +112,10 @@ methods based on what kind of data the file was.</p>
 <span>  fill_holes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  poly_IDs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ID_fmt <span class="op">=</span> <span class="st">"cell_"</span>,</span>
-<span>  flip_vertical <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  shift_vertical_step <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  flip_horizontal <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  shift_horizontal_step <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  flip_vertical <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  shift_vertical_step <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  flip_horizontal <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  shift_horizontal_step <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  calc_centroids <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  remove_unvalid_polygons <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -123,6 +124,7 @@ methods based on what kind of data the file was.</p>
 <span><span class="fu">createGiottoPolygonsFromDfr</span><span class="op">(</span></span>
 <span>  <span class="va">segmdfr</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"cell"</span>,</span>
+<span>  part_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  calc_centroids <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  make_valid <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -196,24 +198,25 @@ each polygon in the mask file.</p></dd>
 poly_IDs. Default = "cell_". See <em>ID_fmt</em> section.</p></dd>
 
 
-<dt id="arg-flip-vertical">flip_vertical<a class="anchor" aria-label="anchor" href="#arg-flip-vertical"></a></dt>
-<dd><p>flip mask figure in a vertical manner</p></dd>
+<dt id="arg-flip-vertical-flip-horizontal">flip_vertical, flip_horizontal<a class="anchor" aria-label="anchor" href="#arg-flip-vertical-flip-horizontal"></a></dt>
+<dd><p>logical. Flip output polygons across y
+(vertical) or x (horizontal) axis.</p></dd>
 
 
-<dt id="arg-shift-vertical-step">shift_vertical_step<a class="anchor" aria-label="anchor" href="#arg-shift-vertical-step"></a></dt>
-<dd><p>shift vertical (boolean or numerical)</p></dd>
-
-
-<dt id="arg-flip-horizontal">flip_horizontal<a class="anchor" aria-label="anchor" href="#arg-flip-horizontal"></a></dt>
-<dd><p>flip mask figure in a horizontal manner</p></dd>
-
-
-<dt id="arg-shift-horizontal-step">shift_horizontal_step<a class="anchor" aria-label="anchor" href="#arg-shift-horizontal-step"></a></dt>
-<dd><p>shift horizontal (boolean or numerical)</p></dd>
+<dt id="arg-shift-vertical-step-shift-horizontal-step">shift_vertical_step, shift_horizontal_step<a class="anchor" aria-label="anchor" href="#arg-shift-vertical-step-shift-horizontal-step"></a></dt>
+<dd><p>logical or numeric. When
+<code>FALSE</code>, no shift is performed. When numeric, a shift of
+\(image height \times step\) (vertical) or \(image width \times step\)
+(horizontal) is performed.</p></dd>
 
 
 <dt id="arg-remove-unvalid-polygons">remove_unvalid_polygons<a class="anchor" aria-label="anchor" href="#arg-remove-unvalid-polygons"></a></dt>
 <dd><p>remove unvalid polygons (default: TRUE)</p></dd>
+
+
+<dt id="arg-part-col">part_col<a class="anchor" aria-label="anchor" href="#arg-part-col"></a></dt>
+<dd><p>character (optional). If provided, a column in the data
+when processing will be indexed along as parts to generate a multipolygon.</p></dd>
 
 
 <dt id="arg-skip-eval-dfr">skip_eval_dfr<a class="anchor" aria-label="anchor" href="#arg-skip-eval-dfr"></a></dt>
@@ -308,7 +311,7 @@ a <code><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">spri
 <span class="r-out co"><span class="r-pr">#&gt;</span>  class       : SpatVector </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  geometry    : polygons </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  dimensions  : 7, 1  (geometries, attributes)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  extent      : 103, 127, 101.04, 111.96  (xmin, xmax, ymin, ymax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  extent      : 3, 27, 1.04, 11.96  (xmin, xmax, ymin, ymax)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  coord. ref. :  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  names       : poly_ID</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type        :   &lt;chr&gt;</span>
@@ -328,7 +331,7 @@ a <code><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">spri
 <span class="r-out co"><span class="r-pr">#&gt;</span>  class       : SpatVector </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  geometry    : polygons </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  dimensions  : 7, 1  (geometries, attributes)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  extent      : 103, 127, 101.04, 111.96  (xmin, xmax, ymin, ymax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  extent      : 3, 27, 1.04, 11.96  (xmin, xmax, ymin, ymax)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  coord. ref. :  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  names       :     poly_ID</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type        :       &lt;chr&gt;</span>
@@ -366,49 +369,133 @@ a <code><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">spri
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># ------- create from data.frame-like ------- #</span></span></span>
 <span class="r-in"><span><span class="co"># load example data and convert to data.table</span></span></span>
-<span class="r-in"><span><span class="va">shp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/toy_poly.shp"</span>, package <span class="op">=</span> <span class="st">"GiottoClass"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">gpoly</span> <span class="op">&lt;-</span> <span class="fu">createGiottoPolygon</span><span class="op">(</span><span class="va">shp</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Selecting attribute "poly_ID" as poly_ID</span>
-<span class="r-in"><span><span class="va">gpoly_dt</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">gpoly</span>, geom <span class="op">=</span> <span class="st">"XY"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dt</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">'a'</span>, <span class="fl">3</span><span class="op">)</span>, <span class="co"># Triangle (id 'a')</span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">'b'</span>, <span class="fl">4</span><span class="op">)</span>, <span class="co"># Square 1 (id 'b')</span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">'c'</span>, <span class="fl">4</span><span class="op">)</span> <span class="co"># Square 2 (id 'c')</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span>,</span></span>
+<span class="r-in"><span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>        <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0.5</span>,</span></span>
+<span class="r-in"><span>        <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">5</span>, <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>        <span class="fl">6</span>, <span class="fl">7</span>, <span class="fl">7</span>, <span class="fl">6</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span>,</span></span>
+<span class="r-in"><span>    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>        <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>        <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>        <span class="fl">5</span>, <span class="fl">5</span>, <span class="fl">6</span>, <span class="fl">6</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># 5 columns are needed for complex polys/full definitions</span></span></span>
-<span class="r-in"><span><span class="co"># examples: multipolygons, polygons with internal holes</span></span></span>
-<span class="r-in"><span><span class="va">full_cols_dt</span> <span class="op">&lt;-</span> <span class="va">gpoly_dt</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">geom</span>, <span class="va">part</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">hole</span>, <span class="va">poly_ID</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/force.html" class="external-link">force</a></span><span class="op">(</span><span class="va">full_cols_dt</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Key: &lt;geom&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       geom  part        x        y  hole poly_ID</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;int&gt; &lt;num&gt;    &lt;num&gt;    &lt;num&gt; &lt;num&gt;  &lt;char&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1:     1     1 7.000000 5.000000     0       a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2:     1     1 7.000000 5.000000     0       a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3:     1     1 6.937166 4.502620     0       a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4:     1     1 6.752613 4.036493     0       a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5:     1     1 6.457937 3.630906     0       a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 183:     7     1 7.071654 9.688656     0       g</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 184:     7     1 7.457937 9.369094     0       g</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 185:     7     1 7.752613 8.963507     0       g</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 186:     7     1 7.937166 8.497380     0       g</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 187:     7     1 8.000000 8.000000     0       g</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu">createGiottoPolygon</span><span class="op">(</span><span class="va">full_cols_dt</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting col "poly_ID" as poly_ID column</span>
+<span class="r-in"><span><span class="co"># simple polygons only need 3 cols</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/force.html" class="external-link">force</a></span><span class="op">(</span><span class="va">dt</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         id     x     y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;char&gt; &lt;num&gt; &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:      a   0.0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:      a   1.0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:      a   0.5     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:      b   2.0     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:      b   5.0     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:      b   5.0     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:      b   2.0     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:      c   6.0     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:      c   7.0     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:      c   7.0     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:      c   6.0     6</span>
+<span class="r-in"><span><span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu">createGiottoPolygon</span><span class="op">(</span><span class="va">dt</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting col "id" as poly_ID column</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting cols "x" and "y" as x and y respectively</span>
-<span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">out1</span>, col <span class="op">=</span> <span class="fu"><a href="https://drieslab.github.io/GiottoUtils/reference/getRainbowColors.html" class="external-link">getRainbowColors</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="createGiottoPolygon-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># 3 columns are needed for simple polys</span></span></span>
-<span class="r-in"><span><span class="va">reduced_cols_dt</span> <span class="op">&lt;-</span> <span class="va">gpoly_dt</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">poly_ID</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">out2</span> <span class="op">&lt;-</span> <span class="fu">createGiottoPolygon</span><span class="op">(</span><span class="va">full_cols_dt</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># multipolygons can be generated using the `part_col` param</span></span></span>
+<span class="r-in"><span><span class="va">dt</span><span class="op">[</span>, <span class="va">part_index</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">7</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         id     x     y part_index</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;char&gt; &lt;num&gt; &lt;num&gt;      &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:      a   0.0     0          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:      a   1.0     0          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:      a   0.5     1          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:      b   2.0     2          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:      b   5.0     2          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:      b   5.0     5          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:      b   2.0     5          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:      c   6.0     5          2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:      c   7.0     5          2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:      c   7.0     6          2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:      c   6.0     6          2</span>
+<span class="r-in"><span><span class="va">dt</span><span class="op">[</span>, <span class="va">id</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"b"</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         id     x     y part_index</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;char&gt; &lt;num&gt; &lt;num&gt;      &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:      a   0.0     0          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:      a   1.0     0          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:      a   0.5     1          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:      b   2.0     2          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:      b   5.0     2          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:      b   5.0     5          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:      b   2.0     5          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:      b   6.0     5          2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:      b   7.0     5          2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:      b   7.0     6          2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:      b   6.0     6          2</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/force.html" class="external-link">force</a></span><span class="op">(</span><span class="va">dt</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         id     x     y part_index</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;char&gt; &lt;num&gt; &lt;num&gt;      &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:      a   0.0     0          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:      a   1.0     0          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:      a   0.5     1          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:      b   2.0     2          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:      b   5.0     2          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:      b   5.0     5          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:      b   2.0     5          1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:      b   6.0     5          2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:      b   7.0     5          2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:      b   7.0     6          2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:      b   6.0     6          2</span>
+<span class="r-in"><span><span class="va">out2</span> <span class="op">&lt;-</span> <span class="fu">createGiottoPolygon</span><span class="op">(</span><span class="va">dt</span>, part_col <span class="op">=</span> <span class="st">"part_index"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting col "id" as poly_ID column</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting cols "x" and "y" as x and y respectively</span>
+<span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">out2</span>, col <span class="op">=</span> <span class="fu"><a href="https://drieslab.github.io/GiottoUtils/reference/getRainbowColors.html" class="external-link">getRainbowColors</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="createGiottoPolygon-7.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># For more complex inputs with holes, it is recommended to format into</span></span></span>
+<span class="r-in"><span><span class="co"># the geom, part, x, y, hole, format that terra uses with matrix inputs</span></span></span>
+<span class="r-in"><span><span class="co"># + poly_ID.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># extract 5 column representation:</span></span></span>
+<span class="r-in"><span><span class="va">dt_full</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">out2</span>, geom <span class="op">=</span> <span class="st">"XY"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/force.html" class="external-link">force</a></span><span class="op">(</span><span class="va">dt_full</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Key: &lt;geom&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      geom  part     x     y  hole poly_ID</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt; &lt;num&gt; &lt;num&gt; &lt;num&gt; &lt;num&gt;  &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     1     1   0.0     0     0       a</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     1     1   1.0     0     0       a</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     1     1   0.5     1     0       a</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     1     1   0.0     0     0       a</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     2     1   2.0     2     0       b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     2     1   5.0     2     0       b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     2     1   5.0     5     0       b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     2     1   2.0     5     0       b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     2     1   2.0     2     0       b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     2     2   6.0     5     0       b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:     2     2   7.0     5     0       b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     2     2   7.0     6     0       b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:     2     2   6.0     6     0       b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:     2     2   6.0     5     0       b</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Columns named geom, part, x, y, hole, are treated specially when provided.</span></span></span>
+<span class="r-in"><span><span class="co"># They can be directly used without internal modification</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">createGiottoPolygon</span><span class="op">(</span><span class="va">dt_full</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting col "poly_ID" as poly_ID column</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting cols "x" and "y" as x and y respectively</span>
-<span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">out2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">res</span>, col <span class="op">=</span> <span class="fu"><a href="https://drieslab.github.io/GiottoUtils/reference/getRainbowColors.html" class="external-link">getRainbowColors</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># additional columns outside of these are retained as attributes</span></span></span>
-<span class="r-in"><span><span class="co"># these cols must map with the poly_ID/geom.</span></span></span>
+<span class="r-in"><span><span class="co"># additional columns outside of the 3 (+ part_col if provided) or 5 column</span></span></span>
+<span class="r-in"><span><span class="co"># formatting are retained as attributes</span></span></span>
+<span class="r-in"><span><span class="co"># These cols MUST map with the poly_ID/geom.</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># set up an example attribute</span></span></span>
-<span class="r-in"><span><span class="va">reduced_cols_dt</span><span class="op">$</span><span class="va">attribute</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">reduced_cols_dt</span><span class="op">$</span><span class="va">poly_ID</span>, <span class="va">letters</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">createGiottoPolygon</span><span class="op">(</span><span class="va">reduced_cols_dt</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dt_full</span><span class="op">$</span><span class="va">attribute</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">dt_full</span><span class="op">$</span><span class="va">poly_ID</span>, <span class="va">letters</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">createGiottoPolygon</span><span class="op">(</span><span class="va">dt_full</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting col "poly_ID" as poly_ID column</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting cols "x" and "y" as x and y respectively</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> An object of class giottoPolygon</span>
@@ -416,14 +503,13 @@ a <code><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">spri
 <span class="r-out co"><span class="r-pr">#&gt;</span> Spatial Information:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  class       : SpatVector </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  geometry    : polygons </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  dimensions  : 7, 2  (geometries, attributes)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  extent      : 3.015771, 27, 1.003947, 11.99605  (xmin, xmax, ymin, ymax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  dimensions  : 2, 2  (geometries, attributes)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  extent      : 0, 7, 0, 6  (xmin, xmax, ymin, ymax)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  coord. ref. :  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  names       : poly_ID attribute</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type        :   &lt;chr&gt;     &lt;int&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  values      :       a         1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      b         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                      c         3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  centroids   : NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  overlaps    : NULL</span>
 </code></pre></div>

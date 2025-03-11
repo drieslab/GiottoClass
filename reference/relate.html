@@ -87,7 +87,7 @@ x and y.</p>
 
 
 <dt id="arg-relation">relation<a class="anchor" aria-label="anchor" href="#arg-relation"></a></dt>
-<dd><p>character. One of "intersects", "touches", "crosses", "overlaps", "within", "contains", "covers", "coveredby", "disjoint". Or a "DE-9IM" string such as "FF*FF****". See <a href="https://en.wikipedia.org/wiki/DE-9IM" class="external-link">wikipedia</a> or <a href="https://docs.geotools.org/stable/userguide/library/jts/dim9.html" class="external-link">geotools doc</a></p></dd>
+<dd><p>character. One of "intersects", "touches", "crosses", "overlaps", "within", "contains", "covers", "coveredby", "disjoint", or "equals". It can also be a "DE-9IM" string such as "FF*FF****". See <a href="https://en.wikipedia.org/wiki/DE-9IM" class="external-link">Wikipedia</a> or <a href="https://docs.geotools.org/stable/userguide/library/jts/dim9.html" class="external-link">GeoTools doc</a></p></dd>
 
 
 <dt id="arg-pairs">pairs<a class="anchor" aria-label="anchor" href="#arg-pairs"></a></dt>
@@ -160,7 +160,7 @@ relate. One of "polygon", "spatlocs", "points"</p></dd>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">select_polys</span> <span class="op">&lt;-</span> <span class="fu"><a href="createGiottoPolygon.html">createGiottoPolygon</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="co"># we don't want the rownumber column.</span></span></span>
-<span class="r-in"><span>    <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">selection</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"name"</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span>    <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">selection</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"name"</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting col "name" as poly_ID column</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Selecting cols "x" and "y" as x and y respectively</span>

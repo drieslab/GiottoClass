@@ -73,25 +73,25 @@ one complete picture</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">location_file</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">location_file</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    field <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fl">5</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    X.X <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>, Y.Y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>, XtileIndex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    YtileIndex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">stitchTileCoordinates</span><span class="op">(</span><span class="va">location_file</span>, Xtilespan <span class="op">=</span> <span class="fl">0.5</span>, Ytilespan <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     field         X.X        Y.Y XtileIndex YtileIndex      Xcoord      Ycoord</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;num&gt;       &lt;num&gt;      &lt;num&gt;      &lt;int&gt;      &lt;int&gt;       &lt;num&gt;       &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     1  0.01308331  0.7811606          1          1  0.01308331  0.78116058</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     2  0.64365001  0.3784188          2          2  1.14365001  0.87841880</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     1 -2.48768926 -1.0124020          3          3 -1.48768926 -0.01240202</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     2  0.93101913 -2.0656557          4          4  2.43101913 -0.56565571</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     1 -1.89955741  1.0928168          5          5  0.10044259  3.09281676</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     2  1.21015863 -1.7202851          6          6  3.71015863  0.77971492</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     1 -1.46457418 -0.3058085          7          7  1.53542582  2.69419149</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     2  0.75557357 -0.3731366          8          8  4.25557357  3.12686344</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     1  0.42274803  0.4004511          9          9  4.42274803  4.40045106</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     2 -0.43002963  1.1347597         10         10  4.06997037  5.63475968</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     field        X.X        Y.Y XtileIndex YtileIndex     Xcoord     Ycoord</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;int&gt;      &lt;int&gt;      &lt;num&gt;      &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     1  1.8788842 -0.6380339          1          1 1.87888423 -0.6380339</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     2  0.1590069 -1.0957999          2          2 0.65900687 -0.5957999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     1 -0.1069341  1.0024878          3          3 0.89306589  2.0024878</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     2 -1.4611245  1.3914528          4          4 0.03887555  2.8914528</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     1 -0.7023167  0.1196433          5          5 1.29768329  2.1196433</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     2  0.9188768 -1.3120106          6          6 3.41887685  1.1879894</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     1  1.4691341 -0.3885520          7          7 4.46913414  2.6114480</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     2 -0.1815672 -0.1108921          8          8 3.31843281  3.3891079</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     1  0.7793798 -1.3222087          9          9 4.77937978  2.6777913</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     2  1.0789663 -1.2427025         10         10 5.57896627  3.2572975</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
