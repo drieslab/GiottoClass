@@ -14,12 +14,13 @@
 \S4method{calculateOverlap}{giotto,missing}(
   x,
   name_overlap = NULL,
-  spatial_info = NULL,
+  spat_info = NULL,
   feat_info = NULL,
   image_names = NULL,
   poly_subset_ids = NULL,
   return_gobject = TRUE,
   verbose = TRUE,
+  spatial_info = deprecated(),
   ...
 )
 
@@ -29,10 +30,12 @@
   name_overlap = NULL,
   poly_subset_ids = NULL,
   feat_subset_column = NULL,
-  feat_subset_ids = NULL,
-  count_info_column = NULL,
+  feat_subset_values = NULL,
+  feat_count_column = NULL,
   return_gpolygon = TRUE,
   verbose = TRUE,
+  feat_subset_ids = deprecated(),
+  count_info_column = deprecated(),
   ...
 )
 
@@ -73,9 +76,11 @@
   y,
   poly_subset_ids = NULL,
   feat_subset_column = NULL,
-  feat_subset_ids = NULL,
-  count_info_column = NULL,
-  verbose = TRUE
+  feat_subset_values = NULL,
+  feat_count_column = NULL,
+  verbose = TRUE,
+  feat_subset_ids = deprecated(),
+  count_info_column = deprecated()
 )
 }
 \arguments{
@@ -84,8 +89,6 @@ polygons. Can also be a \code{giotto} object}
 
 \item{name_overlap}{name for the overlap
 results (default to feat_info parameter)}
-
-\item{spatial_info}{character. Name polygon information}
 
 \item{feat_info}{character. Name of vector feature information to overlap}
 
@@ -98,6 +101,8 @@ to overlap}
 
 \item{verbose}{be verbose}
 
+\item{spatial_info}{character. Name polygon information}
+
 \item{\dots}{additional params to pass to methods.}
 
 \item{y}{Object with features to overlap: \code{giottoPoints}, \code{giottoLargeImage},
@@ -106,16 +111,20 @@ to overlap}
 \item{feat_subset_column}{character. (optional) feature info attribute to
 subset feature points on when performing overlap calculation.}
 
-\item{feat_subset_ids}{(optional) values matched against
+\item{feat_subset_values}{(optional) values matched against
 in \code{feat_subset_column} in order to subset feature points when performing
 overlap calculation.}
 
-\item{count_info_column}{character. (optional) column with count information.
+\item{feat_count_column}{character. (optional) column with count information.
 Useful in cases when more than one detection is reported per point.}
 
 \item{return_gpolygon}{default = TRUE. Whether to return the entire
 giottoPolygon provided to \code{x}, but with the overlaps information appended or
 as a bare terra \code{SpatVector}}
+
+\item{feat_subset_ids}{deprecated. Use \code{feat_subset_values} instead.}
+
+\item{count_info_column}{deprecated. Use \code{feat_count_column} instead.}
 }
 \value{
 Usually an object of the same class as \code{x}, with the overlaps
@@ -129,8 +138,8 @@ polygon annotations. This provides a summary of the spatial data overlapped
 by the polygon which can be further processed to become an expression matrix.
 }
 \details{
-\code{feat_subset_column}, \code{feat_subset_ids}, and \code{count_info_column} are
-specific to overlaps on feature points info, and should not be provided
+\code{feat_subset_column}, \code{feat_subset_values}, and \code{feat_count_column}
+are specific to overlaps on feature points info, and should not be provided
 when overlapping image data. These three params can also be passed to the
 \code{giotto} method through the \code{...} param when working with overlaps on feature
 points info.
@@ -158,7 +167,7 @@ overlaps_all$rna
 # calculate z1 only
 out_z1 <- calculateOverlap(gpoly, gpoints,
     feat_subset_column = "global_z",
-    feat_subset_ids = c(1)
+    feat_subset_values = c(1)
 )
 overlaps_z1 <- overlaps(out_z1)
 overlaps_z1$rna
@@ -172,7 +181,7 @@ overlaps_img$intensity
 # calculate z0 overlaps and return as gobject
 out_g <- calculateOverlap(g,
     feat_subset_column = "global_z",
-    feat_subset_ids = 0
+    feat_subset_values = 0
 )
 overlaps(getPolygonInfo(out_g, return_giottoPolygon = TRUE))
 

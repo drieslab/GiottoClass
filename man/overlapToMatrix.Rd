@@ -11,13 +11,16 @@
 \S4method{overlapToMatrix}{giotto}(
   x,
   name = "raw",
-  poly_info = NULL,
+  spat_info = NULL,
   feat_info = NULL,
   type = c("point", "intensity"),
-  count_info_column = NULL,
-  aggr_function = "sum",
+  feat_count_column = NULL,
+  fun = "sum",
   return_gobject = TRUE,
   verbose = TRUE,
+  aggr_function = deprecated(),
+  poly_info = deprecated(),
+  count_info_column = deprecated(),
   ...
 )
 
@@ -25,8 +28,9 @@
   x,
   feat_info = "rna",
   type = c("point", "intensity"),
-  count_info_column = NULL,
+  feat_count_column = NULL,
   output = c("Matrix", "data.table"),
+  count_info_column = deprecated(),
   ...
 )
 
@@ -34,13 +38,19 @@
   x,
   col_names = NULL,
   row_names = NULL,
-  count_info_column = NULL,
+  feat_count_column = NULL,
   output = c("Matrix", "data.table"),
   verbose = TRUE,
+  count_info_column = deprecated(),
   ...
 )
 
-\S4method{overlapToMatrix}{data.table}(x, aggr_function = "sum", output = c("Matrix", "data.table"))
+\S4method{overlapToMatrix}{data.table}(
+  x,
+  fun = "sum",
+  output = c("Matrix", "data.table"),
+  aggr_function = deprecated()
+)
 }
 \arguments{
 \item{x}{object containing overlaps info. Can be giotto object or SpatVector
@@ -48,19 +58,26 @@ points or data.table of overlaps generated from \code{calculateOverlap}}
 
 \item{name}{name for the overlap count matrix}
 
-\item{poly_info}{character. Polygon information to use}
+\item{spat_info}{character. Polygon information to use}
 
 \item{feat_info}{character. Feature information to use}
 
 \item{type}{character. Type of overlap data (either 'point' or 'intensity')}
 
-\item{count_info_column}{column with count information}
+\item{feat_count_column}{column with count information}
 
-\item{aggr_function}{function to aggregate image information (default = sum)}
+\item{fun}{character. Function to aggregate image information
+(default = "sum")}
 
 \item{return_gobject}{return giotto object (default: TRUE)}
 
 \item{verbose}{be verbose}
+
+\item{aggr_function}{deprecated. Use \code{fun} instead.}
+
+\item{poly_info}{deprecated. Please use spat_info.}
+
+\item{count_info_column}{deprecated. Use \code{feat_count_column} instead.}
 
 \item{\dots}{additional params to pass to methods}
 
