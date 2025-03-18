@@ -328,7 +328,7 @@ anndataToGiotto <- function(
         loads <- p$loadings
         # Add PCA to giottoObject
         dobj <- create_dim_obj(
-            name = "pca.ad",
+            name = "pca",
             spat_unit = spat_unit,
             feat_type = feat_type,
             provenance = NULL,
@@ -352,7 +352,7 @@ anndataToGiotto <- function(
     if (!is.null(u)) {
         # Add UMAP to giottoObject
         dobj <- create_dim_obj(
-            name = "umap.ad",
+            name = "umap",
             spat_unit = spat_unit,
             feat_type = feat_type,
             provenance = NULL,
@@ -372,7 +372,7 @@ anndataToGiotto <- function(
     if (!is.null(t)) {
         # Add TSNE to giottoObject
         dobj <- create_dim_obj(
-            name = "tsne.ad",
+            name = "tsne",
             spat_unit = spat_unit,
             feat_type = feat_type,
             provenance = NULL,
@@ -392,25 +392,23 @@ anndataToGiotto <- function(
 
     # Need to create nnNetObj or igraph object to use with setter for NN
 
-    weights_ad <- NULL
+    weights_ad_all <- extract_NN_connectivities(adata, key_added = n_key_added)
     num_NN_nets <- length(n_key_added)
 
     if (is.null(n_key_added) &&
-        !is.null(extract_NN_connectivities(adata, key_added = n_key_added))) {
-        num_NN_nets <- 1
+        !is.null(weights_ad_all)) {
+        num_NN_nets <- length(weights_ad_all)
     }
 
-    for (i in num_NN_nets) {
+    for (i in 1:num_NN_nets) {
         if (inherits(n_key_added, "list")) {
             n_key_added_it <- n_key_added[[i]]
         } else {
-            n_key_added_it <- n_key_added
+            net_name <- sub("_[^_]+$", "", names(weights_ad_all)[i])
+            n_key_added_it <- net_name
         }
 
-        weights_ad <- extract_NN_connectivities(adata,
-            key_added = n_key_added_it
-        )
-        # adw = methods::as(weights_ad, "TsparseMatrix")
+        weights_ad <- weights_ad_all[[i]]
         if (!is.null(weights_ad)) {
             distances_ad <- extract_NN_distances(adata,
                 key_added = n_key_added_it
@@ -448,7 +446,7 @@ anndataToGiotto <- function(
                 net_name <- paste0(n_key_added_it, ".", nn_info["method"])
             } else if (!("sNN" %in% n_key_added_it) &
                 !is.null(n_key_added_it)) {
-                net_name <- paste0(n_key_added_it, ".", nn_info["method"])
+                net_name <- sub("_connectivities", "", n_key_added_it)
             } else {
                 net_name <- paste0(net_type, ".", nn_info["method"])
             }
@@ -473,30 +471,25 @@ anndataToGiotto <- function(
     }
 
     ## Spatial Network
-    s_weights_ad <- NULL
+    s_weights_ad_all <- extract_SN_connectivities(adata, key_added = spatial_n_key_added)
     num_SN_nets <- length(spatial_n_key_added)
 
     # Check for the case where NULL is provided, since the
     # anndata object takes the default value for SN
 
-    if (is.null(spatial_n_key_added) &&
-        !is.null(extract_SN_connectivities(adata,
-            key_added = spatial_n_key_added
-        ))) {
-        num_SN_nets <- 1
+    if (is.null(spatial_n_key_added) && !is.null(s_weights_ad_all)) {
+        num_SN_nets <- length(s_weights_ad_all)
     }
 
-    for (i in seq_len(num_SN_nets)) {
+    for (i in 1:num_SN_nets) {
         if (inherits(spatial_n_key_added, "list")) {
             spatial_n_key_added_it <- spatial_n_key_added[[i]]
         } else {
-            spatial_n_key_added_it <- spatial_n_key_added
+            net_name <- sub("_[^_]+$", "", names(s_weights_ad_all)[i])
+            spatial_n_key_added_it <- net_name
         }
 
-        s_weights_ad <- extract_SN_connectivities(
-            adata,
-            key_added = spatial_n_key_added_it
-        )
+        s_weights_ad <- s_weights_ad_all[[i]]
         if (!is.null(s_weights_ad)) {
             s_distances_ad <- extract_SN_distances(
                 adata,
@@ -551,16 +544,16 @@ anndataToGiotto <- function(
 
             # TODO filter network?
             # TODO 3D handling?
-            if (delaunay_spat_net) {
+            if (delaunay_spat_net[i]) {
                 spatObj <- create_spat_net_obj(
-                    name = "Spat_Net_from_AnnData",
+                    name = "Delaunay_network",
                     method = "delaunay",
                     networkDT = network_DT,
                     cellShapeObj = cellShapeObj
                 )
             } else {
                 spatObj <- create_spat_net_obj(
-                    name = "Spat_Net_from_AnnData",
+                    name = net_name,
                     method = "non-delaunay",
                     networkDT = network_DT,
                     cellShapeObj = cellShapeObj
@@ -569,8 +562,7 @@ anndataToGiotto <- function(
 
             gobject <- set_spatialNetwork(
                 gobject = gobject,
-                spatial_network = spatObj,
-                name = "Spat_Net_from_AnnData"
+                spatial_network = spatObj
             )
         }
     }
@@ -1020,7 +1012,7 @@ giottoToAnnData <- function(
 
                 # Save NN keys to .uns['NN_keys']
                 network_name <- network_name[!grepl("kNN.", network_name)]
-                save_nn_keys(adata = adata_list[[adata_pos]], network_name = network_name)
+                save_NN_keys(adata = adata_list[[adata_pos]], network_name = network_name)
             }
             adata_pos <- adata_pos + 1
         }
@@ -1080,8 +1072,8 @@ giottoToAnnData <- function(
                 for (p in pidx) {
                     if (gobject@parameters[[p]]["name of spatial network"] == sn_name) {
                         current_param <- gobject@parameters[[p]]
-                        kval <- current_param["k neighbours"]
-                        maxdist <- current_param["maximum distance threshold"]
+                        kval <- current_param["k neighbours"] # null in the case of Delaunay
+                        maxdist <- current_param["maximum distance threshold"] # "auto" for Delaunay, "400 (string)" for sNN
                         dimused <- current_param["dimensions used"]
                     }
                 }
@@ -1098,7 +1090,7 @@ giottoToAnnData <- function(
 
             # Save SN keys to .uns['SN_keys']
             if (length(network_name) != 0) {
-                save_sn_keys(adata = adata_list[[adata_pos]], network_name = network_name)
+                save_SN_keys(adata = adata_list[[adata_pos]], network_name = network_name)
             }
         }
 
@@ -3588,13 +3580,14 @@ spatialdataToGiotto <- function(
     # anndata object takes the default value for SN
 
     if (is.null(spatial_n_key_added) && !is.null(extract_SN_connectivities(sdata, key_added = spatial_n_key_added))) {
-        num_SN_nets <- 1
+        num_SN_nets <- length(extract_SN_connectivities(sdata, key_added = spatial_n_key_added))
     }
 
     for (i in 1:num_SN_nets) {
         if (inherits(spatial_n_key_added, "list")) {
             spatial_n_key_added_it <- spatial_n_key_added[[i]]
-        } else {
+        }
+        else {
             spatial_n_key_added_it <- spatial_n_key_added
         }
 
@@ -3664,8 +3657,7 @@ spatialdataToGiotto <- function(
                         cellShapeObj = cellShapeObj
                     )
                 } else {
-                    sk_trim <- sub("_connectivities", "", sk)
-                    net_name <- sk_trim
+                    net_name <- sub("_connectivities", "", sk)
                     spatObj <- createSpatNetObj(
                         network = network_DT,
                         name = net_name,
@@ -3770,11 +3762,11 @@ spatialdataToGiotto <- function(
     }
 
     ## Nearest Network
-    weights_sd <- NULL
+    weights_sd_all <- extract_NN_connectivities(sdata, key_added = n_key_added)
     num_NN_nets <- length(n_key_added)
 
-    if (is.null(n_key_added) && !is.null(extract_NN_connectivities(sdata, key_added = n_key_added))) {
-        num_NN_nets <- 1
+    if (is.null(n_key_added) && !is.null(weights_sd_all)) {
+        num_NN_nets <- length(weights_sd_all)
     }
 
     for (i in 1:num_NN_nets) {
@@ -3817,8 +3809,7 @@ spatialdataToGiotto <- function(
                     net_type <- "sNN"
                     net_name <- paste0(n_key_added_it, ".", nn_info["method"])
                 } else if (!("sNN" %in% n_key_added_it) & !is.null(nk)) {
-                    nk_trim <- sub("_connectivities", "", nk)
-                    net_name <- nk_trim
+                    net_name <- sub("_connectivities", "", nk)
                 } else {
                     net_name <- paste0(net_type, ".", nn_info["method"])
                 }

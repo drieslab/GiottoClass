@@ -198,43 +198,77 @@ def set_adg_nn(adata = None, df_NN = None, net_name = None, n_neighbors = None, 
     
     return adata
 
-def save_nn_keys(adata = None, network_name = None):
+def save_NN_keys(adata = None, network_name = None):
     adata.uns['NN_keys'] = network_name
     return adata
 
 def set_adg_sn(adata = None, df_SN = None, net_name = None, n_neighbors = None, max_distance = None, dim_used = None):
     ad_guard(adata)
-    dim12 = len(adata.obs_names) # dimensions are # of cell_IDs
-    fill_arr = np.zeros((dim12,dim12))
-    w_fill_df = pd.DataFrame(fill_arr, columns = adata.obs_names, index = adata.obs_names)
-    d_fill_df = pd.DataFrame(fill_arr, columns = adata.obs_names, index = adata.obs_names)
+    cell_ids = adata.obs_names.to_list()
+    cell_index_map = {cell: i for i, cell in enumerate(cell_ids)}
 
-    for i in df_SN.index:
-        tar_row = df_SN.iloc[i,:]
-        f_id = tar_row["from"]
-        t_id = tar_row["to"]
-        weight = tar_row["weight"]
-        dist = tar_row["distance"]
-        w_fill_df.loc[f_id, t_id] = weight
-        d_fill_df.loc[f_id, t_id] = dist
-    
-    weights = scipy.sparse.csr_matrix(w_fill_df)
-    distances = scipy.sparse.csr_matrix(d_fill_df)
-    
+    row_idx, col_idx, weight_vals, dist_vals = [], [], [], []
+
+    df_SN = df_SN.rename(columns={"from": "source", "to": "target"})
+    for row in df_SN.itertuples(index=False):
+        f_id = row.source
+        t_id = row.target
+        weight = row.weight
+        dist = row.distance
+        if f_id in cell_index_map and t_id in cell_index_map:
+            row_idx.append(cell_index_map[f_id])
+            col_idx.append(cell_index_map[t_id])
+            weight_vals.append(weight)
+            dist_vals.append(dist)
+
+    dim = len(cell_ids)
+    weights = scipy.sparse.csr_matrix((weight_vals, (row_idx, col_idx)), shape=(dim, dim))
+    distances = scipy.sparse.csr_matrix((dist_vals, (row_idx, col_idx)), shape=(dim, dim))
+
     cname = net_name + "_connectivities"
     dname = net_name + "_distances"
     adata.obsp[cname] = weights
     adata.obsp[dname] = distances
-    adata.uns[net_name+"_neighbors"] = {'connectivities_key': net_name + '_connectivities',
-                                        'distances_key': net_name + '_distances',
-                                        'params': {'n_neighbors': n_neighbors,
-                                                   'dimensions_used': dim_used,
-                                                   'max_distance':max_distance}
-                                        }
+    adata.uns[net_name + "_neighbors"] = {
+        'connectivities_key': cname,
+        'distances_key': dname,
+        'params': {
+            'n_neighbors': n_neighbors,
+            'dimensions_used': dim_used,
+            'max_distance': max_distance
+        }
+    }
+    # dim12 = len(adata.obs_names) # dimensions are # of cell_IDs
+    # fill_arr = np.zeros((dim12,dim12))
+    # w_fill_df = pd.DataFrame(fill_arr, columns = adata.obs_names, index = adata.obs_names)
+    # d_fill_df = pd.DataFrame(fill_arr, columns = adata.obs_names, index = adata.obs_names)
+
+    # for i in df_SN.index:
+    #     tar_row = df_SN.iloc[i,:]
+    #     f_id = tar_row["from"]
+    #     t_id = tar_row["to"]
+    #     weight = tar_row["weight"]
+    #     dist = tar_row["distance"]
+    #     w_fill_df.loc[f_id, t_id] = weight
+    #     d_fill_df.loc[f_id, t_id] = dist
+    
+    # weights = scipy.sparse.csr_matrix(w_fill_df)
+    # distances = scipy.sparse.csr_matrix(d_fill_df)
+    
+    # cname = net_name + "_connectivities"
+    # dname = net_name + "_distances"
+    # adata.obsp[cname] = weights
+    # adata.obsp[dname] = distances
+    # adata.uns[net_name+"_neighbors"] = {'connectivities_key': net_name + '_connectivities',
+    #                                     'distances_key': net_name + '_distances',
+    #                                     'params': {'n_neighbors': n_neighbors,
+    #                                                'dimensions_used': dim_used,
+    #                                                'max_distance':max_distance}
+    #                                     }
     
     return adata
 
-def save_sn_keys(adata = None, network_name = None):
+def save_SN_keys(adata = None, network_name = None):
     adata.uns['SN_keys'] = network_name
     return adata
 

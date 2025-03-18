@@ -124,45 +124,55 @@ def parse_obsm_for_spat_locs(sdata = None):
 # Extract spatial networks
 def find_SN_keys(sdata = None, key_added = None, tn = None):
     sn_key_list = []
-    prefix = ""
+    prefix = "spatial"
     suffix = "neighbors"
 
     if key_added is None:
-        map_key = prefix + suffix  # Default key to look for
-        if map_key not in sdata.tables[tn].uns:
-            print(f"Warning: Key '{map_key}' not found in sdata.tables[{tn}].uns. Skipping {tn}...")
-            return None
-        tmp_keys = sdata.tables[tn].uns[map_key].keys()
-        for i in tmp_keys:
-            sn_key_list.append(sdata.tables[tn].uns[map_key][i])
-
-    elif ".txt" in key_added:
-        line_keys = []
-        with open(key_added) as f:
-            for line in f.readlines():
-                line = line.strip()
-                line_key_added = line + "_" + suffix
-                line_keys.append(line_key_added)
-        for key in line_keys:
-            if key not in sdata.tables[tn].uns:
-                print(f"Warning: Key '{key}' not found in sdata.tables[{tn}].uns. Skipping {tn}...")
+        if "SN_keys" in sdata.tables[tn].uns:
+            sn_keys = sdata.tables[tn].uns["SN_keys"].tolist()
+            for key in sn_keys:
+                map_keys = sdata.tables[tn].uns[key + "_" + suffix].keys()
+                for mk in map_keys:
+                    sn_key_list.append(sdata.tables[tn].uns[key + "_" + suffix][mk])
+        else:
+            map_key = prefix + suffix  # Default key to look for
+            if map_key not in sdata.tables[tn].uns:
+                print(f"Warning: Key '{map_key}' not found in sdata.tables[{tn}].uns. Skipping {tn}...")
                 return None
-            map_keys = sdata.tables[tn].uns[key].keys()
-            for i in map_keys:
-                sn_key_list.append(sdata.tables[tn].uns[key][i])
+            sn_keys = sdata.tables[tn].uns[map_key].keys()
+            for sk in sn_keys:
+                sn_key_list.append(sdata.tables[tn].uns[map_key][sk])
 
     elif key_added is not None:
-        key_added = key_added + suffix
-        if key_added not in sdata.tables[tn].uns:
-            print(f"Warning: Key '{key}' not found in sdata.tables[{tn}].uns. Skipping {tn}...")
-            return None
-        map_keys = sdata.tables[tn].uns[key_added].keys()
-        for i in map_keys:
-            sn_key_list.append(sdata.tables[tn].uns[key_added][i])
+        if isinstance(key_added, str): # If key_added is a single string
+            key_added = key_added + "_" + suffix
+            if key_added not in sdata.tables[tn].uns:
+                print(f"Warning: Key '{key_added}' not found in sdata.tables[{tn}].uns. Skipping {tn}...")
+                return None
+            map_keys = sdata.tables[tn].uns[key_added].keys()
+            for mk in map_keys:
+                sn_key_list.append(sdata.tables[tn].uns[key_added][mk])
+
+        elif isinstance(key_added, list) and all(isinstance(item, str) for item in key_added): # If key_added is a list of strings
+            for key in key_added:
+                ka = key + "_" + suffix
+                if ka not in sdata.tables[tn].uns:
+                    print(f"Warning: Key '{ka}' not found in sdata.tables[{tn}].uns. Skipping {tn}...")
+                    return None
+                map_keys = sdata.tables[tn].uns[ka].keys()
+                for mk in map_keys:
+                    sn_key_list.append(sdata.tables[tn].uns[ka][mk])
+        
+        else:
+            print(f"Warning: Key '{key_added}' is not in the valid format. It must be a string or a list of strings. Spatial network not converted.")
         
     if len(sn_key_list) == 0:
         sn_key_list = None
     return sn_key_list
+
+def save_SN_keys(adata = None, network_name = None):
+    adata.uns['SN_keys'] = network_name
+    return adata
 
 def extract_SN_connectivities(sdata = None, key_added = None):
     connectivities = {}
@@ -253,30 +263,40 @@ def find_NN_keys(sdata = None, key_added = None, tn = None):
     nn_key_list = []
     
     if key_added is None:
-        param_keys = list(sdata.tables[tn].uns.keys())
-        for pk in param_keys:
-            if "neighbors" in pk and "spatial" not in pk:
-                try:
-                    tmp_keys = sdata.tables[tn].uns[pk].keys()
-                except KeyError:
-                    tmp_keys = None
-                    return None
-                for i in tmp_keys:
-                    nn_key_list.append(sdata.tables[tn].uns[pk].keys())
-                break
-    elif ".txt" in key_added:
-        line_keys = []
-        with open(key_added) as f:
-            for line in f.readlines():
-                line = line.strip()
-                line_keys.append(line)
-        for key in line_keys:
-            if key not in sdata.tables[tn].uns:
-                print(f"Warning: Key '{key}' not found in sdata.tables[{tn}].uns. Skipping {tn}...")
+        if "NN_keys" in sdata.tables[tn].uns:
+            nn_keys = sdata.tables[tn].uns["NN_keys"].tolist()
+            for key in nn_keys:
+                map_keys = sdata.tables[tn].uns[key].keys()
+                for mk in map_keys:
+                    nn_key_list.append(sdata.tables[tn].uns[key][mk])
+        else:
+            param_keys = list(sdata.tables[tn].uns.keys())
+            for pk in param_keys:
+                if "neighbors" in pk and "spatial" not in pk:
+                    try:
+                        tmp_keys = sdata.tables[tn].uns[pk].keys()
+                    except KeyError:
+                        tmp_keys = None
+                        return None
+                    for i in tmp_keys:
+                        nn_key_list.append(sdata.tables[tn].uns[pk].keys())
+                    break
+    elif key_added is not None:
+        if isinstance(key_added, str):
+            if key_added not in sdata.tables[tn].uns:
+                print(f"Warning: Key '{key_added}' not found in sdata.tables[{tn}].uns.")
                 return None
-            map_keys = sdata.tables[tn].uns[key].keys()
-            for i in map_keys:
-                nn_key_list.append(sdata.tables[tn].uns[key][i])
+            map_keys = sdata.tables[tn].uns[key_added].keys()
+            for mk in map_keys:
+                nn_key_list.append(sdata.tables[tn].uns[key_added][mk])
+        elif isinstance(key_added, list) and all(isinstance(item, str) for item in key_added):
+            for key in key_added:
+                if key not in sdata.tables[tn].uns:
+                    print(f"Warning: Key '{key}' not found in adata.uns.")
+                    return None
+                map_keys = sdata.tables[tn].uns[key].keys()
+                for mk in map_keys:
+                    nn_key_list.append(sdata.tables[tn].uns[key][mk])
     elif key_added and key_added.casefold() != "spatial":
         map_keys = sdata.tables[tn].uns[key].keys()
         for i in map_keys:
@@ -325,21 +345,28 @@ def extract_NN_info(sdata = None, key_added = None, tn = None):
 
 def align_network_data(distances = None, weights = None):
     idx_dist_not_sparse = distances.nonzero()
-    blank = [0 for i in range(len(idx_dist_not_sparse[0]))]
-    df = pd.DataFrame({"distance":blank.copy(), "weight":blank.copy(), "from":blank.copy(), "to":blank.copy()})
+    num_entries = len(idx_dist_not_sparse[0])
+
+    df = pd.DataFrame({
+        "distance": np.zeros(num_entries, dtype=float),  # Ensure float dtype
+        "weight": np.zeros(num_entries, dtype=float),  # Ensure float dtype
+        "from": np.zeros(num_entries, dtype=int),  # Ensure int dtype
+        "to": np.zeros(num_entries, dtype=int)  # Ensure int dtype
+    })
+
     t0 = perf_counter()
 
-    d_nz = distances[idx_dist_not_sparse]
+    d_nz = distances[idx_dist_not_sparse].astype(float)
     d_nz = np.array(d_nz).reshape(len(d_nz.T),)
-    w_nz = weights[idx_dist_not_sparse]
+    w_nz = weights[idx_dist_not_sparse].astype(float)
     w_nz = np.array(w_nz).reshape(len(w_nz.T),)
 
-    df.loc[:,"distance"] = pd.Series(d_nz)
-    df.loc[:,"weight"] = pd.Series(w_nz)
+    df.loc[:,"distance"] = d_nz
+    df.loc[:,"weight"] = w_nz
     with warnings.catch_warnings():
         warnings.simplefilter(action='ignore', category=(DeprecationWarning, FutureWarning))
-        df.loc[:,"from"] = pd.Series(idx_dist_not_sparse[0])
-        df.loc[:,"to"] = pd.Series(idx_dist_not_sparse[1])
+        df.loc[:,"from"] = idx_dist_not_sparse[0].astype(int)
+        df.loc[:,"to"] = idx_dist_not_sparse[1].astype(int)
     
     df.loc[:,"from"] += 1
     df.loc[:,"to"] += 1
