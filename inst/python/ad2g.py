@@ -63,26 +63,29 @@ def extract_pca(adata = None):
 
     OUTPUT: Dictionary containing PCA information
     """
-
-
     ad_guard(adata)
     o_keys = adata.obsm_keys()
     v_keys = adata.varm_keys()
-    u_keys = None
+    u_keys = {}
 
-    pca = dict()
+    pca = {}
 
     for ok in o_keys:
         if "pca" in ok or "PCA" in ok:
-            pca['pca'] = adata.obsm[ok]
-            u_keys = adata.uns['pca'].keys()
+            pca[ok.replace("X_", "", 1)] = {"pca": adata.obsm[ok]}
+            u_keys[ok.replace("X_", "", 1)] = adata.uns[ok.replace("X_", "", 1)].keys()
     for vk in v_keys:
-        if "PC" in vk:
-            pca['loadings'] = adata.varm[vk]
+        for pca_name in pca:
+            if pca_name == "pca" or "PCA":
+                pca[pca_name]["loadings"] = adata.varm["PCs"]
+            matching_key = next((vk for vk in adata.varm_keys() if vk.endswith(f"_{pca_name}")), None)
+            if matching_key:
+                pca[pca_name]["loadings"] = adata.varm[matching_key]
     if type(u_keys) is not type(None):
         for uk in u_keys:
             if "variance" == uk:
-                pca['eigenvalues'] = adata.uns['pca'][uk]
+                for pca_name in pca:
+                    pca[pca_name]["eigenvalues"] = adata.uns['pca'][uk]
     
     if(len(pca)) == 0:
         pca = None
@@ -93,23 +96,23 @@ def extract_umap(adata = None):
     ad_guard(adata)
     o_keys = adata.obsm_keys()
 
-    umap = None
+    umap = {}
 
     for ok in o_keys:
         if "umap" in ok or "UMAP" in ok:
-            umap = adata.obsm[ok]
+            umap[ok.replace("X_", "", 1)] = adata.obsm[ok]
 
-    return umap  
+    return umap
 
 def extract_tsne(adata = None):
     ad_guard(adata)
     o_keys = adata.obsm_keys()
 
-    tsne = None
+    tsne = {}
 
     for ok in o_keys:
         if "tsne" in ok or "tsne" in ok:
-            tsne = adata.obsm[ok]
+            tsne[ok.replace("X_", "", 1)] = adata.obsm[ok]
 
     return tsne  
 

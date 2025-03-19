@@ -322,70 +322,80 @@ anndataToGiotto <- function(
 
     ### Set up PCA
     p <- extract_pca(adata)
-    if (!is.null(p)) {
-        pca <- p$pca
-        evs <- p$eigenvalues
-        loads <- p$loadings
-        # Add PCA to giottoObject
-        dobj <- create_dim_obj(
-            name = "pca",
-            spat_unit = spat_unit,
-            feat_type = feat_type,
-            provenance = NULL,
-            reduction = "cells",
-            reduction_method = "pca",
-            coordinates = pca,
-            misc = list(
-                eigenvalues = evs,
-                loadings = loads
-            ),
-            my_rownames = colnames(X)
-        )
+    if (!is.null(p) && length(p) > 0) {
+        for (pca_name in names(p)) {
+            pca <- p[[pca_name]]$pca
+            evs <- p[[pca_name]]$eigenvalues
+            loads <- p[[pca_name]]$loadings
+            # Add PCA to giottoObject
+            dobj <- create_dim_obj(
+                name = pca_name,
+                spat_unit = spat_unit,
+                feat_type = feat_type,
+                provenance = NULL,
+                reduction = "cells",
+                reduction_method = "pca",
+                coordinates = pca,
+                misc = list(
+                    eigenvalues = evs,
+                    loadings = loads
+                ),
+                my_rownames = colnames(X)
+            )
 
-        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
-        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+            ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+            gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
+            ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+        }
     }
 
     ### Set up UMAP
     u <- extract_umap(adata)
-    if (!is.null(u)) {
-        # Add UMAP to giottoObject
-        dobj <- create_dim_obj(
-            name = "umap",
-            spat_unit = spat_unit,
-            feat_type = feat_type,
-            provenance = NULL,
-            reduction = "cells",
-            reduction_method = "umap",
-            coordinates = u,
-            misc = NULL,
-            my_rownames = colnames(X)
-        )
+    if (!is.null(u) && length(u) > 0) {
+        for (umap_name in names(u)) {
+            umap_coords <- u[[umap_name]]
 
-        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
-        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+            # Add UMAP to giottoObject
+            dobj <- create_dim_obj(
+                name = umap_name,
+                spat_unit = spat_unit,
+                feat_type = feat_type,
+                provenance = NULL,
+                reduction = "cells",
+                reduction_method = "umap",
+                coordinates = umap_coords,
+                misc = NULL,
+                my_rownames = colnames(X)
+                )
+
+            ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+            gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
+            ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+        }
     }
+
     ### Set up TSNE
     t <- extract_tsne(adata)
-    if (!is.null(t)) {
-        # Add TSNE to giottoObject
-        dobj <- create_dim_obj(
-            name = "tsne",
-            spat_unit = spat_unit,
-            feat_type = feat_type,
-            provenance = NULL,
-            reduction = "cells",
-            reduction_method = "tsne",
-            coordinates = t,
-            misc = NULL,
-            my_rownames = colnames(X)
-        )
+    if (!is.null(t) && length(t) > 0) {
+        for (tsne_name in names(t)) {
+            tsne_coords <- t[[tsne_name]]
 
-        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
-        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+            # Add TSNE to giottoObject
+            dobj <- create_dim_obj(
+                name = tsne_name,
+                spat_unit = spat_unit,
+                feat_type = feat_type,
+                provenance = NULL,
+                reduction = "cells",
+                reduction_method = "tsne",
+                coordinates = tsne_coords,
+                misc = NULL,
+                my_rownames = colnames(X)
+            )
+            ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+            gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
+            ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+        }
     }
 
     ### NN Network
@@ -579,12 +589,13 @@ anndataToGiotto <- function(
                 lay@Dimnames[[1]] <- fID
                 lay@Dimnames[[2]] <- cID
             }
-            layExprObj <- createExprObj(lay, name = l_n)
+            l_n_trim <- paste(strsplit(l_n, "_")[[1]][3], collapse = "_")
+            layExprObj <- createExprObj(lay, name = l_n_trim)
             gobject <- set_expression_values(
                 gobject = gobject,
                 spat_unit = spat_unit,
                 feat_type = feat_type,
-                name = l_n,
+                name = l_n_trim,
                 values = layExprObj
             )
         }
@@ -3679,31 +3690,34 @@ spatialdataToGiotto <- function(
     ## Add PCA
     p_dict <- extract_pca(sdata)
     if (!is.null(p_dict)) {
-        for (tn in names(p_dict)) {
-            p <- p_dict[[tn]]
-            if (!is.null(p)) {
-                pca <- p$pca
-                evs <- p$eigenvalues
-                loads <- p$loadings
-                parts <- strsplit(tn, "_")[[1]]
-                pca_su <- parts[1]
-                pca_ft <- parts[2]
-                rownames_vec <- if (!is.null(expr_df_dict[[tn]])) colnames(expr_df_dict[[tn]]) else NULL
-                dobj <- createDimObj(
-                    coordinates = pca,
-                    name = "pca",
-                    spat_unit = pca_su,
-                    feat_type = pca_ft,
-                    method = "pca",
-                    reduction = "cells",
-                    provenance = NULL,
-                    misc = list(
-                        eigenvalues = evs,
-                        loadings = loads
-                    ),
-                    my_rownames = rownames_vec
-                )
-                gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
+        for (tn in names(p_dict)) {     
+            for (i in seq_along(p_dict[[tn]][[1]])) {
+                p <- p_dict[[tn]][[1]][[i]]
+                if (!is.null(p)) {
+                    pca_name <- names(p_dict[[tn]][[1]])[[i]]
+                    pca <- p[["pca"]]
+                    evs <- if (!is.null(p[["eigenvalues"]])) p[["eigenvalues"]] else NULL
+                    loads <- if (!is.null(p[["loadings"]])) p[["loadings"]] else NULL
+                    parts <- strsplit(tn, "_")[[1]]
+                    pca_su <- parts[1]
+                    pca_ft <- parts[2]
+                    rownames_vec <- if (!is.null(expr_df_dict[[tn]])) colnames(expr_df_dict[[tn]]) else NULL
+                    dobj <- createDimObj(
+                        coordinates = pca,
+                        name = pca_name,
+                        spat_unit = pca_su,
+                        feat_type = pca_ft,
+                        method = "pca",
+                        reduction = "cells",
+                        provenance = NULL,
+                        misc = list(
+                            eigenvalues = evs,
+                            loadings = loads
+                        ),
+                        my_rownames = rownames_vec
+                    )
+                    gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
+                }
             }
         }
     }
@@ -3712,24 +3726,27 @@ spatialdataToGiotto <- function(
     u_dict <- extract_umap(sdata)
     if (!is.null(u_dict)) {
         for (tn in names(u_dict)) {
-            u <- u_dict[[tn]]
-            parts <- strsplit(tn, "_")[[1]]
-            umap_su <- parts[1]
-            umap_ft <- parts[2]
-            rownames_vec <- if (!is.null(expr_df_dict[[tn]])) colnames(expr_df_dict[[tn]]) else NULL
-            if (!is.null(u)) {
-                dobj <- createDimObj(
-                coordinates = u,
-                name = "umap",
-                spat_unit = umap_su,
-                feat_type = umap_ft,
-                method = "umap",
-                reduction = "cells",
-                provenance = NULL,
-                misc = NULL,
-                my_rownames = rownames_vec
-            )
-            gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
+            for (i in seq_along(u_dict[[tn]][[1]])) {
+                u <- u_dict[[tn]][[1]][[i]]
+                if (!is.null(u)) {
+                    umap_name <- names(u_dict[[tn]][[1]])[[i]]
+                    parts <- strsplit(tn, "_")[[1]]
+                    umap_su <- parts[1]
+                    umap_ft <- parts[2]
+                    rownames_vec <- if (!is.null(expr_df_dict[[tn]])) colnames(expr_df_dict[[tn]]) else NULL
+                        dobj <- createDimObj(
+                        coordinates = u,
+                        name = umap_name,
+                        spat_unit = umap_su,
+                        feat_type = umap_ft,
+                        method = "umap",
+                        reduction = "cells",
+                        provenance = NULL,
+                        misc = NULL,
+                        my_rownames = rownames_vec
+                    )
+                    gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
+                }
             }
         }        
     }
@@ -3738,25 +3755,29 @@ spatialdataToGiotto <- function(
     t_dict <- extract_tsne(sdata)
     if (!is.null(t_dict)) {
         for (tn in names(t_dict)) {
-            t <- t_dict[[tn]]
-            parts <- strsplit(tn, "_")[[1]]
-            tsne_su <- parts[1]
-            tsne_ft <- parts[2]
-            rownames_vec <- if (!is.null(expr_df_dict[[tn]])) colnames(expr_df_dict[[tn]]) else NULL
-            if (!is.null(t)) {
-                dobj <- createDimObj(
-                    coordinates = t,
-                    name = "tsne",
-                    spat_unit = tsne_su,
-                    feat_type = tsne_ft,
-                    method = "tsne",
-                    reduction = "cells",
-                    provenance = NULL,
-                    misc = NULL,
-                    my_rownames = rownames_vec
-                )
-                gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
+            for (i in seq_along(t_dict[[tn]][[1]])) {
+                t <- t_dict[[tn]][[1]][[i]]
+                if (!is.null(t)) {
+                    tsne_name <- names(t_dict[[tn]][[1]])[[i]]
+                    parts <- strsplit(tn, "_")[[1]]
+                    tsne_su <- parts[1]
+                    tsne_ft <- parts[2]
+                    rownames_vec <- if (!is.null(expr_df_dict[[tn]])) colnames(expr_df_dict[[tn]]) else NULL
+                    dobj <- createDimObj(
+                        coordinates = t,
+                        name = tsne_name,
+                        spat_unit = tsne_su,
+                        feat_type = tsne_ft,
+                        method = "tsne",
+                        reduction = "cells",
+                        provenance = NULL,
+                        misc = NULL,
+                        my_rownames = rownames_vec
+                    )
+                    gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
+                }
             }
+            
         }
         
     }

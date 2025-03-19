@@ -2,6 +2,7 @@ import warnings
 import numpy as np
 import pandas as pd
 import scipy as sc
+from collections import defaultdict
 from time import perf_counter
 
 from spatialdata import SpatialData
@@ -201,60 +202,64 @@ def extract_SN_distances(sdata = None, key_added = None, tn = None, sn_key_list 
 
 # Extract PCA
 def extract_pca(sdata = None):
-    pca_dict = {}
+    pca_dict = defaultdict(list)
     for tn in sdata.tables.keys():
-        o_keys = getattr(sdata.tables[tn], "obsm_keys", lambda: [])()
-        v_keys = getattr(sdata.tables[tn], "varm_keys", lambda: [])()
-        u_keys = getattr(sdata.tables[tn], "uns", {}).get("pca", {}).keys()
+        o_keys = sdata.tables[tn].obsm_keys()
+        v_keys = sdata.tables[tn].varm_keys()
+        u_keys = {}
 
-        pca = dict()
+        pca = {}
 
         for ok in o_keys:
-            if "X_pca" in ok:
-                pca['pca'] = sdata.tables[tn].obsm[ok]
-                break
+            if "pca" in ok or "PCA" in ok:
+                pca[ok.replace("X_", "", 1)] = {"pca": sdata.tables[tn].obsm[ok]}
+                u_keys[ok.replace("X_", "", 1)] = sdata.tables[tn].uns[ok.replace("X_", "", 1)].keys()
         for vk in v_keys:
-            if "PCs" in vk:
-                pca['loadings'] = sdata.tables[tn].varm[vk]
-                break  # Use first valid PC loading
+            for pca_name in pca:
+                if pca_name.lower() == "pca":
+                    pca[pca_name]["loadings"] = sdata.tables[tn].varm["PCs"]
+                matching_key = next((vk for vk in sdata.tables[tn].varm_keys() if vk.endswith(f"_{pca_name}")), None)
+                if matching_key:
+                    pca[pca_name]["loadings"] = sdata.tables[tn].varm[matching_key]
         if u_keys:
             for uk in u_keys:
-                if "variance" in uk:
-                    pca['eigenvalues'] = sdata.tables[tn].uns["pca"][uk]
-            
+                if "variance" == uk:
+                    for pca_name in pca:
+                        pca[pca_name]["eigenvalues"] = sdata.tables[tn].uns['pca'][uk]
+        
         if pca:
-            pca_dict[tn] = pca
+            pca_dict[tn].append(pca)
     return pca_dict
 
 # Extract UMAP
 def extract_umap(sdata = None):
-    umap_dict = {}
+    umap_dict = defaultdict(list)
     for tn in sdata.tables.keys():
         o_keys = getattr(sdata.tables[tn], "obsm_keys", lambda: [])()
 
-        umap = None
+        umap = {}
 
         for ok in o_keys:
-            if "X_umap" in ok:
-                umap = sdata.tables[tn].obsm[ok]
+            if "umap" in ok or "UMAP" in ok:
+                umap[ok.replace("X_", "", 1)] = sdata.tables[tn].obsm[ok]
         if umap is not None:
-            umap_dict[tn] = umap
+            umap_dict[tn].append(umap)
 
     return umap_dict
 
 # Extract tSNE
 def extract_tsne(sdata = None):
-    tsne_dict = {}
+    tsne_dict = defaultdict(list)
     for tn in sdata.tables.keys():
         o_keys = getattr(sdata.tables[tn], "obsm_keys", lambda: [])()
 
-        tsne = None
+        tsne = {}
 
         for ok in o_keys:
-            if "X_tsne" in ok:
-                tsne = sdata.tables[tn].obsm[ok]
+            if "tsne" in ok or "TSNE" in ok:
+                tsne[ok.replace("X_", "", 1)] = sdata.tables[tn].obsm[ok]
         if tsne is not None:
-            tsne_dict[tn] = tsne
+            tsne_dict[tn].append(tsne)
 
     return tsne_dict
 
