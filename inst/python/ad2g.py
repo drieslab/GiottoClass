@@ -429,3 +429,38 @@ def extract_SN_info(adata = None, key_added = None):
         if type(sk) is dict:
             sn_info = pd.Series(sk)
     return sn_info
+
+# Spatial Enrichment
+def find_SE_keys(adata = None, key_added = None):
+    se_key_list = []
+
+    if key_added is None:
+        if "SE_keys" in adata.uns:
+            se_key_list = adata.uns["SE_keys"].tolist()
+
+    elif key_added is not None:
+        if isinstance(key_added, str):
+            if key_added not in adata.uns:
+                print(f"Warning: Key '{key_added}' not found in adata.uns.")
+                return None
+            se_key_list = key_added
+        elif isinstance(key_added, list) and all(isinstance(item, str) for item in key_added):
+            for key in key_added:
+                if key not in adata.uns:
+                    print(f"Warning: Key '{key}' not found in adata.uns.")
+                    return None
+                se_key_list.append(key)
+    
+    if len(se_key_list) == 0:
+        se_key_list = None
+    return se_key_list
+
+def extract_spat_enrich(adata = None, key_added = None):
+    ad_guard(adata)
+    enrichment = {}
+    se_key_list = find_SE_keys(adata = adata, key_added = key_added)
+    
+    for sk in se_key_list:
+        enrichment[sk] = adata.uns[sk]
+    
+    return enrichment

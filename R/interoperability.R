@@ -233,6 +233,7 @@ anndataToGiotto <- function(
         n_key_added = NULL,
         spatial_n_key_added = NULL,
         delaunay_spat_net = TRUE,
+        spat_enrich_key_added = NULL,
         spat_unit = NULL,
         feat_type = NULL,
         h5_file = NULL,
@@ -599,6 +600,33 @@ anndataToGiotto <- function(
                 values = layExprObj
             )
         }
+    }
+
+    # Spatial Enrichment
+    spat_enrich_all <- extract_spat_enrich(adata, key_added = spat_enrich_key_added)
+    num_spat_enrich <- length(spat_enrich_all)
+
+    if (is.null(spat_enrich_key_added) && !is.null(spat_enrich_all)) {
+        num_spat_enrich <- length(spat_enrich_all)
+    }
+
+    for (i in 1:num_spat_enrich) {
+        if (inherits(spat_enrich_key_added, "list")) {
+            spat_enrich_key_added_it <- spat_enrich_key_added[[i]]
+        } else {
+            spat_enrich_name <- names(spat_enrich_all)[i]
+            spat_enrich_key_added_it <- spat_enrich_name
+        }
+        se <- spat_enrich_all[[i]]
+
+        spatEnrObj <- createSpatEnrObj(
+            se,
+            name = spat_enrich_name
+        )
+        gobject <- setSpatialEnrichment(
+            gobject = gobject,
+            spatEnrObj
+        )
     }
 
     gobject <- update_giotto_params(
@@ -1057,7 +1085,6 @@ giottoToAnnData <- function(
         )
     }
 
-
     for (su in spat_unit) {
         for (ft in names(gobject@expression[[su]])) {
             # Spatial networks do not have a feature type slot.
@@ -1110,6 +1137,28 @@ giottoToAnnData <- function(
 
     # Reset indexing variable
     adata_pos <- 1
+
+    # Spatial Enrichment
+    spat_enrich_list <- list_giotto_data(gobject = gobject, slot = "spatial_enrichment")
+    for (i in 1:nrow(spat_enrich_list)) {
+        se_su <- spat_enrich_list[i]$spat_unit
+        se_ft <- spat_enrich_list[i]$feat_type
+        se_name <- spat_enrich_list[i]$name
+
+        se <- getSpatialEnrichment(
+            gobject = gobject,
+            spat_unit = se_su,
+            feat_type = se_ft,
+            name = se_name,
+            output = "data.table"
+            )
+        adata_list[[adata_pos]] <- set_adg_spat_enrich(
+            adata = adata_list[[adata_pos]],
+            enrichment = se,
+            name = se_name
+        )
+    }
+    save_SE_keys(adata = adata_list[[adata_pos]], enrichment_name = spat_enrich_list$name)
 
     # Write AnnData object to .h5ad file
     # Verify it exists, and return upon success
@@ -3447,6 +3496,7 @@ spatialdataToGiotto <- function(
         n_key_added = NULL,
         spatial_n_key_added = NULL,
         delaunay_spat_net = TRUE,
+        spat_enrich_key_added = NULL,
         spat_unit = NULL,
         feat_type = NULL,
         python_path = NULL,
@@ -3583,6 +3633,35 @@ spatialdataToGiotto <- function(
     }
 
     sp_dict <- parse_obsm_for_spat_locs(sdata)
+
+    # Spatial Enrichment
+    spat_enrich_all <- extract_spat_enrich(sdata, key_added = spat_enrich_key_added)
+    num_spat_enrich <- length(spat_enrich_all)
+
+    if (is.null(spat_enrich_key_added) && !is.null(spat_enrich_all)) {
+        num_spat_enrich <- length(spat_enrich_all)
+    }
+
+    for (i in 1:num_spat_enrich) {
+        if (inherits(spat_enrich_key_added, "list")) {
+            spat_enrich_key_added_it <- spat_enrich_key_added[[i]]
+        } else {
+            sk <- names(spat_enrich_all)[[i]]
+            split_key <- strsplit(gsub("[()']", "", sk),", ")[[1]]
+            tn <- split_key[1]
+            se_name <- split_key[2]
+            spat_enrich_key_added_it <- se_name
+        }
+        se <- spat_enrich_all[[i]]
+        spatEnrObj <- createSpatEnrObj(
+            se,
+            name = se_name
+        )
+        gobject <- setSpatialEnrichment(
+            gobject = gobject,
+            spatEnrObj
+        )
+    }
 
     ## Spatial Network
     s_weights_sd <- NULL
@@ -3777,9 +3856,7 @@ spatialdataToGiotto <- function(
                     gobject <- set_dimReduction(gobject = gobject, dimObject = dobj)
                 }
             }
-            
         }
-        
     }
 
     ## Nearest Network

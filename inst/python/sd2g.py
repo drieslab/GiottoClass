@@ -443,3 +443,37 @@ def extract_polygons(sdata = None):
         polygons_dict[su] = df
 
     return polygons_dict
+
+# Spatial Enrichment
+def find_SE_keys(sdata = None, key_added = None, tn = None):
+    se_key_list = []
+    if key_added is None:
+        if "SE_keys" in sdata.tables[tn].uns:
+            se_key_list = sdata.tables[tn].uns["SE_keys"].tolist()
+
+    elif key_added is not None:
+        if isinstance(key_added, str):
+            if key_added not in sdata.tables[tn].uns:
+                print(f"Warning: Key '{key_added}' not found in sdata.tables[{tn}].uns.")
+                return None
+            se_key_list = key_added
+        elif isinstance(key_added, list) and all(isinstance(item, str) for item in key_added):
+            for key in key_added:
+                if key not in sdata.tables[tn].uns:
+                    print(f"Warning: Key '{key}' not found in sdata.tables[{tn}].uns.")
+                    return None
+                se_key_list.append(key)
+    
+    if len(se_key_list) == 0:
+        se_key_list = None
+    return se_key_list
+
+def extract_spat_enrich(sdata = None, key_added = None):
+    enrichment_dict = {}
+    for tn in sdata.tables.keys():
+        se_key_list = find_SE_keys(sdata = sdata, key_added = key_added, tn = tn)
+        if type(se_key_list) is type(None):
+            continue
+        for se in se_key_list:
+            enrichment_dict[(tn, se)] = sdata.tables[tn].uns[se]
+    return enrichment_dict

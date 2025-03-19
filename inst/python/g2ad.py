@@ -237,39 +237,20 @@ def set_adg_sn(adata = None, df_SN = None, net_name = None, n_neighbors = None, 
             'dimensions_used': dim_used,
             'max_distance': max_distance
         }
-    }
-    # dim12 = len(adata.obs_names) # dimensions are # of cell_IDs
-    # fill_arr = np.zeros((dim12,dim12))
-    # w_fill_df = pd.DataFrame(fill_arr, columns = adata.obs_names, index = adata.obs_names)
-    # d_fill_df = pd.DataFrame(fill_arr, columns = adata.obs_names, index = adata.obs_names)
-
-    # for i in df_SN.index:
-    #     tar_row = df_SN.iloc[i,:]
-    #     f_id = tar_row["from"]
-    #     t_id = tar_row["to"]
-    #     weight = tar_row["weight"]
-    #     dist = tar_row["distance"]
-    #     w_fill_df.loc[f_id, t_id] = weight
-    #     d_fill_df.loc[f_id, t_id] = dist
-    
-    # weights = scipy.sparse.csr_matrix(w_fill_df)
-    # distances = scipy.sparse.csr_matrix(d_fill_df)
-    
-    # cname = net_name + "_connectivities"
-    # dname = net_name + "_distances"
-    # adata.obsp[cname] = weights
-    # adata.obsp[dname] = distances
-    # adata.uns[net_name+"_neighbors"] = {'connectivities_key': net_name + '_connectivities',
-    #                                     'distances_key': net_name + '_distances',
-    #                                     'params': {'n_neighbors': n_neighbors,
-    #                                                'dimensions_used': dim_used,
-    #                                                'max_distance':max_distance}
-    #                                     }
-    
+    }    
     return adata
 
 def save_SN_keys(adata = None, network_name = None):
     adata.uns['SN_keys'] = network_name
+    return adata
+
+def save_SE_keys(adata = None, enrichment_name = None):
+    adata.uns['SE_keys'] = enrichment_name
+    return adata
+
+def set_adg_spat_enrich(adata = None, enrichment = None, name = None):
+    adata.uns[name] = enrichment
+    save_SE_keys 
     return adata
 
 def write_ad_h5ad(adata = None, save_directory = None, spat_unit = None, feat_type = None):
