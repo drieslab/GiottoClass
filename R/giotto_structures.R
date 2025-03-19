@@ -91,10 +91,9 @@
 #' @description calculates centroids from selected polygons
 #' @keywords internal
 #' @returns SpatVector or giotto polygon
-.calculate_centroids_polygons <- function(
-        gpolygon,
-        name = "centroids",
-        append_gpolygon = TRUE) {
+.calculate_centroids_polygons <- function(gpolygon,
+    name = "centroids",
+    append_gpolygon = TRUE) {
     terra_polygon_centroids <- terra::centroids(slot(gpolygon, "spatVector"))
 
     if (isTRUE(append_gpolygon)) {
@@ -216,6 +215,7 @@
 #' which polygons should now be combined under which group_ID
 #' @param name (optional) name for the giottoPolygon object
 #' @description
+#' **SUPERCEDED**. Use [combineGeom()] instead.\cr\cr
 #' Combine multiple giottoPolygon geometries into a set of multipolygons. Note
 #' that attributes cannot be kept
 #' @returns giottoPolygon
@@ -286,11 +286,160 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 }
 
 
+#' @name combine_split_geoms
+#' @title Combine or Split Complex Geometries
+#' @description
+#' Geometries can be either single/simple or multi with multiple closed rings
+#' defined as a single record. `combineGeom()` is used to combine polygons.
+#' `splitGeom()` breaks combined geometries down into constituent parts.
+#'
+#' # Geometry Attributes Handling
+#' * `combineGeom()` attributes are only kept if `by` param is used. For
+#' conflicts where more than one value is present for a single variable after
+#' combining, they are resolved using `fun` param.
+#' When `by=NULL`, all attributes are dropped and a default `poly_ID` column
+#' is generated based on the `fmt` param.
+#' * `splitGeom()` attributes are duplicated for each part that was part of the
+#' same multipolygon. The `poly_ID` column will be made unique.
+#' * overlaps and centroids information will be dropped after either operation.
+#'
+#' @details
+#' Currently, these are simple wrappers around terra's
+#' `aggregate(dissolve = FALSE)` and `disagg()` with some additional handling
+#' around the `poly_ID` column and a different name to avoid confusion with
+#' spatial feature aggregation.
+#' @param x geometry class to combine or split.
+#' @param by character. Column name of variable used to group the geometries.
+#' Will be used as the new `poly_ID` column. All geometries will be combined
+#' if not provided.
+#' @inheritParams terra::aggregate
+#' @param fmt character. sprintf formatting to use to generate `poly_ID` column
+#' values if no attributes are retained after combining.
+#' @param previous_id character. If not `NULL`, column name to store original
+#' poly_ID values under. Note that merged IDs will be `NA`.
+#' @param ... additional params to pass to [terra::aggregate()] (and then to
+#' `fun`, such as `na.rm=TRUE`) or [terra::disagg()]
+#' @returns the same class as `x`
+#' @examples
+#' dt <- data.table::data.table(
+#'     id = c(
+#'         rep('a', 3), # Triangle (id 'a')
+#'         rep('b', 4), # Square 1 (id 'b')
+#'         rep('c', 4), # Square 2 (id 'c')
+#'         rep('d', 4) # Square 3 (id 'd')
+#'     ),
+#'     x = c(
+#'         0, 1, 0.5,
+#'         2, 5, 5, 2,
+#'         5, 5, 6, 6,
+#'         6, 7, 7, 6
+#'     ),
+#'     y = c(
+#'         0, 0, 1,
+#'         2, 2, 5, 5,
+#'         2, 3, 3, 2,
+#'         5, 5, 6, 6
+#'     )
+#' )
+#' plot_colors <- getRainbowColors(4)
+#' gpoly <- createGiottoPolygon(dt, verbose = FALSE)
+#' plot(gpoly, col = plot_colors)
+#'
+#' gpoly$group_id <- sprintf("group_%d", c(1, 2, 2, 3))
+#' gpoly$values <- 1:4
+#' force(gpoly)
+#'
+#' c_all <- combineGeom(gpoly) # combine all
+#' force(c_all)
+#' plot(c_all, col = plot_colors)
+#'
+#' c_gid <- combineGeom(gpoly, by = "group_id")
+#' force(c_gid)
+#' plot(c_gid, col = plot_colors)
+#' # `dissolve` removes touching boundaries
+#' plot(combineGeom(gpoly, by = "group_id", dissolve = TRUE),
+#'      col = plot_colors)
+#'
+#' # split combined geometries
+#' s_cgid <- splitGeom(c_gid)
+#' force(s_cgid)
+#' plot(s_cgid, col = plot_colors)
+NULL
 
+#' @rdname combine_split_geoms
+#' @export
+setMethod("combineGeom", signature(x = "giottoPolygon"),
+    function(x,
+        by = NULL, dissolve = FALSE, fun = "mean", ...,
+        fmt = "poly_%d", previous_id = "source_id") {
+    # rename cols
+    if (!is.null(by)) {
+        if (!by %in% names(x[])) {
+            stop("[combineGeom] 'by' must be an existing column\n",
+                 call. = FALSE)
+        }
 
+        # handle original names
+        pid_idx_old <- which(names(x[]) == "poly_ID")
+        if (is.null(previous_id)) {
+            x$poly_ID <- NULL
+        } else {
+            names(x[])[pid_idx_old] <- previous_id
+        }
+        # handle new names (by)
+        pid_idx_new <- which(names(x[]) == by)
+        names(x[])[pid_idx_new] <- "poly_ID"
+        by <- "poly_ID"
+    }
+    res <- combineGeom(x[], by = by, dissolve = dissolve, fun = fun, ...)
+    if (ncol(res) == 0) { # if no attributes, add a poly_ID col based on `fmt`
+        res$poly_ID <- sprintf(fmt, seq_len(nrow(res)))
+    }
+    x[] <- res
+    # ensure character poly_ID
+    if (!is.character(x[1]$poly_ID)) x$poly_ID <- sprintf(fmt, x$poly_ID)
+    # update unique names
+    x@unique_ID_cache <- unique(x$poly_ID)
+    # drop overlaps
+    x@overlaps <- NULL
+    # drop centroids
+    x@spatVectorCentroids <- NULL
+    x
+})
+#' @rdname combine_split_geoms
+#' @export
+setMethod("splitGeom", signature("giottoPolygon"),
+    function(x, fmt = "poly_%d", previous_id = "source_id", ...) {
+    if (!is.null(previous_id)) {
+        x[][[previous_id]] <- x$poly_ID
+    }
+    x[] <- splitGeom(x[], ...)
+    # make duplicate names unique
+    x$poly_ID <- sprintf(fmt, seq_len(nrow(x)))
+    # update unique names
+    x@unique_ID_cache <- unique(x$poly_ID)
+    # drop overlaps
+    x@overlaps <- NULL
+    # drop centroids
+    x@spatVectorCentroids <- NULL
+    x
+})
 
-
-
+# Don't export these
+# They are there to perform the underlying geom operations (possibly on other
+# representations other than SpatVectors in the future). However, they don't
+# deal with IDs like might be expected by Giotto.
+#' @keywords internal
+#' @noRd
+setMethod("combineGeom", signature(x = "SpatVector"),
+          function(x, by = NULL, dissolve = FALSE, fun = "mean", ...) {
+              terra::aggregate(x, by = by, dissolve = dissolve, fun = fun, ...)
+          })
+#' @keywords internal
+#' @noRd
+setMethod("splitGeom", signature(x = "SpatVector"), function(x, ...) {
+    terra::disagg(x, ...)
+})
 
 
 
@@ -351,12 +500,11 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 #'
 #' smoothGiottoPolygons(gpolygon = gpoly)
 #' @export
-smoothGiottoPolygons <- function(
-        gpolygon,
-        vertices = 20,
-        k = 3,
-        set_neg_to_zero = TRUE,
-        ...) {
+smoothGiottoPolygons <- function(gpolygon,
+    vertices = 20,
+    k = 3,
+    set_neg_to_zero = TRUE,
+    ...) {
     # NSE vars
     x <- NULL
     y <- NULL
@@ -450,11 +598,12 @@ smoothGiottoPolygons <- function(
 #' @param verbose be verbose
 #' @returns SpatVector
 #' @keywords internal
-.create_spatvector_object_from_dfr <- function(x,
-    x_colname = NULL,
-    y_colname = NULL,
-    feat_ID_colname = NULL,
-    verbose = NULL) {
+.create_spatvector_object_from_dfr <- function(
+        x,
+        x_colname = NULL,
+        y_colname = NULL,
+        feat_ID_colname = NULL,
+        verbose = NULL) {
     x <- data.table::as.data.table(x)
 
     # MANUAL OPTION
@@ -592,16 +741,15 @@ smoothGiottoPolygons <- function(
 #' @param ... additional parameters to pass to \code{\link[dbscan]{kNN}}
 #' @returns kNN spatial feature network
 #' @keywords internal
-createSpatialFeaturesKNNnetwork_dbscan <- function(
-        gobject,
-        feat_type = NULL,
-        name = "knn_feats_network",
-        k = 4,
-        maximum_distance = NULL,
-        minimum_k = 0,
-        add_feat_ids = FALSE,
-        verbose = TRUE,
-        ...) {
+createSpatialFeaturesKNNnetwork_dbscan <- function(gobject,
+    feat_type = NULL,
+    name = "knn_feats_network",
+    k = 4,
+    maximum_distance = NULL,
+    minimum_k = 0,
+    add_feat_ids = FALSE,
+    verbose = TRUE,
+    ...) {
     # define for data.table
     from_feat <- from <- to_feat <- to <- from_to_feat <- NULL
 
@@ -721,19 +869,18 @@ createSpatialFeaturesKNNnetwork_dbscan <- function(
 #'
 #' createSpatialFeaturesKNNnetwork(g)
 #' @export
-createSpatialFeaturesKNNnetwork <- function(
-        gobject,
-        method = "dbscan",
-        feat_type = NULL,
-        name = "knn_feats_network",
-        k = 4,
-        maximum_distance = NULL,
-        minimum_k = 0,
-        add_feat_ids = FALSE,
-        verbose = TRUE,
-        return_gobject = TRUE,
-        toplevel_params = 2,
-        ...) {
+createSpatialFeaturesKNNnetwork <- function(gobject,
+    method = "dbscan",
+    feat_type = NULL,
+    name = "knn_feats_network",
+    k = 4,
+    maximum_distance = NULL,
+    minimum_k = 0,
+    add_feat_ids = FALSE,
+    verbose = TRUE,
+    return_gobject = TRUE,
+    toplevel_params = 2,
+    ...) {
     # 1. select feat_type
     if (is.null(feat_type)) {
         feat_type <- gobject@expression_feat[[1]]
@@ -812,13 +959,12 @@ createSpatialFeaturesKNNnetwork <- function(
 #'
 #' addSpatialCentroidLocationsLayer(g, poly_info = "aggregate")
 #' @export
-addSpatialCentroidLocationsLayer <- function(
-        gobject,
-        poly_info = "cell",
-        feat_type = NULL,
-        provenance = poly_info,
-        spat_loc_name = "raw",
-        return_gobject = TRUE) {
+addSpatialCentroidLocationsLayer <- function(gobject,
+    poly_info = "cell",
+    feat_type = NULL,
+    provenance = poly_info,
+    spat_loc_name = "raw",
+    return_gobject = TRUE) {
     # data.table vars
     x <- y <- poly_ID <- NULL
 
@@ -937,14 +1083,13 @@ addSpatialCentroidLocationsLayer <- function(
 #'
 #' addSpatialCentroidLocations(g, poly_info = "aggregate")
 #' @export
-addSpatialCentroidLocations <- function(
-        gobject,
-        poly_info = "cell",
-        feat_type = NULL,
-        spat_loc_name = "raw",
-        provenance = poly_info,
-        return_gobject = TRUE,
-        verbose = TRUE) {
+addSpatialCentroidLocations <- function(gobject,
+    poly_info = "cell",
+    feat_type = NULL,
+    spat_loc_name = "raw",
+    provenance = poly_info,
+    return_gobject = TRUE,
+    verbose = TRUE) {
     # provenance setup #
     # Require that provenance is a user-provided named list if length of
     # poly_info is greater than 1.

@@ -349,6 +349,29 @@ setMethod("$", signature("affine2d"), function(x, name) {
     c("affine", "order", "rotate", "shear", "scale", "translate")
 }
 
+#' @rdname subset_dollar
+#' @section \code{`$`} methods:
+#'   Select param from `processParam` inheriting objects
+#' @export
+setMethod("$", signature("processParam"), function(x, name) {
+    x@param[[name]]
+})
+#' @export
+.DollarNames.processParam <- function(x, pattern) {
+    names(x@param)
+}
+
+#' @rdname replace_dollar
+#' @section \code{`$<-`} methods:
+#'   Set values by param name into `processParam` inheriting objects
+#' @export
+setMethod(
+    "$<-", signature("processParam"),
+    function(x, name, value) {
+        x@param[[name]] <- value
+        return(initialize(x))
+    }
+)
 
 # [ S4 access generic ####
 
@@ -1174,6 +1197,7 @@ setMethod(
     }
 )
 
+# * affine2d ####
 #' @rdname subset_bracket
 #' @export
 setMethod(
@@ -1202,8 +1226,24 @@ setMethod(
     }
 )
 
+# * processParam ####
+#' @rdname subset_bracket
+#' @export
+setMethod("[",
+    signature(x = "processParam",
+              i = "missing", j = "missing", drop = "missing"),
+    function(x, i, j) x@param
+)
 
-
+#' @rdname replace_bracket
+#' @export
+setMethod("[<-",
+    signature(x = "processParam", i = "missing", j = "missing", value = "list"),
+    function(x, i, j, value) {
+        x@param <- value
+        return(initialize(x))
+    }
+)
 
 
 # giotto subsets ####
@@ -1367,15 +1407,16 @@ setMethod(
 #' @param \dots additional params to pass to `spatValues` used with the
 #' subset param
 #' @export
-setMethod("subset", signature("giotto"), function(x,
-    subset,
-    feat_ids = NULL,
-    cell_ids = NULL,
-    spat_unit = NULL,
-    feat_type = NULL,
-    negate = FALSE,
-    quote = TRUE,
-    ...) {
+setMethod("subset", signature("giotto"), function(
+        x,
+        subset,
+        feat_ids = NULL,
+        cell_ids = NULL,
+        spat_unit = NULL,
+        feat_type = NULL,
+        negate = FALSE,
+        quote = TRUE,
+        ...) {
     spat_unit <- set_default_spat_unit(
         x, spat_unit
     )
@@ -1488,6 +1529,8 @@ setMethod("subset", signature("giotto"), function(x,
 #' means keeping all of them in the output
 #' @param feat_type character vector. Feature types to slice out. ":all:"
 #' means keeping all of them in the output
+#' @param negate logical. If `TRUE`, all specified `spat_unit` and `feat_type`
+#' are **not** kept. `":all:"` tokens are ignored.
 #' @param verbose be verbose
 #' @returns `giotto` object
 #' @examples
@@ -1496,13 +1539,24 @@ setMethod("subset", signature("giotto"), function(x,
 #' force(res)
 #' @seealso [subsetGiotto()] [subset_giotto]
 #' @export
-sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", verbose = FALSE) {
+sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", negate = FALSE, verbose = FALSE) {
     spat_unit <- spat_unit %null% ":all:"
     feat_type <- feat_type %null% ":all:"
     x <- gobject # shorter name
 
     if (identical(spat_unit, ":all:") && identical(feat_type, ":all:")) {
         return(x) # return early if no slicing needed
+    }
+
+    if (isTRUE(negate)) {
+        if (!identical(spat_unit, ":all:")) {
+            avail_su <- spatUnit(gobject)
+            spat_unit <- avail_su[!avail_su %in% spat_unit]
+        }
+        if (!identical(feat_type, ":all:")) {
+            avail_ft <- featType(gobject)
+            feat_type <- avail_ft[!avail_ft %in% feat_type]
+        }
     }
 
     # data slots

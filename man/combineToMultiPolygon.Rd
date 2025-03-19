@@ -18,6 +18,7 @@ which polygons should now be combined under which group_ID}
 giottoPolygon
 }
 \description{
+\strong{SUPERCEDED}. Use \code{\link[=combineGeom]{combineGeom()}} instead.\cr\cr
 Combine multiple giottoPolygon geometries into a set of multipolygons. Note
 that attributes cannot be kept
 }

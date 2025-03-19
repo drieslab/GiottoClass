@@ -12,8 +12,35 @@ NULL
 #### creating Giotto objects ####
 
 #' @title Create a giotto object
-#' @name createGiottoObject
-#' @description Function to create a giotto object
+#' @name create_giotto
+#' @description `giotto` objects can represent and work with datasets that are:
+#'
+#' * Already aggregated _(in the form of a pair of expression matrix and spatial
+#' centroids) + (optional) associated analyses_
+#' * Subcellular _(polygon/mask annotations and point detections
+#' e.g. transcripts or polygon/mask annotations and raw intensity staining
+#' images (e.g. protein stains)). + (optional) associated aggregate data_
+#' * Multiple sets/combinations of the previous two belonging to the same
+#' experiment, organized by [giotto_schema]
+#'
+#' A `giotto` analysis object can be generated in several ways:
+#'
+#' * In one step _(with `createGiottoObject()` and input data)_.
+#' * A piecewise manner where you start with just an empty `giotto` object
+#' that you append to _(either using `createGiottoObject()` with no params or
+#' a call to the class  constructor function `giotto()` - see piecewise
+#' creation section and examples)_.
+#' * Via technology specific convenience functions _(exported from \{Giotto\})_
+#'
+#' See \url{https://drieslab.github.io/Giotto_website/articles/object_creation.html}
+#' for more information. The details sections here also expand on the above
+#' options.
+#' @param gpolygons giotto polygons
+#' @param polygon_mask_list_params list parameters
+#' for \code{\link{createGiottoPolygonsFromMask}}
+#' @param polygon_dfr_list_params list parameters
+#' for \code{\link{createGiottoPolygonsFromDfr}}
+#' @param gpoints giotto points
 #' @param expression expression information
 #' @param raw_exprs deprecated, use expression
 #' @param expression_feat available features (e.g. rna, protein, ...)
@@ -31,14 +58,17 @@ NULL
 #' @param feat_info list of giotto point objects with feature info,
 #' see \code{\link{createGiottoPoints}}
 #' @param spatial_network list of spatial network(s)
+#' @param spatial_network_name list of spatial network name(s)
 #' @param spatial_grid list of spatial grid(s)
 #' @param spatial_grid_name list of spatial grid name(s)
 #' @param spatial_enrichment list of spatial enrichment score(s) for each
 #' spatial region
+#' @param spatial_enrichment_name list of spatial enrichment name(s)
 #' @param dimension_reduction list of dimension reduction(s)
 #' @param nn_network list of nearest neighbor network(s)
 #' @param images list of images
 #' @param largeImages deprecated
+#' @param largeImages_list_params image params when loading largeImages as list
 #' @param offset_file file used to stitch fields together (optional)
 #' @param instructions list of instructions or output result
 #' from \code{\link{createGiottoInstructions}}
@@ -48,13 +78,10 @@ NULL
 #' use (e.g. 'dgCMatrix', 'DelayedArray')
 #' @param h5_file path to h5 file
 #' @param verbose be verbose when building Giotto object
-#' @returns giotto object
-#' @details
+#' @returns `giotto` object
+#' @section single step creation (conventional):
 #'
-#' See \url{http://giottosuite.com/articles/getting_started_gobject.html} for
-#' more details
-#'
-#' \[**Requirements**\] To create a giotto object you need to provide at least
+#' \[**Requirements**\] To use this method, you need to provide at least
 #' a matrix with genes as row names and cells as column names. This matrix can
 #' be provided as a base matrix, sparse Matrix, data.frame, data.table or as a
 #' path to any of those. To include spatial information about
@@ -92,39 +119,108 @@ NULL
 #'   \item{images}
 #' }
 #'
+#' `createGiottoObjectSubcellular()` is another variant of this functionality
+#' that specializes in starting from polygon (e.g. cell annotations) and
+#' points (e.g. transcripts) information, but it is a legacy function. It is
+#' usually most convenient to work with piecewise creation.
+#'
+#' @section piecewise creation (most flexible):
+#' Giotto converts input data into compatible subobjects (`exprObj`,
+#' `giottoPolygon`, `giottoPoints`, etc). These subobjects can be created using
+#' the relevant `create*` functions. They can then directly be used to assemble
+#' a `giotto` object.
+#'
+#' 1. Create an empty `giotto` object (either use `createGiottoObject()` with
+#' no params or the class constructor `giotto()`)
+#' 2. Either append created subobjects one by one or all at once as a `list` of
+#' subobjects.
+#'
+#' \preformatted{
+#' # pseudocode with giotto object and created subobjects:
+#'
+#' # Start with an empty giotto object
+#' g <- giotto()
+#'
+#' # Data (subobjects) can then be added one by one.
+#' g <- setGiotto(g, polys)
+#' g <- setGiotto(g, transcripts)
+#' g <- setGiotto(g, imgs)
+#' g <- setGiotto(g, expression)
+#' g <- setGiotto(g, cell_meta)
+#'
+#' # alternatively as a list
+#' g <- setGiotto(g, list(polys, transcripts, imgs, expression, cell_meta))
+#' }
+#'
+#' @section technology specific:
+#' There are several convenience functions we provide for loading in data from
+#' popular platforms. These functions are exported from \{Giotto\} instead of
+#' this package. They take care of reading the expected output
+#' folder structures, auto-detecting where needed data items are, formatting
+#' items for ingestion, then object creation.
+#'
+#' \preformatted{
+#' # some examples are:
+#' Giotto::createGiottoVisiumObject()
+#' Giotto::createGiottoXeniumObject()
+#' Giotto::createGiottoVisiumHDObject()
+#' Giotto::createGiottoCosMxObject()
+#' }
+#'
+#' Also see \url{https://drieslab.github.io/Giotto_website/articles/import_utilities.html}
+#' for technology-specific import utilities that can be used with the piecewise
+#' `giotto` object assembly method.
+#'
 #' @concept giotto
 #' @examples
+#' # create an empty object
+#' g <- createGiottoObject
+#' # (can also use the class generator function)
+#' g <- giotto()
+#'
+#' # create an object containing an expression matrix
 #' expr_matrix <- readRDS(system.file("extdata/toy_matrix.RDS",
 #'     package = "GiottoClass"
 #' ))
 #'
 #' createGiottoObject(expression = expr_matrix)
+#'
+#' x_gpolygons <- GiottoData::loadSubObjectMini("giottoPolygon")
+#' x_gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
+#'
+#' createGiottoObjectSubcellular(
+#'     gpolygons = x_gpolygons,
+#'     gpoints = x_gpoints
+#' )
+#' @md
+NULL
+
+#' @rdname create_giotto
 #' @export
-createGiottoObject <- function(
-        expression,
-        expression_feat = "rna",
-        spatial_locs = NULL,
-        spatial_info = NULL,
-        calc_poly_centroids = FALSE,
-        centroids_to_spatlocs = FALSE,
-        feat_info = NULL,
-        cell_metadata = NULL,
-        feat_metadata = NULL,
-        spatial_network = NULL,
-        spatial_grid = NULL,
-        spatial_grid_name = NULL,
-        spatial_enrichment = NULL,
-        dimension_reduction = NULL,
-        nn_network = NULL,
-        images = NULL,
-        largeImages = NULL,
-        offset_file = NULL,
-        instructions = NULL,
-        cores = determine_cores(),
-        raw_exprs = NULL,
-        expression_matrix_class = c("dgCMatrix", "DelayedArray"),
-        h5_file = NULL,
-        verbose = FALSE) {
+createGiottoObject <- function(expression,
+    expression_feat = "rna",
+    spatial_locs = NULL,
+    spatial_info = NULL,
+    calc_poly_centroids = FALSE,
+    centroids_to_spatlocs = FALSE,
+    feat_info = NULL,
+    cell_metadata = NULL,
+    feat_metadata = NULL,
+    spatial_network = NULL,
+    spatial_grid = NULL,
+    spatial_grid_name = NULL,
+    spatial_enrichment = NULL,
+    dimension_reduction = NULL,
+    nn_network = NULL,
+    images = NULL,
+    largeImages = NULL,
+    offset_file = NULL,
+    instructions = NULL,
+    cores = determine_cores(),
+    raw_exprs = NULL,
+    expression_matrix_class = c("dgCMatrix", "DelayedArray"),
+    h5_file = NULL,
+    verbose = FALSE) {
     debug_msg <- FALSE # for reading debug help
     initialize_per_step <- FALSE
 
@@ -610,72 +706,29 @@ createGiottoObject <- function(
 
 
 
-#' @title Create a giotto object from subcellular data
-#' @name createGiottoObjectSubcellular
-#' @description Function to create a giotto object starting from subcellular
-#' polygon (e.g. cell) and points (e.g. transcripts) information
-#' @param gpolygons giotto polygons
-#' @param polygon_mask_list_params list parameters
-#' for \code{\link{createGiottoPolygonsFromMask}}
-#' @param polygon_dfr_list_params list parameters
-#' for \code{\link{createGiottoPolygonsFromDfr}}
-#' @param gpoints giotto points
-#' @param cell_metadata cell annotation metadata
-#' @param feat_metadata feature annotation metadata for each unique feature
-#' @param spatial_network list of spatial network(s)
-#' @param spatial_network_name list of spatial network name(s)
-#' @param spatial_grid list of spatial grid(s)
-#' @param spatial_grid_name list of spatial grid name(s)
-#' @param spatial_enrichment list of spatial enrichment score(s) for each
-#' spatial region
-#' @param spatial_enrichment_name list of spatial enrichment name(s)
-#' @param dimension_reduction list of dimension reduction(s)
-#' @param nn_network list of nearest neighbor network(s)
-#' @param images list of images
-#' @param largeImages deprecated
-#' @param largeImages_list_params image params when loading largeImages as list
-#' @param instructions list of instructions or output result
-#' from \code{\link{createGiottoInstructions}}
-#' @param cores how many cores or threads to use to read data if paths are
-#' provided
-#' @param verbose be verbose when building Giotto object
-#' @returns giotto object
-#' @details There are two different ways to create a Giotto Object with
-#' subcellular information:
-#' - Starting from polygons (spatial units e.g. cell) represented by a mask
-#' or dataframe file and giotto points (analyte coordinates e.g. transcripts)
-#' - Starting from polygons (spatial units e.g. cell) represented by a mask
-#' or dataframe file and raw intensity images (e.g. protein stains)
-#' @concept giotto
-#' @examples
-#' x_gpolygons <- GiottoData::loadSubObjectMini("giottoPolygon")
-#' x_gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
-#'
-#' createGiottoObjectSubcellular(
-#'     gpolygons = x_gpolygons,
-#'     gpoints = x_gpoints
-#' )
+#' @rdname create_giotto
 #' @export
-createGiottoObjectSubcellular <- function(gpolygons = NULL,
-    polygon_mask_list_params = NULL,
-    polygon_dfr_list_params = NULL,
-    gpoints = NULL,
-    cell_metadata = NULL,
-    feat_metadata = NULL,
-    spatial_network = NULL,
-    spatial_network_name = NULL,
-    spatial_grid = NULL,
-    spatial_grid_name = NULL,
-    spatial_enrichment = NULL,
-    spatial_enrichment_name = NULL,
-    dimension_reduction = NULL,
-    nn_network = NULL,
-    images = NULL,
-    largeImages = NULL,
-    largeImages_list_params = NULL,
-    instructions = NULL,
-    cores = NA,
-    verbose = FALSE) {
+createGiottoObjectSubcellular <- function(
+        gpolygons = NULL,
+        polygon_mask_list_params = NULL,
+        polygon_dfr_list_params = NULL,
+        gpoints = NULL,
+        cell_metadata = NULL,
+        feat_metadata = NULL,
+        spatial_network = NULL,
+        spatial_network_name = NULL,
+        spatial_grid = NULL,
+        spatial_grid_name = NULL,
+        spatial_enrichment = NULL,
+        spatial_enrichment_name = NULL,
+        dimension_reduction = NULL,
+        nn_network = NULL,
+        images = NULL,
+        largeImages = NULL,
+        largeImages_list_params = NULL,
+        instructions = NULL,
+        cores = NA,
+        verbose = FALSE) {
     # data.table vars
     poly_ID <- cell_ID <- feat_ID <- x <- y <- NULL
 
@@ -1252,14 +1305,13 @@ createGiottoObjectSubcellular <- function(gpolygons = NULL,
 #'
 #' createExprObj(expression_data = x_expr)
 #' @export
-createExprObj <- function(
-        expression_data,
-        name = "test",
-        spat_unit = "cell",
-        feat_type = "rna",
-        provenance = NULL,
-        misc = NULL,
-        expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
+createExprObj <- function(expression_data,
+    name = "test",
+    spat_unit = "cell",
+    feat_type = "rna",
+    provenance = NULL,
+    misc = NULL,
+    expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
     exprMat <- .evaluate_expr_matrix(expression_data,
         expression_matrix_class = expression_matrix_class,
         feat_type = feat_type
@@ -1289,13 +1341,12 @@ createExprObj <- function(
 #' create_expr_obj(exprMat = x_expr)
 #'
 #' @export
-create_expr_obj <- function(
-        name = "test",
-        exprMat = NULL,
-        spat_unit = "cell",
-        feat_type = "rna",
-        provenance = NULL,
-        misc = NULL) {
+create_expr_obj <- function(name = "test",
+    exprMat = NULL,
+    spat_unit = "cell",
+    feat_type = "rna",
+    provenance = NULL,
+    misc = NULL) {
     deprecate_soft("3.3.0",
         what = "create_expr_obj()",
         with = "createExprObj()"
@@ -1335,13 +1386,12 @@ create_expr_obj <- function(
 #'
 #' createCellMetaObj(metadata = df)
 #' @export
-createCellMetaObj <- function(
-        metadata,
-        spat_unit = "cell",
-        feat_type = "rna",
-        provenance = NULL,
-        col_desc = NULL,
-        verbose = TRUE) {
+createCellMetaObj <- function(metadata,
+    spat_unit = "cell",
+    feat_type = "rna",
+    provenance = NULL,
+    col_desc = NULL,
+    verbose = TRUE) {
     metadata <- .evaluate_cell_metadata(
         metadata = metadata,
         verbose = verbose
@@ -1363,12 +1413,11 @@ createCellMetaObj <- function(
 #' @returns cell_meta_obj
 #'
 #' @export
-create_cell_meta_obj <- function(
-        metaDT = NULL,
-        col_desc = NA_character_,
-        spat_unit = "cell",
-        feat_type = "rna",
-        provenance = NULL) {
+create_cell_meta_obj <- function(metaDT = NULL,
+    col_desc = NA_character_,
+    spat_unit = "cell",
+    feat_type = "rna",
+    provenance = NULL) {
     deprecate_soft("3.3.0",
         what = "create_cell_meta_obj()",
         with = "createCellMetaObj()"
@@ -1416,13 +1465,12 @@ create_cell_meta_obj <- function(
 #'
 #' createFeatMetaObj(metadata = x)
 #' @export
-createFeatMetaObj <- function(
-        metadata,
-        spat_unit = "cell",
-        feat_type = "rna",
-        provenance = NULL,
-        col_desc = NULL,
-        verbose = TRUE) {
+createFeatMetaObj <- function(metadata,
+    spat_unit = "cell",
+    feat_type = "rna",
+    provenance = NULL,
+    col_desc = NULL,
+    verbose = TRUE) {
     metadata <- .evaluate_feat_metadata(
         metadata = metadata,
         verbose = verbose
@@ -1443,12 +1491,11 @@ createFeatMetaObj <- function(
 #' @keywords internal
 #' @returns feat_meta_obj
 #' @export
-create_feat_meta_obj <- function(
-        metaDT = NULL,
-        col_desc = NA_character_,
-        spat_unit = "cell",
-        feat_type = "rna",
-        provenance = NULL) {
+create_feat_meta_obj <- function(metaDT = NULL,
+    col_desc = NA_character_,
+    spat_unit = "cell",
+    feat_type = "rna",
+    provenance = NULL) {
     deprecate_soft("3.3.0",
         what = "create_feat_meta_obj()",
         with = "createFeatMetaObj()"
@@ -1499,16 +1546,15 @@ create_feat_meta_obj <- function(
 #'
 #' createDimObj(coordinates = x, name = "pca", method = "pca")
 #' @export
-createDimObj <- function(
-        coordinates,
-        name = "test",
-        spat_unit = "cell",
-        feat_type = "rna",
-        method = NULL,
-        reduction = "cells",
-        provenance = NULL,
-        misc = NULL,
-        my_rownames = NULL) {
+createDimObj <- function(coordinates,
+    name = "test",
+    spat_unit = "cell",
+    feat_type = "rna",
+    method = NULL,
+    reduction = "cells",
+    provenance = NULL,
+    misc = NULL,
+    my_rownames = NULL) {
     coordinates <- .evaluate_dimension_reduction(coordinates)
 
     create_dim_obj(
@@ -1530,16 +1576,15 @@ createDimObj <- function(
 #' @keywords internal
 #' @returns dim_obj
 #' @export
-create_dim_obj <- function(
-        name = "test",
-        reduction = "cells",
-        reduction_method = NA_character_,
-        coordinates = NULL,
-        spat_unit = "cell",
-        feat_type = "rna",
-        provenance = NULL,
-        misc = NULL,
-        my_rownames = NULL) {
+create_dim_obj <- function(name = "test",
+    reduction = "cells",
+    reduction_method = NA_character_,
+    coordinates = NULL,
+    spat_unit = "cell",
+    feat_type = "rna",
+    provenance = NULL,
+    misc = NULL,
+    my_rownames = NULL) {
     deprecate_soft("3.3.0",
         what = "create_dim_obj()",
         with = "createDimObj()"
@@ -1597,14 +1642,13 @@ create_dim_obj <- function(
 #'     nn_type = "sNN"
 #' )
 #' @export
-createNearestNetObj <- function(
-        name = "test",
-        network,
-        nn_type = NULL,
-        spat_unit = "cell",
-        feat_type = "rna",
-        provenance = NULL,
-        misc = NULL) {
+createNearestNetObj <- function(name = "test",
+    network,
+    nn_type = NULL,
+    spat_unit = "cell",
+    feat_type = "rna",
+    provenance = NULL,
+    misc = NULL) {
     if (is.null(network)) {
         igraph <- NULL
     } else {
@@ -1629,14 +1673,13 @@ createNearestNetObj <- function(
 #' @keywords internal
 #' @returns nn_net_obj
 #' @export
-create_nn_net_obj <- function(
-        name = "test",
-        nn_type = NA_character_,
-        igraph = NULL,
-        spat_unit = "cell",
-        feat_type = "rna",
-        provenance = NULL,
-        misc = NULL) {
+create_nn_net_obj <- function(name = "test",
+    nn_type = NA_character_,
+    igraph = NULL,
+    spat_unit = "cell",
+    feat_type = "rna",
+    provenance = NULL,
+    misc = NULL) {
     deprecate_soft("3.3.0",
         what = "create_nn_net_obj()",
         with = "createNearestNetObj()"
@@ -1682,13 +1725,12 @@ create_nn_net_obj <- function(
 #'
 #' createSpatLocsObj(coordinates = x, name = "raw")
 #' @export
-createSpatLocsObj <- function(
-        coordinates,
-        name = "test",
-        spat_unit = "cell",
-        provenance = NULL,
-        misc = NULL,
-        verbose = TRUE) {
+createSpatLocsObj <- function(coordinates,
+    name = "test",
+    spat_unit = "cell",
+    provenance = NULL,
+    misc = NULL,
+    verbose = TRUE) {
     # convert coordinates input to preferred format
     coordinates <- .evaluate_spatial_locations(
         spatial_locs = coordinates,
@@ -1710,12 +1752,11 @@ createSpatLocsObj <- function(
 #' @keywords internal
 #' @returns spat_locs_obj
 #' @export
-create_spat_locs_obj <- function(
-        name = "test",
-        coordinates = NULL,
-        spat_unit = "cell",
-        provenance = NULL,
-        misc = NULL) {
+create_spat_locs_obj <- function(name = "test",
+    coordinates = NULL,
+    spat_unit = "cell",
+    provenance = NULL,
+    misc = NULL) {
     deprecate_soft("3.3.0",
         what = "create_spat_locs_obj()",
         with = "createSpatLocsObj()"
@@ -1778,18 +1819,17 @@ create_spat_locs_obj <- function(
 #'
 #' createSpatNetObj(network = slot(x, "networkDT"), name = "Delaunay_network")
 #' @export
-createSpatNetObj <- function(
-        network,
-        name = "test",
-        networkDT_before_filter = NULL,
-        method = NULL,
-        spat_unit = "cell",
-        provenance = NULL,
-        parameters = NULL,
-        outputObj = NULL,
-        cellShapeObj = NULL,
-        crossSectionObjects = NULL,
-        misc = NULL) {
+createSpatNetObj <- function(network,
+    name = "test",
+    networkDT_before_filter = NULL,
+    method = NULL,
+    spat_unit = "cell",
+    provenance = NULL,
+    parameters = NULL,
+    outputObj = NULL,
+    cellShapeObj = NULL,
+    crossSectionObjects = NULL,
+    misc = NULL) {
     networkDT <- .evaluate_spatial_network(network)
 
     create_spat_net_obj(
@@ -1813,18 +1853,17 @@ createSpatNetObj <- function(
 #' @keywords internal
 #' @returns spat_net_obj
 #' @export
-create_spat_net_obj <- function(
-        name = "test",
-        method = NA_character_,
-        parameters = NULL,
-        outputObj = NULL,
-        networkDT = NULL,
-        networkDT_before_filter = NULL,
-        cellShapeObj = NULL,
-        crossSectionObjects = NULL,
-        spat_unit = "cell",
-        provenance = NULL,
-        misc = NULL) {
+create_spat_net_obj <- function(name = "test",
+    method = NA_character_,
+    parameters = NULL,
+    outputObj = NULL,
+    networkDT = NULL,
+    networkDT_before_filter = NULL,
+    cellShapeObj = NULL,
+    crossSectionObjects = NULL,
+    spat_unit = "cell",
+    provenance = NULL,
+    misc = NULL) {
     deprecate_soft("3.3.0",
         what = "create_spat_net_obj()",
         with = "createSpatNetObj()"
@@ -1875,15 +1914,14 @@ create_spat_net_obj <- function(
 #'     name = "cluster_metagene"
 #' )
 #' @export
-createSpatEnrObj <- function(
-        enrichment_data,
-        name = "test",
-        spat_unit = "cell",
-        feat_type = "rna",
-        method = NULL,
-        provenance = NULL,
-        misc = NULL,
-        verbose = TRUE) {
+createSpatEnrObj <- function(enrichment_data,
+    name = "test",
+    spat_unit = "cell",
+    feat_type = "rna",
+    method = NULL,
+    provenance = NULL,
+    misc = NULL,
+    verbose = TRUE) {
     enrichDT <- .evaluate_spatial_enrichment(enrichment_data, verbose = verbose)
 
     create_spat_enr_obj(
@@ -1903,14 +1941,13 @@ createSpatEnrObj <- function(
 #' @keywords internal
 #' @returns spat_enr_obj
 #' @export
-create_spat_enr_obj <- function(
-        name = "test",
-        method = NA_character_,
-        enrichDT = NULL,
-        spat_unit = "cell",
-        feat_type = "rna",
-        provenance = NULL,
-        misc = NULL) {
+create_spat_enr_obj <- function(name = "test",
+    method = NA_character_,
+    enrichDT = NULL,
+    spat_unit = "cell",
+    feat_type = "rna",
+    provenance = NULL,
+    misc = NULL) {
     deprecate_soft("3.3.0",
         what = "create_spat_enr_obj()",
         with = "createSpatEnrObj()"
@@ -1959,15 +1996,14 @@ create_spat_enr_obj <- function(
 #'
 #' create_spat_grid_obj(name = "test", gridDT = x)
 #' @export
-create_spat_grid_obj <- function(
-        name = "test",
-        method = NA_character_,
-        parameters = NULL,
-        gridDT = NULL,
-        spat_unit = "cell",
-        feat_type = "rna",
-        provenance = NULL,
-        misc = NULL) {
+create_spat_grid_obj <- function(name = "test",
+    method = NA_character_,
+    parameters = NULL,
+    gridDT = NULL,
+    spat_unit = "cell",
+    feat_type = "rna",
+    provenance = NULL,
+    misc = NULL) {
     return(new("spatialGridObj",
         name = name,
         method = method,
@@ -1994,11 +2030,10 @@ create_spat_grid_obj <- function(
 #' @param full fully connected status
 #' @keywords internal
 #' @returns featureNetwork_object
-create_featureNetwork_object <- function(
-        name = "feat_network",
-        network_datatable = NULL,
-        network_lookup_id = NULL,
-        full = NULL) {
+create_featureNetwork_object <- function(name = "feat_network",
+    network_datatable = NULL,
+    network_lookup_id = NULL,
+    full = NULL) {
     # create minimum giotto points object
     f_network <- featureNetwork(
         name = name,
@@ -2089,12 +2124,11 @@ NULL
 #' @export
 setMethod(
     "createGiottoPoints", signature("SpatVector"),
-    function(
-        x,
-        feat_type = "rna",
-        verbose = TRUE,
-        split_keyword = NULL,
-        unique_IDs = NULL) {
+    function(x,
+    feat_type = "rna",
+    verbose = TRUE,
+    split_keyword = NULL,
+    unique_IDs = NULL) {
         checkmate::assert_character(feat_type)
         if (!is.null(split_keyword)) checkmate::assert_list(split_keyword)
 
@@ -2145,15 +2179,14 @@ setMethod(
 #' @export
 setMethod(
     "createGiottoPoints", signature("data.frame"),
-    function(
-        x,
-        x_colname = NULL,
-        y_colname = NULL,
-        feat_ID_colname = NULL,
-        feat_type = "rna",
-        verbose = TRUE,
-        split_keyword = NULL,
-        unique_IDs = NULL) {
+    function(x,
+    x_colname = NULL,
+    y_colname = NULL,
+    feat_ID_colname = NULL,
+    feat_type = "rna",
+    verbose = TRUE,
+    split_keyword = NULL,
+    unique_IDs = NULL) {
         checkmate::assert_character(feat_type)
         if (!is.null(split_keyword)) checkmate::assert_list(split_keyword)
 
@@ -2187,11 +2220,10 @@ setMethod(
 #' @param unique_IDs (optional) unique IDs in spatVector for cacheing
 #' @keywords internal
 #' @returns giotto_points_object
-create_giotto_points_object <- function(
-        feat_type = "rna",
-        spatVector = NULL,
-        networks = NULL,
-        unique_IDs = NULL) {
+create_giotto_points_object <- function(feat_type = "rna",
+    spatVector = NULL,
+    networks = NULL,
+    unique_IDs = NULL) {
     if (is.null(feat_type)) feat_type <- NA # compliance with featData class
 
     # create minimum giotto points object
@@ -2247,40 +2279,107 @@ create_giotto_points_object <- function(
 #' methods based on what kind of data the file was.
 #' @param x input. Filepath to a .GeoJSON or a mask image file. Can also be a
 #' data.frame with vertex 'x', 'y', and 'poly_ID' information.
-#' @param name name for polygons
-#' @param calc_centroids logical. (default `FALSE`) calculate centroids for 
+#' @param name character. Name to assign this set of polygons. This will also
+#' be the name of the spatial unit that they define. See [giotto_schema]
+#' @param calc_centroids logical. (default `FALSE`) calculate centroids for
 #' polygons
-#' @param make_valid logical. (default `FALSE`) Whether to run 
+#' @param make_valid logical. (default `FALSE`) Whether to run
 #' [terra::makeValid()] on the geometries. Setting this to `TRUE` may cause
 #' read-in polygon attribute information to become out of sync.
 #' @param verbose be verbose
-#' @returns giottoPolygon
-NULL
-
-
-#' @rdname createGiottoPolygon
 #' @param \dots additional params to pass. For character method, params pass to
 #' SpatRaster or SpatVector methods, depending on whether x was a filepath to
 #' a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.
+#' @returns giottoPolygon
 #' @examples
 #' # ------- create from a mask image ------- #
-#' m <- system.file("extdata/toy_mask_multi.tif", package = "GiottoClass")
-#' plot(terra::rast(m), col = grDevices::hcl.colors(7))
-#' gp <- createGiottoPolygon(
-#'     m,
-#'     flip_vertical = FALSE, flip_horizontal = FALSE,
-#'     shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
-#'     ID_fmt = "id_test_%03d",
-#'     name = "test"
+#' # example multi-value mask image
+#' mask_multi <- system.file("extdata/toy_mask_multi.tif",
+#'     package = "GiottoClass"
 #' )
-#' plot(gp, col = grDevices::hcl.colors(7))
+#' plot(terra::rast(mask_multi), col = grDevices::hcl.colors(7)) # preview mask
+#' createGiottoPolygon(mask_multi) # with all default settings
+#' gpoly1 <- createGiottoPolygon(mask_multi,
+#'     ID_fmt = "id_test_%03d", # apply a format when assigning poly_IDs
+#'     name = "multi_test"
+#' )
+#' force(gpoly1)
+#' plot(gpoly1, col = grDevices::hcl.colors(7)) # plot poly
+#'
+#' # example single-value mask image
+#' mask_single <- system.file("extdata/toy_mask_single.tif",
+#'     package = "GiottoClass"
+#' )
+#' plot(terra::rast(mask_single)) # preview mask
+#'
+#' gpoly2 <- createGiottoPolygon(mask_single,
+#'     ID_fmt = "id_test_%03d",
+#'     name = "single_test"
+#' )
+#' plot(gpoly2, col = grDevices::hcl.colors(5)) # plot poly
 #'
 #' # ------- create from an shp file ------- #
 #' shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
 #' # vector inputs do not have params for flipping and shifting
-#' gp2 <- createGiottoPolygon(shp, name = "test")
+#' gp2 <- createGiottoPolygon(shp)
 #' plot(gp2, col = grDevices::hcl.colors(7))
 #'
+#' # ------- create from data.frame-like ------- #
+#' # load example data and convert to data.table
+#' dt <- data.table::data.table(
+#'     id = c(
+#'         rep('a', 3), # Triangle (id 'a')
+#'         rep('b', 4), # Square 1 (id 'b')
+#'         rep('c', 4) # Square 2 (id 'c')
+#'     ),
+#'     x = c(
+#'         0, 1, 0.5,
+#'         2, 5, 5, 2,
+#'         6, 7, 7, 6
+#'     ),
+#'     y = c(
+#'         0, 0, 1,
+#'         2, 2, 5, 5,
+#'         5, 5, 6, 6
+#'     )
+#' )
+#'
+#' # simple polygons only need 3 cols
+#' force(dt)
+#' out1 <- createGiottoPolygon(dt)
+#' plot(out1, col = getRainbowColors(3))
+#'
+#' # multipolygons can be generated using the `part_col` param
+#' dt[, part_index := c(rep(1, 7), rep(2, 4))]
+#' dt[, id := c(rep("a", 3), rep("b", 8))]
+#' force(dt)
+#' out2 <- createGiottoPolygon(dt, part_col = "part_index")
+#' plot(out2, col = getRainbowColors(2))
+#'
+#' # For more complex inputs with holes, it is recommended to format into
+#' # the geom, part, x, y, hole, format that terra uses with matrix inputs
+#' # + poly_ID.
+#'
+#' # extract 5 column representation:
+#' dt_full <- data.table::as.data.table(out2, geom = "XY")
+#' force(dt_full)
+#'
+#' # Columns named geom, part, x, y, hole, are treated specially when provided.
+#' # They can be directly used without internal modification
+#' res <- createGiottoPolygon(dt_full)
+#' plot(res, col = getRainbowColors(2))
+#'
+#' # additional columns outside of the 3 (+ part_col if provided) or 5 column
+#' # formatting are retained as attributes
+#' # These cols MUST map with the poly_ID/geom.
+#'
+#' # set up an example attribute
+#' dt_full$attribute <- match(dt_full$poly_ID, letters)
+#' createGiottoPolygon(dt_full)
+NULL
+
+
+#' @rdname createGiottoPolygon
 #' @export
 setMethod(
     "createGiottoPolygon", signature("character"),
@@ -2291,7 +2390,7 @@ setMethod(
         # try failure means it should be vector file
         try_rast <- tryCatch(
             {
-                terra::rast(x)
+                .create_terra_spatraster(x)
             },
             error = function(e) {
                 return(invisible(NULL))
@@ -2346,22 +2445,21 @@ setMethod(
 #' @export
 setMethod(
     "createGiottoPolygon", signature("SpatRaster"),
-    function(
-        x,
-        name = "cell",
-        mask_method = c("guess", "single", "multiple"),
-        remove_background_polygon = FALSE,
-        background_algo = c("range"),
-        fill_holes = TRUE,
-        poly_IDs = NULL,
-        ID_fmt = "cell_",
-        flip_vertical = TRUE,
-        shift_vertical_step = TRUE,
-        flip_horizontal = TRUE,
-        shift_horizontal_step = TRUE,
-        remove_unvalid_polygons = TRUE,
-        calc_centroids = FALSE,
-        verbose = TRUE) {
+    function(x,
+    name = "cell",
+    mask_method = c("guess", "single", "multiple"),
+    remove_background_polygon = FALSE,
+    background_algo = c("range"),
+    fill_holes = TRUE,
+    poly_IDs = NULL,
+    ID_fmt = "cell_",
+    flip_vertical = FALSE,
+    shift_vertical_step = FALSE,
+    flip_horizontal = FALSE,
+    shift_horizontal_step = FALSE,
+    remove_unvalid_polygons = TRUE,
+    calc_centroids = FALSE,
+    verbose = TRUE) {
         # verbose not used
 
         createGiottoPolygonsFromMask(
@@ -2385,37 +2483,27 @@ setMethod(
 
 
 #' @rdname createGiottoPolygon
-#' @examples
-#' # ------- create from data.frame-like ------- #
-#' shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
-#' gpoly <- createGiottoPolygon(shp, name = "test")
-#' plot(gpoly)
-#' gpoly_dt <- data.table::as.data.table(gpoly, geom = "XY")
-#' needed_cols_dt <- gpoly_dt[, .(geom, part, x, y, hole, poly_ID)]
-#' force(needed_cols_dt)
-#'
-#' out <- createGiottoPolygon(needed_cols_dt,
-#'     name = "test"
-#' )
-#' plot(out)
-#'
 #' @export
 setMethod(
     "createGiottoPolygon", signature("data.frame"),
-    function(
-        x,
-        name = "cell",
-        calc_centroids = FALSE,
-        skip_eval_dfr = FALSE,
-        copy_dt = TRUE,
-        verbose = TRUE) {
+    function(x,
+    name = "cell",
+    part_col = NULL,
+    calc_centroids = FALSE,
+    skip_eval_dfr = FALSE,
+    copy_dt = TRUE,
+    verbose = TRUE,
+    make_valid = FALSE,
+    ...) {
         createGiottoPolygonsFromDfr(
             segmdfr = x,
+            part_col = part_col,
             name = name,
             calc_centroids = calc_centroids,
             skip_eval_dfr = skip_eval_dfr,
             copy_dt = copy_dt,
-            verbose = verbose
+            verbose = verbose,
+            ...
         )
     }
 )
@@ -2426,7 +2514,6 @@ setMethod(
 #' data class readable by [terra::rast()]
 #' @param mask_method how the mask file defines individual segmentation
 #' annotations. See *mask_method* section
-#' @param name character. Name to assign created `giottoPolygon`
 #' @param remove_background_polygon try to remove background
 #' polygon (default: FALSE)
 #' @param background_algo algorithm to remove background polygon
@@ -2435,10 +2522,12 @@ setMethod(
 #' each polygon in the mask file.
 #' @param ID_fmt character. Only applied if `poly_IDs = NULL`. Naming scheme for
 #' poly_IDs. Default = "cell_". See *ID_fmt* section.
-#' @param flip_vertical flip mask figure in a vertical manner
-#' @param shift_vertical_step shift vertical (boolean or numerical)
-#' @param flip_horizontal flip mask figure in a horizontal manner
-#' @param shift_horizontal_step shift horizontal (boolean or numerical)
+#' @param flip_vertical,flip_horizontal logical. Flip output polygons across y
+#' (vertical) or x (horizontal) axis.
+#' @param shift_vertical_step,shift_horizontal_step logical or numeric. When
+#' `FALSE`, no shift is performed. When numeric, a shift of
+#' \eqn{image height \times step} (vertical) or \eqn{image width \times step}
+#' (horizontal) is performed.
 #' @param remove_unvalid_polygons remove unvalid polygons (default: TRUE)
 #' @concept mask polygon
 #' @section mask_method:
@@ -2464,49 +2553,23 @@ setMethod(
 #' If a "%" character is detected in the input then the input will be treated as
 #' a `sprintf()` `fmt` param input instead. (ie: `ID_fmt = "cell_%03d"` produces
 #' `cell_001`, `cell_002`, `cell_003`, ...)
-#' @examples
-#' mask_multi <- system.file("extdata/toy_mask_multi.tif",
-#'     package = "GiottoClass"
-#' )
-#' mask_single <- system.file("extdata/toy_mask_single.tif",
-#'     package = "GiottoClass"
-#' )
-#' plot(terra::rast(mask_multi), col = grDevices::hcl.colors(7))
-#' plot(terra::rast(mask_single))
-#'
-#' gpoly1 <- createGiottoPolygonsFromMask(
-#'     mask_multi,
-#'     flip_vertical = FALSE, flip_horizontal = FALSE,
-#'     shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
-#'     ID_fmt = "id_test_%03d",
-#'     name = "multi_test"
-#' )
-#' plot(gpoly1, col = grDevices::hcl.colors(7))
-#'
-#' gpoly2 <- createGiottoPolygonsFromMask(
-#'     mask_single,
-#'     flip_vertical = FALSE, flip_horizontal = FALSE,
-#'     shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
-#'     ID_fmt = "id_test_%03d",
-#'     name = "single_test"
-#' )
-#' plot(gpoly2, col = grDevices::hcl.colors(5))
 #' @export
-createGiottoPolygonsFromMask <- function(maskfile,
-    mask_method = c("guess", "single", "multiple"),
-    name = "cell",
-    remove_background_polygon = FALSE,
-    background_algo = c("range"),
-    fill_holes = TRUE,
-    poly_IDs = NULL,
-    ID_fmt = "cell_",
-    flip_vertical = TRUE,
-    shift_vertical_step = TRUE,
-    flip_horizontal = TRUE,
-    shift_horizontal_step = TRUE,
-    calc_centroids = FALSE,
-    remove_unvalid_polygons = TRUE,
-    verbose = FALSE) {
+createGiottoPolygonsFromMask <- function(
+        maskfile,
+        mask_method = c("guess", "single", "multiple"),
+        name = "cell",
+        remove_background_polygon = FALSE,
+        background_algo = c("range"),
+        fill_holes = TRUE,
+        poly_IDs = NULL,
+        ID_fmt = "cell_",
+        flip_vertical = FALSE,
+        shift_vertical_step = FALSE,
+        flip_horizontal = FALSE,
+        shift_horizontal_step = FALSE,
+        calc_centroids = FALSE,
+        remove_unvalid_polygons = TRUE,
+        verbose = FALSE) {
     # data.table vars
     x <- y <- geom <- part <- NULL
 
@@ -2561,10 +2624,12 @@ createGiottoPolygonsFromMask <- function(maskfile,
 
     ## flip across axes ##
     if (isTRUE(flip_vertical)) {
-        terra_polygon <- .flip_spatvect(terra_polygon)
+        terra_polygon <- .flip_spatvect(terra_polygon,
+            direction = "vertical")
     }
     if (isTRUE(flip_horizontal)) {
-        terra_polygon <- .flip_spatvect(terra_polygon)
+        terra_polygon <- .flip_spatvect(terra_polygon,
+            direction = "horizontal")
     }
 
     # convert to DT format since we want to be able to compare number of geoms
@@ -2718,8 +2783,9 @@ createGiottoPolygonsFromMask <- function(maskfile,
 #' information (x, y, poly_ID) with x and y being vertex information for the
 #' polygon referenced by poly_ID. See details for how columns are selected for
 #' coordinate and ID information.
-#' @param name name for the \code{giottoPolygon} object
-#' @param skip_eval_dfr logical. (default FALSE) skip evaluation of provided 
+#' @param part_col character (optional). If provided, a column in the data
+#' when processing will be indexed along as parts to generate a multipolygon.
+#' @param skip_eval_dfr logical. (default FALSE) skip evaluation of provided
 #' dataframe
 #' @param copy_dt (default TRUE) if segmdfr is provided as dt, this determines
 #' whether a copy is made
@@ -2734,16 +2800,17 @@ createGiottoPolygonsFromMask <- function(maskfile,
 #' default to the 1st and 2nd columns.
 #' @concept polygon
 #' @export
-createGiottoPolygonsFromDfr <- function(
-        segmdfr,
-        name = "cell",
-        calc_centroids = FALSE,
-        make_valid = FALSE,
-        verbose = TRUE,
-        skip_eval_dfr = FALSE,
-        copy_dt = TRUE) {
+createGiottoPolygonsFromDfr <- function(segmdfr,
+    name = "cell",
+    part_col = NULL,
+    calc_centroids = FALSE,
+    make_valid = FALSE,
+    verbose = TRUE,
+    skip_eval_dfr = FALSE,
+    copy_dt = TRUE) {
     eval_list <- .evaluate_spatial_info(
         spatial_info = segmdfr,
+        part_col = part_col,
         make_valid = make_valid,
         skip_eval_dfr = skip_eval_dfr,
         copy_dt = copy_dt,
@@ -2781,16 +2848,13 @@ createGiottoPolygonsFromDfr <- function(
 #' @title Create giotto polygons from GeoJSON
 #' @rdname createGiottoPolygon
 #' @param GeoJSON path to .GeoJSON file
-#' @param name name for the \code{giottoPolygon} object created
-#' @param verbose be verbose
 #' @concept polygon
 #' @export
-createGiottoPolygonsFromGeoJSON <- function(
-        GeoJSON,
-        name = "cell",
-        calc_centroids = FALSE,
-        make_valid = FALSE,
-        verbose = TRUE) {
+createGiottoPolygonsFromGeoJSON <- function(GeoJSON,
+    name = "cell",
+    calc_centroids = FALSE,
+    make_valid = FALSE,
+    verbose = TRUE) {
     eval_list <- .evaluate_spatial_info(
         spatial_info = GeoJSON,
         make_valid = make_valid,
@@ -2835,12 +2899,11 @@ createGiottoPolygonsFromGeoJSON <- function(
 #' @param unique_IDs unique polygon IDs for cacheing
 #' @keywords internal
 #' @returns giotto_polygon_object
-create_giotto_polygon_object <- function(
-        name = "cell",
-        spatVector = NULL,
-        spatVectorCentroids = NULL,
-        overlaps = NULL,
-        unique_IDs = NULL) {
+create_giotto_polygon_object <- function(name = "cell",
+    spatVector = NULL,
+    spatVectorCentroids = NULL,
+    overlaps = NULL,
+    unique_IDs = NULL) {
     # create minimum giotto
     g_polygon <- giottoPolygon(
         name = name,
@@ -2940,31 +3003,30 @@ create_giotto_polygon_object <- function(
 #'
 #' createGiottoImage(mg_object = image_test)
 #' @export
-createGiottoImage <- function(
-        gobject = NULL,
-        spat_unit = NULL,
-        spatial_locs = NULL,
-        spat_loc_name = NULL,
-        mg_object,
-        name = "image",
-        image_transformations = NULL,
-        negative_y = TRUE,
-        do_manual_adj = FALSE,
-        xmax_adj = 0,
-        xmin_adj = 0,
-        ymax_adj = 0,
-        ymin_adj = 0,
-        scale_factor = 1,
-        x_shift = NULL,
-        y_shift = NULL,
-        scale_x = NULL,
-        scale_y = NULL,
-        order = c("first_scale", "first_adj"),
-        xmin_set = NULL,
-        xmax_set = NULL,
-        ymin_set = NULL,
-        ymax_set = NULL,
-        verbose = TRUE) {
+createGiottoImage <- function(gobject = NULL,
+    spat_unit = NULL,
+    spatial_locs = NULL,
+    spat_loc_name = NULL,
+    mg_object,
+    name = "image",
+    image_transformations = NULL,
+    negative_y = TRUE,
+    do_manual_adj = FALSE,
+    xmax_adj = 0,
+    xmin_adj = 0,
+    ymax_adj = 0,
+    ymin_adj = 0,
+    scale_factor = 1,
+    x_shift = NULL,
+    y_shift = NULL,
+    scale_x = NULL,
+    scale_y = NULL,
+    order = c("first_scale", "first_adj"),
+    xmin_set = NULL,
+    xmax_set = NULL,
+    ymin_set = NULL,
+    ymax_set = NULL,
+    verbose = TRUE) {
     # Check params
     order <- match.arg(order, choices = c("first_scale", "first_adj"))
     scale_factor <- c(x = scale_factor, y = scale_factor)
@@ -3202,21 +3264,20 @@ createGiottoImage <- function(
 #'
 #' createGiottoLargeImage(raster_object = image_test)
 #' @export
-createGiottoLargeImage <- function(
-        raster_object,
-        name = "image",
-        negative_y = TRUE,
-        extent = NULL,
-        use_rast_ext = FALSE,
-        image_transformations = NULL,
-        flip_vertical = FALSE,
-        flip_horizontal = FALSE,
-        xmax_bound = NULL,
-        xmin_bound = NULL,
-        ymax_bound = NULL,
-        ymin_bound = NULL,
-        scale_factor = 1,
-        verbose = TRUE) {
+createGiottoLargeImage <- function(raster_object,
+    name = "image",
+    negative_y = TRUE,
+    extent = NULL,
+    use_rast_ext = FALSE,
+    image_transformations = NULL,
+    flip_vertical = FALSE,
+    flip_horizontal = FALSE,
+    xmax_bound = NULL,
+    xmin_bound = NULL,
+    ymax_bound = NULL,
+    ymin_bound = NULL,
+    scale_factor = 1,
+    verbose = TRUE) {
     # create minimum giotto
     g_imageL <- new("giottoLargeImage", name = name)
 
@@ -3343,21 +3404,20 @@ createGiottoLargeImage <- function(
 #'
 #' createGiottoLargeImageList(raster_objects = image_test)
 #' @export
-createGiottoLargeImageList <- function(
-        raster_objects,
-        names = "image",
-        negative_y = TRUE,
-        extent = NULL,
-        use_rast_ext = FALSE,
-        image_transformations = NULL,
-        flip_vertical = FALSE,
-        flip_horizontal = FALSE,
-        xmax_bound = NULL,
-        xmin_bound = NULL,
-        ymax_bound = NULL,
-        ymin_bound = NULL,
-        scale_factor = 1,
-        verbose = TRUE) {
+createGiottoLargeImageList <- function(raster_objects,
+    names = "image",
+    negative_y = TRUE,
+    extent = NULL,
+    use_rast_ext = FALSE,
+    image_transformations = NULL,
+    flip_vertical = FALSE,
+    flip_horizontal = FALSE,
+    xmax_bound = NULL,
+    xmin_bound = NULL,
+    ymax_bound = NULL,
+    ymin_bound = NULL,
+    scale_factor = 1,
+    verbose = TRUE) {
     l_images <- length(raster_objects)
     l_image_names <- length(unique(names))
 

@@ -6,6 +6,7 @@ NULL
 # Giotto Object Settings ####
 # Methods and documentations found in methods-IDs.R
 setGeneric("spatIDs", function(x, ...) standardGeneric("spatIDs"))
+setGeneric("spatIDs<-", function(x, ..., value) standardGeneric("spatIDs<-"))
 setGeneric("featIDs", function(x, ...) standardGeneric("featIDs"))
 
 ## instructions ####
@@ -84,6 +85,23 @@ setGeneric(
     function(x, ...) standardGeneric("overlapToMatrix")
 )
 
+#' @title Data Processing
+#' @name processData
+#' @description Generic for processing an object containing measured values.
+#' Specific methods should be defined for this generic to
+#' perform pre or post processing specific to a data class type. No methods
+#' are exported from \pkg{GiottoClass}. The methods, which may
+#' differ depending on the input data, are attached from other packages which
+#' focus on analyses and/or alternative data representations with specific ways
+#' to implement those analyses.
+#' @param x a data object
+#' @param param a [processParam] inheriting object
+#' @param ... additional arguments, for use in specific methods
+#' @returns An object of the same class containing the processed
+#' @export
+setGeneric("processData", function(x, param, ...) standardGeneric("processData"))
+
+# Methods and documentations found in methods-spatShift.R
 
 setGeneric("spatShift", function(x, ...) standardGeneric("spatShift"))
 setGeneric("affine", function(x, y, ...) standardGeneric("affine"))
@@ -91,12 +109,15 @@ setGeneric("shear", function(x, ...) standardGeneric("shear"))
 setGeneric("XY", function(x, ...) standardGeneric("XY"))
 setGeneric("XY<-", function(x, ..., value) standardGeneric("XY<-"))
 setGeneric("settleGeom", function(x, ...) standardGeneric("settleGeom"))
+setGeneric("combineGeom", function(x, ...) standardGeneric("combineGeom"))
+setGeneric("splitGeom", function(x, ...) standardGeneric("splitGeom"))
 if (!isGeneric("area")) {
     setGeneric("area", function(x, ...) standardGeneric("area"))
 }
 
 # Methods and documentations found in methods-overlaps.R
 setGeneric("overlaps", function(x, ...) standardGeneric("overlaps"))
+
 
 
 # Giotto subnesting ####

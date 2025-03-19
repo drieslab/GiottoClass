@@ -42,7 +42,7 @@ NULL
 #' @rdname XY
 #' @export
 setMethod("XY", signature("spatLocsObj"), function(x, ...) {
-    m <- x[][, colnames(x) != "cell_ID", with = F] |>
+    m <- x[][, colnames(x) != "cell_ID", with = FALSE] |>
         as.matrix(...)
     if (ncol(m) == 2L) colnames(m) <- c("x", "y")
     if (ncol(m) == 3L) colnames(m) <- c("x", "y", "z")
@@ -120,7 +120,7 @@ setMethod("XY<-", signature(x = "SpatVector", value = "matrix"), function(x, geo
     terra_gtype <- terra::geomtype(x)
     if (terra::geomtype(x) != "none") geomtype <- terra_gtype
     geomtype <- match.arg(tolower(geomtype), choices = c("points", "polygons"))
-    
+
     switch(geomtype,
         "points" = .xy_sv_points_set(x, ..., value = value),
         "polygons" = .xy_sv_polys_set(x, ..., value = value)

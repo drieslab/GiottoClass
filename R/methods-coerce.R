@@ -7,9 +7,9 @@ NULL
 #' @name as.data.table
 #' @description Coerce to data.table if possible
 #' @param x The object to coerce
-#' @param geomtype character (optional). One of "points" or "polygons". 
-#' Fallback geomtype used when it is not possible for \{terra\} to determine 
-#' the type of geometry an object is. 
+#' @param geomtype character (optional). One of "points" or "polygons".
+#' Fallback geomtype used when it is not possible for \{terra\} to determine
+#' the type of geometry an object is.
 #' (commonly seen when nrow of the object = 0)
 #' @param keep.rownames This argument is ignored
 #' @param geom character or NULL. If not NULL, either "XY", "WKT", or "HEX", to
@@ -91,13 +91,15 @@ NULL
 #' @method as.data.table SpatVector
 #' @export
 as.data.table.SpatVector <- function(
-    x, geomtype, keep.rownames = FALSE, geom = NULL, include_values = TRUE, ...
-) {
+        x, geomtype, keep.rownames = FALSE, geom = NULL, include_values = TRUE, ...) {
     if (isTRUE(toupper(geom) == "XY")) {
         # permit passing of geomtype if needed
-        if (terra::geomtype(x) != "none") geomtype <- terra::geomtype(x)
-        else geomtype <- match.arg(geomtype, c("points", "polygons"))
-        
+        if (terra::geomtype(x) != "none") {
+            geomtype <- terra::geomtype(x)
+        } else {
+            geomtype <- match.arg(geomtype, c("points", "polygons"))
+        }
+
         # DF conversion with "XY" not supported by {terra} with nrow 0
         if (nrow(x) == 0L) {
             base <- terra::as.data.frame(x[]) |> data.table::setDT()
@@ -119,7 +121,7 @@ as.data.table.SpatVector <- function(
                 return(cbind(base, geom_cols))
             }
         }
-        
+
         # if looking for polygon XY and nrow > 0...
         if (geomtype == "polygons") {
             return(.spatvector_to_dt(x, include_values = include_values))
@@ -239,8 +241,9 @@ methods::setAs("giottoLargeImage", "array", function(from) {
 #' @export
 setMethod(
     "as.polygons", signature("data.frame"),
-    function(x, include_values = TRUE, specific_values = NULL,
-    sort_geom = FALSE) {
+    function(
+        x, include_values = TRUE, specific_values = NULL,
+        sort_geom = FALSE) {
         .dt_to_spatvector_polygon(
             dt = data.table::setDT(x),
             include_values = include_values,
@@ -577,9 +580,8 @@ setMethod(
 #' @returns data.table
 #' @description  convert spatVector to data.table
 #' @keywords internal
-.spatvector_to_dt <- function(
-        spatvector,
-        include_values = TRUE) {
+.spatvector_to_dt <- function(spatvector,
+    include_values = TRUE) {
     # NSE var
     geom <- NULL
 
@@ -608,11 +610,10 @@ setMethod(
 #' 'geom', 'part', and 'hole' columns.
 #' @returns polygon spatVector
 #' @keywords internal
-.dt_to_spatvector_polygon <- function(
-        dt,
-        include_values = TRUE,
-        specific_values = NULL,
-        sort_geom = FALSE) {
+.dt_to_spatvector_polygon <- function(dt,
+    include_values = TRUE,
+    specific_values = NULL,
+    sort_geom = FALSE) {
     # DT vars
     geom <- NULL
 
@@ -646,10 +647,15 @@ setMethod(
 
         attr_values <- unique(dt[, other_values, with = FALSE])
         if (nrow(attr_values) > 0L &&
-            nrow(attr_values) != max(dt[, max(geom)])) {
-            warning(wrap_txt(".dt_to_spatvector_polygon:
-                            Number of attributes does not match number of
-                            polygons to create. Attributes are ignored."), call. = FALSE)
+            nrow(attr_values) != dt[, max(geom)]) {
+            warning(wrap_txt(
+                ".dt_to_spatvector_polygon:
+                Number of attributes does not match number of
+                polygons to create. Attributes are ignored."
+            ), call. = FALSE)
+
+            # fallback to poly_ID only
+            attr_values <- unique(attr_values[, "poly_ID"])
         }
     }
 
@@ -672,10 +678,9 @@ setMethod(
 #' include_values == TRUE
 #' @returns spatVector for points
 #' @keywords internal
-.dt_to_spatvector_points <- function(
-        dt,
-        include_values = TRUE,
-        specific_values = NULL) {
+.dt_to_spatvector_points <- function(dt,
+    include_values = TRUE,
+    specific_values = NULL) {
     all_colnames <- colnames(dt)
     geom_values <- c("geom", "part", "x", "y", "hole")
     other_values <- all_colnames[!all_colnames %in% geom_values]

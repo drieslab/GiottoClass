@@ -134,5 +134,10 @@ setMethod("names<-", signature(x = "giottoLargeImage"), function(x, value) {
     names(x[]) <- value
     x
 })
-
-
+#' @rdname names
+setMethod("names", signature("processParam"), function(x) names(x@param))
+#' @rdname names
+setMethod("names<-", signature("processParam"), function(x, value) {
+    names(x@param) <- value
+    x
+})

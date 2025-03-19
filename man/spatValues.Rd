@@ -2,6 +2,7 @@
 % Please edit documentation in R/slot_accessors.R
 \name{spatValues}
 \alias{spatValues}
+\alias{svkey}
 \title{Giotto object spatial values}
 \usage{
 spatValues(
@@ -17,6 +18,18 @@ spatValues(
   dim_reduction_name = NULL,
   verbose = NULL,
   debug = FALSE
+)
+
+svkey(
+  feats,
+  spat_unit = NULL,
+  feat_type = NULL,
+  expression_values = NULL,
+  spat_loc_name = NULL,
+  poly_info = NULL,
+  dim_reduction_to_use = NULL,
+  dim_reduction_name = NULL,
+  verbose = NULL
 )
 }
 \arguments{
@@ -84,6 +97,13 @@ data was not found when all getters fail. By setting \code{debug = TRUE}, you ca
 see the errors returned from each failed getter printed as messages for
 easier debugging.
 }
+\section{Functions}{
+\itemize{
+\item \code{svkey()}: Create a \code{svkey} defining a \code{spatValues()} call
+for deferred use. Handy for contexts where the full \code{giotto} object is not
+available.
+
+}}
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
 

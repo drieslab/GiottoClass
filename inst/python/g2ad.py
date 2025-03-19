@@ -14,15 +14,6 @@ def ad_guard(adata):
         print("Please provide a valid AnnData object.")
         raise(TypeError)
 
-def dir_guard(save_directory = None):
-    slash = save_directory[-1]
-    if slash != "/" and slash != '\\':
-        print("Argument save_directory must end in a slash character.")
-        print("\ti.e., save_directory = 'C:/my/save/directory/'")
-        print("\tAlternatively, save_directory = 'C:\\my\\save\\directory\\'")
-        print("Stopping conversion. Please try again.")
-        assert(False)
-
 def ad_obj(x = None):
     '''
     Creates an AnnData object using expression matrix, x

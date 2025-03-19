@@ -25,11 +25,10 @@ NULL
 #' @export
 setMethod(
     "flip", signature("giotto"),
-    function(
-        x, direction = "vertical",
-        x0 = 0, y0 = 0,
-        spat_unit = ":all:", feat_type = ":all:",
-        ...) {
+    function(x, direction = "vertical",
+    x0 = 0, y0 = 0,
+    spat_unit = ":all:", feat_type = ":all:",
+    ...) {
         a <- list(direction = direction, x0 = x0, y0 = y0, ...)
 
         checkmate::assert_character(spat_unit)
@@ -166,15 +165,6 @@ setMethod(
 
 #' @rdname flip
 #' @export
-setMethod("flip", signature("giottoLargeImage"), function(x, direction = "vertical", x0 = 0, y0 = 0) {
-    a <- get_args_list()
-    a$x <- as(x, "giottoAffineImage") # convert to giottoAffineImage
-    res <- do.call(flip, args = a)
-    return(res)
-})
-
-#' @rdname flip
-#' @export
 setMethod("flip", signature("giottoAffineImage"), function(x, direction = "vertical", x0 = 0, y0 = 0) {
     a <- get_args_list()
     a$x <- x@affine
@@ -225,11 +215,10 @@ setMethod("flip", signature("affine2d"), function(x, direction = "vertical", x0 
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-.flip_gpoly <- function(
-        gpoly,
-        direction = "vertical",
-        x0 = 0,
-        y0 = 0) {
+.flip_gpoly <- function(gpoly,
+    direction = "vertical",
+    x0 = 0,
+    y0 = 0) {
     checkmate::assert_class(gpoly, "giottoPolygon")
     checkmate::assert_character(direction)
     if (!is.null(x0)) {
@@ -369,9 +358,6 @@ setMethod("flip", signature("affine2d"), function(x, direction = "vertical", x0 
 
 #' @name .flip_large_image
 #' @title Flip a giottoLargeImage object
-#' @description Flip a giottoPoints over a designated x or y value depending on
-#' direction param input. Note that this behavior is different from terra's
-#' implementation of flip for SpatVectors where flips happen over the extent
 #' @param image giottoLargeImage
 #' @param direction character. Direction to flip. Should be either partial
 #' match to 'vertical' or 'horizontal'
@@ -381,11 +367,10 @@ setMethod("flip", signature("affine2d"), function(x, direction = "vertical", x0 
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-.flip_large_image <- function(
-        image,
-        direction = "vertical",
-        x0 = 0,
-        y0 = 0) {
+.flip_large_image <- function(image,
+    direction = "vertical",
+    x0 = 0,
+    y0 = 0) {
     checkmate::assert_class(image, "giottoLargeImage")
     checkmate::assert_character(direction)
     if (!is.null(x0)) {
@@ -432,11 +417,10 @@ setMethod("flip", signature("affine2d"), function(x, direction = "vertical", x0 
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-.flip_gpoints <- function(
-        gpoints,
-        direction = "vertical",
-        x0 = 0,
-        y0 = 0) {
+.flip_gpoints <- function(gpoints,
+    direction = "vertical",
+    x0 = 0,
+    y0 = 0) {
     checkmate::assert_class(gpoints, "giottoPoints")
     checkmate::assert_character(direction)
     if (!is.null(x0)) {
@@ -490,12 +474,11 @@ setMethod("flip", signature("affine2d"), function(x, direction = "vertical", x0 
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-.flip_spatlocs <- function(
-        sl,
-        direction = "vertical",
-        x0 = 0,
-        y0 = 0,
-        copy_obj = TRUE) {
+.flip_spatlocs <- function(sl,
+    direction = "vertical",
+    x0 = 0,
+    y0 = 0,
+    copy_obj = TRUE) {
     sdimy <- sdimx <- NULL
 
     checkmate::assert_class(sl, "spatLocsObj")
@@ -536,12 +519,11 @@ setMethod("flip", signature("affine2d"), function(x, direction = "vertical", x0 
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-.flip_spatnet <- function(
-        sn,
-        direction = "vertical",
-        x0 = 0,
-        y0 = 0,
-        copy_obj = TRUE) {
+.flip_spatnet <- function(sn,
+    direction = "vertical",
+    x0 = 0,
+    y0 = 0,
+    copy_obj = TRUE) {
     sdimy_begin <- sdimy_end <- sdimx_begin <- sdimx_end <- NULL
 
     checkmate::assert_class(sn, "spatialNetworkObj")
@@ -607,11 +589,10 @@ setMethod("flip", signature("affine2d"), function(x, direction = "vertical", x0 
 #' to flip over the extent
 #' @keywords internal
 #' @noRd
-.flip_extent <- function(
-        e,
-        direction = "vertical",
-        x0 = 0,
-        y0 = 0) {
+.flip_extent <- function(e,
+    direction = "vertical",
+    x0 = 0,
+    y0 = 0) {
     checkmate::assert_class(e, "SpatExtent")
     checkmate::assert_character(direction)
     if (!is.null(x0)) {
