@@ -200,7 +200,7 @@ annotateGiotto <- function(gobject,
     if (length(missing_annotations) > 0) {
         wrap_msg(
             "Not all clusters have an accompanying annotation in the
-          annotation_vector: \n", "These names are missing: ",
+            annotation_vector: \n", "These names are missing: ",
             as.character(missing_annotations), "\n",
             "These annotations have no match: ",
             as.character(no_matching_annotations)
@@ -465,7 +465,7 @@ addCellMetadata <- function(gobject,
     if (is.null(avail_ex)) {
         .gstop(
             "No matching expression information discovered for:
-      spat_unit:", spat_unit, "\nfeature type:", feat_type,
+            spat_unit:", spat_unit, "\nfeature type:", feat_type,
             "\nPlease add expression information first"
         )
     }
@@ -647,7 +647,7 @@ addFeatMetadata <- function(gobject,
     if (is.null(avail_ex)) {
         .gstop(
             "No matching expression information discovered for:
-      spat_unit:", spat_unit, "\nfeature type:", feat_type,
+            spat_unit:", spat_unit, "\nfeature type:", feat_type,
             "\nPlease add expression information first"
         )
     }
@@ -1162,9 +1162,9 @@ calculateMetaTableCells <- function(gobject,
     )
 
     if (is.null(metadata_cols)) stop("\n You need to select one or more
-                                  valid column names from pDataDT() \n")
+                                valid column names from pDataDT() \n")
     if (is.null(value_cols)) stop("\n You need to select one or more valid
-                                  value column names from pDataDT() \n")
+                                value column names from pDataDT() \n")
 
     cell_metadata <- combineMetadata(
         gobject = gobject,

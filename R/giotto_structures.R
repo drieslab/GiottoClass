@@ -376,7 +376,7 @@ setMethod("combineGeom", signature(x = "giottoPolygon"),
     if (!is.null(by)) {
         if (!by %in% names(x[])) {
             stop("[combineGeom] 'by' must be an existing column\n",
-                 call. = FALSE)
+                call. = FALSE)
         }
 
         # handle original names
@@ -432,9 +432,9 @@ setMethod("splitGeom", signature("giottoPolygon"),
 #' @keywords internal
 #' @noRd
 setMethod("combineGeom", signature(x = "SpatVector"),
-          function(x, by = NULL, dissolve = FALSE, fun = "mean", ...) {
-              terra::aggregate(x, by = by, dissolve = dissolve, fun = fun, ...)
-          })
+        function(x, by = NULL, dissolve = FALSE, fun = "mean", ...) {
+            terra::aggregate(x, by = by, dissolve = dissolve, fun = fun, ...)
+        })
 #' @keywords internal
 #' @noRd
 setMethod("splitGeom", signature(x = "SpatVector"), function(x, ...) {

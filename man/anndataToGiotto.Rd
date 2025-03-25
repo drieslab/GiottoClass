@@ -9,6 +9,7 @@ anndataToGiotto(
   n_key_added = NULL,
   spatial_n_key_added = NULL,
   delaunay_spat_net = TRUE,
+  spat_enrich_key_added = NULL,
   spat_unit = NULL,
   feat_type = NULL,
   h5_file = NULL,

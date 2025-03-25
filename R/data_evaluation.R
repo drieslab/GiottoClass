@@ -199,7 +199,7 @@ evaluate_input <- function(type, x, ...) {
         }
     } else {
         warning(wrap_txt("Cell metadata input: no col named cell_ID.
-                     Setting temporary NA values"))
+                    Setting temporary NA values"))
         # set temporary NA values
         metadata[, cell_ID := NA_character_]
         # re-order so that cell_ID is the first column
@@ -259,7 +259,7 @@ evaluate_input <- function(type, x, ...) {
         }
     } else {
         warning(wrap_txt("Feature metadata input: no col named feat_ID.
-                     Setting temporary NA values"))
+                    Setting temporary NA values"))
         # set temporary NA values
         metadata[, feat_ID := NA_character_]
     }
@@ -476,7 +476,7 @@ evaluate_input <- function(type, x, ...) {
             "input at column position(s):", non_numeric_indices,
             "\nThe first non-numeric column will be considered as a cell ID to",
             "test for consistency with the expression matrix.
-               Other non-numeric columns will be removed."
+            Other non-numeric columns will be removed."
         )
 
         potential_cell_IDs <- spatial_enrichment[[names(
@@ -596,7 +596,7 @@ evaluate_input <- function(type, x, ...) {
         # if minimal input not given, throw error
         if (!all(c("from", "to", "distance") %in% colnames(nn_network))) {
             .gstop("Unable to coerce data.frame type object to nnNetObj igraph
-             Needed columns: from, to, distance")
+            Needed columns: from, to, distance")
         }
 
         # generate weights

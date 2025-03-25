@@ -162,10 +162,10 @@ readExprData <- function(data_list,
     if (list_depth > 3L) {
         stop("Depth of expression list is more than 3, only 3 levels are
             possible:
-       0)", ch$s, ".
-       1)", ch$s, ch$b, "spatial unit (e.g. cell)
-       2)", ch$s, ch$s, ch$b, "feature (e.g. RNA)
-       3)", ch$s, ch$s, ch$s, ch$b, "data type (e.g. raw)\n")
+        0)", ch$s, ".
+        1)", ch$s, ch$b, "spatial unit (e.g. cell)
+        2)", ch$s, ch$s, ch$b, "feature (e.g. RNA)
+        3)", ch$s, ch$s, ch$s, ch$b, "data type (e.g. raw)\n")
     }
 
 
