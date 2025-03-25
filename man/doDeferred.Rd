@@ -18,6 +18,9 @@ evaluating}
 
 \item{...}{additional args to pass}
 }
+\value{
+giottoLargeImage
+}
 \description{
 Force deferred/lazy operations.
 }

@@ -3,18 +3,18 @@
 \name{names}
 \alias{names}
 \alias{names,giottoLargeImage-method}
-\alias{names<-,giottoLargeImage-method}
+\alias{names<-,giottoLargeImage,ANY-method}
 \alias{names,processParam-method}
-\alias{names<-,processParam-method}
+\alias{names<-,processParam,ANY-method}
 \title{Names of objects}
 \usage{
 \S4method{names}{giottoLargeImage}(x)
 
-\S4method{names}{giottoLargeImage}(x) <- value
+\S4method{names}{giottoLargeImage,ANY}(x) <- value
 
 \S4method{names}{processParam}(x)
 
-\S4method{names}{processParam}(x) <- value
+\S4method{names}{processParam,ANY}(x) <- value
 }
 \arguments{
 \item{x}{object}

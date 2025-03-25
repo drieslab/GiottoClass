@@ -2746,6 +2746,7 @@ add_img_array_alpha <- function(x,
 #' @description Force deferred/lazy operations.
 #' @param x object to force deferred operations in
 #' @param ... additional args to pass
+#' @returns giottoLargeImage
 NULL
 
 #' @rdname doDeferred
