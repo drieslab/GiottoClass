@@ -7,6 +7,15 @@
 
 #' @title Update giotto parameters
 #' @name update_giotto_params
+#' @description
+#' For developer use. Adds an entry to the `giotto` object object history.
+#' Care currently needs to be taken when a function that contains a call to
+#' this function is called from within yet another function. In such cases,
+#' a `toplevel < 0` or setting a temporary `"giotto.update_param" = FALSE` with
+#' `GiottoUtils::gwith_option()` may be the best option to avoid either
+#' evaluation errors or strange history entries. A new `update_giotto_params()`
+#' call can then be added that describes the function of the topmost function
+#' if desired.
 #' @param gobject giotto object
 #' @param description description of function run
 #' @param return_gobject logical. Whether the giotto object should be returned
@@ -18,21 +27,34 @@
 #'
 #' update_giotto_params(g, toplevel = 1)
 #' @export
-update_giotto_params <- function(gobject,
-    description = "_test",
-    return_gobject = TRUE,
-    toplevel = 2) {
-    if (toplevel < 0) {
-        return(gobject)
-    } # skip if toplevel negative
-
+update_giotto_params <- function(
+        gobject,
+        description = "_test",
+        return_gobject = TRUE,
+        toplevel = 2) {
     parameters_list <- gobject@parameters
     number_of_rounds <- length(parameters_list)
     update_name <- paste0(number_of_rounds, description)
 
+    # return before updating if toplevel negative or global setting is FALSE
+    if (skip_update <- toplevel < 0 ||
+        !getOption("giotto.update_param", TRUE)) {
+        if (isTRUE(return_gobject)) {
+            return(gobject)
+        } else {
+            return(list(
+                plist = parameters_list,
+                newname = names(tail(parameters_list, 1L))
+            ))
+        }
+    }
+
+    # `get_args()` can be problematic. Allow skip right before this step.
+
+    # update parameters list
     parameters_list[[update_name]] <- get_args(toplevel = toplevel)
 
-    if (return_gobject == TRUE) {
+    if (isTRUE(return_gobject)) {
         gobject@parameters <- parameters_list
         return(gobject)
     } else {

@@ -741,7 +741,11 @@ setMethod("as.character", signature("giottoImage"), function(x, ...) {
     sprintf("<%s> %s", class(x), objName(x))
 })
 
-
+#' @rdname as.character
+#' @export
+setMethod("as.character", signature("svkey"), function(x, ...) {
+    sprintf("<svkey> feats: '%s'", paste(x@feats, collapse = "', '"))
+})
 
 
 
@@ -777,6 +781,7 @@ setMethod(
                 "(x, y)\n"
             )
             cat("Layers                  :", img_dim[3], "\n")
+            cat("Name                    :", names(object), "\n")
             cat("Estimated max intensity :", object@max_intensity, "\n")
             cat("Estimated min intensity :", object@min_intensity, "\n")
             if (object@is_int == TRUE) {
@@ -791,6 +796,7 @@ setMethod(
 )
 
 
+# affine2d ####
 
 #' @rdname show
 setMethod("show", signature("affine2d"), function(object) {
@@ -826,9 +832,30 @@ setMethod("as.character", signature("giottoLargeImage"), function(x, ...) {
     sprintf("<%s> %s", class(x), objName(x))
 })
 
+# processParam ####
+setMethod("show", signature("processParam"), function(object) {
+    cat(sprintf("<%s>\n", class(object)))
+    cat("params:\n")
+    print_list(object[])
+})
 
+# svkey ####
+setMethod("show", signature("svkey"), function(object) {
+    cat(sprintf("<%s>\n", class(object)))
+    plist <- list(
+        feats = sprintf("'%s'", paste(object@feats, collapse = "' '")))
+    plist$spat_unit <- object@spat_unit
+    plist$feat_type <- object@feat_type
+    plist$expression_values <- object@expression_values
+    plist$spat_loc_name <- object@spat_loc_name
+    plist$spat_enr_name <- object@spat_enr_name
+    plist$poly_info <- object@poly_info
+    plist$dim_reduction_to_use <- object@dim_reduction_to_use
+    plist$dim_reduction_name <- object@dim_reduction_name
+    plist$verbose <- object@verbose
 
-
+    print_list(plist)
+})
 
 
 # show helpers ####

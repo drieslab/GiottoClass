@@ -21,21 +21,20 @@
 #' @param no_python_warn turn off warning that no compatible python env has
 #' been detected
 #' @export
-createGiottoInstructions <- function(
-        python_path = getOption("giotto.py_path"),
-        show_plot = NULL,
-        return_plot = NULL,
-        save_plot = NULL,
-        save_dir = NULL,
-        plot_format = NULL,
-        dpi = NULL,
-        units = NULL,
-        height = NULL,
-        width = NULL,
-        is_docker = FALSE,
-        plot_count = 0,
-        fiji_path = NULL,
-        no_python_warn = FALSE) {
+createGiottoInstructions <- function(python_path = getOption("giotto.py_path"),
+    show_plot = NULL,
+    return_plot = NULL,
+    save_plot = NULL,
+    save_dir = NULL,
+    plot_format = NULL,
+    dpi = NULL,
+    units = NULL,
+    height = NULL,
+    width = NULL,
+    is_docker = FALSE,
+    plot_count = 0,
+    fiji_path = NULL,
+    no_python_warn = FALSE) {
     # python path to use
     # try used here to allow instructions to be made in the absence of a
     # compatible python env
@@ -140,18 +139,17 @@ createGiottoInstructions <- function(
 
 
 #' @keywords internal
-create_giotto_instructions <- function(
-        python_path = NULL,
-        show_plot = NULL,
-        return_plot = NULL,
-        save_plot = NULL,
-        save_dir = NULL,
-        plot_format = NULL,
-        dpi = NULL,
-        units = NULL,
-        height = NULL,
-        width = NULL,
-        is_docker = NULL) {
+create_giotto_instructions <- function(python_path = NULL,
+    show_plot = NULL,
+    return_plot = NULL,
+    save_plot = NULL,
+    save_dir = NULL,
+    plot_format = NULL,
+    dpi = NULL,
+    units = NULL,
+    height = NULL,
+    width = NULL,
+    is_docker = NULL) {
     instructions_list <- list(
         python_path = python_path,
         show_plot = show_plot,
@@ -192,10 +190,9 @@ create_giotto_instructions <- function(
 #' )
 #' @export
 #' @keywords internal
-readGiottoInstructions <- function(
-        giotto_instructions,
-        param = NULL,
-        default) {
+readGiottoInstructions <- function(giotto_instructions,
+    param = NULL,
+    default) {
     deprecate_soft(
         when = "0.3.5",
         what = "readGiottoInstructions()",
@@ -265,12 +262,11 @@ showGiottoInstructions <- function(gobject) {
 #' )
 #' @export
 #' @keywords internal
-changeGiottoInstructions <- function(
-        gobject,
-        params = NULL,
-        new_values = NULL,
-        return_gobject = TRUE,
-        init_gobject = TRUE) {
+changeGiottoInstructions <- function(gobject,
+    params = NULL,
+    new_values = NULL,
+    return_gobject = TRUE,
+    init_gobject = TRUE) {
     deprecate_soft(
         when = "0.3.5",
         what = "changeGiottoInstructions()",
@@ -343,10 +339,9 @@ changeGiottoInstructions <- function(
 #' )
 #' @export
 #' @keywords internal
-replaceGiottoInstructions <- function(
-        gobject,
-        instructions = NULL,
-        init_gobject = TRUE) {
+replaceGiottoInstructions <- function(gobject,
+    instructions = NULL,
+    init_gobject = TRUE) {
     deprecate_soft(
         when = "0.3.5",
         what = "replaceGiottoInstructions()",

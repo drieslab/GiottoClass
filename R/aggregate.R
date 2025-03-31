@@ -50,7 +50,7 @@ polygon_to_raster <- function(polygon, field = NULL) {
     }
 
     # ensure that field is numerical
-    polygon$poly_i <- seq_len(nrow(unique(polygon[[field]])))
+    polygon$poly_i <- seq_len(nrow(polygon))
     poly_rast <- terra::rasterize(x = polygon, r, field = "poly_i")
 
     poly_ID_vector <- polygon[[field]][, 1]
@@ -121,7 +121,7 @@ polygon_to_raster <- function(polygon, field = NULL) {
 #' overlaps_z1$rna
 #'
 #' # overlap image to get sum intensities per cell
-#' out_img <- calculateOverlap(gpoly, gimg)
+#' out_img <- calculateOverlap(gpoly, gimg, progress = FALSE)
 #' overlaps_img <- overlaps(out_img)
 #' overlaps_img$intensity
 #'
@@ -149,16 +149,15 @@ NULL
 #' @export
 setMethod(
     "calculateOverlap", signature(x = "giotto", y = "missing"),
-    function(
-        x,
-        name_overlap = NULL,
-        spatial_info = NULL,
-        feat_info = NULL,
-        image_names = NULL,
-        poly_subset_ids = NULL,
-        return_gobject = TRUE,
-        verbose = TRUE,
-        ...) {
+    function(x,
+    name_overlap = NULL,
+    spatial_info = NULL,
+    feat_info = NULL,
+    image_names = NULL,
+    poly_subset_ids = NULL,
+    return_gobject = TRUE,
+    verbose = TRUE,
+    ...) {
         # 0. guards #
         # --------- #
 
@@ -320,16 +319,15 @@ setMethod(
 #' @export
 setMethod(
     "calculateOverlap", signature(x = "giottoPolygon", y = "giottoPoints"),
-    function(
-        x, y,
-        name_overlap = NULL,
-        poly_subset_ids = NULL,
-        feat_subset_column = NULL,
-        feat_subset_ids = NULL,
-        count_info_column = NULL,
-        return_gpolygon = TRUE,
-        verbose = TRUE,
-        ...) {
+    function(x, y,
+    name_overlap = NULL,
+    poly_subset_ids = NULL,
+    feat_subset_column = NULL,
+    feat_subset_ids = NULL,
+    count_info_column = NULL,
+    return_gpolygon = TRUE,
+    verbose = TRUE,
+    ...) {
         res <- calculateOverlap(
             x = x[],
             y = y[],
@@ -363,20 +361,49 @@ setMethod(
 #' @export
 setMethod(
     "calculateOverlap", signature(x = "giottoPolygon", y = "giottoLargeImage"),
+    function(
+        x, y,
+        name_overlap = NULL,
+        poly_subset_ids = NULL,
+        return_gpolygon = TRUE,
+        verbose = TRUE,
+        ...) {
+        calculateOverlap(
+            x = x,
+            y = y@raster_object,
+            name_overlap = name_overlap %null% objName(y),
+            poly_subset_ids = poly_subset_ids,
+            verbose = verbose,
+            ...
+        )
+    }
+)
+
+# * giottoPolygon giottoAffineImage ####
+#' @rdname calculateOverlap
+#' @export
+setMethod(
+    "calculateOverlap", signature(x = "giottoPolygon", y = "giottoAffineImage"),
     function(x, y,
     name_overlap = NULL,
     poly_subset_ids = NULL,
     return_gpolygon = TRUE,
     verbose = TRUE,
     ...) {
-        calculateOverlap(
-            x = x,
+        aff <- y@affine
+        res <- calculateOverlap(
+            x = affine(x, aff, inv = TRUE),
             y = y@raster_object,
-            name_overlap = objName(y),
+            name_overlap = name_overlap %null% objName(y),
             poly_subset_ids = poly_subset_ids,
             verbose = verbose,
             ...
         )
+        x@overlaps <- res@overlaps
+        if (is.null(centroids(x))) {
+            x <- centroids(x, append_gpolygon = TRUE)
+        }
+        x
     }
 )
 
@@ -386,15 +413,14 @@ setMethod(
 #' @export
 setMethod(
     "calculateOverlap", signature(x = "giottoPolygon", y = "SpatRaster"),
-    function(
-        x, y,
-        name_overlap = NULL,
-        poly_subset_ids = NULL,
-        return_gpolygon = TRUE,
-        verbose = TRUE,
-        ...) {
+    function(x, y,
+    name_overlap = NULL,
+    poly_subset_ids = NULL,
+    return_gpolygon = TRUE,
+    verbose = TRUE,
+    ...) {
         if (is.null(name_overlap)) {
-            .gstop("calculateOverlap: name_overlap must be given")
+            stop("calculateOverlap: name_overlap must be given", call. = FALSE)
         }
 
         res <- calculateOverlap(
@@ -410,7 +436,6 @@ setMethod(
             if (is.null(centroids(x))) {
                 x <- centroids(x, append_gpolygon = TRUE)
             }
-
             x@overlaps[["intensity"]][[name_overlap]] <- res
             return(x)
         } else {
@@ -432,15 +457,20 @@ setMethod(
 #' @export
 setMethod(
     "calculateOverlap", signature(x = "SpatVector", y = "SpatRaster"),
-    function(
-        x, y,
-        poly_subset_ids = NULL,
-        verbose = TRUE,
-        ...) {
+    function(x, y,
+    poly_subset_ids = NULL,
+    verbose = TRUE,
+    ...) {
         checkmate::assert_true(terra::is.polygons(x))
         GiottoUtils::package_check("exactextractr")
 
+        # channel naming (catch if none or too few)
         image_names <- names(y)
+        nchannel <- terra::nlyr(y)
+        if (is.null(image_names) ||
+            nchannel > 1L && length(unique(image_names)) == 1L) {
+            names(y) <- sprintf("channel_%d", seq_len(nchannel))
+        }
 
         # NSE vars
         coverage_fraction <- NULL
@@ -482,13 +512,12 @@ setMethod(
 #' @export
 setMethod(
     "calculateOverlap", signature(x = "SpatVector", y = "SpatVector"),
-    function(
-        x, y,
-        poly_subset_ids = NULL,
-        feat_subset_column = NULL,
-        feat_subset_ids = NULL,
-        count_info_column = NULL,
-        verbose = TRUE) {
+    function(x, y,
+    poly_subset_ids = NULL,
+    feat_subset_column = NULL,
+    feat_subset_ids = NULL,
+    count_info_column = NULL,
+    verbose = TRUE) {
         checkmate::assert_true(terra::is.polygons(x))
         checkmate::assert_true(terra::is.points(y)) # TODO allow another poly?
         if (!is.null(poly_subset_ids)) {
@@ -546,16 +575,17 @@ setMethod(
 #'
 #' calculateOverlapRaster(g)
 #' @export
-calculateOverlapRaster <- function(gobject,
-    name_overlap = NULL,
-    spatial_info = NULL,
-    poly_ID_names = NULL,
-    feat_info = NULL,
-    feat_subset_column = NULL,
-    feat_subset_ids = NULL,
-    count_info_column = NULL,
-    return_gobject = TRUE,
-    verbose = TRUE) {
+calculateOverlapRaster <- function(
+        gobject,
+        name_overlap = NULL,
+        spatial_info = NULL,
+        poly_ID_names = NULL,
+        feat_info = NULL,
+        feat_subset_column = NULL,
+        feat_subset_ids = NULL,
+        count_info_column = NULL,
+        return_gobject = TRUE,
+        verbose = TRUE) {
     # set defaults if not provided
     if (is.null(feat_info)) {
         feat_info <- names(gobject@feat_info)[[1]]
@@ -633,11 +663,10 @@ calculateOverlapRaster <- function(gobject,
 #' @returns `SpatVector` of overlapped points info
 #' @seealso [calculateOverlapRaster()]
 #' @keywords internal
-.calculate_overlap_raster <- function(
-        spatvec,
-        pointvec,
-        count_info_column = NULL,
-        verbose = TRUE) {
+.calculate_overlap_raster <- function(spatvec,
+    pointvec,
+    count_info_column = NULL,
+    verbose = TRUE) {
     # DT vars
     poly_ID <- poly_i <- ID <- x <- y <- feat_ID <- feat_ID_uniq <- NULL
 
@@ -703,10 +732,9 @@ calculateOverlapRaster <- function(gobject,
 #' @description  overlap for a single polygon
 #' @returns terra::intersect
 #' @keywords internal
-.overlap_points_single_polygon <- function(
-        spatvec,
-        poly_ID_name,
-        pointvec_dt) {
+.overlap_points_single_polygon <- function(spatvec,
+    poly_ID_name,
+    pointvec_dt) {
     # define for data.table
     x <- y <- NULL
 
@@ -762,16 +790,15 @@ calculateOverlapRaster <- function(gobject,
 #'     image_names = "dapi_z0"
 #' )
 #' @export
-calculateOverlapPolygonImages <- function(
-        gobject,
-        name_overlap = "protein",
-        spatial_info = "cell",
-        poly_ID_names = NULL,
-        image_names = NULL,
-        poly_subset = NULL,
-        return_gobject = TRUE,
-        verbose = TRUE,
-        ...) {
+calculateOverlapPolygonImages <- function(gobject,
+    name_overlap = "protein",
+    spatial_info = "cell",
+    poly_ID_names = NULL,
+    image_names = NULL,
+    poly_subset = NULL,
+    return_gobject = TRUE,
+    verbose = TRUE,
+    ...) {
     # TODO consider deprecating poly_ID_names (it does nothing here.)
     # poly_subset is being used instead
 
@@ -906,11 +933,10 @@ calculateOverlapPolygonImages <- function(
 #' @keywords internal
 #' @returns spatVector
 #' @seealso \code{\link{.overlap_points_single_polygon}}
-.overlap_points_per_polygon <- function(
-        spatvec,
-        pointvec,
-        poly_ID_names,
-        verbose = TRUE) {
+.overlap_points_per_polygon <- function(spatvec,
+    pointvec,
+    poly_ID_names,
+    verbose = TRUE) {
     # spatial polygon
     spatvec <- spatvec[terra::is.valid(spatvec)]
 
@@ -971,15 +997,14 @@ calculateOverlapPolygonImages <- function(
 #'
 #' calculateOverlapSerial(g, spatial_info = "z1")
 #' @export
-calculateOverlapSerial <- function(
-        gobject,
-        name_overlap = NULL,
-        spatial_info = "cell",
-        feat_info = "rna",
-        poly_ID_names = "all",
-        polygon_group_size = 500,
-        return_gobject = TRUE,
-        verbose = FALSE) {
+calculateOverlapSerial <- function(gobject,
+    name_overlap = NULL,
+    spatial_info = "cell",
+    feat_info = "rna",
+    poly_ID_names = "all",
+    polygon_group_size = 500,
+    return_gobject = TRUE,
+    verbose = FALSE) {
     # spatial polygon
     spatvec <- gobject@spatial_info[[spatial_info]]@spatVector
 
@@ -1044,10 +1069,9 @@ calculateOverlapSerial <- function(
 #' @description overlap wrapped polygons
 #' @returns Packed object
 #' @keywords internal
-.overlap_points_per_polygon_wrapped <- function(
-        spatvec_wrapped,
-        pointvec_wrapped,
-        poly_ID_names) {
+.overlap_points_per_polygon_wrapped <- function(spatvec_wrapped,
+    pointvec_wrapped,
+    poly_ID_names) {
     unwrap_spatvec <- terra::vect(spatvec_wrapped)
     unwrap_pointvec <- terra::vect(pointvec_wrapped)
 
@@ -1095,15 +1119,14 @@ calculateOverlapSerial <- function(
 #'
 #' calculateOverlapParallel(g, spatial_info = "z1")
 #' @export
-calculateOverlapParallel <- function(
-        gobject,
-        name_overlap = NULL,
-        spatial_info = "cell",
-        feat_info = "rna",
-        poly_ID_names = "all",
-        polygon_group_size = 500,
-        return_gobject = TRUE,
-        verbose = TRUE) {
+calculateOverlapParallel <- function(gobject,
+    name_overlap = NULL,
+    spatial_info = "cell",
+    feat_info = "rna",
+    poly_ID_names = "all",
+    polygon_group_size = 500,
+    return_gobject = TRUE,
+    verbose = TRUE) {
     # spatial polygon
     spatvec <- gobject@spatial_info[[spatial_info]]@spatVector
 
@@ -1215,17 +1238,16 @@ NULL
 #' @param verbose be verbose
 #' @export
 setMethod(
-    "overlapToMatrix", signature("giotto"), function(
-        x,
-        name = "raw",
-        poly_info = NULL,
-        feat_info = NULL,
-        type = c("point", "intensity"),
-        count_info_column = NULL,
-        aggr_function = "sum",
-        return_gobject = TRUE,
-        verbose = TRUE,
-        ...) {
+    "overlapToMatrix", signature("giotto"), function(x,
+    name = "raw",
+    poly_info = NULL,
+    feat_info = NULL,
+    type = c("point", "intensity"),
+    count_info_column = NULL,
+    aggr_function = "sum",
+    return_gobject = TRUE,
+    verbose = TRUE,
+    ...) {
         type <- match.arg(type, choices = c("point", "intensity"))
         checkmate::assert_character(name, len = 1L)
         if (!is.null(count_info_column)) {
@@ -1334,13 +1356,12 @@ setMethod(
 #' @param output data format/class to return the results as
 #' @export
 setMethod(
-    "overlapToMatrix", signature("giottoPolygon"), function(
-        x,
-        feat_info = "rna",
-        type = c("point", "intensity"),
-        count_info_column = NULL,
-        output = c("Matrix", "data.table"),
-        ...) {
+    "overlapToMatrix", signature("giottoPolygon"), function(x,
+    feat_info = "rna",
+    type = c("point", "intensity"),
+    count_info_column = NULL,
+    output = c("Matrix", "data.table"),
+    ...) {
         type <- match.arg(type, choices = c("point", "intensity"))
 
         overlaps_data <- switch(type,
@@ -1386,14 +1407,13 @@ setMethod(
 #' no values were detected.
 #' @export
 setMethod(
-    "overlapToMatrix", signature("SpatVector"), function(
-        x,
-        col_names = NULL,
-        row_names = NULL,
-        count_info_column = NULL,
-        output = c("Matrix", "data.table"),
-        verbose = TRUE,
-        ...) {
+    "overlapToMatrix", signature("SpatVector"), function(x,
+    col_names = NULL,
+    row_names = NULL,
+    count_info_column = NULL,
+    output = c("Matrix", "data.table"),
+    verbose = TRUE,
+    ...) {
         output <- match.arg(
             toupper(output),
             choices = c("MATRIX", "DATA.TABLE")
@@ -1496,10 +1516,9 @@ setMethod(
 #' @param aggr_function function to aggregate image information (default = sum)
 #' @export
 setMethod(
-    "overlapToMatrix", signature("data.table"), function(
-        x,
-        aggr_function = "sum",
-        output = c("Matrix", "data.table")) {
+    "overlapToMatrix", signature("data.table"), function(x,
+    aggr_function = "sum",
+    output = c("Matrix", "data.table")) {
         output <- match.arg(
             toupper(output),
             choices = c("MATRIX", "DATA.TABLE")
@@ -1561,13 +1580,12 @@ setMethod(
 #'
 #' overlapToMatrixMultiPoly(g, poly_info = "z0")
 #' @export
-overlapToMatrixMultiPoly <- function(
-        gobject,
-        name = "raw",
-        poly_info = "cell",
-        feat_info = "rna",
-        new_poly_info = "multi",
-        return_gobject = TRUE) {
+overlapToMatrixMultiPoly <- function(gobject,
+    name = "raw",
+    poly_info = "cell",
+    feat_info = "rna",
+    new_poly_info = "multi",
+    return_gobject = TRUE) {
     # define for data.table
     i <- j <- x <- NULL
 
@@ -1683,16 +1701,15 @@ overlapToMatrixMultiPoly <- function(
 #' @concept overlap
 #' @returns giotto object or data.table with aggregated information
 #' @export
-overlapImagesToMatrix <- function(
-        gobject,
-        name = "raw",
-        poly_info = "cell",
-        feat_info = "protein",
-        name_overlap = "images",
-        aggr_function = "sum",
-        image_names = NULL,
-        spat_locs_name = "raw",
-        return_gobject = TRUE) {
+overlapImagesToMatrix <- function(gobject,
+    name = "raw",
+    poly_info = "cell",
+    feat_info = "protein",
+    name_overlap = "images",
+    aggr_function = "sum",
+    image_names = NULL,
+    spat_locs_name = "raw",
+    return_gobject = TRUE) {
     # data.table vars
     value <- poly_ID <- feat_ID <- x <- y <- NULL
 
@@ -1810,9 +1827,8 @@ overlapImagesToMatrix <- function(
 # volumetric understanding of the cell's expression
 
 
-.combine_matrices <- function(
-        mat_list,
-        summarize = "sum") {
+.combine_matrices <- function(mat_list,
+    summarize = "sum") {
     # data.table vars
     i <- j <- x <- i2 <- j2 <- NULL
 
@@ -1906,14 +1922,13 @@ overlapImagesToMatrix <- function(
 #'
 #' aggregateStacksExpression(g, spat_units = c("z0", "z1"), feat_type = "rna")
 #' @export
-aggregateStacksExpression <- function(
-        gobject,
-        spat_units,
-        feat_type,
-        values = "raw",
-        summarize = "sum",
-        new_spat_unit = "aggregate",
-        verbose = TRUE) {
+aggregateStacksExpression <- function(gobject,
+    spat_units,
+    feat_type,
+    values = "raw",
+    summarize = "sum",
+    new_spat_unit = "aggregate",
+    verbose = TRUE) {
     # aggregate matrices
     matrix_list <- list()
     for (spat_unit in spat_units) {
@@ -1990,9 +2005,8 @@ aggregateStacksExpression <- function(
 
 
 
-.combine_spatlocs <- function(
-        spatlocs_list,
-        summarize = "mean") {
+.combine_spatlocs <- function(spatlocs_list,
+    summarize = "mean") {
     # data.table vars
     sdimx <- sdimy <- sdimz <- NULL
 
@@ -2032,12 +2046,11 @@ aggregateStacksExpression <- function(
 #'
 #' aggregateStacksLocations(g, spat_units = c("z0", "z1"))
 #' @export
-aggregateStacksLocations <- function(
-        gobject,
-        spat_units,
-        values = "raw",
-        summarize = "mean",
-        new_spat_unit = "aggregate") {
+aggregateStacksLocations <- function(gobject,
+    spat_units,
+    values = "raw",
+    summarize = "mean",
+    new_spat_unit = "aggregate") {
     # aggregate locations
     locs_list <- list()
     for (spat_unit in spat_units) {
@@ -2112,11 +2125,10 @@ aggregateStacksLocations <- function(
 #' different z-stacks
 #' @returns SpatRaster
 #' @keywords internal
-.combine_stack_spatvectors <- function(
-        gobject,
-        spat_units,
-        for_loop = FALSE,
-        for_loop_group_size = 100) {
+.combine_stack_spatvectors <- function(gobject,
+    spat_units,
+    for_loop = FALSE,
+    for_loop_group_size = 100) {
     # 1. combine all spatVectors across all stacks
     stack_list <- list()
     for (spat_i in seq_len(length(spat_units))) {
@@ -2196,12 +2208,11 @@ aggregateStacksLocations <- function(
 #'
 #' aggregateStacksPolygons(g, spat_units = c("z0", "z1"))
 #' @export
-aggregateStacksPolygons <- function(
-        gobject,
-        spat_units,
-        new_spat_unit = "aggregate",
-        for_loop = FALSE,
-        for_loop_group_size = 100) {
+aggregateStacksPolygons <- function(gobject,
+    spat_units,
+    new_spat_unit = "aggregate",
+    for_loop = FALSE,
+    for_loop_group_size = 100) {
     # aggregate spatvectors
     aggregated_spatVec <- .combine_stack_spatvectors(
         gobject = gobject,
@@ -2246,11 +2257,10 @@ aggregateStacksPolygons <- function(
 #'     feat_type = "rna"
 #' )
 #' @export
-aggregateStacksPolygonOverlaps <- function(
-        gobject,
-        spat_units,
-        feat_type,
-        new_spat_unit = "aggregate") {
+aggregateStacksPolygonOverlaps <- function(gobject,
+    spat_units,
+    feat_type,
+    new_spat_unit = "aggregate") {
     # aggregate spatvectors
     polygon_list <- list()
 
@@ -2304,17 +2314,16 @@ aggregateStacksPolygonOverlaps <- function(
 #'     values = "raw"
 #' )
 #' @export
-aggregateStacks <- function(
-        gobject,
-        spat_units,
-        feat_type,
-        values,
-        summarize_expression = "sum",
-        summarize_locations = "mean",
-        for_loop = FALSE,
-        for_loop_group_size = 100,
-        new_spat_unit = "aggregate",
-        verbose = TRUE) {
+aggregateStacks <- function(gobject,
+    spat_units,
+    feat_type,
+    values,
+    summarize_expression = "sum",
+    summarize_locations = "mean",
+    for_loop = FALSE,
+    for_loop_group_size = 100,
+    new_spat_unit = "aggregate",
+    verbose = TRUE) {
     if (isTRUE(verbose)) {
         wrap_msg("1. Start aggregating expression data")
     }

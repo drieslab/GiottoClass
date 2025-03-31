@@ -1,5 +1,5 @@
 options("giotto.use_conda" = FALSE)
-g <- GiottoData::loadGiottoMini("vis")
+g <- GiottoData::loadGiottoMini("visium")
 nobs <- nrow(pDataDT(g))
 nvar <- nrow(fDataDT(g))
 

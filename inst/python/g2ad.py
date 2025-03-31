@@ -14,15 +14,6 @@ def ad_guard(adata):
         print("Please provide a valid AnnData object.")
         raise(TypeError)
 
-def dir_guard(save_directory = None):
-    slash = save_directory[-1]
-    if slash != "/" and slash != '\\':
-        print("Argument save_directory must end in a slash character.")
-        print("\ti.e., save_directory = 'C:/my/save/directory/'")
-        print("\tAlternatively, save_directory = 'C:\\my\\save\\directory\\'")
-        print("Stopping conversion. Please try again.")
-        assert(False)
-
 def ad_obj(x = None):
     '''
     Creates an AnnData object using expression matrix, x
@@ -103,13 +94,14 @@ def set_adg_metadata(adata = None, cell_meta = None, feat_meta = None):
     
     return adata
 
-def set_adg_pca(adata = None, pca_coord = None, loadings = None, eigenv = None, feats_used = None):
+def set_adg_pca(adata = None, pca_coord = None, loadings = None, eigenv = None, feats_used = None, pca_name = None):
     ad_guard(adata)
     hvf = False
-    
+    pca_name_initial = pca_name
     if pca_coord is not None:
-        adata.obsm['X_pca'] = pca_coord
+        adata.obsm['X_' + pca_name] = pca_coord
     if feats_used is not None:
+        pca_name = "" if pca_name == "pca" else "_" + pca_name
         all_feats = adata.var_names
         all_false = [False for i in all_feats]
         highly_variable = pd.Series(all_false, index=all_feats)
@@ -117,10 +109,10 @@ def set_adg_pca(adata = None, pca_coord = None, loadings = None, eigenv = None, 
             if i in feats_used:
                 highly_variable.iloc[x] = True
         highly_variable.name = 'highly_variable'
-        adata.var['highly_variable'] = highly_variable
+        adata.var['highly_variable' + pca_name] = highly_variable
         hvf = True
 
-    if loadings is not None and hvf:    
+    if loadings is not None and hvf:
         n_pc = loadings.shape[1]
         pc_placehold = np.zeros(shape = (adata.n_vars, n_pc))
         pc_placehold = pd.DataFrame(pc_placehold, index=adata.var_names, dtype=float)
@@ -130,29 +122,29 @@ def set_adg_pca(adata = None, pca_coord = None, loadings = None, eigenv = None, 
             test_pc = loadings.iloc[row,:]
             pc_placehold.loc[i] = test_pc
         pc_placehold = pc_placehold.to_numpy(dtype=float)
-        adata.varm["PCs"] = pc_placehold
+        adata.varm["PCs" + pca_name] = pc_placehold
 
     elif loadings is not None:
-        adata.varm["PCs"] = loadings.to_numpy(dtype=float)
+        adata.varm["PCs" + pca_name] = loadings.to_numpy(dtype=float)
     if eigenv is not None:
         eigenv_shape = len(eigenv)
         eigenv = np.array(eigenv)
-        adata.uns['pca'] = {}
-        adata.uns['pca'] = {'variance':eigenv.reshape(eigenv_shape,)}
+        adata.uns[pca_name_initial] = {}
+        adata.uns[pca_name_initial] = {'variance':eigenv.reshape(eigenv_shape,)}
 
     return adata
 
-def set_adg_umap(adata = None, umap_data = None):
+def set_adg_umap(adata = None, umap_data = None, umap_name = None):
     ad_guard(adata)
     if umap_data is not None:
-        adata.obsm['X_umap'] = umap_data
+        adata.obsm['X_' + umap_name] = umap_data
     
     return adata
 
-def set_adg_tsne(adata = None, tsne_data = None):
+def set_adg_tsne(adata = None, tsne_data = None, tsne_name = None):
     ad_guard(adata)
     if tsne_data is not None:
-        adata.obsm['X_tsne'] = tsne_data
+        adata.obsm['X_' + tsne_name] = tsne_data
     
     return adata
 
@@ -197,36 +189,59 @@ def set_adg_nn(adata = None, df_NN = None, net_name = None, n_neighbors = None, 
     
     return adata
 
+def save_NN_keys(adata = None, network_name = None):
+    adata.uns['NN_keys'] = network_name
+    return adata
+
 def set_adg_sn(adata = None, df_SN = None, net_name = None, n_neighbors = None, max_distance = None, dim_used = None):
     ad_guard(adata)
-    dim12 = len(adata.obs_names) # dimensions are # of cell_IDs
-    fill_arr = np.zeros((dim12,dim12))
-    w_fill_df = pd.DataFrame(fill_arr, columns = adata.obs_names, index = adata.obs_names)
-    d_fill_df = pd.DataFrame(fill_arr, columns = adata.obs_names, index = adata.obs_names)
+    cell_ids = adata.obs_names.to_list()
+    cell_index_map = {cell: i for i, cell in enumerate(cell_ids)}
 
-    for i in df_SN.index:
-        tar_row = df_SN.iloc[i,:]
-        f_id = tar_row["from"]
-        t_id = tar_row["to"]
-        weight = tar_row["weight"]
-        dist = tar_row["distance"]
-        w_fill_df.loc[f_id, t_id] = weight
-        d_fill_df.loc[f_id, t_id] = dist
-    
-    weights = scipy.sparse.csr_matrix(w_fill_df)
-    distances = scipy.sparse.csr_matrix(d_fill_df)
-    
+    row_idx, col_idx, weight_vals, dist_vals = [], [], [], []
+
+    df_SN = df_SN.rename(columns={"from": "source", "to": "target"})
+    for row in df_SN.itertuples(index=False):
+        f_id = row.source
+        t_id = row.target
+        weight = row.weight
+        dist = row.distance
+        if f_id in cell_index_map and t_id in cell_index_map:
+            row_idx.append(cell_index_map[f_id])
+            col_idx.append(cell_index_map[t_id])
+            weight_vals.append(weight)
+            dist_vals.append(dist)
+
+    dim = len(cell_ids)
+    weights = scipy.sparse.csr_matrix((weight_vals, (row_idx, col_idx)), shape=(dim, dim))
+    distances = scipy.sparse.csr_matrix((dist_vals, (row_idx, col_idx)), shape=(dim, dim))
+
     cname = net_name + "_connectivities"
     dname = net_name + "_distances"
     adata.obsp[cname] = weights
     adata.obsp[dname] = distances
-    adata.uns[net_name+"_neighbors"] = {'connectivities_key': net_name + '_connectivities',
-                                        'distances_key': net_name + '_distances',
-                                        'params': {'n_neighbors': n_neighbors,
-                                                   'dimensions_used': dim_used,
-                                                   'max_distance':max_distance}
-                                        }
-    
+    adata.uns[net_name + "_neighbors"] = {
+        'connectivities_key': cname,
+        'distances_key': dname,
+        'params': {
+            'n_neighbors': n_neighbors,
+            'dimensions_used': dim_used,
+            'max_distance': max_distance
+        }
+    }    
+    return adata
+
+def save_SN_keys(adata = None, network_name = None):
+    adata.uns['SN_keys'] = network_name
+    return adata
+
+def save_SE_keys(adata = None, enrichment_name = None):
+    adata.uns['SE_keys'] = enrichment_name
+    return adata
+
+def set_adg_spat_enrich(adata = None, enrichment = None, name = None):
+    adata.uns[name] = enrichment
+    save_SE_keys 
     return adata
 
 def write_ad_h5ad(adata = None, save_directory = None, spat_unit = None, feat_type = None):

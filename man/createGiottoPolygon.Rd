@@ -24,10 +24,10 @@
   fill_holes = TRUE,
   poly_IDs = NULL,
   ID_fmt = "cell_",
-  flip_vertical = TRUE,
-  shift_vertical_step = TRUE,
-  flip_horizontal = TRUE,
-  shift_horizontal_step = TRUE,
+  flip_vertical = FALSE,
+  shift_vertical_step = FALSE,
+  flip_horizontal = FALSE,
+  shift_horizontal_step = FALSE,
   remove_unvalid_polygons = TRUE,
   calc_centroids = FALSE,
   verbose = TRUE
@@ -36,10 +36,13 @@
 \S4method{createGiottoPolygon}{data.frame}(
   x,
   name = "cell",
+  part_col = NULL,
   calc_centroids = FALSE,
   skip_eval_dfr = FALSE,
   copy_dt = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  make_valid = FALSE,
+  ...
 )
 
 createGiottoPolygonsFromMask(
@@ -51,10 +54,10 @@ createGiottoPolygonsFromMask(
   fill_holes = TRUE,
   poly_IDs = NULL,
   ID_fmt = "cell_",
-  flip_vertical = TRUE,
-  shift_vertical_step = TRUE,
-  flip_horizontal = TRUE,
-  shift_horizontal_step = TRUE,
+  flip_vertical = FALSE,
+  shift_vertical_step = FALSE,
+  flip_horizontal = FALSE,
+  shift_horizontal_step = FALSE,
   calc_centroids = FALSE,
   remove_unvalid_polygons = TRUE,
   verbose = FALSE
@@ -63,7 +66,9 @@ createGiottoPolygonsFromMask(
 createGiottoPolygonsFromDfr(
   segmdfr,
   name = "cell",
+  part_col = NULL,
   calc_centroids = FALSE,
+  make_valid = FALSE,
   verbose = TRUE,
   skip_eval_dfr = FALSE,
   copy_dt = TRUE
@@ -73,6 +78,7 @@ createGiottoPolygonsFromGeoJSON(
   GeoJSON,
   name = "cell",
   calc_centroids = FALSE,
+  make_valid = FALSE,
   verbose = TRUE
 )
 }
@@ -84,9 +90,11 @@ data.frame with vertex 'x', 'y', and 'poly_ID' information.}
 SpatRaster or SpatVector methods, depending on whether x was a filepath to
 a maskfile or a spatial file (ex: wkt, shp, GeoJSON) respectively.}
 
-\item{name}{name for the \code{giottoPolygon} object created}
+\item{name}{character. Name to assign this set of polygons. This will also
+be the name of the spatial unit that they define. See \link{giotto_schema}}
 
-\item{calc_centroids}{(default FALSE) calculate centroids for polygons}
+\item{calc_centroids}{logical. (default \code{FALSE}) calculate centroids for
+polygons}
 
 \item{verbose}{be verbose}
 
@@ -106,20 +114,28 @@ each polygon in the mask file.}
 \item{ID_fmt}{character. Only applied if \code{poly_IDs = NULL}. Naming scheme for
 poly_IDs. Default = "cell_". See \emph{ID_fmt} section.}
 
-\item{flip_vertical}{flip mask figure in a vertical manner}
+\item{flip_vertical, flip_horizontal}{logical. Flip output polygons across y
+(vertical) or x (horizontal) axis.}
 
-\item{shift_vertical_step}{shift vertical (boolean or numerical)}
-
-\item{flip_horizontal}{flip mask figure in a horizontal manner}
-
-\item{shift_horizontal_step}{shift horizontal (boolean or numerical)}
+\item{shift_vertical_step, shift_horizontal_step}{logical or numeric. When
+\code{FALSE}, no shift is performed. When numeric, a shift of
+\eqn{image height \times step} (vertical) or \eqn{image width \times step}
+(horizontal) is performed.}
 
 \item{remove_unvalid_polygons}{remove unvalid polygons (default: TRUE)}
 
-\item{skip_eval_dfr}{(default FALSE) skip evaluation of provided dataframe}
+\item{part_col}{character (optional). If provided, a column in the data
+when processing will be indexed along as parts to generate a multipolygon.}
+
+\item{skip_eval_dfr}{logical. (default FALSE) skip evaluation of provided
+dataframe}
 
 \item{copy_dt}{(default TRUE) if segmdfr is provided as dt, this determines
 whether a copy is made}
+
+\item{make_valid}{logical. (default \code{FALSE}) Whether to run
+\code{\link[terra:is.valid]{terra::makeValid()}} on the geometries. Setting this to \code{TRUE} may cause
+read-in polygon attribute information to become out of sync.}
 
 \item{maskfile}{path to mask file, a terra \code{SpatRaster}, or some other
 data class readable by \code{\link[terra:rast]{terra::rast()}}}
@@ -185,62 +201,89 @@ a \code{sprintf()} \code{fmt} param input instead. (ie: \code{ID_fmt = "cell_\%0
 
 \examples{
 # ------- create from a mask image ------- #
-m <- system.file("extdata/toy_mask_multi.tif", package = "GiottoClass")
-plot(terra::rast(m), col = grDevices::hcl.colors(7))
-gp <- createGiottoPolygon(
-    m,
-    flip_vertical = FALSE, flip_horizontal = FALSE,
-    shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
-    ID_fmt = "id_test_\%03d",
-    name = "test"
+# example multi-value mask image
+mask_multi <- system.file("extdata/toy_mask_multi.tif",
+    package = "GiottoClass"
 )
-plot(gp, col = grDevices::hcl.colors(7))
+plot(terra::rast(mask_multi), col = grDevices::hcl.colors(7)) # preview mask
+createGiottoPolygon(mask_multi) # with all default settings
+gpoly1 <- createGiottoPolygon(mask_multi,
+    ID_fmt = "id_test_\%03d", # apply a format when assigning poly_IDs
+    name = "multi_test"
+)
+force(gpoly1)
+plot(gpoly1, col = grDevices::hcl.colors(7)) # plot poly
+
+# example single-value mask image
+mask_single <- system.file("extdata/toy_mask_single.tif",
+    package = "GiottoClass"
+)
+plot(terra::rast(mask_single)) # preview mask
+
+gpoly2 <- createGiottoPolygon(mask_single,
+    ID_fmt = "id_test_\%03d",
+    name = "single_test"
+)
+plot(gpoly2, col = grDevices::hcl.colors(5)) # plot poly
 
 # ------- create from an shp file ------- #
 shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
 # vector inputs do not have params for flipping and shifting
-gp2 <- createGiottoPolygon(shp, name = "test")
+gp2 <- createGiottoPolygon(shp)
 plot(gp2, col = grDevices::hcl.colors(7))
 
 # ------- create from data.frame-like ------- #
-shp <- system.file("extdata/toy_poly.shp", package = "GiottoClass")
-gpoly <- createGiottoPolygon(shp, name = "test")
-plot(gpoly)
-gpoly_dt <- data.table::as.data.table(gpoly, geom = "XY")
-needed_cols_dt <- gpoly_dt[, .(geom, part, x, y, hole, poly_ID)]
-force(needed_cols_dt)
+# load example data and convert to data.table
+dt <- data.table::data.table(
+    id = c(
+        rep('a', 3), # Triangle (id 'a')
+        rep('b', 4), # Square 1 (id 'b')
+        rep('c', 4) # Square 2 (id 'c')
+    ),
+    x = c(
+        0, 1, 0.5,
+        2, 5, 5, 2,
+        6, 7, 7, 6
+    ),
+    y = c(
+        0, 0, 1,
+        2, 2, 5, 5,
+        5, 5, 6, 6
+    )
+)
 
-out <- createGiottoPolygon(needed_cols_dt,
-    name = "test"
-)
-plot(out)
+# simple polygons only need 3 cols
+force(dt)
+out1 <- createGiottoPolygon(dt)
+plot(out1, col = getRainbowColors(3))
 
-mask_multi <- system.file("extdata/toy_mask_multi.tif",
-    package = "GiottoClass"
-)
-mask_single <- system.file("extdata/toy_mask_single.tif",
-    package = "GiottoClass"
-)
-plot(terra::rast(mask_multi), col = grDevices::hcl.colors(7))
-plot(terra::rast(mask_single))
+# multipolygons can be generated using the `part_col` param
+dt[, part_index := c(rep(1, 7), rep(2, 4))]
+dt[, id := c(rep("a", 3), rep("b", 8))]
+force(dt)
+out2 <- createGiottoPolygon(dt, part_col = "part_index")
+plot(out2, col = getRainbowColors(2))
 
-gpoly1 <- createGiottoPolygonsFromMask(
-    mask_multi,
-    flip_vertical = FALSE, flip_horizontal = FALSE,
-    shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
-    ID_fmt = "id_test_\%03d",
-    name = "multi_test"
-)
-plot(gpoly1, col = grDevices::hcl.colors(7))
+# For more complex inputs with holes, it is recommended to format into
+# the geom, part, x, y, hole, format that terra uses with matrix inputs
+# + poly_ID.
 
-gpoly2 <- createGiottoPolygonsFromMask(
-    mask_single,
-    flip_vertical = FALSE, flip_horizontal = FALSE,
-    shift_horizontal_step = FALSE, shift_vertical_step = FALSE,
-    ID_fmt = "id_test_\%03d",
-    name = "single_test"
-)
-plot(gpoly2, col = grDevices::hcl.colors(5))
+# extract 5 column representation:
+dt_full <- data.table::as.data.table(out2, geom = "XY")
+force(dt_full)
+
+# Columns named geom, part, x, y, hole, are treated specially when provided.
+# They can be directly used without internal modification
+res <- createGiottoPolygon(dt_full)
+plot(res, col = getRainbowColors(2))
+
+# additional columns outside of the 3 (+ part_col if provided) or 5 column
+# formatting are retained as attributes
+# These cols MUST map with the poly_ID/geom.
+
+# set up an example attribute
+dt_full$attribute <- match(dt_full$poly_ID, letters)
+createGiottoPolygon(dt_full)
 }
 \concept{mask polygon}
 \concept{polygon}

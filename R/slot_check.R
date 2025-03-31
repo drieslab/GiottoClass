@@ -2,9 +2,8 @@
 
 #' @keywords internal
 #' @noRd
-.check_cell_metadata <- function(
-        gobject,
-        verbose = TRUE) {
+.check_cell_metadata <- function(gobject,
+    verbose = TRUE) {
     # data.table vars
     cell_ID <- spat_unit <- NULL
 
@@ -134,9 +133,8 @@
 
 #' @keywords internal
 #' @noRd
-.check_feat_metadata <- function(
-        gobject,
-        verbose = TRUE) {
+.check_feat_metadata <- function(gobject,
+    verbose = TRUE) {
     # data.table vars
     feat_ID <- spat_unit <- feat_type <- NULL
 
@@ -546,7 +544,7 @@
                             "dim_type:", su_dr$dim_type[[obj_i]],
                             "name:", su_dr$name[[obj_i]], "\n",
                             "Dimension reduction has no cell_IDs.
-                             Guessing based on existing expression cell_IDs"
+                            Guessing based on existing expression cell_IDs"
                         ))
                         rownames(dr_obj[]) <- IDs
                         ### ### ### ### ### ### ### ### ### ### ### ### ### ###

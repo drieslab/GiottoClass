@@ -28,17 +28,18 @@
 #'
 #' saveGiotto(gobject = g, dir = tempdir(), overwrite = TRUE)
 #' @export
-saveGiotto <- function(gobject,
-    foldername = "saveGiottoDir",
-    dir = getwd(),
-    method = c("RDS", "qs"),
-    method_params = list(),
-    overwrite = FALSE,
-    export_image = TRUE,
-    image_filetype = "PNG",
-    include_feat_coord = TRUE,
-    verbose = TRUE,
-    ...) {
+saveGiotto <- function(
+        gobject,
+        foldername = "saveGiottoDir",
+        dir = getwd(),
+        method = c("RDS", "qs"),
+        method_params = list(),
+        overwrite = FALSE,
+        export_image = TRUE,
+        image_filetype = "PNG",
+        include_feat_coord = TRUE,
+        verbose = TRUE,
+        ...) {
     # check params
     checkmate::assert_character(foldername)
     checkmate::assert_character(dir)
@@ -317,13 +318,12 @@ saveGiotto <- function(gobject,
 #'
 #' loadGiotto(path_to_folder = paste0(td, "/saveGiottoDir"))
 #' @export
-loadGiotto <- function(
-        path_to_folder,
-        load_params = list(),
-        reconnect_giottoImage = TRUE,
-        python_path = NULL,
-        init_gobject = TRUE,
-        verbose = TRUE) {
+loadGiotto <- function(path_to_folder,
+    load_params = list(),
+    reconnect_giottoImage = TRUE,
+    python_path = NULL,
+    init_gobject = TRUE,
+    verbose = TRUE) {
     # data.table vars
     img_type <- NULL
 
@@ -426,10 +426,10 @@ loadGiotto <- function(
 
     if (identical(gobject_file, character(0))) { # no matches
         vmsg(.v = verbose, "giotto object was not found
-         skip loading giotto object")
+        skip loading giotto object")
     } else if (length(gobject_file) > 1) { # more than one match
         vmsg(.v = verbose, "more than 1 giotto object was found
-         skip loading giotto object")
+        skip loading giotto object")
     } else {
         # pick a reading function
         read_fun <- NULL

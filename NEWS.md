@@ -1,8 +1,68 @@
-# GiottoClass 0.4.5
+# GiottoClass 0.4.7 (2025/02/04)
+
+## new
+- `spatIDs()<-` for `giottoPolygon`
+- `combineGeom()` and `splitGeom()` for `giottoPolygon`
+
+## bug fixes
+- fixes and updates for {spatialdata} and {anndata} interoperability.
+- fix bug introduced in 0.4.6 with `shear()` for `giottoPolygon`.
+- fix {magick} `giottoAffineImage` realization when extent does not match the image dims ratio.
+- fix `ext<-()` for `spatLocsObj`
+- fix `ext<-()` for `giottoAffineImage`
+- fix external affine matrix compatibility. `affine()` now has `pre_multiply` param to switch between working with affine matrices defined for either pre or post-multiply. Pre is the general convention, but Giotto internally uses post. This will be addressed in a later update.
+- fix `giottoToSeuratV5()` selection of a default image to use
+- replace internal usage of deprecated create_spat_net_obj -> createSpatNetObj and set_spatialNetwork -> setSpatialNetwork when calculating spatial networks.
+- fix `createGiottoPolygon()` not preserving attributes from `data.table` inputs
+- fix `loadGiotto()` error when a non-expected reticulate environment is already activated in the session
+- fix `createGiottoLargeImage()` and `createGiottoPolygonsFromMask()` to align with {terra} `v1.8-21` `rast(noflip = TRUE)` [#1102](https://github.com/drieslab/Giotto/issues/1102) by StevenWijnen and rbutleriii
+- add fallback for when attributes do not match number of geometries in `createGiottoPolygon()` so that poly_ID col is not dropped
+
+## changes
+- move {magick} from imports to suggests
+- {terra} `>=v1.8-21`
 
 ## enhancements
+- `[[` can now be used to select channels in `giottoLargeImage`-inheriting objects
+- `XY()` replacement function for `SpatVector` now has `geomtype` param in case of `"none"` geometries
+- `negate` param for negative selection in `sliceGiotto()`
+- `spatUnit()` and `featType()` method for `giotto` to find existing spatial units and feature types
+- expose `make_valid` param and `...` passing for `createGiottoPolygon()` `data.frame` method
+- `createGiottoPolygon()` `part_col` param for generating multipolygons from `data.frame-like` inputs.
 
+## new
+- `processData()` generic and `processParam` class
+- `svkey` metaprogramming object for storing `spatValue()` parameters for later eval.
+
+# GiottoClass 0.4.6 (2025/01/17)
+
+## bug fixes
+- fix `gefToGiotto()` gene column reading [#255](https://github.com/drieslab/GiottoClass/pull/255) by cmubioinformatics
+- fix `plot(add = TRUE)` for adding on to rasterized point plots
+- fix `calculateOverlap()` when there are duplicate poly_IDs
+- fix `calculateOverlap()` `giottoPolygon`, `giottoAffineImage` method. (The `giotto`, `missing` method still needs work)
+- fix `calculateOverlap()` `giottoPolygon`, `giottoLargeImage` method that locked `name_overlap` to be `objName()` of `y`
+- fix poly_ID generation when `terra::makeValid()` increases number of polys
+- fix `giottoPoints`, `giottoPolygon` `as.data.table()` conversion when `row()` = 0
+
+## new
+- `names()` and `names<-()` for `giottoLargeImage` inheriting objects to name image layers
+
+## enhancements
+- `make_valid` param for `createGiottoPolygonsFromDfr()` and `createGiottoPolygonsFromGeoJSON()`
+
+
+# GiottoClass 0.4.5 (2024/12/09)
+
+## enhancements
 - `spatUnit()<-` and `featType()<-` `list` methods
+- `set_default_spat_unit()` and `set_default_feat_type()` now look for defaults when given `NA_character_` inputs as well.
+- `update_giotto_params()` can now be turned off with `options("giotto.update_param" = FALSE)`
+
+## bug fixes
+- fix `giottoToSeuratV5()` Interoperability for Xenium Image
+- fix `createGiottoPolygon()` when no attributes information is provided
+- fix `createGiottoPolygonsFromGeoJSON()` reading from json GeometryCollection type inputs
 
 # GiottoClass 0.4.4 (2024/11/14)
 

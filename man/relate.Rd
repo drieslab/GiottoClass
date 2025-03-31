@@ -32,7 +32,7 @@
 
 \item{y}{spatial object records to test relations against}
 
-\item{relation}{character. One of "intersects", "touches", "crosses", "overlaps", "within", "contains", "covers", "coveredby", "disjoint". Or a "DE-9IM" string such as "FF*FF****". See \href{https://en.wikipedia.org/wiki/DE-9IM}{wikipedia} or \href{https://docs.geotools.org/stable/userguide/library/jts/dim9.html}{geotools doc}}
+\item{relation}{character. One of "intersects", "touches", "crosses", "overlaps", "within", "contains", "covers", "coveredby", "disjoint", or "equals". It can also be a "DE-9IM" string such as "FF*FF****". See \href{https://en.wikipedia.org/wiki/DE-9IM}{Wikipedia} or \href{https://docs.geotools.org/stable/userguide/library/jts/dim9.html}{GeoTools doc}}
 
 \item{pairs}{logical. If \code{TRUE} a two-column matrix is returned with the indices of the cases where the requested relation is \code{TRUE}. This is especially helpful when dealing with many geometries as the returned value is generally much smaller}
 
@@ -64,7 +64,7 @@ absence of a specific spatial relationships between the geometries in
 x and y.
 }
 \examples{
-g <- GiottoData::loadGiottoMini("viz")
+g <- GiottoData::loadGiottoMini("vizgen")
 activeSpatUnit(g) <- "aggregate"
 sl <- g[["spatial_locs"]][[1]]
 gpoints <- g[["feat_info"]][[1]]
@@ -76,7 +76,10 @@ res2 <- relate(gpoints, gpoly, relation = "intersects", use_names = FALSE)
 selection <- system.file("extdata/viz_interactive_select.csv",
     package = "GiottoClass"
 )
-select_polys <- createGiottoPolygon(data.table::fread(selection))
+select_polys <- createGiottoPolygon(
+    # we don't want the rownumber column.
+    data.table::fread(selection)[, c("x", "y", "name")]
+)
 res <- relate(g, select_polys, relation = "intersects")
 g[, res[y == "polygon1", x]]
 g[, res[y == "polygon2", x]]

@@ -5,6 +5,7 @@
 \alias{calculateOverlap,giotto,missing-method}
 \alias{calculateOverlap,giottoPolygon,giottoPoints-method}
 \alias{calculateOverlap,giottoPolygon,giottoLargeImage-method}
+\alias{calculateOverlap,giottoPolygon,giottoAffineImage-method}
 \alias{calculateOverlap,giottoPolygon,SpatRaster-method}
 \alias{calculateOverlap,SpatVector,SpatRaster-method}
 \alias{calculateOverlap,SpatVector,SpatVector-method}
@@ -36,6 +37,16 @@
 )
 
 \S4method{calculateOverlap}{giottoPolygon,giottoLargeImage}(
+  x,
+  y,
+  name_overlap = NULL,
+  poly_subset_ids = NULL,
+  return_gpolygon = TRUE,
+  verbose = TRUE,
+  ...
+)
+
+\S4method{calculateOverlap}{giottoPolygon,giottoAffineImage}(
   x,
   y,
   name_overlap = NULL,
@@ -153,7 +164,7 @@ overlaps_z1 <- overlaps(out_z1)
 overlaps_z1$rna
 
 # overlap image to get sum intensities per cell
-out_img <- calculateOverlap(gpoly, gimg)
+out_img <- calculateOverlap(gpoly, gimg, progress = FALSE)
 overlaps_img <- overlaps(out_img)
 overlaps_img$intensity
 

@@ -4,8 +4,9 @@ NULL
 ## spatIDs and featIDs generic ####
 #' @title Spatial and feature IDs
 #' @name spatIDs-generic
-#' @description Get the cell
-#' IDs (termed spatial IDs to better reflect when not at the single-cell level)
+#' @aliases spatIDs<-
+#' @description Get the cell/spot IDs
+#' (termed spatial IDs to better reflect when not at the single-cell level)
 #' and feature IDs of a giotto object or subobject.
 #'
 #' \[**`giotto` object specific**\]
@@ -24,6 +25,8 @@ NULL
 #'
 #' @aliases spatIDs featIDs
 #' @param x an object
+#' @param old character. IDs to match against to replace
+#' @param value character. IDs to replace with
 #' @param subset logical expression to find a subset of features.
 #' @param negate logical. if `TRUE` all IDs that are **not** in the `subset`
 #' are selected
@@ -37,7 +40,7 @@ NULL
 #' @returns character vector of cell/spatial IDs or feature IDs
 #' @include classes.R
 #' @examples
-#' g <- GiottoData::loadGiottoMini("vis")
+#' g <- GiottoData::loadGiottoMini("visium")
 #' spatIDs(g)
 #' spatIDs(g, subset = nr_feats <= 200)
 #' spatIDs(g, subset = Dim.1 > 25, dim_reduction_to_use = "umap")
@@ -48,6 +51,14 @@ NULL
 #' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
 #' featIDs(gpoints)
 #'
+#' # ID replacements (currently only giottoPolygons)
+#' polys <- g[["spatial_info"]][[1]]
+#' slot(polys, "overlaps") <- NULL # make NULL to avoid a warning
+#' head(spatIDs(polys))
+#' spatIDs(polys) <- paste0("poly_", seq_len(nrow(polys)))
+#' head(spatIDs(polys))
+#' spatIDs(polys, old = c("poly_1", "poly_3")) <- c("test1", "test2")
+#' head(spatIDs(polys))
 NULL
 
 
@@ -154,6 +165,52 @@ setMethod(
         return(out)
     }
 )
+
+#' @rdname spatIDs-generic
+#' @export
+setMethod(
+    "spatIDs<-", signature(x = "giottoPolygon"),
+    function(x, old = NULL, ..., value) {
+        if (!is.null(x@overlaps)) {
+            warning("dropping overlaps information due to ID change",
+                call. = FALSE
+            )
+            x@overlaps <- NULL
+        }
+
+        if (!is.null(old)) {
+            if (length(old) != length(value)) {
+                "IDs to use does not match number of old IDs to replace" %>%
+                    stop(call. = FALSE)
+            }
+            i <- match(old, spatIDs(x))
+            matched <- !is.na(i)
+            if (any(!matched)) {
+                wrap_txtf(
+                    "spatIDs<-(): old ID(s) not discovered:\n %s.\n
+                    Skipping associated replacement values:\n '%s'",
+                    paste(old[!matched], collapse = "', '"),
+                    paste(value[!matched], collapse = "', '")
+                ) %>%
+                    warning(call. = FALSE)
+            }
+            x@spatVector$poly_ID[i[matched]] <- value[matched]
+            x@unique_ID_cache <- spatIDs(x, use_cache = FALSE, uniques = TRUE)
+            x@spatVectorCentroids <- centroids(x@spatVector)
+            return(x)
+        } else {
+            if (nrow(x) != length(value)) {
+                "IDs to use does not match number of geometries" %>%
+                    stop(call. = FALSE)
+            }
+            x@spatVector$poly_ID <- value
+            x@unique_ID_cache <- unique(value)
+            x@spatVectorCentroids <- centroids(x@spatVector)
+            return(x)
+        }
+    }
+)
+
 #' @rdname spatIDs-generic
 #' @export
 setMethod(
