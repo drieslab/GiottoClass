@@ -460,6 +460,9 @@ def extract_spat_enrich(adata = None, key_added = None):
     enrichment = {}
     se_key_list = find_SE_keys(adata = adata, key_added = key_added)
     
+    if type(se_key_list) is type(None):
+        return None
+    
     for sk in se_key_list:
         enrichment[sk] = adata.uns[sk]
     
