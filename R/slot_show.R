@@ -1110,17 +1110,21 @@ showGiottoImageNames <- function(gobject) {
 #' matrix, data.frame and classes that inherit them.
 #' @keywords internal
 #' @returns abbreviated matrix exprObj
-.abbrev_mat <- function(exprObj, nrows, ncols, header = TRUE) {
-    mat <- as.matrix(exprObj[])
+.abbrev_mat <- function(exprObj, nrows, ncols,
+    print_prov = TRUE, header = TRUE
+) {
+    mat <- exprObj[]
     four_names <- head(colnames(mat), 4)
     mat_cols <- ncol(mat)
     mat_rows <- nrow(mat)
 
     # suppress colnames
+    cols_suppressed <- mat_cols > ncols
     mat <- mat[
         seq_len(if (nrows <= mat_rows) nrows else mat_rows),
         seq_len(if (ncols <= mat_cols) ncols else mat_cols)
     ]
+    mat <- as.matrix(mat)
     colnames(mat) <- NULL
 
     # prints
@@ -1131,7 +1135,7 @@ showGiottoImageNames <- function(gobject) {
             '" and feature type: "', exprObj@feat_type, '"\n'
         ))
     }
-    cat("  Provenance:", exprObj@provenance)
+    if (isTRUE(print_prov)) cat("  Provenance:", exprObj@provenance)
     if (isTRUE(header)) {
         cat("\n\ncontains:\n")
     } else {
@@ -1141,7 +1145,13 @@ showGiottoImageNames <- function(gobject) {
         mat_rows, " x ", mat_cols, ' dense matrix of class "',
         class(exprObj[]), '"\n\n'
     ))
-    print(mat)
+    output <- capture.output(print(mat))
+    if (cols_suppressed) {
+        output <- paste(output, "......")
+    }
+    for (i in seq(from = 2, to = length(output))) {
+        cat(output[i], "\n")
+    }
     cat("\n First four colnames:")
     cat("\n", wrap_txt(four_names, strWidth = 40), "\n")
 }
