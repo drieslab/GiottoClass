@@ -217,7 +217,7 @@ setMethod(
             )] %none%
                 print_cap
             writeLines(gsub(
-                pattern = "in show(.*?))'", replacement = "",
+                pattern = "in show().*", replacement = "",
                 x = print_cap
             ))
             cat("\n First four colnames:")
@@ -228,7 +228,9 @@ setMethod(
                 ), "\n"
             )
         } else if (inherits(slot(object, "exprMat"), "denseMatrix")) {
-            .abbrev_mat(object, nrows = 10, ncols = 10, header = FALSE)
+            .abbrev_mat(object,
+                nrows = 10, ncols = 6, print_prov = FALSE, header = FALSE
+            )
         } else {
             # * other matrices *
             print(slot(object, "exprMat"))
