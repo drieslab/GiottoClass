@@ -147,12 +147,11 @@ setMethod(
 # TODO apply as instructions for lazy eval after crop/resampling
 #' @rdname flip
 #' @export
-setMethod(
-    "flip", signature(x = "giottoLargeImage"),
-    function(x, direction = "vertical", x0 = 0, y0 = 0, ...) {
-        .flip_large_image(image = x, direction = direction, x0 = x0, y0 = y0)
-    }
-)
+setMethod("flip", signature("giottoLargeImage"), function(x, direction = "vertical", x0 = 0, y0 = 0) {
+    a <- get_args_list()
+    a$x <- as(x, "giottoAffineImage") # convert to giottoAffineImage
+    do.call(flip, args = a)
+})
 
 #' @rdname flip
 #' @export
