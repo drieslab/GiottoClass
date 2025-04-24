@@ -19,7 +19,7 @@ globalVariables(
         "extract_NN_info", "align_network_data", "extract_SN_connectivities",
         "extract_SN_distances", "set_adg_sn", "create_AnnData",
         # tifffile
-        "ometif_2_tif",
+        "py_tif_convert",
         # spatialdata interop
         "createSpatialData", "read_spatialdata_from_path", "extract_spatial",
         "extract_image"
