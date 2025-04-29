@@ -1296,7 +1296,7 @@ createGiottoObjectSubcellular <- function(
 #' @param provenance origin data of expression information (if applicable)
 #' @param misc misc
 #' @param expression_matrix_class class of expression matrix to
-#' use (e.g. 'dgCMatrix', 'DelayedArray')
+#' use (e.g. 'dgCMatrix', 'DelayedArray', 'dbMatrix')
 #' @returns exprObj
 #' @examples
 #' x_expr <- readRDS(system.file("extdata/toy_matrix.RDS",
@@ -1312,7 +1312,7 @@ createExprObj <- function(
         feat_type = "rna",
         provenance = NULL,
         misc = NULL,
-        expression_matrix_class = c("dgCMatrix", "DelayedArray", "dbSparseMatrix")) {
+        expression_matrix_class = c("dgCMatrix", "DelayedArray", "dbMatrix")) {
     exprMat <- .evaluate_expr_matrix(expression_data,
         expression_matrix_class = expression_matrix_class,
         feat_type = feat_type
