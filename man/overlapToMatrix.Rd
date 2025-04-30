@@ -6,6 +6,8 @@
 \alias{overlapToMatrix,giottoPolygon-method}
 \alias{overlapToMatrix,SpatVector-method}
 \alias{overlapToMatrix,data.table-method}
+\alias{overlapToMatrix,overlapPointDT-method}
+\alias{overlapToMatrix,overlapIntensityDT-method}
 \title{overlapToMatrix}
 \usage{
 \S4method{overlapToMatrix}{giotto}(
@@ -51,6 +53,23 @@
   output = c("Matrix", "data.table"),
   aggr_function = deprecated()
 )
+
+\S4method{overlapToMatrix}{overlapPointDT}(
+  x,
+  name = "raw",
+  sort = TRUE,
+  feat_count_column = NULL,
+  output = c("Matrix", "exprObj"),
+  ...
+)
+
+\S4method{overlapToMatrix}{overlapIntensityDT}(
+  x,
+  name = "raw",
+  sort = TRUE,
+  output = c("Matrix", "exprObj"),
+  ...
+)
 }
 \arguments{
 \item{x}{object containing overlaps info. Can be giotto object or SpatVector
@@ -87,6 +106,9 @@ points or data.table of overlaps generated from \code{calculateOverlap}}
 names that are expected to exist. This fixes the dimensions of the matrix
 since the overlaps information does not directly report rows and cols where
 no values were detected.}
+
+\item{sort}{logical (default = TRUE). Whether to perform a mixed sort on
+output matrix row and col names.}
 }
 \value{
 giotto object or count matrix

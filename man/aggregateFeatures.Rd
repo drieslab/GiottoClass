@@ -9,8 +9,8 @@ aggregateFeatures(
   spat_info = NULL,
   feat_info = NULL,
   image_names = NULL,
-  spat_unit = NULL,
-  feat_type = NULL,
+  new_spat_unit = NULL,
+  new_feat_type = NULL,
   name = "raw",
   poly_subset_ids = NULL,
   feat_subset_column = NULL,
@@ -34,11 +34,11 @@ aggregated.}
 \item{image_names}{character. Name of image(s) containing intensity values
 to be aggregated.}
 
-\item{spat_unit}{character (optional). Name of spatial unit to assign the
-expression info to. Default is the same as \code{spat_info}.}
+\item{new_spat_unit}{character (optional). Name of spatial unit to assign
+the expression info to. Default is the same as \code{spat_info}.}
 
-\item{feat_type}{character (optional). Name of feature type to assign the
-expression info to. Default is the same as \code{feat_info} when used. When
+\item{new_feat_type}{character (optional). Name of feature type to assign
+the expression info to. Default is the same as \code{feat_info} when used. When
 \code{image_names} is used instead, default is "protein".}
 
 \item{name}{character. (default = "raw") Name to assign the output
@@ -57,15 +57,18 @@ overlap calculation.}
 information. Useful in cases when more than one detection is reported per
 point.}
 
-\item{fun}{character (default = "sum"). Function to aggregate image
-information}
+\item{fun}{character (default = "sum"). A function usable by
+\code{\link[exactextractr:exact_extract]{exactextractr::exact_extract()}} to aggregate image intensity values.}
 
 \item{return_gobject}{logical (default = TRUE). Whether to return the
 \code{giotto} object or just the aggregated expression values as \code{exprObj} class.}
 
 \item{verbose}{logical. Whether to be verbose.}
 
-\item{\dots}{Additional params to pass (none implemented)}
+\item{\dots}{Additional params to pass to the overlap calculation method.
+None implemented for point overlaps. For intensity overlaps, passes to
+\code{\link[exactextractr:exact_extract]{exactextractr::exact_extract()}} and additionally the function requested
+with the \code{fun} param.}
 }
 \value{
 \code{giotto} when \code{return_gobject=TRUE}, \code{exprObj} when

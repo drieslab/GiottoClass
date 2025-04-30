@@ -3,9 +3,15 @@
 \name{as.matrix}
 \alias{as.matrix}
 \alias{as.matrix,spatLocsObj-method}
+\alias{as.matrix,overlapPointDT-method}
+\alias{as.matrix,overlapIntensityDT-method}
 \title{Coerce to matrix}
 \usage{
 \S4method{as.matrix}{spatLocsObj}(x, id_rownames = TRUE, ...)
+
+\S4method{as.matrix}{overlapPointDT}(x, feat_count_column = NULL, ...)
+
+\S4method{as.matrix}{overlapIntensityDT}(x, ...)
 }
 \arguments{
 \item{x}{object to coerce}
@@ -13,6 +19,10 @@
 \item{id_rownames}{logical. Retain the spatial IDs as the rownames}
 
 \item{\dots}{additional params to pass (none implemented)}
+
+\item{feat_count_column}{character. If provided, column in overlaps info
+that contains count information to take into account when generating matrix.
+This is important when point detections represent more than one count.}
 }
 \value{
 matrix

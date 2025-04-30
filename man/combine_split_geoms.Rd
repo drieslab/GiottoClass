@@ -2,6 +2,8 @@
 % Please edit documentation in R/giotto_structures.R
 \name{combine_split_geoms}
 \alias{combine_split_geoms}
+\alias{combineGeom}
+\alias{splitGeom}
 \alias{combineGeom,giottoPolygon-method}
 \alias{splitGeom,giottoPolygon-method}
 \title{Combine or Split Complex Geometries}

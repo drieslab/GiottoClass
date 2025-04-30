@@ -69,7 +69,14 @@
   ...
 )
 
-\S4method{calculateOverlap}{SpatVector,SpatRaster}(x, y, poly_subset_ids = NULL, verbose = TRUE, ...)
+\S4method{calculateOverlap}{SpatVector,SpatRaster}(
+  x,
+  y,
+  poly_subset_ids = NULL,
+  verbose = TRUE,
+  fun = "sum",
+  ...
+)
 
 \S4method{calculateOverlap}{SpatVector,SpatVector}(
   x,
@@ -78,6 +85,7 @@
   feat_subset_column = NULL,
   feat_subset_values = NULL,
   feat_count_column = NULL,
+  method = c("raster", "vector"),
   verbose = TRUE,
   feat_subset_ids = deprecated(),
   count_info_column = deprecated()

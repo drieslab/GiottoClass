@@ -935,6 +935,7 @@ calculateOverlapRaster <- function(
 }
 
 #' @param overlap_data `data.table` of extracted intensity values per poly_ID
+#' @noRd
 .create_overlap_intensity_dt <- function(overlap_data) {
     odt <- new("overlapIntensityDT", data = overlap_data)
     odt@nfeats <- ncol(overlap_data) - 1L
@@ -1896,8 +1897,10 @@ setMethod(
 
 # * overlapPointDT ####
 
+#' @rdname overlapToMatrix
 #' @param sort logical (default = TRUE). Whether to perform a mixed sort on
 #' output matrix row and col names.
+#' @export
 setMethod("overlapToMatrix", signature("overlapPointDT"),
     function(x,
     name = "raw",
@@ -1922,6 +1925,8 @@ setMethod("overlapToMatrix", signature("overlapPointDT"),
 
 # * overlapIntensityDT ####
 
+#' @rdname overlapToMatrix
+#' @export
 setMethod("overlapToMatrix", signature("overlapIntensityDT"),
     function(x,
              name = "raw",
