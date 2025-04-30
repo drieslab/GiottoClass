@@ -441,7 +441,8 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
         # update S4 object if needed
         info_list <- lapply(info_list, function(info) {
             try_val <- try(validObject(info), silent = TRUE)
-            if (inherits(try_val, "try-error")) {
+            if (inherits(try_val, "try-error") ||
+                .gversion(.Object) <= "0.4.7") {
                 info <- updateGiottoPolygonObject(info)
             }
             return(info)

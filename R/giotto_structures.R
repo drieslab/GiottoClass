@@ -288,6 +288,7 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 
 #' @name combine_split_geoms
 #' @title Combine or Split Complex Geometries
+#' @aliases combineGeom splitGeom
 #' @description
 #' Geometries can be either single/simple or multi with multiple closed rings
 #' defined as a single record. `combineGeom()` is used to combine polygons.

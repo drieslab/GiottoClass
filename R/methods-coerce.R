@@ -31,6 +31,9 @@ NULL
 #' @description Coerce to matrix
 #' @param x object to coerce
 #' @param id_rownames logical. Retain the spatial IDs as the rownames
+#' @param feat_count_column character. If provided, column in overlaps info
+#' that contains count information to take into account when generating matrix.
+#' This is important when point detections represent more than one count.
 #' @param \dots additional params to pass (none implemented)
 #' @examples
 #' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
@@ -147,8 +150,16 @@ as.data.table.giottoPoints <- function(x, ...) {
     as.data.table(x[], geomtype = "points", ...)
 }
 
-
-
+#' @rdname as.data.table
+#' @method as.data.frame overlapPointDT
+#' @export
+as.data.frame.overlapPointDT <- function(x, ...) {
+    data.frame(
+        poly_ID = x@spat_ids[x@data$poly],
+        feat_ID = x@feat_ids[x@data$feat_id_index],
+        feat_ID_uniq = x@data$feat # these map from feat_ID_uniq
+    )
+}
 
 # to matrix ####
 
@@ -169,6 +180,40 @@ setMethod("as.matrix", signature("spatLocsObj"), function(x, id_rownames = TRUE,
     return(m)
 })
 
+# not using `setAs()` since we need more params
+#' @rdname as.matrix
+#' @export
+setMethod("as.matrix", signature("overlapPointDT"),
+          function(x, feat_count_column = NULL, ...) {
+              if (!is.null(feat_count_column)) {
+                  feat_count <- x@data[[feat_count_column]]
+              } else {
+                  feat_count <- 1
+              }
+              Matrix::sparseMatrix(
+                  i = x@data$feat_id_index,
+                  j = x@data$poly,
+                  x = feat_count,
+                  dimnames = list(
+                      x@feat_ids,
+                      x@spat_ids
+                  ),
+                  ...
+              )
+          })
+
+#' @rdname as.matrix
+#' @export
+setMethod("as.matrix", signature("overlapIntensityDT"), function(x, ...) {
+    m <- Matrix::Matrix(as.matrix(
+        x[][,-1]),
+        dimnames = list(
+            x[]$poly_ID,
+            colnames(x[][, -1])
+        )
+    )
+    t(m)
+})
 
 
 
