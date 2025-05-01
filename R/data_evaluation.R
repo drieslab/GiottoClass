@@ -83,17 +83,37 @@ evaluate_input <- function(type, x, ...) {
 #' @keywords internal
 #' @returns sparse matrix
 #' @noRd
-.evaluate_expr_matrix <- function(inputmatrix,
-    sparse = TRUE,
-    cores = determine_cores(),
-    feat_type = "rna",
-    expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
-    if (inherits(inputmatrix, "character")) {
+.evaluate_expr_matrix <- function(
+        inputmatrix,
+        sparse = TRUE,
+        cores = determine_cores(),
+        feat_type = "rna",
+        expression_matrix_class = c("dgCMatrix", "DelayedArray", "dbMatrix")) {
+    target_class <- match.arg(
+        expression_matrix_class[1],
+        c("dgCMatrix", "DelayedArray", "dbMatrix")
+    )
+    
+    # Return early if inputmatrix is already of the target class
+    if (!inherits(inputmatrix, "character") && 
+        inherits(inputmatrix, target_class)) {
+        return(inputmatrix)
+    }
+    
+    # Main decision tree for converting inputmatrix
+    if (inherits(inputmatrix, "character") && length(inputmatrix) == 1) {
         inputmatrix <- path.expand(inputmatrix)
-        mymatrix <- readExprMatrix(inputmatrix,
+        mymatrix <- readExprMatrix(
+            path = inputmatrix,
             cores = cores,
             expression_matrix_class = expression_matrix_class,
             feat_type = feat_type
+        )
+    } else if (target_class == "dbMatrix") {
+        .gstop(
+            "Automatic conversion to 'dbMatrix' is not supported within ",
+            "createExprObj(). Please provide a pre‑constructed ",
+            "'dbMatrix' object instead. See ?dbMatrix for details."
         )
     } else if (expression_matrix_class[1] == "DelayedArray") {
         mymatrix <- DelayedArray::DelayedArray(inputmatrix)
@@ -131,7 +151,8 @@ evaluate_input <- function(type, x, ...) {
     } else {
         .gstop(
             "expression input needs to be a path to matrix-like data or an",
-            "object of class 'Matrix', 'data.table', 'data.frame' or 'matrix'"
+            "object of class 'Matrix', 'data.table', 'data.frame', 'matrix'",
+      "'DelayedMatrix' or 'dbSparseMatrix'."
         )
     }
 

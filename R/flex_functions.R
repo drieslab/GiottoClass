@@ -30,6 +30,8 @@ mean_flex <- function(x, ...) {
         return(Matrix::mean(x, ...)) # replace with sparseMatrixStats
     } else if (inherits(x, "Matrix")) {
         return(Matrix::mean(x, ...))
+    } else if (inherits(x, "dbMatrix")) {
+        return(dbMatrix::mean(x))
     } else {
         return(base::mean(x, ...))
     }
@@ -40,6 +42,7 @@ mean_flex <- function(x, ...) {
 #' @title rowSums_flex
 #' @name rowSums_flex
 #' @param mymatrix matrix to use
+#' @param ... other arguments passed to [`rowSums`]
 #' @returns numeric
 #' @keywords internal
 #' @examples
@@ -47,18 +50,18 @@ mean_flex <- function(x, ...) {
 #'
 #' rowSums_flex(m)
 #' @export
-rowSums_flex <- function(mymatrix) {
+rowSums_flex <- function(mymatrix, ...) {
     if (inherits(mymatrix, "DelayedArray")) {
-        # return(Matrix::rowSums(mymatrix))
-        # } else if(inherits(mymatrix, 'DelayedMatrix')) {
-        return(DelayedMatrixStats::rowSums2(mymatrix))
+        return(DelayedMatrixStats::rowSums2(mymatrix, ...))
     } else if (inherits(mymatrix, "dgCMatrix")) {
-        return(Matrix::rowSums(mymatrix)) # replace with sparseMatrixStats
+        return(Matrix::rowSums(mymatrix, ...)) # replace with sparseMatrixStats
     } else if (inherits(mymatrix, "Matrix")) {
-        return(Matrix::rowSums(mymatrix))
+        return(Matrix::rowSums(mymatrix, ...))
+    } else if (inherits(mymatrix, "dbMatrix")) {
+        return(dbMatrix::rowSums(mymatrix, ...))
     } else {
         temp_matrix <- as.matrix(mymatrix)
-        temp_res <- matrixStats::rowSums2(temp_matrix)
+        temp_res <- matrixStats::rowSums2(temp_matrix, ...)
         names(temp_res) <- rownames(temp_matrix)
         return(temp_res)
     }
@@ -69,6 +72,7 @@ rowSums_flex <- function(mymatrix) {
 #' @title rowMeans_flex
 #' @name rowMeans_flex
 #' @param mymatrix matrix to use
+#' @param ... other arguments passed to underlying functions
 #' @returns numeric
 #' @keywords internal
 #' @examples
@@ -76,19 +80,18 @@ rowSums_flex <- function(mymatrix) {
 #'
 #' rowMeans_flex(m)
 #' @export
-rowMeans_flex <- function(mymatrix) {
-    # replace by MatrixGenerics?
+rowMeans_flex <- function(mymatrix, ...) {
     if (inherits(mymatrix, "DelayedArray")) {
-        # return(Matrix::rowMeans(mymatrix))
-        # } else  if(inherits(mymatrix, 'DelayedMatrix')) {
-        return(DelayedMatrixStats::rowMeans2(mymatrix))
+        return(DelayedMatrixStats::rowMeans2(mymatrix, ...))
     } else if (inherits(mymatrix, "dgCMatrix")) {
-        return(Matrix::rowMeans(mymatrix)) # replace with sparseMatrixStats
+        return(Matrix::rowMeans(mymatrix, ...)) # replace with sparseMatrixStats
     } else if (inherits(mymatrix, "Matrix")) {
-        return(Matrix::rowMeans(mymatrix))
+        return(Matrix::rowMeans(mymatrix, ...))
+    } else if (inherits(mymatrix, "dbMatrix")) {
+        return(dbMatrix::rowMeans(mymatrix, ...))
     } else {
         temp_matrix <- as.matrix(mymatrix)
-        temp_res <- matrixStats::rowMeans2(temp_matrix)
+        temp_res <- matrixStats::rowMeans2(temp_matrix, ...)
         names(temp_res) <- rownames(temp_matrix)
         return(temp_res)
     }
@@ -99,6 +102,7 @@ rowMeans_flex <- function(mymatrix) {
 #' @title colSums_flex
 #' @name colSums_flex
 #' @param mymatrix matrix to use
+#' @param ... other arguments passed to underlying functions
 #' @returns numeric
 #' @keywords internal
 #' @examples
@@ -106,18 +110,18 @@ rowMeans_flex <- function(mymatrix) {
 #'
 #' colSums_flex(m)
 #' @export
-colSums_flex <- function(mymatrix) {
+colSums_flex <- function(mymatrix, ...) {
     if (inherits(mymatrix, "DelayedArray")) {
-        return(DelayedMatrixStats::colSums2(mymatrix))
-        # return(Matrix::colSums(mymatrix))
-        # } else if(inherits(mymatrix, 'DelayedMatrix')) {
+        return(DelayedMatrixStats::colSums2(mymatrix, ...))
     } else if (inherits(mymatrix, "dgCMatrix")) {
-        return(Matrix::colSums(mymatrix)) # replace with sparseMatrixStats
+        return(Matrix::colSums(mymatrix, ...)) # replace with sparseMatrixStats
     } else if (inherits(mymatrix, "Matrix")) {
-        return(Matrix::colSums(mymatrix))
+        return(Matrix::colSums(mymatrix, ...))
+    } else if (inherits(mymatrix, "dbMatrix")) {
+        return(dbMatrix::colSums(mymatrix, ...))
     } else {
         temp_matrix <- as.matrix(mymatrix)
-        temp_res <- matrixStats::colSums2(temp_matrix)
+        temp_res <- matrixStats::colSums2(temp_matrix, ...)
         names(temp_res) <- colnames(temp_matrix)
         return(temp_res)
     }
@@ -128,6 +132,7 @@ colSums_flex <- function(mymatrix) {
 #' @title colMeans_flex
 #' @name colMeans_flex
 #' @param mymatrix matrix to use
+#' @param ... other arguments passed to underlying functions
 #' @returns numeric
 #' @keywords internal
 #' @examples
@@ -135,18 +140,18 @@ colSums_flex <- function(mymatrix) {
 #'
 #' colMeans_flex(m)
 #' @export
-colMeans_flex <- function(mymatrix) {
+colMeans_flex <- function(mymatrix, ...) {
     if (inherits(mymatrix, "DelayedArray")) {
-        # return(Matrix::colMeans(mymatrix))
-        # } else if(inherits(mymatrix, 'DelayedMatrix')) {
-        return(DelayedMatrixStats::colMeans2(mymatrix))
+        return(DelayedMatrixStats::colMeans2(mymatrix, ...))
     } else if (inherits(mymatrix, "dgCMatrix")) {
-        return(Matrix::colMeans(mymatrix)) # replace with sparseMatrixStats
+        return(Matrix::colMeans(mymatrix, ...)) # replace with sparseMatrixStats
     } else if (inherits(mymatrix, "Matrix")) {
-        return(Matrix::colMeans(mymatrix))
+        return(Matrix::colMeans(mymatrix, ...))
+    } else if (inherits(mymatrix, "dbMatrix")) {
+        return(dbMatrix::colMeans(mymatrix, ...))
     } else {
         temp_matrix <- as.matrix(mymatrix)
-        temp_res <- matrixStats::colMeans2(temp_matrix)
+        temp_res <- matrixStats::colMeans2(temp_matrix, ...)
         names(temp_res) <- colnames(temp_matrix)
         return(temp_res)
     }
@@ -166,12 +171,13 @@ colMeans_flex <- function(mymatrix) {
 #' @export
 t_flex <- function(mymatrix) {
     if (inherits(mymatrix, "DelayedArray")) {
-        # return(methods::as(t(mymatrix), 'HDF5Matrix'))
         return(DelayedArray::t(mymatrix))
     } else if (inherits(mymatrix, "dgCMatrix")) {
         return(Matrix::t(mymatrix)) # replace with sparseMatrixStats
     } else if (inherits(mymatrix, "Matrix")) {
         return(Matrix::t(mymatrix))
+    } else if(inherits(mymatrix, 'dbMatrix')) {
+        return(dbMatrix::t(mymatrix))
     } else if (inherits(mymatrix, "spatLocsObj")) {
         return(t(mymatrix))
     } else if (inherits(mymatrix, "spatialNetworkObj")) {
