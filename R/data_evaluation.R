@@ -88,17 +88,34 @@ evaluate_input <- function(type, x, ...) {
         sparse = TRUE,
         cores = determine_cores(),
         feat_type = "rna",
-        expression_matrix_class = c("dgCMatrix", "DelayedArray", "dbSparseMatrix")) {
-    if (inherits(inputmatrix, "character")) {
+        expression_matrix_class = c("dgCMatrix", "DelayedArray", "dbMatrix")) {
+    target_class <- match.arg(
+        expression_matrix_class[1],
+        c("dgCMatrix", "DelayedArray", "dbMatrix")
+    )
+    
+    # Return early if inputmatrix is already of the target class
+    if (!inherits(inputmatrix, "character") && 
+        inherits(inputmatrix, target_class)) {
+        return(inputmatrix)
+    }
+    
+    # Main decision tree for converting inputmatrix
+    if (inherits(inputmatrix, "character") && length(inputmatrix) == 1) {
         inputmatrix <- path.expand(inputmatrix)
-        mymatrix <- readExprMatrix(inputmatrix,
+        mymatrix <- readExprMatrix(
+            path = inputmatrix,
             cores = cores,
             expression_matrix_class = expression_matrix_class,
             feat_type = feat_type
         )
-    } else if (expression_matrix_class[1] == "dbSparseMatrix") {
-    mymatrix <- inputmatrix
-  } else if (expression_matrix_class[1] == "DelayedArray") {
+    } else if (target_class == "dbMatrix") {
+        .gstop(
+            "Automatic conversion to 'dbMatrix' is not supported within ",
+            "createExprObj(). Please provide a pre‑constructed ",
+            "'dbMatrix' object instead. See ?dbMatrix for details."
+        )
+    } else if (expression_matrix_class[1] == "DelayedArray") {
         mymatrix <- DelayedArray::DelayedArray(inputmatrix)
     } else if (inherits(inputmatrix, "Matrix")) {
         mymatrix <- inputmatrix
