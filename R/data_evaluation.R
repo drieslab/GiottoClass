@@ -370,7 +370,7 @@ evaluate_input <- function(type, x, ...) {
         c("numeric", "integer")]
 
     # determine cell_ID -------------------- #
-    potential_cell_IDs <- NULL
+    potential_cell_ids <- NULL
 
     # find non-numeric cols (possible cell_ID col)
     if (length(non_numeric_classes) > 0) {
@@ -386,7 +386,7 @@ evaluate_input <- function(type, x, ...) {
             "\n Other non numeric columns will be removed"
         )
 
-        potential_cell_IDs <- x[[names(non_numeric_classes)[[1]]]]
+        potential_cell_ids <- x[[names(non_numeric_classes)[[1]]]]
 
         x <- x[, -non_numeric_indices, with = FALSE]
     }
@@ -399,8 +399,9 @@ evaluate_input <- function(type, x, ...) {
     )
 
     # Assign first non-numeric as cell_ID
-    if (!is.null(potential_cell_IDs)) {
-        x[, cell_ID := potential_cell_IDs]
+    cell_ID <- NULL # NSE var
+    if (!is.null(potential_cell_ids)) {
+        x[, cell_ID := potential_cell_ids]
     }
     x
 }
