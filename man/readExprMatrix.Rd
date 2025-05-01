@@ -9,7 +9,7 @@ readExprMatrix(
   cores = determine_cores(),
   transpose = FALSE,
   feat_type = "rna",
-  expression_matrix_class = c("dgCMatrix", "DelayedArray")
+  expression_matrix_class = c("dgCMatrix", "DelayedArray", "dbSparseMatrix")
 )
 }
 \arguments{

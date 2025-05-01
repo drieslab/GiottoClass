@@ -4,10 +4,12 @@
 \alias{colSums_flex}
 \title{colSums_flex}
 \usage{
-colSums_flex(mymatrix)
+colSums_flex(mymatrix, ...)
 }
 \arguments{
 \item{mymatrix}{matrix to use}
+
+\item{...}{other arguments passed to underlying functions}
 }
 \value{
 numeric

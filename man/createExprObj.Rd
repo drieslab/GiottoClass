@@ -11,7 +11,7 @@ createExprObj(
   feat_type = "rna",
   provenance = NULL,
   misc = NULL,
-  expression_matrix_class = c("dgCMatrix", "DelayedArray")
+  expression_matrix_class = c("dgCMatrix", "DelayedArray", "dbMatrix")
 )
 }
 \arguments{
@@ -28,7 +28,7 @@ createExprObj(
 \item{misc}{misc}
 
 \item{expression_matrix_class}{class of expression matrix to
-use (e.g. 'dgCMatrix', 'DelayedArray')}
+use (e.g. 'dgCMatrix', 'DelayedArray', 'dbMatrix')}
 }
 \value{
 exprObj
