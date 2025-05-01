@@ -307,8 +307,7 @@ evaluate_input <- function(type, x, ...) {
 }
 
 .evaluate_spatial_locations.numeric <- function(
-    x, numeric_format = c("pair", "triplet"), ...
-) {
+        x, numeric_format = c("pair", "triplet"), ...) {
     numeric_format <- match.arg(numeric_format, choices = c("pair", "triplet"))
     x <- switch(numeric_format,
         "pair" = .spatlocs_numeric_parse_pair(x, ...),
@@ -345,8 +344,7 @@ evaluate_input <- function(type, x, ...) {
 }
 
 .evaluate_spatial_locations.character <- function(
-        x, cores = determine_cores(), ...
-) {
+        x, cores = determine_cores(), ...) {
     if (!file.exists(x)) {
         stop("path to spatial locations does not exist\n", call. = FALSE)
     }
@@ -355,8 +353,7 @@ evaluate_input <- function(type, x, ...) {
 }
 
 .evaluate_spatial_locations.data.frame <- function(
-    x, verbose = NULL, ...
-) {
+        x, verbose = NULL, ...) {
     .spatlocs_check_ncol(x)
     # coerce to data.table
     x <- tryCatch(
