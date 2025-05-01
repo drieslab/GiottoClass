@@ -277,49 +277,97 @@ evaluate_input <- function(type, x, ...) {
 
 # Spatial ####
 
+# s3 generic to process inputs for spatial locations objects
+.evaluate_spatial_locations <- function(x, ...) {
+    UseMethod(".evaluate_spatial_locations")
+}
 
+.evaluate_spatial_locations.default <- function(x, ...) {
+    stop(wrap_txt(
+        "spatial_locs needs to be a `data.table` or `data.frame`-like object",
+        "a filepath to one of these, numeric matrix, or numeric xy pairs"
+    ), call. = FALSE)
+}
 
-
-
-#' @title Evaluate spatial locations
-#' @name .evaluate_spatial_locations
-#' @description Evaluate spatial location input
-#' @param spatial_locs spatial locations to evaluate
-#' @param cores how many cores to use
-#' @return data.table
-#' @keywords internal
-#' @noRd
-.evaluate_spatial_locations <- function(spatial_locs,
-    cores = determine_cores(),
-    verbose = TRUE) {
-    # data.table variables
-    cell_ID <- NULL
-
-    if (!any(class(spatial_locs) %in% c(
-        "data.table", "data.frame", "matrix", "character"
-    ))) {
-        .gstop("spatial_locs needs to be a data.table or data.frame-like object
-            or a path to one of these")
+.evaluate_spatial_locations.matrix <- function(x, verbose = NULL, ...) {
+    id <- NULL # NSE vars
+    has_colnames <- !is.null(colnames(x))
+    .spatlocs_check_ncol(x)
+    dt <- data.table::as.data.table(x)
+    if (!has_colnames) {
+        colnames(dt) <- c("x", "y", "z")[seq_len(ncol(x))]
     }
-    if (inherits(spatial_locs, "character")) {
-        if (!file.exists(spatial_locs)) {
-            .gstop("path to spatial locations does not exist")
-        }
-        spatial_locs <- data.table::fread(input = spatial_locs, nThread = cores)
-    } else {
-        spatial_locs <- tryCatch(
-            data.table::setDT(spatial_locs),
-            error = function(e) data.table::as.data.table(spatial_locs)
-        )
+    rnames <- rownames(x)
+    if (!is.null(rnames)) {
+        vmsg(.v = verbose, "[spatlocs] matrix input has rownames.
+             Using these as IDs.")
+        dt[, id := rnames]
     }
+    .evaluate_spatial_locations(dt, verbose = verbose, ...)
+}
+
+.evaluate_spatial_locations.numeric <- function(
+        x, numeric_format = c("pair", "triplet"), ...) {
+    numeric_format <- match.arg(numeric_format, choices = c("pair", "triplet"))
+    x <- switch(numeric_format,
+        "pair" = .spatlocs_numeric_parse_pair(x, ...),
+        "triplet" = .spatlocs_numeric_parse_triplet(x, ...)
+    )
+    .evaluate_spatial_locations(x, ...)
+}
+
+.spatlocs_numeric_parse_pair <- function(x, ...) {
+    if (length(x) %% 2 != 0 || length(x) == 0) {
+        stop(wrap_txt(
+            "[spatlocs] numeric 'pair' inputs must be given as x,y pairs.
+                For example: c(x1, y1, x2, y2)"
+        ), call. = FALSE)
+    }
+    data.table::data.table(
+        x = x[c(TRUE, FALSE)],
+        y = x[c(FALSE, TRUE)]
+    )
+}
+
+.spatlocs_numeric_parse_triplet <- function(x, ...) {
+    if (length(x) %% 3 != 0 || length(x) == 0) {
+        stop(wrap_txt(
+            "[spatlocs] numeric 'triplet' inputs must be given as x,y,z",
+            "triplets.\n For example: c(x1, y1, z1, x2, y2, z2)"
+        ), call. = FALSE)
+    }
+    data.table::data.table(
+        x = x[c(TRUE, FALSE, FALSE)],
+        y = x[c(FALSE, TRUE, FALSE)],
+        z = x[c(FALSE, FALSE, TRUE)]
+    )
+}
+
+.evaluate_spatial_locations.character <- function(
+        x, cores = determine_cores(), ...) {
+    if (!file.exists(x)) {
+        stop("path to spatial locations does not exist\n", call. = FALSE)
+    }
+    x <- data.table::fread(input = x, nThread = cores)
+    .evaluate_spatial_locations(x, cores = cores, ...)
+}
+
+.evaluate_spatial_locations.data.frame <- function(
+        x, verbose = NULL, ...) {
+    .spatlocs_check_ncol(x)
+    # coerce to data.table
+    x <- tryCatch(
+        data.table::setDT(x),
+        error = function(e) data.table::as.data.table(x)
+    )
 
     # check if all columns are numeric
-    column_classes <- lapply(spatial_locs, FUN = class)
+    column_classes <- lapply(x, FUN = class)
     non_numeric_classes <- column_classes[!column_classes %in%
         c("numeric", "integer")]
 
-
-    potential_cell_IDs <- NULL
+    # determine cell_ID -------------------- #
+    potential_cell_ids <- NULL
 
     # find non-numeric cols (possible cell_ID col)
     if (length(non_numeric_classes) > 0) {
@@ -335,41 +383,41 @@ evaluate_input <- function(type, x, ...) {
             "\n Other non numeric columns will be removed"
         )
 
-        potential_cell_IDs <- spatial_locs[[names(non_numeric_classes)[[1]]]]
+        potential_cell_ids <- x[[names(non_numeric_classes)[[1]]]]
 
-        spatial_locs <- spatial_locs[, -non_numeric_indices, with = FALSE]
-    }
-
-    # check number of columns: too few
-    if (ncol(spatial_locs) < 2) {
-        .gstop("There need to be at least 2 numeric columns for spatial
-            locations \n")
-    }
-
-    # check number of columns: too many
-    if (ncol(spatial_locs) > 3) {
-        warning("There are more than 3 columns for spatial locations, only the
-                first 3 will be used \n")
-        spatial_locs <- spatial_locs[, seq_len(3)]
+        x <- x[, -non_numeric_indices, with = FALSE]
     }
 
     # for spatial dimension names
     spatial_dimensions <- c("x", "y", "z")
-    colnames(spatial_locs) <- paste0(
+    colnames(x) <- paste0(
         "sdim",
-        spatial_dimensions[seq_len(ncol(spatial_locs))]
+        spatial_dimensions[seq_len(ncol(x))]
     )
 
     # Assign first non-numeric as cell_ID
-    if (!is.null(potential_cell_IDs)) {
-        spatial_locs[, cell_ID := potential_cell_IDs]
+    cell_ID <- NULL # NSE var
+    if (!is.null(potential_cell_ids)) {
+        x[, cell_ID := potential_cell_ids]
     }
-
-    return(spatial_locs)
+    x
 }
 
-
-
+.spatlocs_check_ncol <- function(x) {
+    # too few
+    if (ncol(x) < 2L) {
+        stop(wrap_txt(
+            "There need to be at least 2 numeric columns for spatial locations"
+        ), call. = FALSE)
+    }
+    # too many
+    if (ncol(x) > 3L) {
+        warning(wrap_txt(
+            "There are more than 3 columns for spatial locations, only the",
+            "first 3 will be used"
+        ), call. = FALSE)
+    }
+}
 
 
 
