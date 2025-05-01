@@ -409,59 +409,6 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
     avail_se <- list_spatial_enrichments(.Object)
 
 
-    ## Perform any subobject updates ##
-    ## ----------------------------- ##
-
-    # Feature Info #
-    if (!is.null(avail_fi)) {
-        info_list <- get_feature_info_list(.Object)
-        # update S4 object if needed
-        info_list <- lapply(info_list, function(info) {
-            try_val <- try(validObject(info), silent = TRUE)
-            if (inherits(try_val, "try-error")) {
-                info <- updateGiottoPointsObject(info)
-            }
-            return(info)
-        })
-        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        .Object <- setFeatureInfo(
-            gobject = .Object,
-            x = info_list,
-            verbose = FALSE,
-            initialize = FALSE
-        )
-        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    }
-
-
-    # Spatial Info #
-    if (!is.null(avail_si)) {
-        info_list <- get_polygon_info_list(.Object)
-
-        # update S4 object if needed
-        info_list <- lapply(info_list, function(info) {
-            try_val <- try(validObject(info), silent = TRUE)
-            if (inherits(try_val, "try-error") ||
-                .gversion(.Object) <= "0.4.7") {
-                info <- updateGiottoPolygonObject(info)
-            }
-            return(info)
-        })
-        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-        .Object <- setPolygonInfo(
-            gobject = .Object,
-            x = info_list,
-            verbose = FALSE,
-            centroids_to_spatlocs = FALSE,
-            initialize = FALSE
-        )
-        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    }
-
-
-
-
-
 
     ## Set active/default spat_unit and feat_type ##
     ## ------------------------------------------ ##

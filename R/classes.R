@@ -474,6 +474,48 @@ updateGiottoObject <- function(gobject) {
 
     # -------------------------------------------------------------------------#
 
+    # subobject updates
+    if (!is.null(attr(gobject, "feat_info"))) {
+        info_list <- get_feature_info_list(gobject)
+        # update S4 object if needed
+        info_list <- lapply(info_list, function(info) {
+            try_val <- try(validObject(info), silent = TRUE)
+            if (inherits(try_val, "try-error")) {
+                info <- updateGiottoPointsObject(info)
+            }
+            return(info)
+        })
+        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+        gobject <- setFeatureInfo(
+            gobject = gobject,
+            x = info_list,
+            verbose = FALSE,
+            initialize = FALSE
+        )
+        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    }
+    if (!is.null(attr(gobject, "spatial_info"))) {
+        info_list <- get_polygon_info_list(gobject)
+        # update S4 object if needed
+        info_list <- lapply(info_list, function(info) {
+            try_val <- try(validObject(info), silent = TRUE)
+            if (inherits(try_val, "try-error") ||
+                .gversion(gobject) <= "0.4.7") {
+                info <- updateGiottoPolygonObject(info)
+            }
+            return(info)
+        })
+        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+        gobject <- setPolygonInfo(
+            gobject = gobject,
+            x = info_list,
+            verbose = FALSE,
+            centroids_to_spatlocs = FALSE,
+            initialize = FALSE
+        )
+        ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+    }
+
     # finally, set updated version number
     .gversion(gobject) <- packageVersion("GiottoClass")
 
