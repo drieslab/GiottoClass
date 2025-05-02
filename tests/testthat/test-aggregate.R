@@ -1,5 +1,5 @@
 random_pts_names <- function(n, species = 20) {
-    local_seed(1234)
+    GiottoUtils::local_seed(1234)
     sampleset <- c(letters, LETTERS, seq(from = 0, to = 9))
     nameset <- vapply(seq_len(species), FUN = function(i) {
         paste(sample(sampleset, size = 8, replace = TRUE), collapse = "")
@@ -9,7 +9,7 @@ random_pts_names <- function(n, species = 20) {
 }
 
 random_points_gen <- function(n = 500, extent = ext(gpoly)) {
-    local_seed(1234)
+    GiottoUtils::local_seed(1234)
     evect <- as.numeric(ext(extent)[])
     count <- abs(round(rnorm(n, 0, sd = 0.8))) + 1
     data.table::data.table(
