@@ -438,7 +438,7 @@ updateGiottoObject <- function(gobject) {
 
     # ensure instructions are of correct type
     inst <- instructions(gobject)
-    if (!inherits(inst, "giottoInstructions", "NULL") &&
+    if (!inherits(inst, c("giottoInstructions", "NULL")) &&
         inherits(inst, "list")) {
         class(inst) <- c("giottoInstructions", "list")
         instructions(gobject, initialize = FALSE) <- inst
