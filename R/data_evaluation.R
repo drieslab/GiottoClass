@@ -93,13 +93,13 @@ evaluate_input <- function(type, x, ...) {
         expression_matrix_class[1],
         c("dgCMatrix", "DelayedArray", "dbMatrix")
     )
-    
+
     # Return early if inputmatrix is already of the target class
-    if (!inherits(inputmatrix, "character") && 
+    if (!inherits(inputmatrix, "character") &&
         inherits(inputmatrix, target_class)) {
         return(inputmatrix)
     }
-    
+
     # Main decision tree for converting inputmatrix
     if (inherits(inputmatrix, "character") && length(inputmatrix) == 1) {
         inputmatrix <- path.expand(inputmatrix)
@@ -892,7 +892,7 @@ evaluate_input <- function(type, x, ...) {
     cores = determine_cores(),
     verbose = TRUE) {
     # NSE vars
-    geom <- poly_ID <- NULL
+    geom <- poly_ID <- part <- hole <- NULL
 
     ## 1. load or read spatial information data ##
     ## 1.1 read from file
