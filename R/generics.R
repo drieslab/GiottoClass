@@ -95,7 +95,7 @@ setGeneric(
 #' focus on analyses and/or alternative data representations with specific ways
 #' to implement those analyses.
 #' @param x a data object
-#' @param param a [processParam] inheriting object
+#' @param param a [processParam-class] inheriting object
 #' @param ... additional arguments, for use in specific methods
 #' @returns An object of the same class containing the processed
 #' @export
