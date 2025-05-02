@@ -288,10 +288,13 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
 
 #' @name combine_split_geoms
 #' @title Combine or Split Complex Geometries
+#' @aliases splitGeom combineGeom
 #' @description
 #' Geometries can be either single/simple or multi with multiple closed rings
 #' defined as a single record. `combineGeom()` is used to combine polygons.
-#' `splitGeom()` breaks combined geometries down into constituent parts.
+#' `splitGeom()` breaks combined geometries down into constituent parts.\cr
+#' Avoid using the `SpatVector` methods. They are lower-level and does not
+#' deal with IDs like might be expected by Giotto.
 #'
 #' # Geometry Attributes Handling
 #' * `combineGeom()` attributes are only kept if `by` param is used. For
@@ -425,18 +428,13 @@ setMethod("splitGeom", signature("giottoPolygon"),
     x
 })
 
-# Don't export these
-# They are there to perform the underlying geom operations (possibly on other
-# representations other than SpatVectors in the future). However, they don't
-# deal with IDs like might be expected by Giotto.
-#' @keywords internal
-#' @noRd
+
+#' @describeIn combine_split_geoms Avoid using.
 setMethod("combineGeom", signature(x = "SpatVector"),
         function(x, by = NULL, dissolve = FALSE, fun = "mean", ...) {
             terra::aggregate(x, by = by, dissolve = dissolve, fun = fun, ...)
         })
-#' @keywords internal
-#' @noRd
+#' @describeIn combine_split_geoms Avoid using.
 setMethod("splitGeom", signature(x = "SpatVector"), function(x, ...) {
     terra::disagg(x, ...)
 })

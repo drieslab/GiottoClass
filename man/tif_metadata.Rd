@@ -36,7 +36,7 @@ for \code{.qptiff}.}
 with figuring out which is most appropriate.}
 
 \item{output}{character. One of "data.frame" to return a data.frame of the
-attributes information of the xml node, "xmL" for an {xml2} representation
+attributes information of the xml node, "xmL" for an \{xml2\} representation
 of the node, "list" for an R native list (note that many items in the
 list may have overlapping names that make indexing difficult), or
 "structure" to invisibly return NULL, but print the structure of the XML
@@ -47,7 +47,7 @@ list of image metadata information
 }
 \description{
 Use the python package tifffile to get the the XML metadata
-of a .tif file. The R package {xml2} is then used to work with it to
+of a .tif file. The R package \{xml2\} is then used to work with it to
 retrieve specific nodes in the xml data and extract data.
 }
 \section{Functions}{

@@ -93,20 +93,20 @@ evaluate_input <- function(type, x, ...) {
         expression_matrix_class[1],
         c("dgCMatrix", "DelayedArray", "dbMatrix")
     )
-    
+
     # Return early if inputmatrix is already of the target class
-    if (!inherits(inputmatrix, "character") && 
+    if (!inherits(inputmatrix, "character") &&
         inherits(inputmatrix, target_class)) {
         return(inputmatrix)
     }
-    
+
     # Main decision tree for converting inputmatrix
     if (inherits(inputmatrix, "character") && length(inputmatrix) == 1) {
         inputmatrix <- path.expand(inputmatrix)
         mymatrix <- readExprMatrix(
             path = inputmatrix,
             cores = cores,
-            expression_matrix_class = expression_matrix_class,
+            expression_matrix_class = target_class,
             feat_type = feat_type
         )
     } else if (target_class == "dbMatrix") {
@@ -115,7 +115,7 @@ evaluate_input <- function(type, x, ...) {
             "createExprObj(). Please provide a pre‑constructed ",
             "'dbMatrix' object instead. See ?dbMatrix for details."
         )
-    } else if (expression_matrix_class[1] == "DelayedArray") {
+    } else if (target_class == "DelayedArray") {
         mymatrix <- DelayedArray::DelayedArray(inputmatrix)
     } else if (inherits(inputmatrix, "Matrix")) {
         mymatrix <- inputmatrix
@@ -145,7 +145,7 @@ evaluate_input <- function(type, x, ...) {
         inputmatrix[] <- .evaluate_expr_matrix(
             inputmatrix[],
             sparse = sparse, cores = cores,
-            expression_matrix_class = expression_matrix_class
+            expression_matrix_class = target_class
         )
         mymatrix <- inputmatrix
     } else {
@@ -892,7 +892,7 @@ evaluate_input <- function(type, x, ...) {
     cores = determine_cores(),
     verbose = TRUE) {
     # NSE vars
-    geom <- poly_ID <- NULL
+    geom <- poly_ID <- part <- hole <- NULL
 
     ## 1. load or read spatial information data ##
     ## 1.1 read from file
