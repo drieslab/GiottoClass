@@ -106,7 +106,7 @@ evaluate_input <- function(type, x, ...) {
         mymatrix <- readExprMatrix(
             path = inputmatrix,
             cores = cores,
-            expression_matrix_class = expression_matrix_class,
+            expression_matrix_class = target_class,
             feat_type = feat_type
         )
     } else if (target_class == "dbMatrix") {
@@ -115,7 +115,7 @@ evaluate_input <- function(type, x, ...) {
             "createExprObj(). Please provide a pre‑constructed ",
             "'dbMatrix' object instead. See ?dbMatrix for details."
         )
-    } else if (expression_matrix_class[1] == "DelayedArray") {
+    } else if (target_class == "DelayedArray") {
         mymatrix <- DelayedArray::DelayedArray(inputmatrix)
     } else if (inherits(inputmatrix, "Matrix")) {
         mymatrix <- inputmatrix
@@ -145,7 +145,7 @@ evaluate_input <- function(type, x, ...) {
         inputmatrix[] <- .evaluate_expr_matrix(
             inputmatrix[],
             sparse = sparse, cores = cores,
-            expression_matrix_class = expression_matrix_class
+            expression_matrix_class = target_class
         )
         mymatrix <- inputmatrix
     } else {
