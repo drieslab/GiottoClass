@@ -320,7 +320,7 @@ setClass(
 # ** processParam ####
 
 #' @title Parameter Classes for Data Processing Operations
-#' @name processParam
+#' @name processParam-class
 #' @description
 #' Utility class that defines a data processing procedure and any params used
 #' in performing it. Packages defining processing methods will create their own
@@ -328,14 +328,14 @@ setClass(
 #' the data to process to [processData()].
 #' @slot param list. Named parameters to use with the intended processing
 #' operation. These can be accessed and updated using the `$` operator.
-#' @export
+#' @exportClass processParam
 setClass("processParam", contains = "VIRTUAL", slots = list(param = "list"))
 
 
 
 # ** svkey ####
 
-#' @name svkey
+#' @name svkey-class
 #' @title Spatial Value Key
 #' @description
 #' A metaprogramming object that references a set of information to get

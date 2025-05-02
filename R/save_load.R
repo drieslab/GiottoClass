@@ -426,10 +426,10 @@ loadGiotto <- function(path_to_folder,
 
     if (identical(gobject_file, character(0))) { # no matches
         vmsg(.v = verbose, "giotto object was not found
-         skip loading giotto object")
+        skip loading giotto object")
     } else if (length(gobject_file) > 1) { # more than one match
         vmsg(.v = verbose, "more than 1 giotto object was found
-         skip loading giotto object")
+        skip loading giotto object")
     } else {
         # pick a reading function
         read_fun <- NULL

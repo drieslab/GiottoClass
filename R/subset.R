@@ -1624,7 +1624,7 @@ subsetGiottoLocsSubcellular <- function(
     # only to be used if there is no aggregated information #
     if (!is.null(gobject@expression)) {
         stop(wrap_txt("Aggregated information was found in gobject.
-                  Use subsetGiottoLocs() instead"))
+                    Use subsetGiottoLocs() instead"))
     }
 
     # Check spatial params

@@ -2746,6 +2746,7 @@ add_img_array_alpha <- function(x,
 #' @description Force deferred/lazy operations.
 #' @param x object to force deferred operations in
 #' @param ... additional args to pass
+#' @returns giottoLargeImage
 NULL
 
 #' @rdname doDeferred
@@ -2867,7 +2868,7 @@ ometif_to_tif <- to_simple_tif
 #' @name tif_metadata
 #' @title Read Metadata of a Specialized tif
 #' @description Use the python package tifffile to get the the XML metadata
-#' of a .tif file. The R package {xml2} is then used to work with it to
+#' of a .tif file. The R package \{xml2\} is then used to work with it to
 #' retrieve specific nodes in the xml data and extract data.
 #' @param path character. filepath to tif image
 #' @param node character vector. Specific xml node to get. More terms can be
@@ -2879,7 +2880,7 @@ ometif_to_tif <- to_simple_tif
 #' "integer"). `output = "structure"` can help
 #' with figuring out which is most appropriate.
 #' @param output character. One of "data.frame" to return a data.frame of the
-#' attributes information of the xml node, "xmL" for an {xml2} representation
+#' attributes information of the xml node, "xmL" for an \{xml2\} representation
 #' of the node, "list" for an R native list (note that many items in the
 #' list may have overlapping names that make indexing difficult), or
 #' "structure" to invisibly return NULL, but print the structure of the XML

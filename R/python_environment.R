@@ -184,7 +184,7 @@ checkGiottoEnvironment <- function(
     vmsg(
         .v = verbose, .initial = " ",
         "If this is the wrong environment, try specifying `envname` param
-         or set option \"giotto.py_path\" with the desired envname or path"
+        or set option \"giotto.py_path\" with the desired envname or path"
     )
 
     return(found)
@@ -321,7 +321,7 @@ checkGiottoEnvironment <- function(
         if (checkmate::test_file_exists(mini_install_path)) {
             stop(wrap_txt(
                 "`mini_install_path` should be a path to a directory;
-             not an executable."
+                not an executable."
             ))
         }
         # complete path
@@ -767,12 +767,12 @@ set_giotto_python_path <- function(
         For full functionality, install python and/or use
         strategy 1 or 2:")
     vmsg("1. use installGiottoEnvironment() to install
-         a local miniconda python environment along with required modules")
+        a local miniconda python environment along with required modules")
     vmsg("2. provide an existing python path to
-         python_path to use your own python path which has all modules
-         installed")
+        python_path to use your own python path which has all modules
+        installed")
     vmsg('Set options(\"giotto.use_conda\" = FALSE) if
-         python functionalities are not needed')
+        python functionalities are not needed')
     return(invisible())
 }
 
