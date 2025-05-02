@@ -198,6 +198,10 @@ setMethod("as.matrix", signature("overlapPointDT"),
                       x@feat_ids,
                       x@spat_ids
                   ),
+                  dims = c(
+                      length(x@feat_ids),
+                      length(x@spat_ids)
+                  ),
                   ...
               )
           })
