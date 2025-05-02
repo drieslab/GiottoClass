@@ -23,10 +23,13 @@
 #' vector of cell_IDs to use.
 #' * \[`giottoPolygon`\] inputs are directly used as filters. List names are
 #' used when reporting the spatial relationships in output geometry objects.
-#' These can also be used as points instead if `use_centroids` includes the
-#' name of this filter, and additionally can be buffered.
-#' * \[`SpatVector`] inputs, directly used. Can also be buffered or converted
-#' to centroids.
+#' These can also be used as centroids and additionally can be buffered.
+#' * \[`SpatVector`] inputs are directly used. Can also be converted to
+#' centroids and/or buffered.
+#' * \[`numeric`\] input is read as XY pairs (e.g. `c(x1, y1, x2, y2, ...)`),
+#' to be used as centroids. These are bufferable.
+#' * \['spatLocsObj'\] inputs are directly used as centroids. These are
+#' bufferable.
 #' @param name (optional) character. If not `NULL`, a new spatial unit of this
 #' name will be generated from the results.
 #' @param clip logical. Default = `TRUE`. Whether final round of querying should

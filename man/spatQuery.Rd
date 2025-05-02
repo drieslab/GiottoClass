@@ -48,10 +48,13 @@ filter. The actual character values should either be \code{"all"} or a specific
 vector of cell_IDs to use.
 \item [\code{giottoPolygon}] inputs are directly used as filters. List names are
 used when reporting the spatial relationships in output geometry objects.
-These can also be used as points instead if \code{use_centroids} includes the
-name of this filter, and additionally can be buffered.
-\item [\code{SpatVector}] inputs, directly used. Can also be buffered or converted
-to centroids.
+These can also be used as centroids and additionally can be buffered.
+\item [\code{SpatVector}] inputs are directly used. Can also be converted to
+centroids and/or buffered.
+\item [\code{numeric}] input is read as XY pairs (e.g. \code{c(x1, y1, x2, y2, ...)}),
+to be used as centroids. These are bufferable.
+\item ['spatLocsObj'] inputs are directly used as centroids. These are
+bufferable.
 }}
 
 \item{name}{(optional) character. If not \code{NULL}, a new spatial unit of this
