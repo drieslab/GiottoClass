@@ -22,6 +22,8 @@ globalVariables(
         "py_tif_convert",
         # spatialdata interop
         "createSpatialData", "read_spatialdata_from_path", "extract_spatial",
-        "extract_image"
+        "extract_image", "extract_spat_enrich", "save_NN_keys", "save_SN_keys",
+        "set_adg_spat_enrich", "save_SE_keys", "extract_polygons",
+        "extract_spat_enrich", "extract_points"
     )
 )
