@@ -4,10 +4,12 @@
 \alias{colMeans_flex}
 \title{colMeans_flex}
 \usage{
-colMeans_flex(mymatrix)
+colMeans_flex(mymatrix, ...)
 }
 \arguments{
 \item{mymatrix}{matrix to use}
+
+\item{...}{other arguments passed to underlying functions}
 }
 \value{
 numeric

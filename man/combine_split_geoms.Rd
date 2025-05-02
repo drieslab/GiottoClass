@@ -2,10 +2,12 @@
 % Please edit documentation in R/giotto_structures.R
 \name{combine_split_geoms}
 \alias{combine_split_geoms}
-\alias{combineGeom}
 \alias{splitGeom}
+\alias{combineGeom}
 \alias{combineGeom,giottoPolygon-method}
 \alias{splitGeom,giottoPolygon-method}
+\alias{combineGeom,SpatVector-method}
+\alias{splitGeom,SpatVector-method}
 \title{Combine or Split Complex Geometries}
 \usage{
 \S4method{combineGeom}{giottoPolygon}(
@@ -19,6 +21,10 @@
 )
 
 \S4method{splitGeom}{giottoPolygon}(x, fmt = "poly_\%d", previous_id = "source_id", ...)
+
+\S4method{combineGeom}{SpatVector}(x, by = NULL, dissolve = FALSE, fun = "mean", ...)
+
+\S4method{splitGeom}{SpatVector}(x, ...)
 }
 \arguments{
 \item{x}{geometry class to combine or split.}
@@ -46,7 +52,9 @@ the same class as \code{x}
 \description{
 Geometries can be either single/simple or multi with multiple closed rings
 defined as a single record. \code{combineGeom()} is used to combine polygons.
-\code{splitGeom()} breaks combined geometries down into constituent parts.
+\code{splitGeom()} breaks combined geometries down into constituent parts.\cr
+Avoid using the \code{SpatVector} methods. They are lower-level and does not
+deal with IDs like might be expected by Giotto.
 }
 \details{
 Currently, these are simple wrappers around terra's
@@ -54,6 +62,13 @@ Currently, these are simple wrappers around terra's
 around the \code{poly_ID} column and a different name to avoid confusion with
 spatial feature aggregation.
 }
+\section{Functions}{
+\itemize{
+\item \code{combineGeom(SpatVector)}: Avoid using.
+
+\item \code{splitGeom(SpatVector)}: Avoid using.
+
+}}
 \section{Geometry Attributes Handling}{
 \itemize{
 \item \code{combineGeom()} attributes are only kept if \code{by} param is used. For
