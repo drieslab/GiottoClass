@@ -1138,14 +1138,12 @@ setMethod(
 .subset_overlap_point_dt_i <- function(x, i) {
     if (is.numeric(i) || is.logical(i)) {
         i <- x@spat_ids[i]
-        res <- .subset_overlap_point_dt_i(x, i)
-        return(res)
     }
 
     poly <- NULL # NSE vars
     idx <- match(i, x@spat_ids) # poly indices to keep
-    kept_ids <- x@spat_ids[x@spat_ids %in% i]
-    x@spat_ids <- i # replace spatial ids
+    idx <- idx[!is.na(idx)] # drop unmatched NAs
+    x@spat_ids <- x@spat_ids[x@spat_ids %in% i] # replace spatial ids
 
     x@data <- x@data[poly %in% idx]
     x@data[, poly := match(poly, idx)]
