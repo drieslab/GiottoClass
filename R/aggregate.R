@@ -2674,24 +2674,24 @@ aggregateStacksPolygonOverlaps <- function(gobject,
 
     for (i in seq_len(length(spat_units))) {
         spat_unit <- spat_units[i]
-        vecDT <- gobject@spatial_info[[spat_unit]]@overlaps[[feat_type]]
+        ovlp <- getPolygonInfo(gobject,
+            polygon_name = spat_unit,
+            polygon_overlap = feat_type
+        )
+        # vecDT <- gobject@spatial_info[[spat_unit]]@overlaps[[feat_type]]
 
-        if (!is.null(vecDT)) {
-            vecDT <- .spatvector_to_dt(vecDT)
-            vecDT[, "stack" := i]
-            polygon_list[[spat_unit]] <- vecDT
+        if (!is.null(ovlp)) {
+            ovlp@data[, "stack" := i]
+            polygon_list[[spat_unit]] <- ovlp
         }
     }
 
     if (length(polygon_list) == 0) {
         wrap_msg("No feature overlaps found for stack aggregation \n")
     } else {
-        polygon_DT <- data.table::rbindlist(polygon_list)
-        polygon <- .dt_to_spatvector_points(
-            dt = polygon_DT,
-            include_values = TRUE
-        )
-        gobject@spatial_info[[new_spat_unit]]@overlaps[[feat_type]] <- polygon
+        comb_ovlp <- do.call(rbind, polygon_list)
+        gobject@spatial_info[[new_spat_unit]]@overlaps[[feat_type]] <-
+            comb_ovlp
     }
 
     return(gobject)
