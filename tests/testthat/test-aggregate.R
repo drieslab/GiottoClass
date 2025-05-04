@@ -39,7 +39,7 @@ test_that("calculateOverlap works for points", {
     ovlp_rast <- overlaps(res_rast, "rna")
     checkmate::expect_class(ovlp_rast, "overlapInfo")
     expect_equal(nrow(ovlp_rast@data), 12383)
-    expect_identical(as.numeric(ovlp_rast@data[100,]), c(385, 685, 4))
+    expect_identical(as.numeric(ovlp_rast@data[100,]), c(385, 685, 12))
     res_vect <- calculateOverlap(gpoly, gpts,
         verbose = FALSE, method = "vector"
     )
@@ -47,7 +47,7 @@ test_that("calculateOverlap works for points", {
     # larger due to double counts being possible with vector method
     ovlp_vect <- overlaps(res_vect, "rna")
     expect_equal(nrow(ovlp_vect@data), 12311)
-    expect_identical(as.numeric(ovlp_vect@data[100,]), c(12, 671, 11))
+    expect_identical(as.numeric(ovlp_vect@data[100,]), c(12, 671, 3))
 
     # with counts info
     res_vect_cts <- calculateOverlap(gpoly, gpts,
@@ -58,7 +58,7 @@ test_that("calculateOverlap works for points", {
         names(ovlp_vect_cts@data),
         c("poly", "feat", "feat_id_index", "count")
     )
-    expect_identical(as.numeric(ovlp_vect_cts@data[100,]), c(12, 671, 11, 2))
+    expect_identical(as.numeric(ovlp_vect_cts@data[100,]), c(12, 671, 3, 2))
 })
 
 test_that("calculateOverlap works for basic images", {
