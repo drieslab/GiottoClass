@@ -760,6 +760,9 @@ setMethod(
             x <- x[x$poly_ID %in% poly_subset_ids]
         }
 
+        # preserve total all feat ids present
+        feat_ids <- unique(y$feat_ID)
+
         # * subset points if needed
         # e.g. to select transcripts within a z-plane
         if (!is.null(feat_subset_column) && !is.null(feat_subset_values)) {
@@ -781,7 +784,7 @@ setMethod(
             )
         )
 
-        .create_overlap_point_dt(x, y, res)
+        .create_overlap_point_dt(x, y, res, feat_ids = feat_ids)
     }
 )
 
@@ -948,7 +951,8 @@ calculateOverlapRaster <- function(
 #' indices between x and y
 #' @param keep additional col(s) in `y` to keep
 #' @noRd
-.create_overlap_point_dt <- function(x, y, overlap_data, keep = NULL) {
+.create_overlap_point_dt <- function(x, y,
+        overlap_data, keep = NULL, feat_ids) {
     poly <- feat_idx <- feat <- feat_id_index <- NULL # NSE vars
     # cleanup input overlap_data
     checkmate::assert_data_frame(overlap_data)
@@ -972,7 +976,7 @@ calculateOverlapRaster <- function(
     fids <- unique(ytab$feat_ID)
     odt <- new("overlapPointDT",
         spat_ids = sids,
-        feat_ids = fids,
+        feat_ids = feat_ids,
         nfeats = as.integer(nrow(y))
     )
 
