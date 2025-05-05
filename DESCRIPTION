@@ -1,6 +1,6 @@
 Package: GiottoClass
 Title: Giotto Suite Object Definitions and Framework
-Version: 0.4.7
+Version: 0.5.0
 Authors@R: c(
 	person("Ruben", "Dries", email = "rubendries@gmail.com",
 		 role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7650-7754")),
