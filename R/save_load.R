@@ -550,6 +550,13 @@ loadGiotto <- function(path_to_folder,
         verbose = verbose
     )
 
+    # load overlaps of gpoly
+    gobject <- .load_giotto_spatial_info_overlaps(
+        gobject = gobject,
+        manifest = manifest,
+        verbose = verbose
+    )
+
     return(gobject)
 }
 
@@ -599,6 +606,55 @@ loadGiotto <- function(path_to_folder,
     return(gobject)
 }
 
+# load and append to gobject the polygons overlaps information
+.load_giotto_spatial_info_overlaps <- function(gobject, manifest, verbose = NULL) {
+    # objects from GiottoClass v0.5 and onwards do not need this for overlaps
+    if (!"versions" %in% attributes(gobject)) return(gobject)
+    if (.gversion(gobject) >= "0.5.0") return(gobject)
+
+    ## 3.3. overlaps
+    vmsg(.v = verbose, "3.3 read Giotto spatial overlap information \n")
+
+    si <- get_polygon_info_list(gobject) # none case taken care of in 3.1
+    spats <- names(si)
+
+    # These files are optional, depending on if they have been calculated.
+    # They may not exist
+    # They are named in "feattype_spatunit_postfix.extension" convention
+
+    for (spat in spats) {
+        feats <- .gpoly_overlap_names(si[[spat]], type = "point")
+        if (is.null(feats)) next # goto next spat_unit if no overlaps
+
+        for (feat in feats) {
+            # format: feattype_spatunit
+            comb <- paste(feat, spat, sep = "_")
+
+            # format: feattype_spatunit_postfix.extension
+            shp_file <- paste0(comb, "_spatInfo_spatVectorOverlaps.shp")
+            txt_file <- paste0(comb, "_spatInfo_spatVectorOverlaps_names.txt")
+            load_shp <- manifest[[shp_file]]
+            load_txt <- manifest[[txt_file]]
+
+            vmsg(
+                .v = verbose, .is_debug = TRUE, .initial = "  ",
+                sprintf("[%s and %s] %s", spat, feat, basename(load_shp))
+            )
+            spatVector <- terra::vect(load_shp)
+
+            # read in original column names
+            spatVector_names <- data.table::fread(
+                input = load_txt, header = FALSE
+            )[["V1"]]
+            names(spatVector) <- spatVector_names
+
+            # append
+            gobject@spatial_info[[spat]]@overlaps[[feat]] <- spatVector
+        }
+    }
+
+    return(gobject)
+}
 
 
 # the actual reconnection step is done through reconnect() after this step now
