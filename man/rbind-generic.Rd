@@ -6,6 +6,7 @@
 \alias{rbind2,featMetaObj,featMetaObj-method}
 \alias{rbind2,spatLocsObj,spatLocsObj-method}
 \alias{rbind2,giottoPolygon,giottoPolygon-method}
+\alias{rbind2,overlapPointDT,overlapPointDT-method}
 \title{Combine objects by rows (Giotto-related)}
 \usage{
 \S4method{rbind2}{cellMetaObj,cellMetaObj}(x, y, ...)
@@ -15,6 +16,8 @@
 \S4method{rbind2}{spatLocsObj,spatLocsObj}(x, y, ...)
 
 \S4method{rbind2}{giottoPolygon,giottoPolygon}(x, y, add_list_ID = TRUE, ...)
+
+\S4method{rbind2}{overlapPointDT,overlapPointDT}(x, y, ...)
 }
 \arguments{
 \item{x}{item 1 to rbind}
