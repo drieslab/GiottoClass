@@ -609,8 +609,9 @@ loadGiotto <- function(path_to_folder,
 # load and append to gobject the polygons overlaps information
 .load_giotto_spatial_info_overlaps <- function(gobject, manifest, verbose = NULL) {
     # objects from GiottoClass v0.5 and onwards do not need this for overlaps
-    if (!"versions" %in% attributes(gobject)) return(gobject)
-    if (.gversion(gobject) >= "0.5.0") return(gobject)
+    if ("versions" %in% names(attributes(gobject))) {
+        if (.gversion(gobject) >= "0.5.0") return(gobject)
+    }
 
     ## 3.3. overlaps
     vmsg(.v = verbose, "3.3 read Giotto spatial overlap information \n")
