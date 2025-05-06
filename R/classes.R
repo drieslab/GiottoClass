@@ -320,26 +320,26 @@ setClass(
 # ** processParam ####
 
 #' @title Parameter Classes for Data Processing Operations
-#' @name processParam
+#' @name processParam-class
 #' @description
 #' Utility class that defines a data processing procedure and any params used
-#' in performing it. Packages defining processing methods will create their own 
+#' in performing it. Packages defining processing methods will create their own
 #' child classes. These parameter objects are intended to be passed alongside
 #' the data to process to [processData()].
 #' @slot param list. Named parameters to use with the intended processing
 #' operation. These can be accessed and updated using the `$` operator.
-#' @export
+#' @exportClass processParam
 setClass("processParam", contains = "VIRTUAL", slots = list(param = "list"))
 
 
 
 # ** svkey ####
 
-#' @name svkey
+#' @name svkey-class
 #' @title Spatial Value Key
 #' @description
 #' A metaprogramming object that references a set of information to get
-#' from a `giotto` object when used as `svkey@get(gobject)`. 
+#' from a `giotto` object when used as `svkey@get(gobject)`.
 #' Referenced data will be retrieved as a `data.table` via [spatValues()]
 #' @keywords internal
 setClass("svkey",

@@ -4,7 +4,7 @@
 \alias{.abbrev_mat}
 \title{Print abbreviated matrix}
 \usage{
-.abbrev_mat(exprObj, nrows, ncols, header = TRUE)
+.abbrev_mat(exprObj, nrows, ncols, print_prov = TRUE, header = TRUE)
 }
 \value{
 abbreviated matrix exprObj

@@ -4,10 +4,12 @@
 \alias{rowSums_flex}
 \title{rowSums_flex}
 \usage{
-rowSums_flex(mymatrix)
+rowSums_flex(mymatrix, ...)
 }
 \arguments{
 \item{mymatrix}{matrix to use}
+
+\item{...}{other arguments passed to \code{\link{rowSums}}}
 }
 \value{
 numeric

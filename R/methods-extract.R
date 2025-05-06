@@ -1230,8 +1230,8 @@ setMethod(
 #' @rdname subset_bracket
 #' @export
 setMethod("[",
-    signature(x = "processParam",
-              i = "missing", j = "missing", drop = "missing"),
+    signature(
+        x = "processParam", i = "missing", j = "missing", drop = "missing"),
     function(x, i, j) x@param
 )
 

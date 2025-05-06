@@ -118,7 +118,7 @@ featIDs(gpoints)
 
 # ID replacements (currently only giottoPolygons)
 polys <- g[["spatial_info"]][[1]]
-polys@overlaps <- NULL # make NULL to avoid a warning
+slot(polys, "overlaps") <- NULL # make NULL to avoid a warning
 head(spatIDs(polys))
 spatIDs(polys) <- paste0("poly_", seq_len(nrow(polys)))
 head(spatIDs(polys))
