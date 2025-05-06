@@ -45,7 +45,6 @@ Imports:
 Suggests: 
     Biobase,
     chihaya,
-    dbMatrix,
     DelayedArray,
     DelayedMatrixStats (>= 1.24.0),
     exactextractr,
