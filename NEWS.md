@@ -26,7 +26,6 @@
 - `remove_background_poly` now defaults to `TRUE` during polygon ingestion
 - move {magick} from imports to suggests
 - {terra} `>=v1.8-21`
-- {dbMatrix} to suggests
 - deprecate `spatQueryGiottoPolygons()` in favor of more general `spatQuery()`
 - deprecate `ometif_metadata()` in favor of `tif_metadata()`
 - deprecate `ometif_to_tif()` in favor of `to_simple_tif()`
