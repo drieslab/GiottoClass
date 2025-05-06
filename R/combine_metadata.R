@@ -181,6 +181,10 @@ combineSpatialCellMetadataInfo <- function(gobject,
 #' @param ext numeric or SpatExtent (optional). A cropping extent to apply to
 #' to the geometries.
 #' @param xlim,ylim numeric length of 2 (optional). x or y bounds to apply.
+#' @param remove_background_polygon logical (default = `TRUE`). `crop()` may
+#' sometimes produce extent-filling polygons when the original geometry is
+#' problematic or invalid. Set `TRUE` to remove these, based on whether a
+#' polygon fills up most of the x and y range.
 #' @concept combine cell metadata
 #' @returns data.table with combined spatial information
 #' @examples
@@ -198,7 +202,8 @@ combineCellData <- function(gobject,
     spat_enr_names = NULL,
     ext = NULL,
     xlim = NULL,
-    ylim = NULL) {
+    ylim = NULL,
+    remove_background_polygon = TRUE) {
 
     checkmate::assert_numeric(xlim, len = 2L, null.ok = TRUE)
     checkmate::assert_numeric(ylim, len = 2L, null.ok = TRUE)
@@ -260,7 +265,9 @@ combineCellData <- function(gobject,
         }
         if (need_crop) {
             sv <- crop(sv, e)
-            sv <- .remove_background_polygon(sv, verbose = FALSE)
+            if (remove_background_polygon) {
+                sv <- .remove_background_polygon(sv, verbose = FALSE)
+            }
             if (nrow(sv) == 0) {
                 warning("no geometries left after crop", call. = FALSE)
             }
