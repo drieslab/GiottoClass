@@ -64,7 +64,7 @@ setMethod(
         # check for pre-0.1.2 class
         if (is.null(attr(x, "colors"))) {
             .gstop("This image object is out of date
-             Please run `GiottoClass:::.update_giotto_image()` on this object.",
+            Please run `GiottoClass:::.update_giotto_image()` on this object.",
                 .n = 2
             )
         }
@@ -595,9 +595,8 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
         package_check(
             "scattermore",
             repository = "CRAN",
-            custom_msg = "scattermore must be installed for plotting mode 'raster' = TRUE
-      To install:
-      install.packages('scattermore')"
+            custom_msg = "scattermore must be installed for plotting mode 
+            'raster' = TRUE. To install: install.packages('scattermore')"
         )
         args_list$size <- raster_size
         do.call(".plot_giotto_points_raster", args_list)

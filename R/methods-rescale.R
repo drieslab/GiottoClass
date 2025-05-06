@@ -444,7 +444,7 @@ rescalePolygons <- function(gobject,
 
     if (is.null(original_centroids)) {
         stop("Selected polygons don't have associated centroid,
-         use addSpatialCentroidLocations() ")
+        use addSpatialCentroidLocations() ")
     }
 
 

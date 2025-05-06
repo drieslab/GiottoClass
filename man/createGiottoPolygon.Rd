@@ -11,7 +11,14 @@
 \alias{createGiottoPolygonsFromGeoJSON}
 \title{Create giotto polygons object}
 \usage{
-\S4method{createGiottoPolygon}{character}(x, ...)
+\S4method{createGiottoPolygon}{character}(
+  x,
+  remove_background_polygon = TRUE,
+  background_algo = "range",
+  make_valid = FALSE,
+  verbose = TRUE,
+  ...
+)
 
 \S4method{createGiottoPolygon}{SpatVector}(x, name = "cell", calc_centroids = FALSE, verbose = TRUE)
 
@@ -49,7 +56,7 @@ createGiottoPolygonsFromMask(
   maskfile,
   mask_method = c("guess", "single", "multiple"),
   name = "cell",
-  remove_background_polygon = FALSE,
+  remove_background_polygon = TRUE,
   background_algo = c("range"),
   fill_holes = TRUE,
   poly_IDs = NULL,
@@ -79,12 +86,25 @@ createGiottoPolygonsFromGeoJSON(
   name = "cell",
   calc_centroids = FALSE,
   make_valid = FALSE,
+  remove_background_polygon = TRUE,
+  background_algo = "range",
   verbose = TRUE
 )
 }
 \arguments{
 \item{x}{input. Filepath to a .GeoJSON or a mask image file. Can also be a
 data.frame with vertex 'x', 'y', and 'poly_ID' information.}
+
+\item{remove_background_polygon}{try to remove background
+polygon (default: TRUE)}
+
+\item{background_algo}{algorithm to remove background polygon}
+
+\item{make_valid}{logical. (default \code{FALSE}) Whether to run
+\code{\link[terra:is.valid]{terra::makeValid()}} on the geometries. Setting this to \code{TRUE} may cause
+read-in polygon attribute information to become out of sync.}
+
+\item{verbose}{be verbose}
 
 \item{\dots}{additional params to pass. For character method, params pass to
 SpatRaster or SpatVector methods, depending on whether x was a filepath to
@@ -96,15 +116,8 @@ be the name of the spatial unit that they define. See \link{giotto_schema}}
 \item{calc_centroids}{logical. (default \code{FALSE}) calculate centroids for
 polygons}
 
-\item{verbose}{be verbose}
-
 \item{mask_method}{how the mask file defines individual segmentation
 annotations. See \emph{mask_method} section}
-
-\item{remove_background_polygon}{try to remove background
-polygon (default: FALSE)}
-
-\item{background_algo}{algorithm to remove background polygon}
 
 \item{fill_holes}{fill holes within created polygons}
 
@@ -132,10 +145,6 @@ dataframe}
 
 \item{copy_dt}{(default TRUE) if segmdfr is provided as dt, this determines
 whether a copy is made}
-
-\item{make_valid}{logical. (default \code{FALSE}) Whether to run
-\code{\link[terra:is.valid]{terra::makeValid()}} on the geometries. Setting this to \code{TRUE} may cause
-read-in polygon attribute information to become out of sync.}
 
 \item{maskfile}{path to mask file, a terra \code{SpatRaster}, or some other
 data class readable by \code{\link[terra:rast]{terra::rast()}}}

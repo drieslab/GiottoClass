@@ -9,7 +9,8 @@ readExprMatrix(
   cores = determine_cores(),
   transpose = FALSE,
   feat_type = "rna",
-  expression_matrix_class = c("dgCMatrix", "DelayedArray")
+  expression_matrix_class = c("dgCMatrix", "DelayedArray"),
+  ...
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ readExprMatrix(
 
 \item{expression_matrix_class}{class of expression matrix to
 use (e.g. 'dgCMatrix', 'DelayedArray')}
+
+\item{...}{additional params to pass}
 }
 \value{
 sparse matrix

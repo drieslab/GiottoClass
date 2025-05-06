@@ -241,7 +241,7 @@ createNetwork <- function(
     if (k >= nrow(x)) {
         k <- (nrow(x) - 1L)
         vmsg(.v = verbose, "k is higher than total number of cells.
-         Adjusted to (total number of cells - 1)")
+        Adjusted to (total number of cells - 1)")
     }
     # distances must be calculated when a limit is set
     if (!is.null(maximum_distance)) include_distance <- TRUE
@@ -300,7 +300,7 @@ createNetwork <- function(
     if (k >= nrow(x)) {
         k <- (nrow(x) - 1L)
         vmsg(.v = verbose, "k is higher than total number of cells.
-         Adjusted to (total number of cells - 1)")
+        Adjusted to (total number of cells - 1)")
     }
 
     nn_network <- dbscan::kNN(x = x, k = k, sort = TRUE, ...)
@@ -444,7 +444,7 @@ createNetwork <- function(
 
     if (ncol(x) > 2L) {
         .gstop("\'deldir\' delaunay method only applies to 2D data.
-           use method \'geometry\' or \'RTriangle\' instead")
+            use method \'geometry\' or \'RTriangle\' instead")
     }
 
     deldir_obj <- deldir::deldir(x = x, ...)
@@ -748,7 +748,7 @@ createNearestNetwork <- function(
     if (k >= nrow(matrix_to_use)) {
         k <- (nrow(matrix_to_use) - 1)
         vmsg(.v = verbose, "k is higher than total number of cells.
-         Adjusted to (total number of cells - 1)")
+        Adjusted to (total number of cells - 1)")
     }
 
     nn_network <- dbscan::kNN(x = matrix_to_use, k = k, sort = TRUE, ...)

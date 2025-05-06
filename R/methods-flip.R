@@ -147,12 +147,11 @@ setMethod(
 # TODO apply as instructions for lazy eval after crop/resampling
 #' @rdname flip
 #' @export
-setMethod(
-    "flip", signature(x = "giottoLargeImage"),
-    function(x, direction = "vertical", x0 = 0, y0 = 0, ...) {
-        .flip_large_image(image = x, direction = direction, x0 = x0, y0 = y0)
-    }
-)
+setMethod("flip", signature("giottoLargeImage"), function(x, direction = "vertical", x0 = 0, y0 = 0) {
+    a <- get_args_list()
+    a$x <- as(x, "giottoAffineImage") # convert to giottoAffineImage
+    do.call(flip, args = a)
+})
 
 #' @rdname flip
 #' @export
@@ -351,55 +350,6 @@ setMethod("flip", signature("affine2d"), function(x, direction = "vertical", x0 
 
     # 3. return
     return(x)
-}
-
-
-
-
-#' @name .flip_large_image
-#' @title Flip a giottoLargeImage object
-#' @param image giottoLargeImage
-#' @param direction character. Direction to flip. Should be either partial
-#' match to 'vertical' or 'horizontal'
-#' @param x0 x value to flip horizontally over (ignored for vertical). Pass NULL
-#' to flip over the extent
-#' @param y0 y value to flip vertically over (ignored for horizontal). Pass NULL
-#' to flip over the extent
-#' @keywords internal
-#' @noRd
-.flip_large_image <- function(image,
-    direction = "vertical",
-    x0 = 0,
-    y0 = 0) {
-    checkmate::assert_class(image, "giottoLargeImage")
-    checkmate::assert_character(direction)
-    if (!is.null(x0)) {
-        checkmate::assert_numeric(x0)
-    }
-    if (!is.null(y0)) {
-        checkmate::assert_numeric(y0)
-    }
-
-    # 1. perform flip
-    e <- ext(image)
-    image@raster_object <- terra::flip(image@raster_object,
-        direction = direction
-    )
-
-    # 2. perform shift to match line of symmetry
-    if (grepl(direction, "vertical") & !is.null(y0)) {
-        y_range <- as.numeric(c(e$ymin, e$ymax))
-        dy <- 2 * y0 - y_range[1] - y_range[2]
-        image <- spatShift(x = image, dy = dy)
-    }
-    if (grepl(direction, "horizontal") & !is.null(x0)) {
-        x_range <- as.numeric(c(e$xmin, e$xmax))
-        dx <- 2 * x0 - x_range[1] - x_range[2]
-        image <- spatShift(x = image, dx = dx)
-    }
-
-    # 3. return
-    return(image)
 }
 
 
