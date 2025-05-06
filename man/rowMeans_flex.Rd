@@ -4,10 +4,12 @@
 \alias{rowMeans_flex}
 \title{rowMeans_flex}
 \usage{
-rowMeans_flex(mymatrix)
+rowMeans_flex(mymatrix, ...)
 }
 \arguments{
 \item{mymatrix}{matrix to use}
+
+\item{...}{other arguments passed to underlying functions}
 }
 \value{
 numeric

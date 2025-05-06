@@ -929,7 +929,7 @@ set_cell_metadata <- function(gobject,
             )], silent = TRUE)
             if (inherits(id_error, "try-error")) {
                 stop("cannot automatically set metadata cell_ID based on
-                     gobject cell_ID slot.")
+                    gobject cell_ID slot.")
             }
         } else if (spat_unit %in% list_cell_id_names(gobject)) {
             # if cell ID col is present in both, try to match
@@ -1816,7 +1816,7 @@ set_expression_values <- function(gobject,
     # 3. if input is NULL, remove object (no initialize option)
     if (is.null(values)) {
         if (isTRUE(verbose)) wrap_msg("NULL passed to values param.
-                                 Removing specified expression")
+                                Removing specified expression")
         gobject@expression[[spat_unit]][[feat_type]][[name]] <- NULL
 
         # prune if empty
@@ -2983,7 +2983,7 @@ set_dimReduction <- function(gobject,
     # 0. pass to external if not native format
     if (!inherits(dimObject, c("dimObj", "NULL"))) {
         stop(wrap_txt(deparse(substitute(dimObject)), "is not dimObj (set)
-                  or NULL (remove)"))
+                or NULL (remove)"))
     }
 
     # 1. Determine user inputs
@@ -3503,7 +3503,7 @@ set_NearestNetwork <- function(gobject,
     # 3. If input is null, remove object
     if (is.null(nn_network)) {
         vmsg(.v = verbose, "NULL passed to nn_network.
-                           Removing specified nearest neighbor network.")
+                            Removing specified nearest neighbor network.")
         gobject@nn_network[[spat_unit]][[feat_type]][[nn_type]][[name]] <- NULL
 
         # prune if empty
@@ -5933,7 +5933,7 @@ setGiottoImage <- function(gobject,
     if (is.null(image)) {
         if (!is.null(name)) { # image removal
             vmsg(.v = verbose, "NULL passed to `image` param
-                 removing specified image")
+                removing specified image")
             gobject@images[[name]] <- image
             return(gobject)
         } else {

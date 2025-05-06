@@ -544,7 +544,7 @@
                             "dim_type:", su_dr$dim_type[[obj_i]],
                             "name:", su_dr$name[[obj_i]], "\n",
                             "Dimension reduction has no cell_IDs.
-                             Guessing based on existing expression cell_IDs"
+                            Guessing based on existing expression cell_IDs"
                         ))
                         rownames(dr_obj[]) <- IDs
                         ### ### ### ### ### ### ### ### ### ### ### ### ### ###

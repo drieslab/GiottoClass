@@ -498,6 +498,16 @@ setMethod(
         # rbind and convert output to data.table
         dt_exact <- data.table::as.data.table(do.call("rbind", extract_res))
 
+        missing_ids <- setdiff(x$poly_ID, dt_exact$poly_ID)
+        if (length(missing_ids) > 0L) {
+            missing_dt <- data.table::data.table(poly_ID = missing_ids)
+            # fill out missing_dt with 0 values so it can be used to rbind
+            for (col in setdiff(names(dt_exact), names(missing_dt))) {
+                missing_dt[, (col) := 0]
+            }
+            dt_exact <- rbind(dt_exact, missing_dt)
+        }
+
         # prepare output
         colnames(dt_exact)[2:(length(image_names) + 1)] <- image_names
         dt_exact[, coverage_fraction := NULL]

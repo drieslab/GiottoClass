@@ -23,7 +23,8 @@ giottoToSpatialData(
 
 \item{spot_radius}{radius of the spots}
 
-\item{python_path}{path to python executable within a conda/miniconda environment}
+\item{python_path}{path to python executable within a conda/miniconda
+environment}
 
 \item{env_name}{name of environment containing python_path executable}
 
@@ -36,5 +37,6 @@ SpatialData object saved on disk.
 Converts a Giotto object to SpatialData object
 }
 \details{
-Function in beta. Converts and saves a Giotto object in SpatialData format on disk.
+Function in beta. Converts and saves a Giotto object in SpatialData
+format on disk.
 }

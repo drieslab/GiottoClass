@@ -1296,7 +1296,7 @@ createGiottoObjectSubcellular <- function(
 #' @param provenance origin data of expression information (if applicable)
 #' @param misc misc
 #' @param expression_matrix_class class of expression matrix to
-#' use (e.g. 'dgCMatrix', 'DelayedArray')
+#' use (e.g. 'dgCMatrix', 'DelayedArray', 'dbMatrix')
 #' @returns exprObj
 #' @examples
 #' x_expr <- readRDS(system.file("extdata/toy_matrix.RDS",
@@ -1305,13 +1305,14 @@ createGiottoObjectSubcellular <- function(
 #'
 #' createExprObj(expression_data = x_expr)
 #' @export
-createExprObj <- function(expression_data,
-    name = "test",
-    spat_unit = "cell",
-    feat_type = "rna",
-    provenance = NULL,
-    misc = NULL,
-    expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
+createExprObj <- function(
+        expression_data,
+        name = "test",
+        spat_unit = "cell",
+        feat_type = "rna",
+        provenance = NULL,
+        misc = NULL,
+        expression_matrix_class = c("dgCMatrix", "DelayedArray", "dbMatrix")) {
     exprMat <- .evaluate_expr_matrix(expression_data,
         expression_matrix_class = expression_matrix_class,
         feat_type = feat_type
@@ -1714,27 +1715,49 @@ create_nn_net_obj <- function(name = "test",
 #' @param provenance origin data of aggregated expression
 #' information (if applicable)
 #' @param misc misc
-#' @param verbose be verbose
+#' @param numeric_format character. One of `"pair"` (default) or `"triplet"`.
+#' Whether `numeric` inputs should be understood as XY pairs or XYZ triplets.
+#' @param verbose verbosity
+#' @param \dots additional params to pass
 #' @returns spatLocsObj
 #' @examples
+#' # from data.frame
 #' x <- data.frame(
 #'     cell_ID = c("cell_1", "cell_2", "cell_3"),
 #'     sdimx = c(6637.881, 6471.978, 6801.610),
 #'     sdimy = c(-5140.465, -4883.541, -4968.685)
 #' )
+#' s1 <- createSpatLocsObj(coordinates = x, name = "raw")
+#' plot(s1)
 #'
-#' createSpatLocsObj(coordinates = x, name = "raw")
+#' # from matrix
+#' m <- matrix(c(2 ,3, 4, 2), ncol = 2)
+#' rownames(m) <- c("cell1", "cell2")
+#' s2 <- createSpatLocsObj(m)
+#' plot(s2)
+#'
+#' # from numeric xy pairs
+#' num2d <- c(1, 3, 5, 9)
+#' s3 <- createSpatLocsObj(num2d)
+#' plot(s3)
+#' # from numeric xyz triplets
+#' num3d <- c(3, 2, 9, 3, 8, 5)
+#' s4 <- createSpatLocsObj(num3d, numeric_format = "triplet")
+#' plot(s4)
 #' @export
 createSpatLocsObj <- function(coordinates,
     name = "test",
     spat_unit = "cell",
     provenance = NULL,
     misc = NULL,
-    verbose = TRUE) {
+    numeric_format = c("pair", "triplet"),
+    verbose = TRUE,
+    ...) {
     # convert coordinates input to preferred format
-    coordinates <- .evaluate_spatial_locations(
-        spatial_locs = coordinates,
-        verbose = verbose
+    coordinates <- .evaluate_spatial_locations(coordinates,
+        numeric_format = numeric_format,
+        verbose = verbose,
+        ...
     )
 
     create_spat_locs_obj(
@@ -2383,7 +2406,12 @@ NULL
 #' @export
 setMethod(
     "createGiottoPolygon", signature("character"),
-    function(x, ...) {
+    function(x,
+        remove_background_polygon = TRUE,
+        background_algo = "range",
+        make_valid = FALSE,
+        verbose = TRUE,
+        ...) {
         checkmate::assert_file_exists(x)
 
         # try success means it should be mask file
@@ -2402,11 +2430,30 @@ setMethod(
 
         # mask workflow
         if (inherits(try_rast, "SpatRaster")) {
-            return(createGiottoPolygon(try_rast, ...))
+            return(createGiottoPolygon(try_rast,
+                remove_background_polygon = remove_background_polygon,
+                background_algo = background_algo,
+                verbose = verbose,
+                ...
+            ))
         }
 
         # file workflow
-        return(createGiottoPolygon(x = terra::vect(x), ...))
+        reslist <- .evaluate_spatial_info(x,
+            make_valid = make_valid,
+            verbose = verbose
+        )
+
+        sv <- reslist$spatvector
+
+        if (isTRUE(remove_background_polygon)) {
+            sv <- .remove_background_polygon(sv,
+                background_algo = background_algo,
+                verbose = verbose
+            )
+        }
+
+        createGiottoPolygon(sv, ...)
     }
 )
 
@@ -2515,7 +2562,7 @@ setMethod(
 #' @param mask_method how the mask file defines individual segmentation
 #' annotations. See *mask_method* section
 #' @param remove_background_polygon try to remove background
-#' polygon (default: FALSE)
+#' polygon (default: TRUE)
 #' @param background_algo algorithm to remove background polygon
 #' @param fill_holes fill holes within created polygons
 #' @param poly_IDs character vector. Default = NULL. Custom unique names for
@@ -2558,7 +2605,7 @@ createGiottoPolygonsFromMask <- function(
         maskfile,
         mask_method = c("guess", "single", "multiple"),
         name = "cell",
-        remove_background_polygon = FALSE,
+        remove_background_polygon = TRUE,
         background_algo = c("range"),
         fill_holes = TRUE,
         poly_IDs = NULL,
@@ -2713,26 +2760,10 @@ createGiottoPolygonsFromMask <- function(
 
     ## remove background polygon ##
     if (isTRUE(remove_background_polygon)) {
-        if (background_algo == "range") {
-            backgr_poly_id <- .identify_background_range_polygons(
-                terra_polygon
-            )
-            if (length(backgr_poly_id) > 1L) {
-                warning("More than one background poly found.")
-            }
-        }
-
-        if (length(backgr_poly_id) > 0) {
-            vmsg(.v = verbose, sprintf(
-                "removed background poly.\n ID was: %s",
-                backgr_poly_id
-            ))
-
-            terra_polygon <- terra::subset(
-                x = terra_polygon,
-                terra_polygon[["poly_ID"]] != backgr_poly_id
-            )
-        }
+        terra_polygon <- .remove_background_polygon(terra_polygon,
+            background_algo = background_algo,
+            verbose = verbose
+        )
     }
 
 
@@ -2854,6 +2885,8 @@ createGiottoPolygonsFromGeoJSON <- function(GeoJSON,
     name = "cell",
     calc_centroids = FALSE,
     make_valid = FALSE,
+    remove_background_polygon = TRUE,
+    background_algo = "range",
     verbose = TRUE) {
     eval_list <- .evaluate_spatial_info(
         spatial_info = GeoJSON,
@@ -2863,6 +2896,14 @@ createGiottoPolygonsFromGeoJSON <- function(GeoJSON,
 
     spatvector <- eval_list$spatvector
     unique_IDs <- eval_list$unique_IDs
+
+    ## remove background polygon ##
+    if (isTRUE(remove_background_polygon)) {
+        spatvector <- .remove_background_polygon(spatvector,
+            background_algo = background_algo,
+            verbose = verbose
+        )
+    }
 
     g_polygon <- create_giotto_polygon_object(
         name = name,
@@ -2887,7 +2928,30 @@ createGiottoPolygonsFromGeoJSON <- function(GeoJSON,
 
 
 
+.remove_background_polygon <- function(x,
+    background_algo = "range",
+    verbose = NULL) {
+    ## remove background polygon ##
+    if (background_algo == "range") {
+        backgr_poly_id <- .identify_background_range_polygons(x)
+        if (length(backgr_poly_id) > 1L) {
+            warning("More than one background poly found.")
+        }
+    }
 
+    if (length(backgr_poly_id) > 0) {
+        vmsg(.v = verbose, sprintf(
+            "removed background poly.\n ID was: %s",
+            backgr_poly_id
+        ))
+
+        x <- terra::subset(
+            x = x,
+            x[["poly_ID"]] != backgr_poly_id
+        )
+    }
+    x
+}
 
 
 #' @title Create a giotto polygon object
