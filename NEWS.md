@@ -1,8 +1,10 @@
-# GiottoClass 0.4.7 (2025/02/04)
+# GiottoClass 0.4.7 (2025/05/06)
 
 ## new
 - `spatIDs()<-` for `giottoPolygon`
 - `combineGeom()` and `splitGeom()` for `giottoPolygon`
+- `processData()` generic and `processParam` class
+- `svkey` metaprogramming object for storing `spatValue()` parameters for later eval.
 
 ## bug fixes
 - fixes and updates for {spatialdata} and {anndata} interoperability.
@@ -17,10 +19,17 @@
 - fix `loadGiotto()` error when a non-expected reticulate environment is already activated in the session
 - fix `createGiottoLargeImage()` and `createGiottoPolygonsFromMask()` to align with {terra} `v1.8-21` `rast(noflip = TRUE)` [#1102](https://github.com/drieslab/Giotto/issues/1102) by StevenWijnen and rbutleriii
 - add fallback for when attributes do not match number of geometries in `createGiottoPolygon()` so that poly_ID col is not dropped
+- fix `calculateOverlap()`when raster aggregation finds polygons with no values
+- fix `createGiottoPolygon()` dispatch on `character` so that it can access poly cleanup params
 
 ## changes
+- `remove_background_poly` now defaults to `TRUE` during polygon ingestion
 - move {magick} from imports to suggests
 - {terra} `>=v1.8-21`
+- {dbMatrix} to suggests
+- deprecate `spatQueryGiottoPolygons()` in favor of more general `spatQuery()`
+- deprecate `ometif_metadata()` in favor of `tif_metadata()`
+- deprecate `ometif_to_tif()` in favor of `to_simple_tif()`
 
 ## enhancements
 - `[[` can now be used to select channels in `giottoLargeImage`-inheriting objects
@@ -29,10 +38,12 @@
 - `spatUnit()` and `featType()` method for `giotto` to find existing spatial units and feature types
 - expose `make_valid` param and `...` passing for `createGiottoPolygon()` `data.frame` method
 - `createGiottoPolygon()` `part_col` param for generating multipolygons from `data.frame-like` inputs.
+- `combineCellData()` `ext`, `xlim`, `ylim` cropping. (also background poly removal in case of cropping artefacts)
+- large improvements to anndata and spatialdata converters (see [#294](https://github.com/drieslab/GiottoClass/pull/294))
+- `spatLocsObj` can now be created from `numeric` xy pairs and xyz triplets
+- improvements to `spatQuery()`
+- add support for qptiff in `tif_metadata()` and `to_simple_tif()`
 
-## new
-- `processData()` generic and `processParam` class
-- `svkey` metaprogramming object for storing `spatValue()` parameters for later eval.
 
 # GiottoClass 0.4.6 (2025/01/17)
 
