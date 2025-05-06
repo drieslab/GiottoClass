@@ -269,8 +269,8 @@ joinGiottoObjects <- function(gobject_list,
             vmsg(
                 .v = verbose,
                 "No xy shift or specific padding values given.
-                 Using defaults: x_padding = 1000
-                 Set any padding value of 0 to avoid this behavior"
+                Using defaults: x_padding = 1000
+                Set any padding value of 0 to avoid this behavior"
             )
             x_padding <- 1000
         }

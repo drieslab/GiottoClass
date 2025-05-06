@@ -83,19 +83,39 @@ evaluate_input <- function(type, x, ...) {
 #' @keywords internal
 #' @returns sparse matrix
 #' @noRd
-.evaluate_expr_matrix <- function(inputmatrix,
-    sparse = TRUE,
-    cores = determine_cores(),
-    feat_type = "rna",
-    expression_matrix_class = c("dgCMatrix", "DelayedArray")) {
-    if (inherits(inputmatrix, "character")) {
+.evaluate_expr_matrix <- function(
+        inputmatrix,
+        sparse = TRUE,
+        cores = determine_cores(),
+        feat_type = "rna",
+        expression_matrix_class = c("dgCMatrix", "DelayedArray", "dbMatrix")) {
+    target_class <- match.arg(
+        expression_matrix_class[1],
+        c("dgCMatrix", "DelayedArray", "dbMatrix")
+    )
+
+    # Return early if inputmatrix is already of the target class
+    if (!inherits(inputmatrix, "character") &&
+        inherits(inputmatrix, target_class)) {
+        return(inputmatrix)
+    }
+
+    # Main decision tree for converting inputmatrix
+    if (inherits(inputmatrix, "character") && length(inputmatrix) == 1) {
         inputmatrix <- path.expand(inputmatrix)
-        mymatrix <- readExprMatrix(inputmatrix,
+        mymatrix <- readExprMatrix(
+            path = inputmatrix,
             cores = cores,
-            expression_matrix_class = expression_matrix_class,
+            expression_matrix_class = target_class,
             feat_type = feat_type
         )
-    } else if (expression_matrix_class[1] == "DelayedArray") {
+    } else if (target_class == "dbMatrix") {
+        .gstop(
+            "Automatic conversion to 'dbMatrix' is not supported within ",
+            "createExprObj(). Please provide a pre-constructed ",
+            "'dbMatrix' object instead. See ?dbMatrix for details."
+        )
+    } else if (target_class == "DelayedArray") {
         mymatrix <- DelayedArray::DelayedArray(inputmatrix)
     } else if (inherits(inputmatrix, "Matrix")) {
         mymatrix <- inputmatrix
@@ -125,13 +145,14 @@ evaluate_input <- function(type, x, ...) {
         inputmatrix[] <- .evaluate_expr_matrix(
             inputmatrix[],
             sparse = sparse, cores = cores,
-            expression_matrix_class = expression_matrix_class
+            expression_matrix_class = target_class
         )
         mymatrix <- inputmatrix
     } else {
         .gstop(
             "expression input needs to be a path to matrix-like data or an",
-            "object of class 'Matrix', 'data.table', 'data.frame' or 'matrix'"
+            "object of class 'Matrix', 'data.table', 'data.frame', 'matrix'",
+      "'DelayedMatrix' or 'dbSparseMatrix'."
         )
     }
 
@@ -199,7 +220,7 @@ evaluate_input <- function(type, x, ...) {
         }
     } else {
         warning(wrap_txt("Cell metadata input: no col named cell_ID.
-                     Setting temporary NA values"))
+                    Setting temporary NA values"))
         # set temporary NA values
         metadata[, cell_ID := NA_character_]
         # re-order so that cell_ID is the first column
@@ -259,7 +280,7 @@ evaluate_input <- function(type, x, ...) {
         }
     } else {
         warning(wrap_txt("Feature metadata input: no col named feat_ID.
-                     Setting temporary NA values"))
+                    Setting temporary NA values"))
         # set temporary NA values
         metadata[, feat_ID := NA_character_]
     }
@@ -277,49 +298,97 @@ evaluate_input <- function(type, x, ...) {
 
 # Spatial ####
 
+# s3 generic to process inputs for spatial locations objects
+.evaluate_spatial_locations <- function(x, ...) {
+    UseMethod(".evaluate_spatial_locations")
+}
 
+.evaluate_spatial_locations.default <- function(x, ...) {
+    stop(wrap_txt(
+        "spatial_locs needs to be a `data.table` or `data.frame`-like object",
+        "a filepath to one of these, numeric matrix, or numeric xy pairs"
+    ), call. = FALSE)
+}
 
-
-
-#' @title Evaluate spatial locations
-#' @name .evaluate_spatial_locations
-#' @description Evaluate spatial location input
-#' @param spatial_locs spatial locations to evaluate
-#' @param cores how many cores to use
-#' @return data.table
-#' @keywords internal
-#' @noRd
-.evaluate_spatial_locations <- function(spatial_locs,
-    cores = determine_cores(),
-    verbose = TRUE) {
-    # data.table variables
-    cell_ID <- NULL
-
-    if (!any(class(spatial_locs) %in% c(
-        "data.table", "data.frame", "matrix", "character"
-    ))) {
-        .gstop("spatial_locs needs to be a data.table or data.frame-like object
-            or a path to one of these")
+.evaluate_spatial_locations.matrix <- function(x, verbose = NULL, ...) {
+    id <- NULL # NSE vars
+    has_colnames <- !is.null(colnames(x))
+    .spatlocs_check_ncol(x)
+    dt <- data.table::as.data.table(x)
+    if (!has_colnames) {
+        colnames(dt) <- c("x", "y", "z")[seq_len(ncol(x))]
     }
-    if (inherits(spatial_locs, "character")) {
-        if (!file.exists(spatial_locs)) {
-            .gstop("path to spatial locations does not exist")
-        }
-        spatial_locs <- data.table::fread(input = spatial_locs, nThread = cores)
-    } else {
-        spatial_locs <- tryCatch(
-            data.table::setDT(spatial_locs),
-            error = function(e) data.table::as.data.table(spatial_locs)
-        )
+    rnames <- rownames(x)
+    if (!is.null(rnames)) {
+        vmsg(.v = verbose, "[spatlocs] matrix input has rownames.
+             Using these as IDs.")
+        dt[, id := rnames]
     }
+    .evaluate_spatial_locations(dt, verbose = verbose, ...)
+}
+
+.evaluate_spatial_locations.numeric <- function(
+        x, numeric_format = c("pair", "triplet"), ...) {
+    numeric_format <- match.arg(numeric_format, choices = c("pair", "triplet"))
+    x <- switch(numeric_format,
+        "pair" = .spatlocs_numeric_parse_pair(x, ...),
+        "triplet" = .spatlocs_numeric_parse_triplet(x, ...)
+    )
+    .evaluate_spatial_locations(x, ...)
+}
+
+.spatlocs_numeric_parse_pair <- function(x, ...) {
+    if (length(x) %% 2 != 0 || length(x) == 0) {
+        stop(wrap_txt(
+            "[spatlocs] numeric 'pair' inputs must be given as x,y pairs.
+                For example: c(x1, y1, x2, y2)"
+        ), call. = FALSE)
+    }
+    data.table::data.table(
+        x = x[c(TRUE, FALSE)],
+        y = x[c(FALSE, TRUE)]
+    )
+}
+
+.spatlocs_numeric_parse_triplet <- function(x, ...) {
+    if (length(x) %% 3 != 0 || length(x) == 0) {
+        stop(wrap_txt(
+            "[spatlocs] numeric 'triplet' inputs must be given as x,y,z",
+            "triplets.\n For example: c(x1, y1, z1, x2, y2, z2)"
+        ), call. = FALSE)
+    }
+    data.table::data.table(
+        x = x[c(TRUE, FALSE, FALSE)],
+        y = x[c(FALSE, TRUE, FALSE)],
+        z = x[c(FALSE, FALSE, TRUE)]
+    )
+}
+
+.evaluate_spatial_locations.character <- function(
+        x, cores = determine_cores(), ...) {
+    if (!file.exists(x)) {
+        stop("path to spatial locations does not exist\n", call. = FALSE)
+    }
+    x <- data.table::fread(input = x, nThread = cores)
+    .evaluate_spatial_locations(x, cores = cores, ...)
+}
+
+.evaluate_spatial_locations.data.frame <- function(
+        x, verbose = NULL, ...) {
+    .spatlocs_check_ncol(x)
+    # coerce to data.table
+    x <- tryCatch(
+        data.table::setDT(x),
+        error = function(e) data.table::as.data.table(x)
+    )
 
     # check if all columns are numeric
-    column_classes <- lapply(spatial_locs, FUN = class)
+    column_classes <- lapply(x, FUN = class)
     non_numeric_classes <- column_classes[!column_classes %in%
         c("numeric", "integer")]
 
-
-    potential_cell_IDs <- NULL
+    # determine cell_ID -------------------- #
+    potential_cell_ids <- NULL
 
     # find non-numeric cols (possible cell_ID col)
     if (length(non_numeric_classes) > 0) {
@@ -335,41 +404,41 @@ evaluate_input <- function(type, x, ...) {
             "\n Other non numeric columns will be removed"
         )
 
-        potential_cell_IDs <- spatial_locs[[names(non_numeric_classes)[[1]]]]
+        potential_cell_ids <- x[[names(non_numeric_classes)[[1]]]]
 
-        spatial_locs <- spatial_locs[, -non_numeric_indices, with = FALSE]
-    }
-
-    # check number of columns: too few
-    if (ncol(spatial_locs) < 2) {
-        .gstop("There need to be at least 2 numeric columns for spatial
-            locations \n")
-    }
-
-    # check number of columns: too many
-    if (ncol(spatial_locs) > 3) {
-        warning("There are more than 3 columns for spatial locations, only the
-                first 3 will be used \n")
-        spatial_locs <- spatial_locs[, seq_len(3)]
+        x <- x[, -non_numeric_indices, with = FALSE]
     }
 
     # for spatial dimension names
     spatial_dimensions <- c("x", "y", "z")
-    colnames(spatial_locs) <- paste0(
+    colnames(x) <- paste0(
         "sdim",
-        spatial_dimensions[seq_len(ncol(spatial_locs))]
+        spatial_dimensions[seq_len(ncol(x))]
     )
 
     # Assign first non-numeric as cell_ID
-    if (!is.null(potential_cell_IDs)) {
-        spatial_locs[, cell_ID := potential_cell_IDs]
+    cell_ID <- NULL # NSE var
+    if (!is.null(potential_cell_ids)) {
+        x[, cell_ID := potential_cell_ids]
     }
-
-    return(spatial_locs)
+    x
 }
 
-
-
+.spatlocs_check_ncol <- function(x) {
+    # too few
+    if (ncol(x) < 2L) {
+        stop(wrap_txt(
+            "There need to be at least 2 numeric columns for spatial locations"
+        ), call. = FALSE)
+    }
+    # too many
+    if (ncol(x) > 3L) {
+        warning(wrap_txt(
+            "There are more than 3 columns for spatial locations, only the",
+            "first 3 will be used"
+        ), call. = FALSE)
+    }
+}
 
 
 
@@ -476,7 +545,7 @@ evaluate_input <- function(type, x, ...) {
             "input at column position(s):", non_numeric_indices,
             "\nThe first non-numeric column will be considered as a cell ID to",
             "test for consistency with the expression matrix.
-               Other non-numeric columns will be removed."
+            Other non-numeric columns will be removed."
         )
 
         potential_cell_IDs <- spatial_enrichment[[names(
@@ -596,7 +665,7 @@ evaluate_input <- function(type, x, ...) {
         # if minimal input not given, throw error
         if (!all(c("from", "to", "distance") %in% colnames(nn_network))) {
             .gstop("Unable to coerce data.frame type object to nnNetObj igraph
-             Needed columns: from, to, distance")
+            Needed columns: from, to, distance")
         }
 
         # generate weights
@@ -823,7 +892,7 @@ evaluate_input <- function(type, x, ...) {
     cores = determine_cores(),
     verbose = TRUE) {
     # NSE vars
-    geom <- poly_ID <- NULL
+    geom <- poly_ID <- part <- hole <- NULL
 
     ## 1. load or read spatial information data ##
     ## 1.1 read from file
