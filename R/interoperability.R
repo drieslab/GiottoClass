@@ -203,21 +203,22 @@ check_py_for_scanpy <- function() {
 #' @param n_key_added equivalent of "key_added" argument from scanpy.pp.
 #' neighbors(). If multiple spatial networks are in the anndata object, a list
 #' of key_added terms may be provided. If converting an anndata object from
-#' giottoToAnnData, the keys are saved in .uns['NN_keys']
+#' giottoToAnnData, the keys are saved in `.uns\['NN_keys'\]`
 #' and all keys are used in conversion unless specified in the function call.
 #' Cannot be "spatial". This becomes the name of the nearest network in the gobject.
 #' @param spatial_n_key_added equivalent of "key_added" argument from
 #' squidpy.gr.spatial_neighbors. If multiple spatial networks are in the
 #' anndata object, a list of key_added terms may be provided. If converting an
-#' anndata object from giottoToAnnData, the keys are saved in .uns['SN_keys']
+#' anndata object from giottoToAnnData, the keys are saved in `.uns\['SN_keys'\]`
 #' and all keys are used in conversion unless specified in the function call.
 #' Cannot be the same as n_key_added.
 #' @param delaunay_spat_net binary parameter for spatial network. If TRUE, the
 #' spatial network is a delaunay network.
-#' @param spat_enrich_key_added 
+#' @param spat_enrich_key_added
 #' list of names of spatial enrichment annotations present in the anndata object.
 #' If converting an anndata object from giottoToAnnData and the original Giotto object had
-#' spatial enrichment annotations, the keys are saved in .uns['SE_keys']
+#' spatial enrichment annotations, the keys are saved in
+#' `.uns\['SE_keys'\]`
 #' and all keys are used in conversion unless specified in the function call.
 #' @param spat_unit desired spatial unit to use for conversion, default NULL
 #' @param feat_type desired feature type to use for conversion, default NULL
@@ -1156,7 +1157,7 @@ giottoToAnnData <- function(gobject = NULL,
 
             # Save SN keys to .uns['SN_keys']
             if (length(network_name) != 0) {
-                save_SN_keys(adata = adata_list[[adata_pos]], 
+                save_SN_keys(adata = adata_list[[adata_pos]],
                             network_name = network_name)
             }
         }
@@ -1168,9 +1169,9 @@ giottoToAnnData <- function(gobject = NULL,
     adata_pos <- 1
 
     # Spatial Enrichment
-    spat_enrich_list <- list_giotto_data(gobject = gobject, 
+    spat_enrich_list <- list_giotto_data(gobject = gobject,
                                         slot = "spatial_enrichment")
-    
+
     if (!is.null(spat_enrich_list) && is.data.frame(spat_enrich_list)) {
         for (i in seq_len(nrow(spat_enrich_list))) {
             se_su <- spat_enrich_list[i]$spat_unit
@@ -1190,7 +1191,7 @@ giottoToAnnData <- function(gobject = NULL,
                 name = se_name
             )
         }
-        save_SE_keys(adata = adata_list[[adata_pos]], 
+        save_SE_keys(adata = adata_list[[adata_pos]],
                     enrichment_name = spat_enrich_list$name)
 
     }
@@ -3621,7 +3622,7 @@ spatialdataToGiotto <- function(
             }
             ft_list <- c(ft_list, ft)
             cat("Spatial unit and feature type extracted from table name.\n")
-        } 
+        }
         else if (length(su_list_initial) > 0 && length(ft_list_initial) == 0) {
             su <- spat_unit
             ft <- "rna"
@@ -3646,11 +3647,11 @@ spatialdataToGiotto <- function(
             ft_list <- c(ft_list, ft)
             cat("Default spatial unit and feature type have been set to [cell][rna]. If you wish to set a specific\nspatial unit and feature type, please specify it in the function call.\n")
         }
-        
+
         gobject <- setExpression(
-            gobject, 
-            x = createExprObj(expr_df_dict[[key]], name = "raw"), 
-            spat_unit = su, 
+            gobject,
+            x = createExprObj(expr_df_dict[[key]], name = "raw"),
+            spat_unit = su,
             feat_type = ft)
     }
 
@@ -3734,13 +3735,13 @@ spatialdataToGiotto <- function(
             parts <- strsplit(key, "_")[[1]]
             spat_loc_su <- parts[1]
             gobject <- setSpatialLocations(
-                gobject, 
-                x = createSpatLocsObj(spatial_dict[[key]], name = "raw"), 
+                gobject,
+                x = createSpatLocsObj(spatial_dict[[key]], name = "raw"),
                 spat_unit = spat_loc_su)
         } else {
             gobject <- setSpatialLocations(
-                gobject, 
-                x = createSpatLocsObj(spatial_dict[[key]], name = "raw"), 
+                gobject,
+                x = createSpatLocsObj(spatial_dict[[key]], name = "raw"),
                 spat_unit = su)
         }
     }
@@ -3809,7 +3810,7 @@ spatialdataToGiotto <- function(
                 sk <- gsub("[()']", "", split_key[2])
 
                 s_distances_sd <- extract_SN_distances(
-                    sdata, key_added = spatial_n_key_added_it, 
+                    sdata, key_added = spatial_n_key_added_it,
                     tn = tn, sn_key_list = sk)
                 ij_matrix <- methods::as(s_distances_sd, "TsparseMatrix")
                 from_idx <- ij_matrix@i + 1 # zero index!!!
@@ -3890,7 +3891,7 @@ spatialdataToGiotto <- function(
     ## Add PCA
     p_dict <- extract_pca(sdata)
     if (!is.null(p_dict)) {
-        for (tn in names(p_dict)) {     
+        for (tn in names(p_dict)) {
             for (i in seq_along(p_dict[[tn]][[1]])) {
                 p <- p_dict[[tn]][[1]][[i]]
                 if (!is.null(p)) {
@@ -3917,7 +3918,7 @@ spatialdataToGiotto <- function(
                         my_rownames = rownames_vec
                     )
                     gobject <- set_dimReduction(
-                        gobject = gobject, 
+                        gobject = gobject,
                         dimObject = dobj)
                 }
             }
@@ -3948,7 +3949,7 @@ spatialdataToGiotto <- function(
                         my_rownames = rownames_vec
                     )
                     gobject <- set_dimReduction(
-                        gobject = gobject, 
+                        gobject = gobject,
                         dimObject = dobj)
                 }
             }
@@ -4009,7 +4010,7 @@ spatialdataToGiotto <- function(
                 nk <- gsub("[()']", "", split_key[2])
 
                 distances_sd <- extract_NN_distances(
-                    sdata, key_added = n_key_added_it, 
+                    sdata, key_added = n_key_added_it,
                     tn = tn, nn_key_list = nk)
 
                 nn_dt <- align_network_data(
@@ -4028,7 +4029,7 @@ spatialdataToGiotto <- function(
                 nn_dt[, uniq_ID := NULL]
                 vert <- unique(x = c(nn_dt$from_cell_ID, nn_dt$to_cell_ID))
                 nn_network_igraph <- igraph::graph_from_data_frame(
-                    nn_dt[, .(from_cell_ID, to_cell_ID, weight, distance)], 
+                    nn_dt[, .(from_cell_ID, to_cell_ID, weight, distance)],
                     directed = TRUE, vertices = vert)
 
                 nn_info <- extract_NN_info(
@@ -4104,13 +4105,13 @@ spatialdataToGiotto <- function(
 #' @param spat_unit spatial unit which will be used in conversion
 #' @param feat_type feature type which will be used in conversion
 #' @param spot_radius radius of the spots
-#' @param python_path path to python executable within a conda/miniconda 
+#' @param python_path path to python executable within a conda/miniconda
 #' environment
 #' @param env_name name of environment containing python_path executable
 #' @param save_directory directory in which the SpatialData object will be saved
 #'
 #' @return SpatialData object saved on disk.
-#' @details Function in beta. Converts and saves a Giotto object in SpatialData 
+#' @details Function in beta. Converts and saves a Giotto object in SpatialData
 #' format on disk.
 #' @export
 
@@ -4195,7 +4196,7 @@ giottoToSpatialData <- function(gobject = NULL,
         for (su in spat_unit) {
             gpoly <- getPolygonInfo(gobject, polygon_name = su)
             gpoly_sf <- as.sf(gpoly)
-            sf::st_write(gpoly_sf, paste0(temp, "shapes/", su, ".geojson"), 
+            sf::st_write(gpoly_sf, paste0(temp, "shapes/", su, ".geojson"),
                         delete_dsn = TRUE)
         }
     }
@@ -4206,7 +4207,7 @@ giottoToSpatialData <- function(gobject = NULL,
         for (ft in feat_type) {
             gpoint <- getFeatureInfo(gobject, feat_type = ft)
             gpoint_dt <- as.data.table(gpoint, geom = "XY")
-            fwrite(gpoint_dt, paste0(temp, "points/", ft, ".csv"), 
+            fwrite(gpoint_dt, paste0(temp, "points/", ft, ".csv"),
                     sep = ",", row.names = FALSE)
         }
     }
