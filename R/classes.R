@@ -321,6 +321,7 @@ setClass(
 
 #' @title Parameter Classes for Data Processing Operations
 #' @name processParam-class
+#' @aliases processParam
 #' @description
 #' Utility class that defines a data processing procedure and any params used
 #' in performing it. Packages defining processing methods will create their own
