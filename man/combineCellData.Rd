@@ -15,7 +15,8 @@ combineCellData(
   spat_enr_names = NULL,
   ext = NULL,
   xlim = NULL,
-  ylim = NULL
+  ylim = NULL,
+  remove_background_polygon = TRUE
 )
 }
 \arguments{
@@ -39,6 +40,11 @@ combineCellData(
 to the geometries.}
 
 \item{xlim, ylim}{numeric length of 2 (optional). x or y bounds to apply.}
+
+\item{remove_background_polygon}{logical (default = \code{TRUE}). \code{crop()} may
+sometimes produce extent-filling polygons when the original geometry is
+problematic or invalid. Set \code{TRUE} to remove these, based on whether a
+polygon fills up most of the x and y range.}
 }
 \value{
 data.table with combined spatial information
