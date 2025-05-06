@@ -9,7 +9,7 @@ processData(x, param, ...)
 \arguments{
 \item{x}{a data object}
 
-\item{param}{a \link{processParam} inheriting object}
+\item{param}{a \linkS4class{processParam} inheriting object}
 
 \item{...}{additional arguments, for use in specific methods}
 }
