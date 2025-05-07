@@ -321,6 +321,7 @@ setClass(
 
 #' @title Parameter Classes for Data Processing Operations
 #' @name processParam-class
+#' @aliases processParam
 #' @description
 #' Utility class that defines a data processing procedure and any params used
 #' in performing it. Packages defining processing methods will create their own
@@ -434,6 +435,14 @@ updateGiottoObject <- function(gobject) {
     if (is.null(attr(gobject, "h5_file"))) {
         attr(gobject, "h5_file") <- NA
         gobject@h5_file <- NULL
+    }
+
+    # ensure instructions are of correct type
+    inst <- instructions(gobject)
+    if (!inherits(inst, c("giottoInstructions", "NULL")) &&
+        inherits(inst, "list")) {
+        class(inst) <- c("giottoInstructions", "list")
+        instructions(gobject, initialize = FALSE) <- inst
     }
 
     # [Switch to GiottoClass versioning] --------------------------------------#
