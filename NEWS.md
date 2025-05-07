@@ -21,6 +21,7 @@
 - add fallback for when attributes do not match number of geometries in `createGiottoPolygon()` so that poly_ID col is not dropped
 - fix `calculateOverlap()`when raster aggregation finds polygons with no values
 - fix `createGiottoPolygon()` dispatch on `character` so that it can access poly cleanup params
+- fix incorrect `giottoInstructions` class in older objects now possible via `updateGiottoObject()`
 
 ## changes
 - `remove_background_poly` now defaults to `TRUE` during polygon ingestion
