@@ -437,6 +437,14 @@ updateGiottoObject <- function(gobject) {
         gobject@h5_file <- NULL
     }
 
+    # ensure instructions are of correct type
+    inst <- instructions(gobject)
+    if (!inherits(inst, c("giottoInstructions", "NULL")) &&
+        inherits(inst, "list")) {
+        class(inst) <- c("giottoInstructions", "list")
+        instructions(gobject, initialize = FALSE) <- inst
+    }
+
     # [Switch to GiottoClass versioning] --------------------------------------#
     # GiottoClass 0.1.2 adds max_window and colors slots to giottoLargeImage
     # this update function has been moved to .update_image_slot() below
