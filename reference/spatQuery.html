@@ -230,7 +230,7 @@ set of polygons attached to the giotto object.</p></dd>
 <span class="r-in"><span><span class="va">hex_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"ID_%d"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">6</span>, <span class="fl">8</span>, <span class="fl">17</span>, <span class="fl">19</span>, <span class="fl">23</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">box_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"ID_%d"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">14</span>, <span class="fl">15</span>, <span class="fl">16</span>, <span class="fl">22</span>, <span class="fl">41</span>, <span class="fl">44</span>, <span class="fl">45</span>, <span class="fl">51</span>, <span class="fl">52</span>, <span class="fl">62</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu">spatQueryGiottoPolygons</span><span class="op">(</span><span class="va">g</span>,</span></span>
+<span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu">spatQuery</span><span class="op">(</span><span class="va">g</span>,</span></span>
 <span class="r-in"><span>    filters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>        hexarray <span class="op">=</span> <span class="va">hex_ids</span>,</span></span>
 <span class="r-in"><span>        boxgrid <span class="op">=</span> <span class="va">box_ids</span>,</span></span>
@@ -238,12 +238,13 @@ set of polygons attached to the giotto object.</p></dd>
 <span class="r-in"><span>    <span class="op">)</span>,</span></span>
 <span class="r-in"><span>    return_gobject <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .check_filter_buffer_allowed(i = f_i, filters = filters, buffer = buffer):</span> object 'res' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> processing [hexarray] vs [boxgrid]...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> processing [boxgrid] vs [z0]...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Setting polygon info [query_polys]</span>
 <span class="r-in"><span><span class="co"># extract polys since we attached it to the giotto object</span></span></span>
 <span class="r-in"><span><span class="va">qp</span> <span class="op">&lt;-</span> <span class="va">g</span><span class="op">[[</span>, <span class="st">"query_polys"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in g[[, "query_polys"]][[1]]:</span> subscript out of bounds</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">qp2</span> <span class="op">&lt;-</span> <span class="fu">spatQueryGiottoPolygons</span><span class="op">(</span><span class="va">g</span>,</span></span>
+<span class="r-in"><span><span class="va">qp2</span> <span class="op">&lt;-</span> <span class="fu">spatQuery</span><span class="op">(</span><span class="va">g</span>,</span></span>
 <span class="r-in"><span>    filters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>        hexarray <span class="op">=</span> <span class="va">hex_ids</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>        boxgrid <span class="op">=</span> <span class="va">box_ids</span>,</span></span>
@@ -252,21 +253,20 @@ set of polygons attached to the giotto object.</p></dd>
 <span class="r-in"><span>    buffer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>hexarray <span class="op">=</span> <span class="fl">150</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    return_gobject <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .check_filter_buffer_allowed(i = f_i, filters = filters, buffer = buffer):</span> object 'res' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> processing [hexarray] vs [boxgrid]...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> processing [boxgrid] vs [z0]...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># check that extracted polys are being clipped as expected</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">pz0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">hexarray</span><span class="op">[</span><span class="va">hex_ids</span><span class="op">]</span>, border <span class="op">=</span> <span class="st">"blue"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">boxgrid</span><span class="op">[</span><span class="va">box_ids</span><span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">qp</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">rainbow</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># selection by hex and box</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'x' in selecting a method for function 'plot': object 'qp' not found</span>
 <span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="fu"><a href="buffer.html">buffer</a></span><span class="op">(</span><span class="va">hexarray</span><span class="op">[</span><span class="va">hex_ids</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, width <span class="op">=</span> <span class="fl">150</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># buffered hex</span></span></span>
-<span class="r-plt img"><img src="spatQuery-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">qp2</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># selection by buffered hex and box</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'x' in selecting a method for function 'plot': object 'qp2' not found</span>
+<span class="r-plt img"><img src="spatQuery-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># query for polys that fall within 100 units of a point</span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">spatQueryGiottoPolygons</span><span class="op">(</span><span class="va">g</span>,</span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">spatQuery</span><span class="op">(</span><span class="va">g</span>,</span></span>
 <span class="r-in"><span>    filters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>        pts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6500</span>, <span class="op">-</span><span class="fl">4900</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>        z0 <span class="op">=</span> <span class="st">"all"</span></span></span>
@@ -276,7 +276,7 @@ set of polygons attached to the giotto object.</p></dd>
 <span class="r-in"><span>    make_valid <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>    clip <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .check_filter_buffer_allowed(i = f_i, filters = filters, buffer = buffer):</span> object 'res' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> processing [pts] vs [z0]...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">pt_buffer</span> <span class="op">&lt;-</span> <span class="fu"><a href="createSpatLocsObj.html">createSpatLocsObj</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6500</span>, <span class="op">-</span><span class="fl">4900</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span></span>
 <span class="r-in"><span>    <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/as.points.html" class="external-link">as.points</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span></span>
@@ -284,15 +284,14 @@ set of polygons attached to the giotto object.</p></dd>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in createSpatLocsObj(c(6500, -4900)) %&gt;% terra::as.points() %&gt;%     buffer(100):</span> could not find function "%&gt;%"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">pz0</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="spatQuery-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">pt_buffer</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="st">"dodgerblue"</span><span class="op">)</span> <span class="co"># the selecting shape.</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'x' in selecting a method for function 'plot': object 'pt_buffer' not found</span>
 <span class="r-in"><span><span class="co"># note that clip = FALSE for this selection</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="plot-generic.html">plot</a></span><span class="op">(</span><span class="va">res</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'x' in selecting a method for function 'plot': object 'res' not found</span>
+<span class="r-plt img"><img src="spatQuery-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># only return the ids</span></span></span>
-<span class="r-in"><span><span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu">spatQueryGiottoPolygons</span><span class="op">(</span><span class="va">g</span>,</span></span>
+<span class="r-in"><span><span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu">spatQuery</span><span class="op">(</span><span class="va">g</span>,</span></span>
 <span class="r-in"><span>    filters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>        pts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6500</span>, <span class="op">-</span><span class="fl">4900</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>        z0 <span class="op">=</span> <span class="st">"all"</span></span></span>
@@ -301,14 +300,19 @@ set of polygons attached to the giotto object.</p></dd>
 <span class="r-in"><span>    return_ids <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>    make_valid <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .check_filter_buffer_allowed(i = f_i, filters = filters, buffer = buffer):</span> object 'res' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> processing [pts] vs [z0]...</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ids</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'ids' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "283905456529622685341101046014233199432"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "123860671559578247432410194986927758864"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "152684748256642370929802439227360458069"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "134398773695365619188678200952912609063"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "186988931894710833920932112634285943415"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6] "334199301045926627171760429217123408914"</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">ids</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'ids' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 73</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># only return the table of relations</span></span></span>
-<span class="r-in"><span><span class="va">tab</span> <span class="op">&lt;-</span> <span class="fu">spatQueryGiottoPolygons</span><span class="op">(</span><span class="va">g</span>,</span></span>
+<span class="r-in"><span><span class="va">tab</span> <span class="op">&lt;-</span> <span class="fu">spatQuery</span><span class="op">(</span><span class="va">g</span>,</span></span>
 <span class="r-in"><span>    filters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>        hexarray <span class="op">=</span> <span class="va">hex_ids</span>,</span></span>
 <span class="r-in"><span>        boxgrid <span class="op">=</span> <span class="va">box_ids</span>,</span></span>
@@ -317,9 +321,45 @@ set of polygons attached to the giotto object.</p></dd>
 <span class="r-in"><span>    return_table <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>    make_valid <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .check_filter_buffer_allowed(i = f_i, filters = filters, buffer = buffer):</span> object 'res' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> processing [hexarray] vs [boxgrid]...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> processing [boxgrid] vs [z0]...</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/force.html" class="external-link">force</a></span><span class="op">(</span><span class="va">tab</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'tab' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                     poly_ID hexarray boxgrid</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                      &lt;char&gt;   &lt;char&gt;  &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1: 251905496166492083168644493421091558216     ID_3   ID_15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2: 115370283894795045523368609208878185314     ID_3   ID_15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3: 313341882093478712453835418083823400203     ID_3   ID_16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4: 165786478473465185470745991122188406667     ID_6   ID_12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5: 176844289786228093052039491926955764947     ID_6   ID_12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6: 176844289786228093052039491926955764947     ID_6   ID_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: 262996653580953175020435707363716649390     ID_6   ID_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8: 153751792203577791006158581642177087065     ID_6   ID_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:  48024672048124996997588408479044670509     ID_6   ID_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:  15242486364109501724975900940581726845     ID_6   ID_22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:  51755314931016750193347838201084403236     ID_8   ID_14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:  20548793658722995878220914240286086757     ID_8   ID_14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13: 182235958169292445695483205478317795477     ID_8   ID_14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14: 230344318208995342827768566280706457626     ID_8   ID_14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15: 115370283894795045523368609208878185314     ID_8   ID_15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:  36648998424868029072860674954666559763    ID_17   ID_41</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:  39033692777509843205319060807429911979    ID_17   ID_41</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18: 278393157796816366316911857085286324582    ID_17   ID_51</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:  87260224659312905497866017323180367450    ID_17   ID_51</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20: 150082699777048696177232440639953146354    ID_17   ID_52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21: 101161259912191124732236989250178928032    ID_17   ID_52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22: 110900719814678261966908552089216814729    ID_19   ID_44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23:  64228015236811922665804882776457047292    ID_19   ID_44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24: 291975341311453330406711526698967834209    ID_19   ID_44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25:  15834776842182822801451197571763335013    ID_19   ID_44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26:   3942785923272820952395109293003259310    ID_19   ID_45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27:  87260224659312905497866017323180367450    ID_23   ID_51</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28: 101161259912191124732236989250178928032    ID_23   ID_52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29: 224458376429228506642398057779371677646    ID_23   ID_52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30: 306415949245581212081161219410047325001    ID_23   ID_62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31:  68418314542386876178693610244900595267    ID_23   ID_62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32:  47275912178029130797780898068213599096    ID_23   ID_62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33:  62669443199671326763841071380380779477    ID_23   ID_62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                     poly_ID hexarray boxgrid</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
