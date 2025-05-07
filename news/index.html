@@ -70,6 +70,8 @@
 <li>add fallback for when attributes do not match number of geometries in <code><a href="../reference/createGiottoPolygon.html">createGiottoPolygon()</a></code> so that poly_ID col is not dropped</li>
 <li>fix <code><a href="../reference/calculateOverlap.html">calculateOverlap()</a></code>when raster aggregation finds polygons with no values</li>
 <li>fix <code><a href="../reference/createGiottoPolygon.html">createGiottoPolygon()</a></code> dispatch on <code>character</code> so that it can access poly cleanup params</li>
+<li>fix incorrect <code>giottoInstructions</code> class in older objects now possible via <code><a href="../reference/updateGiottoObject.html">updateGiottoObject()</a></code>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="changes-0-4-7">changes<a class="anchor" aria-label="anchor" href="#changes-0-4-7"></a></h3>
@@ -78,7 +80,7 @@
 <li>move {magick} from imports to suggests</li>
 <li>{terra} <code>&gt;=v1.8-21</code>
 </li>
-<li>deprecate <code><a href="../reference/spatQueryGiottoPolygons.html">spatQueryGiottoPolygons()</a></code> in favor of more general <code>spatQuery()</code>
+<li>deprecate <code><a href="../reference/spatQuery.html">spatQueryGiottoPolygons()</a></code> in favor of more general <code><a href="../reference/spatQuery.html">spatQuery()</a></code>
 </li>
 <li>deprecate <code><a href="../reference/tif_metadata.html">ometif_metadata()</a></code> in favor of <code><a href="../reference/tif_metadata.html">tif_metadata()</a></code>
 </li>
@@ -104,7 +106,7 @@
 <li>large improvements to anndata and spatialdata converters (see <a href="https://github.com/drieslab/GiottoClass/pull/294" class="external-link">#294</a>)</li>
 <li>
 <code>spatLocsObj</code> can now be created from <code>numeric</code> xy pairs and xyz triplets</li>
-<li>improvements to <code>spatQuery()</code>
+<li>improvements to <code><a href="../reference/spatQuery.html">spatQuery()</a></code>
 </li>
 <li>add support for qptiff in <code><a href="../reference/tif_metadata.html">tif_metadata()</a></code> and <code><a href="../reference/to_simple_tif.html">to_simple_tif()</a></code>
 </li>
