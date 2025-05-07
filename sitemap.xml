@@ -279,8 +279,6 @@
 <url><loc>https://drieslab.github.io/GiottoClass/reference/nnNetObj-class.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/objHistory.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/objectlist_name_utils.html</loc></url>
-<url><loc>https://drieslab.github.io/GiottoClass/reference/ometif_metadata.html</loc></url>
-<url><loc>https://drieslab.github.io/GiottoClass/reference/ometif_to_tif.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/overlapImagesToMatrix.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/overlapToMatrix.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/overlapToMatrixMultiPoly.html</loc></url>
@@ -291,7 +289,7 @@
 <url><loc>https://drieslab.github.io/GiottoClass/reference/polyStamp.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/polygon_to_raster.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/processData.html</loc></url>
-<url><loc>https://drieslab.github.io/GiottoClass/reference/processParam.html</loc></url>
+<url><loc>https://drieslab.github.io/GiottoClass/reference/processParam-class.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/r_spatial_conversions.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/rbind-generic.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/rbind2_giotto_polygon_hetero.html</loc></url>
@@ -395,10 +393,12 @@
 <url><loc>https://drieslab.github.io/GiottoClass/reference/subset_dollar.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/subset_giotto.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/subset_giotto_subobjects.html</loc></url>
-<url><loc>https://drieslab.github.io/GiottoClass/reference/svKey.html</loc></url>
+<url><loc>https://drieslab.github.io/GiottoClass/reference/svkey-class.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/t_flex.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/terraVectData-class.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/tessellate.html</loc></url>
+<url><loc>https://drieslab.github.io/GiottoClass/reference/tif_metadata.html</loc></url>
+<url><loc>https://drieslab.github.io/GiottoClass/reference/to_simple_tif.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/transpose.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/updateGiottoImage.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/updateGiottoImageMG.html</loc></url>
