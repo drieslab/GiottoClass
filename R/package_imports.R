@@ -12,7 +12,7 @@
 #' @importFrom graphics legend par rect
 #' @importMethodsFrom terra spin flip rescale t
 #' @importMethodsFrom Matrix t
-#' @importMethodsFrom terra ext ext<- convHull minCircle minRect
+#' @importMethodsFrom terra ext ext<- hull
 #' @importMethodsFrom terra plot
 #' @importMethodsFrom terra wrap
 #' @importMethodsFrom terra zoom
@@ -23,7 +23,6 @@
 #' @importMethodsFrom terra as.data.frame as.polygons as.points
 #' @importMethodsFrom terra nrow ncol
 #' @importMethodsFrom terra hist density
-#' @importMethodsFrom terra area
 #' @importClassesFrom terra SpatExtent SpatVector
 #' @import GiottoUtils
 #' @import data.table
