@@ -7,6 +7,7 @@
 #' @param x any of giotto image, giottoPolygon, giottoPoints, spatLocsObj, SpatVector
 #' @param by character (variable name), to get a new geometry for groups of input geometries
 #' @inheritParams terra::hull
+#' @inheritDotParams terra::hull
 #' @examples
 #' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
 #' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")

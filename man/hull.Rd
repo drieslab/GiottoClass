@@ -29,6 +29,12 @@ convHull(x, ...)
 \item{allowHoles}{logical. May the output polygons contain holes? For "concave_*" methods only}
 
 \item{tight}{logical. Should the hull follow the outer boundaries of the input polygons? For "concave_length" with polygon geometry only}
+
+\item{...}{
+  Arguments passed on to \code{\link[terra:convhull]{terra::hull}}
+  \describe{
+    \item{\code{}}{}
+  }}
 }
 \value{
 SpatVector
