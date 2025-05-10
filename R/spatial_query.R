@@ -43,6 +43,8 @@
 #' permitted if is also the the last item in `filter`. Unbuffered points may
 #' only return results as IDs (`return_ids = TRUE`). Do note that buffering on
 #' a large number of elements can cause significant slowdowns.
+#' @param make_valid logical (default = `FALSE`). Whether to make geometries
+#' valid before using them. Set `TRUE` if topology errors show up.
 #' @param combine_fragments logical. (default = `FALSE`). Whether to combine
 #' geoms fragmented by the intersections as multipolygons based on the
 #' `poly_ID` col. If `TRUE`, the operation may introduce `NA`s in the spatial
@@ -79,7 +81,7 @@
 #' hex_ids <- sprintf("ID_%d", c(1, 3, 6, 8, 17, 19, 23))
 #' box_ids <- sprintf("ID_%d", c(12, 14, 15, 16, 22, 41, 44, 45, 51, 52, 62))
 #'
-#' g <- spatQueryGiottoPolygons(g,
+#' g <- spatQuery(g,
 #'     filters = list(
 #'         hexarray = hex_ids,
 #'         boxgrid = box_ids,
@@ -90,7 +92,7 @@
 #' # extract polys since we attached it to the giotto object
 #' qp <- g[[, "query_polys"]][[1]]
 #'
-#' qp2 <- spatQueryGiottoPolygons(g,
+#' qp2 <- spatQuery(g,
 #'     filters = list(
 #'         hexarray = hex_ids[3],
 #'         boxgrid = box_ids,
@@ -109,7 +111,7 @@
 #' plot(qp2, col = "black", add = TRUE) # selection by buffered hex and box
 #'
 #' # query for polys that fall within 100 units of a point
-#' res <- spatQueryGiottoPolygons(g,
+#' res <- spatQuery(g,
 #'     filters = list(
 #'         pts = c(6500, -4900),
 #'         z0 = "all"
@@ -120,9 +122,10 @@
 #'     clip = FALSE
 #' )
 #'
-#' pt_buffer <- createSpatLocsObj(c(6500, -4900)) %>%
-#'     terra::as.points() %>%
-#'     buffer(100)
+#' pt_buffer <- buffer(
+#'     as.points(createSpatLocsObj(c(6500, -4900))),
+#'     100
+#' )
 #'
 #' plot(pz0)
 #' plot(pt_buffer, add = TRUE, border = "dodgerblue") # the selecting shape.
@@ -130,7 +133,7 @@
 #' plot(res, col = "red", add = TRUE)
 #'
 #' # only return the ids
-#' ids <- spatQueryGiottoPolygons(g,
+#' ids <- spatQuery(g,
 #'     filters = list(
 #'         pts = c(6500, -4900),
 #'         z0 = "all"
@@ -143,7 +146,7 @@
 #' length(ids)
 #'
 #' # only return the table of relations
-#' tab <- spatQueryGiottoPolygons(g,
+#' tab <- spatQuery(g,
 #'     filters = list(
 #'         hexarray = hex_ids,
 #'         boxgrid = box_ids,
@@ -219,7 +222,7 @@ spatQuery <- function(gobject,
 
     # check buffer behavior
     for (f_i in seq_along(filters)) {
-        b_res <- .check_filter_buffer_allowed(
+        .check_filter_buffer_allowed(
             i = f_i,
             filters = filters,
             buffer = buffer
@@ -316,7 +319,7 @@ spatQuery <- function(gobject,
 
     # checks are only relevant for point classes.
     # poly can be buffered or not whenever
-    if (!is_point_class) return(res)
+    if (!is_point_class) return(invisible())
 
     if (i == length(filters)) { # if last filter
         if (!has_buffer) {

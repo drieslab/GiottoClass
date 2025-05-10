@@ -74,6 +74,9 @@ permitted if is also the the last item in \code{filter}. Unbuffered points may
 only return results as IDs (\code{return_ids = TRUE}). Do note that buffering on
 a large number of elements can cause significant slowdowns.}
 
+\item{make_valid}{logical (default = \code{FALSE}). Whether to make geometries
+valid before using them. Set \code{TRUE} if topology errors show up.}
+
 \item{combine_fragments}{logical. (default = \code{FALSE}). Whether to combine
 geoms fragmented by the intersections as multipolygons based on the
 \code{poly_ID} col. If \code{TRUE}, the operation may introduce \code{NA}s in the spatial
@@ -133,7 +136,7 @@ g <- setGiotto(g, hexarray)
 hex_ids <- sprintf("ID_\%d", c(1, 3, 6, 8, 17, 19, 23))
 box_ids <- sprintf("ID_\%d", c(12, 14, 15, 16, 22, 41, 44, 45, 51, 52, 62))
 
-g <- spatQueryGiottoPolygons(g,
+g <- spatQuery(g,
     filters = list(
         hexarray = hex_ids,
         boxgrid = box_ids,
@@ -144,7 +147,7 @@ g <- spatQueryGiottoPolygons(g,
 # extract polys since we attached it to the giotto object
 qp <- g[[, "query_polys"]][[1]]
 
-qp2 <- spatQueryGiottoPolygons(g,
+qp2 <- spatQuery(g,
     filters = list(
         hexarray = hex_ids[3],
         boxgrid = box_ids,
@@ -163,7 +166,7 @@ plot(buffer(hexarray[hex_ids[3]], width = 150), add = TRUE) # buffered hex
 plot(qp2, col = "black", add = TRUE) # selection by buffered hex and box
 
 # query for polys that fall within 100 units of a point
-res <- spatQueryGiottoPolygons(g,
+res <- spatQuery(g,
     filters = list(
         pts = c(6500, -4900),
         z0 = "all"
@@ -174,9 +177,10 @@ res <- spatQueryGiottoPolygons(g,
     clip = FALSE
 )
 
-pt_buffer <- createSpatLocsObj(c(6500, -4900)) \%>\%
-    terra::as.points() \%>\%
-    buffer(100)
+pt_buffer <- buffer(
+    as.points(createSpatLocsObj(c(6500, -4900))),
+    100
+)
 
 plot(pz0)
 plot(pt_buffer, add = TRUE, border = "dodgerblue") # the selecting shape.
@@ -184,7 +188,7 @@ plot(pt_buffer, add = TRUE, border = "dodgerblue") # the selecting shape.
 plot(res, col = "red", add = TRUE)
 
 # only return the ids
-ids <- spatQueryGiottoPolygons(g,
+ids <- spatQuery(g,
     filters = list(
         pts = c(6500, -4900),
         z0 = "all"
@@ -197,7 +201,7 @@ head(ids)
 length(ids)
 
 # only return the table of relations
-tab <- spatQueryGiottoPolygons(g,
+tab <- spatQuery(g,
     filters = list(
         hexarray = hex_ids,
         boxgrid = box_ids,
