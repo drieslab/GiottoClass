@@ -13,7 +13,11 @@
 \arguments{
 \item{x}{\code{giottoPolygon}}
 
-\item{...}{additional args to pass}
+\item{...}{
+  Arguments passed on to \code{\link[terra:expanse]{terra::expanse}}
+  \describe{
+    \item{\code{}}{}
+  }}
 }
 \value{
 \code{numeric} vector of spatial area
@@ -21,17 +25,23 @@
 \description{
 Compute the area covered by polygons
 }
+\details{
+Giotto's methods do not hook into terra's \code{area()} generic. This is because
+\code{area()} in terra is deprecated in favor of \code{expanse()}. Additionally,
+Giotto suppresses warnings about unrecognized CRS, which are currently not
+as relevant for biological data.
+}
 \examples{
 sl <- GiottoData::loadSubObjectMini("spatLocsObj")
 gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
 gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
 
 # area of polygons
-area(gpoly)
+head(area(gpoly))
 
 # area of the convex hull
-area(convHull(sl))
-feature_hulls <- convHull(gpoints, by = "feat_ID")
-area(feature_hulls)
+area(hull(sl))
+feature_hulls <- hull(gpoints, by = "feat_ID")
+head(area(feature_hulls))
 
 }
