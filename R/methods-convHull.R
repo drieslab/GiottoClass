@@ -1,60 +1,76 @@
 # docs ----------------------------------------------------------- #
-#' @title Convex hull, minimal bounding rotated rectangle, and minimal bounding circle
-#' @name convHull
-#' @aliases minRect minCircle
-#' @description Get the convex hull, the minimal bounding rotated rectangle,
-#' or minimal bounding circle of a Giotto spatial object or terra SpatVector
+#' @title Convex, concave, rectangular and circular hulls
+#' @name hull
+#' @aliases minRect minCircle convHull
+#' @description Compute a hull around Giotto spatial object or terra SpatVector.
+#' The concaveness of the concave hull can be specified in different ways.
 #' @param x any of giotto image, giottoPolygon, giottoPoints, spatLocsObj, SpatVector
 #' @param by character (variable name), to get a new geometry for groups of input geometries
-#' @param \dots additional parameters to pass
+#' @inheritParams terra::hull
 #' @examples
 #' sl <- GiottoData::loadSubObjectMini("spatLocsObj")
 #' gpoints <- GiottoData::loadSubObjectMini("giottoPoints")
 #'
-#' h <- convHull(sl)
+#' h <- hull(sl)
 #' plot(h)
 #'
-#' r <- minRect(sl)
+#' r <- hull(sl, type = "rectangle")
 #' plot(r)
 #'
-#' circ <- minCircle(gpoints, by = "feat_ID")
+#' circ <- hull(gpoints, type = "circle", by = "feat_ID")
 #' plot(circ, border = rainbow(100))
+#'
+#' plot(hull(sl, type = "concave_ratio", param = 0.15, allowHoles = FALSE))
 #'
 #' @returns SpatVector
 NULL
 # ---------------------------------------------------------------- #
 
-#' @rdname convHull
+#' @rdname hull
 #' @export
-setMethod("convHull", signature("spatLocsObj"), function(x, by = "", ...) {
-    convHull(x = as.points(x), by = by, ...)
+setMethod("hull", signature("spatLocsObj"), function(x, by = "", param = 1, allowHoles = TRUE, tight = TRUE, ...) {
+    hull(
+        x = as.points(x),
+        by = by,
+        param = param,
+        allowHoles = allowHoles,
+        tight = tight,
+        ...
+    )
 })
-#' @rdname convHull
+#' @rdname hull
 #' @export
-setMethod("convHull", signature("giottoSpatial"), function(x, by = "", ...) {
-    convHull(x[], by = by, ...)
+setMethod("hull", signature("giottoSpatial"), function(x, by = "", param = 1, allowHoles = TRUE, tight = TRUE, ...) {
+    hull(
+        x = x[],
+        by = by,
+        param = param,
+        allowHoles = allowHoles,
+        tight = tight,
+        ...
+    )
 })
 
+#' @rdname hull
+#' @export
+minRect <- function(x, ...) {
+    warning("minRect() is deprecated. Please use hull() in the future.",
+            call. = FALSE)
+    hull(x, type = "rectangle", ...)
+}
 
-#' @rdname convHull
+#' @rdname hull
 #' @export
-setMethod("minRect", signature("spatLocsObj"), function(x, by = "", ...) {
-    minRect(x = as.points(x), by = by, ...)
-})
-#' @rdname convHull
-#' @export
-setMethod("minRect", signature("giottoSpatial"), function(x, by = "", ...) {
-    minRect(x[], by = by, ...)
-})
+minCircle <- function(x, ...) {
+    warning("minCircle() is deprecated. Please use hull() in the future.",
+            call. = FALSE)
+    hull(x, type = "circle", ...)
+}
 
-
-#' @rdname convHull
+#' @rdname hull
 #' @export
-setMethod("minCircle", signature("spatLocsObj"), function(x, by = "", ...) {
-    minCircle(x = as.points(x), by = by, ...)
-})
-#' @rdname convHull
-#' @export
-setMethod("minCircle", signature("giottoSpatial"), function(x, by = "", ...) {
-    minCircle(x[], by = by, ...)
-})
+convHull <- function(x, ...) {
+    warning("convHull() is deprecated. Please use hull() in the future.",
+            call. = FALSE)
+    hull(x, type = "convex", ...)
+}

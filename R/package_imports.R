@@ -12,7 +12,7 @@
 #' @importFrom graphics legend par rect
 #' @importMethodsFrom terra spin flip rescale t
 #' @importMethodsFrom Matrix t
-#' @importMethodsFrom terra ext ext<- convHull minCircle minRect
+#' @importMethodsFrom terra ext ext<- hull
 #' @importMethodsFrom terra plot
 #' @importMethodsFrom terra wrap
 #' @importMethodsFrom terra zoom
