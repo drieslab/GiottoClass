@@ -74,6 +74,9 @@ permitted if is also the the last item in \code{filter}. Unbuffered points may
 only return results as IDs (\code{return_ids = TRUE}). Do note that buffering on
 a large number of elements can cause significant slowdowns.}
 
+\item{make_valid}{logical (default = \code{FALSE}). Whether to make geometries
+valid before using them. Set \code{TRUE} if topology errors show up.}
+
 \item{combine_fragments}{logical. (default = \code{FALSE}). Whether to combine
 geoms fragmented by the intersections as multipolygons based on the
 \code{poly_ID} col. If \code{TRUE}, the operation may introduce \code{NA}s in the spatial
@@ -174,9 +177,10 @@ res <- spatQuery(g,
     clip = FALSE
 )
 
-pt_buffer <- createSpatLocsObj(c(6500, -4900)) \%>\%
-    terra::as.points() \%>\%
-    buffer(100)
+pt_buffer <- buffer(
+    as.points(createSpatLocsObj(c(6500, -4900))),
+    100
+)
 
 plot(pz0)
 plot(pt_buffer, add = TRUE, border = "dodgerblue") # the selecting shape.
