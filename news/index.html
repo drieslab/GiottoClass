@@ -72,6 +72,8 @@
 <li>fix <code><a href="../reference/createGiottoPolygon.html">createGiottoPolygon()</a></code> dispatch on <code>character</code> so that it can access poly cleanup params</li>
 <li>fix incorrect <code>giottoInstructions</code> class in older objects now possible via <code><a href="../reference/updateGiottoObject.html">updateGiottoObject()</a></code>
 </li>
+<li>Remove imports on deprecated {terra} <code><a href="../reference/hull.html">convHull()</a></code>, <code><a href="../reference/hull.html">minRect()</a></code>, <code><a href="../reference/hull.html">minCircle()</a></code>, in favor of <code><a href="../reference/hull.html">hull()</a></code> usage <a href="https://github.com/drieslab/Giotto/issues/1153" class="external-link">#1153</a> by demographix</li>
+<li>Remove import on {terra} <code><a href="../reference/area.html">area()</a></code>, define as new generic from {GiottoClass}</li>
 </ul></div>
 <div class="section level3">
 <h3 id="changes-0-4-7">changes<a class="anchor" aria-label="anchor" href="#changes-0-4-7"></a></h3>
@@ -204,7 +206,7 @@
 <div class="section level3">
 <h3 id="breaking-changes-0-4-0">breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-4-0"></a></h3>
 <ul><li>stop exporting deprecated internal accessors</li>
-<li>terra requirement raised to 1.7.41 for <code><a href="../reference/convHull.html">minCircle()</a></code>
+<li>terra requirement raised to 1.7.41 for <code><a href="../reference/hull.html">minCircle()</a></code>
 </li>
 </ul></div>
 <div class="section level3">
@@ -265,7 +267,7 @@
 <li>
 <code><a href="../reference/XY.html">XY()</a></code> and <code>XY&lt;-()</code> for accessing and setting coordinate values of subobjects as <code>matrix</code>
 </li>
-<li>terra <code><a href="../reference/convHull.html">convHull()</a></code>, <code><a href="../reference/convHull.html">minRect()</a></code>, <code><a href="../reference/convHull.html">minCircle()</a></code> for Giotto spatial vector classes</li>
+<li>terra <code><a href="../reference/hull.html">convHull()</a></code>, <code><a href="../reference/hull.html">minRect()</a></code>, <code><a href="../reference/hull.html">minCircle()</a></code> for Giotto spatial vector classes</li>
 <li>
 <code><a href="../reference/area.html">area()</a></code> for <code>SpatVector</code> and <code>giottoPolygon</code>
 </li>

@@ -70,7 +70,6 @@
 <url><loc>https://drieslab.github.io/GiottoClass/reference/combineToMultiPolygon.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/combine_split_geoms.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/compatible_spatial_network.html</loc></url>
-<url><loc>https://drieslab.github.io/GiottoClass/reference/convHull.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/convertGiottoLargeImageToMG.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/convert_mgImage_to_array_DT.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/convert_to_full_spatial_network.html</loc></url>
@@ -238,6 +237,7 @@
 <url><loc>https://drieslab.github.io/GiottoClass/reference/giotto_schema.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/hexVertices.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/hist.html</loc></url>
+<url><loc>https://drieslab.github.io/GiottoClass/reference/hull.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/index.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/init_cell_metadata.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/init_feat_metadata.html</loc></url>
