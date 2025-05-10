@@ -43,6 +43,8 @@
 #' permitted if is also the the last item in `filter`. Unbuffered points may
 #' only return results as IDs (`return_ids = TRUE`). Do note that buffering on
 #' a large number of elements can cause significant slowdowns.
+#' @param make_valid logical (default = `FALSE`). Whether to make geometries
+#' valid before using them. Set `TRUE` if topology errors show up.
 #' @param combine_fragments logical. (default = `FALSE`). Whether to combine
 #' geoms fragmented by the intersections as multipolygons based on the
 #' `poly_ID` col. If `TRUE`, the operation may introduce `NA`s in the spatial
@@ -120,9 +122,10 @@
 #'     clip = FALSE
 #' )
 #'
-#' pt_buffer <- createSpatLocsObj(c(6500, -4900)) %>%
-#'     terra::as.points() %>%
-#'     buffer(100)
+#' pt_buffer <- buffer(
+#'     as.points(createSpatLocsObj(c(6500, -4900))),
+#'     100
+#' )
 #'
 #' plot(pz0)
 #' plot(pt_buffer, add = TRUE, border = "dodgerblue") # the selecting shape.
