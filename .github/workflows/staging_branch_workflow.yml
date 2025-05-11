@@ -55,7 +55,7 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
-          use-public-rspm: false
+          use-public-rspm: true
 
       - name: Set up dependencies (general)
         uses: r-lib/actions/setup-r-dependencies@v2
@@ -109,9 +109,9 @@ jobs:
       - name: report versions
         shell: Rscript {0}
         run: |
-          print(cat(paste("terra:", packageVersion("terra"))))
-          print(cat(paste("sf:", packageVersion("sf"))))
-          print(cat(paste("sf:", packageVersion("SpatialExperiment"))))
+          print(paste("terra:", packageVersion("terra")))
+          print(paste("sf:", packageVersion("sf")))
+          print(paste("SpatialExperiment:", packageVersion("SpatialExperiment")))
 
       - name: setup giotto_env
         shell: Rscript {0}
