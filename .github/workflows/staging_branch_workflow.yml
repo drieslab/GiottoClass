@@ -1,8 +1,11 @@
 # Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
-  push:
+    push:
     branches: [ staging ]
+    schedule:
+        - cron: '0 0 * * 0'  # Run at midnight every Sunday
+    workflow_dispatch:      # Allow manual trigger
 
 name: STAGING final checks
 
@@ -40,7 +43,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install --cask xquartz
-          
+
       - name: Install X11 on Ubuntu
         if: runner.os == 'Linux'
         run: |
@@ -52,7 +55,7 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
-          use-public-rspm: true
+          use-public-rspm: false
 
       - name: Set up dependencies (general)
         uses: r-lib/actions/setup-r-dependencies@v2
@@ -103,21 +106,28 @@ jobs:
         with:
           python-version: "3.10"
 
+      - name: report versions
+        shell: Rscript {0}
+        run: |
+          print(cat(paste("terra:", packageVersion("terra"))))
+          print(cat(paste("sf:", packageVersion("sf"))))
+          print(cat(paste("sf:", packageVersion("SpatialExperiment"))))
+
       - name: setup giotto_env
         shell: Rscript {0}
         run: |
           if (!GiottoClass::checkGiottoEnvironment()) {
             GiottoClass::installGiottoEnvironment()
           }
-          
+
           reticulate::conda_install(
             envname = 'giotto_env',
             packages = 'scanpy',
             pip = TRUE
           )
-          
+
           path_to_python <- GiottoClass::set_giotto_python_path()
-          
+
           writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
                      Sys.getenv("GITHUB_ENV"))
 
@@ -161,7 +171,7 @@ jobs:
         shell: Rscript {0}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-  
+
   bioccheck:
     needs: R-CMD-check
     runs-on: ubuntu-latest
