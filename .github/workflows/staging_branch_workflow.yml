@@ -4,7 +4,7 @@ on:
   push:
     branches: [ staging ]
   schedule:
-    - cron: '0 0 * * 0'  # Run at midnight every Sunday
+    - cron: '0 0 * * 1,4'  # Run at midnight on Monday and Thursday
   workflow_dispatch:      # Allow manual trigger
 
 name: STAGING final checks
@@ -55,7 +55,7 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
-          use-public-rspm: true
+          use-public-rspm: false
 
       - name: Set up dependencies (general)
         uses: r-lib/actions/setup-r-dependencies@v2
