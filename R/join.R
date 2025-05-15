@@ -691,7 +691,6 @@ joinGiottoObjects <- function(gobject_list,
         for (gobj_i in seq_along(updated_object_list)) {
             gpoly <- getPolygonInfo(
                 updated_object_list[[gobj_i]],
-                polygon_name = spat_info,
                 return_giottoPolygon = TRUE
             )
             spat_information_vector <- gpoly[]

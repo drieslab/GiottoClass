@@ -3,7 +3,6 @@
 \docType{class}
 \name{processParam-class}
 \alias{processParam-class}
-\alias{processParam}
 \title{Parameter Classes for Data Processing Operations}
 \description{
 Utility class that defines a data processing procedure and any params used

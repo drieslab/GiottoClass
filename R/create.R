@@ -2406,12 +2406,7 @@ NULL
 #' @export
 setMethod(
     "createGiottoPolygon", signature("character"),
-    function(x,
-        remove_background_polygon = TRUE,
-        background_algo = "range",
-        make_valid = FALSE,
-        verbose = TRUE,
-        ...) {
+    function(x, ...) {
         checkmate::assert_file_exists(x)
 
         # try success means it should be mask file
@@ -2430,30 +2425,11 @@ setMethod(
 
         # mask workflow
         if (inherits(try_rast, "SpatRaster")) {
-            return(createGiottoPolygon(try_rast,
-                remove_background_polygon = remove_background_polygon,
-                background_algo = background_algo,
-                verbose = verbose,
-                ...
-            ))
+            return(createGiottoPolygon(try_rast, ...))
         }
 
         # file workflow
-        reslist <- .evaluate_spatial_info(x,
-            make_valid = make_valid,
-            verbose = verbose
-        )
-
-        sv <- reslist$spatvector
-
-        if (isTRUE(remove_background_polygon)) {
-            sv <- .remove_background_polygon(sv,
-                background_algo = background_algo,
-                verbose = verbose
-            )
-        }
-
-        createGiottoPolygon(sv, ...)
+        return(createGiottoPolygon(x = terra::vect(x), ...))
     }
 )
 
@@ -2562,7 +2538,7 @@ setMethod(
 #' @param mask_method how the mask file defines individual segmentation
 #' annotations. See *mask_method* section
 #' @param remove_background_polygon try to remove background
-#' polygon (default: TRUE)
+#' polygon (default: FALSE)
 #' @param background_algo algorithm to remove background polygon
 #' @param fill_holes fill holes within created polygons
 #' @param poly_IDs character vector. Default = NULL. Custom unique names for
@@ -2605,7 +2581,7 @@ createGiottoPolygonsFromMask <- function(
         maskfile,
         mask_method = c("guess", "single", "multiple"),
         name = "cell",
-        remove_background_polygon = TRUE,
+        remove_background_polygon = FALSE,
         background_algo = c("range"),
         fill_holes = TRUE,
         poly_IDs = NULL,
@@ -2760,10 +2736,26 @@ createGiottoPolygonsFromMask <- function(
 
     ## remove background polygon ##
     if (isTRUE(remove_background_polygon)) {
-        terra_polygon <- .remove_background_polygon(terra_polygon,
-            background_algo = background_algo,
-            verbose = verbose
-        )
+        if (background_algo == "range") {
+            backgr_poly_id <- .identify_background_range_polygons(
+                terra_polygon
+            )
+            if (length(backgr_poly_id) > 1L) {
+                warning("More than one background poly found.")
+            }
+        }
+
+        if (length(backgr_poly_id) > 0) {
+            vmsg(.v = verbose, sprintf(
+                "removed background poly.\n ID was: %s",
+                backgr_poly_id
+            ))
+
+            terra_polygon <- terra::subset(
+                x = terra_polygon,
+                terra_polygon[["poly_ID"]] != backgr_poly_id
+            )
+        }
     }
 
 
@@ -2885,8 +2877,6 @@ createGiottoPolygonsFromGeoJSON <- function(GeoJSON,
     name = "cell",
     calc_centroids = FALSE,
     make_valid = FALSE,
-    remove_background_polygon = TRUE,
-    background_algo = "range",
     verbose = TRUE) {
     eval_list <- .evaluate_spatial_info(
         spatial_info = GeoJSON,
@@ -2896,14 +2886,6 @@ createGiottoPolygonsFromGeoJSON <- function(GeoJSON,
 
     spatvector <- eval_list$spatvector
     unique_IDs <- eval_list$unique_IDs
-
-    ## remove background polygon ##
-    if (isTRUE(remove_background_polygon)) {
-        spatvector <- .remove_background_polygon(spatvector,
-            background_algo = background_algo,
-            verbose = verbose
-        )
-    }
 
     g_polygon <- create_giotto_polygon_object(
         name = name,
@@ -2928,30 +2910,7 @@ createGiottoPolygonsFromGeoJSON <- function(GeoJSON,
 
 
 
-.remove_background_polygon <- function(x,
-    background_algo = "range",
-    verbose = NULL) {
-    ## remove background polygon ##
-    if (background_algo == "range") {
-        backgr_poly_id <- .identify_background_range_polygons(x)
-        if (length(backgr_poly_id) > 1L) {
-            warning("More than one background poly found.")
-        }
-    }
 
-    if (length(backgr_poly_id) > 0) {
-        vmsg(.v = verbose, sprintf(
-            "removed background poly.\n ID was: %s",
-            backgr_poly_id
-        ))
-
-        x <- terra::subset(
-            x = x,
-            x[["poly_ID"]] != backgr_poly_id
-        )
-    }
-    x
-}
 
 
 #' @title Create a giotto polygon object

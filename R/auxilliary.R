@@ -454,7 +454,24 @@ addCellMetadata <- function(gobject,
     )
 
 
-    # 1. get the cell metadata to add to
+    # 1. check hierarchical slots
+    # Expression information must first exist in the gobject for the
+    # corresponding metadata information to be added.
+    avail_ex <- list_expression(
+        gobject = gobject,
+        spat_unit = spat_unit,
+        feat_type = feat_type
+    )
+    if (is.null(avail_ex)) {
+        .gstop(
+            "No matching expression information discovered for:
+            spat_unit:", spat_unit, "\nfeature type:", feat_type,
+            "\nPlease add expression information first"
+        )
+    }
+
+
+    # 2. get the cell metadata to add to
     cell_metadata <- getCellMetadata(
         gobject,
         spat_unit = spat_unit,
@@ -467,7 +484,7 @@ addCellMetadata <- function(gobject,
     ordered_cell_IDs <- spatIDs(cell_metadata)
 
 
-    # 2. format input metadata
+    # 3. format input metadata
     # [vector/factor input]
     # Values are assumed to be in the same order as the existing metadata info.
     # Convert vector or factor into a single-column data.table
@@ -506,7 +523,7 @@ addCellMetadata <- function(gobject,
     }
 
 
-    # 3. combine with existing metadata
+    # 4. combine with existing metadata
     # get old and new meta colnames that are not the ID col
     new_col_names <- colnames(new_metadata)
     new_col_names <- new_col_names[new_col_names != column_cell_ID]
@@ -541,7 +558,7 @@ addCellMetadata <- function(gobject,
     }
 
 
-    # 4. ensure data is in same order as start and set data
+    # 5. ensure data is in same order as start and set data
     cell_metadata[] <- cell_metadata[][match(ordered_cell_IDs, cell_ID)]
 
 

@@ -112,7 +112,7 @@ evaluate_input <- function(type, x, ...) {
     } else if (target_class == "dbMatrix") {
         .gstop(
             "Automatic conversion to 'dbMatrix' is not supported within ",
-            "createExprObj(). Please provide a pre-constructed ",
+            "createExprObj(). Please provide a pre‑constructed ",
             "'dbMatrix' object instead. See ?dbMatrix for details."
         )
     } else if (target_class == "DelayedArray") {

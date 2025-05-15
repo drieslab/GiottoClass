@@ -568,10 +568,7 @@ loadGiotto <- function(path_to_folder,
     # these files are optional, depending on if they have been calculated.
     # They may not exist
 
-    # build expected filenames as file search terms
     shp_search <- paste0(spats, "_spatInfo_spatVectorCentroids.shp")
-    txt_search <- paste0(spats, "_spatInfo_spatVectorCentroids_names.txt")
-    # detect existing centroids files
     shp_files <- basenames[basenames %in% shp_search]
 
     # return early if none exist
@@ -579,36 +576,30 @@ loadGiotto <- function(path_to_folder,
         return(gobject)
     }
 
-    # apply name on search terms for simple and unique indexing
-    names(shp_search) <- names(txt_search) <- spats
+    txt_files <- paste0(spats, "_spatInfo_spatVectorCentroids_names.txt")
 
-    # iterate through spat_units for data load
-    # skip the spat_unit if file not found
+    # ordering of files follow spats
+    # apply name for simple and unique indexing
+    names(shp_files) <- names(txt_files) <- spats
+
+    # iterate through spat_units and load/regen then append the data
+    # to the gobject
     for (spat in spats) {
-        load_shp <- manifest[[shp_search[[spat]]]]
-        load_txt <- manifest[[txt_search[[spat]]]]
+        load_shp <- manifest[[shp_files[[spat]]]]
+        load_txt <- manifest[[txt_files[[spat]]]]
 
         if (is.null(load_shp)) next # skip to next spat_unit if none
         vmsg(
             .v = verbose, .is_debug = TRUE, .initial = "  ",
             sprintf("[%s] %s", spat, basename(load_shp))
         )
-        missing_nametxt <- FALSE
-        if (is.null(load_txt)) {
-            warning(sprintf("[%s] missing centroid attribute names.txt", spat),
-                    call. = FALSE)
-            missing_nametxt <- TRUE
-        }
-
-        # read in centroids
         spatVector <- terra::vect(load_shp)
+
         # read in original column names and assign to spatVector
-        if (!missing_nametxt) {
-            spatVector_names <- data.table::fread(
-                input = load_txt, header = FALSE
-            )[["V1"]]
-            names(spatVector) <- spatVector_names
-        }
+        spatVector_names <- data.table::fread(
+            input = load_txt, header = FALSE
+        )[["V1"]]
+        names(spatVector) <- spatVector_names
 
         gobject@spatial_info[[spat]]@spatVectorCentroids <- spatVector
     }

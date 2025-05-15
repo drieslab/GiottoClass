@@ -167,9 +167,7 @@ combineSpatialCellMetadataInfo <- function(gobject,
 
 #' @title combineCellData
 #' @name combineCellData
-#' @description Produce a table of information about the cells, including
-#' the geometry and centroids information. This function will be simplified
-#' in the future with [spatValues()].
+#' @description combine cell data information
 #' @param gobject giotto object
 #' @param feat_type feature type
 #' @param include_spat_locs include information about spatial locations
@@ -178,13 +176,6 @@ combineSpatialCellMetadataInfo <- function(gobject,
 #' @param poly_info polygon information name
 #' @param include_spat_enr include information about spatial enrichment
 #' @param spat_enr_names names of spatial enrichment results to include
-#' @param ext numeric or SpatExtent (optional). A cropping extent to apply to
-#' to the geometries.
-#' @param xlim,ylim numeric length of 2 (optional). x or y bounds to apply.
-#' @param remove_background_polygon logical (default = `TRUE`). `crop()` may
-#' sometimes produce extent-filling polygons when the original geometry is
-#' problematic or invalid. Set `TRUE` to remove these, based on whether a
-#' polygon fills up most of the x and y range.
 #' @concept combine cell metadata
 #' @returns data.table with combined spatial information
 #' @examples
@@ -199,15 +190,7 @@ combineCellData <- function(gobject,
     include_poly_info = TRUE,
     poly_info = "cell",
     include_spat_enr = TRUE,
-    spat_enr_names = NULL,
-    ext = NULL,
-    xlim = NULL,
-    ylim = NULL,
-    remove_background_polygon = TRUE) {
-
-    checkmate::assert_numeric(xlim, len = 2L, null.ok = TRUE)
-    checkmate::assert_numeric(ylim, len = 2L, null.ok = TRUE)
-
+    spat_enr_names = NULL) {
     # combine
     # 1. spatial morphology information ( = polygon)
     # 2. cell metadata
@@ -242,39 +225,13 @@ combineCellData <- function(gobject,
     ## spatial poly ##
     if (isTRUE(include_poly_info)) {
         # get spatial poly information
-        sv <- getPolygonInfo(
+        spatial_cell_info_spatvec <- getPolygonInfo(
             gobject = gobject,
             polygon_name = poly_info,
             return_giottoPolygon = FALSE
         )
-
-        e <- ext(sv)
-        need_crop <- FALSE
-        if (!is.null(xlim)) {
-            need_crop <- TRUE
-            e[c(1, 2)] <- xlim
-        }
-        if (!is.null(ylim)) {
-            need_crop <- TRUE
-            e[c(3, 4)] <- ylim
-        }
-        if (!is.null(ext)) {
-            need_crop <- TRUE
-            ext <- ext(ext)
-            e <- intersect(e, ext)
-        }
-        if (need_crop) {
-            sv <- crop(sv, e)
-            if (remove_background_polygon) {
-                sv <- .remove_background_polygon(sv, verbose = FALSE)
-            }
-            if (nrow(sv) == 0) {
-                warning("no geometries left after crop", call. = FALSE)
-            }
-        }
-
         spatial_cell_info_dt <- data.table::as.data.table(
-            sv,
+            spatial_cell_info_spatvec,
             geom = "XY",
             include_values = TRUE
         )
@@ -285,6 +242,7 @@ combineCellData <- function(gobject,
     } else {
         spatial_cell_info_dt <- NULL
     }
+
 
     # combine spatloc and poly information if desired
     if (!is.null(spat_locs_dt) &&
@@ -639,6 +597,10 @@ calculateSpatCellMetadataProportions <- function(gobject,
         value.var = "proptable"
     )
     data.table::setnames(x = proportions_mat, old = "source", new = "cell_ID")
+
+    # convert to matrix
+    # proportions_matrix = dt_to_matrix(proportions_mat)
+    # proportions_matrix[seq_len(4), seq_len(10)]
 
     # create spatial enrichment object
     enrObj <- create_spat_enr_obj(

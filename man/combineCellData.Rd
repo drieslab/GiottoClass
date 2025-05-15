@@ -12,11 +12,7 @@ combineCellData(
   include_poly_info = TRUE,
   poly_info = "cell",
   include_spat_enr = TRUE,
-  spat_enr_names = NULL,
-  ext = NULL,
-  xlim = NULL,
-  ylim = NULL,
-  remove_background_polygon = TRUE
+  spat_enr_names = NULL
 )
 }
 \arguments{
@@ -35,24 +31,12 @@ combineCellData(
 \item{include_spat_enr}{include information about spatial enrichment}
 
 \item{spat_enr_names}{names of spatial enrichment results to include}
-
-\item{ext}{numeric or SpatExtent (optional). A cropping extent to apply to
-to the geometries.}
-
-\item{xlim, ylim}{numeric length of 2 (optional). x or y bounds to apply.}
-
-\item{remove_background_polygon}{logical (default = \code{TRUE}). \code{crop()} may
-sometimes produce extent-filling polygons when the original geometry is
-problematic or invalid. Set \code{TRUE} to remove these, based on whether a
-polygon fills up most of the x and y range.}
 }
 \value{
 data.table with combined spatial information
 }
 \description{
-Produce a table of information about the cells, including
-the geometry and centroids information. This function will be simplified
-in the future with \code{\link[=spatValues]{spatValues()}}.
+combine cell data information
 }
 \examples{
 g <- GiottoData::loadGiottoMini("vizgen")
