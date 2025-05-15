@@ -24,6 +24,8 @@
 - fix incorrect `giottoInstructions` class in older objects now possible via `updateGiottoObject()`
 - Remove imports on deprecated {terra} `convHull()`, `minRect()`, `minCircle()`, in favor of `hull()` usage [#1153](https://github.com/drieslab/Giotto/issues/1153) by demographix
 - Remove import on {terra} `area()`, define as new generic from {GiottoClass}
+- fix `loadGiotto()` issue when there are multiple polygons and some only some of them have created centroids [#304](https://github.com/drieslab/GiottoClass/issues/304)
+- fix `joinGiottoObjects` polygon joins when there is more than one set of polygons [#305](https://github.com/drieslab/GiottoClass/issues/305)
 
 ## changes
 - `remove_background_poly` now defaults to `TRUE` during polygon ingestion
