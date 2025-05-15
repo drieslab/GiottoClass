@@ -170,6 +170,15 @@ setMethod("as.matrix", signature("spatLocsObj"), function(x, id_rownames = TRUE,
 })
 
 
+#' @rdname as.matrix
+#' @param attr Either NULL or `character` providing the name of an edge
+#' attribute to include in the ajacency matrix. The edge attribute to use must
+#' be either `logical` or `numeric`.
+#' @export
+setMethod("as.matrix", signature("nnNetObj"), function(x, attr = NULL, ...) {
+    checkmate::assert_character(attr, null.ok = TRUE)
+    igraph::as_adjacency_matrix(x[], attr = attr, sparse = TRUE, ...)
+})
 
 
 # image types ####
