@@ -1104,12 +1104,10 @@ showGiottoImageNames <- function(gobject) {
 
 
 
-#' @title Print abbreviated matrix
-#' @name .abbrev_mat
-#' @description print abbreviated matrix exprObj. Works for Matrix pkg denseMatrix,
-#' matrix, data.frame and classes that inherit them.
-#' @keywords internal
-#' @returns abbreviated matrix exprObj
+
+# print abbreviated matrix exprObj. Works for Matrix pkg denseMatrix,
+# matrix, data.frame and classes that inherit them.
+# returns abbreviated matrix exprObj
 .abbrev_mat <- function(exprObj, nrows, ncols,
     print_prov = TRUE, header = TRUE
 ) {
