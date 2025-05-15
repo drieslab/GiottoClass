@@ -6045,9 +6045,9 @@ setGiottoImage <- function(gobject,
 #'
 #' @export
 spatValues <- function(gobject,
+    feats,
     spat_unit = NULL,
     feat_type = NULL,
-    feats,
     expression_values = NULL,
     spat_loc_name = NULL,
     spat_enr_name = NULL,
