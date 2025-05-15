@@ -422,20 +422,27 @@ def extract_points(sdata = None):
     point_dict = sdata.points
     for ft, ddf in point_dict.items():
         df = ddf.compute()
-        if "feat_ID" in df.columns:
+        feat_cols = [c for c in df.columns if "feat" in c.lower()]
+        if feat_cols:
+            feat_col = feat_cols[0]
+            if feat_col != "feat_ID":
+                df = df.rename(columns={feat_col: "feat_ID"})
             feat_ids = df["feat_ID"]
-        elif df.index.name == "feat_ID":
+        elif df.index.name == "feat_ID" :
             df = df.reset_index()
             feat_ids = df["feat_ID"]
         else:
             feat_ids = pd.Series(range(len(df)), name="feat_ID")
-        if not {"x", "y"}.issubset(df.columns):
+            
+        coords = ["x", "y"]
+        if not set(coords).issubset(df.columns):
             raise ValueError(f"'x' and 'y' columns are required in points[{ft}], but not found.")
-        df_out = pd.DataFrame({
-            "feat_ID": feat_ids,
-            "x": df["x"],
-            "y": df["y"]
-        })
+        if "z" in df.columns:
+            coords.append("z")
+        out_dict = {"feat_ID": feat_ids}
+        for c in coords:
+            out_dict[c] = df[c]
+        df_out = pd.DataFrame(out_dict)
         df_out["geom"] = df_out["feat_ID"].astype("category").cat.codes + 1
         points_dict[ft] = df_out
     return points_dict
