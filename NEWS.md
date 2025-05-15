@@ -47,6 +47,7 @@
 - `spatLocsObj` can now be created from `numeric` xy pairs and xyz triplets
 - improvements to `spatQuery()`
 - add support for qptiff in `tif_metadata()` and `to_simple_tif()`
+- `as.matrix()` for `nnNetObj()` [#262](https://github.com/drieslab/GiottoClass/issues/262)
 
 
 # GiottoClass 0.4.6 (2025/01/17)
