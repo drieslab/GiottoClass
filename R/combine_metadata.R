@@ -634,10 +634,6 @@ calculateSpatCellMetadataProportions <- function(gobject,
     )
     data.table::setnames(x = proportions_mat, old = "source", new = "cell_ID")
 
-    # convert to matrix
-    # proportions_matrix = dt_to_matrix(proportions_mat)
-    # proportions_matrix[seq_len(4), seq_len(10)]
-
     # create spatial enrichment object
     enrObj <- create_spat_enr_obj(
         name = name,
