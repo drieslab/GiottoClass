@@ -4995,7 +4995,7 @@ setFeatureInfo <- function(gobject,
 
     # NATIVE INPUT TYPES
     # 2. if input is giottoPoints or NULL, pass to internal
-    if (is.null(x) | inherits(x, "giottoPoints")) {
+    if (is.null(x) || inherits(x, "giottoPoints")) {
         # pass to internal
         gobject <- set_feature_info(
             gobject = gobject,
