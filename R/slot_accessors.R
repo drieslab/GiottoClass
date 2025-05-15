@@ -5998,6 +5998,8 @@ setGiottoImage <- function(gobject,
 #' reduction to use
 #' @param dim_reduction_name character. (optional) Name of dimension reduction
 #' to use
+#' @param svkey use a `svkey`. Other params will be ignored. This is just
+#' syntactic sugar for `svkey@get(gobject)`
 #' @param verbose verbosity
 #' @param debug logical. (default = FALSE) See details.
 #' @returns A data.table with a cell_ID column and whichever feats were
@@ -6054,9 +6056,11 @@ spatValues <- function(gobject,
     poly_info = NULL,
     dim_reduction_to_use = NULL,
     dim_reduction_name = NULL,
+    svkey = NULL,
     verbose = NULL,
     debug = FALSE) {
     checkmate::assert_class(gobject, "giotto")
+    if (!is.null(svkey)) return(svkey@get(gobject))
     checkmate::assert_character(feats)
 
     a <- get_args_list()
