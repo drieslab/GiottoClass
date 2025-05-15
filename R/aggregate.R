@@ -2082,7 +2082,8 @@ overlapToMatrixMultiPoly <- function(gobject,
     mat_c_names <- colnames(x)
     x[
         match(mixedsort(mat_r_names), mat_r_names),
-        match(mixedsort(mat_c_names), mat_c_names)
+        match(mixedsort(mat_c_names), mat_c_names),
+        drop = FALSE
     ]
 }
 

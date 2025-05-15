@@ -387,7 +387,7 @@ setMethod("initialize", signature("giottoAffineImage"), function(.Object, ...) {
 
     # detect ID slots
     avail_cid <- list_cell_id_names(.Object)
-    avail_fid <- list_cell_id_names(.Object)
+    avail_fid <- list_feat_id_names(.Object)
 
     # detect metadata slots
     avail_cm <- list_cell_metadata(.Object)
