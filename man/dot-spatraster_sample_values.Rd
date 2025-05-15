@@ -7,7 +7,7 @@
 .spatraster_sample_values(
   raster_object,
   size = 5000,
-  output = c("data.frame", "array", "magick", "EBImage"),
+  output = c("data.frame", "array", "magick", "EBImage", "SpatRaster"),
   verbose = NULL,
   ...
 )
