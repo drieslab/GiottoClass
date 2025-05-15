@@ -74,6 +74,10 @@
 </li>
 <li>Remove imports on deprecated {terra} <code><a href="../reference/hull.html">convHull()</a></code>, <code><a href="../reference/hull.html">minRect()</a></code>, <code><a href="../reference/hull.html">minCircle()</a></code>, in favor of <code><a href="../reference/hull.html">hull()</a></code> usage <a href="https://github.com/drieslab/Giotto/issues/1153" class="external-link">#1153</a> by demographix</li>
 <li>Remove import on {terra} <code><a href="../reference/area.html">area()</a></code>, define as new generic from {GiottoClass}</li>
+<li>fix <code><a href="../reference/loadGiotto.html">loadGiotto()</a></code> issue when there are multiple polygons and some only some of them have created centroids <a href="https://github.com/drieslab/GiottoClass/issues/304" class="external-link">#304</a>
+</li>
+<li>fix <code>joinGiottoObjects</code> polygon joins when there is more than one set of polygons <a href="https://github.com/drieslab/GiottoClass/issues/305" class="external-link">#305</a>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="changes-0-4-7">changes<a class="anchor" aria-label="anchor" href="#changes-0-4-7"></a></h3>
@@ -111,6 +115,9 @@
 <li>improvements to <code><a href="../reference/spatQuery.html">spatQuery()</a></code>
 </li>
 <li>add support for qptiff in <code><a href="../reference/tif_metadata.html">tif_metadata()</a></code> and <code><a href="../reference/to_simple_tif.html">to_simple_tif()</a></code>
+</li>
+<li>
+<code><a href="../reference/as.matrix.html">as.matrix()</a></code> for <code><a href="../reference/nnNetObj-class.html">nnNetObj()</a></code> <a href="https://github.com/drieslab/GiottoClass/issues/262" class="external-link">#262</a>
 </li>
 </ul></div>
 </div>

@@ -45,7 +45,10 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for class 'spatLocsObj'</span></span>
-<span><span class="fu">as.matrix</span><span class="op">(</span><span class="va">x</span>, id_rownames <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">as.matrix</span><span class="op">(</span><span class="va">x</span>, id_rownames <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'nnNetObj'</span></span>
+<span><span class="fu">as.matrix</span><span class="op">(</span><span class="va">x</span>, attr <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -62,6 +65,12 @@
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional params to pass (none implemented)</p></dd>
+
+
+<dt id="arg-attr">attr<a class="anchor" aria-label="anchor" href="#arg-attr"></a></dt>
+<dd><p>Either NULL or <code>character</code> providing the name of an edge
+attribute to include in the ajacency matrix. The edge attribute to use must
+be either <code>logical</code> or <code>numeric</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
