@@ -977,6 +977,13 @@ calculateSpatCellMetadataProportions <- function(gobject,
     metadata_column = NULL,
     name = "proportion",
     return_gobject = TRUE) {
+
+    deprecate_warn(
+        when = "0.4.8",
+        what = "calculateSpatCellMetadataProportions()",
+        with = "calculateLabelProportions()"
+    )
+
     # DT vars
     proptable <- target_clus <- source_clus <- network <- target <- NULL
 
