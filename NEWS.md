@@ -1,3 +1,11 @@
+# GiottoClass 0.4.8 (TBD)
+
+## new
+- `calculateLabelProportions()` for label proportions calculation from table, network neighbors, and polygon selections
+
+## changes
+- `calculateSpatCellMetadataProportions()` now deprecated in favor of `calculateLabelProportions()`
+
 # GiottoClass 0.4.7 (2025/05/06)
 
 ## new
