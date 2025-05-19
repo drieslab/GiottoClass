@@ -5,6 +5,7 @@ import scipy as sc
 from collections import defaultdict
 from time import perf_counter
 from xarray import DataArray
+from shapely.geometry import Polygon, Point
 
 from spatialdata import SpatialData
 
@@ -73,30 +74,51 @@ def extract_layered_data(sdata = None, key = None, layer_name = None):
 # Extract spatial locations
 def extract_spatial(sdata = None):
     spatial_dict = {}
-    table_names = list(sdata.tables.keys())
-    for tn in table_names:
-        table = sdata.tables[tn]
-
+    if hasattr(sdata, 'tables'):
+        tables = sdata.tables      # dict of {name: anndata}
+    elif hasattr(sdata, 'table'):
+        tables = {'table': sdata.table}
+    else:
+        raise AttributeError("SpatialData has neither .tables nor .table")
+    
+    for tn, table in tables.items():
         if hasattr(table, "obsm") and "spatial" in table.obsm:
-            spatial = table.obsm['spatial']
-            spatial_df = pd.DataFrame(spatial)
-            n_dims = spatial_df.shape[1]
+            spatial = table.obsm["spatial"]
+            df = pd.DataFrame(spatial)
+            n_dims = df.shape[1]
 
             if n_dims == 2:
-                spatial_df.columns = ['X', 'Y']
-                spatial_df['Y'] = spatial_df['Y'] * -1
+                df.columns = ["X", "Y"]
+                df["Y"] = -df["Y"]
             elif n_dims == 3:
-                spatial_df.columns = ['X', 'Y', 'Z']
-                spatial_df['Y'] = spatial_df['Y'] * -1
+                df.columns = ["X", "Y", "Z"]
+                df["Y"] = -df["Y"]
             else:
                 print(f"Skipping '{tn}': unexpected number of spatial dimensions ({n_dims})")
                 spatial_dict[tn] = None
                 continue
-
-            spatial_dict[tn] = spatial_df
+            key = "cell" if tn == "table" else tn
+            spatial_dict[key] = df
+        
         else:
             spatial_dict[tn] = None
 
+    for key, df in sdata.shapes.items():
+        if "cell" in key.lower():
+            continue
+
+        if "geometry" not in df.columns:
+            raise ValueError(f"No 'geometry' in shapes['{key}']")
+        
+        centroids = df["geometry"].apply(lambda poly: poly.centroid)
+
+        cent_df = pd.DataFrame({
+            "X": centroids.map(lambda p: p.x),
+            "Y": centroids.map(lambda p: -p.y)
+        }, index = df.index)
+
+        base = key.split("_", 1)[0]
+        spatial_dict[base] = cent_df
     return spatial_dict
 
 def parse_obsm_for_spat_locs(sdata = None):
@@ -451,6 +473,7 @@ def extract_points(sdata = None):
 def extract_polygons(sdata = None):
     polygons_dict = {}
     for shape_name, shape_df in sdata.shapes.items():
+        base = shape_name.split('_', 1)[0]
         rows = []
         if "poly_ID" in shape_df.columns:
             poly_ids = shape_df["poly_ID"]
@@ -474,7 +497,7 @@ def extract_polygons(sdata = None):
             df = pd.DataFrame(rows)
             df["geom"] = df["poly_ID"].astype("category").cat.codes + 1
             df["hole"] = 0
-            polygons_dict[shape_name] = df
+            polygons_dict[base] = df
     return polygons_dict
 
 # Spatial Enrichment
