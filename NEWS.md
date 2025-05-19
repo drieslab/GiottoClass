@@ -2,6 +2,7 @@
 
 ## new
 - `calculateLabelProportions()` for label proportions calculation from table, network neighbors, and polygon selections
+- `clusterData()` generic for {bluster} integration
 
 ## changes
 - `calculateSpatCellMetadataProportions()` now deprecated in favor of `calculateLabelProportions()`
