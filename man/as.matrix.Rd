@@ -5,6 +5,7 @@
 \alias{as.matrix,spatLocsObj-method}
 \alias{as.matrix,overlapPointDT-method}
 \alias{as.matrix,overlapIntensityDT-method}
+\alias{as.matrix,nnNetObj-method}
 \title{Coerce to matrix}
 \usage{
 \S4method{as.matrix}{spatLocsObj}(x, id_rownames = TRUE, ...)
@@ -12,6 +13,8 @@
 \S4method{as.matrix}{overlapPointDT}(x, feat_count_column = NULL, ...)
 
 \S4method{as.matrix}{overlapIntensityDT}(x, ...)
+
+\S4method{as.matrix}{nnNetObj}(x, attr = NULL, ...)
 }
 \arguments{
 \item{x}{object to coerce}
@@ -23,6 +26,10 @@
 \item{feat_count_column}{character. If provided, column in overlaps info
 that contains count information to take into account when generating matrix.
 This is important when point detections represent more than one count.}
+
+\item{attr}{Either NULL or \code{character} providing the name of an edge
+attribute to include in the ajacency matrix. The edge attribute to use must
+be either \code{logical} or \code{numeric}.}
 }
 \value{
 matrix

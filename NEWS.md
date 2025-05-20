@@ -1,4 +1,5 @@
 
+
 # GiottoClass 0.5.0
 
 ## changes
@@ -12,6 +13,14 @@
 - `overlaps()` will now properly find image overlaps
 
 
+# GiottoClass 0.4.8 (TBD)
+
+## new
+- `calculateLabelProportions()` for label proportions calculation from table, network neighbors, and polygon selections
+- `clusterData()` generic for {bluster} integration
+
+## changes
+- `calculateSpatCellMetadataProportions()` now deprecated in favor of `calculateLabelProportions()`
 
 # GiottoClass 0.4.7 (2025/05/06)
 
@@ -62,6 +71,7 @@
 - `spatLocsObj` can now be created from `numeric` xy pairs and xyz triplets
 - improvements to `spatQuery()`
 - add support for qptiff in `tif_metadata()` and `to_simple_tif()`
+- `as.matrix()` for `nnNetObj()` [#262](https://github.com/drieslab/GiottoClass/issues/262)
 
 
 # GiottoClass 0.4.6 (2025/01/17)
