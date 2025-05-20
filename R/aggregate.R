@@ -681,9 +681,6 @@ setMethod(
             names(y) <- sprintf("channel_%d", seq_len(nchannel))
         }
 
-        # NSE vars
-        coverage_fraction <- NULL
-
         # subset polys if needed
         if (!is.null(poly_subset_ids)) {
             x <- x[x$poly_ID %in% poly_subset_ids]
