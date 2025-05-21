@@ -1,4 +1,6 @@
-# docs ####
+
+# tileIterator ####
+# * docs ####
 #' @name tileIterator-class
 #' @title Spatial Tile Iterator
 #' @aliases tileIterator
@@ -80,7 +82,7 @@
 #' x[[1:3]]$fname
 NULL
 
-# methods ####
+# * methods ####
 
 setMethod("initialize", signature("tileIterator"), \(.Object, ...) {
     .Object <- callNextMethod(.Object, ...)
@@ -254,7 +256,7 @@ setMethod("-", signature("tileIterator", "numeric"), function(e1, e2) {
     e1 + -e2
 })
 
-# helpers ####
+# * helpers ####
 
 .DollarNames.tileIterator <- function(x, pattern) {
     colnames(x@metadata)
@@ -363,3 +365,5 @@ setMethod("-", signature("tileIterator", "numeric"), function(e1, e2) {
 
     return(a)
 }
+
+
