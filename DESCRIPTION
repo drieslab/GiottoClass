@@ -149,6 +149,7 @@ Collate:
     'stitch_coordinates.R'
     'subset.R'
     'suite_reexports.R'
+    'tile.R'
     'zzz.R'
 URL: https://drieslab.github.io/GiottoClass/
 biocViews: Software, Technology, Spatial

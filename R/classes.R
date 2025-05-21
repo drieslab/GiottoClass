@@ -359,6 +359,25 @@ setClass("svkey",
     )
 )
 
+#' @rdname tileIterator-class
+#' @slot extent numeric. Spatial extent to tile across.
+#' @slot n numeric. Number of tiles to create.
+#' @slot tiles array. Tile extents stored as a 3D numeric array where dim 1 is
+#' tiles along the x axis, dim 2 is along the y, and dim 3 is xmin, xmax,
+#' ymin, and ymax of the tile.
+#' @slot metadata data.frame. Metadata per tile
+#' @export tileIterator
+#' @exportClass tileIterator
+tileIterator <- setClass(
+    "tileIterator",
+    slots = list(
+        extent = "numeric",
+        n = "numeric",
+        tiles = "array",
+        metadata = "data.frame"
+    )
+)
+
 # SUBCLASSES ####
 
 # ** spatFeatData ####
