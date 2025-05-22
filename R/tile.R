@@ -439,12 +439,13 @@ setMethod("tileApply", signature("SpatRaster", "missing"), function(x, FUN, ti,
     lyr = NULL,
     cores = NA,
     future.seed = TRUE,
-    verbose = NULL,
+    log = FALSE,
+    logpath = tempdir(),
     ...) {
     checkmate::assert_class(ti, "tileIterator")
     checkmate::assert_function(FUN)
     checkmate::assert_integerish(lyr, null.ok = TRUE)
-    f <- sources(x)[[1]] # only works for single source images
+    f <- terra::sources(x)[[1]] # only works for single source images
     if (length(unique(f)) > 1L) {
         stop("[tileApply] only works for single file images", call. = FALSE)
     }
@@ -460,9 +461,22 @@ setMethod("tileApply", signature("SpatRaster", "missing"), function(x, FUN, ti,
         p <- pbar(along = ti)
 
         lapply_flex(seq_along(ti), function(i) {
+            ij <- .tile_idx_to_ij(ti, i)
+            tile_id <- sprintf("[tile %d]", i)
+            if (log) {
+                vmsg(.v = "log", sprintf("%s start (row %d, col %d)", tile_id, ij[[1]], ij[[2]]), .log_path = logpath)
+                vmsg(.v = "log", tile_id, "lyr:", toString(lyr), .log_path = logpath)
+            }
+
             r <- .create_terra_spatraster(f)
             ext(r) <- e
             tile_ext <- ti[i][[1L]]
+
+            if (log) {
+                vmsg(.v = "log", tile_id, "extent:", .ext_to_num_vec(tile_ext), .log_path = logpath)
+                vmsg(.v = "log", tile_id, "buffer:", ti@buffer, .log_path = logpath)
+            }
+
             if (!is.null(lyr)) {
                 r <- r[[lyr]]
             }
