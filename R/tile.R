@@ -367,3 +367,101 @@ setMethod("-", signature("tileIterator", "numeric"), function(e1, e2) {
 }
 
 
+
+
+# tileApply ####
+
+# * docs ####
+
+#' @name tileApply
+#' @title Apply Across Spatial Tiles
+#' @description
+#' Apply a function across spatial tiles to both speed up processing and keep
+#' memory usage reasonable for large operations. This function also hooks into
+#' the \{future\} parallelization framework.
+#'
+#' @section SpatRaster:
+#' This function currently only works for single source SpatRasters. Support
+#' for applying across affine transformed images is still under development.
+#'
+#' @param x object to tile apply
+#' @param FUN function to run across tiles. The first param must be the
+#' `SpatRaster` object. If `.I` is included as a parameter, it can be used
+#' in the function as the tile number.
+#' @param ti `tileIterator` that defines the tiles to apply on.
+#' @param lyr numeric. Layer number(s) to use
+#' @inheritParams GiottoUtils::lapply_flex
+#' @param \dots additonal params to pass to [future.apply::future_lapply()]
+#' @seealso [GiottoUtils::lapply_flex()] for the function passing to future.
+#' @examples
+#' f <- system.file("ex/elev.tif", package="terra")
+#' r <- rast(f)
+#' ti <- tileIterator()
+#' ext(ti) <- ext(r)
+#' length(ti) <- 4
+#'
+#' outdir <- file.path(tempdir(), "testwrite")
+#' dir.create(outdir)
+#'
+#' tileApply(r, ti = ti, lyr = 1, FUN = function(x, .I) {
+#'     terra::writeRaster(x,
+#'         filename = file.path(outdir, sprintf("tile_%03d.tif", .I)))
+#' })
+#' list.files(outdir)
+#'
+#' r1 <- terra::rast(file.path(outdir, "tile_001.tif"))
+#' plot(r1)
+#'
+#' # remove
+#' rm(r1)
+#' unlink(outdir, recursive = TRUE, force = TRUE)
+NULL
+
+#' @rdname tileApply
+#' @export
+setMethod("tileApply", signature("SpatRaster", "missing"), function(x, FUN, ti,
+    lyr = NULL,
+    cores = NA,
+    future.seed = TRUE,
+    verbose = NULL,
+    ...) {
+    checkmate::assert_class(ti, "tileIterator")
+    checkmate::assert_function(FUN)
+    checkmate::assert_integerish(lyr, null.ok = TRUE)
+    f <- sources(x)[[1]] # only works for single source images
+    if (length(unique(f)) > 1L) {
+        stop("[tileApply] only works for single file images", call. = FALSE)
+    }
+    f <- unique(f)
+    if (f == "") {
+        stop(wrap_txt("[tileApply] no filepath found for image.
+                      Please first write to disk."),
+             call. = FALSE)
+    }
+    e <- .ext_to_num_vec(ext(x))
+
+    with_pbar({
+        p <- pbar(along = ti)
+
+        lapply_flex(seq_along(ti), function(i) {
+            r <- .create_terra_spatraster(f)
+            ext(r) <- e
+            tile_ext <- ti[i][[1L]]
+            if (!is.null(lyr)) {
+                r <- r[[lyr]]
+            }
+            terra::window(r) <- tile_ext
+
+            if (".I" %in% names(formals(FUN))) {
+                res <- FUN(r, .I = i)
+            } else {
+                res <- FUN(r)
+            }
+
+            p(message = sprintf("[tile %d] done", i))
+            return(res)
+        },
+        ...)
+    })
+})
+

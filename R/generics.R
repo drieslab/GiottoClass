@@ -85,6 +85,8 @@ setGeneric(
     function(x, ...) standardGeneric("overlapToMatrix")
 )
 
+setGeneric("tileApply", function(x, y, ...) standardGeneric("tileApply"))
+
 #' @title Data Processing
 #' @name processData
 #' @description Generic for processing an object containing measured values.
