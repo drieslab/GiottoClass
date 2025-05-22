@@ -23,7 +23,7 @@
 #' @importMethodsFrom terra as.data.frame as.polygons as.points
 #' @importMethodsFrom terra nrow ncol
 #' @importMethodsFrom terra hist density
-#' @importClassesFrom terra SpatExtent SpatVector
+#' @importClassesFrom terra SpatExtent SpatVector SpatRaster
 #' @import GiottoUtils
 #' @import data.table
 #' @import utils
