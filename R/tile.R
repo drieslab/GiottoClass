@@ -32,7 +32,12 @@
 #' as a list.
 #'
 #' @section padding:
-#' `+`/`-` can be used to add or subtract padding to each of the tiles.
+#' `+`/`-` can be used to add or subtract padding to each of the tiles. Note
+#' that this value does not affect the setting or retrieval of extent info via
+#' `ext()` and `ext()<-`.
+
+#' To avoid having to use `terra::extend()` when buffered tiles exceed raster
+#' extent, you can decrease the extent by the same size as the buffer.
 #'
 #' @section previewing tiles:
 #' `plot()` can be used to check the layout of the tiles.
@@ -66,7 +71,13 @@
 #' y <- x + 10
 #' plot(y, alpha = 0.3)
 #' plot(ext(x), add = TRUE, border = "red")
+#' # this is now larger than the original space
+#' ext(y) <- ext(y) - 10
+#' plot(y, alpha = 0.3)
+#' plot(ext(x), add = TRUE, border = "red")
+#' # now this does not exceed the image
 #'
+#' # negative buffer
 #' z <- x - 5
 #' plot(ext(x), border = "red")
 #' plot(z, add = TRUE)
@@ -159,7 +170,8 @@ setMethod("show", signature("tileIterator"), function(object) {
             "%s (xmin, xmax, ymin, ymax)",
             paste(.ext_to_num_vec(e), collapse = ", ")
         ),
-        dim = paste(dim(x), collapse = " ")
+        dim = paste(dim(x), collapse = " "),
+        buffer = object@buffer
     )
     print_list(plist)
 })
@@ -221,6 +233,7 @@ setMethod(
 )
 
 setMethod("[", signature(x = "tileIterator", i = "numeric", j = "numeric", drop = "missing"), function(x, i, j) {
+    x@tiles <- .do_tile_buffer(x@tiles, x@buffer)
     mapply(function(i, j) {
         n <- ((i - 1) * ncol(x)) + j
         meta <- as.list(x@metadata[n, ])
@@ -241,14 +254,7 @@ setMethod("[[", signature("tileIterator", i = "numeric", j = "missing"), functio
 })
 
 setMethod("+", signature("tileIterator", "numeric"), function(e1, e2) {
-    # return without modification if tiles are not set up yet
-    if (length(e1@tiles) == 0L) {
-        return(e1)
-    }
-    e1@tiles[, , 1L] <- e1@tiles[, , 1L] - e2
-    e1@tiles[, , 2L] <- e1@tiles[, , 2L] + e2
-    e1@tiles[, , 3L] <- e1@tiles[, , 3L] - e2
-    e1@tiles[, , 4L] <- e1@tiles[, , 4L] + e2
+    e1@buffer <- e1@buffer + e2
     e1
 })
 
@@ -257,6 +263,16 @@ setMethod("-", signature("tileIterator", "numeric"), function(e1, e2) {
 })
 
 # * helpers ####
+
+# x the extent array
+# buffer is the value to buffer the tiles by. Can be positive or negative
+.do_tile_buffer <- function(x, buffer = 0) {
+    x[, , 1L] <- x[, , 1L] - buffer
+    x[, , 2L] <- x[, , 2L] + buffer
+    x[, , 3L] <- x[, , 3L] - buffer
+    x[, , 4L] <- x[, , 4L] + buffer
+    x
+}
 
 .DollarNames.tileIterator <- function(x, pattern) {
     colnames(x@metadata)

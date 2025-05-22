@@ -21,6 +21,8 @@ processes. Tile \code{SpatExtent} objects can be extracted on-demand.
 tiles along the x axis, dim 2 is along the y, and dim 3 is xmin, xmax,
 ymin, and ymax of the tile.}
 
+\item{\code{buffer}}{numeric. Tile padding/buffering}
+
 \item{\code{metadata}}{data.frame. Metadata per tile}
 }}
 
@@ -53,7 +55,11 @@ as a list.
 
 \section{padding}{
 
-\code{+}/\code{-} can be used to add or subtract padding to each of the tiles.
+\code{+}/\code{-} can be used to add or subtract padding to each of the tiles. Note
+that this value does not affect the setting or retrieval of extent info via
+\code{ext()} and \verb{ext()<-}.
+To avoid having to use \code{terra::extend()} when buffered tiles exceed raster
+extent, you can decrease the extent by the same size as the buffer.
 }
 
 \section{previewing tiles}{
@@ -93,7 +99,13 @@ plot(x)
 y <- x + 10
 plot(y, alpha = 0.3)
 plot(ext(x), add = TRUE, border = "red")
+# this is now larger than the original space
+ext(y) <- ext(y) - 10
+plot(y, alpha = 0.3)
+plot(ext(x), add = TRUE, border = "red")
+# now this does not exceed the image
 
+# negative buffer
 z <- x - 5
 plot(ext(x), border = "red")
 plot(z, add = TRUE)
