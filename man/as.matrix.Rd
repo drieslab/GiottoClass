@@ -9,6 +9,8 @@
 \S4method{as.matrix}{spatLocsObj}(x, id_rownames = TRUE, ...)
 
 \S4method{as.matrix}{nnNetObj}(x, attr = NULL, ...)
+
+\S4method{as.matrix}{nnNetObj}(x, attr = NULL, ...)
 }
 \arguments{
 \item{x}{object to coerce}
