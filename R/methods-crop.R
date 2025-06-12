@@ -233,13 +233,7 @@ setMethod(
 
         # iterate through all overlaps, removing cell_ids that were removed in the
         # crop.
-        for (feat in names(x@overlaps)) {
-            cell_id_bool <- terra::as.list(
-                x@overlaps[[feat]]
-            )$poly_ID %in% x@unique_ID_cache
-            x@overlaps[[feat]] <- x@overlaps[[feat]][cell_id_bool]
-        }
-
+        x <- .subset_overlaps_poly(x, x@unique_ID_cache)
         x
     }
 )

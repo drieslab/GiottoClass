@@ -177,42 +177,6 @@ saveGiotto <- function(
                     filename = filename, overwrite = TRUE
                 )
             }
-
-            # overlap information
-            if (!is.null(gobject@spatial_info[[spatinfo]]@overlaps)) {
-                for (feature in names(
-                    gobject@spatial_info[[spatinfo]]@overlaps
-                )) {
-                    if (feature == "intensity") next
-                    # intensities are stored as data.table
-                    # They are already saveable with the rest of the gobject.
-                    # Skip.
-
-                    # write names of spatvector
-                    spatvecnames <- names(
-                        gobject@spatial_info[[spatinfo]]@overlaps[[feature]]
-                    )
-                    filename_names <- paste0(
-                        spatinfo_dir, "/", feature, "_",
-                        spatinfo, "_spatInfo_spatVectorOverlaps_names.txt"
-                    )
-                    write.table(
-                        x = spatvecnames, file = filename_names,
-                        col.names = FALSE, row.names = FALSE
-                    )
-
-                    # write spatvector
-                    filename <- paste0(
-                        spatinfo_dir, "/", feature, "_",
-                        spatinfo,
-                        "_spatInfo_spatVectorOverlaps.shp"
-                    )
-                    terra::writeVector(
-                        gobject@spatial_info[[spatinfo]]@overlaps[[feature]],
-                        filename = filename, overwrite = TRUE
-                    )
-                }
-            }
         }
     }
 
@@ -655,6 +619,11 @@ loadGiotto <- function(path_to_folder,
 
 # load and append to gobject the polygons overlaps information
 .load_giotto_spatial_info_overlaps <- function(gobject, manifest, verbose = NULL) {
+    # objects from GiottoClass v0.5 and onwards do not need this for overlaps
+    if ("versions" %in% names(attributes(gobject))) {
+        if (.gversion(gobject) >= "0.5.0") return(gobject)
+    }
+
     ## 3.3. overlaps
     vmsg(.v = verbose, "3.3 read Giotto spatial overlap information \n")
 

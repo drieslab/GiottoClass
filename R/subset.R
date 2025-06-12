@@ -617,24 +617,18 @@
             res_list[[spat_info]] <- spat_subset
         } else {
             # even if the spatial info is not one selected directly through
-            # poly_info,
-            # still subset subset any existing feature overlaps matching the
-            # feat_type
-            # for the feat_ids
+            # `poly_info`, still subset any existing feature overlaps matching
+            # the `feat_type` for the `feat_ids`
             if (!is.null(si@overlaps) &&
                 !is.null(feat_ids)) {
                 if (isTRUE(feat_type) == ":all:") {
                     feat_type <- names(si@overlaps)
                 }
 
-                for (feat in names(si@overlaps)) {
-                    if (isTRUE(feat %in% feat_type)) {
-                        feat_id_bool <- terra::as.list(
-                            si@overlaps[[feat]]
-                        )$feat_ID %in% feat_ids
-                        si@overlaps[[feat]] <- si@overlaps[[feat]][feat_id_bool]
-                    }
-                }
+                si <- .subset_overlaps_feat(si,
+                    i = feat_ids,
+                    feat_type = feat_type
+                )
             }
 
             res_list[[spat_info]] <- si
@@ -1715,17 +1709,11 @@ subsetGiottoLocsSubcellular <- function(
                 return(x)
             }
 
-            gpoly_overlap_names <- names(x@overlaps)
-            for (overlap_feat in gpoly_overlap_names) {
-                if (isTRUE(overlap_feat %in% names(cropped_feats))) {
-                    feat_id_bool <- terra::as.list(
-                        x@overlaps[[overlap_feat]]
-                    )$feat_ID %in%
-                        cropped_feats[[overlap_feat]]
-                    x@overlaps[[overlap_feat]] <- x@overlaps[[
-                        overlap_feat
-                    ]][feat_id_bool]
-                }
+            for (ftype in names(cropped_feats)) {
+                x <- .subset_overlaps_feat(x,
+                    i = cropped_feats[[ftype]],
+                    feat_type = ftype
+                )
             }
             x
         })
@@ -1905,33 +1893,26 @@ subsetGiottoLocsSubcellular <- function(
         }
     }
 
-    # cell ID and feat ID subsets
-    if (!is.null(gpolygon@overlaps)) {
-        if (isTRUE(feat_type) == ":all:") feat_type <- names(gpolygon@overlaps)
-
-        for (feat in names(gpolygon@overlaps)) {
-            # TODO check this for intensity image overlaps
-            if (!is.null(cell_ids)) {
-                cell_id_bool <- terra::as.list(
-                    gpolygon@overlaps[[feat]]
-                )$poly_ID %in% cell_ids
-                gpolygon@overlaps[[feat]] <- gpolygon@overlaps[[
-                    feat
-                ]][cell_id_bool]
-            }
-
-            if (!is.null(feat_ids) &&
-                isTRUE(feat %in% feat_type)) {
-                feat_id_bool <- terra::as.list(
-                    gpolygon@overlaps[[feat]]
-                )$feat_ID %in% feat_ids
-                gpolygon@overlaps[[feat]] <- gpolygon@overlaps[[
-                    feat
-                ]][feat_id_bool]
-            }
-        }
+    # overlap subsets
+    if (is.null(overlaps(gpolygon))) {
+        return(gpolygon) # return early if none
     }
-    return(gpolygon)
+
+    if (feat_type == ":all:") {
+        feat_type <- names(gpolygon@overlaps)
+    }
+
+    if (!is.null(cell_ids)) {
+        gpolygon <- .subset_overlaps_poly(gpolygon, i = cell_ids)
+    }
+    if (!is.null(feat_ids)) {
+        gpolygon <- .subset_overlaps_feat(gpolygon,
+            i = feat_ids,
+            feat_type = feat_type
+        )
+    }
+
+    gpolygon
 }
 
 
