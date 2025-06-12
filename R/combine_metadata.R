@@ -755,7 +755,7 @@ calculateLabelProportions <- function(gobject, labels,
 
     # find column_group_id if not provided
     groups_col <- .clp_detect_group_col(
-        groups, column_cell_id, column_group_id
+        groups, column_cell_id, column_group_id, verbose = verbose
     )
 
     data.table::setnames(labs, old = "cell_ID", new = column_cell_id)
@@ -817,7 +817,8 @@ calculateLabelProportions <- function(gobject, labels,
     }
 }
 
-.clp_detect_group_col <- function(groups, column_cell_id, column_group_id) {
+.clp_detect_group_col <- function(groups, column_cell_id, column_group_id,
+    verbose = NULL) {
     if (!is.null(column_group_id)) return(column_group_id)
     fname <- "[calculateLabelProportions]" # for printing
     vmsg(.v = verbose, fname, "no 'column_group_id' provided.
