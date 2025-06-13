@@ -406,7 +406,7 @@ evaluate_input <- function(type, x, ...) {
 
         x <- x[, -non_numeric_indices, with = FALSE]
         keep_ncols <- min(3L, ncol(x))
-        x <- x[, seq_len(keep_ncols)] # restrict to first 3 cols
+        x <- x[, seq_len(keep_ncols), with = FALSE] # restrict to first 3 cols
     }
 
     # add spatial dimension colnames
