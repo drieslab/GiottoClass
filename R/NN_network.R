@@ -142,6 +142,13 @@ createNetwork <- function(
     # NSE vars
     from <- to <- NULL
 
+    if (length(x) == 0L) {
+        stop(wrap_txt(errWidth = TRUE,
+            "[createNetwork] empty matrix provided.
+            No network can be generated"
+        ))
+    }
+
     # check params
     type <- match.arg(type, choices = c("sNN", "kNN", "delaunay"))
 
