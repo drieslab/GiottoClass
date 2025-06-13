@@ -421,16 +421,22 @@ evaluate_input <- function(type, x, ...) {
 }
 
 .spatlocs_check_ncol <- function(x) {
-    numeric_cols <- vapply(x, is.numeric, FUN.VALUE = logical(1L))
+    if (is.matrix(x) || is.array(x)) {
+        n_numeric_cols <- if (is.numeric(x)) ncol(x) else 0L
+    } else {
+        # For data.frame-like: use column-wise check
+        numeric_cols <- vapply(x, is.numeric, FUN.VALUE = logical(1L))
+        n_numeric_cols <- sum(numeric_cols)
+    }
 
     # too few
-    if (sum(numeric_cols) < 2L) {
+    if (n_numeric_cols < 2L) {
         stop(wrap_txt(
             "There need to be at least 2 numeric columns for spatial locations"
         ), call. = FALSE)
     }
     # too many
-    if (sum(numeric_cols) > 3L) {
+    if (n_numeric_cols > 3L) {
         warning(wrap_txt(
             "There are more than 3 numeric columns for spatial locations, only",
             "the first 3 will be used"
