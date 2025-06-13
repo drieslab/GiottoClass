@@ -1301,7 +1301,9 @@ setMethod(
         if (drop) {
             return(res)
         } else {
-            g <- giotto(initialize = FALSE, instructions = instructions(x))
+            g <- giotto(initialize = FALSE,
+                    instructions = instructions(x),
+                    parameters = x@parameters)
             g <- setGiotto(g, res, verbose = FALSE)
             if (!is.null(spat_unit)) activeSpatUnit(g) <- spat_unit[[1]]
             if (!is.null(feat_type)) activeFeatType(g) <- feat_type[[1]]
