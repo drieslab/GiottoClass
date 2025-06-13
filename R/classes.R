@@ -1662,6 +1662,7 @@ giottoImage <- setClass(
 #' @exportClass giottoLargeImage
 giottoLargeImage <- setClass(
     Class = "giottoLargeImage",
+    contains = "giottoSubobject",
     slots = c(
         name = "ANY",
         raster_object = "ANY",
