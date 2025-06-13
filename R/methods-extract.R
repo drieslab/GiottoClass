@@ -1642,6 +1642,7 @@ setMethod("as.list", signature("giotto"), function(x, slots, spat_unit = NULL, f
     if (missing(slots)) slots <- dataslots
     slots <- match.arg(slots, choices = dataslots, several.ok = TRUE)
     res <- do.call(.giotto_datalist, list(x = x, slots = slots))
+    if (is.null(res)) res <- list()
 
     if (!is.null(name)) {
         res <- .dbrkt_on_filter(res, name)
