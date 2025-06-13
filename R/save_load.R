@@ -371,7 +371,7 @@ loadGiotto <- function(path_to_folder,
         verbose = verbose
     )
 
-    if (isTRUE(reconnect_giottoImage) && length(gobject[["images"]] > 0)) {
+    if (isTRUE(reconnect_giottoImage) && length(gobject[["images"]]) > 0) {
         imglist <- lapply(gobject[["images"]], reconnect)
         gobject <- setGiotto(gobject, imglist,
             verbose = FALSE, initialize = FALSE
