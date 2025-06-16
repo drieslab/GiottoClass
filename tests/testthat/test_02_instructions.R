@@ -51,7 +51,7 @@ describe("giottoInstructions", {
         })
 
         it("can be retrieved from a gobject with instructions()", {
-            intrs <- instructions(g)
+            instrs <- instructions(g)
             expect_true(inherits(instrs, "giottoInstructions"))
             expect_type(instrs, "list")
         })
