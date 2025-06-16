@@ -1281,6 +1281,8 @@ setMethod(
 
 # * overlapPointDT ####
 
+#' @rdname overlapPointDT-class
+#' @export
 setMethod("[",
     signature(
         x = "overlapPointDT",
@@ -1296,6 +1298,8 @@ setMethod("[",
     }
 )
 
+#' @rdname overlapPointDT-class
+#' @export
 setMethod("[",
     signature(
         x = "overlapPointDT",
@@ -1311,6 +1315,8 @@ setMethod("[",
     }
 )
 
+#' @rdname overlapPointDT-class
+#' @export
 setMethod("[",
     signature(
         x = "overlapPointDT",

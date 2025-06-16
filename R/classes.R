@@ -1579,6 +1579,71 @@ setClass("overlapInfo",
 setClass("overlapPoint", contains = c("overlapInfo", "VIRTUAL"))
 setClass("overlapIntensity", contains = c("overlapInfo", "VIRTUAL"))
 
+#' @name overlapPointDT-class
+#' @title Polygon and Point Relationships
+#' @description
+#' Utility class for storing overlaps relationships between polygons and points
+#' in a sparse `data.table` format. Retrieve the unique ID index of overlapped
+#' points `[i, ]`. Get indices of which polys are overlapping specific feature
+#' species using `[, j]`.
+#'
+#' Subsetting with `ids = FALSE` and `[i, j]` indexing is also supported.
+#'
+#' Supports `as.matrix` for conversion to `dgCMatrix`. Contained poly and
+#' feature names simplify rownames/colnames and empty row/col creation.
+#'
+#' @slot data data.table. Table containing 3 integer cols:
+#'
+#'   * `poly` - polygon index. Maps to `spat_ids` slot.
+#'   * `feat` - feat_ID_uniq (unique integer identifier) of a point detection
+#'   * `feat_id_index` - index of feature name mapping in `@feat_ids` slot.
+#' @slot spat_unit character. Spatial unit (usually name of polygons information)
+#' @slot feat_type character. Feature type (usually name of points information)
+#' @slot provenance character. provenance information
+#' @slot spat_ids character. Polygon names
+#' @slot feat_ids character. Feature names
+#' @slot nfeats integer (optional metadata). How many feature points were
+#'  used in overlap operation. Gives an idea of sparsity, but has no effect on
+#'  processing.
+#'
+#' @param x object
+#' @param i numeric, character, logical. Index of or name of poly in overlapping
+#' polygons
+#' @param j numeric, character, logical. Index of or name of feature being
+#' overlapped.
+#' @param use_names logical (default = `FALSE`). Whether to return as integer
+#' indices or with character ids.
+#' @param ids logical (default = `TRUE`). Whether to return the requested
+#' integer indices (`TRUE`) or the subset overlap object (`FALSE`).
+#' @param drop not used.
+#' @param \dots additional params to pass (none implemented)
+#' @returns integer or character if only `i` or `j` provided, depending on
+#' `use_names`. A subset `overlapPointDT` if both `i` and `j` are used.
+#' @examples
+#' g <- GiottoData::loadGiottoMini("vizgen")
+#' poly <- g[["spatial_info", "z0"]][[1]]
+#' ovlp <- overlaps(poly, "rna")
+#' ovlp
+#'
+#' as.matrix(ovlp)
+#'
+#' dim(ovlp)
+#' nrow(ovlp) # number of relationships
+#'
+#' # get feature unique IDs overlapped by nth poly
+#' ovlp[1] # check one (no overlaps returns integer(0))
+#' ovlp[1:5] # check multiple
+#' ovlp[1:5, use_names = TRUE] # returns feature names, but no longer unique
+#'
+#' # get integer index of poly(s) overlapping particular feature species
+#' ovlp[, 1]
+#' ovlp[, "Mlc1"] # this is the same
+#'
+#' # get a subset of overlap object
+#' ovlp[1:10, ids = FALSE] # subset to first 10 polys
+#' ovlp[, 1:10, ids = FALSE] # subset to first 10 feature species
+#' ovlp[1:10, 1:10] # subset to first 10 polys and first 10 features species
+#' @exportClass overlapPointDT
 setClass("overlapPointDT",
     contains = "overlapPoint",
     slots = list(
