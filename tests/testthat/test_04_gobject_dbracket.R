@@ -326,7 +326,7 @@ describe("gobject [[ extraction", {
         it("[[]] is equivalent to as.list() with same parameters", {
             # Test that [[ is using as.list internally correctly
             list_result1 <- g[[]]
-            list_result2 <- as.list.giotto(g)
+            list_result2 <- as.list(g)
 
             expect_equal(length(list_result1), length(list_result2))
             expect_equal(objName(list_result1), objName(list_result2))
@@ -338,7 +338,7 @@ describe("gobject [[ extraction", {
             test_spat_unit <- available_spat_units[1]
 
             bracket_result <- g[[spat_unit = test_spat_unit]]
-            aslist_result <- as.list.giotto(g, spat_unit = test_spat_unit)
+            aslist_result <- as.list(g, spat_unit = test_spat_unit)
 
             expect_equal(length(bracket_result), length(aslist_result))
             expect_equal(objName(bracket_result), objName(aslist_result))
@@ -349,7 +349,7 @@ describe("gobject [[ extraction", {
             test_feat_type <- available_feat_types[1]
 
             bracket_result <- g[[feat_type = test_feat_type]]
-            aslist_result <- as.list.giotto(g, feat_type = test_feat_type)
+            aslist_result <- as.list(g, feat_type = test_feat_type)
 
             expect_equal(length(bracket_result), length(aslist_result))
             expect_equal(objName(bracket_result), objName(aslist_result))
