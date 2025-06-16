@@ -146,10 +146,10 @@ setMethod("dim", signature("giottoPolygon"), function(x) dim(x[]))
 #' @export
 setMethod("dim", signature("giottoPoints"), function(x) dim(x[]))
 
-#' @rdname dims_generic
+#' @rdname dims-generic
 #' @export
 setMethod("dim", signature("overlapPointDT"), function(x) dim(x@data))
 
-#' @rdname dims_generic
+#' @rdname dims-generic
 #' @export
 setMethod("dim", signature("overlapIntensityDT"), function(x) dim(x@data))

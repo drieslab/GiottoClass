@@ -24,6 +24,8 @@
 \alias{dim,giottoLargeImage-method}
 \alias{dim,giottoPolygon-method}
 \alias{dim,giottoPoints-method}
+\alias{dim,overlapPointDT-method}
+\alias{dim,overlapIntensityDT-method}
 \title{Dimensions of giotto objects}
 \usage{
 \S4method{nrow}{giotto}(x)
@@ -69,6 +71,10 @@
 \S4method{dim}{giottoPolygon}(x)
 
 \S4method{dim}{giottoPoints}(x)
+
+\S4method{dim}{overlapPointDT}(x)
+
+\S4method{dim}{overlapIntensityDT}(x)
 }
 \arguments{
 \item{x}{object to check dimensions of}
