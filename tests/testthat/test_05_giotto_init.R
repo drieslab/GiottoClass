@@ -116,8 +116,10 @@ describe("Giotto Object Setup With Subcellular Data", {
 
 describe("Gobject ID interaction/edge cases", {
 
+    test <- giotto()
     ex <- test_data$ex
     gpoly <- test_data$gpoly
+    gpoints <- test_data$gpoints
 
     it("cell_ID from spatial_info is overwritten by expression", {
         expected_IDs <- spatIDs(ex)

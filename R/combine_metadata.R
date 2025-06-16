@@ -677,6 +677,9 @@ calculateLabelProportions <- function(gobject, labels,
     checkmate::assert_character(column_cell_id, len = 1L)
     checkmate::assert_character(column_group_id, len = 1L, null.ok = TRUE)
 
+    # NSE vars
+    .LPG <- .NPG <- weight <- NULL
+
     fname <- "[calculateLabelProportions]" # for printing
     group_method <- match.arg(
         group_method, choices = c("table", "spatialnetwork", "polygon")

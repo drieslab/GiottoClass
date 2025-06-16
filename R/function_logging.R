@@ -75,7 +75,7 @@ update_giotto_params <- function(
 
 #' @export
 #' @keywords internal
-print.ghistory <- function(x) {
+print.ghistory <- function(x, ...) {
     message("Steps and parameters used:")
     for (i in seq_along(x)) {
         cat(GiottoUtils::color_blue(sprintf("<%s>\n", names(x)[[i]])))
@@ -85,7 +85,7 @@ print.ghistory <- function(x) {
 
 #' @export
 #' @keywords internal
-print.ghistory_item <- function(x) {
+print.ghistory_item <- function(x, ...) {
     GiottoUtils::print_list(x, pre = "  ")
     atts <- attr(x, "attachments")
     if (!is.null(atts)) {

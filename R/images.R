@@ -1578,7 +1578,7 @@ convertGiottoLargeImageToMG <- function(gobject = NULL,
 #'
 #' writeGiottoLargeImage(
 #'     gobject = g, largeImage_name = "image",
-#'     filename = paste0("tempfile()", ".png")
+#'     filename = paste0(tempfile(), ".png")
 #' )
 #' @export
 writeGiottoLargeImage <- function(giottoLargeImage = NULL,
