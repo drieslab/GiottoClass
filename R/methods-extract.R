@@ -1611,8 +1611,26 @@ sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", negat
 # * as.list ####
 
 #' @rdname as.list
-#' @export
-as.list.giotto <- function(x, slots, spat_unit = NULL, feat_type = NULL, name = NULL, ...) {
+#' @title Coerce to a list
+#' @docType methods
+#' @method as.list giotto
+#' @description Generic to coerce to a list if possible. Used with the `giotto`
+#' object, it disassembles it into a list of subobjects.
+#' @param x the object to coerce
+#' @param slots character vector. Which data slots to include in list. See
+#'   details
+#' @param spat_unit spatial unit (e.g. "cell")
+#' @param feat_type feature type to use (e.g. "rna", "protein")
+#' @param name name of the elements to select from the slot
+#' @param \dots additional arguments
+#' @details
+#' * Giotto method - the slots argument currently accepts any or multiple of:
+#' `"spatial_info", "spatial_locs", "spatial_network", "feat_info",
+#' "expression", "cell_metadata", "feat_metadata", "spatial_enrichment",
+#' "nn_network", "dimension_reduction", "multiomics"`
+#' @returns list
+#' @exportMethod as.list
+setMethod("as.list", signature("giotto"), function(x, slots, spat_unit = NULL, feat_type = NULL, name = NULL, ...) {
     dataslots <- c(
         "spatial_info", "spatial_locs", "spatial_network", "feat_info",
         "expression", "cell_metadata", "feat_metadata", "spatial_enrichment",
@@ -1639,36 +1657,6 @@ as.list.giotto <- function(x, slots, spat_unit = NULL, feat_type = NULL, name = 
         res <- .dbrkt_ft_filter(res, feat_type)
     }
     return(res)
-}
-
-#' @rdname as.list
-#' @title Coerce to a list
-#' @docType methods
-#' @method as.list giotto
-#' @description Generic to coerce to a list if possible
-#' @param x the object to coerce
-#' @param slots character vector. Which data slots to include in list. See
-#'   details
-#' @param spat_unit spatial unit (e.g. "cell")
-#' @param feat_type feature type to use (e.g. "rna", "protein")
-#' @param name name of the elements to select from the slot
-#' @param \dots additional arguments
-#' @details
-#' * Giotto method - the slots argument currently accepts any or multiple of:
-#' `"spatial_info", "spatial_locs", "spatial_network", "feat_info",
-#' "expression", "cell_metadata", "feat_metadata", "spatial_enrichment",
-#' "nn_network", "dimension_reduction", "multiomics"`
-#' @returns list
-#' @exportMethod as.list
-setMethod("as.list", signature("giotto"), function(x, slots, spat_unit = NULL, feat_type = NULL, name = NULL, ...) {
-    as.list.giotto(
-        x = x,
-        slots = slots,
-        spat_unit = spat_unit,
-        feat_type = feat_type,
-        name = name,
-        ...
-    )
 })
 
 

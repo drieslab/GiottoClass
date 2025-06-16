@@ -1,39 +1,58 @@
 
-describe("Giotto Object Save and Load", {
+describe("Giotto Object Save/Load", {
 
-    g <- GiottoData::loadGiottoMini("viz")
-
+    g <- test_data$viz
+    empty <- giotto()
     test <- tempdir()
 
-    test_that("gobject can be saved and loaded - qs", {
-        rlang::local_options(lifecycle_verbosity = "quiet")
-        saveGiotto(g, dir = test, method = "qs", overwrite = TRUE, verbose = FALSE)
-        g2 <<- loadGiotto(file.path(test, "saveGiottoDir"))
+    describe("qs method", {
 
-        expect_true(methods::validObject(g2))
+        # register cleanup
+        on.exit(unlink(file.path(test, "saveGiottoDir"), recursive = TRUE),
+                add = TRUE)
+
+        it("it can be saved and loaded", {
+            rlang::local_options(lifecycle_verbosity = "quiet")
+            saveGiotto(g, dir = test, method = "qs", overwrite = TRUE,
+                       verbose = FALSE)
+            g2 <<- loadGiotto(file.path(test, "saveGiottoDir"))
+
+            expect_true(methods::validObject(g2))
+        })
+
+        it("it can be overwritten and loaded", {
+            rlang::local_options(lifecycle_verbosity = "quiet")
+            saveGiotto(g2, dir = test, method = "qs", overwrite = TRUE,
+                       verbose = FALSE)
+            g3 <- loadGiotto(file.path(test, "saveGiottoDir"))
+
+            expect_true(methods::validObject(g3))
+        })
+
     })
 
-    test_that("gobject an be ovewritten and loaded - qs", {
-        rlang::local_options(lifecycle_verbosity = "quiet")
-        saveGiotto(g2, dir = test, method = "qs", overwrite = TRUE, verbose = FALSE)
-        g3 <- loadGiotto(file.path(test, "saveGiottoDir"))
+    describe("RDS method", {
 
-        expect_true(methods::validObject(g3))
+        # register cleanup
+        on.exit(unlink(file.path(test, "saveGiottoDir"), recursive = TRUE),
+                add = TRUE)
+
+        it("it can be saved and loaded", {
+            rlang::local_options(lifecycle_verbosity = "quiet")
+            saveGiotto(g, dir = test, overwrite = TRUE, verbose = FALSE)
+            g2 <<- loadGiotto(file.path(test, "saveGiottoDir"))
+
+            expect_true(methods::validObject(g2))
+        })
+
+        it("it can be overwritten and loaded", {
+            rlang::local_options(lifecycle_verbosity = "quiet")
+            saveGiotto(g2, dir = test, overwrite = TRUE, verbose = FALSE)
+            g3 <- loadGiotto(file.path(test, "saveGiottoDir"))
+
+            expect_true(methods::validObject(g3))
+        })
+
     })
 
-    test_that("gobject can be saved and loaded - RDS", {
-        rlang::local_options(lifecycle_verbosity = "quiet")
-        saveGiotto(g, dir = test, overwrite = TRUE, verbose = FALSE)
-        g2 <<- loadGiotto(file.path(test, "saveGiottoDir"))
-
-        expect_true(methods::validObject(g2))
-    })
-
-    test_that("gobject an be ovewritten and loaded - RDS", {
-        rlang::local_options(lifecycle_verbosity = "quiet")
-        saveGiotto(g2, dir = test, overwrite = TRUE, verbose = FALSE)
-        g3 <- loadGiotto(file.path(test, "saveGiottoDir"))
-
-        expect_true(methods::validObject(g3))
-    })
 })
