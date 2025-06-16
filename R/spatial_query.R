@@ -245,9 +245,15 @@ spatQuery <- function(gobject,
     # sv1 is the filter poly (or result of previous intersect iteration)
     # sv2 is the data poly
     sv1 <- .filter_get(1L) # get initial sv1
+    names(sv1)[which(names(sv1) == "poly_ID")] <- filter_names[[1L]]
     if (make_valid) sv1 <- terra::makeValid(sv1)
     for (f_i in 2:length(filters)) {
         sv2 <- .filter_get(f_i)
+
+        if (f_i != length(filters)) {
+            names(sv2)[which(names(sv2) == "poly_ID")] <- filter_names[[f_i]]
+        }
+
         vmsg(.v = verbose, sprintf("processing [%s] vs [%s]...",
             filter_names[f_i - 1L], filter_names[f_i]
         ))
@@ -255,12 +261,8 @@ spatQuery <- function(gobject,
         sv1 <- terra::intersect(sv1, sv2)
     }
 
-    # update colnames of output geoms
-    is_pid_idx <- which(names(sv1) == "poly_ID")
-    names(sv1)[is_pid_idx] <-
-        c(filter_names[seq_len(length(filter_names) - 1L)], "poly_ID")
     # reorder with "poly_ID" col first
-    sv1 <- sv1[, unique(c(tail(is_pid_idx, 1L), is_pid_idx))]
+    sv1 <- sv1[, unique(c("poly_ID", names(sv1)))]
 
     if (return_table) {
         return(data.table::as.data.table(sv1))
