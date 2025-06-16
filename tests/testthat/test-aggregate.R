@@ -20,7 +20,7 @@ random_points_gen <- function(n = 500, extent = ext(gpoly)) {
     )
 }
 
-g <- GiottoData::loadGiottoMini("vizgen")
+g <- test_data$viz
 gpoly <- g[["spatial_info", "aggregate"]][[1]]
 gpoly@overlaps = NULL
 gpoly@spatVectorCentroids <- NULL
