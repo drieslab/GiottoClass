@@ -630,8 +630,13 @@ smoothGiottoPolygons <- function(gpolygon,
 
         # data.frame like object needs to have 2 coordinate columns and
         # at least one other column as the feat_ID
-        if (ncol(x) < 3) stop("At minimum, columns for xy coordinates and
-                            feature ID are needed.\n")
+        if (ncol(x) < 3) {
+            stop(wrap_txtf(errWidth = TRUE,
+                "[createGiottoPoints] ncol = %d, but at least 3 expected.
+                At minimum, columns for xy coordinates and feature ID are %s",
+                ncol(x), " needed.\n"
+            ), call. = FALSE)
+        }
         col_classes <- vapply(x, class, FUN.VALUE = character(1L))
         ## find feat_ID as either first character col or named column
         ## if not detected, select 3rd column

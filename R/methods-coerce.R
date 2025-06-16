@@ -91,7 +91,7 @@ NULL
 #' @method as.data.table SpatVector
 #' @export
 as.data.table.SpatVector <- function(
-        x, geomtype, keep.rownames = FALSE, geom = NULL, include_values = TRUE, ...) {
+        x, keep.rownames = FALSE, geom = NULL, include_values = TRUE, geomtype, ...) {
     if (isTRUE(toupper(geom) == "XY")) {
         # permit passing of geomtype if needed
         if (terra::geomtype(x) != "none") {

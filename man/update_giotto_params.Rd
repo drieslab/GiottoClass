@@ -8,7 +8,8 @@ update_giotto_params(
   gobject,
   description = "_test",
   return_gobject = TRUE,
-  toplevel = 2
+  toplevel = 2,
+  attachments = NULL
 )
 }
 \arguments{
@@ -20,6 +21,9 @@ update_giotto_params(
 
 \item{toplevel}{expected relative stackframe where call that is being
 recorded was made. If negative, param recording is skipped}
+
+\item{attachments}{named list. Items to attach. These are intended for lightweight
+param classes containing settings. No large items should be added here.}
 }
 \value{
 giotto object or list of parameters

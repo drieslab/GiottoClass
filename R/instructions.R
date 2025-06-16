@@ -48,12 +48,16 @@ createGiottoInstructions <- function(python_path = getOption("giotto.py_path"),
         silent = TRUE
     )
 
-    if ((is.null(python_path) || inherits(python_path, "try-error")) &
-        !no_python_warn) {
-        warning(wrap_txt("Python is required for full Giotto functionality."),
+    if ((is.null(python_path) || inherits(python_path, "try-error")) &&
+        (!no_python_warn && !getOption("giotto.no_python_warn", FALSE))) {
+        warning(wrap_txt(
+            "Python is required for full Giotto functionality.
+            Turn off this message by setting option
+            \"giotto.no_python_warn\" = TRUE"),
             call. = FALSE
         )
         options("giotto.has_conda" = FALSE)
+        options("giotto.no_python_warn" = TRUE)
     }
 
     # print plot to console
