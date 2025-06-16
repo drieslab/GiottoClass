@@ -427,8 +427,8 @@ setMethod(
             for (img_name in image_names) {
                 if (!img_name %in% potential_large_image_names) {
                     warning(
-                        "image with the name ", img_name,
-                        " was not found and will be skipped \n"
+                        "[calculateOverlap] image with the name ", img_name,
+                        " was not found and will be skipped \n", call. = FALSE
                     )
                 }
             }
@@ -1163,8 +1163,8 @@ calculateOverlapPolygonImages <- function(gobject,
     for (img_name in image_names) {
         if (!img_name %in% potential_large_image_names) {
             warning(
-                "image with the name ", img_name,
-                " was not found and will be skipped \n"
+                "[calculateOverlap] image with the name ", img_name,
+                " was not found and will be skipped \n", call. = FALSE
             )
         }
     }
@@ -1178,8 +1178,8 @@ calculateOverlapPolygonImages <- function(gobject,
 
         if (!img_name %in% potential_large_image_names) {
             warning(
-                "image with the name ", img_name,
-                " was not found and will be skipped \n"
+                "[calculateOverlap] image with the name ", img_name,
+                " was not found and will be skipped \n", call. = FALSE
             )
         }
 

@@ -11,11 +11,15 @@
 \alias{nrow,spatialNetworkObj-method}
 \alias{nrow,enrData-method}
 \alias{nrow,dimObj-method}
+\alias{nrow,overlapPointDT-method}
+\alias{nrow,overlapIntensityDT-method}
 \alias{ncol,giotto-method}
 \alias{ncol,exprData-method}
 \alias{ncol,metaData-method}
 \alias{ncol,enrData-method}
 \alias{ncol,dimObj-method}
+\alias{ncol,overlapPointDT-method}
+\alias{ncol,overlapIntensityDT-method}
 \alias{dim,giotto-method}
 \alias{dim,spatLocsObj-method}
 \alias{dim,exprData-method}
@@ -46,6 +50,10 @@
 
 \S4method{nrow}{dimObj}(x)
 
+\S4method{nrow}{overlapPointDT}(x)
+
+\S4method{nrow}{overlapIntensityDT}(x)
+
 \S4method{ncol}{giotto}(x)
 
 \S4method{ncol}{exprData}(x)
@@ -55,6 +63,10 @@
 \S4method{ncol}{enrData}(x)
 
 \S4method{ncol}{dimObj}(x)
+
+\S4method{ncol}{overlapPointDT}(x)
+
+\S4method{ncol}{overlapIntensityDT}(x)
 
 \S4method{dim}{giotto}(x)
 

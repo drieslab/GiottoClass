@@ -69,7 +69,13 @@ setMethod("nrow", signature("enrData"), function(x) nrow(x@enrichDT))
 #' @export
 setMethod("nrow", signature("dimObj"), function(x) nrow(x@coordinates))
 
+#' @rdname dims-generic
+#' @export
+setMethod("nrow", signature("overlapPointDT"), function(x) nrow(x@data))
 
+#' @rdname dims-generic
+#' @export
+setMethod("nrow", signature("overlapIntensityDT"), function(x) nrow(x@data))
 
 # ncol ####
 
@@ -103,8 +109,13 @@ setMethod("ncol", signature("enrData"), function(x) ncol(x@enrichDT))
 #' @export
 setMethod("ncol", signature("dimObj"), function(x) ncol(x@coordinates))
 
+#' @rdname dims-generic
+#' @export
+setMethod("ncol", signature("overlapPointDT"), function(x) ncol(x@data))
 
-
+#' @rdname dims-generic
+#' @export
+setMethod("ncol", signature("overlapIntensityDT"), function(x) ncol(x@data))
 
 
 ## dim() generic ####
