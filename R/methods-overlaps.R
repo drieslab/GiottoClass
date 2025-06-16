@@ -27,7 +27,10 @@ setMethod(
             return(x@overlaps)
         } else {
             # return named entry
-            return(x@overlaps[[name]])
+            o <- x@overlaps[[name]]
+            # if still null, look in intensity overlaps
+            if (is.null(o)) o <- x@overlaps$intensity[[name]]
         }
+        o
     }
 )
