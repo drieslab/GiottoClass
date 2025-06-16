@@ -161,6 +161,13 @@ as.data.frame.overlapPointDT <- function(x, ...) {
     )
 }
 
+#' @rdname as.data.table
+#' @method as.data.frame overlapIntensityDT
+#' @export
+as.data.frame.overlapIntensityDT <- function(x, ...) {
+    x[]
+}
+
 # to matrix ####
 
 
