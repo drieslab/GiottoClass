@@ -1,4 +1,4 @@
-# GiottoClass 0.4.8 (TBD)
+# GiottoClass 0.4.8 (2025/06/16)
 
 ## new
 - `calculateLabelProportions()` for label proportions calculation from table, network neighbors, and polygon selections
