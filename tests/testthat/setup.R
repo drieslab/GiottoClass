@@ -30,3 +30,4 @@ setup_test_data <- function() {
 }
 
 test_data <- setup_test_data()
+set.seed(1234) # reproducibility seed
