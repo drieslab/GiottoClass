@@ -1,11 +1,11 @@
 pandoc: 3.1.11
-pkgdown: 2.1.2
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   image_tools: image_tools.html
   overview: overview.html
   spatial_geometries: spatial_geometries.html
-last_built: 2025-05-15T19:27Z
+last_built: 2025-06-17T15:30Z
 urls:
   reference: https://drieslab.github.io/GiottoClass/reference
   article: https://drieslab.github.io/GiottoClass/articles

@@ -21,7 +21,7 @@ if desired.'><meta property="og:image" content="https://drieslab.github.io/Giott
 
     <a class="navbar-brand me-2" href="../index.html">GiottoClass</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,8 @@ if desired.</p>
 <span>  <span class="va">gobject</span>,</span>
 <span>  description <span class="op">=</span> <span class="st">"_test"</span>,</span>
 <span>  return_gobject <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  toplevel <span class="op">=</span> <span class="fl">2</span></span>
+<span>  toplevel <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  attachments <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -92,6 +93,11 @@ if desired.</p>
 <dt id="arg-toplevel">toplevel<a class="anchor" aria-label="anchor" href="#arg-toplevel"></a></dt>
 <dd><p>expected relative stackframe where call that is being
 recorded was made. If negative, param recording is skipped</p></dd>
+
+
+<dt id="arg-attachments">attachments<a class="anchor" aria-label="anchor" href="#arg-attachments"></a></dt>
+<dd><p>named list. Items to attach. These are intended for lightweight
+param classes containing settings. No large items should be added here.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -149,7 +155,7 @@ recorded was made. If negative, param recording is skipped</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>

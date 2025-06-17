@@ -45,6 +45,7 @@
 <url><loc>https://drieslab.github.io/GiottoClass/reference/as.points.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/as.polygons.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/buffer.html</loc></url>
+<url><loc>https://drieslab.github.io/GiottoClass/reference/calculateLabelProportions.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/calculateMetaTable.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/calculateMetaTableCells.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/calculateOverlap.html</loc></url>
@@ -60,6 +61,7 @@
 <url><loc>https://drieslab.github.io/GiottoClass/reference/checkPythonPackage.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/check_py_for_scanpy.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/circleVertices.html</loc></url>
+<url><loc>https://drieslab.github.io/GiottoClass/reference/clusterData.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/colMeans_flex.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/colSums_flex.html</loc></url>
 <url><loc>https://drieslab.github.io/GiottoClass/reference/combineCellData.html</loc></url>
