@@ -164,9 +164,9 @@ jobs:
             quiet = FALSE,
             clean = FALSE,
             branch = "staging",
-            type = c("tests"),
+            type = c("tests", "examples", "vignettes"),
             combine_types = TRUE,
-            install_path = file.path(Sys.getenv("RUNNER_TEMP"), "package", auth_token = Sys.getenv("GITHUB_PAT"))
+            install_path = file.path(Sys.getenv("RUNNER_TEMP"), "package")
           )
         shell: Rscript {0}
         env:
