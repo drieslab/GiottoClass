@@ -1,3 +1,13 @@
+# GiottoClass 0.4.8 (2025/06/17)
+
+## new
+- `calculateLabelProportions()` for label proportions calculation from table, network neighbors, and polygon selections
+- `clusterData()` generic for {bluster} integration
+
+## changes
+- `calculateSpatCellMetadataProportions()` now deprecated in favor of `calculateLabelProportions()`
+- `spatValues()` 2nd arg has been changed to `feats`
+
 # GiottoClass 0.4.7 (2025/05/06)
 
 ## new
