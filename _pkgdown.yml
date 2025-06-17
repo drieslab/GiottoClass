@@ -209,6 +209,7 @@ reference:
   - annotateSpatialNetwork
   - calculateMetaTable
   - calculateMetaTableCells
+  - calculateLabelProportions
   - calculateSpatCellMetadataProportions
 - title: Instructions
   desc: Set instructions for Giotto Object behavior
@@ -232,6 +233,7 @@ reference:
 - contents:
   - processData
   - processParam
+  - clusterData
 - title: Poly Generation
   desc: Creation of polygon shapes and arrays
 - contents:
