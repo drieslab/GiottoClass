@@ -1301,7 +1301,9 @@ setMethod(
         if (drop) {
             return(res)
         } else {
-            g <- giotto(initialize = FALSE, instructions = instructions(x))
+            g <- giotto(initialize = FALSE,
+                    instructions = instructions(x),
+                    parameters = x@parameters)
             g <- setGiotto(g, res, verbose = FALSE)
             if (!is.null(spat_unit)) activeSpatUnit(g) <- spat_unit[[1]]
             if (!is.null(feat_type)) activeFeatType(g) <- feat_type[[1]]
@@ -1612,7 +1614,8 @@ sliceGiotto <- function(gobject, spat_unit = ":all:", feat_type = ":all:", negat
 #' @title Coerce to a list
 #' @docType methods
 #' @method as.list giotto
-#' @description Generic to coerce to a list if possible
+#' @description Generic to coerce to a list if possible. Used with the `giotto`
+#' object, it disassembles it into a list of subobjects.
 #' @param x the object to coerce
 #' @param slots character vector. Which data slots to include in list. See
 #'   details
@@ -1642,6 +1645,7 @@ setMethod("as.list", signature("giotto"), function(x, slots, spat_unit = NULL, f
     if (missing(slots)) slots <- dataslots
     slots <- match.arg(slots, choices = dataslots, several.ok = TRUE)
     res <- do.call(.giotto_datalist, list(x = x, slots = slots))
+    if (is.null(res)) res <- list()
 
     if (!is.null(name)) {
         res <- .dbrkt_on_filter(res, name)

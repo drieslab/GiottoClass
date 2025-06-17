@@ -14,7 +14,7 @@ processData(x, param, ...)
 \item{...}{additional arguments, for use in specific methods}
 }
 \value{
-An object of the same class containing the processed
+An object of the same class containing the processed values
 }
 \description{
 Generic for processing an object containing measured values.

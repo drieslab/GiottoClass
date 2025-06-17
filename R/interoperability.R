@@ -3742,7 +3742,7 @@ spatialdataToGiotto <- function(
             gobject <- setSpatialLocations(
                 gobject,
                 x = createSpatLocsObj(spatial_dict[[key]], name = "raw"),
-                spat_unit = su)
+                spat_unit = key)
         }
     }
     sp_dict <- parse_obsm_for_spat_locs(sdata)
