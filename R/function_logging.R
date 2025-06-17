@@ -21,6 +21,8 @@
 #' @param return_gobject logical. Whether the giotto object should be returned
 #' @param toplevel expected relative stackframe where call that is being
 #' recorded was made. If negative, param recording is skipped
+#' @param attachments named list. Items to attach. These are intended for lightweight
+#' param classes containing settings. No large items should be added here.
 #' @returns giotto object or list of parameters
 #' @examples
 #' g <- GiottoData::loadGiottoMini("visium")
@@ -31,7 +33,9 @@ update_giotto_params <- function(
         gobject,
         description = "_test",
         return_gobject = TRUE,
-        toplevel = 2) {
+        toplevel = 2,
+        attachments = NULL) {
+    checkmate::assert_list(attachments, null.ok = TRUE, names = "unique")
     parameters_list <- gobject@parameters
     number_of_rounds <- length(parameters_list)
     update_name <- paste0(number_of_rounds, description)
@@ -52,7 +56,14 @@ update_giotto_params <- function(
     # `get_args()` can be problematic. Allow skip right before this step.
 
     # update parameters list
-    parameters_list[[update_name]] <- get_args(toplevel = toplevel)
+    new_entry <- get_args(toplevel = toplevel)
+    class(new_entry) <- c("ghistory_item", "character")
+    if (!is.null(attachments)) {
+        attr(new_entry, "attachments") <- attachments
+    }
+
+    parameters_list[[update_name]] <- new_entry
+    class(parameters_list) <- "ghistory"
 
     if (isTRUE(return_gobject)) {
         gobject@parameters <- parameters_list
@@ -62,7 +73,28 @@ update_giotto_params <- function(
     }
 }
 
+#' @export
+#' @keywords internal
+print.ghistory <- function(x, ...) {
+    message("Steps and parameters used:")
+    for (i in seq_along(x)) {
+        cat(GiottoUtils::color_blue(sprintf("<%s>\n", names(x)[[i]])))
+        print(x[[i]])
+    }
+}
 
+#' @export
+#' @keywords internal
+print.ghistory_item <- function(x, ...) {
+    GiottoUtils::print_list(x, pre = "  ")
+    atts <- attr(x, "attachments")
+    if (!is.null(atts)) {
+        for (a in names(atts)) {
+            cat(" ", GiottoUtils::color_yellow(sprintf("<%s> :\n", a)))
+            cat(str_reformat(atts[[a]], indent = 4))
+        }
+    }
+}
 
 #' @title Giotto object history
 #' @name objHistory
@@ -89,14 +121,8 @@ objHistory <- function(object, summarized = FALSE) {
                 wrap_msg("\t name info: ", sub_step[selected_names])
             }
         }
-    } else {
-        message("Steps and parameters used:")
-        for (i in seq_along(p)) {
-            cat(GiottoUtils::color_blue(sprintf("<%s>\n", names(p)[[i]])))
-            GiottoUtils::print_list(p[[i]], pre = "  ")
-        }
     }
-    invisible(x = object@parameters)
+    object@parameters
 }
 
 

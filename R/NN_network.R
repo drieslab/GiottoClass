@@ -16,8 +16,9 @@ NULL
 #' @param method method used to create the type of network requested.
 #' One of "dbscan" for sNN and kNN or "geometry", "RTriangle", or "deldir"
 #' for delaunay.
-#' @param node_ids character. Node ID values to assign. If NULL, integer indices
-#' will be used as node IDs.
+#' @param node_ids character. Node ID values to assign. If NULL, rownames of
+#' input matrix will be used. If no rownames, integer indices will be used as
+#' node IDs.
 #' @param include_weight logical. include edge weight attribute in output
 #' @param include_distance logical. include edge distance attribute in output
 #' @param as.igraph logical. Whether to return as `igraph`. Otherwise returns
@@ -141,6 +142,13 @@ createNetwork <- function(
     # NSE vars
     from <- to <- NULL
 
+    if (length(x) == 0L) {
+        stop(wrap_txt(errWidth = TRUE,
+            "[createNetwork] empty matrix provided.
+            No network can be generated"
+        ))
+    }
+
     # check params
     type <- match.arg(type, choices = c("sNN", "kNN", "delaunay"))
 
@@ -189,6 +197,11 @@ createNetwork <- function(
             args = alist
         )$delaunay_network_DT
     )
+
+    # default node_ids are input matrix rownames
+    if (is.null(node_ids) && !is.null(rownames(x))) {
+        node_ids <- rownames(x)
+    }
 
     # replace indices with node_ids if desired
     if (!is.null(node_ids)) {

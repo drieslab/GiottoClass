@@ -26,8 +26,9 @@ information, PCA matrix, spatial locations xy(z) coordinates.}
 One of "dbscan" for sNN and kNN or "geometry", "RTriangle", or "deldir"
 for delaunay.}
 
-\item{node_ids}{character. Node ID values to assign. If NULL, integer indices
-will be used as node IDs.}
+\item{node_ids}{character. Node ID values to assign. If NULL, rownames of
+input matrix will be used. If no rownames, integer indices will be used as
+node IDs.}
 
 \item{include_distance}{logical. include edge distance attribute in output}
 
