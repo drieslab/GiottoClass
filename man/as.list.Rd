@@ -25,7 +25,8 @@ details}
 list
 }
 \description{
-Generic to coerce to a list if possible
+Generic to coerce to a list if possible. Used with the \code{giotto}
+object, it disassembles it into a list of subobjects.
 }
 \details{
 \itemize{

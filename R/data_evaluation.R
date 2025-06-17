@@ -390,53 +390,76 @@ evaluate_input <- function(type, x, ...) {
     # determine cell_ID -------------------- #
     potential_cell_ids <- NULL
 
-    # find non-numeric cols (possible cell_ID col)
-    if (length(non_numeric_classes) > 0) {
+    # 1. find non-numeric cols (possible cell_ID col)
+    # 2. collect first one as expected cell IDs
+    # 3. remove all cols except numeric cols
+    if (length(non_numeric_classes) > 0L) {
         non_numeric_indices <- which(!column_classes %in%
             c("numeric", "integer"))
 
-        vmsg(
-            .v = verbose,
-            "There are non numeric or integer columns for the spatial location
-            input at column position(s): ", non_numeric_indices,
-            "\n The first non-numeric column will be considered as a cell ID
-            to test for consistency with the expression matrix",
-            "\n Other non numeric columns will be removed"
+        .spatlocs_multiple_non_numerics_msg(
+            non_num_cols = non_numeric_indices,
+            verbose = verbose
         )
 
         potential_cell_ids <- x[[names(non_numeric_classes)[[1]]]]
 
         x <- x[, -non_numeric_indices, with = FALSE]
+        keep_ncols <- min(3L, ncol(x))
+        x <- x[, seq_len(keep_ncols), with = FALSE] # restrict to first 3 cols
     }
 
-    # for spatial dimension names
-    spatial_dimensions <- c("x", "y", "z")
-    colnames(x) <- paste0(
-        "sdim",
-        spatial_dimensions[seq_len(ncol(x))]
-    )
+    # add spatial dimension colnames
+    spatial_dimensions <- c("x", "y", "z")[seq_len(ncol(x))]
+    colnames(x) <- paste0("sdim", spatial_dimensions)
 
     # Assign first non-numeric as cell_ID
-    cell_ID <- NULL # NSE var
     if (!is.null(potential_cell_ids)) {
-        x[, cell_ID := potential_cell_ids]
+        x[, "cell_ID" := potential_cell_ids]
     }
     x
 }
 
 .spatlocs_check_ncol <- function(x) {
+    if (is.matrix(x) || is.array(x)) {
+        n_numeric_cols <- if (is.numeric(x)) ncol(x) else 0L
+    } else {
+        # For data.frame-like: use column-wise check
+        numeric_cols <- vapply(x, is.numeric, FUN.VALUE = logical(1L))
+        n_numeric_cols <- sum(numeric_cols)
+    }
+
     # too few
-    if (ncol(x) < 2L) {
+    if (n_numeric_cols < 2L) {
         stop(wrap_txt(
             "There need to be at least 2 numeric columns for spatial locations"
         ), call. = FALSE)
     }
     # too many
-    if (ncol(x) > 3L) {
+    if (n_numeric_cols > 3L) {
         warning(wrap_txt(
-            "There are more than 3 columns for spatial locations, only the",
-            "first 3 will be used"
+            "There are more than 3 numeric columns for spatial locations, only",
+            "the first 3 will be used"
         ), call. = FALSE)
+    }
+}
+
+# when more than one non-numeric col is present,
+# inform about handling (extra are dropped.)
+.spatlocs_multiple_non_numerics_msg <- function(
+    non_num_cols,
+    verbose = NULL,
+    type = "locations") {
+    if (length(non_num_cols) > 1L) {
+        vmsg(.v = verbose, sprintf(
+            "[spatial %s]
+                Input has multiple non numeric columns at positions: %s
+                The first non-numeric column will be considered as a %s\n%s",
+            type,
+            toString(non_num_cols),
+            "cell ID to test for consistency with the expression matrix",
+            "Other non numeric columns will be removed"
+        ))
     }
 }
 
@@ -504,15 +527,14 @@ evaluate_input <- function(type, x, ...) {
 
     if (!any(class(unlist(spatial_enrichment)) %in%
         c("data.table", "data.frame", "matrix", "character"))) {
-        .gstop(
-            "spatial enrichment needs to be a data.table or data.frame-like",
-            "object or a path to one of these"
+        stop(
+            "[spatial enrichment] input needs to be a data.frame-like ",
+            "object or a path to one\n", call. = FALSE
         )
     }
     if (inherits(spatial_enrichment, "character")) {
-        if (!file.exists(path.expand(spatial_enrichment))) {
-            .gstop("path to spatial enrichment info does not exist")
-        }
+        # assume filepath
+        checkmate::assert_file_exists(spatial_enrichment)
 
         spatial_enrichment <- data.table::fread(
             input = spatial_enrichment,
@@ -538,14 +560,10 @@ evaluate_input <- function(type, x, ...) {
         non_numeric_indices <- which(!column_classes %in%
             c("numeric", "integer"))
 
-        vmsg(
-            .v = verbose,
-            "There are non numeric or integer columns for the spatial
-            enrichment",
-            "input at column position(s):", non_numeric_indices,
-            "\nThe first non-numeric column will be considered as a cell ID to",
-            "test for consistency with the expression matrix.
-            Other non-numeric columns will be removed."
+        .spatlocs_multiple_non_numerics_msg(
+            type = "enrichment",
+            non_num_cols = non_numeric_indices,
+            verbose = verbose
         )
 
         potential_cell_IDs <- spatial_enrichment[[names(
@@ -561,10 +579,10 @@ evaluate_input <- function(type, x, ...) {
 
     # check number of columns: too few
     if (ncol(spatial_enrichment) < 1L) {
-        .gstop(
-            "There has to be at least 2 columns (1 for cell IDs, and",
-            "at least one other for enrichment data"
-        )
+        stop(wrap_txt(errWidth = TRUE,
+            "[spatial enrichment] There has to be at least 2 columns:
+            1 for cell IDs, and at least one other for enrichment data\n"
+        ), call. = FALSE)
     }
 
     # Assign first non-numeric as cell_ID

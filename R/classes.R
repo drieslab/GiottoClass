@@ -1,11 +1,15 @@
 #' @include package_imports.R
 NULL
 
+# OLDCLASS ####
+setOldClass("giottoInstructions")
+
 # MISC ####
 ## * Define class unions ####
 
 setClassUnion("nullOrChar", c("NULL", "character"))
 setClassUnion("nullOrList", c("NULL", "list"))
+setClassUnion("nullOrInstructions", c("nullOrList", "giottoInstructions"))
 setClassUnion("nullOrDatatable", c("NULL", "data.table"))
 setClassUnion("nullOrLogical", c("NULL", "logical"))
 # see zzz.R for allMatrix
@@ -371,10 +375,6 @@ setClass("spatFeatData",
 )
 
 
-# OLDCLASS ####
-setOldClass("giottoInstructions")
-
-
 
 
 
@@ -598,22 +598,22 @@ giotto <- setClass(
     "giotto",
     slots = c(
         expression = "nullOrList",
-        expression_feat = "ANY",
-        spatial_locs = "ANY",
-        spatial_info = "ANY",
-        cell_metadata = "ANY",
-        feat_metadata = "ANY",
-        feat_info = "ANY",
-        cell_ID = "ANY",
-        feat_ID = "ANY",
-        spatial_network = "ANY",
-        spatial_grid = "ANY",
-        spatial_enrichment = "ANY",
-        dimension_reduction = "ANY",
-        nn_network = "ANY",
-        images = "ANY",
+        expression_feat = "nullOrChar",
+        spatial_locs = "nullOrList",
+        spatial_info = "nullOrList",
+        cell_metadata = "nullOrList",
+        feat_metadata = "nullOrList",
+        feat_info = "nullOrList",
+        cell_ID = "nullOrList",
+        feat_ID = "nullOrList",
+        spatial_network = "nullOrList",
+        spatial_grid = "nullOrList",
+        spatial_enrichment = "nullOrList",
+        dimension_reduction = "nullOrList",
+        nn_network = "nullOrList",
+        images = "nullOrList",
         parameters = "ANY",
-        instructions = "ANY",
+        instructions = "nullOrInstructions",
         offset_file = "ANY",
         versions = "list",
         join_info = "ANY",
@@ -1662,6 +1662,7 @@ giottoImage <- setClass(
 #' @exportClass giottoLargeImage
 giottoLargeImage <- setClass(
     Class = "giottoLargeImage",
+    contains = "giottoSubobject",
     slots = c(
         name = "ANY",
         raster_object = "ANY",

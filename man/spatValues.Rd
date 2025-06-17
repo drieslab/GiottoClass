@@ -7,15 +7,16 @@
 \usage{
 spatValues(
   gobject,
+  feats,
   spat_unit = NULL,
   feat_type = NULL,
-  feats,
   expression_values = NULL,
   spat_loc_name = NULL,
   spat_enr_name = NULL,
   poly_info = NULL,
   dim_reduction_to_use = NULL,
   dim_reduction_name = NULL,
+  svkey = NULL,
   verbose = NULL,
   debug = FALSE
 )
@@ -35,12 +36,12 @@ svkey(
 \arguments{
 \item{gobject}{\code{giotto} object}
 
+\item{feats}{character vector. One or more features or values to find within
+the giotto object}
+
 \item{spat_unit}{character. spatial unit to check}
 
 \item{feat_type}{character. feature type to check}
-
-\item{feats}{character vector. One or more features or values to find within
-the giotto object}
 
 \item{expression_values}{character. (optional) Name of expression information
 to use}
@@ -58,6 +59,9 @@ reduction to use}
 
 \item{dim_reduction_name}{character. (optional) Name of dimension reduction
 to use}
+
+\item{svkey}{use a \code{svkey}. Other params will be ignored. This is just
+syntactic sugar for \code{svkey@get(gobject)}}
 
 \item{verbose}{verbosity}
 
