@@ -6060,7 +6060,10 @@ spatValues <- function(gobject,
     verbose = NULL,
     debug = FALSE) {
     checkmate::assert_class(gobject, "giotto")
-    if (!is.null(svkey)) return(svkey@get(gobject))
+    if (!is.null(svkey)) {
+        checkmate::assert_class(svkey, "svkey")
+        return(svkey@get(gobject))
+    }
     checkmate::assert_character(feats)
 
     a <- get_args_list()
