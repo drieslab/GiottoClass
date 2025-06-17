@@ -37,16 +37,16 @@ describe("Core Giotto Object Creation and Validation", {
         # and pull the assigned active settings.
         expect_identical(activeSpatUnit(g), "aggregate")
         expect_identical(activeFeatType(g), "rna")
+    })
 
-        # setting a specific value (does not even need the gobject)
-        test_that("specific input spat_unit returns unmodified", {
-            expect_identical("test_value",
-                set_default_spat_unit(spat_unit = "test_value"))
-        })
-        test_that("specific input feat_type returns unmodified", {
-            expect_identical("test_value",
-                set_default_feat_type(feat_type = "test_value"))
-        })
+    # setting a specific value (does not even need the gobject)
+    it("specific input spat_unit returns unmodified", {
+        expect_identical("test_value",
+            set_default_spat_unit(spat_unit = "test_value"))
+    })
+    it("specific input feat_type returns unmodified", {
+        expect_identical("test_value",
+            set_default_feat_type(feat_type = "test_value"))
     })
 
     it("creates Giotto object from expression matrix", {

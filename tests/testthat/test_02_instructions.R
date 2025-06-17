@@ -36,7 +36,7 @@ describe("giottoInstructions", {
             instrs <- g@instructions
             expect_true(inherits(instrs, "giottoInstructions"))
             expect_type(instrs, "list")
-            identical(instrs, createGiottoInstructions())
+            expect_identical(instrs, createGiottoInstructions())
         })
     })
 

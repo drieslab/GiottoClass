@@ -24,7 +24,7 @@ describe("Network Creation Functions", {
                 expect_true(inherits(result, "igraph"))
                 expect_true(igraph::is_igraph(result))
                 expect_equal(igraph::vcount(result), nrow(pca_matrix))
-                expect_true(igraph::is.named(result))
+                expect_true(igraph::is_named(result))
             })
 
             it("creates kNN network with default parameters", {
