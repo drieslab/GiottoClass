@@ -295,8 +295,10 @@ joinGiottoObjects <- function(gobject_list,
             )
             # when x_shift is the default based on xrange, skip the first
             # x_shift since the first object can be at x0
-            final_x_shift <- (x_shift * (gobj_idx - 1)) +
-                (x_padding * (gobj_idx - 1))
+            final_x_shift <- (cumsum(
+                c(0, head(x_shift, length(x_shift - 1)))
+            ) -
+                x_shift[[1L]]) + (x_padding * (gobj_idx - 1))
         } else {
             # when x_shift is explicit, include the first x_shift
             final_x_shift <- x_shift + (x_padding * (gobj_idx - 1))
