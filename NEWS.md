@@ -11,7 +11,13 @@
 - `overlaps()` will now properly find image overlaps
 
 
-# GiottoClass 0.4.8 (2025/06/16)
+
+# GiottoClass 0.4.9 (2025/07/07)
+
+## bug fixes
+- fix irregular default x padding/shift behavior [#1140](https://github.com/drieslab/Giotto/issues/1140) by rbutleriii
+
+# GiottoClass 0.4.8 (2025/06/17)
 
 ## new
 - `calculateLabelProportions()` for label proportions calculation from table, network neighbors, and polygon selections
@@ -19,6 +25,7 @@
 
 ## changes
 - `calculateSpatCellMetadataProportions()` now deprecated in favor of `calculateLabelProportions()`
+- `spatValues()` 2nd arg has been changed to `feats`
 
 # GiottoClass 0.4.7 (2025/05/06)
 

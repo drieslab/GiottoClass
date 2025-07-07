@@ -35,7 +35,7 @@ update_giotto_params <- function(
         return_gobject = TRUE,
         toplevel = 2,
         attachments = NULL) {
-    checkmate::assert_list(attachments, null.ok = TRUE)
+    checkmate::assert_list(attachments, null.ok = TRUE, names = "unique")
     parameters_list <- gobject@parameters
     number_of_rounds <- length(parameters_list)
     update_name <- paste0(number_of_rounds, description)
