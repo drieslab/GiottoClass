@@ -2302,389 +2302,382 @@ seuratToGiottoV5 <- function(sobject,
     sp_network = NULL,
     nn_network = NULL,
     verbose = TRUE) {
-    package_check("Seurat")
-
-    # NSE vars
-    sdimy <- NULL
-
-    if (is.null(Seurat::GetAssayData(
+  package_check("Seurat")
+  
+  # NSE vars
+  sdimy <- NULL
+  
+  if (is.null(Seurat::GetAssayData(
+    object = sobject, slot = "counts",
+    assay = spatial_assay
+  ))) {
+    wrap_msg("No raw expression values are provided in spatial_assay")
+    return(sobject)
+  } else {
+    exp <- Seurat::GetAssayData(
+      object = sobject, slot = "counts",
+      assay = spatial_assay
+    )
+    if (!is.null(sobject@assays$SCT)) {
+      normexp <- Seurat::GetAssayData(
         object = sobject, slot = "counts",
-        assay = spatial_assay
-    ))) {
-        wrap_msg("No raw expression values are provided in spatial_assay")
-        return(sobject)
+        assay = "SCT"
+      )
+    }
+    
+    if ("data" %in% slotNames(sobject@assays[[spatial_assay]])) {
+      if (!is.null(slot(sobject, "assays")[[spatial_assay]]@data)) {
+        normexp <- Seurat::GetAssayData(
+          object = sobject,
+          slot = "data", assay = spatial_assay
+        )
+      }
+    }
+    if ("layers" %in% slotNames(sobject@assays[[spatial_assay]])) {
+      if (!is.null(slot(sobject, "assays")[[spatial_assay]]@layers)) {
+        normexp <- SeuratObject::LayerData(
+          object = sobject,
+          assay = spatial_assay
+        )
+      }
+    }
+    
+    # Cell Metadata
+    cell_metadata <- sobject@meta.data
+    cell_metadata <- data.table::as.data.table(
+      cell_metadata, keep.rownames = TRUE)
+    
+    # Feat Metadata
+    feat_metadata <- sobject[[]]
+    feat_metadata <- data.table::as.data.table(
+      feat_metadata, keep.rownames = TRUE)
+    
+    # rownames of both kept as `rn`
+    # Dimension Reduction
+    if (sum(vapply(
+      dim_reduction,
+      function(x) length(sobject@reductions[[x]]),
+      FUN.VALUE = integer(1L)
+    )) == 0) {
+      dimReduc_list <- NULL
     } else {
-        exp <- Seurat::GetAssayData(
-            object = sobject, slot = "counts",
-            assay = spatial_assay
-        )
-        if (!is.null(sobject@assays$SCT)) {
-            normexp <- Seurat::GetAssayData(
-                object = sobject, slot = "counts",
-                assay = "SCT"
-            )
+      dimReduc_list <- lapply(dim_reduction, function(x) {
+        dim_coord <- as.matrix(Seurat::Embeddings(
+          object = sobject,
+          reduction = x
+        ))
+        dim_load <- as.matrix(Seurat::Loadings(
+          object = sobject,
+          reduction = x
+        ))
+        dim_eig <- Seurat::Stdev(sobject, reduction = x)
+        if (length(dim_eig) > 0) {
+          dim_eig <- sapply(dim_eig, function(x) x^2)
         }
-
-        if ("data" %in% slotNames(sobject@assays[[spatial_assay]])) {
-            if (!is.null(slot(sobject, "assays")[[spatial_assay]]@data)) {
-                normexp <- Seurat::GetAssayData(
-                    object = sobject,
-                    slot = "data", assay = spatial_assay
-                )
-            }
+        colnames(dim_coord) <- paste0("Dim.", seq_len(ncol(dim_coord)))
+        if (length(dim_load) > 0) {
+          colnames(dim_load) <- paste0(
+            "Dim.", seq_len(ncol(dim_load))
+          )
         }
-        if ("layers" %in% slotNames(sobject@assays[[spatial_assay]])) {
-            if (!is.null(slot(sobject, "assays")[[spatial_assay]]@layers)) {
-                normexp <- SeuratObject::LayerData(
-                    object = sobject,
-                    assay = spatial_assay
-                )
-            }
-        }
-
-        # Cell Metadata
-        cell_metadata <- sobject@meta.data
-        cell_metadata <- data.table::as.data.table(
-            cell_metadata,
-            keep.rownames = TRUE
+        dimReduc <- create_dim_obj(
+          name = x,
+          reduction = "cells",
+          reduction_method = x,
+          spat_unit = "cell",
+          feat_type = "rna",
+          provenance = NULL,
+          coordinates = dim_coord,
+          misc = list(eigenvalues = dim_eig, loadings = dim_load)
         )
-
-        # Feat Metadata
-        feat_metadata <- sobject[[]]
-        feat_metadata <- data.table::as.data.table(
-            feat_metadata,
-            keep.rownames = TRUE
-        )
-
-        # rownames of both kept as `rn`
-        # Dimension Reduction
-        if (sum(vapply(
-            dim_reduction,
-            function(x) length(sobject@reductions[[x]]),
-            FUN.VALUE = integer(1L)
-        )) == 0) {
-            dimReduc_list <- NULL
+        
+        return(dimReduc)
+      })
+      # names(dimReduc_list) <- dim_reduction
+    }
+    
+    # Spatial Locations
+    if (length(sobject@assays[[spatial_assay]]) == 0) {
+      spat_loc <- NULL
+    } else {
+      # !requires image objects!
+      if (!is.null(Seurat::Images(
+        object = sobject,
+        assay = spatial_assay
+      ))) {
+        spat_coord <- Seurat::GetTissueCoordinates(
+          sobject,
+          scale = NULL,
+          cols = c(
+            "imagerow",
+            "imagecol"))
+        
+        if (!("cell" %in% spat_coord)) {
+          spat_coord$cell_ID <- rownames(spat_coord)
+          colnames(spat_coord) <- c("sdimy", "sdimx", "cell_ID")
         } else {
-            dimReduc_list <- lapply(dim_reduction, function(x) {
-                dim_coord <- as.matrix(Seurat::Embeddings(
-                    object = sobject,
-                    reduction = x
-                ))
-                dim_load <- as.matrix(Seurat::Loadings(
-                    object = sobject,
-                    reduction = x
-                ))
-                dim_eig <- Seurat::Stdev(sobject, reduction = x)
-                if (length(dim_eig) > 0) {
-                    dim_eig <- sapply(dim_eig, function(x) x^2)
-                }
-                colnames(dim_coord) <- paste0("Dim.", seq_len(ncol(dim_coord)))
-                if (length(dim_load) > 0) {
-                    colnames(dim_load) <- paste0(
-                        "Dim.", seq_len(ncol(dim_load))
-                    )
-                }
-                dimReduc <- create_dim_obj(
-                    name = x,
-                    reduction = "cells",
-                    reduction_method = x,
-                    spat_unit = "cell",
-                    feat_type = "rna",
-                    provenance = NULL,
-                    coordinates = dim_coord,
-                    misc = list(eigenvalues = dim_eig, loadings = dim_load)
-                )
-
-                return(dimReduc)
-            })
-            # names(dimReduc_list) <- dim_reduction
+          colnames(spat_coord) <- c("sdimy", "sdimx", "cell_ID")
         }
-
-        # Spatial Locations
-        if (length(sobject@assays[[spatial_assay]]) == 0) {
-            spat_loc <- NULL
-        } else {
-            # !requires image objects!
-            if (!is.null(Seurat::Images(
-                object = sobject,
-                assay = spatial_assay
-            ))) {
-                spat_coord <- Seurat::GetTissueCoordinates(
-                    sobject,
-                    scale = NULL,
-                    cols = c(
-                        "imagerow",
-                        "imagecol"
-                    )
-                )
-
-                if (!("cell" %in% spat_coord)) {
-                    spat_coord$cell_ID <- rownames(spat_coord)
-                    colnames(spat_coord) <- c("sdimy", "sdimx", "cell_ID")
-                } else {
-                    colnames(spat_coord) <- c("sdimy", "sdimx", "cell_ID")
-                }
-
-                spat_loc <- data.table::as.data.table(spat_coord)
-
-                # seurat has coords following imaging conventions
-                # flip them for Giotto
-                spat_loc[, sdimy := -sdimy]
-                data.table::setcolorder(
-                    spat_loc,
-                    neworder = c(
-                        "sdimx",
-                        "sdimy",
-                        "cell_ID"
-                    )
-                )
-            } else {
-                message("Images for RNA assay not found in the data.
+        
+        spat_loc <- data.table::as.data.table(spat_coord)
+        
+        # seurat has coords following imaging conventions
+        # flip them for Giotto
+        spat_loc[, sdimy := -sdimy]
+        data.table::setcolorder(
+          spat_loc,
+          neworder = c("sdimx",
+                       "sdimy",
+                       "cell_ID"
+          )
+        )
+        
+      } else {
+        message("Images for RNA assay not found in the data.
                         Skipping image processing.")
-                spat_loc <- NULL
-            }
-        }
-        # Subcellular
-        name <- names(sobject@images)
-        if (length(sobject@assays[[subcellular_assay]]) == 1) {
-            if (!is.null(Seurat::Images(
-                object = sobject,
-                assay = spatial_assay
-            ))) {
-                spat_coord <- Seurat::GetTissueCoordinates(sobject)
-                colnames(spat_coord) <- c("sdimx", "sdimy")
-                spat_coord$cell_ID <- rownames(spat_coord)
-                exp <- exp[, c(intersect(spat_coord$cell_ID, colnames(exp)))]
-                spat_loc <- spat_coord
-            }
-        }
-        if (!length(sobject@images) == 0) {
-            for (i in names(sobject@images)) {
-                if ("molecules" %in% names(sobject@images[[i]]) == TRUE) {
-                    if (!length(sobject@images[[i]][["molecules"]]) == 0) {
-                        assay <- names(sobject@assays)
-                        featnames <- rownames(sobject)
-                        mol_spatlocs <- data.table::data.table()
-
-                        for (x in featnames) {
-                            df <- (Seurat::FetchData(
-                                sobject[[i]][["molecules"]],
-                                vars = x
-                            ))
-                            mol_spatlocs <- rbind(mol_spatlocs, df)
-                        }
-                        gpoints <- createGiottoPoints(mol_spatlocs,
-                            feat_type = "rna"
-                        )
-                    }
-                }
-                if ("centroids" %in% names(sobject@images[[i]])) {
-                    centroids_coords <-
-                        sobject@images[[i]]$centroids@coords
-                    centroids_coords <- vect(centroids_coords)
-                    gpolygon <- create_giotto_polygon_object(
-                        name = "cell", spatVector = centroids_coords
-                    )
-                }
-                if ("segmentation" %in% names(sobject@images[[i]])) {
-                    polygon_list <- list()
-                    for (j in seq(sobject@images[[
-                        i
-                    ]]@boundaries$segmentation@polygons)) {
-                        polygon_info <- sobject@images[[
-                            i
-                        ]]@boundaries$segmentation@polygons[[j]]
-                        # Get coordinates from segmentation
-
-                        seg_coords <- polygon_info@Polygons[[1]]@coords
-                        # Fetch cell_Id from polygon information
-                        cell_ID <- polygon_info@ID
-                        # Convert it to SpatVector
-                        seg_coords <- vect(seg_coords)
-                        # Create giotto_polygon_object
-                        gpolygon <- create_giotto_polygon_object(
-                            name = "cell",
-                            spatVector = centroids_coords,
-                            spatVectorCentroids = seg_coords
-                        )
-                        # Add the cell_ID to the list of polygon names
-                        polygon_list[[cell_ID]] <- gpolygon
-                    }
-                }
-            }
-        }
+        spat_loc <- NULL
+      }
     }
-
-
-
-
-
-
-
-    # Find SeuratImages, extract them, and pass to create image
-    image_list <- list()
-    for (i in names(sobject@images)) {
-        simg <- sobject[[i]]
-        # check if image slot has image in it
-        if ("image" %in% slotNames(simg)) {
-            img_array <- slot(simg, "image")
-            if (!is.null(img_array)) {
-                scalef <- Seurat::ScaleFactors(simg)
-                gImg <- createGiottoLargeImage(
-                    raster_object = terra::rast(img_array) * 255,
-                    name = i,
-                    scale_factor = 1 / scalef$lowres
+    # Subcellular
+    name <- names(sobject@images)
+    # if (!is.null(subcellular_assay)){
+    if (length(sobject@assays[[subcellular_assay]]) == 1) {
+      spat_coord <- Seurat::GetTissueCoordinates(sobject)
+      if ("cell" %in% colnames(spat_coord)) {
+        spat_coord$cell_ID <- spat_coord$cell
+      } else {
+        spat_coord$cell_ID <- rownames(spat_coord)
+      }
+      colnames(spat_coord)[1:2] <- c("sdimx", "sdimy")
+      
+      # colnames(spat_coord) <- c("sdimx", "sdimy")
+      # spat_coord$cell_ID <- rownames(spat_coord)
+      exp <- exp[, c(intersect(spat_coord$cell_ID, colnames(exp)))]
+      spat_loc <- spat_coord
+    }
+    # }
+    if (!length(sobject@images) == 0) {
+      for (i in names(sobject@images)) {
+        if ("molecules" %in% names(sobject@images[[i]]) == TRUE) {
+          if (!length(sobject@images[[i]][["molecules"]]) == 0) {
+            assay <- names(sobject@assays)
+            featnames <- rownames(sobject)
+            mol_spatlocs <- data.table::data.table()
+            
+            for (x in featnames) {
+              df <- (Seurat::FetchData(
+                sobject[[i]][["molecules"]],
+                vars = x
+              ))
+              mol_spatlocs <- rbind(mol_spatlocs, df)
+            }
+            gpoints <- createGiottoPoints(mol_spatlocs,
+                                          feat_type = "rna"
+            )
+            if ("centroids" %in% names(sobject@images[[i]])) {
+              centroids_coords <-
+                sobject@images[[i]]$centroids@coords
+              centroids_coords <- vect(centroids_coords)
+              gpolygon <- create_giotto_polygon_object(
+                name = "cell", spatVector = centroids_coords
+              )
+            }
+            if ("segmentation" %in% names(sobject@images[[i]])) {
+              polygon_list <- list()
+              
+              for (j in seq(sobject@images[[
+                i
+              ]]@boundaries$segmentation@polygons)) {
+                polygon_info <- sobject@images[[
+                  i
+                ]]@boundaries$segmentation@polygons[[j]]
+                
+                # Get coordinates from segmentation
+                seg_coords <- polygon_info@Polygons[[1]]@coords
+                
+                # Fetch cell_Id from polygon information
+                cell_ID <- polygon_info@ID
+                
+                # Convert it to SpatVector
+                seg_coords <- vect(seg_coords)
+                
+                # Create giotto_polygon_object
+                gpolygon <- create_giotto_polygon_object(
+                  name = "cell",
+                  spatVector = centroids_coords,
+                  spatVectorCentroids = seg_coords
                 )
-                image_list[[i]] <- gImg
+                
+                # Add the cell_ID to the list of polygon names
+                polygon_list[[cell_ID]] <- gpolygon
+              }
             }
+          }
         }
+      }
     }
-
-
-    gobject <- createGiottoObject(exp,
-        spatial_locs = spat_loc,
-        dimension_reduction = dimReduc_list
+  }
+  
+  # Find SueratImages, extract them, and pass to create image
+  image_list <- list()
+  for (i in names(sobject@images)) {
+    simg <- sobject[[i]]
+    # check if image slot has image in it
+    if ("image" %in% slotNames(simg)) {
+      img_array <- slot(simg, "image")
+      if (!is.null(img_array)) {
+        scalef <- Seurat::ScaleFactors(simg)
+        gImg <- createGiottoLargeImage(
+          raster_object = terra::rast(img_array) * 255,
+          name = i,
+          scale_factor = 1 / scalef$lowres
+        )
+        image_list[[i]] <- gImg
+      }
+    }
+  }
+  
+  
+  gobject <- createGiottoObject(exp,
+                                spatial_locs = spat_loc,
+                                dimension_reduction = dimReduc_list
+  )
+  if (exists("normexp") == TRUE) {
+    exprObj <- create_expr_obj(
+      name = "normalized",
+      exprMat = normexp,
+      spat_unit = "cell",
+      feat_type = "rna",
+      provenance = "cell"
     )
-    if (exists("normexp") == TRUE) {
-        exprObj <- create_expr_obj(
-            name = "normalized",
-            exprMat = normexp,
-            spat_unit = "cell",
-            feat_type = "rna",
-            provenance = "cell"
-        )
-        gobject <- set_expression_values(
-            gobject = gobject,
-            values = exprObj, set_defaults = FALSE
-        )
-        # gobject@expression$cell$rna$normalized = normexp
-    }
-
-    # Networks
-
-    # spatial_network
-    weight <- distance <- NULL
-
-    if (!is.null(sp_network)) {
-        for (i in seq(sp_network)) {
-            if (verbose) message("Copying spatial networks")
-            stempgraph <- Seurat::as.Graph(sobject@graphs[[sp_network[i]]])
-            m <- as.matrix(stempgraph)
-            sobjIgraph <- igraph::graph.adjacency(m, weighted = TRUE)
-
-            if (verbose) message("Calculating distances")
-            for (j in seq_along(sobject@graphs[[sp_network[i]]]@x)) {
-                dist_matrix <- sobject@graphs[[sp_network[i]]]@x[[j]]
-                sobjIgraph <- igraph::set_edge_attr(
-                    graph = sobjIgraph, name = "distance",
-                    value = dist_matrix, index = j
-                )
-            }
-            e_attr <- igraph::edge_attr_names(sobjIgraph)
-            if ("weight" %in% e_attr) {
-                igDT <- data.table::setDT(igraph::as_data_frame(sobjIgraph))
-                igDT[, weight := 1 / (1 + distance)]
-                data.table::setcolorder(igDT,
-                    neworder = c("from", "to", "weight", "distance")
-                )
-                sobjIgraph <- igraph::graph_from_data_frame(igDT)
-            }
-            DT <- data.table()
-
-            edges <- igraph::ends(sobjIgraph,
-                es = igraph::E(sobjIgraph),
-                names = TRUE
-            )
-
-            DT$from <- edges[, 1]
-            DT$to <- edges[, 2]
-            num_rows <- nrow(DT)
-            DT$sdimx_begin <- as.numeric(rep(NA, num_rows))
-            DT$sdimy_begin <- as.numeric(rep(NA, num_rows))
-            DT$sdimx_end <- as.numeric(rep(NA, num_rows))
-            DT$sdimy_end <- as.numeric(rep(NA, num_rows))
-            ed_attr <- igraph::edge.attributes(sobjIgraph)
-            DT$weight <- ed_attr[1]
-            DT$distance <- ed_attr[2]
-            spatNetObj <- create_spat_net_obj(
-                networkDT = DT
-            )
-            gobject <- set_spatialNetwork(
-                gobject = gobject,
-                spatial_network = spatNetObj,
-                name = sp_network[i]
-            )
-        }
-    }
-
-    ## nn_network
-    if (!is.null(nn_network)) {
-        nnNetObj_list <- lapply(seq_along(nn_network), function(i) {
-            stempgraph <- Seurat::as.Graph(sobject@graphs[[nn_network[i]]])
-            m <- as.matrix(stempgraph)
-            sobjIgraph <- igraph::graph.adjacency(m, weighted = TRUE)
-
-            if (verbose) message("Calculating distances")
-            for (j in seq_along(sobject@graphs[[nn_network[i]]]@x)) {
-                dist_matrix <- sobject@graphs[[nn_network[i]]]@x[[j]]
-
-                sobjIgraph <- igraph::set_edge_attr(
-                    graph = sobjIgraph, name = "distance",
-                    value = dist_matrix, index = j
-                )
-            }
-            e_attr <- igraph::edge_attr_names(sobjIgraph)
-            if ("weight" %in% e_attr) {
-                igDT <- data.table::setDT(igraph::as_data_frame(sobjIgraph))
-                igDT[, weight := 1 / (1 + distance)]
-                data.table::setcolorder(igDT,
-                    neworder = c("from", "to", "weight", "distance")
-                )
-                sobjIgraph <- igraph::graph_from_data_frame(igDT)
-            }
-
-            if (verbose) message("Copying nearest neighbour networks")
-            nnNetObj <- createNearestNetObj(
-                name = names(sobject@graphs)[i],
-                network = sobjIgraph
-            )
-            return(nnNetObj)
-        })
-
-        gobject <- setGiotto(gobject, nnNetObj_list)
-    }
-    gobject <- addCellMetadata(
-        gobject = gobject, new_metadata = cell_metadata,
-        by_column = TRUE, column_cell_ID = "rn"
+    gobject <- set_expression_values(
+      gobject = gobject,
+      values = exprObj, set_defaults = FALSE
     )
-
-    gobject <- addFeatMetadata(
-        gobject = gobject, new_metadata = feat_metadata
+    # gobject@expression$cell$rna$normalized = normexp
+  }
+  
+  # Networks
+  
+  # spatial_network
+  weight <- distance <- NULL
+  
+  if (!is.null(sp_network)) {
+    for (i in seq(sp_network)) {
+      if (verbose) message("Copying spatial networks")
+      stempgraph <- Seurat::as.Graph(sobject@graphs[[sp_network[i]]])
+      m <- as.matrix(stempgraph)
+      sobjIgraph <- igraph::graph.adjacency(m, weighted = TRUE)
+      
+      if (verbose) message("Calculating distances")
+      for (j in seq_along(sobject@graphs[[sp_network[i]]]@x)) {
+        dist_matrix <- sobject@graphs[[sp_network[i]]]@x[[j]]
+        sobjIgraph <- igraph::set_edge_attr(
+          graph = sobjIgraph, name = "distance",
+          value = dist_matrix, index = j
+        )
+      }
+      e_attr <- igraph::edge_attr_names(sobjIgraph)
+      if ("weight" %in% e_attr) {
+        igDT <- data.table::setDT(igraph::as_data_frame(sobjIgraph))
+        igDT[, weight := 1 / (1 + distance)]
+        data.table::setcolorder(igDT,
+                                neworder = c("from", "to", "weight", "distance")
+        )
+        sobjIgraph <- igraph::graph_from_data_frame(igDT)
+      }
+      DT <- data.table()
+      
+      edges <- igraph::ends(sobjIgraph,
+                            es = igraph::E(sobjIgraph),
+                            names = TRUE
+      )
+      
+      DT$from <- edges[, 1]
+      DT$to <- edges[, 2]
+      num_rows <- nrow(DT)
+      DT$sdimx_begin <- as.numeric(rep(NA, num_rows))
+      DT$sdimy_begin <- as.numeric(rep(NA, num_rows))
+      DT$sdimx_end <- as.numeric(rep(NA, num_rows))
+      DT$sdimy_end <- as.numeric(rep(NA, num_rows))
+      ed_attr <- igraph::edge.attributes(sobjIgraph)
+      DT$weight <- ed_attr[1]
+      DT$distance <- ed_attr[2]
+      spatNetObj <- create_spat_net_obj(
+        networkDT = DT
+      )
+      gobject <- set_spatialNetwork(
+        gobject = gobject,
+        spatial_network = spatNetObj,
+        name = sp_network[i]
+      )
+    }
+  }
+  
+  ## nn_network
+  if (!is.null(nn_network)) {
+    nnNetObj_list <- lapply(seq_along(nn_network), function(i) {
+      stempgraph <- Seurat::as.Graph(sobject@graphs[[nn_network[i]]])
+      m <- as.matrix(stempgraph)
+      sobjIgraph <- igraph::graph.adjacency(m, weighted = TRUE)
+      
+      if (verbose) message("Calculating distances")
+      for (j in seq_along(sobject@graphs[[nn_network[i]]]@x)) {
+        dist_matrix <- sobject@graphs[[nn_network[i]]]@x[[j]]
+        
+        sobjIgraph <- igraph::set_edge_attr(
+          graph = sobjIgraph, name = "distance",
+          value = dist_matrix, index = j
+        )
+      }
+      e_attr <- igraph::edge_attr_names(sobjIgraph)
+      if ("weight" %in% e_attr) {
+        igDT <- data.table::setDT(igraph::as_data_frame(sobjIgraph))
+        igDT[, weight := 1 / (1 + distance)]
+        data.table::setcolorder(igDT,
+                                neworder = c("from", "to", "weight", "distance")
+        )
+        sobjIgraph <- igraph::graph_from_data_frame(igDT)
+      }
+      
+      if (verbose) message("Copying nearest neighbour networks")
+      nnNetObj <- createNearestNetObj(
+        name = names(sobject@graphs)[i],
+        network = sobjIgraph
+      )
+      return(nnNetObj)
+    })
+    
+    gobject <- setGiotto(gobject, nnNetObj_list)
+  }
+  gobject <- addCellMetadata(
+    gobject = gobject, new_metadata = cell_metadata,
+    by_column = TRUE, column_cell_ID = "rn")
+  
+  gobject <- addFeatMetadata(
+    gobject = gobject, new_metadata = feat_metadata)
+  
+  if (exists("gpoints")) {
+    gobject <- addGiottoPoints(
+      gobject = gobject,
+      gpoints = list(gpoints)
     )
-
-    if (exists("gpoints")) {
-        gobject <- addGiottoPoints(
-            gobject = gobject,
-            gpoints = list(gpoints)
-        )
-    }
-
-    if (exists("gpolygon")) {
-        if (exists("polygon_list")) {
-            gobject <- addGiottoPolygons(
-                gobject = gobject,
-                gpolygons = polygon_list
-            )
-        }
-    }
-
-    if (exists("gImg")) {
-        gobject <- addGiottoLargeImage(
-            gobject = gobject,
-            largeImages = image_list
-        )
-    }
-    return(gobject)
+  }
+  
+  if (exists("gpolygon")) {
+    gobject <- addGiottoPolygons(
+      gobject = gobject,
+      gpolygons = polygon_list
+    )
+  }
+  
+  if (exists("gImg")) {
+    gobject <- addGiottoLargeImage(
+      gobject = gobject,
+      largeImages = image_list
+    )
+  }
+  return(gobject)
 }
 
 
