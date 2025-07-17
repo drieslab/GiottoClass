@@ -2312,7 +2312,7 @@ seuratToGiottoV5 <- function(
         subcellular_assay = "SCT",
         sp_network = NULL,
         nn_network = NULL,
-        polygon = FALSE,
+        polygon = TRUE,
         verbose = TRUE) {
     package_check("Seurat")
 
