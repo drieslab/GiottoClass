@@ -10,7 +10,9 @@ createSpatLocsObj(
   spat_unit = "cell",
   provenance = NULL,
   misc = NULL,
-  verbose = TRUE
+  numeric_format = c("pair", "triplet"),
+  verbose = TRUE,
+  ...
 )
 }
 \arguments{
@@ -25,7 +27,12 @@ information (if applicable)}
 
 \item{misc}{misc}
 
-\item{verbose}{be verbose}
+\item{numeric_format}{character. One of \code{"pair"} (default) or \code{"triplet"}.
+Whether \code{numeric} inputs should be understood as XY pairs or XYZ triplets.}
+
+\item{verbose}{verbosity}
+
+\item{\dots}{additional params to pass}
 }
 \value{
 spatLocsObj
@@ -34,11 +41,27 @@ spatLocsObj
 Create an S4 spatLocsObj
 }
 \examples{
+# from data.frame
 x <- data.frame(
     cell_ID = c("cell_1", "cell_2", "cell_3"),
     sdimx = c(6637.881, 6471.978, 6801.610),
     sdimy = c(-5140.465, -4883.541, -4968.685)
 )
+s1 <- createSpatLocsObj(coordinates = x, name = "raw")
+plot(s1)
 
-createSpatLocsObj(coordinates = x, name = "raw")
+# from matrix
+m <- matrix(c(2 ,3, 4, 2), ncol = 2)
+rownames(m) <- c("cell1", "cell2")
+s2 <- createSpatLocsObj(m)
+plot(s2)
+
+# from numeric xy pairs
+num2d <- c(1, 3, 5, 9)
+s3 <- createSpatLocsObj(num2d)
+plot(s3)
+# from numeric xyz triplets
+num3d <- c(3, 2, 9, 3, 8, 5)
+s4 <- createSpatLocsObj(num3d, numeric_format = "triplet")
+plot(s4)
 }

@@ -925,78 +925,80 @@ giottoToAnnData <- function(gobject = NULL,
     # agreement reqs
     reduction_list <- list_giotto_data(gobject, "dimension_reduction")
     dim_red <- NULL
+    if (!is.null(reduction_list) && is.data.frame(reduction_list)) {
+        for (i in seq_len(nrow(reduction_list))) {
+            ro <- reduction_list[[i, 1]]
+            su <- reduction_list[[i, 2]]
+            ft <- reduction_list[[i, 3]]
+            method <- reduction_list[[i, 4]]
+            name <- reduction_list[[i, 5]]
 
-    for (i in seq_len(nrow(reduction_list))) {
-        ro <- reduction_list[[i, 1]]
-        su <- reduction_list[[i, 2]]
-        ft <- reduction_list[[i, 3]]
-        method <- reduction_list[[i, 4]]
-        name <- reduction_list[[i, 5]]
+            if (ro != "cells") {
+                warning("AnnData does not support storing PCA by features.
+                        Skipping PCA data conversion.")
+                break
+            }
 
-        if (ro != "cells") {
-            warning("AnnData does not support storing PCA by features.
-                    Skipping PCA data conversion.")
-            break
-        }
-
-        if (ft != "rna") name <- paste0(ft, ".pca")
-        dim_red <- try_get_dimReduction(
-            gobject = gobject,
-            spat_unit = su,
-            feat_type = ft,
-            reduction = ro,
-            reduction_method = method,
-            name = name,
-            output = "dimObj",
-            set_defaults = FALSE
-        )
-
-        if (is.null(dim_red)) {
-            adata_pos <- adata_pos + 1
-            next
-        }
-
-        if (method == "pca") {
-            pca_coord <- dim_red[]
-            pca_loadings <- data.table(dim_red@misc$loadings)
-            feats_used <- dimnames(dim_red@misc$loadings)[[1]]
-            evs <- dim_red@misc$eigenvalues
-
-            adata_list[[adata_pos]] <- set_adg_pca(
-                adata = adata_list[[adata_pos]],
-                pca_coord = pca_coord,
-                loadings = pca_loadings,
-                eigenv = evs,
-                feats_used = feats_used,
-                pca_name = name
+            if (ft != "rna") name <- paste0(ft, ".pca")
+            dim_red <- try_get_dimReduction(
+                gobject = gobject,
+                spat_unit = su,
+                feat_type = ft,
+                reduction = ro,
+                reduction_method = method,
+                name = name,
+                output = "dimObj",
+                set_defaults = FALSE
             )
-            wrap_msg(sprintf("\n%s converted.\n", name))
-            adata_pos <- adata_pos + 1
-        }
 
-        if (method == "umap") {
-            umap_data <- dim_red[]
-            adata_list[[adata_pos]] <- set_adg_umap(
-                adata = adata_list[[adata_pos]],
-                umap_data = umap_data,
-                umap_name = name
-            )
-            wrap_msg(sprintf("\n%s converted.\n", name))
-            adata_pos <- adata_pos + 1
-        }
+            if (is.null(dim_red)) {
+                adata_pos <- adata_pos + 1
+                next
+            }
 
-        if (method == "tsne") {
-            tsne_data <- dim_red[]
-            adata_list[[adata_pos]] <- set_adg_tsne(
-                adata = adata_list[[adata_pos]],
-                tsne_data = tsne_data,
-                tsne_name = name
-            )
-            wrap_msg(sprintf("\n%s converted.\n", name))
-            adata_pos <- adata_pos + 1
+            if (method == "pca") {
+                pca_coord <- dim_red[]
+                pca_loadings <- data.table(dim_red@misc$loadings)
+                feats_used <- dimnames(dim_red@misc$loadings)[[1]]
+                evs <- dim_red@misc$eigenvalues
+
+                adata_list[[adata_pos]] <- set_adg_pca(
+                    adata = adata_list[[adata_pos]],
+                    pca_coord = pca_coord,
+                    loadings = pca_loadings,
+                    eigenv = evs,
+                    feats_used = feats_used,
+                    pca_name = name
+                )
+                wrap_msg(sprintf("\n%s converted.\n", name))
+                adata_pos <- adata_pos + 1
+            }
+
+            if (method == "umap") {
+                umap_data <- dim_red[]
+                adata_list[[adata_pos]] <- set_adg_umap(
+                    adata = adata_list[[adata_pos]],
+                    umap_data = umap_data,
+                    umap_name = name
+                )
+                wrap_msg(sprintf("\n%s converted.\n", name))
+                adata_pos <- adata_pos + 1
+            }
+
+            if (method == "tsne") {
+                tsne_data <- dim_red[]
+                adata_list[[adata_pos]] <- set_adg_tsne(
+                    adata = adata_list[[adata_pos]],
+                    tsne_data = tsne_data,
+                    tsne_name = name
+                )
+                wrap_msg(sprintf("\n%s converted.\n", name))
+                adata_pos <- adata_pos + 1
+            }
+            adata_pos <- 1
         }
-        adata_pos <- 1
     }
+
 
     # Nearest Neighbor Network
 
@@ -1164,26 +1166,30 @@ giottoToAnnData <- function(gobject = NULL,
     # Spatial Enrichment
     spat_enrich_list <- list_giotto_data(gobject = gobject, 
                                         slot = "spatial_enrichment")
-    for (i in seq_len(nrow(spat_enrich_list))) {
-        se_su <- spat_enrich_list[i]$spat_unit
-        se_ft <- spat_enrich_list[i]$feat_type
-        se_name <- spat_enrich_list[i]$name
+    
+    if (!is.null(spat_enrich_list) && is.data.frame(spat_enrich_list)) {
+        for (i in seq_len(nrow(spat_enrich_list))) {
+            se_su <- spat_enrich_list[i]$spat_unit
+            se_ft <- spat_enrich_list[i]$feat_type
+            se_name <- spat_enrich_list[i]$name
 
-        se <- getSpatialEnrichment(
-            gobject = gobject,
-            spat_unit = se_su,
-            feat_type = se_ft,
-            name = se_name,
-            output = "data.table"
+            se <- getSpatialEnrichment(
+                gobject = gobject,
+                spat_unit = se_su,
+                feat_type = se_ft,
+                name = se_name,
+                output = "data.table"
+                )
+            adata_list[[adata_pos]] <- set_adg_spat_enrich(
+                adata = adata_list[[adata_pos]],
+                enrichment = se,
+                name = se_name
             )
-        adata_list[[adata_pos]] <- set_adg_spat_enrich(
-            adata = adata_list[[adata_pos]],
-            enrichment = se,
-            name = se_name
-        )
+        }
+        save_SE_keys(adata = adata_list[[adata_pos]], 
+                    enrichment_name = spat_enrich_list$name)
+
     }
-    save_SE_keys(adata = adata_list[[adata_pos]], 
-                enrichment_name = spat_enrich_list$name)
 
     # Write AnnData object to .h5ad file
     # Verify it exists, and return upon success
@@ -3582,19 +3588,58 @@ spatialdataToGiotto <- function(
     # Extract expression matrices
     expr_df_dict <- extract_expression(sdata)
 
-    # Set expression data
+    su_list_initial <- list()
+    ft_list_initial <- list()
     su_list <- list()
     ft_list <- list()
+
+    # Set expression data
+    if (!is.null(spat_unit)) {
+        su_list_initial <- spat_unit
+    }
+    if (!is.null(feat_type)) {
+        ft_list_initial <- feat_type
+    }
+
     for (key in names(expr_df_dict)) {
-        parts <- strsplit(key, "_")[[1]]
-        su <- parts[1]
-        su_list <- c(su_list, su)
-        if (length(parts) == 3) {
-            ft <- paste0(parts[2], "_", parts[3])
-        } else {
-            ft <- parts[2]
+        # If table name is used to extract su and ft
+        if (length(su_list_initial) == 0 && length(ft_list_initial) == 0 && length(strsplit(key, "_")[[1]]) >= 2) {
+            parts <- strsplit(key, "_")[[1]]
+            su <- parts[1]
+            su_list <- c(su_list, su)
+            if (length(parts) == 3) {
+                ft <- paste0(parts[2], "_", parts[3])
+            } else {
+                ft <- parts[2]
+            }
+            ft_list <- c(ft_list, ft)
+            cat("Spatial unit and feature type extracted from table name.\n")
+        } 
+        else if (length(su_list_initial) > 0 && length(ft_list_initial) == 0) {
+            su <- spat_unit
+            ft <- "rna"
+            ft_list <- c(ft_list, ft)
+            cat("Only the spatial unit has been specified in function call. Default feature type has been set to rna.\n")
         }
-        ft_list <- c(ft_list, ft)
+        else if (length(su_list_initial) == 0 && length(ft_list_initial) > 0) {
+            su <- "cell"
+            ft <- feat_type
+            su_list <- c(su_list, su)
+            cat("Only the feature type has been specified in function call. Default spatial unit has been set to cell.\n")
+        }
+        else if (length(su_list_initial) > 0 && length(ft_list_initial) > 0) {
+            su <- spat_unit[[1]]
+            ft <- feat_type[[1]]
+            cat("Using spat_unit and feat_type specified in function call.\n")
+        }
+        else {
+            su <- "cell"
+            ft <- "rna"
+            su_list <- c(su_list, su)
+            ft_list <- c(ft_list, ft)
+            cat("Default spatial unit and feature type have been set to [cell][rna]. If you wish to set a specific\nspatial unit and feature type, please specify it in the function call.\n")
+        }
+        
         gobject <- setExpression(
             gobject, 
             x = createExprObj(expr_df_dict[[key]], name = "raw"), 
@@ -3659,19 +3704,39 @@ spatialdataToGiotto <- function(
         }
     }
 
+    # Extract polygons
+    polygon_dict <- extract_polygons(sdata)
+    for (su in names(polygon_dict)) {
+        gpoly_dt <- as.data.table(polygon_dict[[su]])
+        gpoly <- createGiottoPolygon(
+            gpoly_dt
+        )
+        gobject <- setPolygonInfo(gobject, gpoly, name = su)
+    }
+
+    gobject <- update_giotto_params(
+        gobject = gobject,
+        description = "_AnnData_Conversion"
+    )
     # Extract spatial locations
     spatial_dict <- extract_spatial(sdata)
 
     # Set spatial locations
     for (key in names(spatial_dict)) {
-        parts <- strsplit(key, "_")[[1]]
-        spat_loc_su <- parts[1]
-        gobject <- setSpatialLocations(
-            gobject, 
-            x = createSpatLocsObj(spatial_dict[[key]], name = "raw"), 
-            spat_unit = spat_loc_su)
+        if (length(strsplit(key, "_")[[1]]) >= 2) {
+            parts <- strsplit(key, "_")[[1]]
+            spat_loc_su <- parts[1]
+            gobject <- setSpatialLocations(
+                gobject, 
+                x = createSpatLocsObj(spatial_dict[[key]], name = "raw"), 
+                spat_unit = spat_loc_su)
+        } else {
+            gobject <- setSpatialLocations(
+                gobject, 
+                x = createSpatLocsObj(spatial_dict[[key]], name = "raw"), 
+                spat_unit = su)
+        }
     }
-
     sp_dict <- parse_obsm_for_spat_locs(sdata)
 
     # Spatial Enrichment
@@ -3690,13 +3755,18 @@ spatialdataToGiotto <- function(
             sk <- names(spat_enrich_all)[[i]]
             split_key <- strsplit(gsub("[()']", "", sk),", ")[[1]]
             tn <- split_key[1]
+            tn_parts <- strsplit(tn, "_")[[1]]
+            se_su <- tn_parts[1]
+            se_ft <- tn_parts[2]
             se_name <- split_key[2]
             spat_enrich_key_added_it <- se_name
         }
         se <- spat_enrich_all[[i]]
         spatEnrObj <- createSpatEnrObj(
             se,
-            name = se_name
+            name = se_name,
+            spat_unit = se_su,
+            feat_type = se_ft
         )
         gobject <- setSpatialEnrichment(
             gobject = gobject,
@@ -4012,22 +4082,6 @@ spatialdataToGiotto <- function(
             gpoint
         )
     }
-
-    # Extract polygons
-    polygon_dict <- extract_polygons(sdata)
-    for (su in names(polygon_dict)) {
-        gpoly_dt <- as.data.table(polygon_dict[[su]])
-        gpoly <- createGiottoPolygon(
-            gpoly_dt
-        )
-        gobject <- setPolygonInfo(gobject, gpoly, name = su)
-    }
-
-    gobject <- update_giotto_params(
-        gobject = gobject,
-        description = "_AnnData_Conversion"
-    )
-
     return(gobject)
 }
 

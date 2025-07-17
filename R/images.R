@@ -2776,23 +2776,25 @@ setMethod(
 # converters ####
 
 
-#' @title Convert ome.tif to tif
-#' @name ometif_to_tif
+#' @title Convert Specialized TIF Formats to Basic TIF
+#' @name to_simple_tif
 #' @description
-#' Simple converter from .ome.tif to .tif format. Utilizes the python
+#' Simple converter from specialized formats to .tif format. Utilizes the python
 #' \pkg{tifffile} package. Performs image conversions one page at a time.
-#' Wrap this in a for loop or lapply for more than one image or page.
-#' @param input_file character. Filepath to ome.tif to convert
+#' Wrap this in a for loop or lapply for more than one image or page. Used
+#' when image formats are unsupported by terra. This is implementation may
+#' change in the future. Currently tested to work with `.ome.tif` and `qptiff`
+#' @param input_file character. Filepath to tif to convert
 #' @param output_dir character. Directory to write .tif to. Defaults to a new
-#' folder in the directory called "tif_exports"
+#' folder in the directory called `"tif_exports"`
 #' @param page numeric. Which page of the tif to open (if needed). If provided,
 #' a "_%04d" formatted suffix will be added to the output filename.
 #' @param overwrite logical. Default = FALSE. Whether to overwrite if the
 #' filename already exists.
 #' @returns returns the written filepath invisibly
-#' @family ometif utility functions
+#' @family tif utility functions
 #' @export
-ometif_to_tif <- function(input_file,
+to_simple_tif <- function(input_file,
     output_dir = file.path(dirname(input_file), "tif_exports"),
     page,
     overwrite = FALSE) {
@@ -2804,11 +2806,11 @@ ometif_to_tif <- function(input_file,
         repository = c("pip:tifffile", "pip:imagecodecs")
     )
 
-    ometif2tif_path <- system.file(
-        "python", "ometif_convert.py",
+    py_tif_convert_path <- system.file(
+        "python", "tif_convert.py",
         package = "GiottoClass"
     )
-    reticulate::source_python(ometif2tif_path)
+    reticulate::source_python(py_tif_convert_path)
     # ensure output directory exists
     if (!checkmate::test_directory_exists(output_dir)) {
         dir.create(output_dir, recursive = TRUE)
@@ -2824,9 +2826,17 @@ ometif_to_tif <- function(input_file,
     }
     a$page <- a$page - 1L # zero indexed
 
+    fext_pattern <- ".ome.tif$" # default
+    if (all(c("ome", "tif") %in% file_extension(input_file))) {
+        fext_pattern <- ".ome.tif$"
+    }
+    if ("qptiff" %in% file_extension(input_file)) {
+        fext_pattern <- ".qptiff$"
+    }
+
     # decide output filename
     fname <- sub(
-        pattern = ".ome.tif$", replacement = "",
+        pattern = fext_pattern, replacement = "",
         x = basename(input_file)
     )
     fpath <- file.path(
@@ -2844,31 +2854,60 @@ ometif_to_tif <- function(input_file,
             )
         }
     }
-    do.call(ometif_2_tif, args = a)
+    do.call(py_tif_convert, args = a)
     return(invisible(fpath))
 }
 
+#' @describeIn to_simple_tif deprecated.
+#' @export
+ometif_to_tif <- to_simple_tif
 
 
 
-#' @name ometif_metadata
-#' @title Read metadata of an ometif
+
+#' @name tif_metadata
+#' @title Read Metadata of a Specialized tif
 #' @description Use the python package tifffile to get the the XML metadata
-#' of a .ome.tif file. The R package xml2 is then used to work with it to
+#' of a .tif file. The R package \{xml2\} is then used to work with it to
 #' retrieve specific nodes in the xml data and extract data.
-#' @param path character. filepath to .ome.tif image
+#' @param path character. filepath to tif image
 #' @param node character vector. Specific xml node to get. More terms can be
 #' added to get a node from a specific hierarchy.
+#' @param page numeric. Specific page to get metadata from. Currently only used
+#' for `.qptiff`.
+#' @param type character. Type of data to extract. Only affects
+#' `output = data.frame` (Matches to one of "attribute", "text", "double",
+#' "integer"). `output = "structure"` can help
+#' with figuring out which is most appropriate.
 #' @param output character. One of "data.frame" to return a data.frame of the
-#' attributes information of the xml node, "xmL" for an xml2 representation
+#' attributes information of the xml node, "xmL" for an \{xml2\} representation
 #' of the node, "list" for an R native list (note that many items in the
 #' list may have overlapping names that make indexing difficult), or
 #' "structure" to invisibly return NULL, but print the structure of the XML
 #' document or node.
 #' @returns list of image metadata information
-#' @family ometif utility functions
+#' @examples
+#' if (FALSE) {
+#' # check structure of metadata
+#' tif_metadata("path/to/ometif", output = "structure")
+#'
+#' # xenium morphology ometif - find channels/biomarkers
+#' tif_metadata("path/to/ometif", node = "Channel")
+#'
+#' # phenocycler qptiff - find channels/biomarkers
+#' tif_metadata("path/to/qptiff",
+#'     page = NULL,
+#'     node = "Biomarker",
+#'     type = "text"
+#' )
+#' }
+#' @family tif utility functions
 #' @export
-ometif_metadata <- function(path, node = NULL, output = c("data.frame", "xml", "list", "structure")) {
+tif_metadata <- function(path,
+    node = NULL,
+    page = NULL,
+    type = c("attribute", "text", "double", "integer"),
+    output = c("data.frame", "xml", "list", "structure")) {
     checkmate::assert_file_exists(path)
     package_check(
         pkg_name = c("tifffile", "xml2"),
@@ -2877,26 +2916,112 @@ ometif_metadata <- function(path, node = NULL, output = c("data.frame", "xml", "
 
     TIF <- reticulate::import("tifffile", convert = TRUE, delay_load = TRUE)
     img <- TIF$TiffFile(path)
-    output <- match.arg(
-        output,
+    output <- match.arg(output,
         choices = c("data.frame", "xml", "list", "structure")
     )
-    x <- xml2::read_xml(img$ome_metadata)
+    type <- match.arg(type,
+        choices = c("attribute", "text", "double", "integer")
+    )
+
+    .tif_metadata_extract(
+        img = img,
+        node = node,
+        page = page,
+        type = type,
+        output = output
+    )
+}
+
+#' @describeIn tif_metadata deprecated.
+#' @export
+ometif_metadata <- tif_metadata
+
+
+.tif_metadata_extract <- function(img, node, page = NULL, type, output) {
+    npages <- length(img$series[[1L]]$pages)
+    if (is.null(page)) page <- seq_len(npages)
+    # ensure pages are in subscript bounds
+    if (any(page > npages)) {
+        oob_bool <- page > npages
+        oob_pages <- page[oob_bool]
+        warning(
+            sprintf("pages %s do not exist",
+                    paste(collapse = ", ", oob_pages)
+            ), call. = FALSE
+        )
+        page <- page[!oob_bool]
+    }
+    # if multiple pages, lapply recurse
+    if (length(page) > 1L && img$is_qpi) {
+        reslist <- lapply(page, function(p) {
+            data <- .tif_metadata_extract(
+                img = img,
+                node = node,
+                page = p,
+                type = type,
+                output = output
+            )
+        })
+        if (inherits(reslist[[1]], "data.frame")) {
+            reslist <- Reduce(rbind, reslist)
+        }
+        return(reslist)
+    }
+
+
+
+    if (img$is_ome) x <- img$ome_metadata
+    else if (img$is_fluoview) x <- img$fluoview_metadata
+    else if (img$is_nih) x <- img$nih_metadata
+    else if (img$is_astrotiff) x <- img$astrotiff_metadata
+    else if (img$is_imagej) x <- img$imagej_metadata
+    else if (img$is_lsm) x <- img$lsm_metadata
+    else if (img$is_qpi) x <- img$series[[1]]$pages[[page - 1L]]$description
+    else if (img$is_micromanager) x <- img$micromanager_metadata
+    else stop("unrecognized tif format\n", call. = FALSE)
+
+    x <- xml2::read_xml(x)
+    ns <- xml2::xml_ns(x)
+    has_namespace <- length(ns) > 0L
 
     if (!is.null(node)) {
         node <- paste(node, collapse = "/")
-        x <- xml2::xml_find_all(
-            x, sprintf("//d1:%s", node),
-            ns = xml2::xml_ns(x)
-        )
+        if (has_namespace) {
+            x <- xml2::xml_find_all(
+                x, sprintf("//d1:%s", node),
+                ns = xml2::xml_ns(x)
+            )
+        } else {
+            x <- xml2::xml_find_all(
+                x, sprintf("//%s", node)
+            )
+        }
     }
 
     switch(output,
         "data.frame" = {
-            x <- Reduce("rbind", xml2::xml_attrs(x))
-            rownames(x) <- NULL
-            x <- as.data.frame(x)
-            return(x)
+            switch(type,
+                "attribute" = {
+                    x <- Reduce("rbind", xml2::xml_attrs(x))
+                    rownames(x) <- NULL
+                    return(as.data.frame(x))
+                },
+                "text" = {
+                    x <- (as.data.frame(xml2::xml_text(x)))
+                    colnames(x) <- node
+                    return(x)
+                },
+                "double" = {
+                    x <- (as.data.frame(xml2::xml_double(x)))
+                    colnames(x) <- node
+                    return(x)
+                },
+                "integer" = {
+                    x <- (as.data.frame(xml2::xml_integer(x)))
+                    colnames(x) <- node
+                    return(x)
+                }
+            )
         },
         "xml" = return(x),
         "list" = return(xml2::as_list(x)),
@@ -2906,3 +3031,4 @@ ometif_metadata <- function(path, node = NULL, output = c("data.frame", "xml", "
         }
     )
 }
+

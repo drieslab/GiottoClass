@@ -4,6 +4,7 @@ import pandas as pd
 import scipy as sc
 from collections import defaultdict
 from time import perf_counter
+from xarray import DataArray
 
 from spatialdata import SpatialData
 
@@ -28,7 +29,8 @@ def extract_expression(sdata = None):
     expr_df_dict = {}
     table_names = list(sdata.tables.keys())
     for tn in table_names:
-        expr = sdata.tables[tn].X.transpose().todense()
+        expr_data = sdata.tables[tn].X
+        expr = expr_data.T if isinstance(expr_data, np.ndarray) else expr_data.transpose().todense()
         expr_df = pd.DataFrame(expr, index=sdata.tables[tn].var.index, columns=sdata.tables[tn].obs.index)
         expr_df_dict[tn] = expr_df
     return expr_df_dict
@@ -73,11 +75,28 @@ def extract_spatial(sdata = None):
     spatial_dict = {}
     table_names = list(sdata.tables.keys())
     for tn in table_names:
-        spatial = sdata.tables[tn].obsm['spatial']
-        spatial_df = pd.DataFrame(spatial)
-        spatial_df.columns = ['X', 'Y']
-        spatial_df['Y'] = spatial_df['Y'] * -1
-        spatial_dict[tn] = spatial_df
+        table = sdata.tables[tn]
+
+        if hasattr(table, "obsm") and "spatial" in table.obsm:
+            spatial = table.obsm['spatial']
+            spatial_df = pd.DataFrame(spatial)
+            n_dims = spatial_df.shape[1]
+
+            if n_dims == 2:
+                spatial_df.columns = ['X', 'Y']
+                spatial_df['Y'] = spatial_df['Y'] * -1
+            elif n_dims == 3:
+                spatial_df.columns = ['X', 'Y', 'Z']
+                spatial_df['Y'] = spatial_df['Y'] * -1
+            else:
+                print(f"Skipping '{tn}': unexpected number of spatial dimensions ({n_dims})")
+                spatial_dict[tn] = None
+                continue
+
+            spatial_dict[tn] = spatial_df
+        else:
+            spatial_dict[tn] = None
+
     return spatial_dict
 
 def parse_obsm_for_spat_locs(sdata = None):
@@ -382,15 +401,14 @@ def align_network_data(distances = None, weights = None):
 
 # Extract images
 def extract_image(sdata = None):
-    # Retrieve the list of images
-    image_list = list(sdata.images.keys())
-
-    # Extract image from SpatialData and convert it to numpy array
     extracted_images = []
-    for image_key in image_list:
+    for image_key in sdata.images.keys():
         image = sdata.images[image_key]
-        image_array = np.transpose(image.compute().data, (1, 2, 0))  # Transpose to (y, x, c)
-        extracted_images.append(image_array)
+        if isinstance(image, DataArray):
+            image_array = np.transpose(image.compute().data, (1, 2, 0))  # (c, y, x) → (y, x, c)
+            extracted_images.append(image_array)
+        else:
+            print(f"Skipping image '{image_key}': not a DataArray")
     return extracted_images
 
 # Extract image names
@@ -402,32 +420,40 @@ def extract_image_names(sdata = None):
 def extract_points(sdata = None):
     points_dict = {}
     point_dict = sdata.points
-    for ft, ddf in point_dict.items():  # Iterate over all feature types (e.g., "rna", "protein", etc.)
-        # Convert Dask DataFrame to Pandas
-        df = ddf.compute()  # `.compute()` converts Dask -> Pandas
-        
-        # Select relevant columns
-        df = df[["feat_ID", "x", "y"]].copy()
-
-        # Assign a unique integer index for each feature
-        df["geom"] = df["feat_ID"].astype("category").cat.codes + 1
-        points_dict[ft] = df
-
+    for ft, ddf in point_dict.items():
+        df = ddf.compute()
+        if "feat_ID" in df.columns:
+            feat_ids = df["feat_ID"]
+        elif df.index.name == "feat_ID":
+            df = df.reset_index()
+            feat_ids = df["feat_ID"]
+        else:
+            feat_ids = pd.Series(range(len(df)), name="feat_ID")
+        if not {"x", "y"}.issubset(df.columns):
+            raise ValueError(f"'x' and 'y' columns are required in points[{ft}], but not found.")
+        df_out = pd.DataFrame({
+            "feat_ID": feat_ids,
+            "x": df["x"],
+            "y": df["y"]
+        })
+        df_out["geom"] = df_out["feat_ID"].astype("category").cat.codes + 1
+        points_dict[ft] = df_out
     return points_dict
 
 # Extract polygons
 def extract_polygons(sdata = None):
     polygons_dict = {}
-    polygon_dict = sdata.shapes
-    for su in polygon_dict.keys():
+    for shape_name, shape_df in sdata.shapes.items():
         rows = []
-        for poly_id, geometry in zip(polygon_dict[su]["poly_ID"], polygon_dict[su]["geometry"]):
+        if "poly_ID" in shape_df.columns:
+            poly_ids = shape_df["poly_ID"]
+        else:
+            poly_ids = shape_df.index if shape_df.index.name else range(len(shape_df))
+        for poly_id, geometry in zip(poly_ids, shape_df["geometry"]):
             if geometry.geom_type == "Polygon":
                 coords = list(geometry.exterior.coords)
-                part_id = 1
                 for x, y in coords:
-                    rows.append({"poly_ID": poly_id, "x": x, "y": y, "part": part_id})
-
+                    rows.append({"poly_ID": poly_id, "x": x, "y": y, "part": 1})
             elif geometry.geom_type == "MultiPolygon":
                 part_id = 1
                 for poly in geometry.geoms:
@@ -435,13 +461,13 @@ def extract_polygons(sdata = None):
                     for x, y in coords:
                         rows.append({"poly_ID": poly_id, "x": x, "y": y, "part": part_id})
                     part_id += 1
-        df = pd.DataFrame(rows)
-
-        df["geom"] = df["poly_ID"].astype("category").cat.codes + 1
-        df["hole"] = 0
-
-        polygons_dict[su] = df
-
+            else:
+                continue
+        if rows:
+            df = pd.DataFrame(rows)
+            df["geom"] = df["poly_ID"].astype("category").cat.codes + 1
+            df["hole"] = 0
+            polygons_dict[shape_name] = df
     return polygons_dict
 
 # Spatial Enrichment

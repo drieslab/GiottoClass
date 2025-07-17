@@ -190,7 +190,9 @@ def set_adg_nn(adata = None, df_NN = None, net_name = None, n_neighbors = None, 
     return adata
 
 def save_NN_keys(adata = None, network_name = None):
-    adata.uns['NN_keys'] = network_name
+    if isinstance(network_name, str):
+        network_name = [network_name]
+    adata.uns['NN_keys'] = np.array(network_name, dtype = object)
     return adata
 
 def set_adg_sn(adata = None, df_SN = None, net_name = None, n_neighbors = None, max_distance = None, dim_used = None):
@@ -232,16 +234,20 @@ def set_adg_sn(adata = None, df_SN = None, net_name = None, n_neighbors = None, 
     return adata
 
 def save_SN_keys(adata = None, network_name = None):
-    adata.uns['SN_keys'] = network_name
+    if isinstance(network_name, str):
+        network_name = [network_name]
+    adata.uns['SN_keys'] = np.array(network_name, dtype = object)
     return adata
 
 def save_SE_keys(adata = None, enrichment_name = None):
-    adata.uns['SE_keys'] = enrichment_name
+    if isinstance(enrichment_name, str):
+        enrichment_name = [enrichment_name]
+    adata.uns['SE_keys'] = np.array(enrichment_name, dtype = object)
+
     return adata
 
 def set_adg_spat_enrich(adata = None, enrichment = None, name = None):
     adata.uns[name] = enrichment
-    save_SE_keys 
     return adata
 
 def write_ad_h5ad(adata = None, save_directory = None, spat_unit = None, feat_type = None):
