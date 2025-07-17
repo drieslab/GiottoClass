@@ -95,11 +95,25 @@ setGeneric(
 #' focus on analyses and/or alternative data representations with specific ways
 #' to implement those analyses.
 #' @param x a data object
-#' @param param a [processParam] inheriting object
+#' @param param a [processParam-class] inheriting object
 #' @param ... additional arguments, for use in specific methods
-#' @returns An object of the same class containing the processed
+#' @returns An object of the same class containing the processed values
 #' @export
 setGeneric("processData", function(x, param, ...) standardGeneric("processData"))
+#' @title Data Clustering
+#' @name clusterData
+#' @description Generic for clustering numeric matrix-like data. `param` accepts
+#' param classes from the bioconductor \pkg{bluster} framework.
+#' No methods are exported from \pkg{GiottoClass}. The methods, which may
+#' differ depending on the input data, are attached from other packages which
+#' focus on analyses and/or alternative data representations with specific ways
+#' to implement those analyses.
+#' @param x a data object
+#' @param param a [bluster::BlusterParam-class] inheriting object
+#' @param ... additional arguments, for use in specific methods
+#' @returns Clustering results. Exact outputs may depend on param settings
+#' @export
+setGeneric("clusterData", function(x, param, ...) standardGeneric("clusterData"))
 
 # Methods and documentations found in methods-spatShift.R
 
@@ -111,9 +125,8 @@ setGeneric("XY<-", function(x, ..., value) standardGeneric("XY<-"))
 setGeneric("settleGeom", function(x, ...) standardGeneric("settleGeom"))
 setGeneric("combineGeom", function(x, ...) standardGeneric("combineGeom"))
 setGeneric("splitGeom", function(x, ...) standardGeneric("splitGeom"))
-if (!isGeneric("area")) {
-    setGeneric("area", function(x, ...) standardGeneric("area"))
-}
+setGeneric("area", function(x, ...) standardGeneric("area"))
+
 
 # Methods and documentations found in methods-overlaps.R
 setGeneric("overlaps", function(x, ...) standardGeneric("overlaps"))

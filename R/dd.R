@@ -5,19 +5,6 @@
 # Use the @inheritParams tag to use these templates in documentation
 # ------------------------------------------------------------------------- #
 
-# No @title to prevent .Rd generation
-# No @noRd tags can be used on these dummy documentations, otherwise
-# @inheritParams
-# cannot be used
-
-# Note that these dummy documentations WILL be flagged with warnings when
-# building
-# the documentation, but this should be fine.
-
-
-
-
-
 
 
 

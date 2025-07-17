@@ -709,12 +709,12 @@ reconnect_giottoImage_MG <- function(
 #' @keywords internal
 .spatraster_sample_values <- function(raster_object,
     size = 5000,
-    output = c("data.frame", "array", "magick", "EBImage"),
+    output = c("data.frame", "array", "magick", "EBImage", "SpatRaster"),
     verbose = NULL,
     ...) {
     output <- match.arg(
         arg = output,
-        choices = c("data.frame", "array", "magick", "EBImage")
+        choices = c("data.frame", "array", "magick", "EBImage", "SpatRaster")
     )
 
     # account for possible giottoLargeImage input
@@ -744,6 +744,7 @@ reconnect_giottoImage_MG <- function(
     if (isTRUE(argslist$as.df)) {
         res <- stats::na.omit(res) # data.frame remove NAs
     } else {
+        if (output == "SpatRaster") return(res)
         # all others
         res <- terra::as.array(res)
         na_bool <- is.na(res)
@@ -1577,7 +1578,7 @@ convertGiottoLargeImageToMG <- function(gobject = NULL,
 #'
 #' writeGiottoLargeImage(
 #'     gobject = g, largeImage_name = "image",
-#'     filename = paste0("tempfile()", ".png")
+#'     filename = paste0(tempfile(), ".png")
 #' )
 #' @export
 writeGiottoLargeImage <- function(giottoLargeImage = NULL,

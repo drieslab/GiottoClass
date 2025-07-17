@@ -1,11 +1,15 @@
 #' @include package_imports.R
 NULL
 
+# OLDCLASS ####
+setOldClass("giottoInstructions")
+
 # MISC ####
 ## * Define class unions ####
 
 setClassUnion("nullOrChar", c("NULL", "character"))
 setClassUnion("nullOrList", c("NULL", "list"))
+setClassUnion("nullOrInstructions", c("nullOrList", "giottoInstructions"))
 setClassUnion("nullOrDatatable", c("NULL", "data.table"))
 setClassUnion("nullOrLogical", c("NULL", "logical"))
 # see zzz.R for allMatrix
@@ -321,6 +325,7 @@ setClass(
 
 #' @title Parameter Classes for Data Processing Operations
 #' @name processParam-class
+#' @aliases processParam
 #' @description
 #' Utility class that defines a data processing procedure and any params used
 #' in performing it. Packages defining processing methods will create their own
@@ -368,10 +373,6 @@ setClass("svkey",
 setClass("spatFeatData",
     contains = c("spatData", "featData", "VIRTUAL")
 )
-
-
-# OLDCLASS ####
-setOldClass("giottoInstructions")
 
 
 
@@ -434,6 +435,14 @@ updateGiottoObject <- function(gobject) {
     if (is.null(attr(gobject, "h5_file"))) {
         attr(gobject, "h5_file") <- NA
         gobject@h5_file <- NULL
+    }
+
+    # ensure instructions are of correct type
+    inst <- instructions(gobject)
+    if (!inherits(inst, c("giottoInstructions", "NULL")) &&
+        inherits(inst, "list")) {
+        class(inst) <- c("giottoInstructions", "list")
+        instructions(gobject, initialize = FALSE) <- inst
     }
 
     # [Switch to GiottoClass versioning] --------------------------------------#
@@ -589,22 +598,22 @@ giotto <- setClass(
     "giotto",
     slots = c(
         expression = "nullOrList",
-        expression_feat = "ANY",
-        spatial_locs = "ANY",
-        spatial_info = "ANY",
-        cell_metadata = "ANY",
-        feat_metadata = "ANY",
-        feat_info = "ANY",
-        cell_ID = "ANY",
-        feat_ID = "ANY",
-        spatial_network = "ANY",
-        spatial_grid = "ANY",
-        spatial_enrichment = "ANY",
-        dimension_reduction = "ANY",
-        nn_network = "ANY",
-        images = "ANY",
+        expression_feat = "nullOrChar",
+        spatial_locs = "nullOrList",
+        spatial_info = "nullOrList",
+        cell_metadata = "nullOrList",
+        feat_metadata = "nullOrList",
+        feat_info = "nullOrList",
+        cell_ID = "nullOrList",
+        feat_ID = "nullOrList",
+        spatial_network = "nullOrList",
+        spatial_grid = "nullOrList",
+        spatial_enrichment = "nullOrList",
+        dimension_reduction = "nullOrList",
+        nn_network = "nullOrList",
+        images = "nullOrList",
         parameters = "ANY",
-        instructions = "ANY",
+        instructions = "nullOrInstructions",
         offset_file = "ANY",
         versions = "list",
         join_info = "ANY",
@@ -1653,6 +1662,7 @@ giottoImage <- setClass(
 #' @exportClass giottoLargeImage
 giottoLargeImage <- setClass(
     Class = "giottoLargeImage",
+    contains = "giottoSubobject",
     slots = c(
         name = "ANY",
         raster_object = "ANY",

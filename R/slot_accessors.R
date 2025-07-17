@@ -4995,7 +4995,7 @@ setFeatureInfo <- function(gobject,
 
     # NATIVE INPUT TYPES
     # 2. if input is giottoPoints or NULL, pass to internal
-    if (is.null(x) | inherits(x, "giottoPoints")) {
+    if (is.null(x) || inherits(x, "giottoPoints")) {
         # pass to internal
         gobject <- set_feature_info(
             gobject = gobject,
@@ -5998,6 +5998,8 @@ setGiottoImage <- function(gobject,
 #' reduction to use
 #' @param dim_reduction_name character. (optional) Name of dimension reduction
 #' to use
+#' @param svkey use a `svkey`. Other params will be ignored. This is just
+#' syntactic sugar for `svkey@get(gobject)`
 #' @param verbose verbosity
 #' @param debug logical. (default = FALSE) See details.
 #' @returns A data.table with a cell_ID column and whichever feats were
@@ -6045,18 +6047,23 @@ setGiottoImage <- function(gobject,
 #'
 #' @export
 spatValues <- function(gobject,
+    feats,
     spat_unit = NULL,
     feat_type = NULL,
-    feats,
     expression_values = NULL,
     spat_loc_name = NULL,
     spat_enr_name = NULL,
     poly_info = NULL,
     dim_reduction_to_use = NULL,
     dim_reduction_name = NULL,
+    svkey = NULL,
     verbose = NULL,
     debug = FALSE) {
     checkmate::assert_class(gobject, "giotto")
+    if (!is.null(svkey)) {
+        checkmate::assert_class(svkey, "svkey")
+        return(svkey@get(gobject))
+    }
     checkmate::assert_character(feats)
 
     a <- get_args_list()
