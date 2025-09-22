@@ -475,14 +475,20 @@ combineFeatureOverlapData <- function(gobject,
             # overlap poly and feat info
             poly_list <- list()
             for (poly in poly_info) {
-                feat_overlap_info_spatvec <- getPolygonInfo(
+                feat_overlap <- getPolygonInfo(
                     gobject = gobject,
                     polygon_name = poly,
                     polygon_overlap = feat
                 )
-                feat_overlap_info <- .spatvector_to_dt(
-                    feat_overlap_info_spatvec
+
+                pts <- getFeatureInfo(gobject,
+                    feat_type = feat_type,
+                    return_giottoPoints = FALSE
                 )
+
+                # extract overlapped points
+                pts <- pts[pts$feat_ID_uniq %in% feat_overlap@data$feat,]
+                feat_overlap_info <- .spatvector_to_dt(pts)
 
                 if (!is.null(sel_feats[[feat]])) {
                     selected_features <- sel_feats[[feat]]

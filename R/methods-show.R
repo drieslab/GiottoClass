@@ -667,8 +667,23 @@ setMethod(
 
 
 
-
-
+## overlapPointDT ####
+setMethod("show", signature("overlapPointDT"), function(object) {
+    cat(sprintf("<%s>\n", class(object)))
+    .show_spat_and_feat(object)
+    .show_prov(object)
+    cat(sprintf("* polygons : %d\n", length(object@spat_ids)))
+    cat(sprintf("* features : %d\n", object@nfeats))
+    cat(sprintf("* relations: %d\n", nrow(object@data)))
+})
+## overlapIntensityDT ####
+setMethod("show", signature("overlapIntensityDT"), function(object) {
+    cat(sprintf("<%s>\n", class(object)))
+    .show_spat_and_feat(object)
+    .show_prov(object)
+    print(object@data)
+    cat(color_blue("* use `[]` to drop to `data.table`"))
+})
 
 
 

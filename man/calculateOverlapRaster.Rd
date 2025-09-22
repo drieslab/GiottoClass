@@ -11,10 +11,12 @@ calculateOverlapRaster(
   poly_ID_names = NULL,
   feat_info = NULL,
   feat_subset_column = NULL,
-  feat_subset_ids = NULL,
-  count_info_column = NULL,
+  feat_subset_values = NULL,
+  feat_count_column = NULL,
   return_gobject = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  feat_subset_ids = deprecated(),
+  count_info_column = deprecated()
 )
 }
 \arguments{
@@ -31,13 +33,18 @@ results (default to feat_info parameter)}
 
 \item{feat_subset_column}{feature info column to subset features with}
 
-\item{feat_subset_ids}{ids within feature info column to use for subsetting}
+\item{feat_subset_values}{value(s) within feature info \code{feat_subset_column}
+to use for subsetting}
 
-\item{count_info_column}{column with count information (optional)}
+\item{feat_count_column}{column with count information (optional)}
 
 \item{return_gobject}{return giotto object (default: TRUE)}
 
 \item{verbose}{be verbose}
+
+\item{feat_subset_ids}{deprecated. Use \code{feat_subset_values} instead.}
+
+\item{count_info_column}{deprecated. Use \code{feat_count_column} instead.}
 }
 \value{
 giotto object or spatVector with overlapping information

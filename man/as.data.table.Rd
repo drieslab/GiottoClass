@@ -5,6 +5,8 @@
 \alias{as.data.table.SpatVector}
 \alias{as.data.table.giottoPolygon}
 \alias{as.data.table.giottoPoints}
+\alias{as.data.frame.overlapPointDT}
+\alias{as.data.frame.overlapIntensityDT}
 \title{Coerce to data.table}
 \usage{
 \method{as.data.table}{SpatVector}(
@@ -19,6 +21,10 @@
 \method{as.data.table}{giottoPolygon}(x, ...)
 
 \method{as.data.table}{giottoPoints}(x, ...)
+
+\method{as.data.frame}{overlapPointDT}(x, ...)
+
+\method{as.data.frame}{overlapIntensityDT}(x, ...)
 }
 \arguments{
 \item{x}{The object to coerce}

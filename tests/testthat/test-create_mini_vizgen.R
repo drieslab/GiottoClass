@@ -141,7 +141,7 @@ test_that("giottoLargeImages are created", {
 
 vizsubc <- addGiottoImage(
     gobject = vizsubc,
-    largeImages = imagelist
+    images = imagelist
 )
 
 test_that("images were added", {
@@ -159,20 +159,20 @@ test_that("images were added", {
 # we can set a global option or specify this for each command
 # options('giotto.spat_unit' = 'z1') # now you don't need to think about setting spat_unit each time
 
-vizsubc <- calculateOverlapRaster(
+vizsubc <- calculateOverlap(
     vizsubc,
-    spatial_info = "z0",
+    spat_info = "z0",
     feat_info = "rna",
     feat_subset_column = "global_z",
-    feat_subset_ids = 0
+    feat_subset_values = 0
 )
 
-vizsubc <- calculateOverlapRaster(
+vizsubc <- calculateOverlap(
     vizsubc,
-    spatial_info = "z1",
+    spat_info = "z1",
     feat_info = "rna",
     feat_subset_column = "global_z",
-    feat_subset_ids = 1
+    feat_subset_values = 1
 )
 
 
@@ -194,22 +194,20 @@ nfeats <- length(feats)
 
 
 test_that("overlaps are calculated", {
-    expect_class(overlaps(z0_gpoly)$rna, "SpatVector")
-    expect_class(overlaps(z0_gpoly)$rna, "SpatVector")
-    expect_identical(terra::geomtype(overlaps(z0_gpoly)$rna), "points")
-    expect_identical(terra::geomtype(overlaps(z0_gpoly)$rna), "points")
+    expect_class(overlaps(z0_gpoly)$rna, "overlapPointDT")
+    expect_class(overlaps(z0_gpoly)$rna, "overlapPointDT")
 })
 
 vizsubc <- overlapToMatrix(
     vizsubc,
-    poly_info = "z0",
+    spat_info = "z0",
     feat_info = "rna",
     name = "raw"
 )
 
 vizsubc <- overlapToMatrix(
     vizsubc,
-    poly_info = "z1",
+    spat_info = "z1",
     feat_info = "rna",
     name = "raw"
 )

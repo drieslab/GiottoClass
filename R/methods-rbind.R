@@ -90,6 +90,36 @@ setMethod(
     }
 )
 
+#' @rdname rbind-generic
+#' @export
+setMethod("rbind2", signature("overlapPointDT", "overlapPointDT"),
+    function(x, y, ...) {
+        comb_spat <- unique(c(x@spat_ids, y@spat_ids))
+        comb_feat <- unique(c(x@feat_ids, y@feat_ids))
+
+        x_spat_map <- match(x@spat_ids, comb_spat)
+        y_spat_map <- match(y@spat_ids, comb_spat)
+        x_feat_map <- match(x@feat_ids, comb_feat)
+        y_feat_map <- match(y@feat_ids, comb_feat)
+
+        # replace id dictionaries for x (output object)
+        x@spat_ids <- comb_spat
+        x@feat_ids <- comb_feat
+
+        # remap indices
+        x@data[, poly := x_spat_map[poly]]
+        y@data[, poly := y_spat_map[poly]]
+        x@data[, feat_id_index := x_feat_map[feat_id_index]]
+        y@data[, feat_id_index := y_feat_map[feat_id_index]]
+
+        x@data <- rbind(x@data, y@data)
+        x@nfeats <- x@nfeats + y@nfeats
+
+        data.table::setkeyv(x@data, "feat")
+        data.table::setindex(x@data, "poly")
+        x
+    }
+)
 
 
 if (!isGeneric("rbind")) setGeneric("rbind", signature = "...")
@@ -113,7 +143,14 @@ setMethod("rbind", "spatLocsObj", function(..., deparse.level = 1) {
     }
 })
 
-
+setMethod("rbind", "overlapPointDT", function(..., deparse.level = 1) {
+    if (nargs() <= 2L) {
+        rbind2(...)
+    } else {
+        xs <- list(...)
+        rbind2(xs[[1L]], do.call(Recall, xs[-1L]))
+    }
+})
 
 # internals ####
 
