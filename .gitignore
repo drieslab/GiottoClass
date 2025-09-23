@@ -6,7 +6,8 @@ inst/doc
 .git_old
 .vscode/*
 .Rprofile
-docs
 codecov.yml
-pkgdown
 cell_rna*
+docs
+pkgdown
+.github
