@@ -2798,7 +2798,6 @@ to_simple_tif <- function(input_file,
     output_dir = file.path(dirname(input_file), "tif_exports"),
     page = NULL,
     overwrite = FALSE) {
-    #a <- list(input_file = input_file)
 
     # get tifffile py
     package_check(
@@ -2829,23 +2828,6 @@ to_simple_tif <- function(input_file,
     page_0based <- page_1based - 1L
     fname_page  <- sprintf("_page%04d", page_1based)
 
-    # if (!missing(page)) {
-    #     a$page <- as.integer(page)
-    #     fname_page <- sprintf("_%04d", a$page)
-    # } else {
-    #     a$page <- 1L # default to page 1
-    #     fname_page <- ""
-    # }
-    # a$page <- a$page - 1L # zero indexed
-
-    # fext_pattern <- ".ome.tif$" # default
-    # if (all(c("ome", "tif") %in% file_extension(input_file))) {
-    #     fext_pattern <- ".ome.tif$"
-    # }
-    # if ("qptiff" %in% file_extension(input_file)) {
-    #     fext_pattern <- ".qptiff$"
-    # }
-
     # Case-insensitive extension handling (.ome.tif/.ome.tiff/.qptiff/.tif/.tiff)
     in_base <- basename(input_file)
     if (grepl("(?i)\\.ome\\.tif{1,2}$", in_base, perl = TRUE)) {
@@ -2857,15 +2839,6 @@ to_simple_tif <- function(input_file,
     } else {
         stop("Unrecognized TIF extension: ", in_base, call. = FALSE)
     }
-    # # decide output filename
-    # fname <- sub(
-    #     pattern = fext_pattern, replacement = "",
-    #     x = basename(input_file)
-    # )
-    # fpath <- file.path(
-    #     output_dir, paste0(fname, fname_page, ".tif")
-    # )
-    # a$output_file <- fpath
 
     # Output filename
     fname   <- sub(fext_pattern, "", in_base, perl = TRUE)
@@ -2876,13 +2849,12 @@ to_simple_tif <- function(input_file,
         if (isTRUE(overwrite)) {
             unlink(outpath, force = TRUE) # if overwrite, delete original
         } else {
-            stop(outpath, "already exists. Set overwrite = TRUE to replace.\n",
+            stop("File already exists: ", outpath,
+                 "\nSet overwrite = TRUE to replace.\n",
                 call. = FALSE
             )
         }
     }
-    # do.call(py_tif_convert, args = a)
-    # return(invisible(fpath))
     # Convert (Python expects 0-based page)
     py_tif_convert(input_file = input_file, output_file = outpath, page = page_0based)
 
@@ -2974,9 +2946,8 @@ ometif_metadata <- tif_metadata
 .tif_metadata_extract <- function(img, node, page = NULL, type, output) {
     npages <- tryCatch(length(img$pages), error = function(e) NA_integer_)
     if (is.na(npages)) {
-    npages <- length(img$series[[1L]]$pages)
+        npages <- length(img$series[[1L]]$pages)
     }
-    if (is.null(page)) page <- seq_len(npages)
     # ensure pages are in subscript bounds
     if (is.null(page)) page <- seq_len(npages)
     page <- page[!is.na(page) & page >= 1]
@@ -2988,16 +2959,6 @@ ometif_metadata <- tif_metadata
         warning(sprintf("pages %s do not exist", paste(oob, collapse = ", ")), call. = FALSE)
         page <- page[page <= npages]
     }
-    # if (any(page > npages)) {
-    #     oob_bool <- page > npages
-    #     oob_pages <- page[oob_bool]
-    #     warning(
-    #         sprintf("pages %s do not exist",
-    #                 paste(collapse = ", ", oob_pages)
-    #         ), call. = FALSE
-    #     )
-    #     page <- page[!oob_bool]
-    # }
     # if multiple pages, lapply recurse
     if (length(page) > 1L && isTRUE(img$is_qpi)) {
         reslist <- lapply(page, function(p) {
