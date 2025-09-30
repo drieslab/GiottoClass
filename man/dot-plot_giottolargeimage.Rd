@@ -33,42 +33,50 @@
 
 \item{giottoLargeImage}{giottoLargeImage object}
 
-\item{crop_extent}{(optional) extent object to focus on specific region of image}
+\item{crop_extent}{(optional) extent object to focus on specific region of
+image}
 
-\item{xmax_crop, xmin_crop, ymax_crop, ymin_crop}{(optional) crop min/max x and y bounds}
+\item{xmax_crop, xmin_crop, ymax_crop, ymin_crop}{(optional) crop min/max x
+and y bounds}
 
-\item{max_intensity}{(optional) value to treat as maximum intensity in color scale}
+\item{max_intensity}{(optional) value to treat as maximum intensity in
+color scale}
 
-\item{asRGB}{(optional) logical. Force RGB plotting if not automatically detected}
+\item{asRGB}{(optional) logical. Force RGB plotting if not automatically
+detected}
 
-\item{stretch}{character. Option to stretch the values to increase contrast: "lin"
-linear or "hist" (histogram)}
+\item{stretch}{character. Option to stretch the values to increase
+contrast: "lin" (linear) or "hist" (histogram)}
 
 \item{axes}{boolean. Default = TRUE. Whether to draw axes}
 
-\item{smooth}{boolean. default = TRUE. whether to apply smoothing on the image}
+\item{smooth}{boolean. Default = TRUE. Whether to apply smoothing on the
+image}
 
 \item{mar}{plot margins default = c(3,5,1.5,1)}
 
 \item{legend}{whether to plot legend of color scale (grayscale only).
 default = FALSE}
 
-\item{maxcell}{positive integer. Maximum number of image cells to use for the plot}
+\item{maxcell}{positive integer. Maximum number of image cells to use for
+the plot}
 
 \item{col}{character. Colors for single channel images. The default is
-grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1). It can also be a
-data.frame with two columns (value, color) to get a "classes" type legend or with
-three columns (from, to, color) to get an "interval" type legend}
+grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1). It can also
+be a data.frame with two columns (value, color) to get a "classes" type
+legend or with three columns (from, to, color) to get an "interval" type
+legend}
 
-\item{asp}{numeric. (default = 1) specific aspect ratio to use}
+\item{asp}{numeric (default = 1). Specific aspect ratio to use}
 
-\item{...}{additional params to pass to terra::plot or terra::plotRGB depending
+\item{...}{additional params to pass to terra::plot or terra::plotRGB
 depending on image type}
 }
 \value{
 plot
 }
 \description{
-Plot a \emph{downsampled} version of giottoLargeImage. Cropping can increase plot resolution of region of interest.
+Plot a \emph{downsampled} version of giottoLargeImage.
+Cropping can increase plot resolution of region of interest.
 }
 \keyword{internal}
