@@ -4082,7 +4082,7 @@ get_spatialGrid <- function(gobject,
         available <- list_spatial_grids(gobject,
             spat_unit = spat_unit
         )
-        if (nrow(available > 0 & is.null(available$feat_type))) {
+        if (nrow(available) > 0 && is.null(available$feat_type)) {
             # If ANY old nesting objects are discovered (only reports old
             # nestings if any detected)
             if (is.null(name)) {
