@@ -27,7 +27,7 @@ ometif_metadata(
 \item{node}{character vector. Specific xml node to get. More terms can be
 added to get a node from a specific hierarchy.}
 
-\item{page}{numeric. Specific page to get metadata from. Currently only used
+\item{page}{numeric or NULL. Specific page to get metadata from. Currently only used
 for \code{.qptiff}.}
 
 \item{type}{character. Type of data to extract. Only affects
@@ -43,12 +43,13 @@ list may have overlapping names that make indexing difficult), or
 document or node.}
 }
 \value{
-list of image metadata information
+list/data.frame/XML depending on \code{output}
 }
 \description{
 Use the python package tifffile to get the the XML metadata
 of a .tif file. The R package \{xml2\} is then used to work with it to
-retrieve specific nodes in the xml data and extract data.
+retrieve specific nodes in the xml data and extract data
+(JPEG2000, multi-file pyramids).
 }
 \section{Functions}{
 \itemize{
