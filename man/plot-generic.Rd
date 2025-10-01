@@ -57,15 +57,21 @@
 
 \item{\dots}{additional parameters to pass}
 
-\item{col}{character. Colors. The default is grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1)}
+\item{col}{character. Colors. The default is
+grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1)}
 
-\item{max_intensity}{(optional) value to treat as maximum intensity in color scale}
+\item{max_intensity}{(optional) value to treat as maximum intensity in
+color scale}
 
-\item{mar}{numeric vector of length 4 to set the margins of the plot (to make space for the legend). The default is (3, 5, 1.5, 1)}
+\item{mar}{numeric vector of length 4 to set the margins of the plot
+(to make space for the legend). The default is (3, 5, 1.5, 1)}
 
-\item{asRGB}{(optional) logical. Force RGB plotting if not automatically detected}
+\item{asRGB}{(optional) logical. Force RGB plotting if not automatically
+detected}
 
-\item{legend}{logical or character. If not FALSE a legend is drawn. The character value can be used to indicate where the legend is to be drawn. For example "topright" or "bottomleft"}
+\item{legend}{logical or character. If not FALSE a legend is drawn. The
+character value can be used to indicate where the legend is to be drawn.
+For example "topright" or "bottomleft"}
 
 \item{axes}{logical. Draw axes?}
 
@@ -125,13 +131,17 @@ through \code{...}
 }
 \section{Functions}{
 \itemize{
-\item \code{plot(x = giottoImage, y = missing)}: Plot \emph{magick}-based giottoImage object. ... param passes to \code{\link{.plot_giottoimage_mg}}
+\item \code{plot(x = giottoImage, y = missing)}: Plot \emph{magick}-based giottoImage object.
+... param passes to \code{\link{.plot_giottoimage_mg}}
 
-\item \code{plot(x = giottoLargeImage, y = missing)}: Plot \emph{terra}-based giottoLargeImage object. ... param passes to \code{\link{.plot_giottolargeimage}}
+\item \code{plot(x = giottoLargeImage, y = missing)}: Plot \emph{terra}-based giottoLargeImage object.
+... param passes to \code{\link{.plot_giottolargeimage}}
 
-\item \code{plot(x = giottoPolygon, y = missing)}: Plot \emph{terra}-based giottoPolygon object. ... param passes to \code{\link[terra]{plot}}
+\item \code{plot(x = giottoPolygon, y = missing)}: Plot \emph{terra}-based giottoPolygon object.
+... param passes to \code{\link[terra]{plot}}
 
-\item \code{plot(x = giottoPoints, y = missing)}: \emph{terra}-based giottoPoint object. ... param passes to \code{\link[terra]{plot}}
+\item \code{plot(x = giottoPoints, y = missing)}: \emph{terra}-based giottoPoint object.
+... param passes to \code{\link[terra]{plot}}
 
 \item \code{plot(x = spatLocsObj, y = missing)}: Plot a spatLocsObj
 
