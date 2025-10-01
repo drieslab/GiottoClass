@@ -2958,6 +2958,9 @@ ometif_metadata <- tif_metadata
         oob <- page[page > npages]
         warning(sprintf("pages %s do not exist", paste(oob, collapse = ", ")), call. = FALSE)
         page <- page[page <= npages]
+        if (length(page) == 0L) {
+            stop("No valid page indices after filtering.", call. = FALSE)
+        }
     }
     # if multiple pages, lapply recurse
     if (length(page) > 1L && isTRUE(img$is_qpi)) {
