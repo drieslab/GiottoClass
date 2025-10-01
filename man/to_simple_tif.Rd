@@ -8,24 +8,23 @@
 to_simple_tif(
   input_file,
   output_dir = file.path(dirname(input_file), "tif_exports"),
-  page,
+  page = NULL,
   overwrite = FALSE
 )
 
 ometif_to_tif(
   input_file,
   output_dir = file.path(dirname(input_file), "tif_exports"),
-  page,
+  page = NULL,
   overwrite = FALSE
 )
 }
 \arguments{
 \item{input_file}{character. Filepath to tif to convert}
 
-\item{output_dir}{character. Directory to write .tif to. Defaults to a new
-folder in the directory called \code{"tif_exports"}}
+\item{output_dir}{character. Output directory (default: "\if{html}{\out{<dir>}}/tif_exports")}
 
-\item{page}{numeric. Which page of the tif to open (if needed). If provided,
+\item{page}{integer or NULL. 1-based page index; NULL means first page,
 a "_\%04d" formatted suffix will be added to the output filename.}
 
 \item{overwrite}{logical. Default = FALSE. Whether to overwrite if the

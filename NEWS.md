@@ -1,3 +1,11 @@
+# GiottoClass 0.4.10 (2025/09/30)
+
+## bug fixes
+- fix bug in spatial grid getter [#1193](https://github.com/drieslab/Giotto/issues/1193) by RunBelief
+
+## enhancements
+- improvements to `tif_metadata()` and `to_simple_tif()`
+
 # GiottoClass 0.4.9 (2025/07/07)
 
 ## bug fixes

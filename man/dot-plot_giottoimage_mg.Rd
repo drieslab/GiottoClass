@@ -17,6 +17,7 @@
 plot
 }
 \description{
-get and plot a giottoImage either directly or from a giotto object
+get and plot a giottoImage either directly or from a giotto
+object
 }
 \keyword{internal}

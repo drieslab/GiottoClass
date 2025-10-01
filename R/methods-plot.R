@@ -20,18 +20,27 @@ NULL
 
 # * giottoImage ####
 
-#' @describeIn plot-generic Plot \emph{magick}-based giottoImage object. ... param passes to \code{\link{.plot_giottoimage_mg}}
+#' @describeIn plot-generic Plot \emph{magick}-based giottoImage object. 
+#' ... param passes to \code{\link{.plot_giottoimage_mg}}
 #' @export
-setMethod("plot", signature(x = "giottoImage", y = "missing"), function(x, y, ...) .plot_giottoimage_mg(giottoImage = x, ...))
+setMethod("plot", signature(x = "giottoImage", y = "missing"), 
+        function(x, y, ...) .plot_giottoimage_mg(giottoImage = x, ...))
 
 # * giottoLargeImage ####
 
-#' @describeIn plot-generic Plot \emph{terra}-based giottoLargeImage object. ... param passes to \code{\link{.plot_giottolargeimage}}
-#' @param col character. Colors. The default is grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1)
-#' @param max_intensity (optional) value to treat as maximum intensity in color scale
-#' @param mar numeric vector of length 4 to set the margins of the plot (to make space for the legend). The default is (3, 5, 1.5, 1)
-#' @param asRGB (optional) logical. Force RGB plotting if not automatically detected
-#' @param legend logical or character. If not FALSE a legend is drawn. The character value can be used to indicate where the legend is to be drawn. For example "topright" or "bottomleft"
+#' @describeIn plot-generic Plot \emph{terra}-based giottoLargeImage object. 
+#' ... param passes to \code{\link{.plot_giottolargeimage}}
+#' @param col character. Colors. The default is 
+#' grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1)
+#' @param max_intensity (optional) value to treat as maximum intensity in 
+#' color scale
+#' @param mar numeric vector of length 4 to set the margins of the plot 
+#' (to make space for the legend). The default is (3, 5, 1.5, 1)
+#' @param asRGB (optional) logical. Force RGB plotting if not automatically 
+#' detected
+#' @param legend logical or character. If not FALSE a legend is drawn. The 
+#' character value can be used to indicate where the legend is to be drawn. 
+#' For example "topright" or "bottomleft"
 #' @param axes logical. Draw axes?
 #' @param maxcell positive integer. Maximum number of cells to use for the plot
 #' @param smooth logical. If TRUE the cell values are smoothed
@@ -49,8 +58,8 @@ setMethod("plot", signature(x = "giottoImage", y = "missing"), function(x, y, ..
 setMethod(
     "plot",
     signature(x = "giottoLargeImage", y = "missing"),
-    function(x, y, col, max_intensity, mar, asRGB = FALSE, legend = FALSE, axes = TRUE,
-    maxcell = 5e5, smooth = TRUE, ...) {
+    function(x, y, col, max_intensity, mar, asRGB = FALSE, legend = FALSE, 
+            axes = TRUE, maxcell = 5e5, smooth = TRUE, ...) {
         arglist <- list(
             giottoLargeImage = x,
             asRGB = asRGB,
@@ -101,7 +110,8 @@ setMethod(
 
 # * giottoPolygon ####
 
-#' @describeIn plot-generic Plot \emph{terra}-based giottoPolygon object. ... param passes to \code{\link[terra]{plot}}
+#' @describeIn plot-generic Plot \emph{terra}-based giottoPolygon object. 
+#' ... param passes to \code{\link[terra]{plot}}
 #' @param point_size size of points when plotting giottoPolygon object centroids
 #' @param type what to plot: either 'poly' (default) or polygon 'centroid'
 #' @param max_poly numeric. If `type` is not specified, maximum number of
@@ -138,7 +148,8 @@ setMethod(
 
 # * giottoPoints ####
 
-#' @describeIn plot-generic \emph{terra}-based giottoPoint object. ... param passes to \code{\link[terra]{plot}}
+#' @describeIn plot-generic \emph{terra}-based giottoPoint object. 
+#' ... param passes to \code{\link[terra]{plot}}
 #' @param point_size size of points when plotting giottoPoints
 #' @param feats specific features to plot within giottoPoints object
 #' (defaults to NULL, meaning all available features)
@@ -201,7 +212,8 @@ setMethod(
 #' @export
 setMethod(
     "plot", signature(x = "giottoPoints", y = "missing"),
-    function(x, point_size = 0, feats = NULL, raster = TRUE, raster_size = 600, ...) {
+    function(x, point_size = 0, feats = NULL, raster = TRUE, raster_size = 600, 
+            ...) {
         if (length(x@unique_ID_cache) == 0) {
             stop(wrap_txt("No geometries to plot"), call. = FALSE)
         }
@@ -221,7 +233,8 @@ setMethod(
 #' plot(sl)
 #'
 #' @export
-setMethod("plot", signature(x = "spatLocsObj", y = "missing"), function(x, ...) {
+setMethod("plot", signature(x = "spatLocsObj", y = "missing"), 
+        function(x, ...) {
     if (nrow(x) == 0L) {
         message("No locations to plot")
         return(invisible(NULL))
@@ -270,7 +283,8 @@ setMethod(
 
 #' @describeIn plot-generic Plot a spatialNetworkObj
 #' @export
-setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x, ...) {
+setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), 
+        function(x, ...) {
     l <- list(...)
     if (is.null(l$asp)) l$asp <- 1
     if (is.null(l$xlab)) l$xlab <- ""
@@ -302,7 +316,8 @@ setMethod("plot", signature(x = "spatialNetworkObj", y = "missing"), function(x,
     if (nrow(nodes) > 10000L) {
         if (is.null(l$pch)) l$pch <- "."
     }
-    do.call("plot", append(l, list(x = nodes$sdimx_begin, y = nodes$sdimy_begin)))
+    do.call(
+        "plot", append(l, list(x = nodes$sdimx_begin, y = nodes$sdimy_begin)))
     graphics::segments(
         x0 = x[]$sdimx_begin, y0 = x[]$sdimy_begin,
         x1 = x[]$sdimx_end, y1 = x[]$sdimy_end,
@@ -424,7 +439,8 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
 
 #' @title .plot_giottoimage_mg
 #' @name .plot_giottoimage_mg
-#' @description get and plot a giottoImage either directly or from a giotto object
+#' @description get and plot a giottoImage either directly or from a giotto 
+#' object
 #' @param gobject giotto object
 #' @param image_name name of giotto image \code{\link{showGiottoImageNames}}
 #' @param giottoImage giottoImage object
@@ -436,11 +452,16 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
     if (!is.null(giottoImage)) {
         graphics::plot(giottoImage@mg_object)
     } else {
-        if (is.null(gobject)) stop("The giotto object that will be updated needs to be provided \n")
-        if (is.null(image_name)) stop("The name of the giotto image that will be updated needs to be provided \n")
+        if (is.null(gobject)) stop(
+            "The giotto object that will be updated needs to be provided \n")
+        if (is.null(image_name)) stop(
+            "The name of the giotto image that will be updated needs to be 
+            provided \n")
 
         g_image_names <- names(gobject@images)
-        if (!image_name %in% g_image_names) stop(image_name, " was not found among the image names, see showImageNames()")
+        if (!image_name %in% g_image_names) stop(
+            image_name, 
+            " was not found among the image names, see showImageNames()")
 
         graphics::plot(gobject@images[[image_name]]@mg_object)
     }
@@ -453,28 +474,36 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
 
 #' @title .plot_giottolargeimage
 #' @name .plot_giottolargeimage
-#' @description Plot a \emph{downsampled} version of giottoLargeImage. Cropping can increase plot resolution of region of interest.
+#' @description Plot a \emph{downsampled} version of giottoLargeImage. 
+#' Cropping can increase plot resolution of region of interest.
 #' @param gobject giotto object
 #' @param largeImage_name name of giottoLargeImage
 #' @param giottoLargeImage giottoLargeImage object
-#' @param crop_extent (optional) extent object to focus on specific region of image
-#' @param xmax_crop,xmin_crop,ymax_crop,ymin_crop (optional) crop min/max x and y bounds
-#' @param max_intensity (optional) value to treat as maximum intensity in color scale
-#' @param asRGB (optional) logical. Force RGB plotting if not automatically detected
-#' @param stretch character. Option to stretch the values to increase contrast: "lin"
-#' linear or "hist" (histogram)
+#' @param crop_extent (optional) extent object to focus on specific region of 
+#' image
+#' @param xmax_crop,xmin_crop,ymax_crop,ymin_crop (optional) crop min/max x 
+#' and y bounds
+#' @param max_intensity (optional) value to treat as maximum intensity in 
+#' color scale
+#' @param asRGB (optional) logical. Force RGB plotting if not automatically 
+#' detected
+#' @param stretch character. Option to stretch the values to increase 
+#' contrast: "lin" (linear) or "hist" (histogram)
 #' @param axes boolean. Default = TRUE. Whether to draw axes
-#' @param smooth boolean. default = TRUE. whether to apply smoothing on the image
+#' @param smooth boolean. Default = TRUE. Whether to apply smoothing on the 
+#' image
 #' @param mar plot margins default = c(3,5,1.5,1)
 #' @param legend whether to plot legend of color scale (grayscale only).
 #' default = FALSE
-#' @param maxcell positive integer. Maximum number of image cells to use for the plot
+#' @param maxcell positive integer. Maximum number of image cells to use for 
+#' the plot
 #' @param col character. Colors for single channel images. The default is
-#' grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1). It can also be a
-#' data.frame with two columns (value, color) to get a "classes" type legend or with
-#' three columns (from, to, color) to get an "interval" type legend
-#' @param asp numeric. (default = 1) specific aspect ratio to use
-#' @param ... additional params to pass to terra::plot or terra::plotRGB depending
+#' grDevices::grey.colors(n = 256, start = 0, end = 1, gamma = 1). It can also 
+#' be a data.frame with two columns (value, color) to get a "classes" type 
+#' legend or with three columns (from, to, color) to get an "interval" type 
+#' legend
+#' @param asp numeric (default = 1). Specific aspect ratio to use
+#' @param ... additional params to pass to terra::plot or terra::plotRGB 
 #' depending on image type
 #' @return plot
 #' @keywords internal
@@ -833,7 +862,8 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
         args_list$col <- args_list$col %null% "white"
         do.call(terra::plot, args_list)
     } else {
-        args_list$x <- terra::subset(data, terra::values(data)$feat_ID %in% feats)
+        args_list$x <- terra::subset(
+            data, terra::values(data)$feat_ID %in% feats)
         if (length(feats) == 1L) {
             args_list$col <- args_list$col %null% "white"
         }
@@ -851,7 +881,8 @@ setMethod("plot", signature(x = "affine2d", y = "missing"), function(x, ...) {
 #' @name .plot_giotto_polygon
 #' @title Plot a giotto polygon object
 #' @param x giottoPolygon object
-#' @param point_size (default = 0.6) size of plotted points when plotting centroids
+#' @param point_size (default = 0.6) size of plotted points when plotting 
+#' centroids
 #' @param type (default is poly) plot the 'poly' or its 'centroid'
 #' @param ... additional params to pass to plot function
 #' @keywords internal
