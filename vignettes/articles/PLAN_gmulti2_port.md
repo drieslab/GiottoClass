@@ -197,6 +197,72 @@ stamp the participation set and per-sample resolved names onto a joint slot when
 written; make `materialize()` the only writer, with getters assembling and returning
 without caching back (accidentally already true — make it the contract).
 
+#### Q5b — `@mapping` and `giottoSpace` are the same construct
+
+`@mapping` should be a **recipe slot**, not a lookup table: when joint content does not
+exist, consult the declaration for the handle and build it on the spot. The default entry
+(`"raw"` everywhere) is just a seeded recipe, so a failing default and a failing user-set
+entry go down the **same code path and produce the same message**. That unified failure is
+the point — a privileged hardcoded default would fail differently from a user's.
+
+Once framed that way, `@mapping` and `giottoSpace@samples` are the same thing: a
+**per-sample keyed recipe** answering "how do I get this sample's contribution to a joint
+thing." Mapping says how to *find* it (sample → child-level name); space says how to
+*place* it (sample → ordered step list).
+
+**Both have the same defect today, with opposite visible effects.**
+
+| | non-participating child |
+|---|---|
+| expression federation | silently **dropped** (`Filter(Negate(is.null), per_child)`) |
+| space resolution | silently **included at untransformed native coordinates** (`methods-resolver.R:294-301`) |
+
+Space appears better only because `GiottoVisuals/R/gmulti.R:203` errors on samples outside
+the space's key set — that check lives in **one consumer**, not in the engine.
+`.space_sample_key_for` likewise returns `NULL` on ambiguity and
+`.apply_space_to_subobj` then returns the subobject untouched. Called directly rather than
+through the plot dispatcher, a non-participating child comes back silently mispositioned —
+which is harder to notice than a missing one.
+
+**Three rules both should follow:**
+
+1. **Participation is the key set** — declared, never inferred from what happens to exist
+2. **Keyed but unsatisfiable is a loud error naming the sample** — child lacks `"raw"`; step references a missing slot. Applies to the seeded default exactly as to a user entry
+3. **Not-keyed has declared semantics** — mapping: does not contribute; space: *excluded*, not silently identity. Deliberate identity already has vocabulary (`giottoSpace("a")` with an empty step list), so it should require the empty key
+
+**Default seeds legitimately differ, and this should be stated rather than discovered:**
+mapping seeds **every child** (non-spatial federation is what a gmulti is for); space seeds
+**nothing** (cross-sample spatial is opt-in). Same mechanism, opposite default.
+
+**Entry shape — keep named character.** "Recipe" means assembly is driven by the
+declaration, not that entries carry arbitrary steps. Policy (`on_missing`, later `combine`)
+belongs on the handle, which is where the uniform failure lives. Entries are already the
+same shape as space's keys, so upgrading to step lists later is additive — whereas going
+there now invites per-sample transforms on expression and reopens the `cbind`-validity
+problem this closes.
+
+#### Q5c — parent handles vs child names
+
+`@mapping` is parent-handle → per-sample child-level name, on both axes:
+`names(mapping$spat_unit)` is the gmulti's own vocabulary; values are
+`c(<sample> = "<child name>")`. `.gm_validate_mapping` constrains the **child** side —
+samples must exist in `@objects`, and each child slot name must exist on that child
+(`cell_ID` / `feat_ID`). The handle side is unconstrained, which is right for a parent
+namespace. Joint slots and `@cell_ID` / `@feat_ID` are keyed by parent handles
+(`.gm_narrowing_keys` treats `names(@mapping[[axis]])` as the authoritative universe).
+
+The two-namespace design is sound. It leaks in three places, all the same
+infer-rather-than-declare pattern:
+
+1. **Discovery seeds handle == child name**, so by default the namespaces are indistinguishable — nothing marks a handle as a deliberate parent name versus an auto-discovered passthrough
+2. **`.gm_resolve_axis` silently escapes into the child namespace** — an undeclared handle falls back to scanning children for a slot of that name. A handle that was never declared still "works" if some child happens to carry it
+3. **Joint objects carry child-side tags.** Admitted in-source: the joint matrix inherits its `spat_unit` / `feat_type` tags from the first child's template "even though the cells across children may have come from different per-child spat_units." So `mg@expression[["nucleus"]][["rna"]]` can hold an `exprObj` whose own `@spat_unit` is `"nucleus_v1"` — one sample's private name, chosen by child order. `.gm_assemble_cell_metadata` uses the same first-child-as-template pattern
+
+(3) is a live risk rather than an inconsistency: anything reading `spatUnit()` / `featType()`
+off an assembled joint object gets a child's private name instead of the federated handle.
+Assembly should stamp the **parent handle** onto the joint object, and the audit for
+downstream readers of those tags belongs in stage 3.
+
 **Precedent — GiottoDisk ADR 0006**, *view state is not chain state; window-dependent ops
 bake at push time*. `libraryNormParam` runs its aggregate in the producer and freezes the
 factors into the record, so afterwards the record is a pure function of a value and an
