@@ -260,8 +260,30 @@ infer-rather-than-declare pattern:
 
 (3) is a live risk rather than an inconsistency: anything reading `spatUnit()` / `featType()`
 off an assembled joint object gets a child's private name instead of the federated handle.
-Assembly should stamp the **parent handle** onto the joint object, and the audit for
-downstream readers of those tags belongs in stage 3.
+
+**It is an oversight, and it is fixable.** The template itself is legitimate — assembly
+needs a well-formed `exprObj` shell and cloning the first child's is the cheap way to get
+one. Only the identity tags should not ride along with the structure. Two changes:
+
+1. **`.gm_resolve_axis` / `.gm_resolve_participation` must return the resolved parent handle.** Today they return only per-sample `list(su = <child_su>, ft = <child_ft>)`. When the caller passes `spat_unit` / `feat_type` explicitly the handle is already in scope; when they are `NULL`, `.gm_resolve_axis` picks `names(axis_map)[[1L]]` internally and **discards it**. That is the only reason this isn't a one-liner
+2. **Assembly stamps the handle** — `spatUnit(template) <- su_handle`, `featType(template) <- ft_handle`. The setters exist and dispatch correctly (`exprObj` → `spatFeatData` → `spatData` + `featData`), so the `ANY` no-op method is not in play
+
+**All four identity tags follow the same rule** — they should describe the federation, not
+whichever child sorted first:
+
+| tag | today | should be |
+|---|---|---|
+| `@spat_unit` | first child's child-level name | parent handle |
+| `@feat_type` | first child's child-level name | parent handle |
+| `@name` | first child's expression name | parent handle for the `values` axis |
+| `@provenance` | first child's provenance (via `spatData` → `provData`) | contributing samples, or cleared — decide, don't inherit |
+
+`@name` is only accidentally correct today because `values` is assumed identical across
+children; Q5a removes that assumption. `@provenance` is the worst to inherit, since it is
+specifically a record of where data came from. `.gm_assemble_cell_metadata` uses the same
+first-child-as-template pattern and needs the same fix.
+
+Auditing downstream readers of these tags belongs in stage 3.
 
 **Precedent — GiottoDisk ADR 0006**, *view state is not chain state; window-dependent ops
 bake at push time*. `libraryNormParam` runs its aggregate in the producer and freezes the
