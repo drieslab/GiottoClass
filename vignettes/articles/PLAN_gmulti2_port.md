@@ -169,11 +169,21 @@ time**, and the terra `(xmin, xmax, ymin, ymax)` convention is applied exactly o
 `numeric(4)` → WKT, instead of being re-derived per substrate. `.materialize_crop_region`'s
 pass-the-numeric-through branch — the source of the duplication — disappears.
 
-Still to settle: WKT carries no CRS, and GiottoDisk's op record has no `crs` field either.
-Planar Giotto data makes this a non-issue in practice, but the sedona path binds a
-SRID explicitly (`ST_GeomFromText(wkt, 4326)`), so the recipe should state the convention
-rather than leave it implicit. Also confirm the emitted WKT precision round-trips without
-shifting a crop boundary.
+**CRS — settled, reuse what exists.** The record carries **WKT only, no CRS field**.
+GiottoDisk already resolves SRID on the *store* side via `.spatrelate_store_srid()`
+(`methods-spatRelate.R:52`): `4326L` when the store has no CRS — the biology-data case —
+`EPSG:NNNN` parsed when it does, `NA` otherwise so a mismatch surfaces as a sedonadb error
+rather than a silent wrong answer. Writes set `edges = "planar"` explicitly
+(`utils-spatial.R:254`) so no engine infers spherical. Per-engine differences are handled:
+sedona gets the SRID literal, duckdb deliberately omits it (`ST_GeomFromText` takes no SRID
+arg), terra is indifferent.
+
+This is also the *correct* side for it. A recipe is re-resolved against current state by
+design, so a CRS baked into a step record could assert something the store it resolves
+against disagrees with. Keep CRS authoritative where it is.
+
+Still unverified: whether the emitted WKT precision round-trips without shifting a crop
+boundary. One check during stage 4.
 
 **Correct while porting:** the current docs claim steps are "pure data appended in order —
 no closures — so a view survives serialization and travels to parallel workers." That is
