@@ -95,8 +95,8 @@ Plus 8 new `Collate:` entries in DESCRIPTION, and edits to `subset.R`,
 
 | # | implementation | old status | disposition | why |
 |---|---|---|---|---|
-| 1 | recipe classes + resolver | Complete | **Port** | 2,125 lines, foundational to the subsystem |
-| 2 | view steps | Complete | **Port + rework** | Type the crop region inside `.materialize_crop_region` while porting — 4 call sites each re-deriving the axis convention |
+| 1 | recipe classes + resolver | Complete | **Port + rework** | 2,125 lines, foundational. Steps become plain tagged lists; containers stay S4. See Q7 |
+| 2 | view steps | Complete | **Port + rework** | Subsumed by Q7 — normalizing the crop region is a prerequisite for serializable step records, and fixes the axis-convention duplication at the same time |
 | 3 | predicate vs output frame | Complete | **Port** | Clean separation, explicit-only resolution. Keep as-is |
 | 4 | centroid routing | Complete, refactor pending | **Port + rework** | Routing decided by cache allocation with two patches riding on it. Its own doc calls it a workaround — fix on the way over, not later |
 | 5 | space steps | Complete | **Port** | Storage shape drives the good properties |
@@ -126,10 +126,43 @@ Resolve before writing the code that assumes an answer.
 | Q4 | **Does `space =` earn 57 formals?** Porting the wide surface then trimming is a breaking change; porting narrow then widening is not | vs 7 — port scope |
 | Q5 | Should joint slots stay both lazy cache *and* ground truth? The duality caused the §17 no-op. Options: eager materialization at a defined trigger, or a cache-validity flag so key-derivation can't read an empty cache as an empty universe | fed 8, 17 |
 | Q6 | `getSpatialLocations(mg)` — named per-child list, or one `sample::id` table? Consistency with the other joint getters vs a consumer-wide break | fed 15, 18 |
+| Q7 | **Recipe steps as plain tagged lists instead of S4 step classes?** Recommend yes — see below | vs 1, 2, 4, 5, 6 |
 
-Q4 and Q5 are the two I would settle first. Q4 sets how much surface area the port
-carries; Q5 is the one where the old implementation has a demonstrated defect rather
-than an open preference.
+Q4, Q5 and Q7 are the three to settle first. Q4 sets how much surface the port carries;
+Q5 is where the old implementation has a demonstrated defect rather than an open
+preference; Q7 is cheap now and breaking later.
+
+### Q7 — list recipes vs S4 step classes
+
+Proposal: `viewFilter` / `viewCrop` / `viewSampleSelect` / `spaceTransform` become plain
+tagged lists (`list(type = "crop", region = ..., relation = ...)`). `giottoView` and
+`giottoSpace` stay S4.
+
+**For:**
+
+- **The step classes carry no dispatch.** `setMethod`/`signature` uses: `viewFilter` 0, `viewCrop` 0, `viewSampleSelect` 0, `spaceTransform` 1 (`show`), `viewStep` 1 (`show`). The resolver already filters them as type tags via `inherits()` at six sites — `s$type == "crop"` is a mechanical substitution.
+- **Converges with GiottoDisk.** `@ops` there is already `list(type = ..., ...)` folded by `switch()` arms, chosen because records must survive `saveRDS` and reach parallel workers. The recipe layer solved the same problem differently in the same ecosystem.
+- **Readable and editable** — a recipe becomes inspectable and hand-editable without S4 accessors, and JSON export becomes possible rather than blocked.
+
+**Keep containers S4** — `giottoView` / `giottoSpace` carry ~20 real methods (`+`, `show`, `materialize`, `subset`, `crop`, `selectSamples`, `spin`, `affine`, `flip`, `rescale`, `shear`, `zoom`), `giottoSpace` validity, and slot typing on `gobject@view` / `@spaces`.
+
+**Prerequisites — three non-serializable payloads, each already worth fixing:**
+
+| blocker | fix |
+|---|---|
+| `viewFilter@env` is an environment | `.eager_substitute_env()` already inlines env-resident scalars/vectors to make the predicate self-contained; `env` is a residual fallback for functions and missing names. Deparse the predicate to a string and drop the slot |
+| `viewCrop@region` is `"ANY"`, may hold `SpatExtent` / `SpatVector` — terra pointer-backed, not RDS-safe without `wrap()` | Normalize to WKT or `numeric(4)` with an explicit axis convention — the same fix vs §2 already wants |
+| `spaceTransform@args` is an open `...` passthrough | Per-op normalization or whitelist |
+
+**Correct while porting:** the current docs claim steps are "pure data appended in order —
+no closures — so a view survives serialization and travels to parallel workers." That is
+**false today**: an environment reference is as unserializable as a closure. Q7 makes the
+claim true; until then the claim should not be repeated.
+
+**Cost / timing:** touches the ~2,125-line view/space surface and changes the serialized
+form of every slotted recipe. Nearly free during a fresh port; a breaking change to saved
+gobjects afterwards. Lost: slot type checking at construction — recover with a constructor
+plus one validator per step type, as GiottoDisk does.
 
 ## 7. Suggested stages
 
