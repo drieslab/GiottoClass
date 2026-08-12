@@ -276,12 +276,19 @@ whichever child sorted first:
 | `@spat_unit` | first child's child-level name | parent handle |
 | `@feat_type` | first child's child-level name | parent handle |
 | `@name` | first child's expression name | parent handle for the `values` axis |
-| `@provenance` | first child's provenance (via `spatData` → `provData`) | contributing samples, or cleared — decide, don't inherit |
+| `@provenance` | first child's provenance (via `spatData` → `provData`) | **the parent `spat_unit` handle** |
 
 `@name` is only accidentally correct today because `values` is assumed identical across
-children; Q5a removes that assumption. `@provenance` is the worst to inherit, since it is
-specifically a record of where data came from. `.gm_assemble_cell_metadata` uses the same
+children; Q5a removes that assumption. `.gm_assemble_cell_metadata` uses the same
 first-child-as-template pattern and needs the same fix.
+
+**Provenance follows the existing convention** — `prov(res) <- spatUnit(x)` is already what
+`aggregate.R:616`, `:718` and `classes-binpoints.R:152` do. Two reasons it is also right
+here: the slot is typed `"ANY"` so the plural form stays available if a federation ever
+spans several handles, and the per-child origins (`"nucleus_v1"`, `"nuc"`) are **already
+recorded in `@mapping`** — copying them into `@provenance` would create a second copy that
+can drift from the declaration. Parent handle keeps the artifact self-consistent and leaves
+per-sample origin with the declaration that owns it.
 
 Auditing downstream readers of these tags belongs in stage 3.
 
