@@ -151,8 +151,29 @@ tagged lists (`list(type = "crop", region = ..., relation = ...)`). `giottoView`
 | blocker | fix |
 |---|---|
 | `viewFilter@env` is an environment | `.eager_substitute_env()` already inlines env-resident scalars/vectors to make the predicate self-contained; `env` is a residual fallback for functions and missing names. Deparse the predicate to a string and drop the slot |
-| `viewCrop@region` is `"ANY"`, may hold `SpatExtent` / `SpatVector` — terra pointer-backed, not RDS-safe without `wrap()` | Normalize to WKT or `numeric(4)` with an explicit axis convention — the same fix vs §2 already wants |
+| `viewCrop@region` is `"ANY"`, may hold `SpatExtent` / `SpatVector` — terra pointer-backed, not RDS-safe without `wrap()` | **Accept typed geometry at the call site, convert to WKT at record time.** Adopt GiottoDisk's existing cascade (below) rather than defining a second policy |
 | `spaceTransform@args` is an open `...` passthrough | Per-op normalization or whitelist |
+
+**Geometry recording — adopt GiottoDisk's cascade.** `GiottoDisk@dev/R/methods-spatRelate.R`
+already solves this for the op chain, and `viewCrop` should mirror it rather than invent a
+second policy:
+
+- the **WKT `character` method is the canonical entry**; the record carries a plain string (`y_wkt`)
+- typed inputs coerce and recurse — `SpatVector` does `terra::geom(y_use, wkt = TRUE)` then calls the WKT method; `sf` / `sfc` likewise
+- multi-feature inputs are unioned (`terra::aggregate` / `sf::st_union`) into one geometry before serializing
+- verbosity is bounded: features capped at `getOption("giottodisk.spatrelate_inline_max", 1000L)`, with an error directing large query sets to the store/store path
+- WKT is geometry-only — attributes are not carried through
+
+Two payoffs beyond serialization: the disk path receives WKT with **no conversion at resolve
+time**, and the terra `(xmin, xmax, ymin, ymax)` convention is applied exactly once, at
+`numeric(4)` → WKT, instead of being re-derived per substrate. `.materialize_crop_region`'s
+pass-the-numeric-through branch — the source of the duplication — disappears.
+
+Still to settle: WKT carries no CRS, and GiottoDisk's op record has no `crs` field either.
+Planar Giotto data makes this a non-issue in practice, but the sedona path binds a
+SRID explicitly (`ST_GeomFromText(wkt, 4326)`), so the recipe should state the convention
+rather than leave it implicit. Also confirm the emitted WKT precision round-trips without
+shifting a crop boundary.
 
 **Correct while porting:** the current docs claim steps are "pure data appended in order —
 no closures — so a view survives serialization and travels to parallel workers." That is
