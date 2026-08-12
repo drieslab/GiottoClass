@@ -124,13 +124,90 @@ Resolve before writing the code that assumes an answer.
 | Q2 | `@groups` name collision handling — reject at registration, at resolution, or both? | fed 11 |
 | Q3 | Does `giottoSpace(group=)` expand at construction (needs a gobject) or stay symbolic and expand at resolution? Symbolic breaks `names(space@samples)` as the participation set | fed 11, vs 9 |
 | Q4 | **Does `space =` earn 57 formals?** Porting the wide surface then trimming is a breaking change; porting narrow then widening is not | vs 7 — port scope |
-| Q5 | Should joint slots stay both lazy cache *and* ground truth? The duality caused the §17 no-op. Options: eager materialization at a defined trigger, or a cache-validity flag so key-derivation can't read an empty cache as an empty universe | fed 8, 17 |
+| Q5 | Should joint slots stay both lazy cache *and* ground truth? The duality caused the §17 no-op — see below for what the audit found | fed 8, 12, 17 |
 | Q6 | `getSpatialLocations(mg)` — named per-child list, or one `sample::id` table? Consistency with the other joint getters vs a consumer-wide break | fed 15, 18 |
 | Q7 | **Recipe steps as plain tagged lists instead of S4 step classes?** Recommend yes — see below | vs 1, 2, 4, 5, 6 |
 
 Q4, Q5 and Q7 are the three to settle first. Q4 sets how much surface the port carries;
 Q5 is where the old implementation has a demonstrated defect rather than an open
 preference; Q7 is cheap now and breaking later.
+
+### Q5 — joint slots: ground truth, lazily populated
+
+Audited on the checkpoint. The design is "joint slots are ground truth, raw content
+assembled on first access." Sound in the abstract; the implementation has no way to
+police intent.
+
+**`@mapping` covers two axes, not three.** `spat_unit` and `feat_type` get per-sample
+reconciliation; the `values` name is passed **verbatim** to every child
+(`.gm_assemble_expression`), and `.gm_discover_mapping()` only reads `names(g@cell_ID)` /
+`names(g@feat_ID)`. So matrix names are *assumed identical across children*.
+
+**Three implicit picks decide ground truth, all order-dependent:**
+
+| site | code | picks |
+|---|---|---|
+| `.gm_assemble_expression` | `values <- common[[1L]]` | which matrix, from an intersection ordered by the first child |
+| `.gm_resolve_axis(handle = NULL)` | `names(axis_map)[[1L]]` | which spat_unit / feat_type — this is fed §12 |
+| `.gm_discover_mapping` | `unique(unlist(per_child))` | sets the order the two above read |
+
+**Three silent narrowings:**
+
+- `Filter(Negate(is.null), per_child)` — a child lacking the requested `values` is **dropped**; only *all* children failing raises. A joint matrix built from 2 of 5 samples is indistinguishable from one built from 5
+- `feats_common <- Reduce(intersect, ...)` — features silently intersected
+- cmeta assembly intersects columns "to avoid NA inflation"
+
+**One mislabel**, admitted in a source comment: the joint `exprObj` inherits the *first
+child's* spat_unit / feat_type tags even when `@mapping` reconciled several.
+
+#### Decisions
+
+**Give `@mapping` a third axis for `values`.** All three keying axes then reconcile the
+same way, and there is no axis left that assembly infers rather than reads.
+
+- discovery **seeds every participating sample to `"raw"`** — the ingest convention (`create.R:458`, `:849`; `setExpression` default)
+- populating the mapping **fails loudly, naming the objects** that have no `"raw"`
+- two remedies, both explicit and both the user's call: rename the child's matrix to `"raw"`, or edit that sample's mapping entry to point at whatever it *is* called — `c(A = "raw", B = "counts")`
+
+This is strictly better than hardcoding `"raw"` in the assembly path: renaming data is no
+longer the only escape, and federating a deliberately non-raw matrix stays available by
+declaring it. `"raw"` is a *default in the manifest*, not a rule in the code.
+
+**Keep the `cbind`-validity caveat as declaration-time friction, not a ban.** A matrix
+name does not say whether concatenation is statistically valid: per-cell derivations
+(library-size lognorm) concatenate fine, since each column used its own library size;
+per-gene or per-batch derivations (scaled / z-scored, HVG-subset, batch-corrected) do not,
+because each child was standardized to its own gene statistics, making the joint matrix
+silently incomparable across samples. So declaring `values = c(A = "scaled", B = "scaled")`
+should warn — the user is explicitly asking for it, which is the right place for the
+friction. The default seed of `"raw"` means nobody arrives there by accident.
+
+**Open sub-question — is the `values` axis flat or per-universe?** `spat_unit` and
+`feat_type` are independent axes intersected by `.gm_resolve_participation`, but
+expression names are nested *under* a pair: `@expression[[su]][[ft]][[name]]`. Either
+
+- **flat** — one `values` map applied within whichever universe resolves. Simpler, matches the common case where every universe uses the same matrix names. *Recommended.*
+- **per-universe** — `mapping$values[[su]][[ft]][[handle]]`. Exact, but a third nesting level in a structure users hand-edit.
+
+Start flat; per-universe is an additive change if a real case needs it.
+
+**Remaining changes:** replace the two `[[1L]]` picks with mapping lookups or a loud
+error; give assembly an `on_missing = c("error", "drop", "fill")` defaulting to error;
+stamp the participation set and per-sample resolved names onto a joint slot when it is
+written; make `materialize()` the only writer, with getters assembling and returning
+without caching back (accidentally already true — make it the contract).
+
+**Precedent — GiottoDisk ADR 0006**, *view state is not chain state; window-dependent ops
+bake at push time*. `libraryNormParam` runs its aggregate in the producer and freezes the
+factors into the record, so afterwards the record is a pure function of a value and an
+axis id. Same move: if joint content depends on which children participated, bake the
+participation set in at materialization so a later read cannot silently mean something
+else. Related shape in other systems: manifest-not-inference (Iceberg, Hive), build
+provenance stamped on the artifact (Iceberg snapshots, Nix/Bazel input hashes), explicit
+union modes rather than silent intersection (SQL `INNER` vs `FULL OUTER`), and an explicit
+compute boundary (`dbplyr::compute()`).
+
+---
 
 ### Q7 — list recipes vs S4 step classes
 
