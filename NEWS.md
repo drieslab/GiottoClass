@@ -29,6 +29,16 @@
     - An `engine = "auto"` that selects by dataset size is planned; for now
       prefer `"dbscan"` on small data, where it is both exact and faster.
 
+- `giottoMulti` class — container federating several `giotto` objects into one
+  analysable unit. Spatial information stays per-child; non-spatial content is
+  shared at the parent. Constructed with `createGiottoMulti()`.
+- `gAny` virtual class — dispatch tag shared by `giotto` and `giottoMulti`, so
+  shared-domain methods can be written once. `giottoMulti` deliberately does
+  not inherit from `giotto`, so a spatial method with no `giottoMulti`
+  signature fails loudly rather than reading an absent slot.
+- `spatIDs()` and `featIDs()` gain `giottoMulti` methods, returning globally
+  namespaced (`sample::id`) IDs from the parent's identity registry. `local =
+  TRUE` returns child-level IDs and `object =` restricts to named children.
 - `giotto` class gains a `source` slot for attaching a `gsource`-inheriting
   backend manager (see {GiottoDisk}).
 - `createGiottoObject()` gains a `backend` param: accepts a filepath or a
