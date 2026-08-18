@@ -39,6 +39,12 @@
 - `spatIDs()` and `featIDs()` gain `giottoMulti` methods, returning globally
   namespaced (`sample::id`) IDs from the parent's identity registry. `local =
   TRUE` returns child-level IDs and `object =` restricts to named children.
+- `subset()` method for `giottoMulti` narrows the joint analysis view to a set
+  of global cell and/or feature IDs. Narrowing is recorded on `@cell_ID` /
+  `@feat_ID` and applied when shared-domain getters read a joint slot; the
+  identity registry and the children themselves are left untouched, so the
+  un-subset object remains the widen-back handle. A change to the child
+  population resets any recorded narrowing.
 - `giotto` class gains a `source` slot for attaching a `gsource`-inheriting
   backend manager (see {GiottoDisk}).
 - `createGiottoObject()` gains a `backend` param: accepts a filepath or a

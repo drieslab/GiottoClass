@@ -1,11 +1,10 @@
 # Tests for the giottoMulti class, its construction path, and the id_map
 # identity registry.
 #
-# STAGE 1 of the port sequence in vignettes/articles/PLAN_gmulti2_port.md.
 # Scope matches R/gmulti.R: class, gAny dispatch, constructor, @source
-# resolution, id_map + @id_sig caching. Narrowing (@cell_ID / @feat_ID),
-# @mapping federation, and the view/space recipes arrive in stages 2-4 with
-# their own tests.
+# resolution, id_map + @id_sig caching, and the @cell_ID / @feat_ID narrowing
+# contract. The @mapping federation API (setter, validation, invalidation) and
+# the view/space recipes arrive later with their own tests.
 
 .mk_minimal <- function(ncell, nfeat) {
     m <- matrix(0, nrow = nfeat, ncol = ncell)
@@ -262,4 +261,135 @@ test_that("explicit source is accepted when no child carries one", {
     fake <- structure(list(), class = "srcB")
     mg <- createGiottoMulti(list(a = g), source = fake)
     expect_identical(mg@source, fake)
+})
+
+
+# @mapping auto-discovery ####
+# Discovery is here (not with the rest of the federation API) because the
+# narrowing contract below depends on it: .gm_narrowing_keys() treats
+# @mapping as the authoritative key universe.
+
+test_that("construction auto-discovers the symmetric trivial mapping", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    m <- mg@mapping
+    expect_identical(names(m$spat_unit), "cell")
+    expect_identical(names(m$feat_type), "rna")
+    # every participating sample maps handle -> its own child-level name
+    expect_identical(m$spat_unit$cell, c(a = "cell", b = "cell"))
+    expect_identical(m$feat_type$rna, c(a = "rna", b = "rna"))
+})
+
+test_that("a user-set mapping survives bare re-init", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4)))
+    mg@mapping$spat_unit <- list(custom = c(a = "cell"))
+    expect_identical(names(initialize(mg)@mapping$spat_unit), "custom")
+})
+
+
+# @cell_ID / @feat_ID narrowing contract ####
+
+test_that("subset narrows @cell_ID and is non-destructive on the parent", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    keep <- c("a::c1", "a::c2", "b::c1")
+
+    mg2 <- subset(mg, cells = keep)
+    expect_identical(spatIDs(mg2), keep)
+    expect_identical(names(mg2@cell_ID), "cell")
+    # value semantics: the original is the widen-back handle
+    expect_length(spatIDs(mg), 8L)
+})
+
+test_that("subset narrows @feat_ID", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    mg2 <- subset(mg, features = c("f1", "f2"))
+    expect_identical(featIDs(mg2), c("f1", "f2"))
+    expect_identical(names(mg2@feat_ID), "rna")
+})
+
+test_that("the identity registry is never narrowed by subset", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    mg2 <- subset(mg, cells = c("a::c1"))
+    # @id_map still covers every child ID; only the read path narrows
+    expect_identical(nrow(mg2@id_map$cells), 8L)
+    expect_identical(spatIDs(mg2), "a::c1")
+})
+
+test_that("narrowing keys come from @mapping, not the empty joint slots", {
+    # Regression guard: deriving keys from the lazily-populated joint slots
+    # alone makes a default-scoped subset() record nothing and silently
+    # no-op, since those slots are empty on a fresh multi.
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4)))
+    expect_length(mg@expression, 0L) # joint cache genuinely empty
+    expect_identical(.gm_narrowing_keys(mg, "spat_unit"), "cell")
+
+    mg_nomap <- mg
+    mg_nomap@mapping <- list(spat_unit = list(), feat_type = list())
+    expect_length(.gm_narrowing_keys(mg_nomap, "spat_unit"), 0L)
+})
+
+test_that("subset composes additively across calls", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    mg2 <- subset(mg, cells = c("a::c1", "a::c2", "b::c1"))
+    mg3 <- subset(mg2, cells = c("a::c2", "b::c1", "b::c2"))
+    # intersection of the two narrowings, not replacement
+    expect_identical(spatIDs(mg3), c("a::c2", "b::c1"))
+})
+
+test_that("subset silently ignores globals absent from the registry", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4)))
+    mg2 <- subset(mg, cells = c("a::c1", "nope::c9"))
+    expect_identical(spatIDs(mg2), "a::c1")
+})
+
+test_that("spatIDs narrowing respects object= and local=", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    mg2 <- subset(mg, cells = c("a::c1", "a::c2", "b::c1"))
+    expect_identical(spatIDs(mg2, object = "a"), c("a::c1", "a::c2"))
+    expect_identical(spatIDs(mg2, object = "b"), "b::c1")
+    expect_identical(spatIDs(mg2, local = TRUE), c("c1", "c2", "c1"))
+})
+
+test_that("a population change resets narrowing", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4)))
+    mg2 <- subset(mg, cells = "a::c1")
+    expect_identical(spatIDs(mg2), "a::c1")
+
+    # replacing a child with a different cell count changes @id_sig, which
+    # invalidates a narrowing recorded against the old population
+    mg2@objects$a <- .mk_minimal(3, 4)
+    mg3 <- initialize(mg2)
+    expect_null(mg3@cell_ID)
+    expect_length(spatIDs(mg3), 3L)
+})
+
+test_that("children are never mutated by a subset on the parent", {
+    g1 <- .mk_minimal(5, 4)
+    mg <- createGiottoMulti(list(a = g1, b = .mk_minimal(3, 4)))
+    mg2 <- subset(mg, cells = "a::c1")
+    expect_identical(spatIDs(mg2@objects$a), paste0("c", 1:5))
+    expect_identical(spatIDs(mg2@objects$b), paste0("c", 1:3))
+})
+
+
+# narrowing applies on read through the gAny accessors ####
+
+test_that("a joint expression matrix is filtered on read by @cell_ID", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    # write a joint matrix spanning both children
+    ids <- spatIDs(mg)
+    m <- matrix(1, nrow = 4, ncol = length(ids),
+        dimnames = list(paste0("f", 1:4), ids))
+    mg <- setExpression(mg, createExprObj(m, spat_unit = "cell",
+        feat_type = "rna", name = "raw"), verbose = FALSE)
+    expect_identical(ncol(getExpression(mg, output = "matrix")), 8L)
+
+    mg2 <- subset(mg, cells = c("a::c1", "b::c1"))
+    got <- getExpression(mg2, output = "matrix")
+    expect_identical(colnames(got), c("a::c1", "b::c1"))
+})
+
+test_that(".gm_apply_view is a no-op on a plain giotto", {
+    g <- .mk_minimal(5, 4)
+    e <- getExpression(g, output = "exprObj")
+    expect_identical(.gm_apply_view(e, g), e)
 })

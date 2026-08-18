@@ -1686,3 +1686,77 @@ createMetafeats <- function(gobject,
     }
     return(gobject)
 }
+
+
+# subobject narrowing ####
+
+#' Narrow a subobject to a surviving set of cell and/or feature IDs.
+#'
+#' Single source of truth for which axis of each subobject class is cell-keyed
+#' and which is feature-keyed. `NULL` for either argument means "no narrowing
+#' on that axis"; a class with no such axis passes through untouched.
+#'
+#' Two narrowing channels share this. The eager one records a surviving set on
+#' a `giottoMulti`'s `@cell_ID` / `@feat_ID` and applies it when a
+#' shared-domain getter reads a joint slot (`.gm_apply_view()`). The recipe
+#' one resolves a view lazily and applies it per subobject via
+#' `resolveSubobject()`. They differ in where the ID set comes from, not in how
+#' a given class is filtered — so that part lives here rather than in both.
+#'
+#' In-memory only: a backed subobject is materialized to be filtered. A
+#' coordinator that can push the filter into its storage should do that
+#' instead of calling this.
+#' @keywords internal
+#' @noRd
+.narrow_subobject <- function(x, cells = NULL, feats = NULL) {
+    if (is.null(cells) && is.null(feats)) return(x)
+
+    if (inherits(x, "exprObj")) {
+        mat <- x[]
+        if (!is.null(cells)) {
+            mat <- mat[, colnames(mat) %in% cells, drop = FALSE]
+        }
+        if (!is.null(feats)) {
+            mat <- mat[rownames(mat) %in% feats, , drop = FALSE]
+        }
+        x[] <- mat
+        return(x)
+    }
+
+    if (inherits(x, c("cellMetaObj", "spatEnrObj"))) {
+        if (!is.null(cells)) {
+            cell_ID <- NULL # data.table NSE
+            x[] <- x[][cell_ID %in% cells]
+        }
+        return(x)
+    }
+
+    if (inherits(x, "featMetaObj")) {
+        if (!is.null(feats)) {
+            feat_ID <- NULL # data.table NSE
+            x[] <- x[][feat_ID %in% feats]
+        }
+        return(x)
+    }
+
+    if (inherits(x, "dimObj")) {
+        if (!is.null(cells)) {
+            coords <- x@coordinates
+            x@coordinates <- coords[rownames(coords) %in% cells, , drop = FALSE]
+        }
+        return(x)
+    }
+
+    if (inherits(x, "nnNetObj")) {
+        # @network holds a dataStore rather than an igraph on a backed
+        # object; pass those through instead of erroring inside igraph.
+        net <- x@network
+        if (!is.null(cells) && inherits(net, "igraph")) {
+            keep <- names(igraph::V(net)) %in% cells
+            x@network <- igraph::induced_subgraph(net, igraph::V(net)[keep])
+        }
+        return(x)
+    }
+
+    x
+}

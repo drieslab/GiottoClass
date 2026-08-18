@@ -763,6 +763,17 @@
 
     # update ID slots now performed by intialization
 
+    # giottoMulti: only the joint slots are narrowed in place
+    # (@expression / @cell_metadata / @feat_metadata /
+    # @dimension_reduction / @spatial_enrichment / @nn_network). Per-child
+    # slots (@spatial_locs / @spatial_network / @spatial_info / @feat_info
+    # / @images) are NOT present on the multi -- those live on children
+    # and are accessed via federation. The gmulti's @cell_ID / @feat_ID
+    # slots are updated to record the active narrowing; federation getters
+    # apply that narrowing transparently as they walk children. The
+    # children themselves are never mutated -- mutating them would report a
+    # filter on data the child never went through.
+    is_multi <- inherits(gobject, "giottoMulti")
 
     if (verbose) wrap_msg("completed 1: preparation")
 
@@ -782,15 +793,18 @@
     if (verbose) wrap_msg("completed 2: subset expression data")
 
 
-    # filter spatial locations
+    # filter spatial locations (per-child slot on a gmulti; skip there
+    # -- federation getters apply the @cell_ID narrowing instead)
 
-    gobject <- .subset_spatial_locations(
-        gobject = gobject,
-        cell_ids = cell_ids,
-        spat_unit = spat_unit
-    )
+    if (!is_multi) {
+        gobject <- .subset_spatial_locations(
+            gobject = gobject,
+            cell_ids = cell_ids,
+            spat_unit = spat_unit
+        )
 
-    if (verbose) wrap_msg("completed 3: subset spatial locations")
+        if (verbose) wrap_msg("completed 3: subset spatial locations")
+    }
 
 
 
@@ -817,15 +831,16 @@
 
 
     ## spatial network & grid ##
-    # cell spatial network
-    gobject <- .subset_spatial_network(
-        gobject = gobject,
-        spat_unit = spat_unit,
-        cell_ids = cell_ids
-    )
+    # cell spatial network (per-child slot on a gmulti; skip there)
+    if (!is_multi) {
+        gobject <- .subset_spatial_network(
+            gobject = gobject,
+            spat_unit = spat_unit,
+            cell_ids = cell_ids
+        )
 
-
-    if (verbose) wrap_msg("completed 6: subset spatial network(s)")
+        if (verbose) wrap_msg("completed 6: subset spatial network(s)")
+    }
 
     # spatial grid
     # need to be recomputed
@@ -868,8 +883,8 @@
 
     if (verbose) wrap_msg("completed 9: subsetted spatial enrichment results")
 
-    ## spatial info
-    if (!is.null(gobject@spatial_info)) {
+    ## spatial info (per-child slot on a gmulti; skip)
+    if (!is_multi && !is.null(gobject@spatial_info)) {
         # # get poly whitelist
         # # whitelist is based on the provenance and spat_unit of any matching
         # # aggregate spatial locations and expression information
@@ -912,8 +927,8 @@
     }
 
 
-    ## feature info
-    if (!is.null(gobject@feat_info)) {
+    ## feature info (per-child slot on a gmulti; skip)
+    if (!is_multi && !is.null(gobject@feat_info)) {
         gobject@feat_info <- .subset_feature_info_data(
             feat_info = gobject@feat_info,
             feat_ids = feat_ids,
@@ -929,7 +944,8 @@
     }
 
     ## remove overlap entries for transcripts cropped out by spatial bounds
-    if (!is.null(gobject@spatial_info) &&
+    if (!is_multi &&
+        !is.null(gobject@spatial_info) &&
         !is.null(gobject@feat_info) &&
         any(!vapply(list(x_min, x_max, y_min, y_max), is.null,
             FUN.VALUE = logical(1L)))) {
@@ -955,6 +971,37 @@
 
     parameters_list <- parameters_info[["plist"]]
     gobject@parameters <- parameters_list
+
+
+    ## giottoMulti: record the active narrowing on @cell_ID / @feat_ID
+    ## (nested by spat_unit / feat_type). Federation getters consume these
+    ## to filter joint-slot reads and per-child returns transparently.
+    if (is_multi) {
+        if (!is.null(cell_ids)) {
+            su_keys <- if (identical(spat_unit, ":all:")) {
+                .gm_narrowing_keys(gobject, "spat_unit")
+            } else {
+                spat_unit
+            }
+            for (su in su_keys) {
+                current <- gobject@cell_ID[[su]]
+                if (is.null(current)) current <- spatIDs(gobject, spat_unit = su)
+                gobject@cell_ID[[su]] <- intersect(current, cell_ids)
+            }
+        }
+        if (!is.null(feat_ids)) {
+            ft_keys <- if (identical(feat_type, ":all:")) {
+                .gm_narrowing_keys(gobject, "feat_type")
+            } else {
+                feat_type
+            }
+            for (ft in ft_keys) {
+                current <- gobject@feat_ID[[ft]]
+                if (is.null(current)) current <- featIDs(gobject, feat_type = ft)
+                gobject@feat_ID[[ft]] <- intersect(current, feat_ids)
+            }
+        }
+    }
 
 
 

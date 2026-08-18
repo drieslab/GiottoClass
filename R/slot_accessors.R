@@ -495,6 +495,8 @@ setMethod("getCellMetadata", signature("gAny"), function(gobject,
 
     if (isTRUE(copy_obj)) cellMeta[] <- data.table::copy(cellMeta[])
 
+    cellMeta <- .gm_apply_view(cellMeta, gobject)
+
     if (output == "cellMetaObj") return(cellMeta)
     if (output == "data.table") return(slot(cellMeta, "metaDT"))
 })
@@ -705,6 +707,8 @@ setMethod("getFeatureMetadata", signature("gAny"), function(gobject,
     }
 
     if (isTRUE(copy_obj)) featMeta[] <- data.table::copy(featMeta[])
+
+    featMeta <- .gm_apply_view(featMeta, gobject)
 
     if (output == "featMetaObj") return(featMeta)
     if (output == "data.table") return(featMeta[])
@@ -950,6 +954,8 @@ setMethod("getExpression", signature("gAny"), function(
     }
 
     expr_vals <- gobject@expression[[spat_unit]][[feat_type]][[name]]
+
+    expr_vals <- .gm_apply_view(expr_vals, gobject)
 
     # Output
     if (output == "exprObj") {
@@ -1654,6 +1660,8 @@ setMethod("getDimReduction", signature("gAny"), function(gobject,
     reduction_res <- gobject@dimension_reduction[[reduction]][[
         spat_unit]][[feat_type]][[reduction_method]][[name]]
 
+    reduction_res <- .gm_apply_view(reduction_res, gobject)
+
     if (output == "dimObj") return(reduction_res)
     if (output == "matrix") return(slot(reduction_res, "coordinates"))
 })
@@ -1889,6 +1897,8 @@ setMethod("getNearestNetwork", signature("gAny"), function(gobject,
             sep = ""
         ))
     }
+
+    nnNet <- .gm_apply_view(nnNet, gobject)
 
     if (output == "nnNetObj") return(nnNet)
     if (output == "igraph") return(slot(nnNet, "network"))
@@ -3050,6 +3060,8 @@ setMethod("getSpatialEnrichment", signature("gAny"), function(gobject,
         feat_type]][[name]]
 
     if (isTRUE(copy_obj)) enr_res[] <- data.table::copy(enr_res[])
+
+    enr_res <- .gm_apply_view(enr_res, gobject)
 
     if (output == "spatEnrObj") return(enr_res)
     if (output == "data.table") return(enr_res[])

@@ -181,18 +181,36 @@ setMethod("initialize", signature("giottoMulti"), function(.Object, objects = NU
     # cached signature. Bare re-init when nothing changed is a no-op modulo a
     # signature comparison over N children — microseconds even at atlas scale.
     #
-    # Stage 2 adds the other half of this branch: resetting @cell_ID /
-    # @feat_ID to NULL on a population change, because those slots record the
-    # surviving set from a prior filter on a specific population and stop
-    # being well-defined once a child is added, removed, or replaced.
+    # When the population changes (child added / removed / replaced),
+    # @cell_ID / @feat_ID narrowing is reset to NULL: those slots record the
+    # *surviving set from a prior filter on a specific population*, which is
+    # no longer well-defined after a structural change. User-facing contract:
+    # re-run the filter on the expanded multi to recompute. The alternative —
+    # letting a new child silently inherit whatever narrowing the parent
+    # carries — would report a filter that child never went through, so
+    # narrowing is treated as eager state tied to a specific population.
     cur_sig <- .gm_compute_sig(.Object@objects)
     if (!identical(cur_sig, .Object@id_sig)) {
         .Object@id_map$cells <- .gm_build_cell_idmap(.Object@objects)
         .Object@id_map$feats <- .gm_build_feat_idmap(.Object@objects)
         .Object@id_sig <- cur_sig
+        .Object@cell_ID <- NULL
+        .Object@feat_ID <- NULL
     }
 
-    # Stage 3 adds @mapping auto-discovery here.
+    # mapping: auto-discover only when empty (first construction). This is
+    # what makes @mapping the authoritative universe of spat_unit / feat_type
+    # handles, which `.gm_narrowing_keys()` depends on — deriving those keys
+    # from the lazily-populated joint slots alone means a default-scoped
+    # subset() records no narrowing at all and silently no-ops.
+    #
+    # Only discovery lands here. The `gmultiMapping<-` setter, entry
+    # validation, and per-universe invalidation are the federation stage.
+    mapping_empty <- length(.Object@mapping$spat_unit) == 0L &&
+        length(.Object@mapping$feat_type) == 0L
+    if (mapping_empty) {
+        .Object@mapping <- .gm_discover_mapping(.Object@objects)
+    }
 
     .Object
 })
@@ -250,6 +268,47 @@ setMethod("[[", signature(x = "giottoMulti", i = "ANY", j = "missing"),
     function(x, i, j, ...) x@objects[[i]])
 
 
+# SUBSET ####
+
+#' @title Subset a giottoMulti
+#' @name subset-giottoMulti
+#' @description
+#' Narrow the joint analysis view of the multi to a subset of global cell IDs
+#' and/or global feature IDs. Eager: the surviving set is recorded on
+#' `@cell_ID` / `@feat_ID` and every populated joint shared slot is trimmed in
+#' place.
+#'
+#' Children (`@objects`) are the spatial axis and are not touched. If you want
+#' narrowed spatial content on a specific child, do that explicitly on the
+#' child.
+#'
+#' Subset returns a new `giottoMulti`; R copy-on-modify means the original is
+#' untouched and acts as the "widen back" handle.
+#' @param x a `giottoMulti`
+#' @param cells `character` vector of global cell IDs to retain. `NULL` =
+#'   no cell-level filter.
+#' @param features `character` vector of global feature IDs to retain.
+#'   `NULL` = no feature-level filter.
+#' @param ... not used
+#' @returns a `giottoMulti` with `@cell_ID` / `@feat_ID` narrowed and
+#'   populated joint slots trimmed accordingly. `@id_map` (the identity
+#'   registry) is left untouched — it records identity, not selection.
+#' @examples
+#' \dontrun{
+#' subset(mg, cells = c("a::c1", "a::c2"))
+#' }
+#' @export
+setMethod("subset", "giottoMulti",
+    function(x, cells = NULL, features = NULL, ...) {
+        subsetGiotto(
+            gobject = x,
+            cell_ids = cells,
+            feat_ids = features
+        )
+    }
+)
+
+
 # ID ACCESSORS ####
 
 # `@id_map` is read through the existing `spatIDs` / `featIDs` generics rather
@@ -271,8 +330,20 @@ setMethod(
             keep <- m$object %in% target
             m <- m[keep, ]
         }
-        # Stage 2 intersects with @cell_ID here — the registry is never
-        # narrowed, so the active surviving set is applied on read.
+        # @cell_ID narrowing: when set, intersect with global ids. The slot
+        # is nested by spat_unit; restrict to one spat_unit if requested,
+        # else union across spat_units. Empty @cell_ID is "no narrowing".
+        # The registry itself is never narrowed, so this applies on read.
+        if (length(x@cell_ID) > 0L) {
+            surv <- if (is.null(spat_unit)) {
+                unique(unlist(x@cell_ID, use.names = FALSE))
+            } else {
+                x@cell_ID[[spat_unit]]
+            }
+            if (!is.null(surv)) {
+                m <- m[m$global_id %in% surv, ]
+            }
+        }
         if (isTRUE(local)) return(m$local_id)
         m$global_id
     }
@@ -291,7 +362,18 @@ setMethod(
             keep <- m$object %in% target
             m <- m[keep, ]
         }
-        # Stage 2 intersects with @feat_ID here, as spatIDs does with @cell_ID.
+        # @feat_ID narrowing: same pattern as @cell_ID in spatIDs above,
+        # nested by feat_type instead of spat_unit.
+        if (length(x@feat_ID) > 0L) {
+            surv <- if (is.null(feat_type)) {
+                unique(unlist(x@feat_ID, use.names = FALSE))
+            } else {
+                x@feat_ID[[feat_type]]
+            }
+            if (!is.null(surv)) {
+                m <- m[m$global_id %in% surv, ]
+            }
+        }
         ids <- if (isTRUE(local)) m$local_id else m$global_id
         if (isTRUE(uniques)) unique(ids) else ids
     }
@@ -348,6 +430,102 @@ setMethod(
     first_idx <- which(have_source)[1L]
     if (!is.na(first_idx)) return(child_sources[[first_idx]])
     NULL
+}
+
+#' Keys over which a `":all:"` narrowing is recorded on @cell_ID / @feat_ID.
+#'
+#' `@mapping` is the authoritative universe for both axes: it is populated at
+#' construction by `.gm_discover_mapping()` and covers every spat_unit /
+#' feat_type any child declares. The joint slots are only a lazily-populated
+#' cache — they are empty on a freshly constructed multi and stay empty until
+#' something explicitly writes one, so deriving keys from them alone means a
+#' `":all:"` narrowing records nothing at all and `subset()` silently no-ops.
+#'
+#' The joint-slot and `@cell_ID` / `@feat_ID` names are still unioned in, to
+#' cover multis whose `@mapping` was cleared.
+#' @noRd
+.gm_narrowing_keys <- function(gobject, axis = c("spat_unit", "feat_type")) {
+    axis <- match.arg(axis)
+    declared <- names(gobject@mapping[[axis]])
+    cached <- switch(axis,
+        "spat_unit" = c(
+            names(gobject@expression),
+            names(gobject@cell_metadata),
+            names(gobject@cell_ID)
+        ),
+        "feat_type" = c(
+            unlist(lapply(gobject@expression, names), use.names = FALSE),
+            unlist(lapply(gobject@feat_metadata, names), use.names = FALSE),
+            names(gobject@feat_ID)
+        )
+    )
+    unique(c(declared, cached))
+}
+
+#' Auto-discover the federation mapping from a list of child gobjects.
+#'
+#' Walks each child's @cell_ID / @feat_ID slot keys (the authoritative source
+#' of which spat_units / feat_types exist in that child) and assembles the
+#' symmetric trivial mapping: for every (handle, sample) pair where the child
+#' has a slot named `handle`, set `mapping$<axis>$<handle>[<sample>] = handle`.
+#'
+#' Children with non-matching names (e.g. "rna" in one sample vs
+#' "transcripts" in another for the same modality) get separate entries by
+#' name — discovery never silently equates differently-named slots.
+#' Reconciling them is a declaration edit, which the federation stage adds.
+#' @noRd
+.gm_discover_mapping <- function(objects) {
+    if (length(objects) == 0L) {
+        return(list(spat_unit = list(), feat_type = list()))
+    }
+    discover_axis <- function(slot_name) {
+        per_child <- lapply(objects, function(g) {
+            nms <- tryCatch(names(slot(g, slot_name)),
+                error = function(e) character())
+            if (is.null(nms)) character() else nms
+        })
+        all_names <- unique(unlist(per_child, use.names = FALSE))
+        if (length(all_names) == 0L) return(list())
+        out <- lapply(all_names, function(nm) {
+            samples <- names(per_child)[vapply(per_child,
+                function(x) nm %in% x, logical(1L))]
+            stats::setNames(rep(nm, length(samples)), samples)
+        })
+        names(out) <- all_names
+        out
+    }
+    list(
+        spat_unit = discover_axis("cell_ID"),
+        feat_type = discover_axis("feat_ID")
+    )
+}
+
+#' Apply the active giottoMulti narrowing to a joint-slot subobject.
+#'
+#' Shared-domain getter methods read the joint slot and pass the result here.
+#' Resolves which globals are currently in scope for the subobject's own
+#' spat_unit / feat_type, then defers the filtering itself to
+#' [.narrow_subobject()] — the per-class axis knowledge is shared with the
+#' recipe layer's `resolveSubobject()` rather than duplicated here.
+#'
+#' A no-op on a single giotto: there is nothing to narrow against, and the
+#' subobject is already aligned with the gobject's cells.
+#' @noRd
+.gm_apply_view <- function(x, gobject) {
+    if (!inherits(gobject, "giottoMulti")) return(x)
+    # Active narrowing lives in @cell_ID / @feat_ID, indexed by spat_unit /
+    # feat_type. @id_map is the full identity registry, not an active filter.
+    # Subobjects expose their own spat_unit / feat_type via accessors.
+    su <- tryCatch(spatUnit(x), error = function(e) NULL)
+    ft <- tryCatch(featType(x), error = function(e) NULL)
+    cells <- if (!is.null(su) && length(su) == 1L) {
+        gobject@cell_ID[[su]]
+    } else NULL
+    feats <- if (!is.null(ft) && length(ft) == 1L) {
+        gobject@feat_ID[[ft]]
+    } else NULL
+
+    .narrow_subobject(x, cells = cells, feats = feats)
 }
 
 #' Compute a cheap length-signature of each child's ID slots.
