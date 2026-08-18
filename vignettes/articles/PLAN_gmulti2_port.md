@@ -118,19 +118,62 @@ No action 1.
 
 Resolve before writing the code that assumes an answer.
 
-| Q | question | gates |
-|---|---|---|
-| Q1 | `@mapping` entry rename — warn-and-drop dependent joint state, or block pending opt-in? Currently drops | fed 5, 11 |
-| Q2 | `@groups` name collision handling — reject at registration, at resolution, or both? | fed 11 |
-| Q3 | Does `giottoSpace(group=)` expand at construction (needs a gobject) or stay symbolic and expand at resolution? Symbolic breaks `names(space@samples)` as the participation set | fed 11, vs 9 |
-| Q4 | **Does `space =` earn 57 formals?** Porting the wide surface then trimming is a breaking change; porting narrow then widening is not | vs 7 — port scope |
-| Q5 | Should joint slots stay both lazy cache *and* ground truth? The duality caused the §17 no-op — see below for what the audit found | fed 8, 12, 17 |
-| Q6 | `getSpatialLocations(mg)` — named per-child list, or one `sample::id` table? Consistency with the other joint getters vs a consumer-wide break | fed 15, 18 |
-| Q7 | **Recipe steps as plain tagged lists instead of S4 step classes?** Recommend yes — see below | vs 1, 2, 4, 5, 6 |
+| Q | question | gates | status |
+|---|---|---|---|
+| Q1 | `@mapping` entry rename — warn-and-drop dependent joint state, or block pending opt-in? Currently drops | fed 5, 11 | **decided — block on expansion**, see §6.1 |
+| Q2 | `@groups` name collision handling — reject at registration, at resolution, or both? | fed 11 | open |
+| Q3 | Does `giottoSpace(group=)` expand at construction (needs a gobject) or stay symbolic and expand at resolution? Symbolic breaks `names(space@samples)` as the participation set | fed 11, vs 9 | open |
+| Q4 | **Does `space =` earn 57 formals?** Porting the wide surface then trimming is a breaking change; porting narrow then widening is not | vs 7 — port scope | **decided — port all 57**, see §6.2 |
+| Q5 | Should joint slots stay both lazy cache *and* ground truth? The duality caused the §17 no-op — see below for what the audit found | fed 8, 12, 17 | decided, see below |
+| Q6 | `getSpatialLocations(mg)` — named per-child list, or one `sample::id` table? Consistency with the other joint getters vs a consumer-wide break | fed 15, 18 | open |
+| Q7 | **Recipe steps as plain tagged lists instead of S4 step classes?** Recommend yes — see below | vs 1, 2, 4, 5, 6 | decided — yes |
 
 Q4, Q5 and Q7 are the three to settle first. Q4 sets how much surface the port carries;
 Q5 is where the old implementation has a demonstrated defect rather than an open
 preference; Q7 is cheap now and breaking later.
+
+### 6.1 Q1 — mapping edits against a materialized universe
+
+**A handle's participation set cannot be expanded once that universe has been generated
+at the parent.** Existing joint content was built from a specific participation set;
+silently widening the declaration afterwards leaves content that omits a sample the
+declaration now claims. Opting a sample in is therefore explicit: drop the joint content
+for that universe, then re-declare.
+
+This replaces the current warn-and-drop for the expansion case. It is enforceable exactly
+via Q5's participation stamp — you cannot detect an invalidating expansion without knowing
+what participated.
+
+**Consequence for child-add.** `initialize()` does run on the supported add paths —
+`createGiottoMulti()` via `new()`, and `[[<-` which defaults `initialize = TRUE` (with an
+opt-out for bulk adds); direct `@objects` manipulation is caught by the `@id_sig` check on
+the next `initialize()`. So discovery should **auto-seed a newly added sample** rather than
+leaving it undeclared. Seeding rule per existing handle:
+
+| handle state | new sample seeded as |
+|---|---|
+| universe not yet materialized, child has a slot of that name | the handle name |
+| universe not yet materialized, child lacks it | `NA_character_` |
+| universe already materialized | `NA_character_` — expansion is blocked above |
+
+**`NA_character_` is the deliberate-skip sentinel** — "this sample does not contribute to
+this handle". Distinct from a *resolvable* entry (contribute) and from a *keyed but
+unsatisfiable* entry (loud error naming the sample, per Q5b rule 2). Because auto-seed keys
+every sample for every handle, a sample **missing** from an entry vector should not arise
+in normal operation; treat it as an error, as a safety net for hand-edited mappings. Note
+`.gm_validate_mapping()` currently rejects `NA` — `NA %in% child_keys` is `FALSE`, so it
+needs an explicit `is.na()` skip.
+
+### 6.2 Q4 — `space =` / `view =` surface
+
+**Port the full surface as it exists.** Verified counts: `space =` is 30 formals in
+GiottoClass across 11 files and 27 in GiottoVisuals across 9 files (= the "57"); `view =`
+is a further 18 + 25 = 43. Trimming later is a breaking change and that cost is accepted
+for a uniform API. Both knobs land together so the same signatures are touched once.
+
+Staging consequence worth stating in the NEWS entry: 48 of those formals are GiottoClass
+and land with the recipe subsystem, but the other 52 are GiottoVisuals — so the surface is
+not actually uniform until the GiottoVisuals stage.
 
 ### Q5 — joint slots: ground truth, lazily populated
 
@@ -161,6 +204,13 @@ reconciliation; the `values` name is passed **verbatim** to every child
 child's* spat_unit / feat_type tags even when `@mapping` reconciled several.
 
 #### Decisions
+
+**All three axes land in the same change**, not `spat_unit` / `feat_type` first and
+`values` after. Splitting them leaves the `values <- common[[1L]]` implicit pick alive in
+between and changes the mapping shape twice; the mechanism and the validation path are the
+same for all three. Auto-seed therefore seeds `cell` / `rna` / `raw` for a fresh multi —
+emergent from discovery plus the `"raw"` ingest convention, not hardcoded, so a seeded
+default fails through the same path as a user entry.
 
 **Give `@mapping` a third axis for `values`.** All three keying axes then reconcile the
 same way, and there is no axis left that assembly infers rather than reads.
