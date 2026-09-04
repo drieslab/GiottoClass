@@ -149,7 +149,21 @@ list_expression_names <- function(gobject,
 #' list_cell_id_names(g)
 #' @export
 list_cell_id_names <- function(gobject) {
-    return(names(gobject@cell_ID))
+    nms <- names(gobject@cell_ID)
+    # On a fresh giottoMulti @cell_ID is empty until narrowing or a first
+    # setCellMetadata materializes state. Setter check_valid paths call this
+    # to validate spat_unit; fall back to the mapping's declared handles
+    # (the authoritative universe), then the union of children's spat_units,
+    # so a first-write into the joint slot can resolve.
+    if (length(nms) == 0L && inherits(gobject, "giottoMulti")) {
+        nms <- names(gobject@mapping$spat_unit)
+        if (length(nms) == 0L) {
+            nms <- unique(unlist(lapply(gobject@objects, function(g) {
+                names(g@cell_ID)
+            }), use.names = FALSE))
+        }
+    }
+    nms
 }
 
 

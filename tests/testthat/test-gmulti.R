@@ -2,9 +2,9 @@
 # identity registry.
 #
 # Scope matches R/gmulti.R: class, gAny dispatch, constructor, @source
-# resolution, id_map + @id_sig caching, and the @cell_ID / @feat_ID narrowing
-# contract. The @mapping federation API (setter, validation, invalidation) and
-# the view/space recipes arrive later with their own tests.
+# resolution, id_map + @id_sig caching, the @cell_ID / @feat_ID narrowing
+# contract, and (stage 3) the @mapping federation API + access layer. The
+# view/space recipes arrive later with their own tests.
 
 .mk_minimal <- function(ncell, nfeat) {
     m <- matrix(0, nrow = nfeat, ncol = ncell)
@@ -34,11 +34,13 @@ test_that("giottoMulti declares the full slot set up front", {
     expect_true(all(c("mapping", "cell_ID", "feat_ID", "view", "spaces") %in% nms))
 })
 
-test_that("empty giottoMulti seeds @mapping with both axes", {
+test_that("empty giottoMulti seeds @mapping with all three axes", {
     mg <- new("giottoMulti")
-    expect_named(mg@mapping, c("spat_unit", "feat_type"), ignore.order = TRUE)
+    expect_named(mg@mapping, c("spat_unit", "feat_type", "values"),
+        ignore.order = TRUE)
     expect_length(mg@mapping$spat_unit, 0L)
     expect_length(mg@mapping$feat_type, 0L)
+    expect_length(mg@mapping$values, 0L)
 })
 
 test_that("giottoMulti is a gAny but deliberately not a giotto", {
@@ -274,9 +276,30 @@ test_that("construction auto-discovers the symmetric trivial mapping", {
     m <- mg@mapping
     expect_identical(names(m$spat_unit), "cell")
     expect_identical(names(m$feat_type), "rna")
-    # every participating sample maps handle -> its own child-level name
+    # every sample is keyed; participating samples map handle -> their own
+    # child-level name
     expect_identical(m$spat_unit$cell, c(a = "cell", b = "cell"))
     expect_identical(m$feat_type$rna, c(a = "rna", b = "rna"))
+    # values axis is seeded to the ingest convention
+    expect_identical(m$values$raw, c(a = "raw", b = "raw"))
+})
+
+test_that("discovery keys every sample; non-carriers get the NA sentinel", {
+    g1 <- .mk_minimal(5, 4)
+    g2 <- .mk_minimal(3, 4)
+    # give g1 an extra spat_unit g2 doesn't have
+    e_extra <- g1@expression$cell$rna$raw
+    spatUnit(e_extra) <- "extra"
+    g1@expression$extra <- list(rna = list(raw = e_extra))
+    g1@cell_ID$extra <- g1@cell_ID$cell
+    g1 <- initialize(g1)
+
+    mg <- createGiottoMulti(list(a = g1, b = g2))
+    m <- mg@mapping
+    # the shared handle keys both; the a-only handle keys both, with b as
+    # a declared skip rather than simply absent
+    expect_identical(m$spat_unit$cell, c(a = "cell", b = "cell"))
+    expect_identical(m$spat_unit$extra, c(a = "extra", b = NA_character_))
 })
 
 test_that("a user-set mapping survives bare re-init", {
@@ -392,4 +415,496 @@ test_that(".gm_apply_view is a no-op on a plain giotto", {
     g <- .mk_minimal(5, 4)
     e <- getExpression(g, output = "exprObj")
     expect_identical(.gm_apply_view(e, g), e)
+})
+
+
+# ============================================================================
+# stage 3 — @mapping federation API + access layer
+# ============================================================================
+
+# gmultiMapping accessor ####
+
+test_that("gmultiMapping returns the full mapping or one axis", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    expect_identical(gmultiMapping(mg), mg@mapping)
+    expect_identical(gmultiMapping(mg, "spat_unit"), mg@mapping$spat_unit)
+    expect_identical(gmultiMapping(mg, "values"), mg@mapping$values)
+})
+
+test_that("gmultiMapping<- full replacement validates and assigns", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    m <- gmultiMapping(mg)
+    names(m$spat_unit) <- "unified"
+    gmultiMapping(mg) <- m
+    expect_identical(names(gmultiMapping(mg, "spat_unit")), "unified")
+})
+
+test_that("gmultiMapping<- NULL triggers fresh auto-discovery", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    m <- gmultiMapping(mg)
+    names(m$spat_unit) <- "unified"
+    gmultiMapping(mg) <- m
+    gmultiMapping(mg) <- NULL
+    expect_identical(names(gmultiMapping(mg, "spat_unit")), "cell")
+    expect_identical(names(gmultiMapping(mg, "values")), "raw")
+})
+
+test_that("axis-scoped setter replaces just one axis", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    gmultiMapping(mg, "spat_unit") <-
+        list(unified = c(a = "cell", b = "cell"))
+    expect_identical(names(gmultiMapping(mg, "spat_unit")), "unified")
+    # other axes untouched
+    expect_identical(names(gmultiMapping(mg, "feat_type")), "rna")
+    expect_identical(names(gmultiMapping(mg, "values")), "raw")
+})
+
+test_that("entry-scoped setter replaces one handle's per-sample vector", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    gmultiMapping(mg, "values", "raw") <- c(a = "raw", b = NA)
+    expect_identical(gmultiMapping(mg, "values")$raw,
+        c(a = "raw", b = NA_character_))
+})
+
+test_that("entry-scoped setter with NULL drops that entry", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    gmultiMapping(mg, "values", "raw") <- NULL
+    expect_length(gmultiMapping(mg, "values"), 0L)
+})
+
+# validation ####
+
+test_that("gmultiMapping<- rejects unknown sample names", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    expect_error(
+        gmultiMapping(mg, "spat_unit", "cell") <-
+            c(a = "cell", b = "cell", nope = "cell"),
+        "unknown sample")
+})
+
+test_that("gmultiMapping<- enforces the every-entry-keys-every-sample rule", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    expect_error(
+        gmultiMapping(mg, "spat_unit", "cell") <- c(a = "cell"),
+        "does not key sample")
+})
+
+test_that("gmultiMapping<- rejects child names that don't exist", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    expect_error(
+        gmultiMapping(mg, "spat_unit", "cell") <-
+            c(a = "cell", b = "nucleus"),
+        "not present")
+})
+
+test_that("NA sentinel passes validation (deliberate skip)", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    expect_no_error(
+        gmultiMapping(mg, "spat_unit", "cell") <- c(a = "cell", b = NA))
+})
+
+test_that("declaring a 'scaled' values federation warns on cbind validity", {
+    g1 <- .mk_minimal(5, 4)
+    g2 <- .mk_minimal(3, 4)
+    for (g in c("g1", "g2")) {
+        gg <- get(g)
+        e <- gg@expression$cell$rna$raw
+        objName(e) <- "scaled"
+        gg@expression$cell$rna$scaled <- e
+        assign(g, gg)
+    }
+    mg <- createGiottoMulti(list(a = g1, b = g2))
+    expect_warning(
+        gmultiMapping(mg, "values", "zsc") <- c(a = "scaled", b = "scaled"),
+        "not.*comparable|comparable")
+})
+
+# invalidation + block-on-expansion ####
+
+test_that("mapping edit invalidates only the affected universe", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    e <- getExpression(mg)
+    mg <- setExpression(mg, e, name = "raw", verbose = FALSE)
+    expect_length(list_expression_names(mg,
+        spat_unit = "cell", feat_type = "rna"), 1L)
+
+    # editing an unrelated (new, unmaterialized) handle leaves it alone
+    gmultiMapping(mg, "spat_unit", "other") <- c(a = NA, b = NA)
+    expect_length(list_expression_names(mg,
+        spat_unit = "cell", feat_type = "rna"), 1L)
+
+    # editing the materialized universe's own entry (non-expansion: a
+    # shrink) drops the joint content for it
+    gmultiMapping(mg, "spat_unit", "cell") <- c(a = "cell", b = NA)
+    expect_length(mg@expression, 0L)
+})
+
+test_that("participation expansion is blocked once a universe materializes", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    gmultiMapping(mg, "values", "raw") <- c(a = "raw", b = NA)
+    e <- getExpression(mg)
+    mg <- setExpression(mg, e, name = "raw", verbose = FALSE)
+
+    expect_error(
+        gmultiMapping(mg, "values", "raw") <- c(a = "raw", b = "raw"),
+        "cannot expand participation")
+
+    # dropping the joint content unblocks the re-declaration
+    mg@expression <- NULL
+    expect_no_error(
+        gmultiMapping(mg, "values", "raw") <- c(a = "raw", b = "raw"))
+})
+
+test_that("expanding an unmaterialized universe is fine", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    gmultiMapping(mg, "values", "raw") <- c(a = "raw", b = NA)
+    expect_no_error(
+        gmultiMapping(mg, "values", "raw") <- c(a = "raw", b = "raw"))
+})
+
+# child-add auto-seeding (plan Q1) ####
+
+test_that("[[<- auto-seeds the new sample on every axis", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    mg[["c"]] <- .mk_minimal(2, 4)
+    m <- gmultiMapping(mg)
+    expect_identical(m$spat_unit$cell,
+        c(a = "cell", b = "cell", c = "cell"))
+    expect_identical(m$values$raw, c(a = "raw", b = "raw", c = "raw"))
+})
+
+test_that("[[<- seeds NA for a handle the new child lacks", {
+    g1 <- .mk_minimal(5, 4)
+    e_extra <- g1@expression$cell$rna$raw
+    spatUnit(e_extra) <- "extra"
+    g1@expression$extra <- list(rna = list(raw = e_extra))
+    g1@cell_ID$extra <- g1@cell_ID$cell
+    g1 <- initialize(g1)
+    mg <- createGiottoMulti(list(a = g1))
+
+    mg[["b"]] <- .mk_minimal(3, 4)
+    m <- gmultiMapping(mg)
+    expect_identical(m$spat_unit$extra, c(a = "extra", b = NA_character_))
+    expect_identical(m$spat_unit$cell, c(a = "cell", b = "cell"))
+})
+
+test_that("[[<- seeds NA into a materialized universe (expansion blocked)", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    e <- getExpression(mg)
+    mg <- setExpression(mg, e, name = "raw", verbose = FALSE)
+
+    expect_warning(mg[["c"]] <- .mk_minimal(2, 4), "joint shared slot")
+    m <- gmultiMapping(mg)
+    # materialized universes get the NA skip; opting in = drop + re-declare
+    expect_identical(unname(m$values$raw["c"]), NA_character_)
+    expect_identical(unname(m$spat_unit$cell["c"]), NA_character_)
+})
+
+test_that("a user-removed handle is not re-added by bare re-init", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    gmultiMapping(mg, "values", "raw") <- NULL
+    mg2 <- initialize(mg)
+    expect_length(gmultiMapping(mg2, "values"), 0L)
+})
+
+# assembly — identity tags, participation stamp, error paths ####
+
+test_that("assembled joint expression carries the federation handles", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    # unify under parent-namespace handles that differ from child names
+    gmultiMapping(mg, "spat_unit") <- list(joint_cell = c(a = "cell", b = "cell"))
+    gmultiMapping(mg, "feat_type") <- list(joint_rna = c(a = "rna", b = "rna"))
+
+    e <- getExpression(mg)
+    # Q5c: tags describe the federation, not whichever child sorted first
+    expect_identical(spatUnit(e), "joint_cell")
+    expect_identical(featType(e), "joint_rna")
+    expect_identical(objName(e), "raw")
+    expect_identical(prov(e), "joint_cell")
+})
+
+test_that("assembled joint expression stamps the participation set", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    e <- getExpression(mg)
+    stamp <- e@misc$gmulti
+    expect_identical(stamp$participation, c("a", "b"))
+    expect_identical(stamp$resolved$a,
+        list(su = "cell", ft = "rna", values = "raw"))
+})
+
+test_that("assembled joint cell metadata carries handles and list_ID", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    gmultiMapping(mg, "spat_unit") <- list(joint_cell = c(a = "cell", b = "cell"))
+    cm <- getCellMetadata(mg)
+    expect_identical(spatUnit(cm), "joint_cell")
+    dt <- cm[]
+    expect_identical(unique(dt$list_ID), c("a", "b"))
+    expect_identical(nrow(dt), 8L)
+})
+
+test_that("NA sentinel: a declared skip is excluded without error", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    gmultiMapping(mg, "values", "raw") <- c(a = "raw", b = NA)
+    e <- getExpression(mg)
+    expect_identical(ncol(e[]), 5L)
+    expect_identical(e@misc$gmulti$participation, "a")
+})
+
+test_that("a keyed child missing the values entry errors loudly by default", {
+    g1 <- .mk_minimal(5, 4)
+    g2 <- .mk_minimal(3, 4)
+    names(g2@expression$cell$rna) <- "counts"
+    mg <- createGiottoMulti(list(a = g1, b = g2))
+    # discovery keys b at "raw" even though its matrix is named "counts" —
+    # the first read must fail loudly naming the sample, not silently drop
+    expect_error(getExpression(mg), "unsatisfiable.*b|b.*unsatisfiable")
+})
+
+test_that("the unsatisfiable-child remedy of re-pointing the entry works", {
+    g1 <- .mk_minimal(5, 4)
+    g2 <- .mk_minimal(3, 4)
+    names(g2@expression$cell$rna) <- "counts"
+    mg <- createGiottoMulti(list(a = g1, b = g2))
+    gmultiMapping(mg, "values", "raw") <- c(a = "raw", b = "counts")
+    e <- getExpression(mg)
+    expect_identical(ncol(e[]), 8L)
+    expect_identical(e@misc$gmulti$resolved$b$values, "counts")
+})
+
+test_that("on_missing = 'drop' downgrades the unsatisfiable child to a warning", {
+    g1 <- .mk_minimal(5, 4)
+    g2 <- .mk_minimal(3, 4)
+    names(g2@expression$cell$rna) <- "counts"
+    mg <- createGiottoMulti(list(a = g1, b = g2))
+    expect_warning(e <- getExpression(mg, on_missing = "drop"), "dropping")
+    expect_identical(ncol(e[]), 5L)
+    expect_identical(e@misc$gmulti$participation, "a")
+})
+
+test_that("mismatched feature panels error by default; drop intersects; fill unions", {
+    g1 <- .mk_minimal(5, 4)
+    m2 <- matrix(0, nrow = 3, ncol = 3)
+    rownames(m2) <- paste0("f", 1:3)
+    colnames(m2) <- paste0("c", 1:3)
+    g2 <- createGiottoObject(expression = m2, verbose = FALSE)
+    mg <- createGiottoMulti(list(a = g1, b = g2))
+
+    expect_error(getExpression(mg), "feature panels differ")
+
+    e_drop <- getExpression(mg, on_missing = "drop")
+    expect_identical(nrow(e_drop[]), 3L)
+    expect_identical(ncol(e_drop[]), 8L)
+
+    e_fill <- getExpression(mg, on_missing = "fill")
+    expect_identical(nrow(e_fill[]), 4L)
+    # b lacks f4 — 0-filled
+    expect_true(all(e_fill[]["f4", startsWith(colnames(e_fill[]), "b::")] == 0))
+})
+
+test_that("no name + no raw handle + several declared handles errors", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    gmultiMapping(mg, "values") <- list(
+        one = c(a = "raw", b = "raw"),
+        two = c(a = "raw", b = "raw"))
+    expect_error(getExpression(mg), "several values handles")
+})
+
+# sample addressing ####
+
+test_that(".parse_sample_qualified_name handles bare + prefixed names", {
+    expect_identical(.parse_sample_qualified_name("raw"),
+        list(sample = NULL, name = "raw"))
+    p <- .parse_sample_qualified_name("B191::raw")
+    expect_identical(p$sample, "B191")
+    expect_identical(p$name, "raw")
+    # split at FIRST :: only
+    p2 <- .parse_sample_qualified_name("B191::raw_x::y")
+    expect_identical(p2$sample, "B191")
+    expect_identical(p2$name, "raw_x::y")
+})
+
+test_that("getExpression(samples = ) slices joint matrix columns", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    e <- getExpression(mg, samples = "a")
+    expect_identical(ncol(e[]), 5L)
+    expect_true(all(startsWith(colnames(e[]), "a::")))
+})
+
+test_that("getExpression(name = 'sample::name') parses the prefix", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    e <- getExpression(mg, name = "a::raw")
+    expect_identical(ncol(e[]), 5L)
+    # conflicting sample selections error; matching ones are fine
+    expect_error(getExpression(mg, name = "a::raw", samples = "b"),
+        "conflicting sample selection")
+    expect_no_error(getExpression(mg, name = "a::raw", samples = "a"))
+})
+
+test_that("samples = errors on unknown and non-participating samples", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    expect_error(getExpression(mg, samples = "nope"), "not in @objects")
+
+    gmultiMapping(mg, "values", "raw") <- c(a = "raw", b = NA)
+    expect_error(getExpression(mg, samples = "b"),
+        "do not participate")
+})
+
+test_that("getCellMetadata(samples = ) slices joint cmeta to one sample", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    cm <- getCellMetadata(mg, output = "data.table", samples = "b")
+    expect_identical(nrow(cm), 3L)
+    expect_true(all(startsWith(cm$cell_ID, "b::")))
+})
+
+test_that("getFeatureMetadata(samples = ) validates but is a no-op", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    fm_all <- getFeatureMetadata(mg, output = "data.table")
+    fm_a <- getFeatureMetadata(mg, output = "data.table", samples = "a")
+    expect_identical(fm_all, fm_a)
+    expect_error(getFeatureMetadata(mg, samples = "nope"), "not in @objects")
+})
+
+# spatial-domain per-child dispatch ####
+
+test_that("getSpatialLocations on giottoMulti returns named per-child list", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    out <- getSpatialLocations(mg)
+    expect_type(out, "list")
+    expect_identical(names(out), c("a", "b"))
+    expect_s4_class(out$a, "spatLocsObj")
+    expect_identical(nrow(out$a[]), 5L)
+    expect_identical(nrow(out$b[]), 3L)
+})
+
+test_that("getSpatialLocations honors samples= / object= (and their conflict)", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    out <- getSpatialLocations(mg, samples = "b")
+    expect_identical(names(out), "b")
+    expect_identical(out, getSpatialLocations(mg, object = "b"))
+    expect_error(getSpatialLocations(mg, object = "a", samples = "b"),
+        "conflicting")
+})
+
+test_that("sample-scoped getSpatialLocations composes with view narrowing", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    mg2 <- subset(mg, cells = c("a::c1", "a::c3", "b::c1"))
+
+    sl_a <- getSpatialLocations(mg2, object = "a")$a
+    expect_identical(sort(sl_a[]$cell_ID), c("c1", "c3"))
+    sl_b <- getSpatialLocations(mg2, object = "b")$b
+    expect_identical(sort(sl_b[]$cell_ID), "c1")
+
+    # children themselves untouched
+    expect_length(spatIDs(mg2@objects$a), 5L)
+})
+
+test_that("setSpatialLocations requires a single object= target", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    sl <- getSpatialLocations(mg@objects$b)
+    expect_error(setSpatialLocations(mg, x = sl), "must name the child")
+    expect_error(setSpatialLocations(mg, x = sl, object = c("a", "b")),
+        "length 1")
+    mg2 <- setSpatialLocations(mg, x = sl, object = "b", verbose = FALSE)
+    expect_s4_class(mg2, "giottoMulti")
+})
+
+test_that("getFeatureInfo narrows by the feature axis (A6 gap closed)", {
+    # needs children with giottoPoints feat_info — synthesize from points
+    sv <- terra::vect(
+        data.frame(x = c(0, 1, 2), y = c(0, 1, 2),
+            feat_ID = c("f1", "f2", "f3")),
+        geom = c("x", "y"))
+    gp <- createGiottoPoints(sv, feat_type = "rna")
+    g1 <- .mk_minimal(5, 4)
+    g1 <- setFeatureInfo(g1, gp, feat_type = "rna", verbose = FALSE)
+    mg <- createGiottoMulti(list(a = g1))
+
+    mg2 <- subset(mg, features = c("f1", "f3"))
+    out <- getFeatureInfo(mg2)
+    expect_identical(
+        sort(terra::values(out$a)$feat_ID), c("f1", "f3"))
+})
+
+# container surface ####
+
+test_that("as(g, 'giottoMulti') wraps a single giotto with default name", {
+    g <- .mk_minimal(5, 4)
+    mg <- as(g, "giottoMulti")
+    expect_s4_class(mg, "giottoMulti")
+    expect_identical(names(mg), "sample1")
+    expect_length(spatIDs(mg), 5L)
+})
+
+test_that("mg[i] subsets children and prunes mapping + joint slots", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4),
+        c = .mk_minimal(2, 4)))
+    sub <- mg[c("a", "c")]
+    expect_identical(names(sub), c("a", "c"))
+    expect_identical(spatIDs(sub),
+        c(paste0("a::c", 1:5), paste0("c::c", 1:2)))
+    # mapping entries key only survivors
+    expect_identical(names(gmultiMapping(sub, "spat_unit")$cell),
+        c("a", "c"))
+    expect_error(mg["nope"], "unknown child")
+})
+
+test_that("names(mg) <- renames children, id_map, and mapping keys", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    names(mg) <- c("x", "y")
+    expect_identical(names(mg), c("x", "y"))
+    expect_identical(sort(unique(mg@id_map$cells$object)), c("x", "y"))
+    # mapping keys followed the rename — resolution still works
+    expect_identical(names(gmultiMapping(mg, "values")$raw), c("x", "y"))
+    e <- getExpression(mg)
+    expect_identical(ncol(e[]), 8L)
+    expect_error(names(mg) <- c("a", "a"), "unique")
+    expect_error(names(mg) <- "a", "length")
+})
+
+test_that("names(mg) <- rewrites joint shared slot keys", {
+    g1 <- .mk_minimal(5, 4)
+    mg <- createGiottoMulti(list(a = g1))
+    e <- getExpression(mg)
+    mg <- setExpression(mg, e, name = "raw", verbose = FALSE)
+    names(mg) <- "A"
+    new_cn <- colnames(mg@expression$cell$rna$raw[])
+    expect_true(all(grepl("^A::", new_cn)))
+})
+
+test_that("show(mg) surfaces children, mapping and joint slots", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    out <- paste(capture.output(show(mg)), collapse = "\n")
+    expect_match(out, "2 child object")
+    expect_match(out, "spat_unit: cell \\(2\\)")
+    expect_match(out, "values: raw \\(2\\)")
+    e <- getExpression(mg)
+    mg <- setExpression(mg, e, name = "raw", verbose = FALSE)
+    out2 <- paste(capture.output(show(mg)), collapse = "\n")
+    expect_match(out2, "joint slots: expression")
+})
+
+# combine_metadata routing (D6 — no injector, access layer only) ####
+
+test_that("combineMetadata(mg, spat_loc_name = NULL) returns one joint DT", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    dt <- combineMetadata(mg, spat_loc_name = NULL, verbose = FALSE)
+    expect_s3_class(dt, "data.table")
+    expect_identical(nrow(dt), 8L)
+})
+
+test_that("combineMetadata(mg) walks children with joint-only columns added", {
+    mg <- createGiottoMulti(list(a = .mk_minimal(5, 4), b = .mk_minimal(3, 4)))
+    # materialize a joint-only analysis column
+    cm <- getCellMetadata(mg)
+    dt <- data.table::copy(cm[])
+    dt[, leiden := seq_len(.N)]
+    cm[] <- dt
+    mg <- setCellMetadata(mg, cm, verbose = FALSE)
+
+    out <- combineMetadata(mg, verbose = FALSE)
+    expect_type(out, "list")
+    expect_identical(names(out), c("a", "b"))
+    # the joint-only column reached each per-child combined table
+    expect_true("leiden" %in% names(out$a))
+    expect_identical(nrow(out$b), 3L)
 })

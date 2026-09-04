@@ -31,6 +31,31 @@ combineMetadata <- function(gobject,
     # DT vars
     cell_ID <- NULL
 
+    # giottoMulti: dispatch only when per-child spatial slots are being
+    # combined. When `spat_loc_name = NULL`, this function only touches
+    # joint @cell_metadata (+ optional joint enrichment) — both already
+    # come as single DTs via the gmulti's joint getters, so fall through
+    # to the standard path with no per-child walk.
+    # Otherwise: per-child loop, each child augmented with joint-only
+    # metadata columns through the access layer
+    # (.gm_child_with_joint_meta -> getCellMetadata(samples = )); returns
+    # a named list of per-sample combined DTs (each in its own coord
+    # frame).
+    if (inherits(gobject, "giottoMulti") && !is.null(spat_loc_name)) {
+        children <- names(gobject@objects)
+        out <- lapply(children, function(nm) {
+            combineMetadata(.gm_child_with_joint_meta(gobject, nm),
+                spat_unit = spat_unit,
+                feat_type = feat_type,
+                spat_loc_name = spat_loc_name,
+                spat_enr_names = spat_enr_names,
+                verbose = verbose
+            )
+        })
+        names(out) <- children
+        return(out)
+    }
+
     # Set feat_type and spat_unit
     spat_unit <- set_default_spat_unit(
         gobject = gobject,
@@ -207,6 +232,32 @@ combineCellData <- function(gobject,
 
     checkmate::assert_numeric(xlim, len = 2L, null.ok = TRUE)
     checkmate::assert_numeric(ylim, len = 2L, null.ok = TRUE)
+
+    # giottoMulti: per-child loop, each child augmented with joint-only
+    # metadata columns through the access layer. Returns a named list of
+    # per-sample combined results (each in its own coord frame).
+    # Cross-sample combining is deferred to a future `space =` form that
+    # aligns frames first.
+    if (inherits(gobject, "giottoMulti")) {
+        children <- names(gobject@objects)
+        out <- lapply(children, function(nm) {
+            combineCellData(.gm_child_with_joint_meta(gobject, nm),
+                feat_type = feat_type,
+                include_spat_locs = include_spat_locs,
+                spat_loc_name = spat_loc_name,
+                include_poly_info = include_poly_info,
+                poly_info = poly_info,
+                include_spat_enr = include_spat_enr,
+                spat_enr_names = spat_enr_names,
+                ext = ext,
+                xlim = xlim,
+                ylim = ylim,
+                remove_background_polygon = remove_background_polygon
+            )
+        })
+        names(out) <- children
+        return(out)
+    }
 
     # combine
     # 1. spatial morphology information ( = polygon)

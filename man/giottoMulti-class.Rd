@@ -25,11 +25,13 @@ mapping \verb{(object, local_id) -> global_id}. This is an identity
 \item{\code{id_sig}}{\code{list} of per-child ID length-signatures. Drives id_map cache
 invalidation in \code{initialize()}.}
 
-\item{\code{mapping}}{\code{list} declaring how child-level spat_units and feat_types
-federate up to gmulti-level handles. Two named entries, \code{spat_unit} and
-\code{feat_type}, each a list of named character vectors mapping
-\verb{sample -> child-level name}. Populated from stage 3 of the port; empty
-until then.}
+\item{\code{mapping}}{\code{list} declaring how child-level content federates up to
+gmulti-level handles. Three named entries — \code{spat_unit}, \code{feat_type},
+and \code{values} (expression matrix names; flat, not per-universe) — each a
+list of named character vectors mapping \verb{sample -> child-level name}.
+Every entry keys every sample; \code{NA_character_} is the deliberate-skip
+sentinel ("this sample does not contribute to this handle").
+Auto-discovered at construction; edited via \code{\link[=gmultiMapping]{gmultiMapping()}}.}
 
 \item{\code{expression}}{shared expression matrices (rows = union of features,
 cols = global cell IDs)}

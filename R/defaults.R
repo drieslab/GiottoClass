@@ -32,6 +32,22 @@ set_default_spat_unit <- function(gobject,
     if (inherits(spat_unit, "try-error")) {
         if (!is.null(gobject@expression) && length(gobject@expression) > 0L) {
             spat_unit <- names(gobject@expression)[[1L]]
+        } else if (inherits(gobject, "giottoMulti")) {
+            # giottoMulti has no @spatial_info. Prefer the mapping's first
+            # declared handle (the authoritative universe); fall back to the
+            # first child's live default, read fresh each call.
+            spat_unit <- names(gobject@mapping$spat_unit)[1L]
+            if (is.null(spat_unit) || is.na(spat_unit)) {
+                first_child <- gobject@objects[[1L]]
+                spat_unit <- if (!is.null(first_child)) {
+                    tryCatch(set_default_spat_unit(first_child),
+                        error = function(e) NULL)
+                } else NULL
+            }
+            if (is.null(spat_unit) || is.na(spat_unit)) {
+                warning("No default for spat_unit could be set \n")
+                spat_unit <- NULL
+            }
         } else if (!is.null(gobject@spatial_info)) {
             spat_unit <- names(gobject@spatial_info)[[1L]]
         } else {
@@ -80,6 +96,22 @@ set_default_feat_type <- function(gobject,
             if (is.null(feat_type)) {
                 warning(wrap_txt("No existing feat_types to default to in given
                                 spat_unit"))
+            }
+        } else if (inherits(gobject, "giottoMulti")) {
+            # giottoMulti has no @feat_info. Prefer the mapping's first
+            # declared handle (the authoritative universe); fall back to the
+            # first child's live default, read fresh each call.
+            feat_type <- names(gobject@mapping$feat_type)[1L]
+            if (is.null(feat_type) || is.na(feat_type)) {
+                first_child <- gobject@objects[[1L]]
+                feat_type <- if (!is.null(first_child)) {
+                    tryCatch(set_default_feat_type(first_child,
+                        spat_unit = spat_unit), error = function(e) NULL)
+                } else NULL
+            }
+            if (is.null(feat_type) || is.na(feat_type)) {
+                warning("No default for feat_type could be set \n")
+                feat_type <- NULL
             }
         } else if (!is.null(gobject@feat_info)) {
             feat_type <- names(gobject@feat_info)[[1L]]

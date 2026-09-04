@@ -1758,5 +1758,63 @@ createMetafeats <- function(gobject,
         return(x)
     }
 
+    # spatial classes (cell axis) — used by the giottoMulti per-child
+    # output filter (.gm_narrow_child_outputs); IDs here are child-local
+
+    if (inherits(x, "spatLocsObj")) {
+        if (!is.null(cells)) {
+            cell_ID <- NULL # data.table NSE
+            x[] <- x[][cell_ID %in% cells]
+        }
+        return(x)
+    }
+
+    if (inherits(x, "spatialNetworkObj")) {
+        if (!is.null(cells)) {
+            from <- to <- NULL # NSE
+            x[] <- x[][from %in% cells & to %in% cells]
+        }
+        return(x)
+    }
+
+    if (inherits(x, "giottoPolygon")) {
+        if (!is.null(cells)) {
+            sv <- x@spatVector
+            keep <- terra::values(sv)$poly_ID %in% cells
+            x@spatVector <- sv[keep, ]
+            if (!is.null(x@spatVectorCentroids)) {
+                cv <- x@spatVectorCentroids
+                keep_c <- terra::values(cv)$poly_ID %in% cells
+                x@spatVectorCentroids <- cv[keep_c, ]
+            }
+        }
+        return(x)
+    }
+
+    # spatial class (feature axis) — giottoPoints geometries key on
+    # feat_ID, so the narrowing axis is features, not cells
+
+    if (inherits(x, "giottoPoints")) {
+        if (!is.null(feats)) {
+            sv <- x@spatVector
+            keep <- terra::values(sv)$feat_ID %in% feats
+            x@spatVector <- sv[keep, ]
+        }
+        return(x)
+    }
+
+    # bare SpatVector — what getPolygonInfo / getFeatureInfo return when not
+    # wrapped as giotto classes. The ID column names the axis: poly_ID is
+    # cell-keyed, feat_ID is feature-keyed.
+    if (inherits(x, "SpatVector")) {
+        vals <- terra::values(x)
+        if (!is.null(cells) && "poly_ID" %in% names(vals)) {
+            x <- x[vals$poly_ID %in% cells, ]
+        } else if (!is.null(feats) && "feat_ID" %in% names(vals)) {
+            x <- x[vals$feat_ID %in% feats, ]
+        }
+        return(x)
+    }
+
     x
 }
