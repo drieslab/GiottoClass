@@ -1,0 +1,512 @@
+---
+title: "giottoView and giottoSpace: recipes for filtering and reframing"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{giottoView and giottoSpace: recipes for filtering and reframing}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>"
+)
+```
+
+## What they are
+
+`giottoView` and `giottoSpace` are **non-destructive recipes** attached to a
+`giotto` / `giottoMulti` object that change what subsequent accessors see
+without mutating the underlying data.
+
+| | `giottoView` | `giottoSpace` |
+|---|---|---|
+| Records | filter / crop / sample-selection steps | coordinate-frame transforms (spin, affine, flip, ...) |
+| Effect on accessors | narrows which cells survive | reframes spatial geometry of survivors |
+| Use case | "show me cluster 3 inside this region" | "rotate sample B by 45° and shift to land next to sample A" |
+| Lifetime | recipe object — apply / detach at will | recipe object — apply / detach at will |
+
+They're separate by design: a view is a cell-identity filter (predicates on
+metadata or expression, optionally a spatial crop bbox), while a space is a
+coordinate transform stack. The same view can be applied in any frame; the
+same space can be applied to any cell subset.
+
+## When to use which
+
+* **Filter cells:** `giottoView`. Predicates over metadata or expression,
+  optional crop region, optional sample selector.
+* **Reposition cells:** `giottoSpace`. Spin / affine / shift / flip / rescale
+  composed in order. Sample-keyed so different children of a `giottoMulti`
+  can carry different transforms.
+* **Both:** apply the view first to pick which cells, then the space to
+  decide where to draw them. `materialize()` (or the `view=` / `space=`
+  args on getters) accepts both.
+
+## giottoView basics
+
+A view starts empty and accumulates steps via piping:
+
+```{r}
+library(GiottoClass)
+
+# Empty view
+v <- giottoView()
+v
+```
+
+### Filtering with `subset()`
+
+The predicate is captured unevaluated and resolved later against
+`spatValues()`. Free variables in the predicate (literal scalars, vectors)
+are captured eagerly so the view is self-contained:
+
+```{r}
+v <- giottoView() |>
+    subset(leiden_clus == 1)
+v
+```
+
+Multiple predicates compose by chaining `subset()` — each step intersects
+with the previous survivors:
+
+```{r}
+clusters_of_interest <- c(1, 3)
+
+v <- giottoView() |>
+    subset(leiden_clus %in% clusters_of_interest) |>
+    subset(total_expr > 500)
+v
+```
+
+### Cropping spatial region
+
+`crop()` records a spatial extent (anything `terra::ext()` can interpret —
+SpatExtent, bbox, sf bbox, numeric vector) plus an optional `relation`
+controlling intersection semantics:
+
+```{r}
+v <- giottoView() |>
+    crop(terra::ext(6500, 7000, -4500, -4000))
+v
+```
+
+`relation` is forwarded to `terra::is.related()` and accepts the full set:
+`"intersects"` (default), `"within"`, `"contains"`, `"covers"`,
+`"covered_by"`, `"overlaps"`, `"touches"`, `"crosses"`, `"disjoint"`.
+
+`crop()` is not limited to rectangular extents — any geometry that
+`terra::is.related()` can evaluate against is accepted. Pass a
+`SpatVector` polygon (or an `sf` polygon, WKT, etc.) directly as `y`,
+and the same `relation` vocabulary applies:
+
+```{r}
+# Build an arbitrary ROI polygon (or pull one from gobject@spatial_info,
+# a hand-drawn annotation, an imported GeoJSON, ...)
+roi <- terra::vect(
+    matrix(c(6500, -4500,
+             7100, -4400,
+             6900, -4000,
+             6500, -4200,
+             6500, -4500), ncol = 2, byrow = TRUE),
+    type = "polygons"
+)
+
+v <- giottoView() |>
+    crop(roi, relation = "within")   # cells whose centroid is inside roi
+```
+
+Bbox crops take an AABB short-circuit at resolution time; non-rectangular
+regions fall through to `terra::is.related()`. Geometry of surviving
+subobjects is not modified — only the cell set narrows.
+
+The indirect-usage form (`view = `) works on `crop()` too — same pattern
+as `subset()` below — for recording a polygon filter directly onto a
+slotted view without first building a standalone recipe:
+
+```{r, eval=FALSE}
+g <- crop(g, roi, relation = "within", view = "stripe1")
+g <- subset(g, total_expr > 1, view = "stripe1")  # appends to the same view
+```
+
+Note that eager `crop()` on a `giotto` / `giottoMulti` is **not**
+implemented — it would require coordinated narrowing of every spatial
+subobject, images, expression, and metadata. The `view = ` path is
+mandatory for now; an eager call errors with a pointer to either the
+recipe form or the indirect form.
+
+### Predicate frame vs output frame
+
+A view's `crop()` can carry an additional `space = ` arg that binds the
+view's `@space` slot — the **frame the crop region is interpreted in**.
+This is a separate concern from any output frame the consumer might
+request:
+
+```{r, eval=FALSE}
+# Crop region drawn in "rotate" coords; binds view@space.
+g <- crop(g, ext(3000, 4000, -3000, -2000), view = "test", space = "rotate")
+
+# Default: predicate uses "rotate" frame to decide cells, output stays
+# in NATIVE frame.
+getSpatialLocations(g, view = "test")            # native coords, narrowed
+
+# Explicit: predicate uses "rotate" frame, output also in "rotate" frame.
+getSpatialLocations(g, view = "test", space = "rotate")  # rotated coords
+```
+
+The two arguments are independent:
+
+| | source | what it affects |
+|---|---|---|
+| **Predicate frame** | `view@space` (set by `crop(..., space = "name")`) | how the recorded crop region is interpreted |
+| **Output frame** | explicit `space = ` arg on the getter | what frame the returned coordinates are in |
+
+`view@space` is read at the crop step and used to project the region
+into whatever the output frame turns out to be — getters that don't
+pass `space = ` keep returning native-frame coords. The behavior is
+identical across `getSpatialLocations` / `getCellMetadata` /
+`getPolygonInfo` / `getExpression`: same recipe, same cell set.
+
+Note the arg overload: `space = ` on `crop()` binds the view's
+predicate frame; `space = ` on transform verbs (`spin()`, `affine()`,
+…) records the transform as a step onto the named space recipe. Same
+referent (the slotted space `"name"`), different operation per verb.
+
+### Sample selection (giottoMulti only)
+
+When the view will be applied to a `giottoMulti`, `selectSamples()` records
+which children participate. The step is resolved first, before any filter
+or crop steps:
+
+```{r}
+v <- giottoView() |>
+    selectSamples("visium_a", "visium_b") |>
+    subset(leiden_clus == 1)
+v
+```
+
+## giottoSpace basics
+
+A space records coordinate transforms keyed by sample. Constructing an
+empty space defaults to a single-sample sentinel for use on a plain
+`giotto`:
+
+```{r}
+s <- giottoSpace()
+s
+```
+
+Naming the sample binds the space to a specific child for `giottoMulti`
+use:
+
+```{r}
+s_a <- giottoSpace("visium_a")
+s_a
+```
+
+### Recording transforms
+
+Standard spatial-transform generics (`spin`, `spatShift`, `affine`,
+`flip`, `rescale`, `shear`, `zoom`) get a `giottoSpace` signature that
+records the call rather than executing it:
+
+```{r}
+s <- giottoSpace("visium_b") |>
+    spin(angle = 45) |>
+    spatShift(dx = 100, dy = 0)
+s
+```
+
+Steps are applied in recorded order at resolution time.
+
+### Composing spaces with `+`
+
+Two spaces on the same sample concatenate step lists in order; spaces on
+different samples merge into a multi-sample space. This lets you build a
+"places visium_a and visium_b next to each other" recipe by composing
+per-sample transforms:
+
+```{r}
+s_a <- giottoSpace("visium_a")   # leave as-is
+s_b <- giottoSpace("visium_b") |>
+    spin(angle = 90) |>
+    spatShift(dx = 8000, dy = 0)
+
+s_layout <- s_a + s_b
+s_layout
+```
+
+### Piping after `+` broadcasts — so order matters
+
+A transform piped onto a space is recorded on **every sample the space
+currently keys**, not just the most recently added one. That is what makes
+`giottoSpace("a") |> spin(30)` work without naming the sample twice, but it
+means `+` and a pipe do not commute:
+
+```{r}
+# spin lands on BOTH samples: the space keys a and b when spin() is recorded
+both <- (giottoSpace("a") + giottoSpace("b")) |> spin(30)
+both
+```
+
+```{r}
+# spin lands on `a` ONLY: b is merged in afterwards, already-recorded steps
+# are not retro-applied
+a_only <- (giottoSpace("a") |> spin(30)) + giottoSpace("b")
+a_only
+```
+
+Both are legitimate recipes and neither is a special case — the rule is
+simply that recording applies to the current key set. Two habits keep it
+predictable:
+
+* build each sample's recipe fully, *then* combine with `+`. This is the
+  form used above for `s_layout`, and it is the one to reach for by default.
+* if you want a transform to apply to every sample, combine first and pipe
+  afterwards — and say so in a comment, because the reader cannot tell a
+  deliberate broadcast from an accidental one.
+
+A key with no steps still participates at identity, so `giottoSpace("a")`
+is a meaningful thing to add: it puts `a` in the space untransformed rather
+than leaving it out.
+
+## Which relations use centroids, and which use geometry
+
+`crop()` narrows by a spatial *relation*, and the relation decides what the
+cell is represented by:
+
+| relation | evaluated against | note |
+|---|---|---|
+| `intersects` (default), `disjoint` | the cell **centroid** | the conventional approximation; a cell whose polygon straddles the region boundary but whose centroid falls outside is not kept |
+| `within`, `covered_by`, `contains`, `covers`, `overlaps`, `touches`, `crosses` | the cell **polygon** | area- and boundary-based, so a centroid cannot answer them |
+
+This matters because the two disagree, and the difference is the boundary
+band. On the visium mini with a 3000-unit box at the tissue centre,
+`intersects` keeps 549 cells and `within` keeps 524 — the 25 cells in
+between straddle the edge: centroid inside, polygon not fully contained.
+
+The consequence for practice: a geometry relation needs a polygon source on
+the object. If there isn't one, `crop()` says so at resolution time rather
+than quietly answering the centroid question instead:
+
+```r
+# no @spatial_info on this object
+giottoView(g, "w") <- giottoView() |> crop(box, relation = "within")
+materialize(g, "w")
+#> Error: [crop] relation 'within' must be evaluated against cell geometry,
+#> but this object has no polygon source to evaluate it on.
+```
+
+The routing is a property of the relation alone, not of where the data is
+stored, so the same recipe narrows identically over in-memory objects and
+over backed stores.
+
+## Indirect usage: `view = ` / `space = ` on existing generics
+
+The recipe constructors above are explicit and composable, but for the
+interactive workflow of "try a filter or transform and save it for
+later," the existing eager generics (`subset()`, `spin()`, `spatShift()`,
+`flip()`, `rescale()`, `affine()`) accept an optional `view = ` or
+`space = ` argument. When supplied, the call records the step onto the
+named recipe (creating the slotted view/space if missing) and returns
+the modified gobject. When omitted, the call behaves eagerly as before
+— no behavior change.
+
+### Recording a view from `subset()`
+
+```{r}
+g <- GiottoData::loadGiottoMini("visium", verbose = FALSE)
+
+# Indirect: record the filter under the slot name "cluster1_only"
+g <- subset(g, leiden_clus == 1, view = "cluster1_only")
+
+# A second subset() call with the same name appends to that view
+g <- subset(g, total_expr > 500, view = "cluster1_only")
+
+# Inspect what was recorded
+giottoView(g, "cluster1_only")
+```
+
+The eager path is unchanged when `view` is not supplied:
+
+```{r, eval=FALSE}
+g_sub <- subset(g, leiden_clus == 1)   # returns a narrowed giotto
+```
+
+### Recording a space from a transform
+
+```{r}
+# Indirect: record a rotation under the slot name "rotated"
+g <- spin(g, angle = 45, space = "rotated")
+
+# Chain another transform onto the same space
+g <- spatShift(g, dx = 100, dy = 0, space = "rotated")
+
+giottoSpace(g, "rotated")
+```
+
+The eager paths still apply when `space` is not supplied. Eagerly applied
+transforms walk subobjects and mutate coordinates in place; recipe-mode
+just queues the step.
+
+### Passing a recipe object instead of a name
+
+If you want to build a free-standing recipe (no slotting yet), pass a
+`giottoView` / `giottoSpace` object as the `view = ` / `space = ` arg.
+The generic appends the step and returns the **recipe** (not the
+gobject), so you can keep piping:
+
+```{r}
+v0 <- giottoView()
+v1 <- subset(g, leiden_clus == 2, view = v0)
+v1
+
+# Slot it later when ready
+giottoView(g, "cluster2") <- v1
+```
+
+### Why the same verbs
+
+The intent is that users keep the verbs they already know. The optional
+`view = ` / `space = ` arg lets the same call site choose between "do
+it now" (default) and "save the recipe for later." No new
+`subsetAsView()` / `recordSpace()` functions to learn.
+
+
+## Slotting onto a gobject
+
+Views and spaces can live as standalone recipes or be attached to a gobject
+by name for repeated use. Slotted views participate in `materialize()` /
+getter `view = "name"` lookups, so downstream code can refer to them by
+string without rebuilding the recipe each call.
+
+```{r}
+g <- GiottoData::loadGiottoMini("visium", verbose = FALSE)
+
+giottoView(g, "cluster1_only") <- giottoView() |>
+    subset(leiden_clus == 1)
+
+giottoViews(g)
+```
+
+Retrieve by name:
+
+```{r}
+giottoView(g, "cluster1_only")
+```
+
+Remove with `NULL`:
+
+```{r, eval=FALSE}
+giottoView(g, "cluster1_only") <- NULL
+```
+
+Spaces follow the same `giottoSpace(g, "name") <- value` /
+`giottoSpaces(g)` API:
+
+```{r, eval=FALSE}
+giottoSpace(g, "layout") <- s_layout
+giottoSpaces(g)
+```
+
+## Applying views and spaces
+
+### Via getter `view=` / `space=`
+
+Most data accessors take a `view` argument (and `space`, where coordinates
+matter). When supplied, the returned subobject is projected through the
+recipe before being handed back:
+
+```{r}
+# All cells
+all_meta <- getCellMetadata(g, output = "data.table")
+nrow(all_meta)
+
+# Narrowed to cluster 1 via view
+v <- giottoView() |> subset(leiden_clus == 1)
+narrowed <- getCellMetadata(g, output = "data.table", view = v)
+nrow(narrowed)
+```
+
+The view can be supplied directly (a `giottoView` object) or by the name
+of a slotted view (a character string).
+
+### Via `materialize()`
+
+`materialize(g, view, space)` applies the recipe across all relevant
+slots at once, returning a narrowed gobject. Useful when several
+downstream calls need the same narrowing:
+
+```{r}
+g_narrow <- materialize(g, v)
+g_narrow
+
+# Subsequent accessors see the narrowed view automatically
+length(spatIDs(g_narrow))
+```
+
+The `slots = ` argument scopes which slots to narrow — handy when only a
+subset of data is needed (e.g. plot functions narrow only the slots they
+read).
+
+### Combining view and space
+
+The view runs first to pick cell survivors, then the space transforms the
+spatial geometry of those survivors:
+
+```{r, eval=FALSE}
+g_out <- materialize(g, view = v, space = s)
+```
+
+For plain `getCellMetadata` / `spatValues` calls, `space` is accepted for
+API symmetry but is a no-op on tabular subobjects — only `cell_ID`
+survival is affected. To get transformed coordinates, route through a
+spatial accessor like `getSpatialLocations(g, view = v, space = s)`.
+
+## giottoMulti context
+
+On a `giottoMulti`, views and spaces carry sample selectors:
+
+* `selectSamples("a", "b")` on a view picks which children participate.
+* Sample-keyed transforms on a space define per-child coordinate frames
+  for cross-sample layouts.
+
+Composition then lets you build a "place these samples together, filtered
+to cluster 3" recipe without touching the underlying data:
+
+```{r, eval=FALSE}
+v <- giottoView() |>
+    selectSamples("visium_a", "visium_b") |>
+    subset(leiden_clus == 3)
+
+s <- giottoSpace("visium_a") +
+     (giottoSpace("visium_b") |> spatShift(dx = 8000, dy = 0))
+
+mg_out <- materialize(mg, view = v, space = s)
+```
+
+The view's surviving cell IDs are computed once across the gmulti; per-child
+getter calls downstream reuse that cache.
+
+## Design notes
+
+* **Recipes, not state.** Applying a view doesn't mutate the gobject —
+  `materialize()` returns a new gobject (or you pass the view to a getter
+  per-call). Detach by simply not passing it.
+* **Lazy.** On a disk-backed gobject (via `gsource`), view predicates and
+  spatial crops are pushed into the backend's lazy query plan. The actual
+  data pull happens only when a downstream call collects.
+* **Composable.** `view1 + view2` is reserved for a future release; for now,
+  chain `subset()` / `crop()` on a single view. Spaces compose freely via
+  `+` (same-sample concat / cross-sample merge).
+* **Sample-keyed transforms.** On a `giottoMulti`, every space step is
+  scoped to one or more named samples. Different children carry different
+  recipes simultaneously in a single space object.
+
+## See also
+
+* [giottoMulti vignette](giottoMulti.html) — multi-sample container that
+  view and space integrate with most deeply.
+* `?materialize` — the full resolver entry point.
+* `?giottoView` — slotted view accessors.
+* `?giottoSpace` — slotted space accessors.

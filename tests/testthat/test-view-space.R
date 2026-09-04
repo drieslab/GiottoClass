@@ -929,3 +929,120 @@ test_that("a rectangular region takes the AABB path; a polygon does not", {
         GiottoClass:::.cells_in_region(sl, tri, "intersects"),
         c("a", "c"))
 })
+
+
+# A7 — crop routing is decided by relation, not by storage kind ####
+
+test_that("cropRelationNeedsGeom splits centroid- from geometry-relations", {
+    expect_false(cropRelationNeedsGeom("intersects"))
+    expect_false(cropRelationNeedsGeom("disjoint"))
+    for (r in c("within", "covered_by", "contains", "covers",
+                "overlaps", "touches", "crosses")) {
+        expect_true(cropRelationNeedsGeom(r), info = r)
+    }
+    # vectorized
+    expect_identical(cropRelationNeedsGeom(c("intersects", "within")),
+        c(FALSE, TRUE))
+    expect_error(cropRelationNeedsGeom(NA_character_), "missing")
+})
+
+test_that("intersects and disjoint partition the cell set", {
+    g <- .fixture_giotto()
+    sl <- getSpatialLocations(g, output = "data.table")
+    box <- c(mean(range(sl$sdimx)) - 1500, mean(range(sl$sdimx)) + 1500,
+             mean(range(sl$sdimy)) - 1500, mean(range(sl$sdimy)) + 1500)
+    giottoView(g, "i") <- giottoView() |> crop(box, relation = "intersects")
+    giottoView(g, "d") <- giottoView() |> crop(box, relation = "disjoint")
+    n_i <- length(pDataDT(materialize(g, "i"))$cell_ID)
+    n_d <- length(pDataDT(materialize(g, "d"))$cell_ID)
+    expect_identical(n_i + n_d, nrow(sl))
+    expect_gt(n_i, 0L)
+    expect_gt(n_d, 0L)
+})
+
+test_that("a geometry relation is stricter than the centroid approximation", {
+    # This is the bug A7 fixes: before routing, `within` went down the
+    # centroid path and returned the `intersects` answer — silently
+    # over-inclusive by the cells straddling the region boundary.
+    g <- .fixture_giotto()
+    sl <- getSpatialLocations(g, output = "data.table")
+    box <- c(mean(range(sl$sdimx)) - 1500, mean(range(sl$sdimx)) + 1500,
+             mean(range(sl$sdimy)) - 1500, mean(range(sl$sdimy)) + 1500)
+    giottoView(g, "i") <- giottoView() |> crop(box, relation = "intersects")
+    giottoView(g, "w") <- giottoView() |> crop(box, relation = "within")
+    cells_i <- pDataDT(materialize(g, "i"))$cell_ID
+    cells_w <- pDataDT(materialize(g, "w"))$cell_ID
+    expect_lt(length(cells_w), length(cells_i))
+    # and the within-set is a subset, not merely smaller
+    expect_true(all(cells_w %in% cells_i))
+})
+
+test_that("a geometry relation without a polygon source errors loudly", {
+    m <- matrix(0, nrow = 2, ncol = 3,
+        dimnames = list(c("f1", "f2"), c("c1", "c2", "c3")))
+    g <- createGiottoObject(expression = m, verbose = FALSE,
+        spatial_locs = data.frame(cell_ID = c("c1", "c2", "c3"),
+            sdimx = 1:3, sdimy = 1:3))
+    expect_null(g@spatial_info)
+
+    giottoView(g, "w") <- giottoView() |> crop(c(0, 10, 0, 10),
+        relation = "within")
+    expect_error(materialize(g, "w"), "no polygon source")
+    # the message names the remedy
+    expect_error(materialize(g, "w"), "intersects")
+
+    # the centroid relations still work on the same object
+    giottoView(g, "i") <- giottoView() |> crop(c(0, 10, 0, 10))
+    expect_length(pDataDT(materialize(g, "i"))$cell_ID, 3L)
+})
+
+test_that("routing does not depend on which slot the view is read through", {
+    # one usage layer per predicate: a geometry relation must narrow
+    # cell metadata, expression and spatial locations identically
+    g <- .fixture_giotto()
+    sl <- getSpatialLocations(g, output = "data.table")
+    box <- c(mean(range(sl$sdimx)) - 1500, mean(range(sl$sdimx)) + 1500,
+             mean(range(sl$sdimy)) - 1500, mean(range(sl$sdimy)) + 1500)
+    giottoView(g, "w") <- giottoView() |> crop(box, relation = "within")
+
+    from_meta <- sort(getCellMetadata(g, view = "w",
+        output = "data.table")$cell_ID)
+    from_expr <- sort(colnames(getExpression(g, view = "w",
+        output = "matrix")))
+    from_locs <- sort(getSpatialLocations(g, view = "w",
+        output = "data.table")$cell_ID)
+    expect_identical(from_meta, from_expr)
+    expect_identical(from_meta, from_locs)
+})
+
+test_that("the resolver cache is memoization only, never routing", {
+    # A7 requires that passing or omitting a cache cannot change the
+    # answer — only how many times it is computed.
+    g <- .fixture_giotto()
+    sl <- getSpatialLocations(g, output = "data.table")
+    box <- c(mean(range(sl$sdimx)) - 1500, mean(range(sl$sdimx)) + 1500,
+             mean(range(sl$sdimy)) - 1500, mean(range(sl$sdimy)) + 1500)
+    v <- giottoView() |> crop(box, relation = "within")
+    co <- dataTableCoordinator()
+
+    no_cache <- GiottoClass:::.cached_surviving_cell_ids(g, v, co, NULL)
+    cache <- GiottoClass:::.new_resolver_cache()
+    with_cache <- GiottoClass:::.cached_surviving_cell_ids(g, v, co, cache)
+    again <- GiottoClass:::.cached_surviving_cell_ids(g, v, co, cache)
+    expect_identical(no_cache, with_cache)
+    expect_identical(with_cache, again)
+})
+
+test_that("a space-piped transform broadcasts over the current key set", {
+    # A8: `+` and a pipe do not commute, and that is the documented rule
+    both <- (giottoSpace("a") + giottoSpace("b")) |> spin(30)
+    expect_length(both@samples$a, 1L)
+    expect_length(both@samples$b, 1L)
+
+    a_only <- (giottoSpace("a") |> spin(30)) + giottoSpace("b")
+    expect_length(a_only@samples$a, 1L)
+    expect_length(a_only@samples$b, 0L)
+
+    # a key with no steps still participates, at identity
+    expect_true("b" %in% names(a_only@samples))
+})
