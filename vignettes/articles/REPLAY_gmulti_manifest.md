@@ -95,7 +95,7 @@ Stage numbering follows PLAN §7. "A*" items are from the plan-vs-merge differen
 | | |
 |---|---|
 | **source** | `feature/gmulti2` **as-is** — already reviewed and tested |
-| **files** | `R/classes-virtuals.R` (gAny, 21), `R/classes.R` (+1), `R/gmulti.R` §CLASS/INITIALIZE/CONSTRUCTOR/INTROSPECTION + `.gm_resolve_source` / `.gm_compute_sig` / `.gm_build_{cell,feat}_idmap` / `.gm_resolve_objects`, `R/methods-wrap.R` (+10), DESCRIPTION, NAMESPACE |
+| **files** | `R/gmulti.R` §CLASS/INITIALIZE/CONSTRUCTOR/INTROSPECTION + `.gm_resolve_source` / `.gm_compute_sig` / `.gm_build_{cell,feat}_idmap` / `.gm_resolve_objects`, DESCRIPTION, NAMESPACE. The gAny files (`R/classes-virtuals.R`, `R/classes.R` +1) landed upstream via PR #392. *Correction:* `R/methods-wrap.R` (+10) was listed here in error — those lines are adr/0005 deprecation roxygen from `ad66a280` (§5 do-not-replay), not gmulti content |
 | **tests** | `test-gmulti.R` blocks: class + gAny dispatch, constructor validation, id_map registry, id_sig caching, `@source` |
 | **folds in** | nothing — this stage is done |
 
@@ -305,6 +305,23 @@ base is **`b351ed2b`** (§3), and the fresh branch is cut from the post-merge `g
   verify equivalence" check goes in the stage-2 commit message explicitly, not assumed.
 - **Stage 6** stays no-replay: re-run `test-snapshot-gmulti.R` after stage 1 installs, then
   PR `merge/federation-into-dev` to GiottoDisk `dev`.
+
+### Progress
+
+- **2026-09-04 — steps 0 / 0.5 done.** All branches backed up to `origin`; PR #392 merged
+  (true merge commit, `781998a8` in ancestry, `gsource` tip now `82fb8c3f`).
+- **2026-09-04 — stages 1–2 replayed.** `feature/gmulti-replay` cut from `82fb8c3f`;
+  13 commits cherry-picked from `feature/gmulti2` (9 docs + `1df4b938` stage 1 +
+  `1cde445c` stage 2 + 2 plan-doc commits), skipping `bc03289c` (gAny, upstream via #392)
+  and the two merge commits. One conflict: NEWS.md, union-resolved (upstream hnsw bullets +
+  gmulti bullets). Verified `feature/gmulti2...feature/gmulti-replay` differs by exactly
+  upstream PRs #390/#391 plus the three §5 do-not-replay local commits — traps 1 and 2
+  held, nothing gmulti-relevant dropped (the `methods-wrap.R` +10 turned out to be
+  `ad66a280` doc content, see the stage-1 correction). Full suite on the replay:
+  **1208 pass / 0 fail / 0 skip**.
+- Non-gmulti salvage from `ad66a280` (design.Rmd article, AGENTS.md conversion, adr/0005,
+  wrap deprecation notes) is deliberately not on this branch — re-land it as its own
+  upstream docs PR if still wanted.
 
 ---
 
