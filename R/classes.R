@@ -153,6 +153,16 @@ updateGiottoObject <- function(gobject) {
         gobject <- .update_network_slots(gobject)
     }
 
+    # GiottoClass 0.7.0 adds @view (subset/narrowing recipes) and @spaces
+    # (coordinate-frame recipes). A legacy object deserializes with both
+    # filled from the class prototype; these normalise attribute presence,
+    # mirroring `.update_source_slot()`. Idempotent, so the pre-0.7.0 gate
+    # can run on an object saved by a 0.6.x build without harm.
+    if (.gversion(gobject) < "0.7.0") {
+        gobject <- .update_view_slot(gobject)
+        gobject <- .update_spaces_slot(gobject)
+    }
+
     # -------------------------------------------------------------------------#
 
     # subobject updates
@@ -295,6 +305,36 @@ updateGiottoObject <- function(gobject) {
     checkmate::assert_class(x, "giotto")
     attr(x, "source") <- list() # init slot
     x@source <- NULL
+    x
+}
+
+# for updating pre-0.7.0 objects: add the @view slot that holds slotted
+# giottoView (subset/narrowing) recipes.
+#
+# Only initializes a slot that is genuinely absent. Unlike the pre-0.5.1
+# `@source` migration this one cannot assume the slot is empty: @view is
+# added while the package version is still 0.6.0, so a freshly built
+# object carrying real recipes also passes the version gate and reaches
+# here. Blanket-assigning NULL would silently drop them on the next
+# `loadGiotto()`.
+.update_view_slot <- function(x) {
+    checkmate::assert_class(x, "giotto")
+    if (is.null(attr(x, "view", exact = TRUE))) {
+        attr(x, "view") <- list() # init slot
+        x@view <- NULL
+    }
+    x
+}
+
+# for updating pre-0.7.0 objects: add the @spaces slot that holds slotted
+# giottoSpace (coordinate-frame) recipes. Same non-destructive contract as
+# `.update_view_slot()`.
+.update_spaces_slot <- function(x) {
+    checkmate::assert_class(x, "giotto")
+    if (is.null(attr(x, "spaces", exact = TRUE))) {
+        attr(x, "spaces") <- list() # init slot
+        x@spaces <- NULL
+    }
     x
 }
 
@@ -458,6 +498,8 @@ giotto <- setClass(
         join_info = "ANY",
         multiomics = "ANY",
         source = "ANY",
+        view = "nullOrList",
+        spaces = "nullOrList",
         h5_file = "ANY",
         misc = "list"
     ),
@@ -484,6 +526,8 @@ giotto <- setClass(
         join_info = NULL,
         multiomics = NULL,
         source = NULL,
+        view = NULL,
+        spaces = NULL,
         h5_file = NULL,
         misc = list()
     )

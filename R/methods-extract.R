@@ -1859,7 +1859,23 @@ setMethod("subset", signature("giotto"), function(
         feat_type = NULL,
         negate = FALSE,
         quote = TRUE,
+        view = NULL,
         ...) {
+    # Indirect-usage path: `view = <name|giottoView>` records the
+    # subset as a recipe step rather than executing eagerly. The
+    # predicate NSE capture mirrors subset(giottoView) so the recipe
+    # is self-contained (free vars eagerly substituted from the user
+    # frame).
+    if (!is.null(view)) {
+        pred <- substitute(subset)
+        pred <- .eager_substitute_env(pred,
+            .find_predicate_env(pred, parent.frame()))
+        step <- .view_step_filter(pred,
+            scope_args = list(spat_unit = spat_unit, feat_type = feat_type,
+                              negate = negate, ...))
+        return(.record_view_on_gobject(x, view, step))
+    }
+
     spat_unit <- set_default_spat_unit(
         x, spat_unit
     )

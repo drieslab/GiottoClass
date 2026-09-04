@@ -20,7 +20,9 @@ getSpatialEnrichment(
   name = "DWLS",
   output = c("spatEnrObj", "data.table"),
   copy_obj = TRUE,
-  set_defaults = TRUE
+  set_defaults = TRUE,
+  view = NULL,
+  space = NULL
 )
 }
 \arguments{
@@ -42,6 +44,12 @@ getSpatialEnrichment(
 \item{set_defaults}{set default spat_unit and feat_type. Change to FALSE
 only when
 expression and spat_info are not expected to exist.}
+
+\item{view}{optional \code{giottoView} or character(1) name of a slotted view;
+narrows enrichment rows by surviving cell set via \code{\link[=resolveSubobject]{resolveSubobject()}}}
+
+\item{space}{optional \code{giottoSpace} or character(1) (no-op; accepted for
+API symmetry)}
 }
 \value{
 spatEnrObj or data.table with fractions

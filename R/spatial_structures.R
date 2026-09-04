@@ -429,7 +429,10 @@ createSpatialKNNnetwork <- function(gobject,
         filter = TRUE,
         maximum_distance = maximum_distance,
         minimum_k = minimum_k,
-        output = "igraph"
+        output = "igraph",
+        # spatial coordinates are 2-3 dimensional, where an exact kd-tree
+        # search is optimal and an HNSW index never amortizes its build
+        engine = "dbscan"
     )
     g_net <- createNetwork(coords, param,
         node_ids = node_ids, verbose = verbose, ...
@@ -518,6 +521,11 @@ createSpatialKNNnetwork <- function(gobject,
 #' @param return_gobject logical. return giotto object (default = TRUE)
 #' @param output character. Object type to return spatial network as when
 #' `return_gobject = FALSE`. (default: 'spatialNetworkObj')
+#' @param space (`giottoMulti` only) character vector of sample names to
+#' run on, or `NULL`/`":all:"` (default) to run on every child. Each
+#' selected child receives its own spatial network written into its
+#' `@spatial_network` slot — this mutates the wrapped children
+#' (deliberate; child-immutability is relaxed for network creation).
 #' @param \dots Additional parameters for the selected function
 #' @returns giotto object with updated spatial network slot
 #' @details Creates a spatial network connecting single-cells based on their
@@ -557,7 +565,68 @@ createSpatialNetwork <- function(gobject,
     verbose = FALSE,
     return_gobject = TRUE,
     output = c("spatialNetworkObj", "data.table"),
+    space = NULL,
     ...) {
+    # giottoMulti dispatch — spatial networks live on the per-child
+    # spatial_network slot (no joint slot exists). Iterate over the
+    # requested children and run createSpatialNetwork on each child as a
+    # single giotto. The result is written back into `gobject@objects`,
+    # which mutates the wrapped child. This deliberately breaks the
+    # child-immutability invariant for now — to be revisited.
+    #
+    # `space` follows the plotting-dispatch convention:
+    #   NULL or ":all:" → all children
+    #   character vector → subset of child names
+    if (inherits(gobject, "giottoMulti")) {
+        child_names <- names(gobject@objects)
+        if (length(child_names) == 0L) {
+            stop("[createSpatialNetwork] giottoMulti has no child gobjects",
+                call. = FALSE)
+        }
+        if (is.null(space)) space <- ":all:"
+        if (identical(space, ":all:")) space <- child_names
+        checkmate::assert_character(space,
+            min.len = 1L, any.missing = FALSE)
+        bad <- setdiff(space, child_names)
+        if (length(bad) > 0L) {
+            stop(sprintf(paste(
+                "[createSpatialNetwork] '%s' is not a sample name in this",
+                "giottoMulti. Available samples: %s",
+                sep = " "
+            ), bad[[1L]], paste(child_names, collapse = ", ")),
+            call. = FALSE)
+        }
+        if (!isTRUE(return_gobject)) {
+            stop("[createSpatialNetwork] giottoMulti dispatch requires ",
+                "`return_gobject = TRUE` (per-child writes need the ",
+                "container).", call. = FALSE)
+        }
+        for (nm in space) {
+            gobject@objects[[nm]] <- createSpatialNetwork(
+                gobject = gobject@objects[[nm]],
+                name = name,
+                spat_unit = spat_unit,
+                feat_type = feat_type,
+                spat_loc_name = spat_loc_name,
+                dimensions = dimensions,
+                method = method,
+                delaunay_method = delaunay_method,
+                maximum_distance_delaunay = maximum_distance_delaunay,
+                options = options,
+                Y = Y, j = j, S = S,
+                minimum_k = minimum_k,
+                knn_method = knn_method,
+                k = k,
+                maximum_distance_knn = maximum_distance_knn,
+                verbose = verbose,
+                return_gobject = TRUE,
+                output = output,
+                ...
+            )
+        }
+        return(gobject)
+    }
+
     # get paramters
     method <- match.arg(method, c("Delaunay", "kNN"))
 

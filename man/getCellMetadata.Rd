@@ -14,7 +14,9 @@ getCellMetadata(gobject, spat_unit = NULL, feat_type = NULL, ...)
   feat_type = NULL,
   output = c("cellMetaObj", "data.table"),
   copy_obj = TRUE,
-  set_defaults = TRUE
+  set_defaults = TRUE,
+  view = NULL,
+  space = NULL
 )
 
 \S4method{getCellMetadata}{giottoMulti}(
@@ -45,6 +47,14 @@ getCellMetadata(gobject, spat_unit = NULL, feat_type = NULL, ...)
 \item{set_defaults}{set default spat_unit and feat_type. Change to FALSE
 only when
 expression and spat_info are not expected to exist.}
+
+\item{view}{optional \code{giottoView} or character(1) name of a slotted
+view; when supplied, the returned subobject is projected through the
+view's narrowing recipe via \code{\link[=resolveSubobject]{resolveSubobject()}}}
+
+\item{space}{optional \code{giottoSpace} or character(1) name of a slotted
+space; when supplied, applied alongside \code{view} (spaces are no-ops on
+tabular subobjects but the param is accepted for API symmetry)}
 
 \item{samples}{(giottoMulti) character vector of sample names to slice
 the joint result to; \code{NULL} (default) returns all participants}

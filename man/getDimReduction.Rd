@@ -15,7 +15,9 @@ getDimReduction(gobject, spat_unit = NULL, feat_type = NULL, name = NULL, ...)
   reduction = c("cells", "feats"),
   reduction_method = NULL,
   output = c("dimObj", "matrix"),
-  set_defaults = TRUE
+  set_defaults = TRUE,
+  view = NULL,
+  space = NULL
 )
 }
 \arguments{
@@ -39,6 +41,12 @@ of the embedding coordinates.}
 \item{set_defaults}{set default spat_unit and feat_type. Change to FALSE
 only when
 expression and spat_info are not expected to exist.}
+
+\item{view}{optional \code{giottoView} or character(1) name of a slotted view;
+narrows returned cells via \code{\link[=resolveSubobject]{resolveSubobject()}}}
+
+\item{space}{optional \code{giottoSpace} or character(1) (no-op on dim
+reductions; accepted for API symmetry)}
 }
 \value{
 dim reduction object (default) or dim reduction coordinates

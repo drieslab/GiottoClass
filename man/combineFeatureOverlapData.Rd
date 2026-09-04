@@ -8,7 +8,9 @@ combineFeatureOverlapData(
   gobject,
   feat_type = "rna",
   sel_feats = NULL,
-  poly_info = "cell"
+  poly_info = "cell",
+  view = NULL,
+  space = NULL
 )
 }
 \arguments{
@@ -19,6 +21,12 @@ combineFeatureOverlapData(
 \item{sel_feats}{selected features (default: NULL or no selection)}
 
 \item{poly_info}{polygon information name}
+
+\item{view, space}{optional \link[=giottoView-class]{giottoView} / \link[=giottoSpace-class]{giottoSpace} or
+the name of one slotted on \code{gobject}. Threaded through the underlying
+getFeatureMetadata / getPolygonInfo / getFeatureInfo calls — the
+returned table reflects the view-scoped subset. One resolver pass is
+shared via \code{materialize(slots = ...)} so the predicate evaluates once.}
 }
 \value{
 data.table with combined spatial polygon information

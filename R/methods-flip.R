@@ -28,7 +28,12 @@ setMethod(
     function(x, direction = "vertical",
     x0 = 0, y0 = 0,
     spat_unit = ":all:", feat_type = ":all:",
+    space = NULL,
     ...) {
+        if (!is.null(space)) {
+            return(.record_space_on_gobject(x, space, "flip",
+                list(direction = direction, x0 = x0, y0 = y0, ...)))
+        }
         a <- list(direction = direction, x0 = x0, y0 = y0, ...)
 
         checkmate::assert_character(spat_unit)

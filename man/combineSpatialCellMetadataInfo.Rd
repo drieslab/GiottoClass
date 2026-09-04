@@ -4,7 +4,13 @@
 \alias{combineSpatialCellMetadataInfo}
 \title{combineSpatialCellMetadataInfo}
 \usage{
-combineSpatialCellMetadataInfo(gobject, spat_unit = NULL, feat_type = NULL)
+combineSpatialCellMetadataInfo(
+  gobject,
+  spat_unit = NULL,
+  feat_type = NULL,
+  view = NULL,
+  space = NULL
+)
 }
 \arguments{
 \item{gobject}{Giotto object}
@@ -12,6 +18,11 @@ combineSpatialCellMetadataInfo(gobject, spat_unit = NULL, feat_type = NULL)
 \item{spat_unit}{spatial unit}
 
 \item{feat_type}{feature type(s)}
+
+\item{view, space}{optional \link[=giottoView-class]{giottoView} / \link[=giottoSpace-class]{giottoSpace} or
+the name of one slotted on \code{gobject}. Threaded through to the
+underlying \code{getPolygonInfo} and \code{getCellMetadata} calls so the
+returned table reflects the view-scoped subset.}
 }
 \value{
 list of data.table(s)

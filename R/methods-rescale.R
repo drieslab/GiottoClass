@@ -35,7 +35,14 @@ setMethod(
     "rescale", signature("giotto"),
     function(
         x, fx = 1, fy = fx, x0, y0, spat_unit = ":all:",
-        feat_type = ":all:", images = ":all:") {
+        feat_type = ":all:", images = ":all:",
+        space = NULL) {
+        if (!is.null(space)) {
+            args <- list(fx = fx, fy = fy)
+            if (!missing(x0)) args$x0 <- x0
+            if (!missing(y0)) args$y0 <- y0
+            return(.record_space_on_gobject(x, space, "rescale", args))
+        }
         # scalefactor settings
         a <- list(fx = fx, fy = fy)
 

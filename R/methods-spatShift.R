@@ -34,7 +34,14 @@ setMethod(
     signature = "giotto",
     function(
         x, dx = 0, dy = 0,
-        spat_unit = ":all:", feat_type = ":all:", images = ":all:") {
+        spat_unit = ":all:", feat_type = ":all:", images = ":all:",
+        space = NULL) {
+        # Indirect-usage path: `space = <name|giottoSpace>` records as a
+        # recipe step rather than mutating subobjects eagerly.
+        if (!is.null(space)) {
+            return(.record_space_on_gobject(x, space, "spatShift",
+                list(dx = dx, dy = dy)))
+        }
         a <- list(dx = dx, dy = dy)
 
         spat_unit <- set_default_spat_unit(

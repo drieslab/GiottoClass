@@ -25,6 +25,7 @@ createSpatialNetwork(
   verbose = FALSE,
   return_gobject = TRUE,
   output = c("spatialNetworkObj", "data.table"),
+  space = NULL,
   ...
 )
 }
@@ -79,6 +80,12 @@ for kNN network}
 
 \item{output}{character. Object type to return spatial network as when
 \code{return_gobject = FALSE}. (default: 'spatialNetworkObj')}
+
+\item{space}{(\code{giottoMulti} only) character vector of sample names to
+run on, or \code{NULL}/\code{":all:"} (default) to run on every child. Each
+selected child receives its own spatial network written into its
+\verb{@spatial_network} slot — this mutates the wrapped children
+(deliberate; child-immutability is relaxed for network creation).}
 
 \item{\dots}{Additional parameters for the selected function}
 }

@@ -13,7 +13,9 @@ getFeatureInfo(gobject, feat_type = NULL, ...)
   feat_type = NULL,
   return_giottoPoints = FALSE,
   set_defaults = TRUE,
-  simplify = TRUE
+  simplify = TRUE,
+  view = NULL,
+  space = NULL
 )
 
 \S4method{getFeatureInfo}{giottoMulti}(gobject, feat_type = NULL, ..., object = NULL, samples = NULL)
@@ -33,6 +35,14 @@ expression and spat_info are not expected to exist.}
 
 \item{simplify}{logical. Whether or not to take object out of a list when
 there is a length of 1.}
+
+\item{view}{optional \code{giottoView} or character(1) name of a slotted view;
+applies any crop step to the points via \code{\link[=resolveSubobject]{resolveSubobject()}}. Points are
+not cell-keyed so subset predicates do not cascade here.}
+
+\item{space}{optional \code{giottoSpace} or character(1) name of a slotted
+space; when supplied, recorded transforms are applied to the points
+geometry}
 
 \item{object, samples}{(giottoMulti) children to read from; \code{samples} is
 the canonical name, \code{object} the legacy alias. \code{NULL} = all children}

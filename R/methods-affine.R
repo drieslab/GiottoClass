@@ -66,7 +66,12 @@ setMethod(
     "affine", signature(x = "giotto", y = "matrix"), function(
         x, y, inv = FALSE,
         spat_unit = ":all:", feat_type = ":all:", images = ":all:",
+        space = NULL,
         ...) {
+        if (!is.null(space)) {
+            return(.record_space_on_gobject(x, space, "affine",
+                c(list(y = y, inv = inv), list(...))))
+        }
         a <- list(y = y, inv = inv, ...)
 
         spat_unit <- set_default_spat_unit(

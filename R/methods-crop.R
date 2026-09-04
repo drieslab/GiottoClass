@@ -335,3 +335,40 @@ setMethod(
         return(TRUE)
     }
 }
+
+
+# * giotto (indirect-only via view=) ####
+# Eager crop at the gobject level is not yet implemented (it would require
+# coordinated narrowing of every spatial subobject, images, expression and
+# metadata). Until then this method only accepts `view = `, recording a
+# viewCrop step onto the named slotted view (or onto a giottoView passed
+# directly). Eager calls without `view` error with a clear pointer.
+
+#' @rdname crop
+#' @param view `NULL`, `character(1)`, or a `giottoView`. When supplied,
+#'   records the crop as a step on the named slotted view (or on the
+#'   supplied recipe) instead of executing eagerly. Eager `crop()` on a
+#'   `giotto` is not yet implemented.
+#' @param space `NULL` or `character(1)`. Name of a slotted [giottoSpace-class]
+#'   on `x`. Sets the view's `@space` reference — the coordinate frame in
+#'   which the crop region is interpreted at resolution time. First call
+#'   sets it; subsequent calls that try to rebind to a different name error.
+#'   `NULL` leaves the view in whatever frame it was already bound to (or
+#'   the gobject's native frame if unbound).
+#' @export
+setMethod("crop", signature(x = "gAny", y = "ANY"),
+    function(x, y, relation = "intersects", ..., view = NULL, space = NULL) {
+        if (is.null(view)) {
+            stop("`crop()` on a giotto / giottoMulti requires `view = `. ",
+                "Eager gobject-level crop is not implemented. Either ",
+                "build a recipe with `giottoView() |> crop(...)` and apply ",
+                "it via `materialize()`, or pass `view = \"<name>\"` to ",
+                "record the step onto a slotted view.",
+                call. = FALSE)
+        }
+        checkmate::assert_character(relation, len = 1L, any.missing = FALSE)
+        region <- .normalize_crop_region(y)
+        step <- .view_step_crop(region, relation)
+        .record_view_on_gobject(x, view, step, space = space)
+    }
+)

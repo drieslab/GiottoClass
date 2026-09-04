@@ -28,7 +28,14 @@ setMethod(
     "spin", signature(x = "giotto"),
     function(
         x, angle, x0 = NULL, y0 = NULL, spat_unit = ":all:",
-        feat_type = ":all:") {
+        feat_type = ":all:", space = NULL) {
+        # Indirect-usage path: `space = <name|giottoSpace>` records the
+        # transform as a recipe step rather than eagerly mutating
+        # subobjects. See methods-space.R for the helper.
+        if (!is.null(space)) {
+            return(.record_space_on_gobject(x, space, "spin",
+                list(angle = angle, x0 = x0, y0 = y0)))
+        }
         a <- list(angle = angle, x0 = x0, y0 = y0)
 
         checkmate::assert_character(spat_unit)

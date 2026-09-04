@@ -16,7 +16,9 @@ getSpatialLocations(gobject, spat_unit = NULL, name = NULL, ...)
   copy_obj = TRUE,
   verbose = TRUE,
   set_defaults = TRUE,
-  simplify = TRUE
+  simplify = TRUE,
+  view = NULL,
+  space = NULL
 )
 
 \S4method{getSpatialLocations}{giottoMulti}(
@@ -52,6 +54,14 @@ expression and spat_info are not expected to exist.}
 
 \item{simplify}{logical. Whether or not to take object out of a list when
 there is a length of 1.}
+
+\item{view}{optional \code{giottoView} or character(1) name of a slotted view;
+when supplied, returned spatial locations are narrowed via
+\code{\link[=resolveSubobject]{resolveSubobject()}}}
+
+\item{space}{optional \code{giottoSpace} or character(1) name of a slotted
+space; when supplied, the recorded transforms are applied to the
+returned coordinates}
 
 \item{object, samples}{(giottoMulti) children to read from; \code{samples} is
 the canonical name, \code{object} the legacy alias. \code{NULL} = all children}

@@ -31,13 +31,13 @@ pDataDT <- function(gobject,
     )
 
 
-    if (!inherits(gobject, c("ExpressionSet", "SCESet", "seurat", "giotto"))) {
+    if (!inherits(gobject, c("ExpressionSet", "SCESet", "seurat", "gAny"))) {
         stop("only works with ExpressionSet (-like) objects")
     }
 
     if (inherits(gobject, c("ExpressionSet", "SCESet"))) {
         return(data.table::as.data.table(Biobase::pData(gobject)))
-    } else if (inherits(gobject, "giotto")) {
+    } else if (inherits(gobject, "gAny")) {
         if (is.null(match.call(expand.dots = TRUE)$output)) {
             output <- "data.table"
         } else {
@@ -82,9 +82,9 @@ fDataDT <- function(gobject,
         feat_type = feat_type
     )
 
-    if (!inherits(gobject, c("ExpressionSet", "SCESet", "giotto"))) {
+    if (!inherits(gobject, c("ExpressionSet", "SCESet", "gAny"))) {
         stop("only works with ExpressionSet (-like) objects")
-    } else if (inherits(gobject, "giotto")) {
+    } else if (inherits(gobject, "gAny")) {
         if (is.null(match.call(expand.dots = TRUE)$output)) {
             output <- "data.table"
         } else {

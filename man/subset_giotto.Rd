@@ -27,6 +27,7 @@
   feat_type = NULL,
   negate = FALSE,
   quote = TRUE,
+  view = NULL,
   ...
 )
 }

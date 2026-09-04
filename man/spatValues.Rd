@@ -17,6 +17,9 @@ spatValues(
   dim_reduction_to_use = NULL,
   dim_reduction_name = NULL,
   svkey = NULL,
+  view = NULL,
+  space = NULL,
+  samples = NULL,
   verbose = NULL,
   debug = FALSE
 )
@@ -62,6 +65,13 @@ to use}
 
 \item{svkey}{use a \code{svkey}. Other params will be ignored. This is just
 syntactic sugar for \code{svkey@get(gobject)}}
+
+\item{samples}{character. (giottoMulti only) optional vector of sample
+names to narrow the joint output to. Joint slots (\verb{@expression},
+\verb{@cell_metadata}) honor this directly; per-child-only slots (spatial
+locations, polygon info) remain inaccessible from \code{spatValues(mg, ...)}
+regardless — use the joint-level slots as the ground truth and avoid
+reaching into \code{mg[[sample]]} for per-child content.}
 
 \item{verbose}{verbosity}
 
