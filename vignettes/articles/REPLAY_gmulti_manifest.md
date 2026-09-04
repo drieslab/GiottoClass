@@ -322,6 +322,40 @@ base is **`b351ed2b`** (§3), and the fresh branch is cut from the post-merge `g
 - Non-gmulti salvage from `ad66a280` (design.Rmd article, AGENTS.md conversion, adr/0005,
   wrap deprecation notes) is deliberately not on this branch — re-land it as its own
   upstream docs PR if still wanted.
+- **2026-09-04 — stage 3 landed** (`0120cf69`). Checkpoint-sourced, with A2/A3, Q5c and D6
+  folded in as §4 requires. Full suite on the merged state: **1485 pass / 0 fail / 0 skip**.
+  Decisions taken while implementing, beyond what §4 specified:
+    - The values axis resolves a *default* handle rather than only an explicit one: `"raw"`
+      when declared, a lone declared handle otherwise, and a loud error when several exist.
+      §4 said "mapping lookup or loud error" and left the no-argument case open.
+    - `.gm_seed_new_samples()` is the child-add seeder. It needed a guard §4 did not
+      anticipate: seeding only re-adds *handles* when a genuinely new sample carries them,
+      or a bare `initialize()` resurrects a handle the user deliberately deleted (the
+      stage-1 test "a user-set mapping survives bare re-init" catches this).
+    - `on_missing` covers two failure kinds, not one: a keyed-but-unsatisfiable child, and
+      mismatched feature panels / metadata columns. `"fill"` unions with 0-fill on the
+      expression side (an absent measurement reads as 0) and NA-fill on metadata; a
+      fully-missing child is dropped under both non-error modes, with a warning.
+    - `@mapping` needed sample-key maintenance on the container ops that §4 does not list:
+      `[` prunes dropped samples from every entry and `names<-` renames the keys.
+      Without the rename, every entry silently stops matching and resolution falls back
+      to the legacy child-scan.
+    - Two support files needed multi awareness for the setters to resolve at all:
+      `defaults.R` (`set_default_{spat_unit,feat_type}`) and `slot_list.R`
+      (`list_cell_id_names`). Both prefer the mapping's declared handles, then fall back
+      to the first child. Verified warning-neutral for plain `giotto` against a clean
+      `upstream/gsource` worktree.
+    - **Not ported, deliberately:** `idMap()` (the accessor `spatIDs`/`featIDs` already
+      subsume — stage 1 dropped it on purpose and stage 3 does not revive it),
+      `.gm_walk_apply_view()` (dead on the checkpoint too — its only reference is its own
+      recursive call), plus the §5 items.
+- **2026-09-04 — merged `upstream/gsource` @ `63be3a9a`** (`339c2507`, clean, 0 behind).
+  Brought PR #393 (instructions deprecation cascade moved to `.instr_read` /
+  `.instr_replace` / `.instr_change` internals) and the `objManifest()` / `manifestDiff()`
+  subsystem. No source-file collision with stage 3 — only NAMESPACE and NEWS.md, both
+  auto-merged. Worth knowing: #393 is why the suite's warning count fell from 2,882 to a
+  handful, and `instructions()` still dispatches on `signature("giotto")`, so the
+  giottoMulti fallback path in `defaults.R` is unaffected.
 
 ---
 
