@@ -102,6 +102,23 @@ describe("giottoPolygon", {
             expect_equal(terra::geomtype(p[]), "polygons")
         })
 
+        it("does not depend on the vertex row order", {
+            # a segmentation table ordered by coordinate rather than by cell
+            # interleaves the vertices of different polygons
+            poly_dt <- data.table::fread(df)[, c("x", "y", "name")]
+            shuffled <- poly_dt[order(poly_dt$y, poly_dt$x), ]
+
+            grouped_p <- createGiottoPolygonsFromDfr(
+                poly_dt, calc_centroids = TRUE, verbose = FALSE)
+            p <- createGiottoPolygonsFromDfr(
+                shuffled, calc_centroids = TRUE, verbose = FALSE)
+
+            expect_equal(nrow(p), nrow(grouped_p))
+            expect_identical(names(p[]), "poly_ID")
+            expect_setequal(spatIDs(p), spatIDs(grouped_p))
+            expect_length(p@unique_ID_cache, nrow(p))
+        })
+
     })
 
     describe("Mask Image Input", {
@@ -213,6 +230,86 @@ describe("giottoPolygon", {
 
                 expect_identical(round(centroids_dt$x, digits = 1), singles_x)
                 expect_identical(round(centroids_dt$y, digits = 1), singles_y)
+            })
+        })
+
+        describe("multi-value mask", {
+            # `mask_single` uses NA as background. Masks that encode the
+            # background as a value instead produce a second geom whose part
+            # numbering restarts, which must not collide with the polygon parts.
+            mask_binary <- file.path(tempdir(), "toy_mask_binary.tif")
+            terra::writeRaster(
+                terra::subst(terra::rast(mask_single), NA, 0),
+                filename = mask_binary,
+                overwrite = TRUE
+            )
+
+            mask_args <- list(
+                calc_centroids = TRUE,
+                flip_vertical = FALSE,
+                flip_horizontal = FALSE,
+                shift_horizontal_step = FALSE,
+                shift_vertical_step = FALSE,
+                ID_fmt = "id_test_%03d",
+                verbose = FALSE
+            )
+
+            it("finds the same polys as an NA background", {
+                p <- do.call(
+                    createGiottoPolygonsFromMask, c(list(mask_binary), mask_args)
+                )
+                ref <- do.call(
+                    createGiottoPolygonsFromMask, c(list(mask_single), mask_args)
+                )
+
+                expect_equal(nrow(p), nrow(ref))
+                expect_identical(
+                    data.table::as.data.table(
+                        centroids(p), geom = "XY")[, c("x", "y")],
+                    data.table::as.data.table(
+                        centroids(ref), geom = "XY")[, c("x", "y")]
+                )
+            })
+
+            it("keeps unique poly_IDs", {
+                p <- do.call(
+                    createGiottoPolygonsFromMask, c(list(mask_binary), mask_args)
+                )
+
+                expect_identical(names(p[]), "poly_ID")
+                expect_length(spatIDs(p), nrow(p))
+                expect_false(anyDuplicated(spatIDs(p)) > 0L)
+                expect_length(p@unique_ID_cache, nrow(p))
+            })
+
+            it("accepts supplied poly_IDs", {
+                args <- mask_args
+                args$ID_fmt <- NULL
+                p <- do.call(createGiottoPolygonsFromMask,
+                             c(list(mask_binary), args, list(
+                                 poly_IDs = LETTERS[1:5])))
+
+                expect_equal(nrow(p), 5)
+                expect_identical(p$poly_ID, LETTERS[1:5])
+            })
+
+            it("handles a labelled mask over a valued background", {
+                # background 0 plus 7 distinct label values
+                mask_tri <- file.path(tempdir(), "toy_mask_tri.tif")
+                terra::writeRaster(
+                    terra::subst(terra::rast(mask_multi), NA, 0),
+                    filename = mask_tri,
+                    overwrite = TRUE
+                )
+
+                for (method in c("guess", "single", "multiple")) {
+                    p <- do.call(createGiottoPolygonsFromMask, c(
+                        list(mask_tri), mask_args, list(mask_method = method)
+                    ))
+                    expect_equal(nrow(p), 7)
+                    expect_identical(names(p[]), "poly_ID")
+                    expect_false(anyDuplicated(spatIDs(p)) > 0L)
+                }
             })
         })
 

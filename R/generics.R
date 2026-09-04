@@ -222,6 +222,10 @@ setGeneric("featType<-", function(x, ..., value) standardGeneric("featType<-"))
 setGeneric("objName", function(x) standardGeneric("objName"))
 setGeneric("objName<-", function(x, value) standardGeneric("objName<-"))
 
+## objManifest() generic ####
+# Documentation and methods found in manifest.R
+setGeneric("objManifest", function(x, ...) standardGeneric("objManifest"))
+
 ## setGiotto() generic ####
 setGeneric("setGiotto", function(gobject, x, ...) standardGeneric("setGiotto"))
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/instructions.R
 \name{showGiottoInstructions}
 \alias{showGiottoInstructions}
-\title{deprecated}
+\title{Show giotto instructions}
 \usage{
 showGiottoInstructions(gobject)
 }
@@ -10,14 +10,9 @@ showGiottoInstructions(gobject)
 \item{gobject}{giotto object}
 }
 \value{
-named vector with giotto instructions
+named list of giotto instructions
 }
 \description{
-Function to display all instructions from giotto object
-}
-\examples{
-g <- GiottoData::loadGiottoMini("visium")
-
-showGiottoInstructions(g)
+Deprecated. Use \code{\link[=instructions]{instructions()}} instead.
 }
 \keyword{internal}

@@ -2,29 +2,22 @@
 % Please edit documentation in R/instructions.R
 \name{readGiottoInstructions}
 \alias{readGiottoInstructions}
-\title{deprecated}
+\title{Read a giotto instruction}
 \usage{
 readGiottoInstructions(giotto_instructions, param = NULL, default)
 }
 \arguments{
-\item{giotto_instructions}{giotto object or result from
-createGiottoInstructions()}
+\item{giotto_instructions}{giotto object or a \code{giottoInstructions} list}
 
 \item{param}{parameter to retrieve}
 
-\item{default}{default object to return if parameter to retrieve does not
-exist}
+\item{default}{value to return when \code{param} is absent. When missing, an
+absent \code{param} is an error.}
 }
 \value{
-specific parameter
+the value of the requested instruction param
 }
 \description{
-Retrieves the instruction associated with the provided parameter
-}
-\examples{
-readGiottoInstructions(
-    giotto_instructions = createGiottoInstructions(),
-    param = "show_plot"
-)
+Deprecated. Use \code{\link[=instructions]{instructions()}} instead.
 }
 \keyword{internal}

@@ -181,11 +181,49 @@ saveGiotto <- function(
         }
     )
 
+    ## write provenance sidecars
+    # Lightroom-style: the payload above is untouched, the description of it
+    # sits beside it as greppable text. Never allowed to fail a save.
+    .save_sidecars(gobject, dir = use_dir, verbose = verbose)
+
     # effect overwrite
     if (do_overwrite) {
         unlink(x = final_dir, recursive = TRUE)
         file.rename(from = use_dir, to = final_dir)
     }
+}
+
+
+# Write `manifest.json` (what the object is) and `history.ndjson` (why it
+# looks that way) next to a saved object. Both are derived, so a failure to
+# write one is a lost convenience, never lost data - hence the warning rather
+# than an error.
+.save_sidecars <- function(gobject, dir, verbose = TRUE) {
+    if (!requireNamespace("jsonlite", quietly = TRUE)) {
+        vmsg(
+            .v = verbose,
+            "{jsonlite} not installed: manifest sidecars not written"
+        )
+        return(invisible(FALSE))
+    }
+    tryCatch(
+        {
+            objManifest_json(
+                gobject,
+                file = file.path(dir, "manifest.json"), level = "full"
+            )
+            objHistory_ndjson(
+                gobject,
+                file = file.path(dir, "history.ndjson")
+            )
+            invisible(TRUE)
+        },
+        error = function(e) {
+            warning("manifest sidecars not written: ",
+                conditionMessage(e), call. = FALSE)
+            invisible(FALSE)
+        }
+    )
 }
 
 
@@ -300,12 +338,8 @@ loadGiotto <- function(path_to_folder,
             initialize = TRUE
         )
         vmsg(.v = verbose, .is_debug = TRUE, identified_python_path)
-        gobject <- changeGiottoInstructions(
-            gobject = gobject,
-            params = c("python_path"),
-            new_values = c(identified_python_path),
-            init_gobject = FALSE
-        )
+        instructions(gobject, "python_path", initialize = FALSE) <-
+            identified_python_path
     } else {
         # ***if python is not needed...***
         instr <- instructions(gobject)
@@ -458,9 +492,27 @@ setMethod(".load_external", signature("SpatVector"), function(x, name_fmt, dir,
         sprintf("[%s] %s", oname, basename(fname_shp))
     )
     sv <- terra::vect(fname_shp)
-    if (read_colnames) {
-        sv_names <- data.table::fread(input = fname_txt, header = FALSE)[["V1"]]
-        names(sv) <- sv_names
+    if (read_colnames && file.exists(fname_txt)) {
+        # an empty names file records a SpatVector that had no attributes.
+        # `fread()` cannot read a zero byte file.
+        sv_names <- character()
+        if (file.size(fname_txt) > 0L) {
+            sv_names <- data.table::fread(
+                input = fname_txt, header = FALSE
+            )[["V1"]]
+        }
+        if (length(sv_names) == 0L) {
+            # GDAL adds a placeholder "FID" field when a shapefile is written
+            # with an empty attribute table. Drop it again.
+            terra::values(sv) <- NULL
+        } else if (length(sv_names) != ncol(sv)) {
+            stop(sprintf(
+                "[%s] %s: %d saved column names for %d attributes",
+                oname, basename(fname_shp), length(sv_names), ncol(sv)
+            ), call. = FALSE)
+        } else {
+            names(sv) <- sv_names
+        }
     }
     sv
 })

@@ -16,12 +16,19 @@ setMethod(
     "initialize", signature("giotto"),
     function(.Object, ..., initialize = TRUE) {
         .Object <- methods::callNextMethod(.Object, ...)
-        handle_errors(
+        .Object <- handle_errors(
             {
                 .init_gobject(.Object = .Object, ..., initialize = initialize)
             },
             prefix = "giotto initialize"
         )
+        # Object uid: minted once, at creation, so it survives renames and
+        # copies. Minted here rather than in the class prototype, which is
+        # evaluated once at build time and would hand every object the same
+        # value. Runs after .init_gobject() so that objects old enough to
+        # predate the `versions` slot have been repaired first. An object read
+        # back from disk keeps the uid it was saved with.
+        .gobject_uid_init(.Object)
     }
 )
 

@@ -997,9 +997,7 @@ stitchGiottoLargeImage <- function(largeImage_list = NULL,
     # Check for filename, set default if not found
     if (is.null(filename)) {
         if (!is.null(gobject_list)) {
-            save_dir <- readGiottoInstructions(gobject_list[[1]],
-                param = "save_dir"
-            )
+            save_dir <- instructions(gobject_list[[1]], param = "save_dir")
         } else {
             save_dir <- path.expand("~")
         }

@@ -2561,7 +2561,7 @@ createGiottoPolygonsFromMask <- function(
         remove_unvalid_polygons = TRUE,
         verbose = FALSE) {
     # data.table vars
-    x <- y <- geom <- part <- NULL
+    x <- y <- geom <- poly_idx <- NULL
 
     remove_unvalid_polygons <- as.logical(remove_unvalid_polygons)
 
@@ -2660,11 +2660,15 @@ createGiottoPolygonsFromMask <- function(
             # TODO ordering may be performed based on centroids xy instead of
             # converting the full polygon and then ordering on parts
             # May improve the speed
+            # `part` numbering restarts within each geom, so it is not unique
+            # when the mask holds more than one value. Index across the
+            # (geom, part) pairs instead so that each polygon gets its own ID.
+            spatVecDT[, poly_idx := .GRP, by = c("geom", "part")]
             if (is.null(poly_IDs)) {
-                spatVecDT[, part := naming_fun(ID_fmt, part)]
+                spatVecDT[, poly_idx := naming_fun(ID_fmt, poly_idx)]
             }
             g_polygon <- createGiottoPolygonsFromDfr(
-                segmdfr = spatVecDT[, .(x, y, part)]
+                segmdfr = spatVecDT[, .(x, y, poly_idx)]
             )
             if (!is.null(poly_IDs)) {
                 g_polygon@spatVector$poly_ID <- as.numeric(

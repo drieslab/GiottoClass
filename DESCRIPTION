@@ -46,11 +46,13 @@ Suggests:
     Biobase,
     DelayedArray,
     DelayedMatrixStats (>= 1.24.0),
+    digest,
     exactextractr,
     geometry,
     GiottoData,
     GiottoDisk,
     HDF5Array (>= 1.18.1),
+    jsonlite,
     knitr,
     magick,
     plotly,
@@ -113,6 +115,8 @@ Collate:
     'instructions.R'
     'interoperability.R'
     'join.R'
+    'manifest.R'
+    'manifest-diff.R'
     'methods-IDs.R'
     'methods-XY.R'
     'methods-affine.R'

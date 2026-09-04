@@ -2,6 +2,27 @@
 
 ## new
 
+- `objManifest()` returns a machine-readable inventory of a `giotto` object:
+  identity, a summary block, and a slot-by-slot description nested as the
+  object nests it. Derived on demand, so it cannot go stale. `level = "full"`
+  adds content fingerprints. `objManifest_json()` serializes it against the
+  schema in `inst/schema/giotto-manifest-0.1.0.json`.
+- `manifestDiff()` compares two manifests and reports what changed, as data and
+  as one sentence. Pure: manifests in, diff out. Use `level = "full"` on both
+  sides to see a step that overwrote content in place: re-running a clustering
+  or a normalization leaves every shape and name identical, so only the
+  fingerprints move.
+- `@parameters` entries now carry a structured record (`step_id`, `fn`,
+  `params`, `timestamp`, `seed`, `status`, `diff`) as an attribute; the
+  character entry every existing reader expects is unchanged. `params` holds
+  the deparsed argument expressions, so `1:30` is no longer recorded as `1`.
+  Read them with `ghistory_records()` or `objHistory_ndjson()`.
+- `recordGiottoStep()` logs a failed call or a change made outside a logging
+  function (`status = "error"` / `"unattributed"`).
+- `giotto` objects carry a `uid` in `@versions`, minted at creation and kept
+  through copies and save/load.
+- `saveGiotto()` writes `manifest.json` and `history.ndjson` beside the saved
+  object. Requires \pkg{jsonlite} (Suggests); skipped when absent.
 - `hnswKNN()` restored to GiottoClass, so `createNearestNetwork(engine =
   "hnsw")` works again. It had errored with `'hnswKNN' is not an exported
   object from 'namespace:GiottoDisk'` since 2026-08-11, when {GiottoDisk}
@@ -146,6 +167,14 @@
   but it duplicates that verb's `mean_expr` and should not be used in new code.
 
 ## bug fixes
+- `instructions()` and `instructions<-()` no longer emit a deprecation
+  warning on every access. They were implemented on top of the deprecated
+  `showGiottoInstructions()` / `readGiottoInstructions()` /
+  `changeGiottoInstructions()` / `replaceGiottoInstructions()`, so each read
+  or write raised the warning belonging to a function the caller never used.
+  The implementation now lives in internals; the four deprecated functions
+  remain exported and keep warning, but only for code that calls them
+  directly.
 - `tif_metadata(node =)` returns a one-row `data.frame` when exactly one node matches, rather than transposing it into a single column.
 
 - `create_average_DT()` now selects each group's cells by `cell_ID` rather than
@@ -153,6 +182,19 @@
   independently, and nothing guarantees the two share a cell order. Where they
   diverged, cells were labelled with another cell's group. **Results will
   change for affected objects**; they were wrong before.
+- `createGiottoPolygonsFromMask()` no longer loses polygons and `poly_ID`s when
+  `mask_method = "single"` is used on a mask that encodes its background as a
+  value instead of `NA`. Polygon parts are now indexed across mask values, so
+  parts of different values no longer collide.
+- `loadGiotto()` can read back a `giottoPolygon` or `giottoPoints` whose
+  `SpatVector` has no attribute columns, which previously failed with
+  `[names<-,SpatVector] incorrect number of names`.
+- `createGiottoPolygon()` and `createGiottoPolygonsFromDfr()` no longer depend
+  on the row order of their `data.frame` input. Vertices are now grouped by
+  `poly_ID` before the `SpatVector` is built; input ordered by coordinate
+  instead of by polygon previously produced too many polygons, with the
+  attributes -- and so `poly_ID` -- dropped. Attributes that do not align with
+  the geometries now raise an error instead of being discarded silently.
 - fix "unused argument (ids = FALSE)" when subsetting a `giottoPolygon` object
 - skip 0-entry `giottoPoints` in subset paths
 - documentation fix in `methods-extract`

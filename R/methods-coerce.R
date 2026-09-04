@@ -725,11 +725,29 @@ setMethod(
         }
     }
 
-    terra::vect(
+    sv <- terra::vect(
         x = geom_matrix,
         type = "polygons",
         atts = attr_values
     )
+
+    # terra discards the attribute table without warning when it does not
+    # align with the geometries it created, which silently yields polygons
+    # with no poly_ID
+    attrs_dropped <- !is.null(attr_values) &&
+        ncol(attr_values) > 0L &&
+        nrow(attr_values) > 0L &&
+        ncol(sv) == 0L
+    if (attrs_dropped) {
+        stop(wrap_txt(sprintf(
+            ".dt_to_spatvector_polygon:
+            %d attribute rows were provided for the %d geometries created.
+            Vertices of a polygon must be grouped together.",
+            nrow(attr_values), nrow(sv)
+        )), call. = FALSE)
+    }
+
+    sv
 }
 
 

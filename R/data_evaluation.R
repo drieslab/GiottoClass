@@ -1004,8 +1004,12 @@ evaluate_input <- function(type, x, ...) {
     unique_IDs <- spatial_info[, unique(poly_ID)]
 
     # 4. create spatvector
+    # `sort_geom` groups the vertices of each polygon together. Without it,
+    # input whose rows are ordered by coordinate rather than by poly_ID
+    # generates more geometries than there are attributes.
     spatial_info <- .dt_to_spatvector_polygon(spatial_info,
-        include_values = TRUE
+        include_values = TRUE,
+        sort_geom = TRUE
     )
 
     return_list <- list(

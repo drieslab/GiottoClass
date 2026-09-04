@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://giotto-suite.github.io/schema/giotto-manifest-0.1.0.json",
+  "title": "Giotto object manifest",
+  "description": "Machine-readable inventory of a giotto object, emitted by GiottoClass::objManifest_json(). Derived from the object on demand, never stored on it. Companion document: history.ndjson, one operation per line, from objHistory_ndjson().",
+  "type": "object",
+  "required": ["schema_version", "generated_by", "object", "summary", "slots"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0.1.0"
+    },
+    "generated_by": {
+      "type": "string",
+      "description": "Package and version that wrote this document."
+    },
+    "generated_at": {
+      "type": "string",
+      "description": "ISO 8601 UTC. Excluded from diffs."
+    },
+    "object": {
+      "type": "object",
+      "required": ["class"],
+      "properties": {
+        "uid": {
+          "type": ["string", "null"],
+          "description": "Minted once at object creation and carried through renames, copies and save/load. Null for objects created before uids existed."
+        },
+        "class": { "type": "string" },
+        "versions": {
+          "type": "object",
+          "description": "Contents of the object's versions slot, as strings.",
+          "additionalProperties": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "description": "Read first. Everything under slots is the detail this indexes.",
+      "properties": {
+        "spat_units": { "type": ["array", "null"], "items": { "type": "string" } },
+        "feat_types": { "type": ["array", "null"], "items": { "type": "string" } },
+        "n_cells": {
+          "type": "object",
+          "description": "Cell count per spat_unit.",
+          "additionalProperties": { "type": "integer" }
+        },
+        "n_features": {
+          "type": "object",
+          "description": "Feature count per feat_type.",
+          "additionalProperties": { "type": "integer" }
+        },
+        "has_images": { "type": "boolean" },
+        "has_spatial_info": { "type": "boolean" },
+        "has_feat_info": { "type": "boolean" },
+        "has_spatial_network": { "type": "boolean" },
+        "has_dim_reduction": { "type": "boolean" },
+        "has_nn_network": { "type": "boolean" },
+        "has_spatial_enrichment": { "type": "boolean" },
+        "is_joined": { "type": "boolean" },
+        "n_history_steps": { "type": "integer" }
+      }
+    },
+    "slots": {
+      "type": "object",
+      "description": "One entry per non-empty giotto slot, nested exactly as the object nests it (spat_unit, feat_type, name, and any intermediate key such as dim_type or nn_type). Keys are emitted in sorted order so the document is canonical and diffs are stable.",
+      "additionalProperties": { "$ref": "#/$defs/node" }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Dotted paths of fields that could not be READ (an accessor errored). A field that reads cleanly and is simply absent is omitted rather than listed here."
+    }
+  },
+  "$defs": {
+    "node": {
+      "description": "Either a described leaf or another level of nesting.",
+      "oneOf": [
+        { "$ref": "#/$defs/leaf" },
+        {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/node" }
+        }
+      ]
+    },
+    "leaf": {
+      "type": "object",
+      "description": "One subobject. Fields beyond class are class-specific and are omitted when not applicable.",
+      "required": ["class"],
+      "properties": {
+        "class": { "type": "string" },
+        "name": { "type": "string" },
+        "spat_unit": { "type": "string" },
+        "feat_type": { "type": "string" },
+        "provenance": { "type": "array", "items": { "type": "string" } },
+        "shape": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "description": "[rows, cols]. For expression this is [features, cells]."
+        },
+        "dtype": { "type": "string" },
+        "sparse": { "type": "boolean" },
+        "nnz": { "type": "integer" },
+        "density": { "type": "number" },
+        "columns": {
+          "description": "Column names, or per-column descriptions with distinct-value counts for metadata.",
+          "oneOf": [
+            { "type": "array", "items": { "type": "string" } },
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "dtype": { "type": "string" },
+                  "n_levels": { "type": "integer" },
+                  "levels": { "type": "integer" }
+                }
+              }
+            }
+          ]
+        },
+        "col_desc": { "type": "object" },
+        "bbox": { "$ref": "#/$defs/bbox" },
+        "extent": { "$ref": "#/$defs/bbox" },
+        "crs": { "type": "string" },
+        "n_geom": { "type": "integer" },
+        "centroids_cached": { "type": "boolean" },
+        "overlaps_computed": { "type": "array", "items": { "type": "string" } },
+        "n_records": {
+          "type": "integer",
+          "description": "giottoBinPoints: one record per (bin, feature) detection."
+        },
+        "n_bins": { "type": "integer" },
+        "n_feats": { "type": "integer" },
+        "compact": {
+          "type": "boolean",
+          "description": "giottoBinPoints: whether the counts table is in its compacted form."
+        },
+        "reduction": { "type": "string" },
+        "reduction_method": { "type": "string" },
+        "nn_type": { "type": "string" },
+        "n_nodes": { "type": "integer" },
+        "n_edges": { "type": "integer" },
+        "directed": { "type": "boolean" },
+        "method": { "type": "string" },
+        "has_unfiltered": { "type": "boolean" },
+        "dims": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "description": "Image dimensions as [ncol, nrow, nlyr]."
+        },
+        "resolution": { "type": "array", "items": { "type": "number" } },
+        "file_path": { "type": "array", "items": { "type": "string" } },
+        "on_disk": { "type": "boolean" },
+        "affine": { "type": "array", "items": { "type": "number" } },
+        "n": {
+          "type": "integer",
+          "description": "Count of ids, for the cell_ID and feat_ID slots. The ids themselves are never emitted."
+        },
+        "length": { "type": "integer" },
+        "fingerprint": {
+          "type": "string",
+          "description": "xxhash64 of a canonical reduced representation of the content: dimensions, dimnames, and a fixed-stride slice of the values (all values when fingerprint = 'full'). Deterministic and RNG-free. Numbers are compared to 12 significant digits and geometry coordinates as an ordered multiset, so the fingerprint identifies values rather than a particular serialization of them; a difference below roughly 1e-12 relative is not distinguished. Absent when fingerprinting was not requested, {digest} is unavailable, or the representation would have to be materialised from disk to hash."
+        }
+      }
+    },
+    "bbox": {
+      "type": "object",
+      "required": ["xmin", "xmax", "ymin", "ymax"],
+      "properties": {
+        "xmin": { "type": "number" },
+        "xmax": { "type": "number" },
+        "ymin": { "type": "number" },
+        "ymax": { "type": "number" }
+      }
+    }
+  },
+  "x-encoding-rules": {
+    "special-values": "NA, NaN, Inf and -Inf are encoded as the strings \"NA\", \"NaN\", \"Inf\" and \"-Inf\", never as JSON null. A JSON null means the field was absent, which is a different fact.",
+    "key-order": "Object keys are emitted in sorted order at every level so two manifests of the same state serialize identically."
+  },
+  "x-alabaster-alignment": {
+    "status": "not implemented in 0.1.0",
+    "intent": "Slot vocabulary is close enough to takane/alabaster that a GiottoDisk<->alabaster bridge and cross-language readers should be cheap to add later. expression maps to assays, cell_metadata to column_data, feat_metadata to row_data, dimension_reduction to reduced_dimensions, spatial_locs to the spatial coordinates of a SpatialExperiment. The Giotto-specific spat_unit x feat_type nesting has no takane equivalent and would become one takane object per (spat_unit, feat_type) pair."
+  }
+}
