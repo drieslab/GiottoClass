@@ -349,6 +349,44 @@ base is **`b351ed2b`** (§3), and the fresh branch is cut from the post-merge `g
       subsume — stage 1 dropped it on purpose and stage 3 does not revive it),
       `.gm_walk_apply_view()` (dead on the checkpoint too — its only reference is its own
       recursive call), plus the §5 items.
+- **2026-09-04 — stage 4 landed** (`56ac5fa7`). Checkpoint-sourced, with Q7, A4 and A5
+  folded in. Full suite: **1671 pass / 0 fail / 0 skip**; `test-view-space.R` is 186 of
+  those. Q7 is done and verified end to end — steps are tagged lists, recipes survive
+  `saveRDS` → `readRDS` → resolve, and the "no closures, travels to workers" claim the
+  docs already made is finally true. All three prerequisites landed with it: the filter
+  predicate is deparsed with env values substituted at record time (so `@env` is gone and
+  a later reassignment of a captured variable cannot change the recipe); crop regions
+  normalize to a single WKT string through GiottoDisk's cascade (WKT canonical, typed
+  inputs coerce and recurse, multi-feature union, inline cap, no CRS field); transform
+  args are whitelisted to atomic vectors / numeric matrices / `affine2d`.
+
+  **Two latent bugs in the checkpoint, found by the replay:**
+    1. `updateGiottoObject()`'s new-slot migration did `x@view <- NULL` unconditionally,
+       so it **destroyed slotted recipes on every `loadGiotto()`**. The checkpoint's gate
+       (`< "0.7.0"`) sat above its own version so fresh objects skipped it; at 0.6.0 every
+       object hits the migration. Fixed to initialize only a genuinely absent slot. Worth
+       noting the general shape: a migration helper that is not idempotent is a landmine
+       even behind a correct gate.
+    2. `pDataDT` / `fDataDT` were never lifted from `"giotto"` to `"gAny"` — a stage-3
+       access-layer item missed there, surfaced here by a gmulti test. Now lifted.
+
+  Decisions taken beyond what §4 specified:
+    - **Numeric extents normalize to WKT too**, so WKT is the only stored form and
+       `.materialize_crop_region()`'s numeric pass-through branch is gone. The rectangle
+       fast path is recovered from the geometry at resolve time (`.region_is_rect()`:
+       a single-part polygon with two distinct x and two distinct y values is its own
+       bbox) rather than from the stored type, and applies only to
+       `relation = "intersects"`. Stage 5's A7 owns the full routing decision and may
+       subsume this.
+    - **`sf` / `sfc` accepted** as crop inputs, matching the cascade's typed-input rule;
+       the checkpoint accepted only numeric / SpatExtent / SpatVector.
+    - Q7 removed the `viewStep` / `spaceTransform` `show` methods along with the classes;
+       the label helpers survive and the container `show` methods call them. WKT is
+       summarised as `<POLYGON: n vertices>` rather than printed literally.
+    - Verified `objManifest(giotto())` fails on clean `upstream/gsource` too — an
+      upstream bug in the just-landed manifest feature, not a consequence of the new
+      `@view` / `@spaces` slots. It surfaces as a non-fatal `saveGiotto()` warning; the
+      round-trip test is deliberately left on an empty gobject so it stays visible.
 - **2026-09-04 — merged `upstream/gsource` @ `63be3a9a`** (`339c2507`, clean, 0 behind).
   Brought PR #393 (instructions deprecation cascade moved to `.instr_read` /
   `.instr_replace` / `.instr_change` internals) and the `objManifest()` / `manifestDiff()`
