@@ -275,26 +275,26 @@ setMethod("defaultViewCoordinator", signature(source = "ANY"),
 # Relations for which the centroid test is meaningful.
 .centroid_relations <- c("intersects", "disjoint")
 
-#' @title Does a crop relation require cell geometry?
-#' @name cropRelationNeedsGeom
-#' @description
+#' Does a crop relation require cell geometry?
+#'
 #' `TRUE` when a spatial relation must be evaluated against a cell's actual
 #' polygon rather than its centroid. Only `"intersects"` and `"disjoint"`
 #' are meaningful on a centroid; every other relation is defined by area or
 #' boundary and degenerates when one side is reduced to a point.
 #'
-#' This is the routing contract shared between GiottoClass's in-memory
-#' resolver and the backed resolvers in \pkg{GiottoDisk}, so that one view
-#' recipe narrows identically regardless of where the data lives. Exported
-#' for that reason rather than for direct use.
+#' Internal, and deliberately not exported yet. It is the routing rule the
+#' backed resolvers in \pkg{GiottoDisk} should share rather than duplicate —
+#' two copies of "which relations are centroid-safe" is exactly the drift
+#' this routing exists to prevent. But nothing calls it across the package
+#' boundary today, so exporting now would be a public commitment made ahead
+#' of its consumer. Export it in the change that makes GiottoDisk call it,
+#' not before.
 #'
 #' @param relation `character`. One or more relation names, as accepted by
 #'   [terra::is.related].
 #' @returns `logical` of the same length as `relation`
-#' @examples
-#' cropRelationNeedsGeom(c("intersects", "within"))
-#' @export
-cropRelationNeedsGeom <- function(relation) {
+#' @noRd
+crop_relation_needs_geom <- function(relation) {
     checkmate::assert_character(relation, min.len = 1L, any.missing = FALSE)
     !relation %in% .centroid_relations
 }
@@ -421,7 +421,7 @@ cropRelationNeedsGeom <- function(relation) {
 .cells_in_crop_step <- function(gobject, step, sl_dt, space, coordinator,
                                 spat_unit = NULL) {
     region <- .materialize_crop_region(step$region)
-    if (!cropRelationNeedsGeom(step$relation)) {
+    if (!crop_relation_needs_geom(step$relation)) {
         return(.cells_in_region(sl_dt, region, step$relation))
     }
     polys <- .get_projected_polys(gobject, space, coordinator,
@@ -567,7 +567,7 @@ cropRelationNeedsGeom <- function(relation) {
         # an all-geom recipe on a polygon-only object should not warn
         # about missing spatial locations.
         needs_centroid <- any(!vapply(crop_steps,
-            function(s) cropRelationNeedsGeom(s$relation), logical(1L)))
+            function(s) crop_relation_needs_geom(s$relation), logical(1L)))
         sl_dt <- if (needs_centroid) {
             .get_projected_spatlocs(gobject, pred_space, coordinator)
         } else NULL
@@ -575,7 +575,7 @@ cropRelationNeedsGeom <- function(relation) {
             warning("crop step skipped: no spatial locations available",
                 call. = FALSE)
             crop_steps <- Filter(
-                function(s) cropRelationNeedsGeom(s$relation), crop_steps)
+                function(s) crop_relation_needs_geom(s$relation), crop_steps)
         }
         for (step in crop_steps) {
             keep <- .cells_in_crop_step(gobject, step, sl_dt,

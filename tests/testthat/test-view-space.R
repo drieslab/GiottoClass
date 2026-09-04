@@ -933,17 +933,17 @@ test_that("a rectangular region takes the AABB path; a polygon does not", {
 
 # A7 — crop routing is decided by relation, not by storage kind ####
 
-test_that("cropRelationNeedsGeom splits centroid- from geometry-relations", {
-    expect_false(cropRelationNeedsGeom("intersects"))
-    expect_false(cropRelationNeedsGeom("disjoint"))
+test_that("crop_relation_needs_geom splits centroid- from geometry-relations", {
+    expect_false(GiottoClass:::crop_relation_needs_geom("intersects"))
+    expect_false(GiottoClass:::crop_relation_needs_geom("disjoint"))
     for (r in c("within", "covered_by", "contains", "covers",
                 "overlaps", "touches", "crosses")) {
-        expect_true(cropRelationNeedsGeom(r), info = r)
+        expect_true(GiottoClass:::crop_relation_needs_geom(r), info = r)
     }
     # vectorized
-    expect_identical(cropRelationNeedsGeom(c("intersects", "within")),
+    expect_identical(GiottoClass:::crop_relation_needs_geom(c("intersects", "within")),
         c(FALSE, TRUE))
-    expect_error(cropRelationNeedsGeom(NA_character_), "missing")
+    expect_error(GiottoClass:::crop_relation_needs_geom(NA_character_), "missing")
 })
 
 test_that("intersects and disjoint partition the cell set", {

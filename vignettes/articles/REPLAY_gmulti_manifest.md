@@ -179,7 +179,7 @@ banner, both false — `materialize()` has three real methods and 24 test uses.
 
 | | |
 |---|---|
-| **source** | GiottoDisk `merge/federation-into-dev` @ `28beb2d` — **no replay needed**, but see the stage-5 progress note: A7's two force-cache patches live here and must be dropped in favour of `cropRelationNeedsGeom()` |
+| **source** | GiottoDisk `merge/federation-into-dev` @ `28beb2d` — **no replay needed**, but see the stage-5 progress note: A7's two force-cache patches live here and must be dropped in favour of GiottoClass's `crop_relation_needs_geom()`, which needs exporting at that point |
 | **state** | already merged to current `upstream/dev`, 0 behind, all R parses. Unique payload is 2,978 lines / 20 files, all gmulti-relevant: `parquetCoordinator` + `methods-resolveSubobject.R` (1,148), `snapshotSave(gDirSource, giottoMulti)` (105), `snapshotDelete` child cascade, spatRelate widening, `class-viewCoordinator.R`, `test-snapshot-gmulti.R` (166), `test-view-resolver.R` (926) |
 | **note** | `parquetExprBase` + union streaming PCA are **already upstream** (PRs #44, `514cd30`); the merge deduplicated them and PCA now runs through upstream's `.pe_windows()` seam. Nothing to port |
 | **verify** | `test-snapshot-gmulti.R` skips unless `@source` is a `giottoMulti` slot, so it is inert until the replayed GiottoClass is installed — re-run it after stage 1 lands |
@@ -358,9 +358,14 @@ base is **`b351ed2b`** (§3), and the fresh branch is cut from the post-merge `g
   memoization, so there was nothing to demote here. What stage 5 could do — and did — is
   put the *semantic decision* those patches should be replaced by into GiottoClass as the
   shared contract, so stage 6 drops them by calling it:
-    - **`cropRelationNeedsGeom()` is exported.** Deliberately public, not internal: the
-      backed resolvers need it, and `GiottoClass:::` reach across packages is the pattern
-      the federation work already removed once from GiottoVisuals.
+    - **`crop_relation_needs_geom()` is internal, not exported.** It is the rule GiottoDisk
+      should share rather than duplicate, but nothing calls it across the package boundary
+      yet — exporting now would be a public commitment made ahead of its consumer, for a
+      predicate with no analyst utility. Export it in the change that makes GiottoDisk call
+      it. (Verified new in this stage: no equivalent exists on
+      `feature/gmulti-federation-design`, `merge/federation-into-gsource`, `feature/gmulti2`,
+      or GiottoDisk's merge branch — all four forwarded `relation` straight into
+      `terra::is.related()` against centroids, so the relation was passed but never routed.)
     - Routing is per crop step on `(relation, polygon source availability)`. Only
       `intersects` / `disjoint` are meaningful on a centroid; `within`, `covered_by`,
       `contains`, `covers`, `overlaps`, `touches`, `crosses` are area- or boundary-defined
@@ -384,7 +389,7 @@ base is **`b351ed2b`** (§3), and the fresh branch is cut from the post-merge `g
       and are asserted in a test.
 
   **Still owed to stage 6:** delete the two GiottoDisk patches and route those methods
-  through `cropRelationNeedsGeom()`. Until then the disk path still decides by storage
+  through `crop_relation_needs_geom()`. Until then the disk path still decides by storage
   kind, so a `within` crop over a backed store answers the centroid question — the exact
   divergence A7 closes in memory.
 - **2026-09-04 — stage 4 landed** (`56ac5fa7`). Checkpoint-sourced, with Q7, A4 and A5
