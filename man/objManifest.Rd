@@ -9,13 +9,22 @@
 \arguments{
 \item{x}{giotto object}
 
-\item{level}{character. \code{"summary"} (default) omits fingerprints and is
-cheap enough to call on every operation. \code{"full"} adds them.}
+\item{level}{character. \code{"summary"} (default) omits fingerprints.
+\code{"full"} adds them, which is what detects an operation that overwrites a
+matrix or a column in place - a change \code{"summary"} cannot see, since the
+shape and the names are identical on both sides. Sampled fingerprints cost
+little: they read a fixed number of values regardless of object size.}
 
 \item{fingerprint}{character. \code{"none"}, \code{"sample"} (hash of a deterministic
 fixed-stride slice of the content) or \code{"full"} (hash of all content).
 Defaults to \code{"none"} for \code{level = "summary"} and \code{"sample"} for
-\code{level = "full"}. Overrides \code{level} when given.}
+\code{level = "full"}. Overrides \code{level} when given.
+
+Numbers are compared to 12 significant digits, so a fingerprint identifies
+values rather than bit patterns. Re-reading a saved object does not report a
+change when a storage format has dropped the last bits of a double, and by
+the same token a difference below roughly 1e-12 relative is not reported at
+all.}
 
 \item{...}{additional params (none implemented)}
 }
