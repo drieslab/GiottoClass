@@ -179,7 +179,7 @@ banner, both false — `materialize()` has three real methods and 24 test uses.
 
 | | |
 |---|---|
-| **source** | GiottoDisk `merge/federation-into-dev` @ `28beb2d` — **no replay needed** |
+| **source** | GiottoDisk `merge/federation-into-dev` @ `28beb2d` — **no replay needed**, but see the stage-5 progress note: A7's two force-cache patches live here and must be dropped in favour of `cropRelationNeedsGeom()` |
 | **state** | already merged to current `upstream/dev`, 0 behind, all R parses. Unique payload is 2,978 lines / 20 files, all gmulti-relevant: `parquetCoordinator` + `methods-resolveSubobject.R` (1,148), `snapshotSave(gDirSource, giottoMulti)` (105), `snapshotDelete` child cascade, spatRelate widening, `class-viewCoordinator.R`, `test-snapshot-gmulti.R` (166), `test-view-resolver.R` (926) |
 | **note** | `parquetExprBase` + union streaming PCA are **already upstream** (PRs #44, `514cd30`); the merge deduplicated them and PCA now runs through upstream's `.pe_windows()` seam. Nothing to port |
 | **verify** | `test-snapshot-gmulti.R` skips unless `@source` is a `giottoMulti` slot, so it is inert until the replayed GiottoClass is installed — re-run it after stage 1 lands |
@@ -349,6 +349,44 @@ base is **`b351ed2b`** (§3), and the fresh branch is cut from the post-merge `g
       subsume — stage 1 dropped it on purpose and stage 3 does not revive it),
       `.gm_walk_apply_view()` (dead on the checkpoint too — its only reference is its own
       recursive call), plus the §5 items.
+- **2026-09-04 — stage 5 landed** (`d12221ed`). Full suite: **1700 pass / 0 fail / 0 skip**.
+
+  **Scoping correction — A7's two patches are not in GiottoClass.** §4 stage 5 reads as a
+  GiottoClass-only rework, but `force cache for polygons` and `force NULL cache for
+  points` live in **GiottoDisk** `R/methods-resolveSubobject.R` (the `parquetCoordinator`
+  methods), which is stage 6's payload. GiottoClass's own cache was already pure
+  memoization, so there was nothing to demote here. What stage 5 could do — and did — is
+  put the *semantic decision* those patches should be replaced by into GiottoClass as the
+  shared contract, so stage 6 drops them by calling it:
+    - **`cropRelationNeedsGeom()` is exported.** Deliberately public, not internal: the
+      backed resolvers need it, and `GiottoClass:::` reach across packages is the pattern
+      the federation work already removed once from GiottoVisuals.
+    - Routing is per crop step on `(relation, polygon source availability)`. Only
+      `intersects` / `disjoint` are meaningful on a centroid; `within`, `covered_by`,
+      `contains`, `covers`, `overlaps`, `touches`, `crosses` are area- or boundary-defined
+      and degenerate against a point (`contains` returns nothing at all). Target storage
+      kind is not a discriminator — the geom evaluation runs on the gobject's polygon
+      source either way, and the resulting cell_ID set narrows the target downstream.
+    - **This was silent-wrong, not merely approximate.** Every relation used to take the
+      centroid path. Measured on the visium mini with a 3000-unit box: `intersects` keeps
+      549 cells, `within` keeps 524, and the within-set is a strict subset — so `within`
+      previously returned 549, over-inclusive by the 25 boundary-straddling cells. A
+      geometry relation with no polygon source is now a loud error naming the remedy.
+    - `disjoint` deliberately skips the AABB pre-filter: its survivors are the points
+      *outside* the region, so pre-narrowing to bbox candidates would drop exactly the
+      cells that survive. Guarded by the `intersects + disjoint == total` test.
+    - `.region_is_rect()` (stage 4) survives as pure optimization *under* the centroid
+      path, which is where §4 wanted the cache to sit — same principle, different lever.
+    - A8: `vignettes/view_and_space.Rmd` ported (447 lines, no Q7-stale content — it is
+      written at the API level, which Q7 did not change) plus two new sections: the
+      broadcast rule with worked examples showing `+` and a pipe do not commute, and the
+      relation-routing table. Both broadcast claims were run before being written down,
+      and are asserted in a test.
+
+  **Still owed to stage 6:** delete the two GiottoDisk patches and route those methods
+  through `cropRelationNeedsGeom()`. Until then the disk path still decides by storage
+  kind, so a `within` crop over a backed store answers the centroid question — the exact
+  divergence A7 closes in memory.
 - **2026-09-04 — stage 4 landed** (`56ac5fa7`). Checkpoint-sourced, with Q7, A4 and A5
   folded in. Full suite: **1671 pass / 0 fail / 0 skip**; `test-view-space.R` is 186 of
   those. Q7 is done and verified end to end — steps are tagged lists, recipes survive
