@@ -360,6 +360,22 @@ networkParam <- function(type = c("kNN", "sNN", "delaunay", "radius"), ...) {
     # cols to keep
     keep_cols <- c("from", "to")
     all_index <- network_dt[, unique(unlist(.SD)), .SDcols = keep_cols]
+
+    # A node with no surviving edge is not a vertex of the graph built below,
+    # so it disappears from every downstream result -- proximity enrichment,
+    # motifs, neighbourhood composition -- with nothing to say it went. That is
+    # easy to cause by accident: the Delaunay default is
+    # maximum_distance = "auto", which trims long edges and on a clustered
+    # section can strand a few hundred cells. Say so rather than letting the
+    # cell count quietly disagree with the input.
+    n_dropped <- nrow(x) - length(all_index)
+    if (n_dropped > 0L) {
+        vmsg(sprintf(
+            "%d of %d node(s) have no edges and are omitted from the network",
+            n_dropped, nrow(x)
+        ))
+    }
+
     if (isTRUE(param@include_weight)) keep_cols <- c(keep_cols, "weight")
     if (isTRUE(param@include_distance)) keep_cols <- c(keep_cols, "distance")
     if (type == "sNN") keep_cols <- c(keep_cols, "shared")

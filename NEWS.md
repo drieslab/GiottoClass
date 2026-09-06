@@ -101,6 +101,17 @@
   are now ~0.19 s. Using the search's own distances is also the self-consistent
   choice -- the cutoff now filters on whatever metric the search used.
 
+## changes
+
+- Network construction now reports when nodes are left with no edges: "N of M
+  node(s) have no edges and are omitted from the network". Such a node is not a
+  vertex of the resulting graph, so it silently disappears from every
+  downstream result -- proximity enrichment, motifs, neighbourhood composition
+  -- and the analysed cell count quietly stops matching the input. This is easy
+  to cause by accident, since the Delaunay default `maximum_distance = "auto"`
+  trims long edges and on a clustered section can strand a few hundred cells.
+  Behaviour is unchanged; it is now visible.
+
 ## documentation
 
 - `createSpatialDelaunayNetwork()` gained a *Choosing a Delaunay backend*
