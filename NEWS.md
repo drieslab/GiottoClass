@@ -10,6 +10,9 @@
   route to a distance-based network was kNN with a large `k` plus a
   `maximum_distance` filter -- finding a hundred neighbours per cell in order
   to discard most of them; that advice is now redirected.
+- `createSpatialNetwork(method = "radius", radius = )` reaches
+  `radiusNetworkParam()` from the spatial wrapper, which previously offered
+  only `"Delaunay"` and `"kNN"`.
 - `objManifest()` returns a machine-readable inventory of a `giotto` object:
   identity, a summary block, and a slot-by-slot description nested as the
   object nests it. Derived on demand, so it cannot go stale. `level = "full"`
@@ -111,6 +114,15 @@
   built on top of it -- was unusable on a backed object. The `networkDT` form
   renames the store's `from_id`/`to_id` to the `from`/`to` that the rest of the
   suite expects.
+- `getNearestNetwork(output = "data.table")` and `output = "igraph"` gained the
+  same store handling; both previously failed with *Must provide a graph object*
+  on a backed project. The two accessors now share one reader so they cannot
+  drift apart again.
+- `createNetwork()` on a `giotto` object with a `radiusNetworkParam` now
+  measures `eps` in spatial coordinates. It inherited the nearest-neighbour
+  method, whose default is `space = "expression"`, so a radius given in microns
+  was silently applied to PCA coordinates. Pass `space = "expression"` for the
+  old behaviour.
 
 ## changes
 
