@@ -101,6 +101,17 @@
   are now ~0.19 s. Using the search's own distances is also the self-consistent
   choice -- the cutoff now filters on whatever metric the search used.
 
+## bug fixes
+
+- `getSpatialNetwork(output = "networkDT")` and `output = "igraph"` now work when
+  the network is a GiottoDisk `parquetEdgeStore`, which is what a backed project
+  holds. Previously the store was handed straight to `as.data.table()` and the
+  call failed with *cannot coerce class parquetEdgeStore*, so every consumer of
+  the edge table -- `annotateSpatialNetwork()`, and `cellProximityEnrichment()`
+  built on top of it -- was unusable on a backed object. The `networkDT` form
+  renames the store's `from_id`/`to_id` to the `from`/`to` that the rest of the
+  suite expects.
+
 ## changes
 
 - Network construction now reports when nodes are left with no edges: "N of M

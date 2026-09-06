@@ -2164,19 +2164,46 @@ setMethod("getSpatialNetwork", signature("giotto"), function(gobject,
     if (!inherits(out, "list")) out <- list(out)
     names(out) <- NULL
 
-    # spatialNetworkObj@network is an igraph (canonical as of 0.6.0);
+    # spatialNetworkObj@network is an igraph (canonical as of 0.6.0), or a
+    # GiottoDisk dataStore on a backed project. Both output shapes have to
+    # handle the store: without this, `output = "networkDT"` hands a
+    # parquetEdgeStore to as.data.table() and every downstream consumer of the
+    # edge table -- annotateSpatialNetwork() and everything built on it --
+    # fails on a backed object with "cannot coerce class parquetEdgeStore".
     # igraph is copy-on-modify so `copy_obj` is a no-op here.
+    .read_store <- function(g, what) {
+        package_check("GiottoDisk",
+            repository = "github:giotto-suite/GiottoDisk")
+        GiottoDisk::storeRead(g, output = what)
+    }
     as_dt <- function(g) {
+        if (inherits(g, "dataStore")) {
+            dt <- data.table::as.data.table(.read_store(g, "tibble"))
+            # edge stores name their endpoints from_id/to_id; the networkDT
+            # contract is from/to
+            for (nm in c("from", "to")) {
+                old_nm <- paste0(nm, "_id")
+                if (old_nm %in% names(dt) && !nm %in% names(dt)) {
+                    data.table::setnames(dt, old_nm, nm)
+                }
+            }
+            return(dt)
+        }
         if (inherits(g, "igraph")) {
-            data.table::as.data.table(
+            return(data.table::as.data.table(
                 igraph::as_data_frame(g, what = "edges")
-            )
-        } else g
+            ))
+        }
+        g
+    }
+    as_ig <- function(g) {
+        if (inherits(g, "dataStore")) return(.read_store(g, "igraph"))
+        g
     }
     out <- lapply(out, function(x) {
         switch(output,
             "spatialNetworkObj" = x,
-            "igraph" = x[],
+            "igraph" = as_ig(x[]),
             "networkDT" = as_dt(x[]),
             "unfiltered" = as_dt(x@unfiltered),
             "outputObj" = x@outputObj
