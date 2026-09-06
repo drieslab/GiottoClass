@@ -3,6 +3,7 @@
 \name{createNetwork}
 \alias{createNetwork}
 \alias{createNetwork,matrix,kNNNetworkParam-method}
+\alias{createNetwork,matrix,radiusNetworkParam-method}
 \alias{createNetwork,matrix,sNNNetworkParam-method}
 \alias{createNetwork,matrix,delaunayNetworkParam-method}
 \alias{createNetwork,matrix,missing-method}
@@ -15,6 +16,8 @@
 createNetwork(x, param, ...)
 
 \S4method{createNetwork}{matrix,kNNNetworkParam}(x, param, node_ids = NULL, verbose = NULL, backend = NULL, ...)
+
+\S4method{createNetwork}{matrix,radiusNetworkParam}(x, param, node_ids = NULL, verbose = NULL, backend = NULL, ...)
 
 \S4method{createNetwork}{matrix,sNNNetworkParam}(x, param, node_ids = NULL, verbose = NULL, backend = NULL, ...)
 

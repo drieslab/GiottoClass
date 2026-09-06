@@ -60,8 +60,12 @@ Alternatively you can provide a character vector that specififies the
 spatial dimensions to use, e.g. c("sdimx', "sdimy")
 or a numerical vector, e.g. 2:3
 
-\strong{maximum_distance: } to create a network based on maximum distance
-only, you also need to set k to a very high value, e.g. k = 100
+\strong{maximum_distance: } this is a post-filter on the k neighbours the
+search already found, not a constraint on the search itself. To build a
+network on distance alone, prefer \code{\link[=radiusNetworkParam]{radiusNetworkParam()}}, which searches
+only within the radius; the older advice of setting \code{k} very high (e.g.
+\code{k = 100}) and filtering still works, but it finds a hundred neighbours per
+cell in order to discard most of them.
 }
 \description{
 Create a spatial knn network.

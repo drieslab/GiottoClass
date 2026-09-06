@@ -4,10 +4,10 @@
 \alias{networkParam}
 \title{networkParam — Dispatcher constructor}
 \usage{
-networkParam(type = c("kNN", "sNN", "delaunay"), ...)
+networkParam(type = c("kNN", "sNN", "delaunay", "radius"), ...)
 }
 \arguments{
-\item{type}{one of \code{"kNN"}, \code{"sNN"}, \code{"delaunay"}}
+\item{type}{one of \code{"kNN"}, \code{"sNN"}, \code{"delaunay"}, \code{"radius"}}
 
 \item{...}{arguments forwarded to the type-specific constructor}
 }
