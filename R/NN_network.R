@@ -682,6 +682,21 @@ setMethod("createNetwork", signature("giotto", "NNNetworkParam"),
 )
 
 #' @rdname createNetwork
+#' @details
+#' `radiusNetworkParam` defaults to `space = "spatial"` rather than
+#' `"expression"`. A radius is a distance with units, and for a radius graph
+#' those units are almost always the tissue's -- "cells within 25 um". Reaching
+#' it through the general NN method would have silently measured `eps` in PCA
+#' units instead. Pass `space = "expression"` to get the PCA-space behaviour
+#' back.
+setMethod("createNetwork", signature("giotto", "radiusNetworkParam"),
+    function(x, param, space = c("spatial", "expression"), ...) {
+        space <- match.arg(space)
+        callNextMethod(x = x, param = param, space = space, ...)
+    }
+)
+
+#' @rdname createNetwork
 setMethod("createNetwork", signature("giotto", "delaunayNetworkParam"),
     function(x, param,
             spat_unit = NULL, spat_loc_name = "raw", ...) {
