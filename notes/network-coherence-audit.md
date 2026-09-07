@@ -114,6 +114,17 @@ broken. The `nnNetObj` sibling twenty lines below does it right with
 is runnable, so this is an `R CMD check` failure waiting for the next full
 check run.
 
+*Correction, after actually running the check:* fixing the accessor does **not**
+by itself clear that failure. The example loads
+`GiottoData::loadSubObjectMini("spatialNetworkObj")`, and the mini network
+subobjects shipped by GiottoData 0.2.16 predate the 0.6.0 migration — the
+`spatialNetworkObj` carries `networkDT` / `networkDT_before_filter` and the
+`nnNetObj` carries `igraph`, so neither has a `network` slot at all. Six
+examples across four files hit this, and `tests/testthat/setup.R` already
+documents both the problem and the remedy (`methods::initialize()` runs the
+in-class migration). Both are fixed on the branch below; the point here is that
+the two causes are independent and the audit originally conflated them.
+
 **This is worse than the two entries above suggest, and it is fixed.**
 `spat_net_to_igraph()` has exactly two callers —
 `Giotto::spatialSplitCluster()` and `Giotto::identifyTMAcores()`, at
