@@ -19,12 +19,15 @@ Convert a \code{spatialNetworkObj} to a non-directed igraph
 representation.
 }
 \examples{
-sn <- GiottoData::loadSubObjectMini("spatialNetworkObj")
+# the mini network subobjects predate the 0.6.0 igraph migration;
+# initialize() runs the in-class migration, as tests/testthat/setup.R does
+sn <- methods::initialize(
+    GiottoData::loadSubObjectMini("spatialNetworkObj"))
 # only name attribute
 g <- spat_net_to_igraph(sn)
 
-# view other column info besides to and from cols
-head(sn[], 1)
+# view the edge attributes available to `attr`
+head(igraph::as_data_frame(sn[], what = "edges"), 1)
 
 # include distance and weight col info
 g <- spat_net_to_igraph(sn, attr = c("distance", "weight"))

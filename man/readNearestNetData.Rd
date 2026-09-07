@@ -30,7 +30,7 @@ nnNetObj
 read nearest network results from list
 }
 \examples{
-x <- GiottoData::loadSubObjectMini("nnNetObj")
+x <- methods::initialize(GiottoData::loadSubObjectMini("nnNetObj"))
 
 readNearestNetData(x)
 }

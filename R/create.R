@@ -1620,7 +1620,7 @@ create_dim_obj <- function(name = "test",
 #' dataframe-like inputs must have 'from', 'to', and 'distance' columns
 #' @returns nnNetObj
 #' @examples
-#' x <- GiottoData::loadSubObjectMini("nnNetObj")
+#' x <- methods::initialize(GiottoData::loadSubObjectMini("nnNetObj"))
 #'
 #' createNearestNetObj(
 #'     network = slot(x, "network"), name = "sNN",
@@ -1803,7 +1803,8 @@ create_spat_locs_obj <- function(name = "test",
 #' @param misc misc
 #' @returns spatialNetworkObj
 #' @examples
-#' x <- GiottoData::loadSubObjectMini("spatialNetworkObj")
+#' x <- methods::initialize(
+#'     GiottoData::loadSubObjectMini("spatialNetworkObj"))
 #'
 #' createSpatNetObj(network = slot(x, "network"), name = "Delaunay_network")
 #' @export

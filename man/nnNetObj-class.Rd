@@ -30,5 +30,5 @@ Framework to store nearest neighbor network information
 }}
 
 \examples{
-GiottoData::loadSubObjectMini("nnNetObj")
+methods::initialize(GiottoData::loadSubObjectMini("nnNetObj"))
 }

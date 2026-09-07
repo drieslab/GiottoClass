@@ -44,5 +44,6 @@ distances, and weightings}
 }}
 
 \examples{
-g <- GiottoData::loadSubObjectMini("spatialNetworkObj")
+g <- methods::initialize(
+    GiottoData::loadSubObjectMini("spatialNetworkObj"))
 }

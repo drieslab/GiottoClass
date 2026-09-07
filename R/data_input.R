@@ -1726,7 +1726,7 @@ readDimReducData <- function(data_list,
 #' @description read nearest network results from list
 #' @returns nnNetObj
 #' @examples
-#' x <- GiottoData::loadSubObjectMini("nnNetObj")
+#' x <- methods::initialize(GiottoData::loadSubObjectMini("nnNetObj"))
 #'
 #' readNearestNetData(x)
 #' @export
