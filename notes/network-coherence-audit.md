@@ -114,6 +114,23 @@ broken. The `nnNetObj` sibling twenty lines below does it right with
 is runnable, so this is an `R CMD check` failure waiting for the next full
 check run.
 
+**This is worse than the two entries above suggest, and it is fixed.**
+`spat_net_to_igraph()` has exactly two callers —
+`Giotto::spatialSplitCluster()` and `Giotto::identifyTMAcores()`, at
+`Giotto/R/spatial_clusters.R:65` and `:170`. Both are exported, documented
+user-facing functions, and both were therefore unusable on any in-memory
+spatial network. That is not something to leave filed behind a performance PR,
+so both bugs are fixed on **`fix/spatial-network-igraph-accessors`**, branched
+off `gsource` so it can be reviewed and merged independently of this one.
+
+The fix is smaller than the diagnosis: the slot already holds the graph
+`spat_net_to_igraph()` was rebuilding. Three semantics had to be preserved
+rather than assumed — a kNN network is stored *directed* so the documented
+"non-directed" contract needs `as_undirected(mode = "each")`; `attr = NULL`
+has always meant *no* edge attributes, which a naive pass-through would break;
+and isolated vertices turn out to be dropped by `.finalize_network()` already,
+so the old edge-derived vertex set and the stored one agree.
+
 ### N4 — `maximum_distance` is silently ignored on `kNNNetworkParam`
 
 `filter` defaults to `FALSE`, and `maximum_distance` is only consulted when
@@ -246,9 +263,9 @@ Ordered by harm rather than by effort.
 
 | | finding | why here |
 |---|---|---|
-| 1 | **N3** | Silent wrong answers today (`character(0)` instead of node IDs), and one exported function that fails its own example. Two-line fix each. |
-| 2 | **N4** | Silent wrong answers today. Needs a default change or a warning, and a decision about which. |
-| 3 | **N8** | Not a bug in itself; it is the mechanism that produced N3 and N9's first item, and will produce the next one. Needs an ADR before it needs code. |
-| 4 | **N7** gaps | Capability the package has but does not offer. Additive, no risk. |
-| 5 | **N1**, **N6** | Structural duplication. Real cost, but it manifests as maintenance rather than as wrong results. Breaking changes; batch them with the next major. |
-| 6 | **N5** | Cosmetic until someone calls `output = "unfiltered"` and gets `NULL`. |
+| — | **N3** | **Fixed** on `fix/spatial-network-igraph-accessors`. Promoted out of this table once it turned out to break two exported Giotto functions outright rather than one helper's example. |
+| 1 | **N4** | Silent wrong answers today. Needs a default change or a warning, and a decision about which. |
+| 2 | **N8** | Not a bug in itself; it is the mechanism that produced N3 and N9's first item, and will produce the next one. Needs an ADR before it needs code. |
+| 3 | **N7** gaps | Capability the package has but does not offer. Additive, no risk. |
+| 4 | **N1**, **N6** | Structural duplication. Real cost, but it manifests as maintenance rather than as wrong results. Breaking changes; batch them with the next major. |
+| 5 | **N5** | Cosmetic until someone calls `output = "unfiltered"` and gets `NULL`. |
