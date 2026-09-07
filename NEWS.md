@@ -118,6 +118,18 @@
   but it duplicates that verb's `mean_expr` and should not be used in new code.
 
 ## bug fixes
+- `spatIDs()` on an in-memory `spatialNetworkObj` returned `character(0)` for
+  every network. It read `@network` as the `from`/`to` table the slot held
+  before 0.6.0; `$` on an igraph is `NULL`, so a 855-edge network reported zero
+  nodes. The disk-backed branch was unaffected.
+- `spat_net_to_igraph()` failed with *please supply names for attributes*, from
+  the same cause, and took its only two callers with it:
+  `Giotto::spatialSplitCluster()` and `Giotto::identifyTMAcores()` were
+  unusable on any in-memory spatial network. It now returns the graph the slot
+  already holds rather than rebuilding it, undirecting a kNN network with
+  `mode = "each"` so reciprocal pairs stay two edges, and dropping edge
+  attributes not named in `attr` so the default stays bare as before. Backed
+  networks are read through GiottoDisk.
 - `tif_metadata(node =)` returns a one-row `data.frame` when exactly one node matches, rather than transposing it into a single column.
 
 - `create_average_DT()` now selects each group's cells by `cell_ID` rather than

@@ -137,9 +137,13 @@ setMethod(
         net <- x@network
         # Disk-backed networks (parquetEdgeStore from GiottoDisk's setter
         # auto-write or sourceAdopt path) dispatch to their own spatIDs
-        # method instead of the igraph-only $from/$to accessor.
+        # method instead of the igraph accessor below.
         if (inherits(net, "dataStore")) return(spatIDs(net, ...))
-        as.character(unique(c(x[]$from, x[]$to)))
+        # `@network` has held an igraph since 0.6.0. This read used to be
+        # `unique(c(x[]$from, x[]$to))`, which is `$` on an igraph -- NULL --
+        # so every in-memory network reported zero nodes. Same expression as
+        # the nnNetObj method below.
+        as.character(unique(names(igraph::V(net))))
     }
 )
 #' @rdname spatIDs-generic
