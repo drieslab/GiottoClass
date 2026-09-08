@@ -6,7 +6,7 @@
 \alias{giottoViews}
 \alias{giottoView,gAny,character-method}
 \alias{giottoView,gAny,missing-method}
-\alias{giottoView<-,gAny,character,giottoView-method}
+\alias{giottoView<-,gAny,character,list-method}
 \alias{giottoView<-,gAny,character,NULL-method}
 \alias{giottoViews,gAny-method}
 \title{Slotted views on a giotto object}
@@ -21,40 +21,45 @@ giottoViews(gobject, ...)
 
 \S4method{giottoView}{gAny,missing}(gobject, name, ...)
 
-\S4method{giottoView}{gAny,character,giottoView}(gobject, name, ...) <- value
+\S4method{giottoView}{gAny,character,list}(gobject, name, ...) <- value
 
 \S4method{giottoView}{gAny,character,NULL}(gobject, name, ...) <- value
 
 \S4method{giottoViews}{gAny}(gobject, ...)
 }
 \arguments{
-\item{gobject}{a \code{giotto} object (or omitted for the constructor)}
+\item{gobject}{a \code{giotto} object}
 
 \item{name}{\code{character(1)}. The slot key.}
 
-\item{...}{additional arguments. For the bare constructor, \code{space}.}
+\item{...}{additional arguments, currently unused}
 
-\item{value}{a \code{giottoView}, or \code{NULL} to remove.}
+\item{value}{a view \code{list}, or \code{NULL} to remove.}
 }
 \value{
 the view, an updated gobject, or a character vector of view names
 }
 \description{
-List, retrieve, attach, or remove \link[=giottoView-class]{giottoView} objects slotted into
-a \link[=giotto-class]{giotto} object's \verb{@view} slot.
+List, retrieve, attach, or remove the view recipes held in a
+\link[=giotto-class]{giotto} object's \verb{@view} slot.
 \itemize{
-\item \code{giottoView()} — construct an empty standalone view
-\item \code{giottoView(g, "name")} — retrieve a slotted view by name
+\item \code{giottoView(g, "name")} — retrieve a view by name
 \item \code{giottoView(g, "name") <- v} — slot in (or replace) a view
 \item \code{giottoView(g, "name") <- NULL} — remove a view
-\item \code{giottoViews(g)} — list slotted view names
+\item \code{giottoViews(g)} — list view names
 }
 
+A view is a plain list — \code{list(steps = , space = , misc = )}. There is no
+standalone constructor: record onto a name with \code{subset(g, ..., view = "name")} or \code{crop(g, ..., view = "name")} and the view is created
+on first use. The setter exists to copy a recipe between objects and to
+remove one.
+
 Views are subset/narrowing recipes; for coordinate-frame recipes see
-\link[=giottoSpace-class]{giottoSpace}.
+\link{giottoSpace}.
 }
 \examples{
 g <- giotto()
-giottoView(g, "demo") <- giottoView()
+g <- selectSamples(g, "s1", "s2", view = "demo")
 giottoViews(g)
+giottoView(g, "demo")
 }

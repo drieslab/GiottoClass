@@ -26,7 +26,7 @@ NULL
 
 #' @title resolveSubobject
 #' @name resolveSubobject
-#' @description Apply a [giottoView-class] (and optional [giottoSpace-class])
+#' @description Apply a [giottoView] (and optional [giottoSpace])
 #' recipe to a single subobject, returning the projected subobject. Dispatch
 #' is on `(subobj, coordinator)` so different storage-bridging coordinators
 #' register different methods.
@@ -34,8 +34,8 @@ NULL
 #' @param subobj a giotto subobject (e.g. `cellMetaObj`, `spatLocsObj`, ...)
 #' @param gobject the parent `giotto` (needed for cross-slot lookups via
 #'   `spatValues()`)
-#' @param view a [giottoView-class] or `NULL`
-#' @param space a [giottoSpace-class] or `NULL`
+#' @param view a [giottoView] or `NULL`
+#' @param space a [giottoSpace] or `NULL`
 #' @param coordinator a [viewCoordinator-class]-inheriting object brokering
 #'   IDs and joins between storage backings
 #' @param ... reserved for backend-specific args
@@ -189,17 +189,19 @@ setMethod("defaultViewCoordinator", signature(source = "ANY"),
 #
 # IMPORTANT: this only resolves the *output* space -- the frame that
 # transforms get applied to on returned data. The *predicate* frame
-# (how a recorded crop region is interpreted) lives on `view@space` and
-# is consulted directly by the crop step handlers. Conflating the two was
-# the original bug that caused `getSpatialLocations(g, view = "test")` to
-# silently return rotated coords whenever `view@space` was set.
+# (how a recorded crop region is interpreted) lives on the view's `space`
+# field and is consulted directly by the crop step handlers. Conflating the
+# two was the original bug that caused `getSpatialLocations(g, view =
+# "test")` to silently return rotated coords whenever the view was bound to
+# a space.
 #' @keywords internal
 #' @noRd
 .resolve_space <- function(gobject, space = NULL) {
     if (is.null(space)) return(NULL)
-    if (inherits(space, "giottoSpace")) return(space)
+    # already-resolved recipe passed through internally
+    if (is.list(space)) return(space)
     if (is.character(space)) return(giottoSpace(gobject, space))
-    stop("`space` must be NULL, a character(1), or a giottoSpace",
+    stop("`space` must be NULL, a character(1) name, or a space list",
         call. = FALSE)
 }
 
@@ -210,7 +212,7 @@ setMethod("defaultViewCoordinator", signature(source = "ANY"),
 #' @noRd
 .space_sample_key_for <- function(gobject, space) {
     if (is.null(space)) return(NULL)
-    keys <- names(space@samples)
+    keys <- names(space$samples)
     if (length(keys) == 0L) return(NULL)
     if (.space_default_sample %in% keys) return(.space_default_sample)
     if (length(keys) == 1L) return(keys[[1L]])
@@ -227,7 +229,7 @@ setMethod("defaultViewCoordinator", signature(source = "ANY"),
     if (is.null(space)) return(subobj)
     key <- .space_sample_key_for(gobject, space)
     if (is.null(key)) return(subobj)
-    steps <- space@samples[[key]]
+    steps <- space$samples[[key]]
     for (step in steps) {
         subobj <- do.call(step$op, c(list(x = subobj), step$args))
     }
@@ -236,68 +238,26 @@ setMethod("defaultViewCoordinator", signature(source = "ANY"),
 
 # Crop routing: relation decides, not storage kind ####
 #
-# A crop step narrows the cell set one of two ways:
+# A crop step narrows the cell set, which means reducing each cell to a
+# geometry and testing it against the region. Which geometry is DECLARED on
+# the step as `geom` (see `.view_crop_geoms` in classes-view.R), not
+# inferred here:
 #
-#   centroid path  test the cell's centroid (its spatial_locs row) against
-#                  the region. Cheap, and the conventional approximation in
-#                  spatial omics — `combineCellData()` already documents
-#                  using centroids for an intersects-style test.
-#   geom path      test the cell's actual polygon against the region.
-#                  Needs a polygon source, and is the only correct answer
-#                  for an area-based relation.
+#   geom = "centroid"  test the cell's `spatial_locs` row. Cheap, and the
+#                      conventional choice in spatial omics —
+#                      `combineCellData()` documents the same for an
+#                      intersects-style test. Approximate: a cell whose
+#                      polygon straddles the region boundary with its
+#                      centroid outside is dropped.
+#   geom = "poly"      test the cell's actual polygon. Exact; needs a
+#                      polygon source on the object.
 #
-# Which one is a property of the RELATION, not of where the data is
-# stored. A `within` predicate needs the geometry whether the target
-# subobject is an in-memory data.table or a parquet store, because the
-# geometry evaluation runs against the gobject's polygon source and the
-# resulting cell_ID set narrows the target downstream either way.
-#
-# Only `intersects` and `disjoint` are meaningful on a centroid:
-#
-#   intersects / disjoint   a point either falls in the region or not.
-#                           Centroid is an approximation of the polygon
-#                           test (a cell straddling the boundary with its
-#                           centroid outside is dropped), but it is the
-#                           conventional one.
-#   within / covered_by     "entirely inside" — centroid-inside is a
-#                           strictly weaker test, so the centroid path
-#                           would over-include.
-#   contains / covers       a point cannot contain a polygon; the centroid
-#                           path would return nothing at all.
-#   overlaps/touches/crosses  defined by boundary and interior
-#                           intersection between comparable dimensions;
-#                           point-vs-polygon degenerates.
-#
-# So the last five are silently wrong on centroids rather than merely
-# approximate, which is why routing is decided here rather than left to
-# whichever path a cache allocation happened to select.
-
-# Relations for which the centroid test is meaningful.
-.centroid_relations <- c("intersects", "disjoint")
-
-#' Does a crop relation require cell geometry?
-#'
-#' `TRUE` when a spatial relation must be evaluated against a cell's actual
-#' polygon rather than its centroid. Only `"intersects"` and `"disjoint"`
-#' are meaningful on a centroid; every other relation is defined by area or
-#' boundary and degenerates when one side is reduced to a point.
-#'
-#' Internal, and deliberately not exported yet. It is the routing rule the
-#' backed resolvers in \pkg{GiottoDisk} should share rather than duplicate —
-#' two copies of "which relations are centroid-safe" is exactly the drift
-#' this routing exists to prevent. But nothing calls it across the package
-#' boundary today, so exporting now would be a public commitment made ahead
-#' of its consumer. Export it in the change that makes GiottoDisk call it,
-#' not before.
-#'
-#' @param relation `character`. One or more relation names, as accepted by
-#'   [terra::is.related].
-#' @returns `logical` of the same length as `relation`
-#' @noRd
-crop_relation_needs_geom <- function(relation) {
-    checkmate::assert_character(relation, min.len = 1L, any.missing = FALSE)
-    !relation %in% .centroid_relations
-}
+# Reading the declaration rather than deriving it from the relation is what
+# lets a recorded recipe state which question it asks, and lets the backed
+# resolvers in {GiottoDisk} route on the same field instead of on target
+# storage kind. Storage is not a discriminator: a geom-mode predicate
+# evaluates against the gobject's polygon source and the resulting cell_ID
+# set narrows any target downstream.
 
 # Is this region an axis-aligned rectangle?
 #
@@ -359,26 +319,16 @@ crop_relation_needs_geom <- function(relation) {
     candidates$cell_ID[surv]
 }
 
-# GEOM PATH. Evaluate the relation against the cells' actual polygons and
-# return the surviving IDs. `polys` is a SpatVector carrying a poly_ID
-# column, already in the predicate frame.
-#' @keywords internal
-#' @noRd
-.cells_in_region_geom <- function(polys, region, relation) {
-    ids <- terra::values(polys)$poly_ID
-    if (is.null(ids)) {
-        stop("[crop] polygon source has no poly_ID column, so its ",
-            "geometries cannot be mapped back to cells", call. = FALSE)
-    }
-    ids[terra::is.related(polys, region, relation)]
-}
-
-# Fetch the polygon source for the geom path, in the predicate frame.
+# Fetch the polygon source for `geom = "poly"`, in the predicate frame.
+#
+# Returns a `giottoPolygon`, not a bare SpatVector, so `spatRelate()`
+# dispatches on it — the whole point of routing the geom arm through that
+# generic is that one call covers terra here and sedona/duckdb on a store.
 #
 # giottoMulti: polygons live per child, so each child's are fetched,
 # space-scoped, and their poly_IDs prefixed to `sample::id` to match the
 # joint cell vocabulary — the same shape `.get_projected_spatlocs()`
-# produces for the centroid path.
+# produces for the centroid arm.
 #' @keywords internal
 #' @noRd
 .get_projected_polys <- function(gobject, space, coordinator,
@@ -392,19 +342,23 @@ crop_relation_needs_geom <- function(relation) {
         if (!is.null(sp)) {
             gp <- .apply_space_to_subobj(gp, g, sp, coordinator)
         }
-        gp@spatVector
+        gp
     }
 
     if (inherits(gobject, "giottoMulti")) {
         parts <- lapply(names(gobject@objects), function(nm) {
-            sv <- one(gobject@objects[[nm]],
+            gp <- one(gobject@objects[[nm]],
                 .scope_space_to_sample(space, nm))
-            if (is.null(sv)) return(NULL)
+            if (is.null(gp)) return(NULL)
+            sv <- gp@spatVector
             sv$poly_ID <- paste(nm, terra::values(sv)$poly_ID, sep = "::")
-            sv
+            gp@spatVector <- sv
+            gp@unique_ID_cache <- terra::values(sv)$poly_ID
+            gp
         })
         parts <- Filter(Negate(is.null), parts)
         if (length(parts) == 0L) return(NULL)
+        if (length(parts) == 1L) return(parts[[1L]])
         return(do.call(rbind, parts))
     }
     one(gobject, space)
@@ -412,30 +366,33 @@ crop_relation_needs_geom <- function(relation) {
 
 # Route one crop step and return its surviving cell_IDs.
 #
-# The decision is (relation, polygon source availability) — see the
-# routing notes above. A geom-requiring relation with no polygon source is
-# a loud error: falling back to centroids would answer a different
-# question than the one asked, and silently.
+# Two arms, selected by the step's DECLARED `geom` — no relation
+# inspection. A declared `geom = "poly"` with no polygon source on the
+# object is a loud error: the caller asked for the geometric question, and
+# silently answering the centroid one instead is the failure mode this
+# whole design exists to remove.
 #' @keywords internal
 #' @noRd
 .cells_in_crop_step <- function(gobject, step, sl_dt, space, coordinator,
                                 spat_unit = NULL) {
     region <- .materialize_crop_region(step$region)
-    if (!crop_relation_needs_geom(step$relation)) {
-        return(.cells_in_region(sl_dt, region, step$relation))
-    }
-    polys <- .get_projected_polys(gobject, space, coordinator,
-        spat_unit = spat_unit)
-    if (is.null(polys)) {
-        stop(sprintf(paste0(
-            "[crop] relation '%s' must be evaluated against cell ",
-            "geometry, but this object has no polygon source to ",
-            "evaluate it on.\nEither add polygons (`setPolygonInfo()`), ",
-            "or use relation = 'intersects' / 'disjoint', which are ",
-            "defined on cell centroids."),
-            step$relation), call. = FALSE)
-    }
-    .cells_in_region_geom(polys, region, step$relation)
+    switch(step$geom,
+        centroid = .cells_in_region(sl_dt, region, step$relation),
+        poly = {
+            polys <- .get_projected_polys(gobject, space, coordinator,
+                spat_unit = spat_unit)
+            if (is.null(polys)) {
+                stop(sprintf(paste0(
+                    "[crop] geom = \"poly\" was requested (relation '%s'), ",
+                    "but this object has no polygon source to evaluate it ",
+                    "on.\nEither add polygons (`setPolygonInfo()`) or use ",
+                    "geom = \"centroid\"."),
+                    step$relation), call. = FALSE)
+            }
+            spatIDs(spatRelate(polys, region, relation = step$relation))
+        },
+        stop("[crop] unknown geom '", step$geom, "'", call. = FALSE)
+    )
 }
 
 # Pull the gobject's spatLocs (active spat_unit) as a data.table, optionally
@@ -499,7 +456,7 @@ crop_relation_needs_geom <- function(relation) {
         checkmate::assert_string(view, .var.name = "view")
     }
     v <- if (is.null(view)) NULL else giottoView(gobject, view)
-    # `space` here is the OUTPUT frame -- the predicate frame (view@space)
+    # `space` here is the OUTPUT frame -- the predicate frame (the view's `space`)
     # is consulted independently by the crop step handlers below.
     s <- .resolve_space(gobject, space)
     co <- if (is.null(coordinator)) .default_view_coordinator(gobject)
@@ -540,7 +497,7 @@ crop_relation_needs_geom <- function(relation) {
 # Returns a character vector of cell_IDs; NULL means "no narrowing" (all
 # cells survive).
 #
-# The PREDICATE frame for crop steps is `view@space` -- the frame the
+# The PREDICATE frame for crop steps is the view's `space` -- the frame the
 # crop region was drawn in. This is independent of any output space the
 # caller may have requested via the explicit `space=` arg, which is why
 # this helper does not take a `space` argument.
@@ -560,14 +517,14 @@ crop_relation_needs_geom <- function(relation) {
         surviving <- intersect(surviving, keep)
     }
     if (length(crop_steps) > 0L) {
-        pred_space <- if (!is.na(view@space)) {
-            .resolve_space(gobject, view@space)
+        pred_space <- if (!is.na(view$space)) {
+            .resolve_space(gobject, view$space)
         } else NULL
-        # Centroids are only fetched if some step actually needs them —
-        # an all-geom recipe on a polygon-only object should not warn
+        # Centroids are only fetched if some step declares it needs them,
+        # so an all-poly recipe on a polygon-only object does not warn
         # about missing spatial locations.
-        needs_centroid <- any(!vapply(crop_steps,
-            function(s) crop_relation_needs_geom(s$relation), logical(1L)))
+        needs_centroid <- any(vapply(crop_steps,
+            function(s) identical(s$geom, "centroid"), logical(1L)))
         sl_dt <- if (needs_centroid) {
             .get_projected_spatlocs(gobject, pred_space, coordinator)
         } else NULL
@@ -575,7 +532,7 @@ crop_relation_needs_geom <- function(relation) {
             warning("crop step skipped: no spatial locations available",
                 call. = FALSE)
             crop_steps <- Filter(
-                function(s) crop_relation_needs_geom(s$relation), crop_steps)
+                function(s) identical(s$geom, "poly"), crop_steps)
         }
         for (step in crop_steps) {
             keep <- .cells_in_crop_step(gobject, step, sl_dt,

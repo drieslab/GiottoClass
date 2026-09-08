@@ -48,7 +48,7 @@ sometimes produce extent-filling polygons when the original geometry is
 problematic or invalid. Set \code{TRUE} to remove these, based on whether a
 polygon fills up most of the x and y range.}
 
-\item{view, space}{optional \link[=giottoView-class]{giottoView} / \link[=giottoSpace-class]{giottoSpace} or
+\item{view, space}{optional \link{giottoView} / \link{giottoSpace} or
 the name of one slotted on \code{gobject}. When supplied, each constituent
 subobject is fetched with the view applied (predicate / crop / sample
 narrowing) and the space transforms composed, before being combined.

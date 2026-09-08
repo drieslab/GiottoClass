@@ -4,31 +4,23 @@
 NULL
 
 # =============================================================================
-# methods-view.R — public API for giottoView
+# methods-view.R — the view recorder and accessors
 #
 # Views are subset/narrowing recipes only — no transforms. Transforms live on
-# `giottoSpace` (see methods-space.R). A view may reference a slotted space
-# via `@space`; crop regions are then meaningful in that frame.
+# the space recipe (see methods-space.R). A view may reference a slotted
+# space by name; crop regions are then meaningful in that frame.
 #
-# Methods added here (record-style on view receiver):
-#   subset(view, predicate)        NSE
-#   crop(view, region)             record a crop step
-#   selectSamples(view, ...)       record a samples step (gmulti-only)
-#
-# `+` for `giottoView + giottoView` is reserved (errors for now).
+# There is no view-receiver surface: every op reaches a view through the
+# gobject method that takes `view = `, which records the step onto the named
+# slot (decision Q8). The recording verbs live with their generics —
+# `subset()` in `methods-extract.R`, `crop()` in `methods-crop.R`,
+# `selectSamples()` below.
 # =============================================================================
-
-
-# Constructor ####
-# `giottoView()` and `giottoView(space = "x")` dispatch through the generic
-# on `signature(gobject = "missing", name = "missing")` (defined below
-# alongside the accessor methods). `...` carries the optional `space`
-# argument through to the method.
 
 
 # Internal helper ####
 .view_record_step <- function(view, step) {
-    view@steps <- c(view@steps, list(step))
+    view$steps <- c(view$steps, list(step))
     view
 }
 
@@ -38,19 +30,17 @@ NULL
 # executing eagerly. Returns the gobject with the named view slotted /
 # appended.
 .record_view_on_gobject <- function(gobject, view, step, space = NULL) {
-    # view contract: character(1) name of a slotted view, or NULL.
-    # Inline giottoView objects were considered and rejected (see
-    # vignettes/articles/DESIGN_gmulti_federation.md). If programmatic
-    # composition is needed, build the view, slot it under a name, then
-    # reference it:
-    #   v <- giottoView() |> subset(...) |> crop(...)
-    #   giottoView(g, "tmp") <- v
-    #   subset(g, ..., view = "tmp")
+    # view contract: character(1) name. Views are identified by name only —
+    # passing a recipe inline was considered and rejected (see
+    # vignettes/articles/DESIGN_gmulti_federation.md), because it would make
+    # the same call site sometimes return a gobject and sometimes a recipe.
+    # A view that does not exist yet is created here, so recording is the
+    # construction path.
     checkmate::assert_string(view, .var.name = "view")
     existing <- if (view %in% giottoViews(gobject)) {
         giottoView(gobject, view)
     } else {
-        giottoView()
+        .new_view()
     }
     existing <- .view_bind_space(existing, space)
     new_view <- .view_record_step(existing, step)
@@ -100,71 +90,6 @@ NULL
     }
     default
 }
-
-
-# subset() — NSE predicate capture on views ####
-
-#' @title Subset (filter) a giottoView
-#' @name subset-view
-#' @description
-#' Record a predicate-style filter step on a [giottoView-class]. The
-#' predicate expression is captured unevaluated (NSE) at call site; at
-#' resolution time it is evaluated against `spatValues(g, feats = <names
-#' in predicate>)`, with any additional arguments (`spat_unit`, `feat_type`,
-#' `negate`, ...) forwarded through.
-#'
-#' Values from the calling frame are substituted into the predicate at
-#' record time, so `subset(v, cluster == target)` records the *value* of
-#' `target` rather than a reference to it — the recipe does not change if
-#' `target` is later reassigned, and it survives serialization.
-#'
-#' Cell-keyed propagation to other slots is automatic via cell_ID relations
-#' — no flag needed.
-#'
-#' @param x a `giottoView`
-#' @param subset an unevaluated predicate expression (captured via NSE)
-#' @param ... additional arguments forwarded to the underlying subset /
-#'   spatValues call at resolution time (`spat_unit`, `feat_type`, `negate`,
-#'   `feat_ids`, `cell_ids`, ...)
-#' @returns the view, with the filter step recorded
-#' @examples
-#' v <- subset(giottoView(), cluster == "A")
-#' v
-NULL
-
-#' @rdname subset-view
-#' @export
-setMethod("subset", signature(x = "giottoView"),
-    function(x, subset, ...) {
-        pred <- substitute(subset)
-        env <- .find_predicate_env(pred, parent.frame())
-        pred <- .eager_substitute_env(pred, env)
-        .view_record_step(x, .view_step_filter(pred, scope_args = list(...)))
-    }
-)
-
-
-# crop() — region narrowing on views ####
-# Note: name kept as crop() for ergonomics (familiar verb), but the semantic
-# is relate-based membership, not geometric clipping. The view records the
-# region + relation; resolution narrows cells whose centroid satisfies the
-# relation against the region. Geometry of surviving subobjects is NOT
-# modified — only the cell set narrows.
-
-#' @rdname crop
-#' @param relation `character(1)`. Spatial relation evaluated against cell
-#'   centroids. One of `"intersects"` (default), `"within"`, `"contains"`,
-#'   `"covers"`, `"covered_by"`, `"overlaps"`, `"touches"`, `"crosses"`,
-#'   `"disjoint"`. Passed through to [terra::is.related].
-#' @export
-setMethod("crop", signature(x = "giottoView", y = "ANY"),
-    function(x, y, relation = "intersects", ..., space = NULL) {
-        checkmate::assert_character(relation, len = 1L, any.missing = FALSE)
-        x <- .view_bind_space(x, space)
-        .view_record_step(x,
-            .view_step_crop(.normalize_crop_region(y), relation))
-    }
-)
 
 
 # Crop region recording — WKT is the canonical form ####
@@ -261,15 +186,15 @@ setMethod("crop", signature(x = "giottoView", y = "ANY"),
 }
 
 
-# Bind a view to a named space. First call sets @space; later calls with
+# Bind a view to a named space. First call sets `space`; later calls with
 # the same name are a no-op; later calls with a different name error.
 # `space = NULL` is a no-op (leave whatever's there).
 .view_bind_space <- function(view, space) {
     if (is.null(space)) return(view)
     checkmate::assert_character(space, len = 1L, any.missing = FALSE)
-    cur <- view@space
+    cur <- view$space
     if (is.na(cur)) {
-        view@space <- space
+        view$space <- space
         return(view)
     }
     if (!identical(cur, space)) {
@@ -287,39 +212,30 @@ setMethod("crop", signature(x = "giottoView", y = "ANY"),
 #' @title Select samples within a gmulti-scoped view
 #' @name selectSamples
 #' @description
-#' Record a sample-selection step on a [giottoView-class] that will be
-#' consumed against a [giottoMulti-class]. Picks which children participate
-#' in resolution. The step is resolved FIRST, before any other step. Warns
-#' at resolution time if the parent is not a `giottoMulti`.
+#' Record a sample-selection step on a named view that will be consumed
+#' against a [giottoMulti-class]. Picks which children participate in
+#' resolution. The step is resolved FIRST, before any other step. Warns at
+#' resolution time if the parent is not a `giottoMulti`.
 #'
-#' @param x a `giottoView`
+#' @param x a `giotto` or `giottoMulti` object
 #' @param ... `character` child names (or a single `character` vector)
-#' @returns the view, with the sample-select step recorded
+#' @param view `character(1)`. Name of the view to record onto; created if
+#'   it does not exist yet.
+#' @returns `x`, with the sample-select step recorded on the named view
 #' @examples
-#' v <- selectSamples(giottoView(), "sample1", "sample2")
-#' v
+#' g <- giotto()
+#' g <- selectSamples(g, "sample1", "sample2", view = "pair")
+#' giottoViews(g)
 #' @export
 setGeneric("selectSamples",
-    function(x, ...) standardGeneric("selectSamples"))
+    function(x, ..., view) standardGeneric("selectSamples"))
 
 #' @rdname selectSamples
 #' @export
-setMethod("selectSamples", signature(x = "giottoView"),
-    function(x, ...) {
+setMethod("selectSamples", signature(x = "gAny"),
+    function(x, ..., view) {
         samples <- unlist(list(...), use.names = FALSE)
-        .view_record_step(x, .view_step_samples(samples))
-    }
-)
-
-
-# Composition (+) ####
-# Cross-view composition is reserved for a follow-up.
-
-#' @noRd
-setMethod("+", signature(e1 = "giottoView", e2 = "giottoView"),
-    function(e1, e2) {
-        stop("giottoView + giottoView: cross-view composition is not yet ",
-            "implemented.", call. = FALSE)
+        .record_view_on_gobject(x, view, .view_step_samples(samples))
     }
 )
 
@@ -329,27 +245,33 @@ setMethod("+", signature(e1 = "giottoView", e2 = "giottoView"),
 #' @title Slotted views on a giotto object
 #' @name giottoView
 #' @description
-#' List, retrieve, attach, or remove [giottoView-class] objects slotted into
-#' a [giotto-class] object's `@view` slot.
+#' List, retrieve, attach, or remove the view recipes held in a
+#' [giotto-class] object's `@view` slot.
 #'
-#' * `giottoView()` — construct an empty standalone view
-#' * `giottoView(g, "name")` — retrieve a slotted view by name
+#' * `giottoView(g, "name")` — retrieve a view by name
 #' * `giottoView(g, "name") <- v` — slot in (or replace) a view
 #' * `giottoView(g, "name") <- NULL` — remove a view
-#' * `giottoViews(g)` — list slotted view names
+#' * `giottoViews(g)` — list view names
+#'
+#' A view is a plain list — `list(steps = , space = , misc = )`. There is no
+#' standalone constructor: record onto a name with `subset(g, ...,
+#' view = "name")` or `crop(g, ..., view = "name")` and the view is created
+#' on first use. The setter exists to copy a recipe between objects and to
+#' remove one.
 #'
 #' Views are subset/narrowing recipes; for coordinate-frame recipes see
-#' [giottoSpace-class].
+#' [giottoSpace].
 #'
-#' @param gobject a `giotto` object (or omitted for the constructor)
+#' @param gobject a `giotto` object
 #' @param name `character(1)`. The slot key.
-#' @param value a `giottoView`, or `NULL` to remove.
-#' @param ... additional arguments. For the bare constructor, `space`.
+#' @param value a view `list`, or `NULL` to remove.
+#' @param ... additional arguments, currently unused
 #' @returns the view, an updated gobject, or a character vector of view names
 #' @examples
 #' g <- giotto()
-#' giottoView(g, "demo") <- giottoView()
+#' g <- selectSamples(g, "s1", "s2", view = "demo")
 #' giottoViews(g)
+#' giottoView(g, "demo")
 NULL
 
 #' @rdname giottoView
@@ -367,17 +289,6 @@ setGeneric("giottoView<-",
 setGeneric("giottoViews",
     function(gobject, ...) standardGeneric("giottoViews"))
 
-#' @rdname giottoView-class
-#' @export
-setMethod("giottoView", signature(gobject = "missing", name = "missing"),
-    function(gobject, name, space = NA_character_, ...) {
-        if (!is.na(space)) {
-            checkmate::assert_character(space, len = 1L, any.missing = FALSE)
-        }
-        new("giottoView", space = as.character(space))
-    }
-)
-
 #' @rdname giottoView
 #' @export
 setMethod("giottoView", signature(gobject = "gAny", name = "character"),
@@ -385,7 +296,7 @@ setMethod("giottoView", signature(gobject = "gAny", name = "character"),
         checkmate::assert_character(name, len = 1L)
         v <- gobject@view[[name]]
         if (is.null(v)) {
-            stop("no slotted giottoView named '", name, "'. ",
+            stop("no view named '", name, "'. ",
                 "Available: ", paste(giottoViews(gobject), collapse = ", "),
                 call. = FALSE)
         }
@@ -408,10 +319,12 @@ setMethod("giottoView", signature(gobject = "gAny", name = "missing"),
 #' @rdname giottoView
 #' @export
 setMethod("giottoView<-",
-    signature(gobject = "gAny", name = "character", value = "giottoView"),
+    signature(gobject = "gAny", name = "character", value = "list"),
     function(gobject, name, ..., value) {
         checkmate::assert_character(name, len = 1L)
-        value@name <- name
+        # the class is gone, so this setter is where a hand-built or
+        # copied-in recipe gets checked
+        value <- .validate_view(value, .var.name = "value")
         if (is.null(gobject@view)) gobject@view <- list()
         gobject@view[[name]] <- value
         gobject
@@ -446,7 +359,7 @@ setMethod("giottoViews", signature(gobject = "gAny"),
 #' @title materialize a giottoView into a new gobject
 #' @name materialize
 #' @description
-#' Resolve a [giottoView-class] (optionally with a slotted [giottoSpace-class]
+#' Resolve a [giottoView] (optionally with a slotted [giottoSpace]
 #' frame) against a gobject and return a new gobject containing the projected
 #' subobjects. Use this when downstream work needs to produce structured
 #' outputs (spatial networks, dim reductions) on top of the projected data —
@@ -521,7 +434,7 @@ setGeneric("materialize",
     }
     # Normalise output space to a giottoSpace (or NULL) once at the
     # entry point so per-subobject resolution doesn't re-look-up by
-    # name. The predicate space (view@space) is consulted independently
+    # name. The predicate space (the view's `space`) is consulted independently
     # by the crop step handlers — it is not conflated with output here.
     space_obj <- .resolve_space(gobject, space)
     # Per-call cache shared across all slot walks within this
@@ -664,54 +577,9 @@ setMethod("materialize",
 }
 
 
-# Show methods ####
-
-#' @noRd
-setMethod("show", signature("giottoView"), function(object) {
-    cat("<giottoView>\n")
-    nm <- if (is.na(object@name)) "<ephemeral>" else object@name
-    cat(sprintf("  name : %s\n", nm))
-    sp <- if (is.na(object@space)) "<native>" else object@space
-    cat(sprintf("  space: %s\n", sp))
-    if (length(object@steps) == 0L) {
-        cat("  (empty — pipe through `subset()`, `crop()`, `selectSamples()`)\n")
-        return(invisible(NULL))
-    }
-    cat("  steps:\n")
-    for (s in object@steps) {
-        cat(sprintf("    - %s\n", .view_step_label(s)))
-    }
-})
-
-# Compact one-line label for a view step — used by show methods.
-.view_step_label <- function(step) {
-    switch(step$type,
-        filter = {
-            scope <- if (length(step$scope_args) > 0L) {
-                scope_str <- paste(names(step$scope_args), "=",
-                    vapply(step$scope_args, function(a) {
-                        tryCatch(paste(deparse(a), collapse = " "),
-                            error = function(e) "?")
-                    }, character(1L)), collapse = ", ")
-                sprintf(" [%s]", scope_str)
-            } else ""
-            sprintf("filter:    %s%s", step$predicate, scope)
-        },
-        crop = {
-            rel <- if (identical(step$relation, "intersects")) ""
-                else sprintf(" [%s]", step$relation)
-            sprintf("crop:      %s%s", .wkt_label(step$region), rel)
-        },
-        samples = sprintf("samples:   %s",
-            paste(step$samples, collapse = ", ")),
-        sprintf("<%s>", step$type)
-    )
-}
-
-# WKT strings are long; show the geometry type and vertex count instead of
-# the literal, which would wrap over several lines for any real polygon.
-.wkt_label <- function(wkt) {
-    type <- sub("^\\s*([A-Za-z]+).*$", "\\1", wkt)
-    n <- lengths(regmatches(wkt, gregexpr(",", wkt, fixed = TRUE))) + 1L
-    sprintf("<%s: %d vertices>", toupper(type), n)
-}
+# Q8 removed `show(giottoView)` / `show(giottoSpace)` along with the
+# classes, and with them `.view_step_label()` / `.space_step_label()` /
+# `.wkt_label()`, which had no other callers. Recipes now print as the
+# lists they are. Note a crop step holds a full WKT string, so a real
+# polygon prints long -- a summary on `show(giotto)` is the natural
+# replacement and is deliberately not part of this change.

@@ -121,7 +121,7 @@ combineMetadata <- function(gobject,
 #' @param gobject Giotto object
 #' @param spat_unit spatial unit
 #' @param feat_type feature type(s)
-#' @param view,space optional [giottoView-class] / [giottoSpace-class] or
+#' @param view,space optional [giottoView] / [giottoSpace] or
 #' the name of one slotted on `gobject`. Threaded through to the
 #' underlying `getPolygonInfo` and `getCellMetadata` calls so the
 #' returned table reflects the view-scoped subset.
@@ -232,7 +232,7 @@ combineSpatialCellMetadataInfo <- function(gobject,
 #' sometimes produce extent-filling polygons when the original geometry is
 #' problematic or invalid. Set `TRUE` to remove these, based on whether a
 #' polygon fills up most of the x and y range.
-#' @param view,space optional [giottoView-class] / [giottoSpace-class] or
+#' @param view,space optional [giottoView] / [giottoSpace] or
 #' the name of one slotted on `gobject`. When supplied, each constituent
 #' subobject is fetched with the view applied (predicate / crop / sample
 #' narrowing) and the space transforms composed, before being combined.
@@ -458,7 +458,7 @@ combineCellData <- function(gobject,
 #' @param feat_type feature type
 #' @param spat_unit spatial unit
 #' @param sel_feats selected features (default: NULL or no selection)
-#' @param view,space optional [giottoView-class] / [giottoSpace-class] or
+#' @param view,space optional [giottoView] / [giottoSpace] or
 #' the name of one slotted on `gobject`. Threaded through to
 #' `getFeatureInfo` and `getFeatureMetadata` so feature-level view
 #' projections are applied before assembly.
@@ -567,7 +567,7 @@ combineFeatureData <- function(gobject,
 #' @param feat_type feature type
 #' @param sel_feats selected features (default: NULL or no selection)
 #' @param poly_info polygon information name
-#' @param view,space optional [giottoView-class] / [giottoSpace-class] or
+#' @param view,space optional [giottoView] / [giottoSpace] or
 #' the name of one slotted on `gobject`. Threaded through the underlying
 #' getFeatureMetadata / getPolygonInfo / getFeatureInfo calls — the
 #' returned table reflects the view-scoped subset. One resolver pass is

@@ -40,7 +40,7 @@ share one resolver pass without paying for irrelevant slots.}
 a new \code{giotto} object reflecting the resolved view
 }
 \description{
-Resolve a \link[=giottoView-class]{giottoView} (optionally with a slotted \link[=giottoSpace-class]{giottoSpace}
+Resolve a \link{giottoView} (optionally with a slotted \link{giottoSpace}
 frame) against a gobject and return a new gobject containing the projected
 subobjects. Use this when downstream work needs to produce structured
 outputs (spatial networks, dim reductions) on top of the projected data —

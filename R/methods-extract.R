@@ -1861,18 +1861,24 @@ setMethod("subset", signature("giotto"), function(
         quote = TRUE,
         view = NULL,
         ...) {
-    # Indirect-usage path: `view = <name|giottoView>` records the
-    # subset as a recipe step rather than executing eagerly. The
-    # predicate NSE capture mirrors subset(giottoView) so the recipe
-    # is self-contained (free vars eagerly substituted from the user
-    # frame).
+    # Indirect-usage path: `view = "<name>"` records the subset as a recipe
+    # step rather than executing eagerly, creating the view if it is new.
+    # The predicate is captured by NSE and made self-contained (free vars
+    # eagerly substituted from the user frame) so the recipe serializes.
     if (!is.null(view)) {
         pred <- substitute(subset)
+        # `negate` is folded into the predicate here, exactly as the eager
+        # path below does it (`sub_s <- call("!", sub_s)`), so the step
+        # records the EFFECTIVE predicate. Keeping it as a separate field
+        # would be a second way to say the same thing, and `spatValues()` --
+        # which the step's scope_args are forwarded to -- has no concept of
+        # negation to hand it to.
+        if (negate) pred <- call("!", pred)
         pred <- .eager_substitute_env(pred,
             .find_predicate_env(pred, parent.frame()))
         step <- .view_step_filter(pred,
             scope_args = list(spat_unit = spat_unit, feat_type = feat_type,
-                              negate = negate, ...))
+                              ...))
         return(.record_view_on_gobject(x, view, step))
     }
 

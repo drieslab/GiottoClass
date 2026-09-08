@@ -22,7 +22,7 @@ combineFeatureOverlapData(
 
 \item{poly_info}{polygon information name}
 
-\item{view, space}{optional \link[=giottoView-class]{giottoView} / \link[=giottoSpace-class]{giottoSpace} or
+\item{view, space}{optional \link{giottoView} / \link{giottoSpace} or
 the name of one slotted on \code{gobject}. Threaded through the underlying
 getFeatureMetadata / getPolygonInfo / getFeatureInfo calls — the
 returned table reflects the view-scoped subset. One resolver pass is

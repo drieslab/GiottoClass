@@ -2,10 +2,9 @@
 # giottoSpace — coordinate-frame recipe (parallel space opt-in)
 # =============================================================================
 #
-# `giottoSpace` is a composable standalone S4 class describing a coordinate
-# frame for a `giotto` (single-sample) or `giottoMulti` (multi-sample) object.
-# Slotted spaces are named alternate coordinate frames that consumer functions
-# opt into via `space = "name"`.
+# A space describes a coordinate frame for a `giotto` (single-sample) or
+# `giottoMulti` (multi-sample) object. Slotted spaces are named alternate
+# coordinate frames that consumer functions opt into via `space = "name"`.
 #
 # Unlike views (which are read-only narrowings), spaces are NOT subject to
 # the read-only contract — analyses run in a non-native space are fine; the
@@ -18,20 +17,24 @@
 # supported here — sample-level is the granularity that matches the typical
 # spatialomics alignment workflow.
 #
-# Shape:
+# Shape — spaces are built through the gobject, by name:
 #   # single-sample (giotto)
-#   s <- giottoSpace() |> affine(M)
-#   giottoSpace(g, "tilted") <- s
+#   g <- affine(g, M, space = "tilted")
 #
-#   # multi-sample (giottoMulti)
-#   sa <- giottoSpace("sample_a") |> affine(M_a)
-#   sb <- giottoSpace("sample_b") |> affine(M_b)
-#   atlas <- sa + sb                       # combine sample recipes
-#   giottoSpace(mg, "atlas") <- atlas
+#   # multi-sample (giottoMulti). `samples =` scopes the transform to named
+#   # children, which is what a cross-sample layout needs.
+#   mg <- affine(mg, M_a, space = "atlas", samples = "sample_a")
+#   mg <- spatShift(mg, dx = 8000, space = "atlas", samples = "sample_b")
 #
-# `+` composition:
-#   * same-sample (`sample_a` + `sample_a`) → steps concatenated in order
-#   * different-sample → samples merged into one giottoSpace keyed by name
+# Recording twice against the same sample concatenates steps in order.
+# `samples = NULL` records against every sample already keyed in the space,
+# or against the `:default:` sentinel when the space is new.
+#
+# Q8 replaced `+` and the sample-keyed constructor `giottoSpace("sample_a")`
+# with `samples =`. The old form inherited scope from construction history:
+# `.space_record()` appended to every sample keyed so far, so
+# `(a + b) |> spin(30)` differed from `(a |> spin(30)) + b` with nothing at
+# the call site to say which had happened.
 #
 # Step taxonomy — one type, `"transform"`: a deferred call to one of the
 # GiottoClass spatial transform generics (`affine`, `spin`, `spatShift`,
@@ -39,18 +42,28 @@
 # gobject (or child) is spliced as the first argument and `do.call()`
 # dispatches to the existing transform method.
 #
-# Steps are plain tagged lists rather than S4 for the reasons given at the
-# top of `R/classes-view.R` (decision Q7). `args` is whitelisted to
-# serializable types at record time so the recipe survives `saveRDS` and
+# Steps are recorded individually and never folded at record time, which is
+# what keeps a recipe hand-editable. Application is currently stepwise too
+# -- one pass per step per subobject -- and should not be: all the ops
+# except `zoom` are affine, and `affine2d` already composes them. Planned,
+# with the shape and the exactness argument, in
+# vignettes/articles/IMPLEMENTATION_viewspace.md section 5.
+#
+# A space is
+#
+#   list(samples = list("<sample>" = list(<step>, ...)), misc = list())
+#
+# Both the steps and the container are plain lists, for the reasons given at
+# the top of `R/classes-view.R` (decisions Q7 and Q8). `args` is whitelisted
+# to serializable types at record time so the recipe survives `saveRDS` and
 # reaches a parallel worker.
 #
 # Storage on gobject:
-#   `gobject@spaces` — named list of `giottoSpace`. Sentinel sample name
+#   `gobject@spaces` — named list of space recipes. Sentinel sample name
 #   `:default:` is used for single-giotto entries (no explicit sample).
 #
 # See `R/classes-view.R` for the subset/narrowing recipe.
-# See `R/methods-space.R` for the constructors, `+` composition, record
-# methods on the existing transform generics, accessor, show.
+# See `R/methods-space.R` for the recorder and the accessors.
 # =============================================================================
 
 
@@ -142,78 +155,61 @@
 }
 
 
-# giottoSpace ####
+# space recipe ####
 
-#' @title S4 giottoSpace class
-#' @name giottoSpace-class
-#' @description A `giottoSpace` is a composable, opt-in coordinate-frame
-#' recipe over a `giotto` (single-sample) or `giottoMulti` (multi-sample)
-#' object. It records a sequence of spatial transform steps keyed by sample
-#' name; consumer functions opt into a named space via `space = "name"` and
-#' the recorded transforms are applied to position the data in that frame.
+# The fields a space carries. Dropped with the S4 class: `name` (redundant
+# -- the name is the key under `gobject@spaces`) and `source` (documented
+# as reserved, never read).
+.space_fields <- c("samples", "misc")
+
+#' Construct a space recipe.
 #'
-#' Transforms in a space are SAMPLE-UNIFORM — within a single sample, all
-#' spatial elements move together. Per-element overrides are not supported;
-#' use [materialize()] and per-element transforms post-hoc for that.
+#' The single place a space's shape is written down.
 #'
-#' Compose with `+` to combine per-sample recipes into a multi-sample space:
+#' Starts with NO sample keys. The `:default:` sentinel is added by
+#' `.space_record()` only when a transform is recorded without a `samples`
+#' scope -- seeding it here instead would leave an empty sentinel chain
+#' beside the real keys on every per-sample space, which then reads as a
+#' third participating sample and makes `.scope_space_to_sample()` fall
+#' back to it for children that should have matched nothing.
+#' @noRd
+.new_space <- function(samples = list(), misc = list()) {
+    list(samples = samples, misc = misc)
+}
+
+#' Validate a whole space, whatever produced it.
 #'
-#' ```r
-#' sa <- giottoSpace("sample_a") |> affine(M_a)
-#' sb <- giottoSpace("sample_b") |> affine(M_b)
-#' atlas <- sa + sb
-#' giottoSpace(mg, "atlas") <- atlas
-#' ```
-#'
-#' Same-sample composition concatenates steps in order:
-#'
-#' ```r
-#' s <- (giottoSpace("sample_a") |> spin(30)) +
-#'      (giottoSpace("sample_a") |> spatShift(dx = 10))
-#' ```
-#'
-#' @slot samples named `list`. Keys are sample names (`:default:` for
-#'   single-giotto context); values are lists of transform steps to apply in
-#'   order. Each step is a plain tagged list
-#'   (`list(type = "transform", op = , args = )`) — see the notes at the top
-#'   of `R/classes-view.R` for why steps are not S4.
-#' @slot name `character(1)`. `NA_character_` until slotted into a gobject.
-#' @slot source `ANY`. Reserved pointer / fingerprint. `NULL` for standalone.
-#' @slot misc `list`. Provenance, cache keys.
-#' @returns `giottoSpace`
-#' @examples
-#' giottoSpace()
-#' giottoSpace("sample_a")
-#' @export
-#' @exportClass giottoSpace
-setClass(
-    "giottoSpace",
-    slots = list(
-        samples = "list",
-        name    = "character",
-        source  = "ANY",
-        misc    = "list"
-    ),
-    prototype = list(
-        samples = list(),
-        name    = NA_character_,
-        source  = NULL,
-        misc    = list()
-    ),
-    validity = function(object) {
-        if (length(object@samples) > 0L) {
-            nms <- names(object@samples)
-            if (is.null(nms) || any(is.na(nms)) || any(nms == "")) {
-                return("@samples must be a named list (sample name -> step list)")
-            }
-            ok <- tryCatch({
-                for (steps in object@samples) {
-                    lapply(steps, .validate_space_step)
-                }
-                TRUE
-            }, error = function(e) conditionMessage(e))
-            if (!isTRUE(ok)) return(ok)
-        }
-        TRUE
+#' Runs in the recorder and in `giottoSpace<-`. Unknown fields are rejected
+#' for the same reason as in `.validate_view()`: recipes are hand-editable,
+#' and a typo'd field would otherwise be ignored at resolve time.
+#' @noRd
+.validate_space <- function(space, .var.name = "space") {
+    if (!is.list(space)) {
+        stop("[space] `", .var.name, "` must be a list (got '",
+            class(space)[[1L]], "')", call. = FALSE)
     }
-)
+    unknown <- setdiff(names(space), .space_fields)
+    if (length(unknown) > 0L) {
+        stop("[space] unknown field(s): ",
+            paste(sprintf("`%s`", unknown), collapse = ", "),
+            ". A space holds: ", paste(.space_fields, collapse = ", "),
+            call. = FALSE)
+    }
+    checkmate::assert_list(space$samples,
+        .var.name = paste0(.var.name, "$samples"))
+    checkmate::assert_list(space$misc, null.ok = TRUE,
+        .var.name = paste0(.var.name, "$misc"))
+    if (length(space$samples) > 0L) {
+        nms <- names(space$samples)
+        if (is.null(nms) || any(is.na(nms)) || any(!nzchar(nms))) {
+            stop("[space] `", .var.name, "$samples` must be a named list ",
+                "(sample name -> step list)", call. = FALSE)
+        }
+        for (steps in space$samples) {
+            checkmate::assert_list(steps,
+                .var.name = paste0(.var.name, "$samples[[i]]"))
+            lapply(steps, .validate_space_step)
+        }
+    }
+    space
+}

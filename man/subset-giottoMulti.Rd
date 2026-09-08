@@ -4,10 +4,22 @@
 \alias{subset-giottoMulti}
 \title{Subset a giottoMulti}
 \usage{
-\S4method{subset}{giottoMulti}(x, cells = NULL, features = NULL, ...)
+\S4method{subset}{giottoMulti}(
+  x,
+  subset,
+  cells = NULL,
+  features = NULL,
+  negate = FALSE,
+  view = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{a \code{giottoMulti}}
+
+\item{subset}{predicate expression, captured unevaluated. Only used with
+\verb{view = }, where it becomes the recorded filter step; the eager path
+narrows by ID vector instead (\code{cells} / \code{features}).}
 
 \item{cells}{\code{character} vector of global cell IDs to retain. \code{NULL} =
 no cell-level filter.}
@@ -15,7 +27,15 @@ no cell-level filter.}
 \item{features}{\code{character} vector of global feature IDs to retain.
 \code{NULL} = no feature-level filter.}
 
-\item{...}{not used}
+\item{negate}{logical. Invert the predicate. Folded into the recorded
+predicate, matching \verb{subset(<giotto>)}.}
+
+\item{view}{\code{NULL} or \code{character(1)}. When supplied, records the
+predicate as a filter step on the named view (created if new) instead
+of narrowing eagerly.}
+
+\item{...}{additional scope args forwarded to \code{spatValues()} when a
+recorded filter step resolves}
 }
 \value{
 a \code{giottoMulti} with \verb{@cell_ID} / \verb{@feat_ID} narrowed and
@@ -38,5 +58,6 @@ untouched and acts as the "widen back" handle.
 \examples{
 \dontrun{
 subset(mg, cells = c("a::c1", "a::c2"))
+subset(mg, leiden_clus == 1, view = "cluster1")
 }
 }

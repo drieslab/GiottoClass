@@ -22,7 +22,7 @@ combineFeatureData(
 
 \item{sel_feats}{selected features (default: NULL or no selection)}
 
-\item{view, space}{optional \link[=giottoView-class]{giottoView} / \link[=giottoSpace-class]{giottoSpace} or
+\item{view, space}{optional \link{giottoView} / \link{giottoSpace} or
 the name of one slotted on \code{gobject}. Threaded through to
 \code{getFeatureInfo} and \code{getFeatureMetadata} so feature-level view
 projections are applied before assembly.}

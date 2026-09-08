@@ -311,12 +311,11 @@ updateGiottoObject <- function(gobject) {
 # for updating pre-0.7.0 objects: add the @view slot that holds slotted
 # giottoView (subset/narrowing) recipes.
 #
-# Only initializes a slot that is genuinely absent. Unlike the pre-0.5.1
-# `@source` migration this one cannot assume the slot is empty: @view is
-# added while the package version is still 0.6.0, so a freshly built
-# object carrying real recipes also passes the version gate and reaches
-# here. Blanket-assigning NULL would silently drop them on the next
-# `loadGiotto()`.
+# Only initializes a slot that is genuinely absent, rather than blanket
+# assigning NULL like the pre-0.5.1 `@source` migration: a migration should
+# not destroy content it does not recognise. No released version carries
+# these slots, so today the two are equivalent -- but any object that does
+# reach here holding recipes would otherwise lose them on `loadGiotto()`.
 .update_view_slot <- function(x) {
     checkmate::assert_class(x, "giotto")
     if (is.null(attr(x, "view", exact = TRUE))) {

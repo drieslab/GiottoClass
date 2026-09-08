@@ -45,9 +45,9 @@ resolveSubobject(subobj, gobject, view, space, coordinator, ...)
 \item{gobject}{the parent \code{giotto} (needed for cross-slot lookups via
 \code{spatValues()})}
 
-\item{view}{a \link[=giottoView-class]{giottoView} or \code{NULL}}
+\item{view}{a \link{giottoView} or \code{NULL}}
 
-\item{space}{a \link[=giottoSpace-class]{giottoSpace} or \code{NULL}}
+\item{space}{a \link{giottoSpace} or \code{NULL}}
 
 \item{coordinator}{a \link[=viewCoordinator-class]{viewCoordinator}-inheriting object brokering
 IDs and joins between storage backings}
@@ -58,7 +58,7 @@ IDs and joins between storage backings}
 the projected subobject (same class as \code{subobj})
 }
 \description{
-Apply a \link[=giottoView-class]{giottoView} (and optional \link[=giottoSpace-class]{giottoSpace})
+Apply a \link{giottoView} (and optional \link{giottoSpace})
 recipe to a single subobject, returning the projected subobject. Dispatch
 is on \verb{(subobj, coordinator)} so different storage-bridging coordinators
 register different methods.

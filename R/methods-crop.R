@@ -341,34 +341,54 @@ setMethod(
 # Eager crop at the gobject level is not yet implemented (it would require
 # coordinated narrowing of every spatial subobject, images, expression and
 # metadata). Until then this method only accepts `view = `, recording a
-# viewCrop step onto the named slotted view (or onto a giottoView passed
-# directly). Eager calls without `view` error with a clear pointer.
+# crop step onto the named slotted view. Eager calls without `view` error
+# with a clear pointer.
+#
+# A crop narrows the CELL SET; it is relate-based membership, not geometric
+# clipping. Surviving subobjects keep their geometry.
 
 #' @rdname crop
-#' @param view `NULL`, `character(1)`, or a `giottoView`. When supplied,
-#'   records the crop as a step on the named slotted view (or on the
-#'   supplied recipe) instead of executing eagerly. Eager `crop()` on a
-#'   `giotto` is not yet implemented.
-#' @param space `NULL` or `character(1)`. Name of a slotted [giottoSpace-class]
-#'   on `x`. Sets the view's `@space` reference — the coordinate frame in
-#'   which the crop region is interpreted at resolution time. First call
-#'   sets it; subsequent calls that try to rebind to a different name error.
-#'   `NULL` leaves the view in whatever frame it was already bound to (or
-#'   the gobject's native frame if unbound).
+#' @param relation `character(1)`. Spatial predicate. A crop narrows the
+#'   **cell set**, so each cell is reduced to a geometry (see `geom`) and
+#'   tested against the region. One of `"intersects"` (default),
+#'   `"disjoint"`, `"within"`, `"touches"`, `"contains"`, `"covers"`,
+#'   `"overlaps"`, `"crosses"`. The last four are always `FALSE` against a
+#'   centroid, so requesting one promotes `geom` to `"poly"` with a warning.
+#'   (`"covered_by"` is not a terra predicate and is rejected.)
+#' @param geom `character(1)`. What represents a cell when the predicate is
+#'   evaluated: `"centroid"` (default) uses the cell's `spatial_locs` row —
+#'   cheap, and the conventional choice, but a cell whose polygon straddles
+#'   the region boundary with its centroid outside is dropped. `"poly"` uses
+#'   the cell's actual polygon — exact, and requires a polygon source on the
+#'   object. The choice is recorded on the step, so a saved recipe states
+#'   which question it asks.
+#' @param view `NULL` or `character(1)`. When supplied, records the crop as
+#'   a step on the named view, creating it if it does not exist yet, instead
+#'   of executing eagerly. Eager `crop()` on a `giotto` is not yet
+#'   implemented.
+#' @param space `NULL` or `character(1)`. Name of a slotted space on `x`.
+#'   Sets the view's `space` reference — the coordinate frame in which the
+#'   crop region is interpreted at resolution time. First call sets it;
+#'   subsequent calls that try to rebind to a different name error. `NULL`
+#'   leaves the view in whatever frame it was already bound to (or the
+#'   gobject's native frame if unbound).
 #' @export
 setMethod("crop", signature(x = "gAny", y = "ANY"),
-    function(x, y, relation = "intersects", ..., view = NULL, space = NULL) {
+    function(x, y, relation = "intersects", geom = c("centroid", "poly"),
+             ..., view = NULL, space = NULL) {
         if (is.null(view)) {
             stop("`crop()` on a giotto / giottoMulti requires `view = `. ",
-                "Eager gobject-level crop is not implemented. Either ",
-                "build a recipe with `giottoView() |> crop(...)` and apply ",
-                "it via `materialize()`, or pass `view = \"<name>\"` to ",
-                "record the step onto a slotted view.",
+                "Eager gobject-level crop is not implemented. Pass ",
+                "`view = \"<name>\"` to record the step onto a view, then ",
+                "apply it with `materialize(x, \"<name>\")`.",
                 call. = FALSE)
         }
         checkmate::assert_character(relation, len = 1L, any.missing = FALSE)
+        geom <- match.arg(geom)
         region <- .normalize_crop_region(y)
-        step <- .view_step_crop(region, relation)
+        # vocabulary checks and the poly-only promotion live in the step
+        # constructor, so they fire before anything is recorded on x
+        step <- .view_step_crop(region, relation, geom)
         .record_view_on_gobject(x, view, step, space = space)
     }
 )

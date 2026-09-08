@@ -6,7 +6,7 @@
 \alias{giottoSpaces}
 \alias{giottoSpace,gAny,character-method}
 \alias{giottoSpace,gAny,missing-method}
-\alias{giottoSpace<-,gAny,character,giottoSpace-method}
+\alias{giottoSpace<-,gAny,character,list-method}
 \alias{giottoSpace<-,gAny,character,NULL-method}
 \alias{giottoSpaces,gAny-method}
 \title{Slotted spaces on a giotto object}
@@ -21,45 +21,48 @@ giottoSpaces(gobject, ...)
 
 \S4method{giottoSpace}{gAny,missing}(gobject, name, ...)
 
-\S4method{giottoSpace}{gAny,character,giottoSpace}(gobject, name, ...) <- value
+\S4method{giottoSpace}{gAny,character,list}(gobject, name, ...) <- value
 
 \S4method{giottoSpace}{gAny,character,NULL}(gobject, name, ...) <- value
 
 \S4method{giottoSpaces}{gAny}(gobject, ...)
 }
 \arguments{
-\item{gobject}{a \code{giotto} object (or omitted for the constructor)}
+\item{gobject}{a \code{giotto} object}
 
-\item{name}{\code{character(1)}. The slot key (or sample name for the bare
-constructor).}
+\item{name}{\code{character(1)}. The slot key.}
 
 \item{...}{additional arguments (none currently used)}
 
-\item{value}{a \code{giottoSpace}, or \code{NULL} to remove.}
+\item{value}{a space \code{list}, or \code{NULL} to remove.}
 }
 \value{
 the space, an updated gobject, or a character vector of space names
 }
 \description{
-List, retrieve, attach, or remove \link[=giottoSpace-class]{giottoSpace} objects slotted into
+List, retrieve, attach, or remove \link{giottoSpace} objects slotted into
 a \link[=giotto-class]{giotto} object's \verb{@spaces} slot.
 \itemize{
-\item \code{giottoSpace()} — construct an empty standalone space (sample-anonymous)
-\item \code{giottoSpace("sample_a")} — construct an empty space bound to a named
-sample (for \code{giottoMulti} use)
-\item \code{giottoSpace(g, "name")} — retrieve a slotted space by name
+\item \code{giottoSpace(g, "name")} — retrieve a space by name
 \item \code{giottoSpace(g, "name") <- s} — slot in (or replace) a space
 \item \code{giottoSpace(g, "name") <- NULL} — remove a space
-\item \code{giottoSpaces(g)} — list slotted space names
+\item \code{giottoSpaces(g)} — list space names
 }
 
 Multiple slotted spaces serve as named alternate coordinate frames of the
 same gobject. Consumer functions opt into a frame via the \verb{space =}
 parameter.
+
+A space is a plain list — \code{list(samples = , misc = )}. There is no
+standalone constructor: record onto a name with a transform verb, e.g.
+\code{spatShift(g, dx = 10, space = "shifted")}, and the space is created on
+first use. On a \code{giottoMulti}, \verb{samples =} scopes the transform to named
+children. The setter exists to copy a recipe between objects and to
+remove one.
 }
 \examples{
 g <- giotto()
-s <- giottoSpace() # empty
-giottoSpace(g, "demo") <- s
+g <- spatShift(g, dx = 10, space = "demo")
 giottoSpaces(g)
+giottoSpace(g, "demo")
 }

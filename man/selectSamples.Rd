@@ -2,28 +2,32 @@
 % Please edit documentation in R/methods-view.R
 \name{selectSamples}
 \alias{selectSamples}
-\alias{selectSamples,giottoView-method}
+\alias{selectSamples,gAny-method}
 \title{Select samples within a gmulti-scoped view}
 \usage{
-selectSamples(x, ...)
+selectSamples(x, ..., view)
 
-\S4method{selectSamples}{giottoView}(x, ...)
+\S4method{selectSamples}{gAny}(x, ..., view)
 }
 \arguments{
-\item{x}{a \code{giottoView}}
+\item{x}{a \code{giotto} or \code{giottoMulti} object}
 
 \item{...}{\code{character} child names (or a single \code{character} vector)}
+
+\item{view}{\code{character(1)}. Name of the view to record onto; created if
+it does not exist yet.}
 }
 \value{
-the view, with the sample-select step recorded
+\code{x}, with the sample-select step recorded on the named view
 }
 \description{
-Record a sample-selection step on a \link[=giottoView-class]{giottoView} that will be
-consumed against a \link[=giottoMulti-class]{giottoMulti}. Picks which children participate
-in resolution. The step is resolved FIRST, before any other step. Warns
-at resolution time if the parent is not a \code{giottoMulti}.
+Record a sample-selection step on a named view that will be consumed
+against a \link[=giottoMulti-class]{giottoMulti}. Picks which children participate in
+resolution. The step is resolved FIRST, before any other step. Warns at
+resolution time if the parent is not a \code{giottoMulti}.
 }
 \examples{
-v <- selectSamples(giottoView(), "sample1", "sample2")
-v
+g <- giotto()
+g <- selectSamples(g, "sample1", "sample2", view = "pair")
+giottoViews(g)
 }

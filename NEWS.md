@@ -1,3 +1,112 @@
+# GiottoClass 0.7.0
+
+## new
+
+- **View and space recipes** — named records of *what* a narrowing or a
+  coordinate transform means, resolved on read rather than applied when
+  recorded, so one object can carry several competing narrowings and frames
+  at once. A view is a chain of `filter` / `crop` / `samples` steps; a space
+  is a chain of transform steps keyed by sample. Both are plain lists, not
+  S4: a view is `list(steps = , space = , misc = )` and a space is
+  `list(samples = , misc = )`.
+- `giotto` gains `@view` and `@spaces` slots. Objects saved by an earlier
+  version gain both on `loadGiotto()` / `updateGiottoObject()`.
+- Recipes are built by **recording onto a name**, not by a constructor.
+  `subset()`, `crop()` and `selectSamples()` gain `view =`, and the
+  coordinate-frame verbs (`spin()`, `spatShift()`, `affine()`, `flip()`,
+  `rescale()`) gain `space =`. The first call naming a recipe creates it;
+  later calls with the same name append. Read them back with `giottoView()`
+  / `giottoViews()` / `giottoSpace()` / `giottoSpaces()`; the `<-` setters
+  copy a recipe between objects or remove one, and validate what they are
+  handed.
+  A recorded recipe survives `saveRDS()` and reaches a parallel worker: the
+  subset predicate is captured unevaluated and deparsed with its
+  environment's values substituted in, and a crop region normalizes to WKT.
+  `negate = TRUE` is folded into the recorded predicate, so a step always
+  states the question it will ask.
+- `samples =` on the `giottoMulti` transform methods scopes a recorded
+  transform to named children, which is how a cross-sample layout is built.
+  Omitting it records against every sample the space already keys. A name
+  that is not a child of the object is rejected when the step is recorded,
+  rather than creating a chain nothing resolves against.
+- `crop()` gains `relation =` — the spatial predicate a crop step evaluates
+  (`intersects`, `disjoint`, `within`, `touches`, `contains`, `covers`,
+  `overlaps`, `crosses`) — and `geom = c("centroid", "poly")`, which declares
+  what represents a cell when the predicate is evaluated. Centroids are the
+  conventional approximation and remain the default; `geom = "poly"` tests
+  the cell polygon itself, and a cell straddling the region boundary is kept
+  or dropped accordingly. The four predicates that are always `FALSE` against
+  a point (`contains`, `covers`, `overlaps`, `crosses`) warn and promote to
+  `geom = "poly"`; the step records the *effective* value, so a serialized
+  recipe always states what it will do.
+- `materialize()` collapses a recipe into a real object: the recorded steps
+  are applied and the result no longer carries the view or space.
+- `resolveSubobject()` resolves one subobject through an active view and
+  space, so getters return recipe-consistent content. The getters and the
+  transform generics thread `view =` / `space =` through to it.
+- `spatRelate()` gains `SpatVector`, `character` (WKT), and `sf` methods on
+  its `y` side, so a `giottoSpatial` `x` can be narrowed against any of them
+  while keeping its carrier class. `engine =` is validated rather than
+  silently ignored: in memory only `NULL` / `"auto"` / `"terra"` are
+  honoured, and naming a SQL engine fails instead of quietly returning a
+  terra answer.
+
+- `giottoMulti` class — container federating several `giotto` objects into one
+  analysable unit. Spatial information stays per-child; non-spatial content is
+  shared at the parent. Constructed with `createGiottoMulti()`.
+- `gAny` virtual class — dispatch tag shared by `giotto` and `giottoMulti`, so
+  shared-domain methods can be written once. `giottoMulti` deliberately does
+  not inherit from `giotto`, so a spatial method with no `giottoMulti`
+  signature fails loudly rather than reading an absent slot.
+- `spatIDs()` and `featIDs()` gain `giottoMulti` methods, returning globally
+  namespaced (`sample::id`) IDs from the parent's identity registry. `local =
+  TRUE` returns child-level IDs and `object =` restricts to named children.
+- `subset()` method for `giottoMulti` narrows the joint analysis view to a set
+  of global cell and/or feature IDs. Narrowing is recorded on `@cell_ID` /
+  `@feat_ID` and applied when shared-domain getters read a joint slot; the
+  identity registry and the children themselves are left untouched, so the
+  un-subset object remains the widen-back handle. A change to the child
+  population resets any recorded narrowing.
+- `gmultiMapping()` / `gmultiMapping<-` — the `giottoMulti` federation
+  declaration. Three axes (`spat_unit`, `feat_type`, and `values` for
+  expression names) each map gmulti-level handles to per-sample child-level
+  names. Every entry keys every sample, with `NA_character_` as the
+  deliberate-skip sentinel; a keyed sample whose child cannot satisfy the
+  entry errors loudly at read time, naming the sample and the remedies.
+  Mapping edits invalidate joint content per affected universe, and expanding
+  a handle's participation is blocked once its universe holds materialized
+  joint content — drop the content, then re-declare.
+- Shared-domain getters (`getExpression`, `getCellMetadata`,
+  `getFeatureMetadata`) gain `giottoMulti` methods: the joint slot is read
+  when populated, otherwise content is assembled from children per the
+  mapping, with `sample::id` global IDs. New args: `samples =` slices to
+  named samples (also reachable as a `"sample::name"` prefix on `name =`),
+  and `on_missing = c("error", "drop", "fill")` governs children that cannot
+  contribute and mismatched feature panels / metadata columns — silent
+  partial federations are gone. Assembled objects carry the federation
+  handles on their identity tags (`spat_unit`, `feat_type`, `name`,
+  `provenance`) and, for expression, a participation stamp on `@misc`.
+- Spatial-domain accessors (`get/setSpatialLocations`, `get/setSpatialNetwork`,
+  `get/setPolygonInfo`, `get/setFeatureInfo`, `get/setGiottoImage`) gain
+  per-child `giottoMulti` dispatch: getters return named per-child lists
+  (scoped by `samples =` / `object =`) with any active narrowing applied to
+  the outputs; setters require a single named `object =` target.
+- `giottoMulti` container surface: `as(g, "giottoMulti")`, `mg[i]` child
+  selection (joint slots and mapping pruned to survivors), `mg[[name]] <-`
+  child add/replace with mapping auto-seeding for the new sample,
+  `names(mg) <-` rename (rewrites `sample::id` keys across joint slots and
+  the mapping), and a `show()` method summarizing children, narrowing state,
+  joint slots, and the mapping.
+- `combineMetadata()` and `combineCellData()` accept a `giottoMulti`,
+  returning named per-sample tables with joint-only metadata columns merged
+  in through the access layer.
+
+## bug fixes
+
+- `relate()` on a `spatLocsObj` `x` errored with
+  `x = "data.table", y = "SpatVector"`. The `as.points()` coercion was
+  overwritten one line later, and the `y` branch guarded on `x`.
+
 # GiottoClass 0.6.0
 
 ## new
@@ -50,55 +159,6 @@
     - An `engine = "auto"` that selects by dataset size is planned; for now
       prefer `"dbscan"` on small data, where it is both exact and faster.
 
-- `giottoMulti` class — container federating several `giotto` objects into one
-  analysable unit. Spatial information stays per-child; non-spatial content is
-  shared at the parent. Constructed with `createGiottoMulti()`.
-- `gAny` virtual class — dispatch tag shared by `giotto` and `giottoMulti`, so
-  shared-domain methods can be written once. `giottoMulti` deliberately does
-  not inherit from `giotto`, so a spatial method with no `giottoMulti`
-  signature fails loudly rather than reading an absent slot.
-- `spatIDs()` and `featIDs()` gain `giottoMulti` methods, returning globally
-  namespaced (`sample::id`) IDs from the parent's identity registry. `local =
-  TRUE` returns child-level IDs and `object =` restricts to named children.
-- `subset()` method for `giottoMulti` narrows the joint analysis view to a set
-  of global cell and/or feature IDs. Narrowing is recorded on `@cell_ID` /
-  `@feat_ID` and applied when shared-domain getters read a joint slot; the
-  identity registry and the children themselves are left untouched, so the
-  un-subset object remains the widen-back handle. A change to the child
-  population resets any recorded narrowing.
-- `gmultiMapping()` / `gmultiMapping<-` — the `giottoMulti` federation
-  declaration. Three axes (`spat_unit`, `feat_type`, and `values` for
-  expression names) each map gmulti-level handles to per-sample child-level
-  names. Every entry keys every sample, with `NA_character_` as the
-  deliberate-skip sentinel; a keyed sample whose child cannot satisfy the
-  entry errors loudly at read time, naming the sample and the remedies.
-  Mapping edits invalidate joint content per affected universe, and expanding
-  a handle's participation is blocked once its universe holds materialized
-  joint content — drop the content, then re-declare.
-- Shared-domain getters (`getExpression`, `getCellMetadata`,
-  `getFeatureMetadata`) gain `giottoMulti` methods: the joint slot is read
-  when populated, otherwise content is assembled from children per the
-  mapping, with `sample::id` global IDs. New args: `samples =` slices to
-  named samples (also reachable as a `"sample::name"` prefix on `name =`),
-  and `on_missing = c("error", "drop", "fill")` governs children that cannot
-  contribute and mismatched feature panels / metadata columns — silent
-  partial federations are gone. Assembled objects carry the federation
-  handles on their identity tags (`spat_unit`, `feat_type`, `name`,
-  `provenance`) and, for expression, a participation stamp on `@misc`.
-- Spatial-domain accessors (`get/setSpatialLocations`, `get/setSpatialNetwork`,
-  `get/setPolygonInfo`, `get/setFeatureInfo`, `get/setGiottoImage`) gain
-  per-child `giottoMulti` dispatch: getters return named per-child lists
-  (scoped by `samples =` / `object =`) with any active narrowing applied to
-  the outputs; setters require a single named `object =` target.
-- `giottoMulti` container surface: `as(g, "giottoMulti")`, `mg[i]` child
-  selection (joint slots and mapping pruned to survivors), `mg[[name]] <-`
-  child add/replace with mapping auto-seeding for the new sample,
-  `names(mg) <-` rename (rewrites `sample::id` keys across joint slots and
-  the mapping), and a `show()` method summarizing children, narrowing state,
-  joint slots, and the mapping.
-- `combineMetadata()` and `combineCellData()` accept a `giottoMulti`,
-  returning named per-sample tables with joint-only metadata columns merged
-  in through the access layer.
 - `giotto` class gains a `source` slot for attaching a `gsource`-inheriting
   backend manager (see {GiottoDisk}).
 - `createGiottoObject()` gains a `backend` param: accepts a filepath or a

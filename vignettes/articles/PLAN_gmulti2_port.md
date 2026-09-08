@@ -95,7 +95,7 @@ Plus 8 new `Collate:` entries in DESCRIPTION, and edits to `subset.R`,
 
 | # | implementation | old status | disposition | why |
 |---|---|---|---|---|
-| 1 | recipe classes + resolver | Complete | **Port + rework** | 2,125 lines, foundational. Steps become plain tagged lists; containers stay S4. See Q7 |
+| 1 | recipe classes + resolver | Complete | **Port + rework** | 2,125 lines, foundational. Steps become plain tagged lists (Q7); the containers follow them to plain lists (Q8) |
 | 2 | view steps | Complete | **Port + rework** | Subsumed by Q7 — normalizing the crop region is a prerequisite for serializable step records, and fixes the axis-convention duplication at the same time |
 | 3 | predicate vs output frame | Complete | **Port** | Clean separation, explicit-only resolution. Keep as-is |
 | 4 | centroid routing | Complete, refactor pending | **Port + rework** | Routing decided by cache allocation with two patches riding on it. Its own doc calls it a workaround — fix on the way over, not later |
@@ -127,6 +127,7 @@ Resolve before writing the code that assumes an answer.
 | Q5 | Should joint slots stay both lazy cache *and* ground truth? The duality caused the §17 no-op — see below for what the audit found | fed 8, 12, 17 | decided, see below |
 | Q6 | `getSpatialLocations(mg)` — named per-child list, or one `sample::id` table? Consistency with the other joint getters vs a consumer-wide break | fed 15, 18 | open |
 | Q7 | **Recipe steps as plain tagged lists instead of S4 step classes?** Recommend yes — see below | vs 1, 2, 4, 5, 6 | decided — yes |
+| Q8 | **The `giottoView` / `giottoSpace` containers too?** Raised after stage 5, once the gobject-side surface was measured against the container-side surface | vs 1, 5, 6, 7 | decided — yes, see below |
 
 Q4, Q5 and Q7 are the three to settle first. Q4 sets how much surface the port carries;
 Q5 is where the old implementation has a demonstrated defect rather than an open
@@ -366,7 +367,12 @@ tagged lists (`list(type = "crop", region = ..., relation = ...)`). `giottoView`
 - **Converges with GiottoDisk.** `@ops` there is already `list(type = ..., ...)` folded by `switch()` arms, chosen because records must survive `saveRDS` and reach parallel workers. The recipe layer solved the same problem differently in the same ecosystem.
 - **Readable and editable** — a recipe becomes inspectable and hand-editable without S4 accessors, and JSON export becomes possible rather than blocked.
 
-**Keep containers S4** — `giottoView` / `giottoSpace` carry ~20 real methods (`+`, `show`, `materialize`, `subset`, `crop`, `selectSamples`, `spin`, `affine`, `flip`, `rescale`, `shear`, `zoom`), `giottoSpace` validity, and slot typing on `gobject@view` / `@spaces`.
+~~**Keep containers S4** — `giottoView` / `giottoSpace` carry ~20 real methods (`+`, `show`, `materialize`, `subset`, `crop`, `selectSamples`, `spin`, `affine`, `flip`, `rescale`, `shear`, `zoom`), `giottoSpace` validity, and slot typing on `gobject@view` / `@spaces`.~~
+
+> **Superseded — see Q8.** Two of the three reasons above are false. There is no
+> slot typing: `@view` and `@spaces` are `nullOrList`. And the method count is
+> inflated — the verbs are not *additional* surface, they are a second copy of
+> the gobject-side surface. The containers become plain lists.
 
 **Prerequisites — three non-serializable payloads, each already worth fixing:**
 
@@ -436,6 +442,87 @@ Each stage should build, test, and be independently reviewable.
 
 Stages 1–5 are the substance and are GiottoClass-only. Giotto is untouched until stage
 8, which is convenient given that's where the drift is.
+
+---
+
+### Q8 — the containers become plain lists too (supersedes Q7's "keep containers S4")
+
+Q7 converted the *steps* to tagged lists and kept `giottoView` / `giottoSpace` S4. Measured
+against the code as it stands after stage 5, the three reasons given for keeping them do not
+hold.
+
+**1. There is no slot typing.** `@view` and `@spaces` are declared `nullOrList`
+(`R/classes.R:500-501`). Nothing constrains their contents, so the classes buy no
+enforcement at the gobject boundary — the check that actually runs is the per-step validator
+Q7 introduced.
+
+**2. The container is not a dispatch target.** `materialize` dispatches only on
+`view = "character"`; `resolveSubobject`'s methods signature on `(subobj, coordinator)`.
+Outside their own builder verbs the classes are never dispatched on.
+
+**3. The "~20 methods" are a second copy of the gobject surface, not extra capability.**
+
+| container | methods | verdict |
+|---|---|---|
+| `giottoView` | `subset`, `crop` | duplicate the gobject path — same capture, same step constructor, differing only in the terminal action |
+| | `selectSamples` | container-**only**, but only because no `gAny` arm was written |
+| | `+` | `stop("cross-view composition is not yet implemented")` — a stub |
+| | `show` | presentation |
+| `giottoSpace` | 7 transform verbs | already share `.space_record()` with `.record_space_on_gobject()` — real delegation, no duplication |
+| | `+`, `giottoSpace("<sample>")` | the one genuine gap: per-sample keying |
+
+`.record_view_on_gobject()` creates a view when the name is absent, so
+`subset(g, pred, view = "new")` already covers the whole view surface from nothing.
+
+**The one real gap, and how it closes.** A space is a *sample-keyed map* of step chains; a
+view is one *flat* chain. Sample keying was the only thing a `space = "name"` param could not
+express, because one call site had no way to say "this transform applies to child B only".
+Adding `samples =` to the transform verbs closes it, and does so better than `+`:
+`.space_record()` currently appends to *every* sample already keyed in the space, which is why
+it is marked `ORDER-SENSITIVE, and deliberately so` — `(a + b) |> spin(30)` differs from
+`(a |> spin(30)) + b`. That is scope inherited from construction history, invisible at the
+call site and unrecoverable from the recorded recipe. `samples = c("a", "b")` states it
+per call and removes the footgun.
+
+**Decision.** A view is `list(steps = , space = , misc = )`; a space is
+`list(samples = , misc = )`. `@name` and `@source` are dropped — nothing reads either. The
+gobject-side ops edit the slots directly and that is the whole surface:
+
+```r
+subset(g, pred, view = "v")            # creates or appends
+crop(g, region, view = "v", geom = )
+selectSamples(mg, "a", "b", view = "v")
+spatShift(mg, dx = 8000, space = "s", samples = "b")
+```
+
+Removed: both `setClass`es, 5 `giottoView` methods, 9 `giottoSpace` methods, the 4 standalone
+constructors, and `exportClasses` for both. The validity functions become
+`.validate_view()` / `.validate_space()`, called by the setters — validation still runs, at
+the same boundary, without the class.
+
+**Consequences accepted.** Recipes print as raw nested lists; the `show` methods are gone and
+`show(giotto)` never rendered recipes anyway. A summary line on the gobject's `show` is the
+natural replacement and is not part of this change.
+
+**`samples =` and `@groups`.** `samples =` takes literal child names now. Once `@groups`
+lands (stage 7, gated on D2/D3) it is a named list of character vectors whose entries may
+name other groups, so resolution is a worklist closure, inserted as one line in
+`.gm_slice_to_samples()` (`R/gmulti.R:1428`) ahead of its existing
+`setdiff(samples, names(gobject@objects))` check — which then serves all 17 existing
+`samples =` formals as well. Three guards it needs, none of which the naive form has:
+
+- **cycles must terminate** — `A = "B"`, `B = "A"` loops forever if each pass re-expands;
+  dedupe against a `seen` set of already-expanded *group* names, not against the output
+- **a group named after a sample must be rejected at assignment**, not silently shadow the
+  child at read time
+- **resolving to zero samples must error** — a step scoped to nothing looks like it worked.
+  This is the shape of the stage-2 `subset(giottoMulti)` no-op bug
+
+Late binding is the choice: the step records the group name and resolves at materialize time,
+consistent with filter predicates resolving against current metadata. Q7's eager env
+substitution is not a counter-precedent — that is about calling-environment values that
+vanish on serialization, whereas group membership is object state that persists next to the
+recipe.
 
 ## 8. Risks
 

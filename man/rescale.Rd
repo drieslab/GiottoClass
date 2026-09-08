@@ -11,7 +11,7 @@
 \alias{rescale,giottoLargeImage-method}
 \alias{rescale,giottoAffineImage-method}
 \alias{rescale,affine2d-method}
-\alias{rescale,giottoSpace-method}
+\alias{rescale,giottoMulti-method}
 \title{Rescale an object}
 \usage{
 \S4method{rescale}{giotto}(
@@ -51,7 +51,7 @@
 
 \S4method{rescale}{affine2d}(x, fx = 1, fy = fx, x0, y0)
 
-\S4method{rescale}{giottoSpace}(x, ...)
+\S4method{rescale}{giottoMulti}(x, fx = 1, fy = fx, x0, y0, space = NULL, samples = NULL, ...)
 }
 \arguments{
 \item{x}{object}

@@ -19,7 +19,7 @@ combineSpatialCellMetadataInfo(
 
 \item{feat_type}{feature type(s)}
 
-\item{view, space}{optional \link[=giottoView-class]{giottoView} / \link[=giottoSpace-class]{giottoSpace} or
+\item{view, space}{optional \link{giottoView} / \link{giottoSpace} or
 the name of one slotted on \code{gobject}. Threaded through to the
 underlying \code{getPolygonInfo} and \code{getCellMetadata} calls so the
 returned table reflects the view-scoped subset.}

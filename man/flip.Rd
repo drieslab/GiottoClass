@@ -10,7 +10,7 @@
 \alias{flip,SpatExtent-method}
 \alias{flip,giottoAffineImage-method}
 \alias{flip,affine2d-method}
-\alias{flip,giottoSpace-method}
+\alias{flip,giottoMulti-method}
 \title{Flip an object}
 \usage{
 \S4method{flip}{giotto}(
@@ -38,7 +38,15 @@
 
 \S4method{flip}{affine2d}(x, direction = "vertical", x0 = 0, y0 = 0)
 
-\S4method{flip}{giottoSpace}(x, ...)
+\S4method{flip}{giottoMulti}(
+  x,
+  direction = "vertical",
+  x0 = 0,
+  y0 = 0,
+  space = NULL,
+  samples = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{object}

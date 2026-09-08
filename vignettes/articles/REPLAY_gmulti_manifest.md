@@ -179,7 +179,7 @@ banner, both false — `materialize()` has three real methods and 24 test uses.
 
 | | |
 |---|---|
-| **source** | GiottoDisk `merge/federation-into-dev` @ `28beb2d` — **no replay needed**, but see the stage-5 progress note: A7's two force-cache patches live here and must be dropped in favour of GiottoClass's `crop_relation_needs_geom()`, which needs exporting at that point |
+| **source** | GiottoDisk `merge/federation-into-dev` @ `28beb2d` — **no replay needed**, but see the stage-5 progress note: A7's two force-cache patches live here and must be dropped in favour of reading the crop step's declared `geom` field (see the stage-5 progress note); nothing needs exporting |
 | **state** | already merged to current `upstream/dev`, 0 behind, all R parses. Unique payload is 2,978 lines / 20 files, all gmulti-relevant: `parquetCoordinator` + `methods-resolveSubobject.R` (1,148), `snapshotSave(gDirSource, giottoMulti)` (105), `snapshotDelete` child cascade, spatRelate widening, `class-viewCoordinator.R`, `test-snapshot-gmulti.R` (166), `test-view-resolver.R` (926) |
 | **note** | `parquetExprBase` + union streaming PCA are **already upstream** (PRs #44, `514cd30`); the merge deduplicated them and PCA now runs through upstream's `.pe_windows()` seam. Nothing to port |
 | **verify** | `test-snapshot-gmulti.R` skips unless `@source` is a `giottoMulti` slot, so it is inert until the replayed GiottoClass is installed — re-run it after stage 1 lands |
@@ -349,34 +349,56 @@ base is **`b351ed2b`** (§3), and the fresh branch is cut from the post-merge `g
       subsume — stage 1 dropped it on purpose and stage 3 does not revive it),
       `.gm_walk_apply_view()` (dead on the checkpoint too — its only reference is its own
       recursive call), plus the §5 items.
-- **2026-09-04 — stage 5 landed** (`d12221ed`). Full suite: **1700 pass / 0 fail / 0 skip**.
+- **2026-09-04 — stage 5 landed** (`d12221ed`), then **amended 2026-09-08** after review.
 
   **Scoping correction — A7's two patches are not in GiottoClass.** §4 stage 5 reads as a
   GiottoClass-only rework, but `force cache for polygons` and `force NULL cache for
   points` live in **GiottoDisk** `R/methods-resolveSubobject.R` (the `parquetCoordinator`
   methods), which is stage 6's payload. GiottoClass's own cache was already pure
-  memoization, so there was nothing to demote here. What stage 5 could do — and did — is
-  put the *semantic decision* those patches should be replaced by into GiottoClass as the
-  shared contract, so stage 6 drops them by calling it:
-    - **`crop_relation_needs_geom()` is internal, not exported.** It is the rule GiottoDisk
-      should share rather than duplicate, but nothing calls it across the package boundary
-      yet — exporting now would be a public commitment made ahead of its consumer, for a
-      predicate with no analyst utility. Export it in the change that makes GiottoDisk call
-      it. (Verified new in this stage: no equivalent exists on
-      `feature/gmulti-federation-design`, `merge/federation-into-gsource`, `feature/gmulti2`,
-      or GiottoDisk's merge branch — all four forwarded `relation` straight into
-      `terra::is.related()` against centroids, so the relation was passed but never routed.)
-    - Routing is per crop step on `(relation, polygon source availability)`. Only
-      `intersects` / `disjoint` are meaningful on a centroid; `within`, `covered_by`,
-      `contains`, `covers`, `overlaps`, `touches`, `crosses` are area- or boundary-defined
-      and degenerate against a point (`contains` returns nothing at all). Target storage
-      kind is not a discriminator — the geom evaluation runs on the gobject's polygon
-      source either way, and the resulting cell_ID set narrows the target downstream.
-    - **This was silent-wrong, not merely approximate.** Every relation used to take the
-      centroid path. Measured on the visium mini with a 3000-unit box: `intersects` keeps
-      549 cells, `within` keeps 524, and the within-set is a strict subset — so `within`
-      previously returned 549, over-inclusive by the 25 boundary-straddling cells. A
-      geometry relation with no polygon source is now a loud error naming the remedy.
+  memoization, so there was nothing to demote here.
+
+  **The crop geometry choice is DECLARED on the step, not inferred.** A crop step carries
+  `geom = "centroid" | "poly"` (`crop(..., geom =)`, default `"centroid"`), and the
+  resolver reads it. This is what §11 was actually asking for — "a distinct step type is
+  how a view declares that it means the geometric predicate" — at the cost of a parameter
+  rather than a step type.
+    - **The first attempt inferred it from the relation name** via an internal
+      `crop_relation_needs_geom()` predicate, which was then going to be exported so
+      GiottoDisk could share the inference. Both halves were wrong: an inferred choice
+      cannot be stated by a serialized recipe, and the export was a public commitment made
+      ahead of its consumer. Declaration removes the shared-contract problem outright —
+      GiottoDisk reads the field, so there is nothing to export. Verified the predicate was
+      new in stage 5: no equivalent on `feature/gmulti-federation-design`,
+      `merge/federation-into-gsource`, `feature/gmulti2`, or GiottoDisk's merge branch. All
+      four forwarded `relation` straight into `terra::is.related()` against centroids, so
+      the relation was passed but never routed.
+    - **The relation classification in the first attempt was wrong**, measured against
+      terra rather than reasoned about: `within` (strict interior) and `touches`
+      (boundary-only) are perfectly well defined on a centroid, so restricting to
+      `intersects`/`disjoint` would have refused two working relations. Only `contains`,
+      `covers`, `overlaps`, `crosses` are always `FALSE` against a point — those promote
+      `geom` to `"poly"` with a warning. `covered_by` is not a terra predicate at all and
+      is rejected.
+    - Re-measured honestly, one relation at a time (visium mini, 3000-unit centre box, 624
+      cells): `intersects` gives 549 on both representations; `within` gives 549 on
+      centroid and **524** on poly. The old "549 vs 524" line compared
+      `intersects`/centroid against `within`/poly — varying relation *and* representation
+      at once, so it conflated two questions.
+    - **The geom arm routes through `spatRelate()`**, not a hand-rolled
+      `terra::is.related()` call, so one call site covers terra in memory and
+      sedona/duckdb on a store. That needed §11's stated prerequisite, which is now partly
+      closed: GiottoClass's `spatRelate` gains y-methods for `character` (WKT),
+      `SpatVector` and `sf`. The cascade runs opposite to GiottoDisk's — `SpatVector` is
+      canonical in memory because terra consumes it, WKT is canonical on disk because it
+      goes into SQL. Each side canonicalizes to what its engine eats; that is not drift.
+      `engine` is accepted and validated in memory (`NULL`/`"auto"`/`"terra"` pass —
+      `"auto"` means best-available and in memory that *is* terra; naming `"sedona"` or
+      `"duckdb"` errors rather than silently returning a terra answer).
+    - **Fixed a live bug found on the way**: `relate()` errored for any `spatLocsObj` x.
+      `R/methods-relate.R:53` coerced with `as.points()` and line 55 immediately
+      overwrote it with `x[]` (a data.table for a spatLocsObj), and line 56 guarded on `x`
+      while assigning `y_use`. `spatLocsObj` is one of three `giottoSpatial` members, so a
+      third of the input space was broken. Now one `.as_relate_geom()` helper, one place.
     - `disjoint` deliberately skips the AABB pre-filter: its survivors are the points
       *outside* the region, so pre-narrowing to bbox candidates would drop exactly the
       cells that survive. Guarded by the `intersects + disjoint == total` test.
@@ -388,10 +410,13 @@ base is **`b351ed2b`** (§3), and the fresh branch is cut from the post-merge `g
       relation-routing table. Both broadcast claims were run before being written down,
       and are asserted in a test.
 
-  **Still owed to stage 6:** delete the two GiottoDisk patches and route those methods
-  through `crop_relation_needs_geom()`. Until then the disk path still decides by storage
-  kind, so a `within` crop over a backed store answers the centroid question — the exact
-  divergence A7 closes in memory.
+  **Still owed to stage 6:** delete the two GiottoDisk patches by replacing the
+  `is.null(.cache)` test in `.push_view_to_pstore` with
+  `identical(step$geom, "centroid")` — eager `id_filter` for the centroid arm, the
+  existing lazy `spat_relate` op for the poly arm. Nothing to export; the field is on the
+  step. The patches are currently *class*-keyed (polygon → forced cache → centroid;
+  points → forced NULL cache → geom), so until this lands a backed `giottoPolygon` crop
+  cannot honour `geom = "poly"` and silently answers the centroid question instead.
 - **2026-09-04 — stage 4 landed** (`56ac5fa7`). Checkpoint-sourced, with Q7, A4 and A5
   folded in. Full suite: **1671 pass / 0 fail / 0 skip**; `test-view-space.R` is 186 of
   those. Q7 is done and verified end to end — steps are tagged lists, recipes survive
@@ -437,6 +462,43 @@ base is **`b351ed2b`** (§3), and the fresh branch is cut from the post-merge `g
   auto-merged. Worth knowing: #393 is why the suite's warning count fell from 2,882 to a
   handful, and `instructions()` still dispatches on `signature("giotto")`, so the
   giottoMulti fallback path in `defaults.R` is unaffected.
+
+- **2026-09-08 — version bumped to 0.7.0 and the substrate stack rebuilt.** `classes.R`
+  already gated the `@view` / `@spaces` migration at `< "0.7.0"` while DESCRIPTION still
+  said 0.6.0, which is gsource's own unreleased version — so nothing downstream could gate
+  on the view/space API. NEWS gained a 0.7.0 section for the replay's entries; gsource's
+  unreleased 0.6.0 content stayed in its own section. Note no 0.6.0 was ever released, so
+  the `updateGiottoObject()` recipe-wipe fixed in stage 4 was never a shipped bug and is
+  not in the release notes.
+
+  The rebuild was not optional: **an installed GiottoDisk snapshots GiottoClass's whole
+  method table for any generic it defines a method on** (`exportMethods(subset)` for
+  `subset(parquetBase)`), and re-registers it on load. The August build therefore
+  reinstated a pre-`view` `subset(giotto)` over the current one, which is what made
+  `subset(g, pred, view = "x")` look like it had never worked and what blocked
+  `build_vignettes`. Order matters: GiottoClass first, then Giotto, then GiottoDisk.
+  GiottoDisk@dev needs `Giotto (>= 4.2.4)`, which only `upstream/gsource` has —
+  `upstream/suite_dev` and `origin/gsource` are both still 4.2.3.
+
+  Clearing it exposed a real bug the stale build had been masking: `view_and_space.Rmd`
+  taught `view = <giottoView object>` in four places while `view` is `assert_string` at all
+  three sites and `materialize` dispatches on `view = "character"`. Fixed to slotted names.
+
+- **2026-09-08 — Q8: the containers collapse to plain lists.** Q7 kept `giottoView` /
+  `giottoSpace` S4 on three grounds; measuring the gobject-side surface against the
+  container-side surface after stage 5 falsified two of them and reframed the third. There
+  is no slot typing (`@view` / `@spaces` are `nullOrList`), the containers are never a
+  dispatch target outside their own builder verbs, and the "~20 methods" are largely a
+  second copy of the gobject path — `subset` / `crop` on `giottoView` duplicate the capture
+  and step construction verbatim, `+` on `giottoView` is a `stop()` stub, and the 7
+  `giottoSpace` verbs already delegate through `.space_record()`.
+
+  The one genuine gap was per-sample keying: a space is a sample-keyed map of step chains, a
+  view is one flat chain, and `space = "name"` on a gobject verb had no way to scope a
+  transform to one child. `samples =` on the transform verbs closes it and is strictly
+  better than `+`, which inherited scope from construction history — see Q8 in
+  [PLAN_gmulti2_port.md](PLAN_gmulti2_port.md) for the full argument, the target
+  representation, and the `@groups` resolution guards owed to stage 7.
 
 ---
 

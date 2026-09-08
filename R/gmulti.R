@@ -507,21 +507,55 @@ setMethod("show", "giottoMulti", function(object) {
 #' Subset returns a new `giottoMulti`; R copy-on-modify means the original is
 #' untouched and acts as the "widen back" handle.
 #' @param x a `giottoMulti`
+#' @param subset predicate expression, captured unevaluated. Only used with
+#'   `view = `, where it becomes the recorded filter step; the eager path
+#'   narrows by ID vector instead (`cells` / `features`).
 #' @param cells `character` vector of global cell IDs to retain. `NULL` =
 #'   no cell-level filter.
 #' @param features `character` vector of global feature IDs to retain.
 #'   `NULL` = no feature-level filter.
-#' @param ... not used
+#' @param negate logical. Invert the predicate. Folded into the recorded
+#'   predicate, matching `subset(<giotto>)`.
+#' @param view `NULL` or `character(1)`. When supplied, records the
+#'   predicate as a filter step on the named view (created if new) instead
+#'   of narrowing eagerly.
+#' @param ... additional scope args forwarded to `spatValues()` when a
+#'   recorded filter step resolves
 #' @returns a `giottoMulti` with `@cell_ID` / `@feat_ID` narrowed and
 #'   populated joint slots trimmed accordingly. `@id_map` (the identity
 #'   registry) is left untouched — it records identity, not selection.
 #' @examples
 #' \dontrun{
 #' subset(mg, cells = c("a::c1", "a::c2"))
+#' subset(mg, leiden_clus == 1, view = "cluster1")
 #' }
 #' @export
 setMethod("subset", "giottoMulti",
-    function(x, cells = NULL, features = NULL, ...) {
+    function(x, subset, cells = NULL, features = NULL, negate = FALSE,
+             view = NULL, ...) {
+        # Recording path, mirroring subset(<giotto>). Q8 removed the recipe
+        # builders, so this is now the only way to put a filter step on a
+        # gmulti view. `subset` sits ahead of `cells` / `features` because
+        # the generic's second positional is the predicate everywhere else;
+        # every existing caller passes those two by name.
+        if (!is.null(view)) {
+            # Capture BEFORE testing for absence. `missing(subset)` forces
+            # the promise when the argument arrived through the generic's
+            # `...` into S4's `.local` wrapper, which evaluates the
+            # predicate in the caller's frame and fails on the first column
+            # name. An absent `subset` deparses to the bare symbol.
+            pred <- substitute(subset)
+            if (identical(pred, quote(subset))) {
+                stop("`view = ` records a predicate, so `subset` is ",
+                    "required. To narrow by ID instead, drop `view` and ",
+                    "pass `cells = ` / `features = `.", call. = FALSE)
+            }
+            if (negate) pred <- call("!", pred)
+            pred <- .eager_substitute_env(pred,
+                .find_predicate_env(pred, parent.frame()))
+            return(.record_view_on_gobject(x, view,
+                .view_step_filter(pred, scope_args = list(...))))
+        }
         subsetGiotto(
             gobject = x,
             cell_ids = cells,
