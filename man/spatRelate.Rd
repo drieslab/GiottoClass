@@ -2,9 +2,18 @@
 % Please edit documentation in R/methods-relate.R
 \name{spatRelate}
 \alias{spatRelate}
+\alias{spatRelate,giottoSpatial,SpatVector-method}
+\alias{spatRelate,giottoSpatial,character-method}
+\alias{spatRelate,giottoSpatial,sf-method}
 \alias{spatRelate,giottoSpatial,giottoSpatial-method}
 \title{Spatial relationship as a filter}
 \usage{
+\S4method{spatRelate}{giottoSpatial,SpatVector}(x, y, relation = "intersects", engine = NULL, ...)
+
+\S4method{spatRelate}{giottoSpatial,character}(x, y, relation = "intersects", ...)
+
+\S4method{spatRelate}{giottoSpatial,sf}(x, y, relation = "intersects", ...)
+
 \S4method{spatRelate}{giottoSpatial,giottoSpatial}(x, y, relation = "intersects", ...)
 }
 \arguments{
@@ -17,6 +26,10 @@ SpatVector, sf, character WKT)}
 \item{relation}{\code{character}. Spatial predicate. One of \code{"intersects"},
 \code{"touches"}, \code{"crosses"}, \code{"overlaps"}, \code{"within"}, \code{"contains"},
 \code{"covers"}, \code{"covered_by"}, \code{"disjoint"}. Default \code{"intersects"}.}
+
+\item{engine}{\code{character} or \code{NULL}. Predicate engine. In-memory objects
+support only \code{"terra"} (the default when \code{NULL}); backed stores in
+\pkg{GiottoDisk} additionally offer \code{"sedona"} and \code{"duckdb"}.}
 
 \item{...}{additional args to pass}
 }

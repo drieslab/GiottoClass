@@ -36,6 +36,21 @@
 NULL
 # ---------------------------------------------------------------- #
 
+# Coerce one side of a relate() call to the SpatVector terra expects.
+#
+# A `spatLocsObj` has to go through `as.points()` — its `[]` returns the
+# coordinates data.table, which terra has no relate method for. Doing this
+# in one place is what keeps that coercion from being clobbered: the
+# previous form set `x_use <- as.points(x)` and then immediately overwrote
+# it with `x_use <- x[]`, since a spatLocsObj is also a giottoSpatial.
+#' @keywords internal
+#' @noRd
+.as_relate_geom <- function(x) {
+    if (inherits(x, "spatLocsObj")) return(as.points(x))
+    if (inherits(x, "giottoSpatial")) return(x[])
+    x
+}
+
 #' @rdname relate
 #' @inheritParams terra::relate
 #' @export
@@ -50,10 +65,8 @@ setMethod(
         ...) {
         output <- match.arg(output, choices = c("data.table", "matrix"))
 
-        if (inherits(x, "spatLocsObj")) x_use <- as.points(x)
-        if (inherits(y, "spatLocsObj")) y_use <- as.points(y)
-        if (inherits(x, "giottoSpatial")) x_use <- x[]
-        if (inherits(x, "giottoSpatial")) y_use <- y[]
+        x_use <- .as_relate_geom(x)
+        y_use <- .as_relate_geom(y)
 
         res <- relate(x_use, y_use, relation, pairs, na.rm, ...)
 
@@ -162,24 +175,95 @@ setMethod(
 #' pts_in_polys <- spatRelate(gpoints, gpoly, relation = "intersects")
 NULL
 
+# y-form cascade ####
+#
+# `SpatVector` is the canonical `y` here, because terra is the engine and
+# consumes it directly; every other accepted form coerces into it and
+# recurses. This is the mirror image of {GiottoDisk}'s cascade, which
+# canonicalizes to WKT `character` because it embeds the string in SQL
+# (`ST_Within(geom, ...)`). Each side canonicalizes to what its own engine
+# consumes -- the two are deliberately opposite, not drifting.
+#
+# In-memory has one engine, so `engine` is accepted for signature parity
+# with the backed methods and rejected unless it names terra. Swallowing it
+# in `...` would let engine-agnostic caller code silently get terra when it
+# asked for sedona.
+
+# Accepted engines for the in-memory methods.
+#
+# `"auto"` is accepted, not rejected: it means "pick the best available",
+# and in memory the only engine is terra, so auto is satisfied. {GiottoDisk}
+# resolves auto as sedona > duckdb > terra, so engine-agnostic caller code
+# that passes auto has to work on both sides. Naming a SQL engine
+# explicitly is what fails here, because that request cannot be honoured
+# rather than merely being redundant.
+#' @keywords internal
+#' @noRd
+.assert_relate_engine <- function(engine) {
+    if (is.null(engine) || engine %in% c("auto", "terra")) {
+        return(invisible(engine))
+    }
+    stop("[spatRelate] engine '", engine, "' is not available for an ",
+        "in-memory object; terra is the only engine here. Use ",
+        "engine = \"auto\" (or omit it), or move the data to a backed ",
+        "store, where {GiottoDisk} offers sedona and duckdb.",
+        call. = FALSE)
+}
+
+#' @rdname spatRelate
+#' @param engine `character` or `NULL`. Predicate engine. In-memory objects
+#'   support only `"terra"` (the default when `NULL`); backed stores in
+#'   \pkg{GiottoDisk} additionally offer `"sedona"` and `"duckdb"`.
+#' @export
+setMethod(
+    "spatRelate", signature(x = "giottoSpatial", y = "SpatVector"),
+    function(x, y, relation = "intersects", engine = NULL, ...) {
+        .assert_relate_engine(engine)
+        # The single terra call site for the in-memory spatRelate family;
+        # every other y-form coerces and recurses into here. `relate()` is
+        # not reused because its own y-side is `giottoSpatial`-only, and
+        # widening the relation-matrix API is a separate concern from
+        # widening the filter form.
+        pairs <- terra::relate(
+            .as_relate_geom(x), y,
+            relation = relation, pairs = TRUE, ...
+        )
+        if (nrow(pairs) == 0L) {
+            return(x[integer(0L)])
+        }
+        x[sort(unique(pairs[, 1L]))]
+    }
+)
+
+#' @rdname spatRelate
+#' @export
+setMethod(
+    "spatRelate", signature(x = "giottoSpatial", y = "character"),
+    function(x, y, relation = "intersects", ...) {
+        # WKT. Geometry only -- attributes are not carried through.
+        checkmate::assert_character(y, min.len = 1L, any.missing = FALSE)
+        spatRelate(x, terra::vect(y), relation = relation, ...)
+    }
+)
+
+#' @rdname spatRelate
+#' @export
+setMethod(
+    "spatRelate", signature(x = "giottoSpatial", y = "sf"),
+    function(x, y, relation = "intersects", ...) {
+        package_check("sf", repository = "CRAN")
+        spatRelate(x, terra::vect(y), relation = relation, ...)
+    }
+)
+
 #' @rdname spatRelate
 #' @export
 setMethod(
     "spatRelate", signature(x = "giottoSpatial", y = "giottoSpatial"),
     function(x, y, relation = "intersects", ...) {
-        res <- relate(
-            x, y,
-            relation = relation,
-            pairs = TRUE,
-            output = "data.table",
-            use_names = FALSE,
-            ...
-        )
-        if (nrow(res) == 0L) {
-            return(x[integer(0L)])
-        }
-        keep_idx <- sort(unique(res$x))
-        x[keep_idx]
+        # Unwrap to the canonical form and delegate, so there is exactly
+        # one relate() call site for the in-memory family.
+        spatRelate(x, .as_relate_geom(y), relation = relation, ...)
     }
 )
 
