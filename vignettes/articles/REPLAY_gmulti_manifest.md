@@ -179,7 +179,7 @@ banner, both false — `materialize()` has three real methods and 24 test uses.
 
 | | |
 |---|---|
-| **source** | GiottoDisk `merge/federation-into-dev` @ `28beb2d` — **no replay needed**, but see the stage-5 progress note: A7's two force-cache patches live here and must be dropped in favour of reading the crop step's declared `geom` field (see the stage-5 progress note); nothing needs exporting |
+| **source** | GiottoDisk `merge/federation-into-dev` @ `28beb2d`. **"No replay needed" was true when written and is now false** — that branch predates Q7 and Q8, so its resolver reads `view@steps` / `space@samples` and tests steps with `inherits(s, "viewFilter")`. It does not load against GiottoClass 0.7.0 at all (`importClassesFrom(GiottoClass, giottoView, giottoSpace)` fails at build). A7's two force-cache patches also live here. See the progress note below for what the port actually was |
 | **state** | already merged to current `upstream/dev`, 0 behind, all R parses. Unique payload is 2,978 lines / 20 files, all gmulti-relevant: `parquetCoordinator` + `methods-resolveSubobject.R` (1,148), `snapshotSave(gDirSource, giottoMulti)` (105), `snapshotDelete` child cascade, spatRelate widening, `class-viewCoordinator.R`, `test-snapshot-gmulti.R` (166), `test-view-resolver.R` (926) |
 | **note** | `parquetExprBase` + union streaming PCA are **already upstream** (PRs #44, `514cd30`); the merge deduplicated them and PCA now runs through upstream's `.pe_windows()` seam. Nothing to port |
 | **verify** | `test-snapshot-gmulti.R` skips unless `@source` is a `giottoMulti` slot, so it is inert until the replayed GiottoClass is installed — re-run it after stage 1 lands |
@@ -417,6 +417,69 @@ base is **`b351ed2b`** (§3), and the fresh branch is cut from the post-merge `g
   step. The patches are currently *class*-keyed (polygon → forced cache → centroid;
   points → forced NULL cache → geom), so until this lands a backed `giottoPolygon` crop
   cannot honour `geom = "poly"` and silently answers the centroid question instead.
+  **Done 2026-09-08, see the stage-6 entry below** — the routing turned out to need one
+  more axis than "read `step$geom`", because a store's ability to answer a crop depends on
+  whether one of its rows IS a cell.
+- **2026-09-08 — stage 6 landed** on GiottoDisk `feature/gmulti-replay` (cut from
+  `merge/federation-into-dev`, `upstream/dev` merged in). GiottoDisk suite: **1242 pass /
+  0 fail / 0 skip** across 33 files, against a measured `upstream/dev` baseline of
+  **1086 / 0 / 0** across 31 — so +156 and no regressions. `test-view-resolver.R` is 125
+  of the new ones, and `test-snapshot-gmulti.R` executes for the first time (§8 predicted
+  it would stay inert until a replayed GiottoClass was installed) and is green.
+
+  **§4's "no replay needed" was wrong by the time it was reached.** The merge branch was
+  written against the S4 recipe containers, so it needed the same Q7/Q8 conversion the
+  GiottoClass side got: `view@steps` → `view$steps`, `space@samples` → `space$samples`,
+  `inherits(s, "viewFilter")` → `.view_steps_of(view, "filter")`, and `step@predicate`
+  → `str2lang(step$predicate)` (Q7 records the predicate deparsed). Without it the
+  package does not even build, because `pkg_imports.R` imports `giottoView` /
+  `giottoSpace` as classes.
+
+  **A7 needed a second axis, not just `step$geom`.** The above prescription is right about
+  crops but incomplete: whether a store can evaluate a crop on its own geometry depends on
+  whether one store row IS one cell. Three cases, and `.cache` decides none of them:
+    - cell-keyed geom store (a cell-polygon store) + `geom = "poly"` → lazy
+      `spat_relate` on its own geom column. **This is the case the forced cache made
+      unreachable.**
+    - cell-keyed store + `geom = "centroid"` → eager cell_ID set. The store's geom column
+      is the polygon, not the centroid, so pushing the predicate down there would answer a
+      different question. This is why the centroid arm is eager *even on a geom store*.
+    - non-cell-keyed store (transcript points) → always lazy on its own geometry; a crop
+      there means "clip these points", matching the in-memory path. Expressed as
+      `cell_keyed = FALSE` rather than by forcing `.cache = NULL`.
+
+  `.cache` is now memoization plus an eager/lazy choice for FILTER steps only — with a
+  cache they fold into one `id_filter`, without one each narrows the store on its own and
+  keeps the lazy cross-store `[`-join for atlas-scale owners. It holds three
+  target-independent slots (`filter_ids`, `crop_ids:centroid`, `crop_ids:poly`) rather than
+  one, which is what lets a polygon store take the filter arm eagerly while pushing its own
+  poly crops down. One shared cache per `materialize()` is still safe because no slot
+  depends on the target.
+
+  **Deleted a divergent duplicate.** GiottoDisk had its own `.cells_in_region_dt` /
+  `.cells_in_region_for_view`, and they had silently drifted: no `disjoint` fix, no `geom`
+  arm. Crop semantics now come from `GiottoClass:::.cells_in_crop_step()` for both arms;
+  GiottoDisk keeps only the *fetch* (`.projected_spatlocs_dt`), which it has to own because
+  `spatLocsObj@coordinates` may be a store and GiottoClass's fetch cannot `storeRead`.
+  `.scope_space_to_sample_local` went with them. `.apply_space_to_subobj` stays local and
+  deliberately differs — it dispatches transforms on the inner `parquetBase` rather than on
+  the wrapper, which is the whole point on a backed geometry.
+
+  **Two latent bugs the port surfaced, both fixed:**
+    - `.space_composite_affine()` probed the space's transforms against a bare
+      `SpatVector`. GiottoClass has no `spatShift(SpatVector)` method, so it died on the
+      most common step there is. Probe is now a `spatLocsObj`, which implements all seven
+      transform generics and is the carrier the centroid path already uses.
+    - two `test-view-resolver.R` multi-sample crop assertions compared a `<sample>::`
+      prefixed answer against unprefixed per-child IDs. They had never run: `.mk_multi()`
+      needs a `createGiottoMulti()` that was unreleased when they were written. The joint
+      cell vocabulary is prefixed, so the expectations were wrong, not the code.
+
+  **Blocked on the GiottoClass PR.** `DESCRIPTION` now gates `GiottoClass (>= 0.7.0)`
+  while `Remotes` still points at `@gsource`, which is 0.6.0. Deliberate: the gate states
+  the real requirement, and pointing a Remote at a feature branch is the kind of pin that
+  gets forgotten. This branch cannot merge until `feature/gmulti-replay` lands on
+  GiottoClass `gsource` and a release carries 0.7.0.
 - **2026-09-04 — stage 4 landed** (`56ac5fa7`). Checkpoint-sourced, with Q7, A4 and A5
   folded in. Full suite: **1671 pass / 0 fail / 0 skip**; `test-view-space.R` is 186 of
   those. Q7 is done and verified end to end — steps are tagged lists, recipes survive
