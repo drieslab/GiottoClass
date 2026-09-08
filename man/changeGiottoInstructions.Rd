@@ -2,7 +2,7 @@
 % Please edit documentation in R/instructions.R
 \name{changeGiottoInstructions}
 \alias{changeGiottoInstructions}
-\title{deprecated}
+\title{Change giotto instructions}
 \usage{
 changeGiottoInstructions(
   gobject,
@@ -17,26 +17,20 @@ changeGiottoInstructions(
 
 \item{params}{parameter(s) to change}
 
-\item{new_values}{new value(s) for parameter(s)}
+\item{new_values}{new value(s) for \code{params}}
 
-\item{return_gobject}{(boolean, default = TRUE) return giotto object}
+\item{return_gobject}{logical. Return the giotto object (default \code{TRUE})
+rather than the instructions list alone.}
 
-\item{init_gobject}{(boolean, default = TRUE) initialize gobject if returning}
+\item{init_gobject}{logical. Re-initialize the object when returning it
+(default \code{TRUE})}
 }
 \value{
-giotto object with one or more changed instructions
+giotto object with changed instructions, or the instructions
+list when \code{return_gobject = FALSE}
 }
 \description{
-Function to change one or more instructions from giotto object.
-If more than one item is supplied to \code{params} and \code{new_values}, use
-a vector of values. Does not call \code{initialize} on the giotto object
-}
-\examples{
-g <- GiottoData::loadGiottoMini("visium")
-
-changeGiottoInstructions(
-    gobject = g, params = "save_plot",
-    new_values = TRUE
-)
+Deprecated. Use \code{instructions(gobject, param) <- value}
+instead.
 }
 \keyword{internal}

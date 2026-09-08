@@ -118,6 +118,14 @@
   but it duplicates that verb's `mean_expr` and should not be used in new code.
 
 ## bug fixes
+- `instructions()` and `instructions<-()` no longer emit a deprecation
+  warning on every access. They were implemented on top of the deprecated
+  `showGiottoInstructions()` / `readGiottoInstructions()` /
+  `changeGiottoInstructions()` / `replaceGiottoInstructions()`, so each read
+  or write raised the warning belonging to a function the caller never used.
+  The implementation now lives in internals; the four deprecated functions
+  remain exported and keep warning, but only for code that calls them
+  directly.
 - `spatIDs()` on an in-memory `spatialNetworkObj` returned `character(0)` for
   every network. It read `@network` as the `from`/`to` table the slot held
   before 0.6.0; `$` on an igraph is `NULL`, so a 855-edge network reported zero

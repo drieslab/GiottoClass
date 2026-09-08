@@ -338,12 +338,8 @@ loadGiotto <- function(path_to_folder,
             initialize = TRUE
         )
         vmsg(.v = verbose, .is_debug = TRUE, identified_python_path)
-        gobject <- changeGiottoInstructions(
-            gobject = gobject,
-            params = c("python_path"),
-            new_values = c(identified_python_path),
-            init_gobject = FALSE
-        )
+        instructions(gobject, "python_path", initialize = FALSE) <-
+            identified_python_path
     } else {
         # ***if python is not needed...***
         instr <- instructions(gobject)

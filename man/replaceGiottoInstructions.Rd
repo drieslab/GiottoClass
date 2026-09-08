@@ -2,32 +2,23 @@
 % Please edit documentation in R/instructions.R
 \name{replaceGiottoInstructions}
 \alias{replaceGiottoInstructions}
-\title{deprecated}
+\title{Replace giotto instructions}
 \usage{
 replaceGiottoInstructions(gobject, instructions = NULL, init_gobject = TRUE)
 }
 \arguments{
 \item{gobject}{giotto object}
 
-\item{instructions}{new
-instructions (e.g. result from createGiottoInstructions)}
+\item{instructions}{named list of all instructions, as produced by
+\code{\link[=createGiottoInstructions]{createGiottoInstructions()}}}
 
-\item{init_gobject}{(boolean, default = TRUE) initialize gobject when
-returning}
+\item{init_gobject}{logical. Re-initialize the object before returning it
+(default \code{TRUE})}
 }
 \value{
-giotto object with replaces instructions
+giotto object with replaced instructions
 }
 \description{
-Function to replace all instructions from giotto object. Does
-not call \code{initialize} on the giotto object
-}
-\examples{
-g <- GiottoData::loadGiottoMini("visium")
-
-replaceGiottoInstructions(
-    gobject = g,
-    instructions = createGiottoInstructions()
-)
+Deprecated. Use \code{instructions(gobject) <- value} instead.
 }
 \keyword{internal}
