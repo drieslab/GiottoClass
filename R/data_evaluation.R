@@ -1062,6 +1062,15 @@ evaluate_input <- function(type, x, ...) {
         sort_geom = TRUE
     )
 
+    # the other input types are made valid by `.evaluate_gpoly_spatvector()`
+    # before they return. table input never reaches it, so it is done here.
+    if (make_valid) {
+        spatial_info <- .make_valid(spatial_info, verbose = verbose)
+        # re-derive: `unique_IDs` was taken from the input table above, before
+        # any degenerate geometry was dropped
+        unique_IDs <- unique(terra::values(spatial_info)$poly_ID)
+    }
+
     return_list <- list(
         spatvector = spatial_info,
         unique_IDs = unique_IDs

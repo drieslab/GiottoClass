@@ -70,6 +70,46 @@ describe(".make_valid", {
 })
 
 
+describe("createGiottoPolygon(make_valid = TRUE)", {
+    # table input is the one branch of `.evaluate_spatial_info()` that does not
+    # route through `.evaluate_gpoly_spatvector()`
+    df <- data.table::data.table(
+        poly_ID = c(rep("cellA", 4L), rep("cellB", 2L), rep("cellC", 4L)),
+        x = c(0, 1, 1, 0, 10, 11, 20, 21, 21, 20),
+        y = c(0, 0, 1, 1, 0, 1, 0, 0, 1, 1)
+    )
+
+    it("drops a degenerate polygon from table input", {
+        gp <- suppressWarnings(createGiottoPolygon(df,
+            make_valid = TRUE, calc_centroids = FALSE, verbose = FALSE
+        ))
+        sv <- gp[]
+        expect_equal(nrow(sv), 2)
+        expect_identical(sv$poly_ID, c("cellA", "cellC"))
+        expect_true(all(terra::is.valid(sv)))
+        # the surviving geometries are still the ones their IDs name
+        g <- terra::geom(sv)
+        expect_equal(as.vector(tapply(g[, "x"], g[, "geom"], min)), c(0, 20))
+    })
+
+    it("reports only the surviving IDs", {
+        res <- suppressWarnings(evaluate_input("spat_info", df,
+            make_valid = TRUE, verbose = FALSE
+        ))
+        expect_identical(res$unique_IDs, c("cellA", "cellC"))
+        expect_equal(nrow(res$spatvector), length(res$unique_IDs))
+    })
+
+    it("leaves table input untouched when make_valid = FALSE", {
+        gp <- suppressWarnings(createGiottoPolygon(df,
+            make_valid = FALSE, calc_centroids = FALSE, verbose = FALSE
+        ))
+        expect_equal(nrow(gp[]), 3)
+        expect_identical(gp[]$poly_ID, c("cellA", "cellB", "cellC"))
+    })
+})
+
+
 describe(".dt_to_spatvector_polygon degenerate ring warning", {
     dt <- data.table::data.table(
         poly_ID = c(rep("cellA", 4L), rep("cellB", 2L), rep("cellC", 4L)),
