@@ -2568,7 +2568,7 @@ aggregateStacksLocations <- function(gobject,
 
 
     # 2. make sure spatvectors are valid
-    stack_spatvector <- terra::makeValid(stack_spatvector)
+    stack_spatvector <- .make_valid(stack_spatvector)
 
     # 3. aggregate individual cells/polys
     all_poly_ids <- mixedsort(unique(stack_spatvector$poly_ID))

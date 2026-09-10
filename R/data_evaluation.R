@@ -794,6 +794,59 @@ evaluate_input <- function(type, x, ...) {
 
 
 #' @keywords internal
+#' @param x polygons SpatVector
+#' @param verbose be verbose
+#' @return SpatVector with geometries and attributes still aligned
+#' @noRd
+.make_valid <- function(x, verbose = NULL) {
+    if (terra::geomtype(x) != "polygons") return(terra::makeValid(x))
+    n_in <- nrow(x)
+    if (n_in == 0L) return(x)
+
+    # `makeValid()` discards any geometry that GEOS repairs into a
+    # non-polygonal result (a degenerate ring becomes a LINESTRING) without
+    # discarding its attribute row, which shifts every attribute after the
+    # first drop onto the wrong polygon. `buffer = TRUE` instead routes to
+    # `buffer(x, 0)`, which is 1:1 and returns those geometries as empty, so
+    # they can be removed with `[` and their attributes follow.
+    # This is only used to find them: `buffer(0)` keeps a single lobe of a
+    # self-intersection where `makeValid()` correctly keeps both, so the
+    # repair itself is still done by `makeValid()` below.
+    probe <- terra::makeValid(x, buffer = TRUE)
+    keep <- if (nrow(probe) == n_in) {
+        # planar, and avoids the unknown crs warning on stripped-crs polys
+        terra::crs(probe) <- "local"
+        a <- terra::expanse(probe)
+        !is.na(a) & a > 0 # empty geometries report NaN
+    } else if (nrow(probe) == 0L) {
+        # `buffer(x, 0)` returns nothing at all when every geometry collapses
+        rep(FALSE, n_in)
+    } else {
+        stop(sprintf(
+            "[makeValid] cannot determine which polygons are degenerate (%d of %d probed)",
+            nrow(probe), n_in
+        ), call. = FALSE)
+    }
+
+    if (!all(keep)) {
+        dropped <- if ("poly_ID" %in% names(x)) x$poly_ID[!keep] else which(!keep)
+        vmsg(.v = verbose, sprintf(
+            "[makeValid] %d degenerate polygon(s) dropped: %s",
+            sum(!keep), paste(utils::head(dropped, 5L), collapse = ", ")
+        ))
+    }
+
+    out <- terra::makeValid(x[keep])
+    if (nrow(out) != nrow(terra::values(out))) {
+        stop("[makeValid] geometries dropped, attributes are out of sync",
+            call. = FALSE
+        )
+    }
+    out
+}
+
+
+#' @keywords internal
 #' @param input_sv SpatVector to evaluate
 #' @param verbose be verbose
 #' @return list of SpatVector and unique_IDs
@@ -812,7 +865,7 @@ evaluate_input <- function(type, x, ...) {
     # strip crs info
     terra::set.crs(input_sv, NULL)
     # ensure valid
-    if (make_valid) input_sv <- terra::makeValid(input_sv)
+    if (make_valid) input_sv <- .make_valid(input_sv, verbose = verbose)
 
     col_classes <- vapply(
         sample(x = input_sv, size = 1L),
@@ -851,10 +904,7 @@ evaluate_input <- function(type, x, ...) {
     sv_names[[poly_ID_col]] <- "poly_ID"
     terra::set.names(input_sv, sv_names)
     unique_names <- make.unique(terra::values(input_sv)[[poly_ID_col]])
-    # only select as many names as there are poly geometries.
-    # With `makeValid()`, if a polygon is lost due to the process, the
-    # attributes table length ends up being longer than the number of geoms.
-    input_sv[[poly_ID_col]] <- unique_names[seq_len(nrow(input_sv))]
+    input_sv[[poly_ID_col]] <- unique_names
 
     unique_IDs <- NULL
     if (col_classes[[poly_ID_col]] != "character") {
