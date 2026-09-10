@@ -118,6 +118,11 @@
   but it duplicates that verb's `mean_expr` and should not be used in new code.
 
 ## bug fixes
+- `createGiottoPolygon(make_valid = TRUE)` now has an effect on `data.frame`
+  input. The `data.frame` method declared `make_valid` but never forwarded it,
+  and `.evaluate_spatial_info()` ignored it on the table branch, so the
+  argument was accepted and dropped. Only file and `SpatVector` input were
+  ever made valid.
 - Making polygons valid no longer shifts the attribute table. `makeValid()`
   drops geometries that GEOS repairs into lines, but leaves their attribute
   rows in place, so every `poly_ID` after the first dropped polygon named the

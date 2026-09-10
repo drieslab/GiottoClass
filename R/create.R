@@ -2493,6 +2493,7 @@ setMethod(
             skip_eval_dfr = skip_eval_dfr,
             copy_dt = copy_dt,
             verbose = verbose,
+            make_valid = make_valid,
             ...
         )
     }
