@@ -94,4 +94,26 @@ describe(".dt_to_spatvector_polygon degenerate ring warning", {
         ok$geom <- c(rep(1L, 4L), rep(2L, 4L))
         expect_silent(.dt_to_spatvector_polygon(ok))
     })
+
+    it("accepts a triangle given open or closed", {
+        tri <- function(closed) {
+            n <- if (closed) 4L else 3L
+            data.table::data.table(
+                poly_ID = "tri", geom = 1L, part = 1L, hole = 0L,
+                x = c(0, 1, 1, 0)[seq_len(n)],
+                y = c(0, 0, 1, 0)[seq_len(n)]
+            )
+        }
+        expect_silent(.dt_to_spatvector_polygon(tri(closed = FALSE)))
+        expect_silent(.dt_to_spatvector_polygon(tri(closed = TRUE)))
+    })
+
+    it("flags a 2 vertex ring given closed", {
+        # 3 rows, but the last repeats the first
+        closed2 <- data.table::data.table(
+            poly_ID = "flat", geom = 1L, part = 1L, hole = 0L,
+            x = c(0, 1, 0), y = c(0, 1, 0)
+        )
+        expect_warning(.dt_to_spatvector_polygon(closed2), "flat")
+    })
 })

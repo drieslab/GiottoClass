@@ -832,7 +832,7 @@ evaluate_input <- function(type, x, ...) {
         dropped <- if ("poly_ID" %in% names(x)) x$poly_ID[!keep] else which(!keep)
         vmsg(.v = verbose, sprintf(
             "[makeValid] %d degenerate polygon(s) dropped: %s",
-            sum(!keep), paste(utils::head(dropped, 5L), collapse = ", ")
+            sum(!keep), toString(utils::head(dropped, 5L))
         ))
     }
 
