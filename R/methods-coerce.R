@@ -681,7 +681,7 @@ setMethod(
     specific_values = NULL,
     sort_geom = FALSE) {
     # DT vars
-    geom <- NULL
+    geom <- hole <- N <- poly_ID <- x <- y <- NULL
 
     checkmate::assert_data_table(dt)
     checkmate::assert_logical(include_values)
@@ -723,6 +723,27 @@ setMethod(
             # fallback to poly_ID only
             attr_values <- unique(attr_values[, "poly_ID"])
         }
+    }
+
+    # A ring needs 3 distinct vertices. Rings may be provided either closed or
+    # open, so discount a repeated final vertex. terra accepts fewer without
+    # complaint, but `makeValid()` downstream repairs them into lines and then
+    # discards them, so report them here while the poly_IDs are still in hand.
+    degen <- dt[hole == 0][
+        , .(N = .N - (x[1L] == x[.N] && y[1L] == y[.N])),
+        by = c("geom", "part")
+    ][N < 3L]
+    if (nrow(degen) > 0L) {
+        ids <- if ("poly_ID" %in% all_colnames) {
+            unique(dt[geom %in% degen$geom, poly_ID])
+        } else {
+            unique(degen$geom)
+        }
+        warning(wrap_txt(sprintf(
+            ".dt_to_spatvector_polygon:
+            %d polygon(s) have fewer than 3 vertices and cannot form a ring: %s",
+            length(ids), toString(utils::head(ids, 5L))
+        )), call. = FALSE)
     }
 
     sv <- terra::vect(

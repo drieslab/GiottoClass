@@ -118,6 +118,15 @@
   but it duplicates that verb's `mean_expr` and should not be used in new code.
 
 ## bug fixes
+- Making polygons valid no longer shifts the attribute table. `makeValid()`
+  drops geometries that GEOS repairs into lines, but leaves their attribute
+  rows in place, so every `poly_ID` after the first dropped polygon named the
+  wrong geometry. Affected `combineGeom()`, z-stack aggregation, `spatQuery()`
+  and `createGiottoPolygon(make_valid = TRUE)`, which previously errored
+  instead. Degenerate polygons are now dropped with their attributes and
+  reported by `poly_ID`.
+- Polygons built from a `data.frame` now warn, naming the `poly_ID`s, when a
+  ring has too few vertices to close.
 - `instructions()` and `instructions<-()` no longer emit a deprecation
   warning on every access. They were implemented on top of the deprecated
   `showGiottoInstructions()` / `readGiottoInstructions()` /
