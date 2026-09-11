@@ -11,7 +11,7 @@ createSpatialNetwork(
   feat_type = NULL,
   spat_loc_name = NULL,
   dimensions = "all",
-  method = c("Delaunay", "kNN"),
+  method = c("Delaunay", "kNN", "radius"),
   delaunay_method = c("deldir", "delaunayn_geometry", "RTriangle"),
   maximum_distance_delaunay = "auto",
   options = "Pp",
@@ -22,6 +22,7 @@ createSpatialNetwork(
   knn_method = "dbscan",
   k = 4,
   maximum_distance_knn = NULL,
+  radius = NULL,
   verbose = FALSE,
   return_gobject = TRUE,
   output = c("spatialNetworkObj", "data.table"),
@@ -41,10 +42,17 @@ createSpatialNetwork(
 
 \item{dimensions}{which spatial dimensions to use (default = all)}
 
-\item{method}{which method to use to create a spatial
-network. (default = Delaunay)}
+\item{method}{which method to use to create a spatial network. One of
+\code{"Delaunay"} (default), \code{"kNN"}, or \code{"radius"}. \code{"radius"} connects every
+pair of cells closer together than \code{radius}, so unlike kNN it gives dense
+regions more neighbours than sparse ones.}
 
-\item{delaunay_method}{method to use to generate Delaunay network}
+\item{delaunay_method}{method to use to generate Delaunay network. All
+three give the identical triangulation; \code{"delaunayn_geometry"} is far faster
+above a few thousand points (0.94 s vs ~363 s at 200,000) and is the only
+one that handles 3D. \code{"deldir"} remains the default for backward
+compatibility. See the \emph{Choosing a Delaunay backend} section of
+\code{\link[=createSpatialDelaunayNetwork]{createSpatialDelaunayNetwork()}}.}
 
 \item{maximum_distance_delaunay}{distance cutoff for nearest neighbors to
 consider for Delaunay network. If "auto", "upper whisker" value of the
@@ -72,6 +80,10 @@ final triangulation from the output.}
 
 \item{maximum_distance_knn}{distance cutoff for nearest neighbors to consider
 for kNN network}
+
+\item{radius}{(radius) distance cutoff, in the units of the spatial
+locations. Every pair of cells within this distance of each other is
+connected. Required when \code{method = "radius"}.}
 
 \item{verbose}{be verbose}
 

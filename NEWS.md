@@ -2,6 +2,17 @@
 
 ## new
 
+- `radiusNetworkParam()` builds a fixed-radius spatial network: every pair of
+  nodes within `eps` is joined, so degree follows local density rather than
+  being fixed as it is for kNN. Backed by the exact `dbscan::frNN`.
+  `minimum_k` keeps a floor of nearest neighbours for nodes whose radius is
+  empty, which otherwise drop out of the network entirely. Previously the only
+  route to a distance-based network was kNN with a large `k` plus a
+  `maximum_distance` filter -- finding a hundred neighbours per cell in order
+  to discard most of them; that advice is now redirected.
+- `createSpatialNetwork(method = "radius", radius = )` reaches
+  `radiusNetworkParam()` from the spatial wrapper, which previously offered
+  only `"Delaunay"` and `"kNN"`.
 - `objManifest()` returns a machine-readable inventory of a `giotto` object:
   identity, a summary block, and a slot-by-slot description nested as the
   object nests it. Derived on demand, so it cannot go stale. `level = "full"`
@@ -80,6 +91,72 @@
   finds the backend's own method -- {GiottoDisk} registers one for
   `parquetEdgeStore`. This is how a backed network should be read from here,
   rather than by naming a package GiottoClass only Suggests.
+
+
+## performance
+
+- `edge_distances()` is vectorized. It called `stats::dist()` once per edge,
+  through a `2 x d x E` array built with an extra `aperm()` copy; it now makes
+  one pass over the endpoint rows. Measured 556x faster at 600,000 edges. All
+  network backends funnel through it, so this is what dominated once a fast
+  triangulation was in use: Delaunay via `geometry` at 20,000 points went 0.47 s
+  to 0.14 s. Results agree with the old implementation to ~1e-16 rather than
+  bit-exactly -- `stats::dist()` and `sqrt(rowSums(...))` accumulate in a
+  different order -- which is only observable for an edge sitting exactly on a
+  `maximum_distance` cutoff. Non-euclidean metrics keep the general path.
+- kNN networks no longer recompute distances when `maximum_distance` is set.
+  `dbscan::kNN` already returns them and the recompute went through the
+  per-edge loop above, so asking for a cutoff cost 11x: at 50,000 points a
+  spatial kNN network went 1.89 s with a cutoff against 0.17 s without. Both
+  are now ~0.19 s. Using the search's own distances is also the self-consistent
+  choice -- the cutoff now filters on whatever metric the search used.
+
+## bug fixes
+
+- `getSpatialNetwork(output = "networkDT")` and `output = "igraph"` now work when
+  the network is a GiottoDisk `parquetEdgeStore`, which is what a backed project
+  holds. Previously the store was handed straight to `as.data.table()` and the
+  call failed with *cannot coerce class parquetEdgeStore*, so every consumer of
+  the edge table -- `annotateSpatialNetwork()`, and `cellProximityEnrichment()`
+  built on top of it -- was unusable on a backed object. The `networkDT` form
+  renames the store's `from_id`/`to_id` to the `from`/`to` that the rest of the
+  suite expects.
+- `getNearestNetwork(output = "data.table")` and `output = "igraph"` gained the
+  same store handling; both previously failed with *Must provide a graph object*
+  on a backed project. The two accessors now share one reader so they cannot
+  drift apart again.
+- `createNetwork()` on a `giotto` object with a `radiusNetworkParam` now
+  measures `eps` in spatial coordinates. It inherited the nearest-neighbour
+  method, whose default is `space = "expression"`, so a radius given in microns
+  was silently applied to PCA coordinates. Pass `space = "expression"` for the
+  old behaviour.
+
+## changes
+
+- Network construction now reports when nodes are left with no edges: "N of M
+  node(s) have no edges and are omitted from the network". Such a node is not a
+  vertex of the resulting graph, so it silently disappears from every
+  downstream result -- proximity enrichment, motifs, neighbourhood composition
+  -- and the analysed cell count quietly stops matching the input. This is easy
+  to cause by accident, since the Delaunay default `maximum_distance = "auto"`
+  trims long edges and on a clustered section can strand a few hundred cells.
+  Behaviour is unchanged; it is now visible.
+
+## documentation
+
+- `createSpatialDelaunayNetwork()` gained a *Choosing a Delaunay backend*
+  section. All three backends return the identical triangulation (the same
+  149,978 edges on 50,000 uniform points), but `deldir` -- the default -- is
+  the slowest by orders of magnitude: 21.1 s against `delaunayn_geometry`'s
+  0.20 s at 50,000 points, and ~363 s against 0.94 s at 200,000, where it also
+  peaks at 2.9 GB against 0.24 GB. The default is unchanged; the recommendation
+  is now written down.
+
+## internal
+
+- `.calculate_distance_and_weight()` removed. It had no callers anywhere in the
+  suite and contained a `by = seq_len(nrow())` per-row `stats::dist()` loop --
+  unreachable, but a trap for whoever wired it up next.
 
 ## changes
 - `.ome.tif` and other tifs GDAL cannot open directly are now read through a GDAL VRT built over their JPEG-2000 tiles, so JPEG-2000 images load without python. This covers every 10x Xenium morphology image, and Aperio SVS whole-slide images. `to_simple_tif()` is unchanged and remains the fallback for qptiff and other codecs.

@@ -3,18 +3,22 @@
 \name{createNetwork}
 \alias{createNetwork}
 \alias{createNetwork,matrix,kNNNetworkParam-method}
+\alias{createNetwork,matrix,radiusNetworkParam-method}
 \alias{createNetwork,matrix,sNNNetworkParam-method}
 \alias{createNetwork,matrix,delaunayNetworkParam-method}
 \alias{createNetwork,matrix,missing-method}
 \alias{createNetwork,spatLocsObj,networkParam-method}
 \alias{createNetwork,dimObj,networkParam-method}
 \alias{createNetwork,giotto,NNNetworkParam-method}
+\alias{createNetwork,giotto,radiusNetworkParam-method}
 \alias{createNetwork,giotto,delaunayNetworkParam-method}
 \title{Create a Network}
 \usage{
 createNetwork(x, param, ...)
 
 \S4method{createNetwork}{matrix,kNNNetworkParam}(x, param, node_ids = NULL, verbose = NULL, backend = NULL, ...)
+
+\S4method{createNetwork}{matrix,radiusNetworkParam}(x, param, node_ids = NULL, verbose = NULL, backend = NULL, ...)
 
 \S4method{createNetwork}{matrix,sNNNetworkParam}(x, param, node_ids = NULL, verbose = NULL, backend = NULL, ...)
 
@@ -50,6 +54,8 @@ createNetwork(x, param, ...)
   spat_loc_name = "raw",
   ...
 )
+
+\S4method{createNetwork}{giotto,radiusNetworkParam}(x, param, space = c("spatial", "expression"), ...)
 
 \S4method{createNetwork}{giotto,delaunayNetworkParam}(x, param, spat_unit = NULL, spat_loc_name = "raw", ...)
 }
@@ -95,4 +101,12 @@ the algorithm (kNN, sNN, Delaunay, ...). Part of the \verb{create<Noun>}
 object-construction family. Distinct from analysis-stage operations
 such as \code{\link[=processData]{processData()}}, \code{\link[=filterData]{filterData()}}, \code{\link[=reduceData]{reduceData()}}, and
 \code{\link[=analyzeData]{analyzeData()}}.
+}
+\details{
+\code{radiusNetworkParam} defaults to \code{space = "spatial"} rather than
+\code{"expression"}. A radius is a distance with units, and for a radius graph
+those units are almost always the tissue's -- "cells within 25 um". Reaching
+it through the general NN method would have silently measured \code{eps} in PCA
+units instead. Pass \code{space = "expression"} to get the PCA-space behaviour
+back.
 }
