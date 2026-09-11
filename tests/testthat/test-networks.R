@@ -250,4 +250,37 @@ test_that("spatIDs(spatialNetworkObj) delegates to parquetEdgeStore when @networ
 })
 
 
+# as.igraph ####
+
+test_that("as.igraph returns the graph the @network slot holds", {
+    rlang::local_options(lifecycle_verbosity = "quiet")
+    g2 <- createSpatialNetwork(g, method = "Delaunay", verbose = FALSE)
+    sn <- getSpatialNetwork(g2, name = "Delaunay_network",
+                            output = "spatialNetworkObj")
+    nn <- getNearestNetwork(g, output = "nnNetObj")
+
+    # an accessor, not a construction -- identity, not merely equality
+    expect_identical(igraph::as.igraph(sn), slot(sn, "network"))
+    expect_identical(igraph::as.igraph(nn), slot(nn, "network"))
+})
+
+test_that("as.igraph re-dispatches when @network is backed", {
+    rlang::local_options(lifecycle_verbosity = "quiet")
+    # stands in for a GiottoDisk store: any class registering its own
+    # as.igraph method. GiottoClass must not need to name the backend.
+    setClass("fakeBackedNet", representation(g = "ANY"))
+    on.exit(removeClass("fakeBackedNet"), add = TRUE)
+    registerS3method("as.igraph", "fakeBackedNet", function(x, ...) x@g,
+        envir = asNamespace("igraph"))
+
+    ring <- igraph::make_ring(7)
+    g2 <- createSpatialNetwork(g, method = "Delaunay", verbose = FALSE)
+    sn <- getSpatialNetwork(g2, name = "Delaunay_network",
+                            output = "spatialNetworkObj")
+    slot(sn, "network") <- new("fakeBackedNet", g = ring)
+
+    expect_identical(igraph::as.igraph(sn), ring)
+})
+
+
 options("lifecycle_verbosity" = lifecycle_opt)

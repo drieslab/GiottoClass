@@ -809,3 +809,52 @@ setMethod(
 
     return(spatVec)
 }
+
+
+# as.igraph ####
+
+#' @title Coerce to igraph
+#' @name as.igraph
+#' @description Coerce a network subobject to the `igraph` it holds. Since
+#' 0.6.0 the `@network` slot holds the graph directly, so this is an accessor
+#' rather than a construction. When the slot is backed, the contents are
+#' handed to `as.igraph()` again, which dispatches on whatever backend class
+#' is there -- {GiottoDisk} registers the method for its own store types.
+#' @param x `spatialNetworkObj` or `nnNetObj`
+#' @param \dots passed to the method for the slot contents when backed.
+#' Ignored when the slot already holds an `igraph`.
+#' @returns igraph
+#' @examples
+#' # the mini network subobjects predate the 0.6.0 igraph migration;
+#' # initialize() runs the in-class migration, as tests/testthat/setup.R does
+#' sn <- methods::initialize(
+#'     GiottoData::loadSubObjectMini("spatialNetworkObj"))
+#' igraph::as.igraph(sn)
+#'
+#' nn <- methods::initialize(GiottoData::loadSubObjectMini("nnNetObj"))
+#' igraph::as.igraph(nn)
+NULL
+
+#' @rdname as.igraph
+#' @exportS3Method igraph::as.igraph
+as.igraph.spatialNetworkObj <- function(x, ...) {
+    .network_as_igraph(x, ...)
+}
+
+#' @rdname as.igraph
+#' @exportS3Method igraph::as.igraph
+as.igraph.nnNetObj <- function(x, ...) {
+    .network_as_igraph(x, ...)
+}
+
+# Shared by both network subobjects: return @network when it is already a
+# graph, otherwise re-dispatch on the contents. Keeping the backend branch as
+# a dispatch rather than a `GiottoDisk::storeRead()` call means GiottoClass
+# does not have to name a package it only Suggests.
+.network_as_igraph <- function(x, ...) {
+    net <- x@network
+    if (inherits(net, "igraph")) {
+        return(net)
+    }
+    igraph::as.igraph(net, ...)
+}
