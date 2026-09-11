@@ -15,15 +15,9 @@ setup_test_data <- function() {
     sl <- GiottoData::loadSubObjectMini("spatLocsObj")
     cm <- GiottoData::loadSubObjectMini("cellMetaObj")
     fm <- GiottoData::loadSubObjectMini("featMetaObj")
-    # network subobject minis predate the 0.6.0 igraph migration; run
-    # initialize() so the in-class migration step normalizes them.
-    sn <- methods::initialize(
-        GiottoData::loadSubObjectMini("spatialNetworkObj")
-    )
+    sn <- GiottoData::loadSubObjectMini("spatialNetworkObj")
     enr <- GiottoData::loadSubObjectMini("spatEnrObj")
-    nn <- methods::initialize(
-        GiottoData::loadSubObjectMini("nnNetObj")
-    )
+    nn <- GiottoData::loadSubObjectMini("nnNetObj")
     dr <- GiottoData::loadSubObjectMini("dimObj")
     gpoly <- GiottoData::loadSubObjectMini("giottoPolygon")
     gpoints <- GiottoData::loadSubObjectMini("giottoPoints")

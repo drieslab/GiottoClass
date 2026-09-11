@@ -43,7 +43,7 @@ edge attribute.
 dataframe-like inputs must have 'from', 'to', and 'distance' columns
 }
 \examples{
-x <- methods::initialize(GiottoData::loadSubObjectMini("nnNetObj"))
+x <- GiottoData::loadSubObjectMini("nnNetObj")
 
 createNearestNetObj(
     network = slot(x, "network"), name = "sNN",

@@ -873,7 +873,7 @@ S3toS4dimObj <- function(object) {
 #' @slot misc misc
 #' @returns nnNetObj
 #' @examples
-#' methods::initialize(GiottoData::loadSubObjectMini("nnNetObj"))
+#' GiottoData::loadSubObjectMini("nnNetObj")
 #' @exportClass nnNetObj
 nnNetObj <- setClass("nnNetObj",
     contains = c(
@@ -1028,8 +1028,7 @@ spatLocsObj <- setClass("spatLocsObj",
 #' slot (filtered).
 #' @returns spatialNetworkObj
 #' @examples
-#' g <- methods::initialize(
-#'     GiottoData::loadSubObjectMini("spatialNetworkObj"))
+#' g <- GiottoData::loadSubObjectMini("spatialNetworkObj")
 #' @export
 setClass("spatialNetworkObj",
     contains = c(
