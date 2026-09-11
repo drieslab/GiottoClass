@@ -73,6 +73,13 @@
   narrowed by a spatial predicate rather than a relation matrix. Eager method
   on `(giottoSpatial, giottoSpatial)` wraps `relate() + subset`; the on-disk
   lazy form lives in GiottoDisk via methods on `parquetGeomBase`.
+- `as.igraph()` works on `spatialNetworkObj` and `nnNetObj`, registered on
+  {igraph}'s generic. `@network` holds the graph directly, so this is an
+  accessor rather than a construction and returns the slot unchanged. When the
+  slot is backed, the contents are handed to `as.igraph()` again and dispatch
+  finds the backend's own method -- {GiottoDisk} registers one for
+  `parquetEdgeStore`. This is how a backed network should be read from here,
+  rather than by naming a package GiottoClass only Suggests.
 
 ## changes
 - `.ome.tif` and other tifs GDAL cannot open directly are now read through a GDAL VRT built over their JPEG-2000 tiles, so JPEG-2000 images load without python. This covers every 10x Xenium morphology image, and Aperio SVS whole-slide images. `to_simple_tif()` is unchanged and remains the fallback for qptiff and other codecs.
