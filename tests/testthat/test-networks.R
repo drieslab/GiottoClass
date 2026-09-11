@@ -252,12 +252,10 @@ test_that("spatIDs(spatialNetworkObj) delegates to parquetEdgeStore when @networ
 
 # --- the in-memory igraph path -------------------------------------------
 #
-# Both accessors below still read `@network` as the from/to data.table it held
-# before 0.6.0. The disk-backed branches were covered (above) and stayed
-# correct; the canonical in-memory path had no test at all, which is how
-# `spatIDs()` came to return character(0) for every ordinary network and
-# `spat_net_to_igraph()` came to fail outright -- taking Giotto's
-# spatialSplitCluster() and identifyTMAcores(), its only two callers, with it.
+# `spatIDs()` read `@network` as the from/to data.table it held before 0.6.0,
+# so it returned character(0) for every ordinary network. The disk-backed
+# branch was covered and stayed correct; the canonical in-memory path had no
+# test at all, which is how that went unnoticed for a release cycle.
 
 .sn_fixture <- function(method = "Delaunay", n = 100L, seed = 7L, ...) {
     rlang::local_options(lifecycle_verbosity = "quiet",
@@ -289,44 +287,7 @@ test_that("spatIDs(spatialNetworkObj) returns the nodes of an in-memory network"
     expect_true(all(c(ends$from, ends$to) %in% ids))
 })
 
-test_that("spat_net_to_igraph returns the stored graph, undirected and bare", {
-    sn <- .sn_fixture()
-    net <- sn[]
 
-    g1 <- spat_net_to_igraph(sn)
-    expect_s3_class(g1, "igraph")
-    expect_false(igraph::is_directed(g1))
-    expect_equal(igraph::vcount(g1), igraph::vcount(net))
-    expect_equal(igraph::ecount(g1), igraph::ecount(net))
-    expect_setequal(names(igraph::V(g1)), names(igraph::V(net)))
-
-    # `attr = NULL` means no edge attributes, as it always has -- the stored
-    # graph carries weight and distance, so this is not a free pass-through
-    expect_true("weight" %in% igraph::edge_attr_names(net))
-    expect_length(igraph::edge_attr_names(g1), 0L)
-
-    g2 <- spat_net_to_igraph(sn, attr = c("distance", "weight"))
-    expect_setequal(igraph::edge_attr_names(g2), c("distance", "weight"))
-    expect_equal(igraph::E(g2)$weight, igraph::E(net)$weight)
-
-    g3 <- spat_net_to_igraph(sn, attr = "distance")
-    expect_identical(igraph::edge_attr_names(g3), "distance")
-})
-
-test_that("spat_net_to_igraph undirects a kNN network without losing edges", {
-    sn <- .sn_fixture(method = "kNN", k = 4)
-    net <- sn[]
-    # kNN is asymmetric, so the stored graph is directed -- the case that
-    # makes the "non-directed" contract more than a formality
-    expect_true(igraph::is_directed(net))
-
-    g <- spat_net_to_igraph(sn)
-    expect_false(igraph::is_directed(g))
-    # `mode = "each"`: reciprocal pairs stay two edges, as they did when every
-    # row of the old from/to table was added to an undirected graph
-    expect_equal(igraph::ecount(g), igraph::ecount(net))
-    expect_equal(igraph::vcount(g), igraph::vcount(net))
-})
 
 # as.igraph ####
 

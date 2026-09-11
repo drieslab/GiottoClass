@@ -109,6 +109,14 @@
 - `getSpatialNetwork()` `output` choices changed:
   `"networkDT_before_filter"` → `"unfiltered"`; new option `"igraph"`
   returns the underlying graph directly.
+- `spat_net_to_igraph()` removed. It was exported here but never called here:
+  its only callers were `Giotto::spatialSplitCluster()` and
+  `Giotto::identifyTMAcores()`, and its contract -- undirect with
+  `mode = "each"`, strip edge attributes -- served their clustering helpers
+  rather than any general coercion. It now lives in {Giotto} as an internal.
+  Use `as.igraph()` for the graph a network subobject holds; it returns the
+  slot unchanged, matching `getSpatialNetwork(output = "igraph")`. Undirect
+  with `igraph::as_undirected()` if that is wanted.
 - Removed exported helpers `convert_to_full_spatial_network()` and
   `convert_to_reduced_spatial_network()`. The edge table is now an
   igraph; use `igraph::as_data_frame(net, what = "edges")` if a
@@ -154,12 +162,8 @@
 - `spat_net_to_igraph()` failed with *please supply names for attributes*, from
   the same cause, and took its only two callers with it:
   `Giotto::spatialSplitCluster()` and `Giotto::identifyTMAcores()` were
-  unusable on any in-memory spatial network. It now returns the graph the slot
-  already holds rather than rebuilding it, undirecting a kNN network with
-  `mode = "each"` so reciprocal pairs stay two edges, and dropping edge
-  attributes not named in `attr` so the default stays bare as before. Backed
-  networks are read through `as.igraph()`, which dispatches to the backend's
-  own method.
+  unusable on any in-memory spatial network. The function has since moved to
+  {Giotto} (see breaking changes); both callers work again.
 - `tif_metadata(node =)` returns a one-row `data.frame` when exactly one node matches, rather than transposing it into a single column.
 
 - `create_average_DT()` now selects each group's cells by `cell_ID` rather than
