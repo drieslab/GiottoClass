@@ -246,7 +246,7 @@ spatQuery <- function(gobject,
     # sv2 is the data poly
     sv1 <- .filter_get(1L) # get initial sv1
     names(sv1)[which(names(sv1) == "poly_ID")] <- filter_names[[1L]]
-    if (make_valid) sv1 <- terra::makeValid(sv1)
+    if (make_valid) sv1 <- .make_valid(sv1)
     for (f_i in 2:length(filters)) {
         sv2 <- .filter_get(f_i)
 
@@ -257,7 +257,7 @@ spatQuery <- function(gobject,
         vmsg(.v = verbose, sprintf("processing [%s] vs [%s]...",
             filter_names[f_i - 1L], filter_names[f_i]
         ))
-        if (make_valid) sv2 <- terra::makeValid(sv2)
+        if (make_valid) sv2 <- .make_valid(sv2)
         sv1 <- terra::intersect(sv1, sv2)
     }
 

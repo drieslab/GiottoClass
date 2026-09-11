@@ -101,8 +101,8 @@ polygon (default: TRUE)}
 \item{background_algo}{algorithm to remove background polygon}
 
 \item{make_valid}{logical. (default \code{FALSE}) Whether to run
-\code{\link[terra:makeValid]{terra::makeValid()}} on the geometries. Setting this to \code{TRUE} may cause
-read-in polygon attribute information to become out of sync.}
+\code{\link[terra:makeValid]{terra::makeValid()}} on the geometries. Polygons that cannot be repaired
+into a polygon are dropped along with their attributes.}
 
 \item{verbose}{be verbose}
 

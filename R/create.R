@@ -2251,8 +2251,8 @@ create_giotto_points_object <- function(feat_type = "rna",
 #' @param calc_centroids logical. (default `FALSE`) calculate centroids for
 #' polygons
 #' @param make_valid logical. (default `FALSE`) Whether to run
-#' [terra::makeValid()] on the geometries. Setting this to `TRUE` may cause
-#' read-in polygon attribute information to become out of sync.
+#' [terra::makeValid()] on the geometries. Polygons that cannot be repaired
+#' into a polygon are dropped along with their attributes.
 #' @param verbose be verbose
 #' @param \dots additional params to pass. For character method, params pass to
 #' SpatRaster or SpatVector methods, depending on whether x was a filepath to
@@ -2494,6 +2494,7 @@ setMethod(
             skip_eval_dfr = skip_eval_dfr,
             copy_dt = copy_dt,
             verbose = verbose,
+            make_valid = make_valid,
             ...
         )
     }

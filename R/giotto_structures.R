@@ -276,7 +276,7 @@ combineToMultiPolygon <- function(x, groups, name = NULL) {
     # overlap each other. This is fine when the polys are independent, however,
     # when they are combined as a multipolygon, they become self intersecting
     # geometry and thus not allowed.
-    multi_sv <- terra::makeValid(multi_sv)
+    multi_sv <- .make_valid(multi_sv)
 
     giottoPolygon(
         spatVector = multi_sv,

@@ -73,6 +73,13 @@
   narrowed by a spatial predicate rather than a relation matrix. Eager method
   on `(giottoSpatial, giottoSpatial)` wraps `relate() + subset`; the on-disk
   lazy form lives in GiottoDisk via methods on `parquetGeomBase`.
+- `as.igraph()` works on `spatialNetworkObj` and `nnNetObj`, registered on
+  {igraph}'s generic. `@network` holds the graph directly, so this is an
+  accessor rather than a construction and returns the slot unchanged. When the
+  slot is backed, the contents are handed to `as.igraph()` again and dispatch
+  finds the backend's own method -- {GiottoDisk} registers one for
+  `parquetEdgeStore`. This is how a backed network should be read from here,
+  rather than by naming a package GiottoClass only Suggests.
 
 ## changes
 - `.ome.tif` and other tifs GDAL cannot open directly are now read through a GDAL VRT built over their JPEG-2000 tiles, so JPEG-2000 images load without python. This covers every 10x Xenium morphology image, and Aperio SVS whole-slide images. `to_simple_tif()` is unchanged and remains the fallback for qptiff and other codecs.
@@ -118,6 +125,20 @@
   but it duplicates that verb's `mean_expr` and should not be used in new code.
 
 ## bug fixes
+- `createGiottoPolygon(make_valid = TRUE)` now has an effect on `data.frame`
+  input. The `data.frame` method declared `make_valid` but never forwarded it,
+  and `.evaluate_spatial_info()` ignored it on the table branch, so the
+  argument was accepted and dropped. Only file and `SpatVector` input were
+  ever made valid.
+- Making polygons valid no longer shifts the attribute table. `makeValid()`
+  drops geometries that GEOS repairs into lines, but leaves their attribute
+  rows in place, so every `poly_ID` after the first dropped polygon named the
+  wrong geometry. Affected `combineGeom()`, z-stack aggregation, `spatQuery()`
+  and `createGiottoPolygon(make_valid = TRUE)`, which previously errored
+  instead. Degenerate polygons are now dropped with their attributes and
+  reported by `poly_ID`.
+- Polygons built from a `data.frame` now warn, naming the `poly_ID`s, when a
+  ring has too few vertices to close.
 - `instructions()` and `instructions<-()` no longer emit a deprecation
   warning on every access. They were implemented on top of the deprecated
   `showGiottoInstructions()` / `readGiottoInstructions()` /
