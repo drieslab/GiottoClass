@@ -49,7 +49,7 @@ Suggests:
     digest,
     exactextractr,
     geometry,
-    GiottoData,
+    GiottoData (>= 0.3.6),
     GiottoDisk,
     HDF5Array (>= 1.18.1),
     jsonlite,

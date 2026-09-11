@@ -27,12 +27,9 @@ handed to \code{as.igraph()} again, which dispatches on whatever backend class
 is there -- {GiottoDisk} registers the method for its own store types.
 }
 \examples{
-# the mini network subobjects predate the 0.6.0 igraph migration;
-# initialize() runs the in-class migration, as tests/testthat/setup.R does
-sn <- methods::initialize(
-    GiottoData::loadSubObjectMini("spatialNetworkObj"))
+sn <- GiottoData::loadSubObjectMini("spatialNetworkObj")
 igraph::as.igraph(sn)
 
-nn <- methods::initialize(GiottoData::loadSubObjectMini("nnNetObj"))
+nn <- GiottoData::loadSubObjectMini("nnNetObj")
 igraph::as.igraph(nn)
 }

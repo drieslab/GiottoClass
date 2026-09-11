@@ -194,28 +194,39 @@ compatible_spatial_network <- function(spatial_network,
 #' # only name attribute
 #' g <- spat_net_to_igraph(sn)
 #'
-#' # view other column info besides to and from cols
-#' head(sn[], 1)
+#' # view the edge attributes available to `attr`
+#' head(igraph::as_data_frame(sn[], what = "edges"), 1)
 #'
 #' # include distance and weight col info
 #' g <- spat_net_to_igraph(sn, attr = c("distance", "weight"))
 #' @export
 spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
-    net_list <- as.list(spatialNetworkObj[])
-    cell_ids <- spatIDs(spatialNetworkObj)
+    # Since 0.6.0 `@network` already holds the graph this function used to
+    # rebuild from a `from`/`to` table. That table is gone, so the old body
+    # read NULL edges out of an igraph and failed with "please supply names
+    # for attributes" -- taking spatialSplitCluster() and identifyTMAcores()
+    # with it. Take the stored graph instead, and reshape it to the contract
+    # this function has always documented. `as.igraph()` returns @network
+    # directly, and dispatches on the slot contents when it is backed, so a
+    # backend is read by its own method rather than named from here.
+    net <- igraph::as.igraph(spatialNetworkObj)
 
-    igraph::make_empty_graph(directed = FALSE) %>%
-        igraph::add_vertices(
-            nv = length(cell_ids),
-            attr = list(name = cell_ids)
-        ) %>%
-        igraph::add_edges(
-            edges = rbind(
-                net_list$from,
-                net_list$to
-            ),
-            attr = net_list[attr]
-        )
+    # "non-directed", per this function's own description. A kNN spatial
+    # network is stored directed; `mode = "each"` keeps every edge rather
+    # than collapsing reciprocal pairs, which is what the old
+    # `add_edges()` over an undirected graph did. No-op when already
+    # undirected.
+    if (igraph::is_directed(net)) {
+        net <- igraph::as_undirected(net, mode = "each")
+    }
+
+    # `attr = NULL` meant `net_list[NULL]`, i.e. no edge attributes at all.
+    # The stored graph carries weight and distance, so returning it untouched
+    # would hand back more than was asked for.
+    drop <- setdiff(igraph::edge_attr_names(net), attr)
+    for (a in drop) net <- igraph::delete_edge_attr(net, a)
+
+    net
 }
 
 

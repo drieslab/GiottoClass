@@ -825,13 +825,10 @@ setMethod(
 #' Ignored when the slot already holds an `igraph`.
 #' @returns igraph
 #' @examples
-#' # the mini network subobjects predate the 0.6.0 igraph migration;
-#' # initialize() runs the in-class migration, as tests/testthat/setup.R does
-#' sn <- methods::initialize(
-#'     GiottoData::loadSubObjectMini("spatialNetworkObj"))
+#' sn <- GiottoData::loadSubObjectMini("spatialNetworkObj")
 #' igraph::as.igraph(sn)
 #'
-#' nn <- methods::initialize(GiottoData::loadSubObjectMini("nnNetObj"))
+#' nn <- GiottoData::loadSubObjectMini("nnNetObj")
 #' igraph::as.igraph(nn)
 NULL
 
