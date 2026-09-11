@@ -209,13 +209,10 @@ spat_net_to_igraph <- function(spatialNetworkObj, attr = NULL) {
     # read NULL edges out of an igraph and failed with "please supply names
     # for attributes" -- taking spatialSplitCluster() and identifyTMAcores()
     # with it. Take the stored graph instead, and reshape it to the contract
-    # this function has always documented.
-    net <- spatialNetworkObj@network
-    if (inherits(net, "dataStore")) {
-        package_check("GiottoDisk",
-            repository = "github:giotto-suite/GiottoDisk")
-        net <- GiottoDisk::storeRead(net, output = "igraph")
-    }
+    # this function has always documented. `as.igraph()` returns @network
+    # directly, and dispatches on the slot contents when it is backed, so a
+    # backend is read by its own method rather than named from here.
+    net <- igraph::as.igraph(spatialNetworkObj)
 
     # "non-directed", per this function's own description. A kNN spatial
     # network is stored directed; `mode = "each"` keeps every edge rather

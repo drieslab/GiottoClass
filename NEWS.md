@@ -158,7 +158,8 @@
   already holds rather than rebuilding it, undirecting a kNN network with
   `mode = "each"` so reciprocal pairs stay two edges, and dropping edge
   attributes not named in `attr` so the default stays bare as before. Backed
-  networks are read through GiottoDisk.
+  networks are read through `as.igraph()`, which dispatches to the backend's
+  own method.
 - `tif_metadata(node =)` returns a one-row `data.frame` when exactly one node matches, rather than transposing it into a single column.
 
 - `create_average_DT()` now selects each group's cells by `cell_ID` rather than
